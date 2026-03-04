@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-03-04T05:18:07.413Z",
+  "generatedAt": "2026-03-04T11:45:32.697Z",
   "providers": [
     {
       "provider": "zhipu-ai",
       "sourceUrls": [
         "https://bigmodel.cn/glm-coding",
-        "https://bigmodel.cn/js/app.888b4bb8.js",
+        "https://bigmodel.cn/js/app.6d2b0e42.js",
         "https://bigmodel.cn/js/chunk-0d4f69d1.69f45323.js",
         "https://docs.bigmodel.cn/cn/coding-plan/overview"
       ],
@@ -56,7 +56,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CgSCnX0y.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-Blzvp8Vi.js"
       ],
       "plans": [
         {
@@ -77,38 +77,53 @@
           ]
         },
         {
+          "name": "Andante (月)",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: LEVEL_TRIAL",
+            "更多 Agent 额度",
+            "Agent 4 倍速优先用",
+            "K2.5 提速并提升额度",
+            "Kimi Code 可调用"
+          ]
+        },
+        {
           "name": "Moderato (月)",
-          "currentPrice": 19,
-          "currentPriceText": "¥19/月",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 基础会员",
-            "更多 Agent 额度",
+            "Andante 权益基础上",
+            "2 倍 Agent 额度",
             "Agent 多任务并行",
-            "Agent 4 倍速优先用",
-            "K2.5 提速并提升额度",
-            "PPT 创意视觉 x Nano Banana",
-            "Kimi Code 可调用"
+            "2 倍 K2.5 模型使用额度",
+            "Kimi Code 4 倍额度"
           ]
         },
         {
           "name": "Allegretto (月)",
-          "currentPrice": 39,
-          "currentPriceText": "¥39/月",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 进阶会员",
-            "Moderato 权益基础上",
-            "2 倍 Agent 额度",
-            "2 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 5 倍额度",
+            "Andante 权益基础上",
+            "4 倍 Agent 额度",
+            "Agent 多任务并行",
+            "4 倍 K2.5 模型使用额度",
+            "Kimi Code 20 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -117,44 +132,19 @@
         },
         {
           "name": "Allegro (月)",
-          "currentPrice": 99,
-          "currentPriceText": "¥99/月",
+          "currentPrice": 699,
+          "currentPriceText": "¥699/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 高级会员",
-            "Moderato 权益基础上",
-            "5 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
-            "5 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 15 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
-          ]
-        },
-        {
-          "name": "Vivace (月)",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: 旗舰会员",
-            "Moderato 权益基础上",
+            "Andante 权益基础上",
             "10 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
+            "Agent 多任务并行",
             "10 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 30 倍额度",
+            "Kimi Code 60 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -167,7 +157,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.162/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.169/index.js"
       ],
       "plans": [
         {
@@ -210,11 +200,11 @@
         {
           "name": "Plus-极速版",
           "currentPrice": 98,
-          "currentPriceText": "¥98 /月",
+          "currentPriceText": "¥98/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 100 prompts / 每 5 小时",
+          "notes": "用量: 100 prompts/每 5 小时",
           "serviceDetails": [
             "用量: 100 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5-highspeed MiniMax M2.5 MiniMax M2.1 MiniMax M2",
@@ -225,11 +215,11 @@
         {
           "name": "Max-极速版 超值之选",
           "currentPrice": 199,
-          "currentPriceText": "¥199 /月",
+          "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 300 prompts / 每 5 小时",
+          "notes": "用量: 300 prompts/每 5 小时",
           "serviceDetails": [
             "用量: 300 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5-highspeed MiniMax M2.5 MiniMax M2.1 MiniMax M2",
@@ -240,11 +230,11 @@
         {
           "name": "Ultra-极速版 极速畅用",
           "currentPrice": 899,
-          "currentPriceText": "¥899 /月",
+          "currentPriceText": "¥899/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 2000 prompts / 每 5 小时",
+          "notes": "用量: 2000 prompts/每 5 小时",
           "serviceDetails": [
             "用量: 2000 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5-highspeed MiniMax M2.5 MiniMax M2.1 MiniMax M2",
@@ -255,11 +245,11 @@
         {
           "name": "Starter",
           "currentPrice": 29,
-          "currentPriceText": "¥29 /月",
+          "currentPriceText": "¥29/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 40 prompts / 每 5 小时",
+          "notes": "用量: 40 prompts/每 5 小时",
           "serviceDetails": [
             "用量: 40 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5 MiniMax M2.1 MiniMax M2",
@@ -270,11 +260,11 @@
         {
           "name": "Plus 高性价比",
           "currentPrice": 49,
-          "currentPriceText": "¥49 /月",
+          "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 100 prompts / 每 5 小时",
+          "notes": "用量: 100 prompts/每 5 小时",
           "serviceDetails": [
             "用量: 100 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5 MiniMax M2.1 MiniMax M2",
@@ -285,11 +275,11 @@
         {
           "name": "Max 超大份量",
           "currentPrice": 119,
-          "currentPriceText": "¥119 /月",
+          "currentPriceText": "¥119/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 300 prompts / 每 5 小时",
+          "notes": "用量: 300 prompts/每 5 小时",
           "serviceDetails": [
             "用量: 300 prompts / 每 5 小时",
             "支持模型: MiniMax M2.5 MiniMax M2.1 MiniMax M2",
@@ -308,11 +298,11 @@
         {
           "name": "Coding Plan Lite",
           "currentPrice": 40,
-          "currentPriceText": "40元/月",
+          "currentPriceText": "¥40/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "新客首月 7.9元",
+          "notes": "新客首月 7.9",
           "serviceDetails": [
             "每 5 小时限额: 最多1200次请求",
             "每周限额: 最多9000次请求",
@@ -323,11 +313,11 @@
         {
           "name": "Coding Plan Pro",
           "currentPrice": 200,
-          "currentPriceText": "200元/月",
+          "currentPriceText": "¥200/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "新客首月 39.9元",
+          "notes": "新客首月 39.9",
           "serviceDetails": [
             "每 5 小时限额: 最多6000次请求",
             "每周限额: 最多45000次请求",
@@ -352,7 +342,7 @@
           "originalPrice": 29,
           "originalPriceText": "¥29/月",
           "unit": "月",
-          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V1；覆盖日常编码场景；40 Prompts / 5小时",
+          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V1；覆盖日常编码场景；¥40 Prompts/5小时",
           "serviceDetails": [
             "适合初次体验者的轻量化选择",
             "最低成本体验 KAT-Coder-Pro V1",
@@ -367,7 +357,7 @@
           "originalPrice": 70,
           "originalPriceText": "¥70/月",
           "unit": "月",
-          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V1 驱动；适配Claude Code等主流编程工具；100 Prompts / 5小时",
+          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V1 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
           "serviceDetails": [
             "适配日常核心开发场景的高效搭档",
             "由最新旗舰模型 KAT-Coder-Pro V1 驱动",
@@ -382,7 +372,7 @@
           "originalPrice": 140,
           "originalPriceText": "¥140/月",
           "unit": "月",
-          "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；300 Prompts / 5小时",
+          "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；¥300 Prompts/5小时",
           "serviceDetails": [
             "驱动复杂架构设计的进阶引擎",
             "包含Starter套餐全部权益，性能全面提升",
@@ -397,7 +387,7 @@
           "originalPrice": 350,
           "originalPriceText": "¥350/月",
           "unit": "月",
-          "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；1000 Prompts / 5小时",
+          "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；¥1000 Prompts/5小时",
           "serviceDetails": [
             "支持全天候高强度开发的旗舰配置",
             "卓越的跨文件/仓库级代码深度理解",
@@ -480,7 +470,7 @@
         {
           "name": "包月畅享包",
           "currentPrice": 49.9,
-          "currentPriceText": "49.9 元/月",
+          "currentPriceText": "¥49.9/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
@@ -530,9 +520,42 @@
           ]
         }
       ]
+    },
+    {
+      "provider": "infini-ai",
+      "sourceUrls": [
+        "https://cloud.infini-ai.com/platform/ai",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.e6892000.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.8a667db6.js",
+        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
+      ],
+      "plans": [
+        {
+          "name": "Infini Coding Lite",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "1,000次/5小时、6,000次/7天、12,000次/1个月"
+          ]
+        },
+        {
+          "name": "Infini Coding Pro",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "5,000次/5小时、30,000次/7天、60,000次/1个月"
+          ]
+        }
+      ]
     }
   ],
-  "failures": [
-    "infini-ai: Task timed out after 15000ms"
-  ]
+  "failures": []
 }

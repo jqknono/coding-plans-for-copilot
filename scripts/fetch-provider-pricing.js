@@ -47,6 +47,9 @@ const HTML_ENTITIES = {
   "&nbsp;": " ",
 };
 
+const CNY_CURRENCY_HINT = /(¥|￥|元|人民币|\b(?:CNY|RMB)\b)/i;
+const USD_CURRENCY_HINT = /(\$|\b(?:USD|US\$)\b|美元|dollar)/i;
+
 function decodeHtml(value) {
   if (typeof value !== "string") {
     return "";
@@ -110,6 +113,97 @@ function parsePriceText(text) {
     text: value,
     unit,
   };
+}
+
+function compactInlineText(value) {
+  return String(value || "").replace(/\s+/g, " ").trim();
+}
+
+function detectCurrencyFromText(text, fallback = "USD") {
+  const value = compactInlineText(text);
+  if (!value) {
+    return fallback;
+  }
+  if (CNY_CURRENCY_HINT.test(value)) {
+    return "CNY";
+  }
+  if (USD_CURRENCY_HINT.test(value)) {
+    return "USD";
+  }
+  return fallback;
+}
+
+function normalizeMoneyTextByCurrency(rawValue, fallbackCurrency = "USD") {
+  const text = compactInlineText(rawValue);
+  if (!text) {
+    return null;
+  }
+  if (/(免费|free)/i.test(text)) {
+    return text;
+  }
+
+  const currency = detectCurrencyFromText(text, fallbackCurrency);
+  const normalizedText = text.replace(/\s*\/\s*/g, "/").replace(/\s+/g, " ").trim();
+
+  if (currency === "CNY") {
+    let normalized = normalizedText
+      .replace(/[￥]/g, "¥")
+      .replace(/人民币/gi, "")
+      .replace(/\s*元(?=\s*\/|\s*$)/g, "")
+      .trim();
+    if (!/^¥/.test(normalized) && /^[0-9]/.test(normalized)) {
+      normalized = `¥${normalized}`;
+    }
+    return normalized.replace(/^¥\s+/, "¥");
+  }
+
+  let normalized = normalizedText
+    .replace(/[￥¥]/g, "")
+    .replace(/人民币|元/g, "")
+    .replace(/\b(?:USD|US\$)\b/gi, "")
+    .trim();
+  if (!/^\$/.test(normalized) && /^[0-9]/.test(normalized)) {
+    normalized = `$${normalized}`;
+  }
+  return normalized.replace(/^\$\s+/, "$");
+}
+
+function normalizePlanCurrencySymbols(plan) {
+  if (!plan || typeof plan !== "object") {
+    return plan;
+  }
+  const currencyHintText = [plan.currentPriceText, plan.originalPriceText, plan.notes]
+    .map((value) => compactInlineText(value))
+    .filter(Boolean)
+    .join(" | ");
+  const fallbackCurrency = detectCurrencyFromText(currencyHintText, "USD");
+
+  return {
+    ...plan,
+    currentPriceText: normalizeMoneyTextByCurrency(plan.currentPriceText, fallbackCurrency),
+    originalPriceText: normalizeMoneyTextByCurrency(plan.originalPriceText, fallbackCurrency),
+    notes:
+      typeof plan.notes === "string" && plan.notes.trim()
+        ? plan.notes
+            .split(/([；;])/)
+            .map((part) => {
+              if (part === "；" || part === ";") {
+                return part;
+              }
+              return normalizeMoneyTextByCurrency(part, fallbackCurrency) || compactInlineText(part);
+            })
+            .join("")
+            .replace(/\s+/g, " ")
+            .trim()
+        : plan.notes || null,
+  };
+}
+
+function normalizeProviderCurrencySymbols(providers) {
+  return (providers || []).map((provider) => ({
+    ...provider,
+    plans: (provider?.plans || []).map((plan) => normalizePlanCurrencySymbols(plan)),
+  }));
 }
 
 function dedupePlans(plans) {
@@ -1631,7 +1725,7 @@ async function main() {
 
   const output = {
     generatedAt: new Date().toISOString(),
-    providers,
+    providers: normalizeProviderCurrencySymbols(providers),
     failures,
   };
 

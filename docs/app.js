@@ -72,8 +72,28 @@ function normalizeUnit(unit) {
   return String(unit || "").trim() || "未标注";
 }
 
+function detectCurrencySymbol(text, fallbackSymbol = "$") {
+  const value = String(text || "");
+  if (/[¥￥]|人民币|\b(?:CNY|RMB)\b|元/i.test(value)) {
+    return "¥";
+  }
+  if (/\$|美元|\b(?:USD|US\$)\b|dollar/i.test(value)) {
+    return "$";
+  }
+  return fallbackSymbol;
+}
+
+function getPlanCurrencySymbol(plan) {
+  const hintText = [plan?.currentPriceText, plan?.originalPriceText, plan?.notes]
+    .map((item) => String(item || "").trim())
+    .filter(Boolean)
+    .join(" | ");
+  return detectCurrencySymbol(hintText, "$");
+}
+
 function displayPrice(plan) {
-  return plan.currentPriceText || (Number.isFinite(plan.currentPrice) ? `¥${plan.currentPrice}` : "价格待确认");
+  return plan.currentPriceText
+    || (Number.isFinite(plan.currentPrice) ? `${getPlanCurrencySymbol(plan)}${plan.currentPrice}` : "价格待确认");
 }
 
 function getPlanServices(plan) {
@@ -86,7 +106,7 @@ function getPlanServices(plan) {
   return normalized;
 }
 
-function formatOfferPriceText(rawValue) {
+function formatOfferPriceText(rawValue, fallbackSymbol = "$") {
   const rawText = String(rawValue || "").trim();
   if (!rawText) {
     return null;
@@ -96,13 +116,16 @@ function formatOfferPriceText(rawValue) {
     return null;
   }
   const amount = numberMatch[1];
+  const symbol = detectCurrencySymbol(rawText, fallbackSymbol);
   const hasMonthlyUnit = /\/\s*月|每月|月/.test(rawText);
-  return `¥${amount}${hasMonthlyUnit ? "/月" : "/月"}`;
+  return `${symbol}${amount}${hasMonthlyUnit ? "/月" : "/月"}`;
 }
 
 function getPlanOffer(provider, plan) {
+  const fallbackSymbol = getPlanCurrencySymbol(plan);
+
   if (plan && plan.offerName) {
-    const explicitPriceText = formatOfferPriceText(plan.offerPriceText || plan.offerPrice || "");
+    const explicitPriceText = formatOfferPriceText(plan.offerPriceText || plan.offerPrice || "", fallbackSymbol);
     if (explicitPriceText) {
       return {
         title: String(plan.offerName),
@@ -112,7 +135,7 @@ function getPlanOffer(provider, plan) {
   }
 
   if (plan && plan.firstMonthPriceText) {
-    const firstMonthPriceText = formatOfferPriceText(plan.firstMonthPriceText);
+    const firstMonthPriceText = formatOfferPriceText(plan.firstMonthPriceText, fallbackSymbol);
     if (firstMonthPriceText) {
       return {
         title: "首月特惠",
@@ -123,22 +146,22 @@ function getPlanOffer(provider, plan) {
   if (plan && Number.isFinite(plan.firstMonthPrice)) {
     return {
       title: "首月特惠",
-      priceText: `¥${plan.firstMonthPrice}/月`,
+      priceText: `${fallbackSymbol}${plan.firstMonthPrice}/月`,
     };
   }
 
   const notesText = String(plan?.notes || "");
   const offerPatterns = [
-    /((?:新客|新人|新用户)?\s*首月(?:特惠|优惠)?)[^0-9¥￥]*([¥￥]?\s*[0-9]+(?:\.[0-9]+)?(?:\s*元)?(?:\s*\/\s*月)?)/i,
-    /((?:首购优惠|首购特惠))[:：]?\s*([¥￥]?\s*[0-9]+(?:\.[0-9]+)?(?:\s*元)?(?:\s*\/\s*月)?)/i,
-    /((?:新人专享|新客专享|新用户专享))[^0-9¥￥]*([¥￥]?\s*[0-9]+(?:\.[0-9]+)?(?:\s*元)?(?:\s*\/\s*月)?)/i,
+    /((?:新客|新人|新用户)?\s*首月(?:特惠|优惠)?)[^0-9¥￥$]*((?:USD|US\$)?\s*[¥￥$]?\s*[0-9]+(?:\.[0-9]+)?(?:\s*元)?(?:\s*\/\s*(?:月|month|monthly))?)/i,
+    /((?:首购优惠|首购特惠))[:：]?\s*((?:USD|US\$)?\s*[¥￥$]?\s*[0-9]+(?:\.[0-9]+)?(?:\s*元)?(?:\s*\/\s*(?:月|month|monthly))?)/i,
+    /((?:新人专享|新客专享|新用户专享))[^0-9¥￥$]*((?:USD|US\$)?\s*[¥￥$]?\s*[0-9]+(?:\.[0-9]+)?(?:\s*元)?(?:\s*\/\s*(?:月|month|monthly))?)/i,
   ];
   for (const pattern of offerPatterns) {
     const matched = notesText.match(pattern);
     if (!matched) {
       continue;
     }
-    const priceText = formatOfferPriceText(matched[2]);
+    const priceText = formatOfferPriceText(matched[2], fallbackSymbol);
     if (!priceText) {
       continue;
     }
@@ -150,7 +173,7 @@ function getPlanOffer(provider, plan) {
 
   const labelOnlyMatch = notesText.match(/(新人专享|新客专享|新用户专享|新客首月|新人首月)/i);
   if (labelOnlyMatch && plan?.currentPriceText && plan?.originalPriceText) {
-    const currentAsOffer = formatOfferPriceText(plan.currentPriceText);
+    const currentAsOffer = formatOfferPriceText(plan.currentPriceText, fallbackSymbol);
     if (currentAsOffer) {
       return {
         title: String(labelOnlyMatch[1]).replace(/\s+/g, ""),
