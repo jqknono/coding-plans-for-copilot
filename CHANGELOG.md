@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.4.15] - 2026-03-05
+- feat(config): 为供应商模型添加默认视觉能力配置
+- feat(pricing): 支持人民币/美元符号自动识别并统一价格格式
+
 ## [0.4.14] - 2026-03-04
 - fix(commit-message-generator): 优化仓库上下文解析
 - fix(ci): 修正更新价格推送分支
