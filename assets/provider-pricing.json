@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-03-05T02:59:15.055Z",
+  "generatedAt": "2026-03-06T02:58:48.117Z",
   "providers": [
     {
       "provider": "zhipu-ai",
       "sourceUrls": [
         "https://bigmodel.cn/glm-coding",
-        "https://bigmodel.cn/js/app.6d2b0e42.js",
-        "https://bigmodel.cn/js/chunk-0d4f69d1.69f45323.js",
+        "https://bigmodel.cn/js/app.7e3b39ba.js",
+        "https://bigmodel.cn/js/chunk-0d4f69d1.465ec58a.js",
         "https://docs.bigmodel.cn/cn/coding-plan/overview"
       ],
       "plans": [
@@ -56,7 +56,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-Blzvp8Vi.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-D1BykeQ-.js"
       ],
       "plans": [
         {
@@ -167,7 +167,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.169/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.177/index.js"
       ],
       "plans": [
         {
@@ -411,7 +411,7 @@
       "provider": "x-aio",
       "sourceUrls": [
         "https://code.x-aio.com/",
-        "https://code.x-aio.com/assets/index-kY5B5WUy.js"
+        "https://code.x-aio.com/assets/index-JODhdn8F.js"
       ],
       "plans": [
         {
@@ -442,6 +442,7 @@
           "notes": "首购优惠：¥90/月",
           "serviceDetails": [
             "适用场景: 适合专业团队的高频使用",
+            "贾维斯",
             "每 4 小时 500 Prompts 配额（5x Lite）",
             "高质量开源模型，覆盖主流编码场景",
             "稳定响应速度，持续在线可用",
@@ -478,7 +479,7 @@
       ],
       "plans": [
         {
-          "name": "包月畅享包",
+          "name": "包月畅享包 Lite",
           "currentPrice": 49.9,
           "currentPriceText": "¥49.9/月",
           "originalPrice": null,
@@ -488,6 +489,34 @@
           "serviceDetails": [
             "计费模式/有效期: 包月计费 (30天)",
             "积分额度: 7,000,000 积分/日",
+            "核心权益: 每日刷新，适合日常低频使用"
+          ]
+        },
+        {
+          "name": "包月畅享包 Plus",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计费模式/有效期: 包月计费 (30天)",
+            "积分额度: 28,000,000 积分/日",
+            "核心权益: 每日刷新，适合高频开发者"
+          ]
+        },
+        {
+          "name": "包月畅享包 Pro",
+          "currentPrice": 499,
+          "currentPriceText": "¥499/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计费模式/有效期: 包月计费 (30天)",
+            "积分额度: 70,000,000 积分/日",
             "核心权益: 每日刷新，适合高频开发者"
           ]
         }
@@ -497,7 +526,7 @@
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/761364c7aeaaf2d07d6257615d1c1ffc.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/13fc3c2b441a314a2dc79c6e7aea4047.js",
         "https://t.aliyun.com/abs/promotion/queryPrice"
       ],
       "plans": [
