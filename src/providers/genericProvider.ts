@@ -68,6 +68,10 @@ interface VendorDiscoveryState {
   cachedModels: AIModelConfig[];
 }
 
+interface RefreshModelsOptions {
+  forceDiscoveryRetry?: boolean;
+}
+
 const DEFAULT_CONTEXT_SIZE = 200000;
 const DEFAULT_CONTEXT_WINDOW_SIZE = 400000;
 const DEFAULT_MAX_TOKENS = 4000;
@@ -109,6 +113,7 @@ export class GenericAIProvider extends BaseAIProvider {
   private readonly vendorDiscoveryState = new Map<string, VendorDiscoveryState>();
   private refreshModelsInFlight: Promise<void> | undefined;
   private refreshModelsPending = false;
+  private forceDiscoveryRetryRequested = false;
 
   constructor(
     context: vscode.ExtensionContext,
@@ -153,7 +158,11 @@ export class GenericAIProvider extends BaseAIProvider {
     return this.toProviderMessages(messages);
   }
 
-  async refreshModels(): Promise<void> {
+  async refreshModels(options: RefreshModelsOptions = {}): Promise<void> {
+    if (options.forceDiscoveryRetry) {
+      this.forceDiscoveryRetryRequested = true;
+    }
+
     if (this.refreshModelsInFlight) {
       this.refreshModelsPending = true;
       return this.refreshModelsInFlight;
@@ -161,9 +170,11 @@ export class GenericAIProvider extends BaseAIProvider {
 
     const running = (async () => {
       do {
+        const forceDiscoveryRetry = this.forceDiscoveryRetryRequested;
+        this.forceDiscoveryRetryRequested = false;
         this.refreshModelsPending = false;
-        await this.refreshModelsInternal();
-      } while (this.refreshModelsPending);
+        await this.refreshModelsInternal({ forceDiscoveryRetry });
+      } while (this.refreshModelsPending || this.forceDiscoveryRetryRequested);
     })();
 
     this.refreshModelsInFlight = running;
@@ -176,7 +187,8 @@ export class GenericAIProvider extends BaseAIProvider {
     }
   }
 
-  private async refreshModelsInternal(): Promise<void> {
+  private async refreshModelsInternal(options: RefreshModelsOptions = {}): Promise<void> {
+    const forceDiscoveryRetry = options.forceDiscoveryRetry === true;
     const vendors = this.configStore.getVendors();
     logger.info('Refreshing Coding Plans vendor models', { vendorCount: vendors.length });
     this.modelVendorMap.clear();
@@ -226,7 +238,7 @@ export class GenericAIProvider extends BaseAIProvider {
       const signature = this.buildVendorDiscoverySignature(vendor, apiKey);
       const previousState = this.vendorDiscoveryState.get(vendorKey);
 
-      if (previousState && previousState.signature === signature && previousState.suppressRetry) {
+      if (previousState && previousState.signature === signature && previousState.suppressRetry && !forceDiscoveryRetry) {
         const cached = previousState.cachedModels.length > 0 ? previousState.cachedModels : configuredModels;
         logger.warn('Using cached/settings models because discovery retry is suppressed', {
           vendor: vendor.name,
@@ -236,6 +248,10 @@ export class GenericAIProvider extends BaseAIProvider {
         });
         this.appendResolvedModels(vendor, cached, allModelConfigs);
         continue;
+      }
+
+      if (previousState && previousState.signature === signature && previousState.suppressRetry && forceDiscoveryRetry) {
+        logger.info('Force refresh bypassed suppressed discovery retry', { vendor: vendor.name });
       }
 
       const discovered = await this.discoverModelsFromApi(vendor, apiKey);
@@ -738,3 +754,4 @@ export class GenericAIProvider extends BaseAIProvider {
     }
   }
 }
+

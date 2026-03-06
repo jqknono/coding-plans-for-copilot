@@ -243,7 +243,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
           beforePreview: beforeModels.slice(0, 20)
         });
 
-        await genericProvider.refreshModels();
+        await genericProvider.refreshModels({ forceDiscoveryRetry: true });
         const afterModels = genericProvider.getAvailableModels().map(model => model.id);
         logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} provider refreshed`, {
           afterCount: afterModels.length,
@@ -276,3 +276,4 @@ export function deactivate(): void {
   providers.forEach(provider => provider.dispose());
   providers.clear();
 }
+
