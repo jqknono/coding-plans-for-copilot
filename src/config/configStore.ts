@@ -88,8 +88,13 @@ export class ConfigStore implements vscode.Disposable {
       return;
     }
 
-    const nextModels = this.sortModels(models.map(model => this.withModelDefaults(model)));
-    const nextModelsSignature = JSON.stringify(nextModels);
+    // Persist only model names.
+    // Rationale: when `useModelsEndpoint` is enabled, providers may re-discover models frequently,
+    // and non-name fields (description/capabilities/token limits) can be unstable across requests.
+    // Writing only sorted names makes config updates converge and avoids refresh loops.
+    const inputNames = models
+      .map(model => (typeof model?.name === 'string' ? model.name.trim() : ''))
+      .filter(name => name.length > 0);
     let changed = false;
 
     const updatedVendors = rawVendors.map(rawVendor => {
@@ -103,15 +108,34 @@ export class ConfigStore implements vscode.Disposable {
         return rawVendor;
       }
 
-      const currentModels = Array.isArray(vendorObj.models)
-        ? vendorObj.models
-            .map(model => this.normalizeModel(model))
-            .filter((model): model is VendorModelConfig => model !== undefined)
-            .map(model => this.withModelDefaults(model))
-        : [];
+      // Build a stable canonical casing from the currently stored config.
+      // If the discovered list only differs by name casing, keep the existing casing to avoid flapping.
+      const existingNameByKey = new Map<string, string>();
+      const currentNames: string[] = [];
+      if (Array.isArray(vendorObj.models)) {
+        for (const rawModel of vendorObj.models) {
+          const rawName = this.readModelName(rawModel);
+          if (!rawName) {
+            continue;
+          }
+          const key = rawName.toLowerCase();
+          if (existingNameByKey.has(key)) {
+            continue;
+          }
+          existingNameByKey.set(key, rawName);
+          currentNames.push(rawName);
+        }
+      }
 
-      const normalizedCurrentModels = this.sortModels(currentModels);
-      if (JSON.stringify(normalizedCurrentModels) === nextModelsSignature) {
+      const nextModels = this.sortModels(this.dedupeAndCanonicalizeModelNames(inputNames, existingNameByKey));
+      const normalizedCurrentModels = this.sortModels(
+        this.dedupeAndCanonicalizeModelNames(currentNames, existingNameByKey)
+      );
+
+      // Only compare names.
+      const currentSignature = JSON.stringify(normalizedCurrentModels.map(m => m.name));
+      const nextSignature = JSON.stringify(nextModels.map(m => m.name));
+      if (currentSignature === nextSignature) {
         return rawVendor;
       }
 
@@ -128,6 +152,41 @@ export class ConfigStore implements vscode.Disposable {
 
     await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
     this.onDidChangeEmitter.fire();
+  }
+
+  private readModelName(raw: unknown): string | undefined {
+    if (!raw || typeof raw !== 'object') {
+      return undefined;
+    }
+    const obj = raw as Record<string, unknown>;
+    const name = typeof obj.name === 'string' ? obj.name.trim() : '';
+    return name.length > 0 ? name : undefined;
+  }
+
+  private dedupeAndCanonicalizeModelNames(
+    names: string[],
+    existingNameByKey: Map<string, string>
+  ): VendorModelConfig[] {
+    const seen = new Set<string>();
+    const normalized: VendorModelConfig[] = [];
+
+    for (const rawName of names) {
+      const name = rawName.trim();
+      if (name.length === 0) {
+        continue;
+      }
+
+      const key = name.toLowerCase();
+      if (seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
+
+      const canonical = existingNameByKey.get(key) ?? name;
+      normalized.push({ name: canonical });
+    }
+
+    return normalized;
   }
 
   private normalizeVendors(raw: unknown): VendorConfig[] {
