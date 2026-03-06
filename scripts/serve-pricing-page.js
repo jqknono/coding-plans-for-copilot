@@ -8,6 +8,8 @@ const path = require("node:path");
 
 const DOCS_DIR = path.resolve(__dirname, "..", "docs");
 const PRICING_JSON = path.resolve(__dirname, "..", "assets", "provider-pricing.json");
+const METRICS_JSON = path.resolve(__dirname, "..", "assets", "openrouter-provider-metrics.json");
+const OPENROUTER_PROVIDER_PLANS_JSON = path.resolve(__dirname, "..", "assets", "openrouter-provider-plans.json");
 const PORT = Number.parseInt(process.env.PORT || "4173", 10);
 const HOST = process.env.HOST || "127.0.0.1";
 
@@ -48,6 +50,12 @@ async function handleRequest(req, res) {
     if (pathname === "/provider-pricing.json") {
       return await sendFile(res, PRICING_JSON);
     }
+    if (pathname === "/openrouter-provider-metrics.json") {
+      return await sendFile(res, METRICS_JSON);
+    }
+    if (pathname === "/openrouter-provider-plans.json") {
+      return await sendFile(res, OPENROUTER_PROVIDER_PLANS_JSON);
+    }
 
     const requestedPath = pathname === "/" ? "/index.html" : pathname;
     const filePath = resolveDocsFilePath(requestedPath);
@@ -73,6 +81,8 @@ async function handleRequest(req, res) {
 async function ensureFilesReady() {
   await fs.access(path.join(DOCS_DIR, "index.html"));
   await fs.access(PRICING_JSON);
+  await fs.access(METRICS_JSON);
+  await fs.access(OPENROUTER_PROVIDER_PLANS_JSON);
 }
 
 async function main() {

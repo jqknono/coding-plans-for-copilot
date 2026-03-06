@@ -19,7 +19,10 @@
       <header class="hero">
         <p class="eyebrow">GitHub Pages · 自动抓取</p>
         <h1>编码套餐看板</h1>
-        <p class="subtitle">仅展示各供应商公开页面可解析到的标准月费与备注信息。</p>
+        <p class="subtitle">
+          汇总多家编码套餐的公开月费与权益信息（自动抓取、定期更新），并提供 OpenRouter 模型的供应商性能指标看板（最近 30 分钟：可用率、延迟、吞吐）。
+          支持按币种分区（大陆/海外）、失败项折叠查看、以及从性能指标一键跳转到对应套餐卡片。
+        </p>
         <div class="hero-actions">
           <a
             class="hero-link"
@@ -32,8 +35,8 @@
         </div>
         <div class="stats" id="stats">
           <span>生成时间：<strong id="generatedAt">加载中</strong></span>
-          <span>提供商：<strong id="providerCount">0</strong></span>
-          <span>套餐数：<strong id="planCount">0</strong></span>
+          <span><span id="primaryCountLabel">提供商</span>：<strong id="providerCount">0</strong></span>
+          <span><span id="secondaryCountLabel">套餐数</span>：<strong id="planCount">0</strong></span>
         </div>
       </header>
 
@@ -59,13 +62,126 @@
         </div>
       </section>
 
-      <section class="toolbar">
-        <p>筛选规则：仅标准月费（不含年费、季费与首月特惠价）。</p>
-        <button id="reloadButton" type="button">重新加载</button>
+      <section class="tab-intro" id="tabIntro" aria-label="当前看板说明">
+        <div class="tab-intro-text">
+          <h2 class="tab-intro-title" id="tabIntroTitle">大陆套餐供应商</h2>
+          <p class="tab-intro-desc" id="tabIntroDesc">筛选规则：仅标准月费（不含年费、季费与首月特惠价），仅显示人民币计价套餐。</p>
+        </div>
+        <div class="tab-intro-actions">
+          <button id="reloadButton" type="button">重新加载</button>
+        </div>
       </section>
 
-      <section id="errorBanner" class="error hidden" role="status" aria-live="polite"></section>
-      <section id="providerGrid" class="provider-grid" aria-live="polite"></section>
+      <section class="tabs" role="tablist" aria-label="看板模式切换">
+        <button
+          id="domesticTabButton"
+          class="tab-button active"
+          role="tab"
+          aria-selected="true"
+          aria-controls="domesticPanel"
+          type="button"
+        >
+          大陆套餐供应商
+        </button>
+        <button
+          id="overseasTabButton"
+          class="tab-button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="overseasPanel"
+          type="button"
+        >
+          海外套餐供应商
+        </button>
+        <button
+          id="metricsTabButton"
+          class="tab-button"
+          role="tab"
+          aria-selected="false"
+          aria-controls="metricsPanel"
+          type="button"
+        >
+          供应商性能指标
+        </button>
+      </section>
+
+      <section id="domesticPanel" class="tab-panel" role="tabpanel" aria-live="polite">
+        <section id="domesticErrorBanner" class="error hidden" role="status" aria-live="polite"></section>
+        <section id="domesticGrid" class="provider-grid"></section>
+        <details id="pricingFailures" class="pending-panel hidden">
+          <summary>抓取失败项（可忽略）<strong id="pricingFailuresCount">0</strong></summary>
+          <ul id="pricingFailuresList" class="pending-list"></ul>
+        </details>
+      </section>
+
+      <section id="overseasPanel" class="tab-panel hidden" role="tabpanel" aria-live="polite">
+        <section id="overseasErrorBanner" class="error hidden" role="status" aria-live="polite"></section>
+        <section id="overseasGrid" class="provider-grid"></section>
+        <details id="overseasPending" class="pending-panel hidden">
+          <summary>Pending（访问受限 / 待解析）<strong id="overseasPendingCount">0</strong></summary>
+          <ul id="overseasPendingList" class="pending-list"></ul>
+        </details>
+      </section>
+
+      <section id="metricsPanel" class="tab-panel hidden" role="tabpanel" aria-live="polite">
+        <section id="metricsErrorBanner" class="error hidden" role="status" aria-live="polite"></section>
+        <section class="metrics-card" id="metricsCard" aria-label="性能指标信息与筛选">
+          <header class="metrics-card-head">
+            <div class="metrics-card-meta">
+              <span>北京时间采集时间：<strong id="metricsGeneratedAt">--</strong></span>
+              <span>目标采集窗口：<strong id="metricsCaptureWindow">每日 16:00 (UTC+8)</strong></span>
+              <span class="metrics-card-hint" id="metricsToolbarHintInline"></span>
+            </div>
+            <section class="metrics-card-help" id="metricsHelpSection" aria-label="指标解释">
+              <h3 class="metrics-card-help-title">指标解释</h3>
+              <p>
+                <strong>p50</strong> 为中位值（50% 请求不超过该值）；
+                <strong>p90</strong> 为 90 分位；
+                <strong>p99</strong> 为尾部延迟/吞吐表现（最慢或最极端 1% 请求）。
+              </p>
+            </section>
+          </header>
+          <section class="metrics-card-filters" id="metricsFilters">
+            <label class="metrics-filter-item" data-filter="org">
+              模型厂商
+              <div class="searchable-select">
+                <input
+                  id="metricsOrgFilterInput"
+                  class="searchable-select-input"
+                  type="text"
+                  autocomplete="off"
+                  aria-label="厂商筛选"
+                />
+              </div>
+            </label>
+            <label class="metrics-filter-item" data-filter="model">
+              模型
+              <div class="searchable-select">
+                <input
+                  id="metricsModelFilterInput"
+                  class="searchable-select-input"
+                  type="text"
+                  autocomplete="off"
+                  aria-label="模型筛选"
+                />
+              </div>
+            </label>
+            <label class="metrics-filter-item" data-filter="provider">
+              供应商
+              <div class="searchable-select">
+                <input
+                  id="metricsProviderFilterInput"
+                  class="searchable-select-input"
+                  type="text"
+                  autocomplete="off"
+                  aria-label="Provider 筛选"
+                />
+              </div>
+            </label>
+          </section>
+        </section>
+        <section id="metricsTableContainer" class="metrics-table-container"></section>
+      </section>
     </main>
   </body>
 </html>

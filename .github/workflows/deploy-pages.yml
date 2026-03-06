@@ -7,10 +7,13 @@ on:
     paths:
       - "docs/**"
       - "assets/provider-pricing.json"
+      - "assets/openrouter-provider-metrics.json"
+      - "assets/openrouter-provider-plans.json"
       - ".github/workflows/deploy-pages.yml"
   workflow_run:
     workflows:
       - Update Provider Pricing
+      - Update OpenRouter Provider Metrics
     types:
       - completed
   workflow_dispatch:
@@ -39,7 +42,10 @@ jobs:
         uses: actions/configure-pages@v5
 
       - name: Sync pricing data for Pages
-        run: cp assets/provider-pricing.json docs/provider-pricing.json
+        run: |
+          cp assets/provider-pricing.json docs/provider-pricing.json
+          cp assets/openrouter-provider-metrics.json docs/openrouter-provider-metrics.json
+          cp assets/openrouter-provider-plans.json docs/openrouter-provider-plans.json
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

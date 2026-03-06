@@ -15,8 +15,8 @@
   "commands.coding-plans.selectCommitMessageModel.title": "选择提交消息模型",
   "configuration.coding-plans.commitMessage.showGenerateCommand.description": "控制是否在源代码管理和命令面板中显示“生成提交消息”功能。",
   "configuration.coding-plans.commitMessage.language.description": "生成提交消息的语言",
-  "configuration.coding-plans.commitMessage.useRecentCommitStyle.description": "开启后会读取最近 20 条 commit 消息，并按相近风格生成新的 commit message。",
+  "configuration.coding-plans.commitMessage.useRecentCommitStyle.description": "开启后会读取最近最多 7 条 commit 消息（不足则取全部），并按相近风格生成新的 commit message。",
   "configuration.coding-plans.commitMessage.modelVendor.description": "生成提交消息时优先使用的供应商名称（例如 Zhipu）。留空则每次弹窗选择。",
   "configuration.coding-plans.commitMessage.modelId.description": "生成提交消息时优先使用的模型名称（例如 glm-4-flash）。需与 modelVendor 配合使用。",
-  "configuration.coding-plans.commitMessage.options.description": "提交消息的高级参数（JSON 对象）：包括 prompt、maxDiffLines、pipelineMode、summary 相关阈值、最大 bullet 数、标题长度、校验开关。"
+  "configuration.coding-plans.commitMessage.options.description": "提交消息的高级参数（JSON 对象）：包括 prompt、maxDiffLines、pipelineMode、summary 相关阈值、最大 bullet 数、标题长度、校验开关，以及 llmMaxPromptLength 输入预算。"
 }

@@ -9,3 +9,4 @@ dist/
 minimax-sitemap.xml
 moonshot-sitemap.xml
 .playwright-cli/
+.env

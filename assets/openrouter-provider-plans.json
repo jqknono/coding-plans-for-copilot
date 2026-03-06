@@ -1,0 +1,957 @@
+{
+  "generatedAt": "2026-03-06T07:28:55.286Z",
+  "generatedAtBeijing": "2026年3月6日 15:28:55",
+  "sourceGeneratedAt": "2026-03-05T02:59:15.055Z",
+  "sourceGeneratedAtBeijing": "2026年3月5日 10:59:15",
+  "sourceMetricsGeneratedAt": "2026-03-06T07:28:11.683Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月6日 15:28:11",
+  "summary": {
+    "openrouterProviderCount": 73,
+    "metricsProviderCount": 30,
+    "resolvedMetricsProviderCount": 30,
+    "unresolvedMetricsProviderCount": 0,
+    "structuredProviderCount": 6,
+    "heuristicProviderCount": 8,
+    "providersWithPlans": 14,
+    "pendingCount": 16,
+    "blockedPendingCount": 0,
+    "probeConcurrency": 4,
+    "probeMaxCandidates": 6
+  },
+  "providers": [
+    {
+      "slug": "alibaba",
+      "openrouterName": "Alibaba",
+      "providerId": "aliyun-ai",
+      "plans": [
+        {
+          "name": "Coding Plan Lite",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
+          "originalPrice": 40,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "能力: 支持 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus、MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等模型",
+            "场景: 面向处理轻量级工作负载的个人开发者",
+            "工具: Qwen Code、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具"
+          ]
+        },
+        {
+          "name": "Coding Plan Pro",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
+          "originalPrice": 200,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "权益: 享受 Lite 套餐的全部能力与权益",
+            "额度: 用量是 Lite 版的 5 倍",
+            "场景: 适合大型开发任务，专业级 AI 编程体验"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.aliyun.com/benefit/scene/codingplan",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/761364c7aeaaf2d07d6257615d1c1ffc.js",
+        "https://t.aliyun.com/abs/promotion/queryPrice",
+        "https://www.alibabacloud.com"
+      ],
+      "pricingPageUrl": "https://www.aliyun.com/benefit/scene/codingplan",
+      "officialWebsiteUrl": "https://www.alibabacloud.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-privacy-policy",
+      "termsOfServiceUrl": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0",
+      "statusPageUrl": "https://status.alibabacloud.com/",
+      "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "baseten",
+      "openrouterName": "BaseTen",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 0,
+          "currentPriceText": "$0 per mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.baseten.co/pricing/",
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://www.baseten.co",
+        "https://www.baseten.co/pricing/"
+      ],
+      "pricingPageUrl": "https://www.baseten.co/pricing/",
+      "officialWebsiteUrl": "https://www.baseten.co",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.baseten.co/privacy-policy",
+      "termsOfServiceUrl": "https://www.baseten.co/terms-and-conditions",
+      "statusPageUrl": "https://status.baseten.co/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "chutes",
+      "openrouterName": "Chutes",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "Base",
+          "currentPrice": 3,
+          "currentPriceText": "$3/month",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://chutes.ai/pricing",
+          "serviceDetails": null
+        },
+        {
+          "name": "Plus",
+          "currentPrice": 10,
+          "currentPriceText": "$10/month",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": null
+        },
+        {
+          "name": "Pro",
+          "currentPrice": 20,
+          "currentPriceText": "$20/month",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://chutes.ai",
+        "https://chutes.ai/pricing",
+        "https://chutes.ai/_app/immutable/entry/start.xUi8wbUM.js",
+        "https://chutes.ai/_app/immutable/entry/app.D5la5ehI.js",
+        "https://chutes.ai/_app/immutable/chunks/DzT5jXje.js",
+        "https://chutes.ai/_app/immutable/nodes/0.CPmH-pJO.js",
+        "https://chutes.ai/_app/immutable/chunks/DsnmJJEf.js",
+        "https://chutes.ai/_app/immutable/chunks/C9La0MI8.js",
+        "https://chutes.ai/_app/immutable/chunks/ngJ1Db8E.js",
+        "https://chutes.ai/_app/immutable/chunks/CverPyt9.js",
+        "https://chutes.ai/_app/immutable/chunks/BGe6nO-H.js",
+        "https://chutes.ai/_app/immutable/chunks/CTJC-k41.js",
+        "https://chutes.ai/_app/immutable/chunks/Cw__V-fb.js",
+        "https://chutes.ai/_app/immutable/chunks/Ca-8DU1S.js"
+      ],
+      "pricingPageUrl": "https://chutes.ai/pricing",
+      "officialWebsiteUrl": "https://chutes.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": null,
+      "termsOfServiceUrl": "https://chutes.ai/tos",
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "clarifai",
+      "openrouterName": "Clarifai",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 1770306870929,
+          "currentPriceText": "1770306870929/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.clarifai.com/pricing",
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://www.clarifai.com",
+        "https://www.clarifai.com/pricing",
+        "https://www.clarifai.com/hs/hsstatic/jquery-libs/static-1.4/jquery/jquery-1.11.2.js",
+        "https://www.clarifai.com/hs/hsstatic/content-cwv-embed/static-1.1293/embed.js",
+        "https://www.clarifai.com/hubfs/hub_generated/template_assets/1/167022450794/1772638270728/template_main.min.js",
+        "https://www.clarifai.com/hs/hsstatic/cos-i18n/static-1.53/bundles/project.js",
+        "https://www.clarifai.com/hubfs/hub_generated/module_assets/1/167701623670/1770306870929/module_Header.min.js"
+      ],
+      "pricingPageUrl": "https://www.clarifai.com/pricing",
+      "officialWebsiteUrl": "https://www.clarifai.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.clarifai.com/company/privacy-policy",
+      "termsOfServiceUrl": "https://www.clarifai.com/company/terms",
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "fireworks",
+      "openrouterName": "Fireworks",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 0.2,
+          "currentPriceText": "$0.20 Mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://fireworks.ai/pricing",
+          "serviceDetails": null
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 0.9,
+          "currentPriceText": "$0.90 Mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": null
+        },
+        {
+          "name": "官网价格参考 3",
+          "currentPrice": 0.5,
+          "currentPriceText": "$0.50 Mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://fireworks.ai",
+        "https://fireworks.ai/pricing"
+      ],
+      "pricingPageUrl": "https://fireworks.ai/pricing",
+      "officialWebsiteUrl": "https://fireworks.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://fireworks.ai/privacy-policy",
+      "termsOfServiceUrl": "https://fireworks.ai/terms-of-service",
+      "statusPageUrl": "https://status.fireworks.ai/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "minimax",
+      "openrouterName": "Minimax",
+      "providerId": "minimax-ai",
+      "plans": [
+        {
+          "name": "Plus-极速版",
+          "currentPrice": 98,
+          "currentPriceText": "¥98/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 100 prompts/每 5 小时",
+          "serviceDetails": [
+            "用量: 100 prompts / 每 5 小时",
+            "支持模型: MiniMax M2.5-highspeed MiniMax M2.5 MiniMax M2.1 MiniMax M2",
+            "套餐资源: 2.5 倍 Starter 套餐用量",
+            "适用场景: 适合专业开发场景 满足复杂开发任务需求"
+          ]
+        },
+        {
+          "name": "Max-极速版 超值之选",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 300 prompts/每 5 小时",
+          "serviceDetails": [
+            "用量: 300 prompts / 每 5 小时",
+            "支持模型: MiniMax M2.5-highspeed MiniMax M2.5 MiniMax M2.1 MiniMax M2",
+            "套餐资源: 7.5 倍 Starter 套餐用量",
+            "适用场景: 适合高级开发场景 满足大量编程辅助需求"
+          ]
+        },
+        {
+          "name": "Ultra-极速版 极速畅用",
+          "currentPrice": 899,
+          "currentPriceText": "¥899/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 2000 prompts/每 5 小时",
+          "serviceDetails": [
+            "用量: 2000 prompts / 每 5 小时",
+            "支持模型: MiniMax M2.5-highspeed MiniMax M2.5 MiniMax M2.1 MiniMax M2",
+            "套餐资源: 50 倍 Starter 套餐用量",
+            "适用场景: 适合硬核开发者 超大量编程辅助需求"
+          ]
+        },
+        {
+          "name": "Starter",
+          "currentPrice": 29,
+          "currentPriceText": "¥29/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 40 prompts/每 5 小时",
+          "serviceDetails": [
+            "用量: 40 prompts / 每 5 小时",
+            "支持模型: MiniMax M2.5 MiniMax M2.1 MiniMax M2",
+            "套餐资源: 基础用量",
+            "适用场景: 适合入门级开发场景 满足基础开发需求"
+          ]
+        },
+        {
+          "name": "Plus 高性价比",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 100 prompts/每 5 小时",
+          "serviceDetails": [
+            "用量: 100 prompts / 每 5 小时",
+            "支持模型: MiniMax M2.5 MiniMax M2.1 MiniMax M2",
+            "套餐资源: 2.5 倍 Starter 套餐用量",
+            "适用场景: 适合专业开发场景 满足复杂开发任务需求"
+          ]
+        },
+        {
+          "name": "Max 超大份量",
+          "currentPrice": 119,
+          "currentPriceText": "¥119/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 300 prompts/每 5 小时",
+          "serviceDetails": [
+            "用量: 300 prompts / 每 5 小时",
+            "支持模型: MiniMax M2.5 MiniMax M2.1 MiniMax M2",
+            "套餐资源: 7.5 倍 Starter 套餐用量",
+            "适用场景: 适合专业开发场景 满足复杂开发任务需求"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://platform.minimaxi.com/docs/guides/pricing-coding-plan",
+        "https://platform.minimaxi.com/subscribe/coding-plan",
+        "https://www.minimax.io"
+      ],
+      "pricingPageUrl": "https://platform.minimaxi.com/docs/guides/pricing-coding-plan",
+      "officialWebsiteUrl": "https://www.minimax.io",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.minimax.io/platform/protocol/privacy-policy",
+      "termsOfServiceUrl": "https://www.minimax.io/platform/protocol/terms-of-service",
+      "statusPageUrl": null,
+      "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "mistral",
+      "openrouterName": "Mistral",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 9,
+          "currentPriceText": "9/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://mistral.ai/pricing",
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://mistral.ai",
+        "https://mistral.ai/pricing"
+      ],
+      "pricingPageUrl": "https://mistral.ai/pricing",
+      "officialWebsiteUrl": "https://mistral.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://mistral.ai/terms/#privacy-policy",
+      "termsOfServiceUrl": "https://mistral.ai/terms/#terms-of-use",
+      "statusPageUrl": "https://status.mistral.ai/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "moonshotai",
+      "openrouterName": "Moonshot AI",
+      "providerId": "kimi-ai",
+      "plans": [
+        {
+          "name": "Adagio (月)",
+          "currentPrice": 0,
+          "currentPriceText": "¥0/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "试用计划",
+          "serviceDetails": [
+            "会员等级: 免费试用",
+            "体验 Agent 功能",
+            "跨设备同步使用",
+            "搜索实时资讯",
+            "理解图片与文档",
+            "生成代码与数据分析"
+          ]
+        },
+        {
+          "name": "Moderato (月)",
+          "currentPrice": 19,
+          "currentPriceText": "¥19/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: 基础会员",
+            "更多 Agent 额度",
+            "Agent 多任务并行",
+            "Agent 4 倍速优先用",
+            "K2.5 提速并提升额度",
+            "PPT 创意视觉 x Nano Banana",
+            "Kimi Code 可调用"
+          ]
+        },
+        {
+          "name": "Allegretto (月)",
+          "currentPrice": 39,
+          "currentPriceText": "¥39/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: 进阶会员",
+            "Moderato 权益基础上",
+            "2 倍 Agent 额度",
+            "2 倍 K2.5 模型使用额度",
+            "无限 PPT 创意视觉 x Nano Banana",
+            "Kimi Code 5 倍额度",
+            "专属助理 一键部署 Kimi Claw",
+            "实验性功能 Agent 集群：",
+            "多 Agent 并行，数倍生产力",
+            "适用海量搜索、长文写作、批量处理"
+          ]
+        },
+        {
+          "name": "Allegro (月)",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: 高级会员",
+            "Moderato 权益基础上",
+            "5 倍 Agent 额度",
+            "2 倍 Agent 任务并行",
+            "高峰时段获得优先回复",
+            "5 倍 K2.5 模型使用额度",
+            "无限 PPT 创意视觉 x Nano Banana",
+            "Kimi Code 15 倍额度",
+            "专属助理 一键部署 Kimi Claw",
+            "实验性功能 Agent 集群：",
+            "多 Agent 并行，数倍生产力",
+            "适用海量搜索、长文写作、批量处理"
+          ]
+        },
+        {
+          "name": "Vivace (月)",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: 旗舰会员",
+            "Moderato 权益基础上",
+            "10 倍 Agent 额度",
+            "2 倍 Agent 任务并行",
+            "高峰时段获得优先回复",
+            "10 倍 K2.5 模型使用额度",
+            "无限 PPT 创意视觉 x Nano Banana",
+            "Kimi Code 30 倍额度",
+            "专属助理 一键部署 Kimi Claw",
+            "实验性功能 Agent 集群：",
+            "多 Agent 并行，数倍生产力",
+            "适用海量搜索、长文写作、批量处理"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.kimi.com/code/zh",
+        "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-Blzvp8Vi.js",
+        "https://platform.moonshot.ai"
+      ],
+      "pricingPageUrl": "https://www.kimi.com/code/zh",
+      "officialWebsiteUrl": "https://platform.moonshot.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://platform.moonshot.ai/docs/agreement/userprivacy",
+      "termsOfServiceUrl": "https://platform.moonshot.ai/docs/agreement/modeluse",
+      "statusPageUrl": null,
+      "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "novita",
+      "openrouterName": "Novita",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 2,
+          "currentPriceText": "2/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://novita.ai/pricing",
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://novita.ai",
+        "https://novita.ai/pricing",
+        "https://novita.ai/_next/static/chunks/fd9d1056-0c30b7a9a55d481c.js",
+        "https://novita.ai/_next/static/chunks/52117-664cae9c071219bd.js",
+        "https://novita.ai/_next/static/chunks/main-app-3085998222215aee.js",
+        "https://novita.ai/_next/static/chunks/6137-58be2e4738316245.js",
+        "https://novita.ai/_next/static/chunks/71835-18d2da9d91588018.js",
+        "https://novita.ai/_next/static/chunks/50526-b14b239c7c3afcab.js",
+        "https://novita.ai/_next/static/chunks/86129-2915450d197c3d7e.js"
+      ],
+      "pricingPageUrl": "https://novita.ai/pricing",
+      "officialWebsiteUrl": "https://novita.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://novita.ai/legal/privacy-policy",
+      "termsOfServiceUrl": "https://novita.ai/legal/terms-of-service",
+      "statusPageUrl": "https://status.novita.ai/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "phala",
+      "openrouterName": "Phala",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 35,
+          "currentPriceText": "$ 35/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.redpill.ai/pricing",
+          "serviceDetails": null
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 2,
+          "currentPriceText": "$2.00 Mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://red-pill.ai",
+        "https://www.redpill.ai/pricing"
+      ],
+      "pricingPageUrl": "https://www.redpill.ai/pricing",
+      "officialWebsiteUrl": "https://red-pill.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://red-pill.ai/privacy",
+      "termsOfServiceUrl": "https://red-pill.ai/terms",
+      "statusPageUrl": "https://status.phala.network/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "sambanova",
+      "openrouterName": "SambaNova",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 1,
+          "currentPriceText": "1/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://cloud.sambanova.ai/plans/pricing",
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://sambanova.ai",
+        "https://cloud.sambanova.ai/plans/pricing",
+        "https://cloud.sambanova.ai/_next/static/chunks/fd9d1056-421bbf43c2c70b4c.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/52117-c8ee602b7f296100.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/main-app-d6affe36ab900b3d.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/10892-1aaf7052d1f9fc88.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/46387-caab7d777c6cb74b.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/19643-ec5abe936044a9cf.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/26678-8139b68b3cbd7a8e.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/80572-212db63faab0cf60.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/84905-c98ab9e6461dc92a.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/76501-ca6eba654adea62b.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/32841-dae98bde3144fb88.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/62843-69facc5d64f09392.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/12662-9195cedc8ffff013.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/38398-7f0307e54b5ac085.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/17060-660cc2765cabc55c.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/27648-68b2e9eb55a55b44.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/12722-e60ef40e730894d0.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/13649-e978c338b07c9d21.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/63857-199b1bf5a9681e70.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/61573-e74e87c1aeea56c2.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/76846-68dca7d30f1fed1d.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/58021-f9f1f849f858e630.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/79579-ddee5c9a5c31ee15.js",
+        "https://cloud.sambanova.ai/_next/static/chunks/75591-b00bc121bda6e4f6.js"
+      ],
+      "pricingPageUrl": "https://cloud.sambanova.ai/plans/pricing",
+      "officialWebsiteUrl": "https://sambanova.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://sambanova.ai/privacy-policy",
+      "termsOfServiceUrl": "https://sambanova.ai/terms-and-conditions",
+      "statusPageUrl": "https://status.sambanova.ai/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "seed",
+      "openrouterName": "Seed",
+      "providerId": "volcengine-ai",
+      "plans": [
+        {
+          "name": "Coding Plan Lite 月套餐",
+          "currentPrice": 9.9,
+          "currentPriceText": "¥9.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月（续费价格）",
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "能力: 支持 Doubao、GLM、DeepSeek、Kimi等模型",
+            "适配: 支持自由切换模型，或开启Auto模式",
+            "工具: 支持 Claude Code、Cursor等主流编程工具"
+          ]
+        },
+        {
+          "name": "Coding Plan Pro 月套餐",
+          "currentPrice": 49.9,
+          "currentPriceText": "¥49.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月（续费价格）",
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "能力: 包含lite套餐全部权益",
+            "适配: 满足高阶用户的大规模编程需求",
+            "用量: 用量达 Claude Max（5x）的 3 倍，lite 套餐用量的5倍"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.volcengine.com/activity/codingplan",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.169/index.js",
+        "https://docs.byteplus.com"
+      ],
+      "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
+      "officialWebsiteUrl": "https://docs.byteplus.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://docs.byteplus.com/en/docs/legal/docs-privacy-policy",
+      "termsOfServiceUrl": "https://docs.byteplus.com/en/docs/legal/docs-terms-of-service",
+      "statusPageUrl": null,
+      "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "streamlake",
+      "openrouterName": "StreamLake",
+      "providerId": "kwaikat-ai",
+      "plans": [
+        {
+          "name": "KAT Coding Mini",
+          "currentPrice": 8.8,
+          "currentPriceText": "¥8.8/月",
+          "originalPrice": 29,
+          "originalPriceText": "¥29/月",
+          "unit": "月",
+          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V1；覆盖日常编码场景；¥40 Prompts/5小时",
+          "serviceDetails": [
+            "适合初次体验者的轻量化选择",
+            "最低成本体验 KAT-Coder-Pro V1",
+            "覆盖日常编码场景",
+            "40 Prompts / 5小时"
+          ]
+        },
+        {
+          "name": "KAT Coding Starter",
+          "currentPrice": 48,
+          "currentPriceText": "¥48/月",
+          "originalPrice": 70,
+          "originalPriceText": "¥70/月",
+          "unit": "月",
+          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V1 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
+          "serviceDetails": [
+            "适配日常核心开发场景的高效搭档",
+            "由最新旗舰模型 KAT-Coder-Pro V1 驱动",
+            "适配Claude Code等主流编程工具",
+            "100 Prompts / 5小时"
+          ]
+        },
+        {
+          "name": "KAT Coding Pro",
+          "currentPrice": 96,
+          "currentPriceText": "¥96/月",
+          "originalPrice": 140,
+          "originalPriceText": "¥140/月",
+          "unit": "月",
+          "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；¥300 Prompts/5小时",
+          "serviceDetails": [
+            "驱动复杂架构设计的进阶引擎",
+            "包含Starter套餐全部权益，性能全面提升",
+            "Starter套餐用量的3倍",
+            "300 Prompts / 5小时"
+          ]
+        },
+        {
+          "name": "KAT Coding Max",
+          "currentPrice": 240,
+          "currentPriceText": "¥240/月",
+          "originalPrice": 350,
+          "originalPriceText": "¥350/月",
+          "unit": "月",
+          "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；¥1000 Prompts/5小时",
+          "serviceDetails": [
+            "支持全天候高强度开发的旗舰配置",
+            "卓越的跨文件/仓库级代码深度理解",
+            "Pro套餐用量的3倍以上",
+            "1000 Prompts / 5小时"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.streamlake.com/marketing/coding-plan",
+        "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
+        "https://console.streamlake.com/api/common/describe-product-detail",
+        "https://www.streamlake.ai"
+      ],
+      "pricingPageUrl": "https://www.streamlake.com/marketing/coding-plan",
+      "officialWebsiteUrl": "https://www.streamlake.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.streamlake.ai/document/DOC/mgkci47q13qr66h9i54",
+      "termsOfServiceUrl": "https://www.streamlake.ai/document/DOC/mgkchnd89grpt1961fw",
+      "statusPageUrl": null,
+      "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "z-ai",
+      "openrouterName": "Z.AI",
+      "providerId": "zhipu-ai",
+      "plans": [
+        {
+          "name": "GLM Coding Lite (月)",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": 49,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "下个月度续费金额：¥49",
+          "serviceDetails": [
+            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 80 次 prompts",
+            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 400 次 prompts"
+          ]
+        },
+        {
+          "name": "GLM Coding Pro (月)",
+          "currentPrice": 149,
+          "currentPriceText": "¥149/月",
+          "originalPrice": 149,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "下个月度续费金额：¥149",
+          "serviceDetails": [
+            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 400 次 prompts",
+            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 2000 次 prompts"
+          ]
+        },
+        {
+          "name": "GLM Coding Max (月)",
+          "currentPrice": 469,
+          "currentPriceText": "¥469/月",
+          "originalPrice": 469,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "下个月度续费金额：¥469",
+          "serviceDetails": [
+            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 1600 次 prompts",
+            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 8000 次 prompts"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://bigmodel.cn/glm-coding",
+        "https://bigmodel.cn/js/app.6d2b0e42.js",
+        "https://bigmodel.cn/js/chunk-0d4f69d1.69f45323.js",
+        "https://docs.bigmodel.cn/cn/coding-plan/overview",
+        "https://chat.z.ai"
+      ],
+      "pricingPageUrl": "https://bigmodel.cn/glm-coding",
+      "officialWebsiteUrl": "https://chat.z.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://chat.z.ai/legal-agreement/privacy-policy",
+      "termsOfServiceUrl": "https://chat.z.ai/legal-agreement/terms-of-service",
+      "statusPageUrl": null,
+      "parseMode": "provider-pricing-structured"
+    }
+  ],
+  "pending": [
+    {
+      "slug": "atlas-cloud",
+      "openrouterName": "AtlasCloud",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.atlascloud.ai",
+      "pricingPageUrl": "https://www.atlascloud.ai/pricing/gpu",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $2.49/h / $3.50/h / $2.95/h）",
+      "blocked": false
+    },
+    {
+      "slug": "deepinfra",
+      "openrouterName": "DeepInfra",
+      "providerId": null,
+      "officialWebsiteUrl": "https://deepinfra.com",
+      "pricingPageUrl": "https://deepinfra.com/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.26 / $0.13 / $0.38）",
+      "blocked": false
+    },
+    {
+      "slug": "deepseek",
+      "openrouterName": "DeepSeek",
+      "providerId": null,
+      "officialWebsiteUrl": "https://chat.deepseek.com",
+      "pricingPageUrl": "https://chat.deepseek.com/pricing",
+      "reason": "官网未发现可解析的套餐价格页",
+      "blocked": false
+    },
+    {
+      "slug": "friendli",
+      "openrouterName": "Friendli",
+      "providerId": null,
+      "officialWebsiteUrl": "https://friendli.ai",
+      "pricingPageUrl": "https://friendli.ai/pricing",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0.1 / $0.6 / $0.2）",
+      "blocked": false
+    },
+    {
+      "slug": "gmicloud",
+      "openrouterName": "GMICloud",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.gmicloud.ai",
+      "pricingPageUrl": "https://www.gmicloud.ai/pricing",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $2.50 / $4.39 / $2.10）",
+      "blocked": false
+    },
+    {
+      "slug": "google-vertex",
+      "openrouterName": "Google",
+      "providerId": null,
+      "officialWebsiteUrl": "https://cloud.google.com",
+      "pricingPageUrl": "https://cloud.google.com/pricing",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $300 / $350,000）",
+      "blocked": false
+    },
+    {
+      "slug": "inceptron",
+      "openrouterName": "Inceptron",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.inceptron.io",
+      "pricingPageUrl": "https://www.inceptron.io/pricing",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $3/h / $5/h / $8/h）",
+      "blocked": false
+    },
+    {
+      "slug": "io-net",
+      "openrouterName": "Io Net",
+      "providerId": null,
+      "officialWebsiteUrl": "https://io.net",
+      "pricingPageUrl": "https://io.net",
+      "reason": "官网价格页探测失败：https://io.net/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "ionstream",
+      "openrouterName": "Ionstream",
+      "providerId": null,
+      "officialWebsiteUrl": "https://ionstream.ai",
+      "pricingPageUrl": "https://ionstream.ai",
+      "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "nebius",
+      "openrouterName": "Nebius",
+      "providerId": null,
+      "officialWebsiteUrl": "https://docs.nebius.com",
+      "pricingPageUrl": "https://docs.nebius.com",
+      "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "nextbit",
+      "openrouterName": "NextBit",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.nextbit256.com",
+      "pricingPageUrl": "https://www.nextbit256.com",
+      "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "parasail",
+      "openrouterName": "Parasail",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.parasail.io",
+      "pricingPageUrl": "https://parasail.io/pricing",
+      "reason": "官网价格页探测失败：https://parasail.io/prices: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "siliconflow",
+      "openrouterName": "SiliconFlow",
+      "providerId": null,
+      "officialWebsiteUrl": "https://docs.siliconflow.com",
+      "pricingPageUrl": "https://docs.siliconflow.com",
+      "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "stepfun",
+      "openrouterName": "StepFun",
+      "providerId": null,
+      "officialWebsiteUrl": null,
+      "pricingPageUrl": null,
+      "reason": "OpenRouter 元数据中缺少可用官网地址",
+      "blocked": false
+    },
+    {
+      "slug": "together",
+      "openrouterName": "Together",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.together.ai",
+      "pricingPageUrl": "https://www.together.ai/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.27 / $0.85 / $0.30）",
+      "blocked": false
+    },
+    {
+      "slug": "venice",
+      "openrouterName": "Venice",
+      "providerId": null,
+      "officialWebsiteUrl": "https://venice.ai",
+      "pricingPageUrl": "https://docs.venice.ai/overview/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1/day / $6.00 / $30.00）",
+      "blocked": false
+    }
+  ]
+}

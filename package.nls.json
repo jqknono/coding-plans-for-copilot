@@ -15,8 +15,8 @@
   "commands.coding-plans.selectCommitMessageModel.title": "Select Commit Message Model",
   "configuration.coding-plans.commitMessage.showGenerateCommand.description": "Show the \"Generate Commit Message\" command in Source Control and Command Palette.",
   "configuration.coding-plans.commitMessage.language.description": "Language for generated commit messages",
-  "configuration.coding-plans.commitMessage.useRecentCommitStyle.description": "When enabled, read the latest 20 commit messages and mimic their writing style for generated commit messages.",
+  "configuration.coding-plans.commitMessage.useRecentCommitStyle.description": "When enabled, read up to the latest 7 commit messages and mimic their writing style for generated commit messages.",
   "configuration.coding-plans.commitMessage.modelVendor.description": "Preferred vendor name for commit message generation (e.g. Zhipu). Leave empty to always prompt.",
   "configuration.coding-plans.commitMessage.modelId.description": "Preferred model name for commit message generation (e.g. glm-4-flash). Used together with modelVendor.",
-  "configuration.coding-plans.commitMessage.options.description": "Advanced commit-message options as a JSON object (prompt, maxDiffLines, pipelineMode, summary* thresholds, max bullet count, subject length, validation switches)."
+    "configuration.coding-plans.commitMessage.options.description": "Advanced commit-message options as a JSON object (prompt, maxDiffLines, pipelineMode, summary* thresholds, max bullet count, subject length, validation switches, llmMaxPromptLength budget)."
 }

@@ -2,13 +2,15 @@
 
 **Switch between multiple AI model vendors with one click, breaking Copilot plan limitations.**
 
-Supports coding plans from major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Minimax, and Alibaba Cloud. No need to change usage habits; seamlessly call directly in VS Code Copilot Chat.
+Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Minimax, and Alibaba Cloud, as well as **any** vendor compatible with the OpenAI API. No need to change usage habits; seamlessly call directly in VS Code Copilot Chat.
 
 ---
 
 ## Core Features
 
-- **Unified multi-vendor access**: Switch between 5+ major domestic AI vendors with one click; configure once to use all supported models
+- **Unified multi-vendor access**: Supports **any** provider that complies with the OpenAI API specification. Configure once, use anywhere.
+- **Coding Plans Dashboard**: Visit the [GitHub Page Dashboard](https://jqknono.github.io/coding-plans-for-copilot/) to explore available AI plans and pricing in the market.
+- **Model Provider Performance Dashboard**: A new tab on the same page shows provider-level `latency_last_30m` and `throughput_last_30m` for selected models.
 - **Zero learning curve**: Fully integrated into VS Code Copilot Chat, no change to any operating habits
 - **Flexible model management**: Supports dynamically fetching the `/models` endpoint, and also allows custom model lists and parameters
 - **Smart Commit generation**: Automatically generates commit messages that comply with Conventional Commits specification based on Git changes
@@ -88,7 +90,7 @@ Supports coding plans from major domestic AI vendors such as Zhipu z.ai, Kimi, V
 | `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `200000` | Model maximum output tokens. |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show the "Generate Commit Message" command. |
 | `coding-plans.commitMessage.language` | `string` | `en` | Commit message language, supports `en` / `zh-cn`. |
-| `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | Whether to reference the style of the last 20 commits. |
+| `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | Whether to reference the style of up to the last 7 commits (use all if fewer). |
 | `coding-plans.commitMessage.modelVendor` | `string` | Empty | Vendor name to prioritize when generating commit messages. |
 | `coding-plans.commitMessage.modelId` | `string` | Empty | Model name to prioritize when generating commit messages. |
 | `coding-plans.commitMessage.options.prompt` | `string` | Built-in prompt | Override generation prompt. |
@@ -101,6 +103,7 @@ Supports coding plans from major domestic AI vendors such as Zhipu z.ai, Kimi, V
 | `coding-plans.commitMessage.options.subjectMaxLength` | `number` | `72` | Maximum title length. |
 | `coding-plans.commitMessage.options.requireConventionalType` | `boolean` | `true` | Whether to enforce Conventional Commits type. |
 | `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | Whether to show warning when validation fails. |
+| `coding-plans.commitMessage.options.llmMaxPromptLength` | `number` | `5000` | Maximum prompt length (characters) sent to the model each time; over-limit prompts are truncated with warning. |
 | `coding-plans.models` | `array` | `[]` | Advanced fallback: When `/models` is unavailable, serves as an optional model list. |
 | `coding-plans.modelSettings` | `object` | `{}` | Advanced fallback: Override token and capability parameters per model. |
 
@@ -118,9 +121,24 @@ Supports coding plans from major domestic AI vendors such as Zhipu z.ai, Kimi, V
 
 Vendor configurations can be saved per workspace/folder; API Keys are saved by vendor name in VS Code Secret Storage (local).
 
-### Plan Price Dashboard
+### Dashboard (Pricing + Model Performance)
 
-Visit [GitHub Pages Plan Dashboard](https://jqknono.github.io/coding-plans-for-copilot/) to view pricing and update times for each vendor's coding plans.
+Visit [GitHub Pages Plan Dashboard](https://jqknono.github.io/coding-plans-for-copilot/):
+- `Plan Pricing` tab: pricing and update time for coding plans.
+- `Model Provider Performance` tab: OpenRouter provider-level latency/throughput for selected models (last 30 minutes), with filters for organization/model/provider.
+- `p50/p90/p99` are shown in table columns with percentile explanations.
+- Performance data is scheduled daily at `16:00` Beijing time.
+
+Use environment variable `CODING_PLANS_FOR_COPILOT` as the OpenRouter API key when fetching metrics:
+
+```bash
+npm run metrics:fetch
+```
+
+Optional environment variables:
+- `OPENROUTER_MODEL_ORGS`: comma-separated organization list (default `deepseek,qwen,moonshotai,z-ai,minimax,bytedance,bytedance-seed,kwaipilot,meituan,mistralai,stepfun`).
+- `OPENROUTER_MODEL_LIMIT`: latest model count per organization (default `5`).
+- `OPENROUTER_MODEL_MAX_AGE_DAYS`: only fetch models published in the last N days (default `90`, set `0` to disable age filtering).
 
 ---
 

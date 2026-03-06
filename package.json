@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.4.15",
+    "version": "0.4.16",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",
@@ -166,6 +166,15 @@
                         },
                         "warnOnValidationFailure": {
                             "type": "boolean"
+                        },
+                        "llmMaxPromptLength": {
+                            "type": "number",
+                            "minimum": 500
+                        },
+                        "recentStyleMaxTotalLength": {
+                            "type": "number",
+                            "minimum": 500,
+                            "deprecationMessage": "Deprecated: use llmMaxPromptLength instead."
                         }
                     },
                     "default": {
@@ -178,7 +187,8 @@
                         "maxBodyBulletCount": 7,
                         "subjectMaxLength": 72,
                         "requireConventionalType": true,
-                        "warnOnValidationFailure": true
+                        "warnOnValidationFailure": true,
+                        "llmMaxPromptLength": 5000
                     },
                     "description": "%configuration.coding-plans.commitMessage.options.description%",
                     "order": 5
@@ -392,6 +402,8 @@
         "package:vsix": "npm run package && npx @vscode/vsce package",
         "publish:marketplace": "npm run changelog:update && npm run package && npx @vscode/vsce publish",
         "pricing:fetch": "node ./scripts/fetch-provider-pricing.js",
+        "metrics:fetch": "node ./scripts/fetch-openrouter-provider-metrics.js",
+        "openrouter:plans:fetch": "node ./scripts/fetch-openrouter-provider-plans.js",
         "pricing:serve": "node ./scripts/serve-pricing-page.js"
     },
     "devDependencies": {
