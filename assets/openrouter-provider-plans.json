@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-06T12:27:48.687Z",
-  "generatedAtBeijing": "2026年3月6日 20:27:48",
-  "sourceGeneratedAt": "2026-03-06T10:38:56.214Z",
-  "sourceGeneratedAtBeijing": "2026年3月6日 18:38:56",
-  "sourceMetricsGeneratedAt": "2026-03-06T12:11:59.952Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月6日 20:11:59",
+  "generatedAt": "2026-03-07T08:10:12.202Z",
+  "generatedAtBeijing": "2026年3月7日 16:10:12",
+  "sourceGeneratedAt": "2026-03-07T02:52:12.927Z",
+  "sourceGeneratedAtBeijing": "2026年3月7日 10:52:12",
+  "sourceMetricsGeneratedAt": "2026-03-07T08:09:53.320Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月7日 16:09:53",
   "summary": {
     "openrouterProviderCount": 73,
     "metricsProviderCount": 28,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 4,
     "providersWithPlans": 9,
     "pendingCount": 19,
-    "blockedPendingCount": 1,
+    "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -119,41 +119,45 @@
       ],
       "sourceUrls": [
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.D5la5ehI.js",
-        "https://chutes.ai/_app/immutable/nodes/0.CPmH-pJO.js",
-        "https://chutes.ai/_app/immutable/chunks/C9La0MI8.js",
-        "https://chutes.ai/_app/immutable/chunks/ngJ1Db8E.js",
-        "https://chutes.ai/_app/immutable/chunks/CverPyt9.js",
-        "https://chutes.ai/_app/immutable/chunks/BGe6nO-H.js",
-        "https://chutes.ai/_app/immutable/chunks/CTJC-k41.js",
-        "https://chutes.ai/_app/immutable/chunks/Cw__V-fb.js",
+        "https://chutes.ai/_app/immutable/entry/app.DpKNPbS9.js",
+        "https://chutes.ai/_app/immutable/nodes/0.CMBDMOgk.js",
+        "https://chutes.ai/_app/immutable/chunks/D8exnHiZ.js",
+        "https://chutes.ai/_app/immutable/chunks/Dl4XNryJ.js",
+        "https://chutes.ai/_app/immutable/chunks/BjIJ6sth.js",
+        "https://chutes.ai/_app/immutable/chunks/CRJY7guj.js",
+        "https://chutes.ai/_app/immutable/chunks/CgjQtA95.js",
         "https://chutes.ai/_app/immutable/chunks/Ca-8DU1S.js",
-        "https://chutes.ai/_app/immutable/nodes/2.CmDDjOyM.js",
-        "https://chutes.ai/_app/immutable/chunks/COJA_YT0.js",
-        "https://chutes.ai/_app/immutable/chunks/CL-4Pq9W.js",
-        "https://chutes.ai/_app/immutable/chunks/C1FIbZ3t.js",
-        "https://chutes.ai/_app/immutable/chunks/cNulKdlC.js",
-        "https://chutes.ai/_app/immutable/chunks/3HWg1RV5.js",
-        "https://chutes.ai/_app/immutable/chunks/DRUJVwjV.js",
-        "https://chutes.ai/_app/immutable/chunks/BtST-KJ7.js",
-        "https://chutes.ai/_app/immutable/chunks/CipQ6rQo.js",
+        "https://chutes.ai/_app/immutable/chunks/Dc3owAMq.js",
+        "https://chutes.ai/_app/immutable/chunks/oio_Xq-Y.js",
+        "https://chutes.ai/_app/immutable/chunks/DEp6_UDj.js",
+        "https://chutes.ai/_app/immutable/chunks/DkOnkQDK.js",
+        "https://chutes.ai/_app/immutable/chunks/D_s1kcoS.js",
+        "https://chutes.ai/_app/immutable/chunks/CgCTHtOU.js",
+        "https://chutes.ai/_app/immutable/chunks/cpOVO78B.js",
+        "https://chutes.ai/_app/immutable/chunks/ouEKArfK.js",
+        "https://chutes.ai/_app/immutable/nodes/2.BjNqkf0e.js",
+        "https://chutes.ai/_app/immutable/chunks/B_P-MRLa.js",
+        "https://chutes.ai/_app/immutable/chunks/8fG6iq1I.js",
+        "https://chutes.ai/_app/immutable/chunks/D4KS5_rv.js",
+        "https://chutes.ai/_app/immutable/chunks/BhpnfDxk.js",
+        "https://chutes.ai/_app/immutable/chunks/CC7qjH7B.js",
+        "https://chutes.ai/_app/immutable/chunks/I9EQeaq5.js",
         "https://chutes.ai/_app/immutable/chunks/BGFdVicR.js",
-        "https://chutes.ai/_app/immutable/chunks/BjWDeVzx.js",
-        "https://chutes.ai/_app/immutable/chunks/DdWnNZh_.js",
+        "https://chutes.ai/_app/immutable/chunks/CX0cOqK1.js",
+        "https://chutes.ai/_app/immutable/chunks/_0_9skhe.js",
         "https://chutes.ai/_app/immutable/chunks/DX6rZLP_.js",
         "https://chutes.ai/_app/immutable/chunks/Da5i1ZgH.js",
-        "https://chutes.ai/_app/immutable/chunks/eBBCjH_e.js",
-        "https://chutes.ai/_app/immutable/chunks/BV8DBUMA.js",
-        "https://chutes.ai/_app/immutable/chunks/Bh1uaNGS.js",
-        "https://chutes.ai/_app/immutable/chunks/CW33BQId.js",
-        "https://chutes.ai/_app/immutable/chunks/Cw78zc4Y.js",
-        "https://chutes.ai/_app/immutable/chunks/CUa0oKv8.js",
-        "https://chutes.ai/_app/immutable/chunks/C9V4JaGS.js",
-        "https://chutes.ai/_app/immutable/chunks/BTSD4Her.js",
-        "https://chutes.ai/_app/immutable/chunks/D9SZaJlM.js",
-        "https://chutes.ai/_app/immutable/chunks/v857S0B3.js",
-        "https://chutes.ai/_app/immutable/nodes/21.XrBCEPFr.js",
-        "https://chutes.ai/_app/immutable/chunks/CmVG9oBg.js",
+        "https://chutes.ai/_app/immutable/chunks/CJKeUQeN.js",
+        "https://chutes.ai/_app/immutable/chunks/ChAoM7Kq.js",
+        "https://chutes.ai/_app/immutable/chunks/ywQvApj1.js",
+        "https://chutes.ai/_app/immutable/chunks/sf0RDUnd.js",
+        "https://chutes.ai/_app/immutable/chunks/DVIG32yX.js",
+        "https://chutes.ai/_app/immutable/chunks/BJy-PZes.js",
+        "https://chutes.ai/_app/immutable/chunks/C90lPemf.js",
+        "https://chutes.ai/_app/immutable/chunks/BrIpXUcu.js",
+        "https://chutes.ai/_app/immutable/chunks/xtKrw8NG.js",
+        "https://chutes.ai/_app/immutable/nodes/21.C84GIKcF.js",
+        "https://chutes.ai/_app/immutable/chunks/Z2UmyU3N.js",
         "https://chutes.ai"
       ],
       "pricingPageUrl": "https://chutes.ai/pricing",
@@ -434,7 +438,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-D1BykeQ-.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-B6OQMJm1.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -579,8 +583,7 @@
           "unit": "月",
           "notes": "下个月度续费金额：¥49",
           "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 80 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 400 次 prompts"
+            "下个月度续费金额：¥49"
           ]
         },
         {
@@ -592,8 +595,7 @@
           "unit": "月",
           "notes": "下个月度续费金额：¥149",
           "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 400 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 2000 次 prompts"
+            "下个月度续费金额：¥149"
           ]
         },
         {
@@ -605,8 +607,7 @@
           "unit": "月",
           "notes": "下个月度续费金额：¥469",
           "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 1600 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 8000 次 prompts"
+            "下个月度续费金额：¥469"
           ]
         }
       ],
@@ -678,7 +679,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://friendli.ai",
       "pricingPageUrl": "https://friendli.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.1 / $0.6 / $0.2）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.5 / $0.25 / $1.5）",
       "blocked": false
     },
     {
@@ -723,8 +724,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://ionstream.ai",
       "pricingPageUrl": "https://ionstream.ai",
-      "reason": "官网价格页探测失败：https://ionstream.ai/pricing: Request timeout after 9000ms",
-      "blocked": true
+      "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
+      "blocked": false
     },
     {
       "slug": "nebius",
