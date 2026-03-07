@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-06T10:38:56.214Z",
+  "generatedAt": "2026-03-07T02:52:12.927Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -19,8 +19,7 @@
           "unit": "月",
           "notes": "下个月度续费金额：¥49",
           "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 80 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 400 次 prompts"
+            "下个月度续费金额：¥49"
           ]
         },
         {
@@ -32,8 +31,7 @@
           "unit": "月",
           "notes": "下个月度续费金额：¥149",
           "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 400 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 2000 次 prompts"
+            "下个月度续费金额：¥149"
           ]
         },
         {
@@ -45,8 +43,7 @@
           "unit": "月",
           "notes": "下个月度续费金额：¥469",
           "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 1600 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 8000 次 prompts"
+            "下个月度续费金额：¥469"
           ]
         }
       ]
@@ -56,7 +53,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-D1BykeQ-.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-B6OQMJm1.js"
       ],
       "plans": [
         {
@@ -596,42 +593,9 @@
           ]
         }
       ]
-    },
-    {
-      "provider": "infini-ai",
-      "sourceUrls": [
-        "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.c9e3dd36.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.8ada9e79.js",
-        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
-      ],
-      "plans": [
-        {
-          "name": "Infini Coding Lite",
-          "currentPrice": 40,
-          "currentPriceText": "¥40/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "1,000次/5小时、6,000次/7天、12,000次/1个月"
-          ]
-        },
-        {
-          "name": "Infini Coding Pro",
-          "currentPrice": 200,
-          "currentPriceText": "¥200/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "5,000次/5小时、30,000次/7天、60,000次/1个月"
-          ]
-        }
-      ]
     }
   ],
-  "failures": []
+  "failures": [
+    "infini-ai: Task timed out after 15000ms"
+  ]
 }
