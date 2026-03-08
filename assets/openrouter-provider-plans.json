@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-07T08:10:12.202Z",
-  "generatedAtBeijing": "2026年3月7日 16:10:12",
-  "sourceGeneratedAt": "2026-03-07T02:52:12.927Z",
-  "sourceGeneratedAtBeijing": "2026年3月7日 10:52:12",
-  "sourceMetricsGeneratedAt": "2026-03-07T08:09:53.320Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月7日 16:09:53",
+  "generatedAt": "2026-03-08T08:10:42.490Z",
+  "generatedAtBeijing": "2026年3月8日 16:10:42",
+  "sourceGeneratedAt": "2026-03-08T03:01:12.008Z",
+  "sourceGeneratedAtBeijing": "2026年3月8日 11:01:12",
+  "sourceMetricsGeneratedAt": "2026-03-08T08:10:28.128Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月8日 16:10:28",
   "summary": {
     "openrouterProviderCount": 73,
     "metricsProviderCount": 28,
@@ -583,7 +583,8 @@
           "unit": "月",
           "notes": "下个月度续费金额：¥49",
           "serviceDetails": [
-            "下个月度续费金额：¥49"
+            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 80 次 prompts",
+            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 400 次 prompts"
           ]
         },
         {
@@ -595,7 +596,8 @@
           "unit": "月",
           "notes": "下个月度续费金额：¥149",
           "serviceDetails": [
-            "下个月度续费金额：¥149"
+            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 400 次 prompts",
+            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 2000 次 prompts"
           ]
         },
         {
@@ -607,7 +609,8 @@
           "unit": "月",
           "notes": "下个月度续费金额：¥469",
           "serviceDetails": [
-            "下个月度续费金额：¥469"
+            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 1600 次 prompts",
+            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 8000 次 prompts"
           ]
         }
       ],
