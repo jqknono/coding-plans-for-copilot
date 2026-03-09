@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-08T08:10:42.490Z",
-  "generatedAtBeijing": "2026年3月8日 16:10:42",
-  "sourceGeneratedAt": "2026-03-08T03:01:12.008Z",
-  "sourceGeneratedAtBeijing": "2026年3月8日 11:01:12",
-  "sourceMetricsGeneratedAt": "2026-03-08T08:10:28.128Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月8日 16:10:28",
+  "generatedAt": "2026-03-09T08:19:04.099Z",
+  "generatedAtBeijing": "2026年3月9日 16:19:04",
+  "sourceGeneratedAt": "2026-03-09T03:02:44.436Z",
+  "sourceGeneratedAtBeijing": "2026年3月9日 11:02:44",
+  "sourceMetricsGeneratedAt": "2026-03-09T08:18:49.115Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月9日 16:18:49",
   "summary": {
     "openrouterProviderCount": 73,
     "metricsProviderCount": 28,
@@ -682,7 +682,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://friendli.ai",
       "pricingPageUrl": "https://friendli.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.5 / $0.25 / $1.5）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.1 / $0.6 / $0.2）",
       "blocked": false
     },
     {
