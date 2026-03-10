@@ -13,6 +13,7 @@ const TASK_TIMEOUT_MS = 15_000;
 const PROVIDER_IDS = {
   ZHIPU: "zhipu-ai",
   KIMI: "kimi-ai",
+  XFYUN: "xfyun-ai",
   VOLCENGINE: "volcengine-ai",
   MINIMAX: "minimax-ai",
   ALIYUN: "aliyun-ai",
@@ -386,6 +387,32 @@ function buildTierPriceNotes(priceInfo) {
   return notes.length > 0 ? notes.join("；") : null;
 }
 
+function parseFirstPurchaseAndAddonPrices(rawValue) {
+  const text = normalizeText(rawValue);
+  if (!text) {
+    return {
+      text: null,
+      firstPurchaseAmount: null,
+      addonAmount: null,
+    };
+  }
+
+  const readAmount = (regex) => {
+    const matched = text.match(regex);
+    if (!matched) {
+      return null;
+    }
+    const amount = Number(String(matched[1] || "").replace(/,/g, ""));
+    return Number.isFinite(amount) ? amount : null;
+  };
+
+  return {
+    text,
+    firstPurchaseAmount: readAmount(/首购[^0-9]{0,12}([0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?)/i),
+    addonAmount: readAmount(/叠加购买[^0-9]{0,12}([0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?)/i),
+  };
+}
+
 function asPlan({
   name,
   currentPriceText,
@@ -591,6 +618,87 @@ async function parseKimiCodingPlans() {
   return {
     provider: PROVIDER_IDS.KIMI,
     sourceUrls: unique([pageUrl, apiUrl, commonScriptUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
+async function parseXfyunCodingPlans() {
+  const pageUrl = "https://maas.xfyun.cn/modelSquare";
+  const docUrl = "https://www.xfyun.cn/doc/spark/CodingPlan.html";
+  const html = await fetchText(docUrl);
+  const rows = extractRows(html);
+
+  const pricingHeaderIndex = rows.findIndex(
+    (row) => normalizeText(row?.[0] || "") === "套餐类型" && normalizeText(row?.[1] || "") === "价格",
+  );
+  if (pricingHeaderIndex < 0) {
+    throw new Error("Unable to locate XFYun coding plan pricing table");
+  }
+
+  const pricingRows = [];
+  for (let index = pricingHeaderIndex + 1; index < rows.length; index += 1) {
+    const row = rows[index] || [];
+    const name = normalizeText(row?.[0] || "");
+    if (!name || !/版$/.test(name)) {
+      break;
+    }
+    pricingRows.push(row);
+  }
+
+  if (pricingRows.length === 0) {
+    throw new Error("Unable to parse XFYun coding plan pricing rows");
+  }
+
+  const flowHeaderIndex = rows.findIndex(
+    (row) => normalizeText(row?.[0] || "") === "流控维度" && normalizeText(row?.[1] || "") === "说明",
+  );
+  const flowDetails = [];
+  if (flowHeaderIndex >= 0) {
+    for (let index = flowHeaderIndex + 1; index < rows.length; index += 1) {
+      const row = rows[index] || [];
+      const label = normalizeText(row?.[0] || "");
+      const value = normalizeText(row?.[1] || "");
+      if (!label || !value || /^版本$/.test(label)) {
+        break;
+      }
+      flowDetails.push(`${label}: ${value}`);
+    }
+  }
+
+  const hasIteratedVersion = /价格与支持模型[^。；]*保持一致[\s\S]*?流控方式将调整为[^。；]*请求次数/i.test(html);
+  const plans = pricingRows.map((row) => {
+    const name = normalizeText(row?.[0] || "");
+    const priceInfo = parseFirstPurchaseAndAddonPrices(row?.[1] || "");
+    const currentAmount = priceInfo.addonAmount ?? priceInfo.firstPurchaseAmount;
+    const notes = [
+      Number.isFinite(priceInfo.firstPurchaseAmount) && Number.isFinite(priceInfo.addonAmount)
+        ? `首购优惠：¥${formatAmount(priceInfo.firstPurchaseAmount)}/月`
+        : null,
+      hasIteratedVersion ? "次月迭代版价格与支持模型不变，流控将改为 5 小时/周/月请求次数" : null,
+    ]
+      .filter(Boolean)
+      .join("；");
+
+    return asPlan({
+      name: `Astron Coding Plan ${name}`,
+      currentPriceText: Number.isFinite(currentAmount) ? `¥${formatAmount(currentAmount)}/月` : priceInfo.text,
+      currentPrice: Number.isFinite(currentAmount) ? currentAmount : null,
+      unit: "月",
+      notes,
+      serviceDetails: [
+        normalizeText(row?.[2] || "") ? `支持模型: ${normalizeText(row[2])}` : null,
+        normalizeText(row?.[3] || "") ? `日 Tokens 上限: ${normalizeText(row[3])}` : null,
+        normalizeText(row?.[4] || "") ? `QPS: ${normalizeText(row[4])}` : null,
+        "支持升级与同档位叠加购买",
+        ...flowDetails,
+      ],
+    });
+  });
+
+  return {
+    provider: PROVIDER_IDS.XFYUN,
+    sourceUrls: [pageUrl, docUrl],
     fetchedAt: new Date().toISOString(),
     plans: dedupePlans(plans),
   };
@@ -1825,6 +1933,7 @@ async function main() {
   const tasks = [
     { provider: PROVIDER_IDS.ZHIPU, fn: parseZhipuCodingPlans },
     { provider: PROVIDER_IDS.KIMI, fn: parseKimiCodingPlans },
+    { provider: PROVIDER_IDS.XFYUN, fn: parseXfyunCodingPlans },
     { provider: PROVIDER_IDS.VOLCENGINE, fn: parseVolcengineCodingPlans },
     { provider: PROVIDER_IDS.MINIMAX, fn: parseMinimaxCodingPlans },
     { provider: PROVIDER_IDS.BAIDU, fn: parseBaiduCodingPlans },

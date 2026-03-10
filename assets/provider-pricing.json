@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-10T11:09:37.129Z",
+  "generatedAt": "2026-03-10T11:50:23.254Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -149,6 +149,69 @@
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
             "适用海量搜索、长文写作、批量处理"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "xfyun-ai",
+      "sourceUrls": [
+        "https://maas.xfyun.cn/modelSquare",
+        "https://www.xfyun.cn/doc/spark/CodingPlan.html"
+      ],
+      "plans": [
+        {
+          "name": "Astron Coding Plan 入门版",
+          "currentPrice": 19,
+          "currentPriceText": "¥19/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首购优惠：¥3.9/月；次月迭代版价格与支持模型不变，流控将改为 5 小时/周/月请求次数",
+          "serviceDetails": [
+            "支持模型: DeepSeek-V3.2、GLM-4.7-Flash",
+            "日 Tokens 上限: 2,000 万 tokens/日",
+            "QPS: 20",
+            "支持升级与同档位叠加购买",
+            "5 小时流控: 按实际请求发生时间，滑动 5 小时窗口动态刷新",
+            "周流控: 每周一 00:00:00（UTC+8）重置",
+            "月流控: 每订阅月对应日的 00:00:00（UTC+8）重置"
+          ]
+        },
+        {
+          "name": "Astron Coding Plan 专业版",
+          "currentPrice": 39,
+          "currentPriceText": "¥39/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首购优惠：¥7.9/月；次月迭代版价格与支持模型不变，流控将改为 5 小时/周/月请求次数",
+          "serviceDetails": [
+            "支持模型: DeepSeek-V3.2、GLM-4.7-Flash、 GLM-5、MiniMax-M2.5、Kimi-K2.5",
+            "日 Tokens 上限: 1,000 万 tokens/日",
+            "QPS: 5",
+            "支持升级与同档位叠加购买",
+            "5 小时流控: 按实际请求发生时间，滑动 5 小时窗口动态刷新",
+            "周流控: 每周一 00:00:00（UTC+8）重置",
+            "月流控: 每订阅月对应日的 00:00:00（UTC+8）重置"
+          ]
+        },
+        {
+          "name": "Astron Coding Plan 高效版",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首购优惠：¥39.9/月；次月迭代版价格与支持模型不变，流控将改为 5 小时/周/月请求次数",
+          "serviceDetails": [
+            "支持模型: DeepSeek-V3.2、GLM-4.7-Flash、 GLM-5、MiniMax-M2.5、Kimi-K2.5",
+            "日 Tokens 上限: 5,000 万 tokens/日",
+            "QPS: 20",
+            "支持升级与同档位叠加购买",
+            "5 小时流控: 按实际请求发生时间，滑动 5 小时窗口动态刷新",
+            "周流控: 每周一 00:00:00（UTC+8）重置",
+            "月流控: 每订阅月对应日的 00:00:00（UTC+8）重置"
           ]
         }
       ]

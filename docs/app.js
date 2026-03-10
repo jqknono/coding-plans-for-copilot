@@ -5,6 +5,7 @@ const OPENROUTER_PROVIDER_PLANS_DATA_PATH = "./openrouter-provider-plans.json";
 const PROVIDER_LABELS = {
   "zhipu-ai": "智谱 z.ai",
   "kimi-ai": "Kimi",
+  "xfyun-ai": "讯飞星辰 MaaS",
   "volcengine-ai": "火山引擎",
   "minimax-ai": "MiniMax",
   "aliyun-ai": "阿里云通义千问",
@@ -33,6 +34,7 @@ const MODEL_ORG_LABELS = {
 const PROVIDER_BUY_URLS = {
   "zhipu-ai": "https://bigmodel.cn/glm-coding",
   "kimi-ai": "https://www.kimi.com/code/zh",
+  "xfyun-ai": "https://maas.xfyun.cn/modelSquare",
   "volcengine-ai": "https://www.volcengine.com/activity/codingplan",
   "minimax-ai": "https://platform.minimaxi.com/subscribe/coding-plan",
   "aliyun-ai": "https://common-buy.aliyun.com/?commodityCode=sfm_codingplan_public_cn#/buy",
