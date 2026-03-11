@@ -1,6 +1,6 @@
 {
-  "generatedAt": "2026-03-10T08:16:22.381Z",
-  "generatedAtBeijing": "2026年3月10日 16:16:22",
+  "generatedAt": "2026-03-11T08:16:26.587Z",
+  "generatedAtBeijing": "2026年3月11日 16:16:26",
   "captureWindow": {
     "timezone": "Asia/Shanghai",
     "targetLocalTime": "16:00",
@@ -22,16 +22,48 @@
     ],
     "modelsPerOrganization": 5,
     "modelMaxAgeDays": 90,
-    "modelCreatedAfter": "2025-12-10T08:16:21.000Z",
+    "modelCreatedAfter": "2025-12-11T08:16:25.000Z",
     "endpointConcurrency": 4,
     "baseUrl": "https://openrouter.ai/api/v1"
   },
   "summary": {
     "organizationCount": 11,
-    "modelCount": 18,
+    "modelCount": 19,
     "providerEndpointCount": 88
   },
   "models": [
+    {
+      "organization": "qwen",
+      "id": "qwen/qwen3.5-9b",
+      "name": "Qwen: Qwen3.5-9B",
+      "created": 1773152396,
+      "createdAt": "2026-03-10T14:19:56.000Z",
+      "endpoints": [
+        {
+          "providerName": "Together",
+          "providerSlug": "together",
+          "tag": "together",
+          "quantization": "unknown",
+          "status": 0,
+          "uptime_last_30m": 100,
+          "latency_last_30m": {
+            "p50": 538,
+            "p75": 972,
+            "p90": 2060.800000000001,
+            "p99": 5674.399999999996
+          },
+          "throughput_last_30m": {
+            "p50": 64,
+            "p75": 80,
+            "p90": 89,
+            "p99": 106
+          },
+          "context_length": 262144,
+          "max_completion_tokens": null
+        }
+      ],
+      "providerCount": 1
+    },
     {
       "organization": "qwen",
       "id": "qwen/qwen3.5-35b-a3b",
@@ -45,18 +77,18 @@
           "tag": "alibaba",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.21983839509613,
+          "uptime_last_30m": 99.54463916103215,
           "latency_last_30m": {
-            "p50": 552,
-            "p75": 920,
-            "p90": 2043,
-            "p99": 10315.009999999984
+            "p50": 547,
+            "p75": 922,
+            "p90": 2127.9000000000033,
+            "p99": 9702.55
           },
           "throughput_last_30m": {
             "p50": 123,
-            "p75": 141,
-            "p90": 163,
-            "p99": 271.72999999999956
+            "p75": 139,
+            "p90": 159,
+            "p99": 263.71000000000004
           },
           "context_length": 262144,
           "max_completion_tokens": 65536
@@ -67,18 +99,40 @@
           "tag": "atlas-cloud/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 99.60411718131434,
+          "uptime_last_30m": 99.86457204767063,
           "latency_last_30m": {
-            "p50": 1049,
-            "p75": 1626,
-            "p90": 3329.799999999999,
-            "p99": 11907.17999999999
+            "p50": 1018.5,
+            "p75": 1493,
+            "p90": 2714.4000000000033,
+            "p99": 11394.309999999996
           },
           "throughput_last_30m": {
-            "p50": 104,
-            "p75": 122,
-            "p90": 142.5999999999999,
-            "p99": 236.25999999999976
+            "p50": 140,
+            "p75": 156,
+            "p90": 180,
+            "p99": 294
+          },
+          "context_length": 262144,
+          "max_completion_tokens": 65536
+        },
+        {
+          "providerName": "Ionstream",
+          "providerSlug": "ionstream",
+          "tag": "ionstream/fp8",
+          "quantization": "fp8",
+          "status": -5,
+          "uptime_last_30m": 43.75,
+          "latency_last_30m": {
+            "p50": 723,
+            "p75": 3005,
+            "p90": 17040.800000000017,
+            "p99": 56578.88
+          },
+          "throughput_last_30m": {
+            "p50": 46,
+            "p75": 59,
+            "p90": 66.80000000000001,
+            "p99": 85.93999999999997
           },
           "context_length": 262144,
           "max_completion_tokens": 65536
@@ -91,16 +145,16 @@
           "status": 0,
           "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 414,
-            "p75": 643,
-            "p90": 1279.9000000000005,
-            "p99": 3403.020000000006
+            "p50": 456,
+            "p75": 661,
+            "p90": 1139,
+            "p99": 3230.360000000001
           },
           "throughput_last_30m": {
             "p50": 73,
             "p75": 80,
-            "p90": 87,
-            "p99": 94
+            "p90": 85,
+            "p99": 93
           },
           "context_length": 262144,
           "max_completion_tokens": 262144
@@ -111,24 +165,24 @@
           "tag": "venice",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.96701846965699,
+          "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 740,
-            "p75": 1178,
-            "p90": 2045,
-            "p99": 8328.799999999974
+            "p50": 660,
+            "p75": 1005,
+            "p90": 1844.5999999999995,
+            "p99": 5562.329999999991
           },
           "throughput_last_30m": {
-            "p50": 62,
-            "p75": 70,
-            "p90": 81,
-            "p99": 92
+            "p50": 97,
+            "p75": 114,
+            "p90": 127,
+            "p99": 151.90999999999985
           },
           "context_length": 256000,
           "max_completion_tokens": null
         }
       ],
-      "providerCount": 4
+      "providerCount": 5
     },
     {
       "organization": "qwen",
@@ -143,18 +197,18 @@
           "tag": "alibaba",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.82078853046595,
+          "uptime_last_30m": 99.48085658663206,
           "latency_last_30m": {
-            "p50": 1158.5,
-            "p75": 1881,
-            "p90": 3565,
-            "p99": 14926.309999999998
+            "p50": 543,
+            "p75": 642.5,
+            "p90": 1393.100000000001,
+            "p99": 10792.36
           },
           "throughput_last_30m": {
-            "p50": 63.5,
-            "p75": 78,
-            "p90": 91,
-            "p99": 99.42999999999995
+            "p50": 69,
+            "p75": 75,
+            "p90": 81,
+            "p99": 100
           },
           "context_length": 262144,
           "max_completion_tokens": 65536
@@ -165,18 +219,18 @@
           "tag": "atlas-cloud/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 99.61685823754789,
+          "uptime_last_30m": 99.30313588850174,
           "latency_last_30m": {
-            "p50": 1700,
-            "p75": 2895.5,
-            "p90": 5117.200000000001,
-            "p99": 25000.219999999743
+            "p50": 1621,
+            "p75": 3536.5,
+            "p90": 7293.5,
+            "p99": 46540.6499999995
           },
           "throughput_last_30m": {
-            "p50": 61,
-            "p75": 74.5,
-            "p90": 83.20000000000002,
-            "p99": 180.25999999999996
+            "p50": 72.5,
+            "p75": 89,
+            "p90": 123,
+            "p99": 160.49999999999977
           },
           "context_length": 262144,
           "max_completion_tokens": 65536
@@ -187,18 +241,18 @@
           "tag": "novita/bf16",
           "quantization": "bf16",
           "status": 0,
-          "uptime_last_30m": 100,
+          "uptime_last_30m": 99.13793103448276,
           "latency_last_30m": {
-            "p50": 1589,
-            "p75": 2531,
-            "p90": 4785.6,
-            "p99": 31505.95999999997
+            "p50": 1521.5,
+            "p75": 3104,
+            "p90": 6293.000000000004,
+            "p99": 62316.699999999975
           },
           "throughput_last_30m": {
-            "p50": 60,
-            "p75": 71,
-            "p90": 78,
-            "p99": 99.27999999999997
+            "p50": 53,
+            "p75": 75.25,
+            "p90": 84,
+            "p99": 95.82999999999998
           },
           "context_length": 262144,
           "max_completion_tokens": 65536
@@ -212,75 +266,8 @@
       "name": "Qwen: Qwen3.5-122B-A10B",
       "created": 1772053789,
       "createdAt": "2026-02-25T21:09:49.000Z",
-      "endpoints": [
-        {
-          "providerName": "Alibaba",
-          "providerSlug": "alibaba",
-          "tag": "alibaba",
-          "quantization": "unknown",
-          "status": 0,
-          "uptime_last_30m": 98.79253567508232,
-          "latency_last_30m": {
-            "p50": 1024,
-            "p75": 1441.5,
-            "p90": 2561.2000000000007,
-            "p99": 5130.599999999998
-          },
-          "throughput_last_30m": {
-            "p50": 87,
-            "p75": 129,
-            "p90": 144,
-            "p99": 163.05999999999995
-          },
-          "context_length": 262144,
-          "max_completion_tokens": 65536
-        },
-        {
-          "providerName": "AtlasCloud",
-          "providerSlug": "atlas-cloud",
-          "tag": "atlas-cloud/fp8",
-          "quantization": "fp8",
-          "status": 0,
-          "uptime_last_30m": 97.16312056737588,
-          "latency_last_30m": {
-            "p50": 1920,
-            "p75": 3775,
-            "p90": 5092,
-            "p99": 16251.599999999993
-          },
-          "throughput_last_30m": {
-            "p50": 77,
-            "p75": 109,
-            "p90": 128,
-            "p99": 184.23999999999978
-          },
-          "context_length": 262144,
-          "max_completion_tokens": 65536
-        },
-        {
-          "providerName": "Novita",
-          "providerSlug": "novita",
-          "tag": "novita/bf16",
-          "quantization": "bf16",
-          "status": 0,
-          "uptime_last_30m": 100,
-          "latency_last_30m": {
-            "p50": 1675.5,
-            "p75": 4069.75,
-            "p90": 5612.5,
-            "p99": 17391.000000000022
-          },
-          "throughput_last_30m": {
-            "p50": 73.5,
-            "p75": 109.75,
-            "p90": 123,
-            "p99": 139.20000000000005
-          },
-          "context_length": 262144,
-          "max_completion_tokens": 65536
-        }
-      ],
-      "providerCount": 3
+      "endpoints": [],
+      "providerCount": 0
     },
     {
       "organization": "qwen",
@@ -297,48 +284,16 @@
           "status": 0,
           "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 611,
-            "p75": 1082,
-            "p90": 2015,
-            "p99": 8767.89999999997
+            "p50": 1885.5,
+            "p75": 2808,
+            "p90": 4272.900000000001,
+            "p99": 16058.900000000001
           },
           "throughput_last_30m": {
-            "p50": 90,
-            "p75": 116,
-            "p90": 138,
-            "p99": 177
-          },
-          "context_length": 1000000,
-          "max_completion_tokens": 65536
-        }
-      ],
-      "providerCount": 1
-    },
-    {
-      "organization": "qwen",
-      "id": "qwen/qwen3.5-plus-02-15",
-      "name": "Qwen: Qwen3.5 Plus 2026-02-15",
-      "created": 1771229416,
-      "createdAt": "2026-02-16T08:10:16.000Z",
-      "endpoints": [
-        {
-          "providerName": "Alibaba",
-          "providerSlug": "alibaba",
-          "tag": "alibaba",
-          "quantization": "unknown",
-          "status": 0,
-          "uptime_last_30m": 100,
-          "latency_last_30m": {
-            "p50": 2239,
-            "p75": 3585,
-            "p90": 4758.1,
-            "p99": 20059.999999999935
-          },
-          "throughput_last_30m": {
-            "p50": 32,
-            "p75": 47,
-            "p90": 57,
-            "p99": 80
+            "p50": 3,
+            "p75": 4,
+            "p90": 7,
+            "p99": 124
           },
           "context_length": 1000000,
           "max_completion_tokens": 65536
@@ -358,19 +313,19 @@
           "providerSlug": "atlas-cloud",
           "tag": "atlas-cloud/int4",
           "quantization": "int4",
-          "status": -5,
-          "uptime_last_30m": 43.54040681693238,
+          "status": -2,
+          "uptime_last_30m": 83.07426597582038,
           "latency_last_30m": {
-            "p50": 8107,
-            "p75": 9773.5,
-            "p90": 14685.400000000005,
-            "p99": 38236.71999999999
+            "p50": 2681,
+            "p75": 6398.25,
+            "p90": 12229.300000000008,
+            "p99": 31463.670000000024
           },
           "throughput_last_30m": {
-            "p50": 24,
-            "p75": 31,
+            "p50": 21,
+            "p75": 30,
             "p90": 39,
-            "p99": 53.379999999999995
+            "p99": 59
           },
           "context_length": 262144,
           "max_completion_tokens": 262144
@@ -380,19 +335,19 @@
           "providerSlug": "baseten",
           "tag": "baseten/fp4",
           "quantization": "fp4",
-          "status": -5,
-          "uptime_last_30m": 76.88588007736944,
+          "status": 0,
+          "uptime_last_30m": 97.54098360655738,
           "latency_last_30m": {
-            "p50": 1608,
-            "p75": 8012.5,
-            "p90": 18283.800000000003,
-            "p99": 44753.12000000012
+            "p50": 560,
+            "p75": 1020,
+            "p90": 2762.2000000000035,
+            "p99": 53137.80000000195
           },
           "throughput_last_30m": {
-            "p50": 59,
-            "p75": 86,
-            "p90": 105,
-            "p99": 154
+            "p50": 78,
+            "p75": 110,
+            "p90": 146,
+            "p99": 219.92000000000007
           },
           "context_length": 262000,
           "max_completion_tokens": 262000
@@ -403,18 +358,18 @@
           "tag": "chutes/int4",
           "quantization": "int4",
           "status": 0,
-          "uptime_last_30m": 96.53679653679653,
+          "uptime_last_30m": 95.45454545454545,
           "latency_last_30m": {
-            "p50": 3255,
-            "p75": 8443,
-            "p90": 16487.600000000002,
-            "p99": 72651.76000000018
+            "p50": 2255,
+            "p75": 4591,
+            "p90": 10350.500000000005,
+            "p99": 27425.45999999995
           },
           "throughput_last_30m": {
-            "p50": 15,
-            "p75": 26,
-            "p90": 32,
-            "p99": 39.24000000000001
+            "p50": 13,
+            "p75": 18,
+            "p90": 26,
+            "p99": 32.059999999999945
           },
           "context_length": 262144,
           "max_completion_tokens": 65535
@@ -425,18 +380,18 @@
           "tag": "deepinfra",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 98.38263460310705,
+          "uptime_last_30m": 99.2548435171386,
           "latency_last_30m": {
-            "p50": 4524,
-            "p75": 7431.5,
-            "p90": 12268.500000000004,
-            "p99": 22408.970000000012
+            "p50": 2003,
+            "p75": 3000.5,
+            "p90": 5192,
+            "p99": 18138.69999999994
           },
           "throughput_last_30m": {
-            "p50": 10,
-            "p75": 13,
-            "p90": 16,
-            "p99": 21
+            "p50": 14,
+            "p75": 18,
+            "p90": 21,
+            "p99": 25
           },
           "context_length": 262144,
           "max_completion_tokens": null
@@ -447,18 +402,18 @@
           "tag": "fireworks",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.31972789115646,
+          "uptime_last_30m": 99.94131455399061,
           "latency_last_30m": {
-            "p50": 2181,
-            "p75": 5817,
-            "p90": 10774,
-            "p99": 43986
+            "p50": 886,
+            "p75": 2198,
+            "p90": 4630.400000000001,
+            "p99": 18093.599999999977
           },
           "throughput_last_30m": {
-            "p50": 38,
-            "p75": 66,
-            "p90": 84.5,
-            "p99": 122
+            "p50": 76,
+            "p75": 109,
+            "p90": 148,
+            "p99": 211
           },
           "context_length": 262144,
           "max_completion_tokens": null
@@ -468,19 +423,19 @@
           "providerSlug": "inceptron",
           "tag": "inceptron/int4",
           "quantization": "int4",
-          "status": -5,
-          "uptime_last_30m": 50.67087608524072,
+          "status": -2,
+          "uptime_last_30m": 89.52380952380953,
           "latency_last_30m": {
-            "p50": 868,
-            "p75": 1600.5,
-            "p90": 3321,
-            "p99": 11323.399999999941
+            "p50": 625,
+            "p75": 1225,
+            "p90": 4134.5,
+            "p99": 10169.079999999994
           },
           "throughput_last_30m": {
-            "p50": 51,
-            "p75": 77,
-            "p90": 95,
-            "p99": 107.89999999999998
+            "p50": 69,
+            "p75": 83,
+            "p90": 98,
+            "p99": 108
           },
           "context_length": 262144,
           "max_completion_tokens": 262144
@@ -491,18 +446,18 @@
           "tag": "moonshotai/int4",
           "quantization": "int4",
           "status": -2,
-          "uptime_last_30m": 86.9792852264967,
+          "uptime_last_30m": 93.13321308940995,
           "latency_last_30m": {
-            "p50": 7144.5,
-            "p75": 14837,
-            "p90": 30622.20000000001,
-            "p99": 74244.03000000003
+            "p50": 5049,
+            "p75": 9326.5,
+            "p90": 17532.400000000005,
+            "p99": 54913.77000000003
           },
           "throughput_last_30m": {
             "p50": 18,
-            "p75": 31,
-            "p90": 42,
-            "p99": 73.09000000000015
+            "p75": 27,
+            "p90": 35,
+            "p99": 49.090000000000146
           },
           "context_length": 262144,
           "max_completion_tokens": null
@@ -513,9 +468,19 @@
           "tag": "nebius/int4",
           "quantization": "int4",
           "status": -5,
-          "uptime_last_30m": 0,
-          "latency_last_30m": null,
-          "throughput_last_30m": null,
+          "uptime_last_30m": 78.26984855438275,
+          "latency_last_30m": {
+            "p50": 2536,
+            "p75": 13330,
+            "p90": 20655.000000000004,
+            "p99": 36237.84000000003
+          },
+          "throughput_last_30m": {
+            "p50": 25,
+            "p75": 42,
+            "p90": 54,
+            "p99": 72
+          },
           "context_length": 262144,
           "max_completion_tokens": null
         },
@@ -525,18 +490,18 @@
           "tag": "nextbit/fp4",
           "quantization": "fp4",
           "status": -5,
-          "uptime_last_30m": 78.98057446455255,
+          "uptime_last_30m": 67.46964733089227,
           "latency_last_30m": {
-            "p50": 2322.5,
-            "p75": 8829.75,
-            "p90": 19929.200000000004,
-            "p99": 50511.100000000064
+            "p50": 2737,
+            "p75": 7829,
+            "p90": 15354.300000000001,
+            "p99": 45016.1
           },
           "throughput_last_30m": {
-            "p50": 12,
-            "p75": 37.75,
-            "p90": 73,
-            "p99": 78
+            "p50": 15,
+            "p75": 21.75,
+            "p90": 28,
+            "p99": 40.02999999999997
           },
           "context_length": 262144,
           "max_completion_tokens": 262144
@@ -547,18 +512,18 @@
           "tag": "novita",
           "quantization": "unknown",
           "status": -5,
-          "uptime_last_30m": 23.030573532693595,
+          "uptime_last_30m": 78.53020392458639,
           "latency_last_30m": {
-            "p50": 9008.5,
-            "p75": 11520,
-            "p90": 21039.700000000008,
-            "p99": 65052.590000000004
+            "p50": 4244,
+            "p75": 7591.25,
+            "p90": 14044.400000000005,
+            "p99": 38594.48000000007
           },
           "throughput_last_30m": {
-            "p50": 30,
-            "p75": 48,
-            "p90": 102.90000000000009,
-            "p99": 138
+            "p50": 19,
+            "p75": 32,
+            "p90": 70,
+            "p99": 116
           },
           "context_length": 262144,
           "max_completion_tokens": 262144
@@ -569,18 +534,18 @@
           "tag": "parasail/int4",
           "quantization": "int4",
           "status": 0,
-          "uptime_last_30m": 98.99328859060402,
+          "uptime_last_30m": 99.64664310954063,
           "latency_last_30m": {
-            "p50": 1261,
-            "p75": 2397.25,
-            "p90": 6253.6,
-            "p99": 14460.639999999967
+            "p50": 1055,
+            "p75": 2166.5,
+            "p90": 4687,
+            "p99": 16326.600000000051
           },
           "throughput_last_30m": {
-            "p50": 24,
-            "p75": 31,
-            "p90": 36,
-            "p99": 45
+            "p50": 29,
+            "p75": 35,
+            "p90": 39,
+            "p99": 50
           },
           "context_length": 262144,
           "max_completion_tokens": 262144
@@ -591,18 +556,18 @@
           "tag": "phala",
           "quantization": "unknown",
           "status": -2,
-          "uptime_last_30m": 84.32203389830508,
+          "uptime_last_30m": 89.79915433403805,
           "latency_last_30m": {
-            "p50": 3797,
-            "p75": 6842,
-            "p90": 13735.000000000004,
-            "p99": 39087.17999999989
+            "p50": 3350.5,
+            "p75": 6730,
+            "p90": 11374.3,
+            "p99": 27333.740000000005
           },
           "throughput_last_30m": {
-            "p50": 11,
-            "p75": 14,
-            "p90": 17,
-            "p99": 24.059999999999945
+            "p50": 13,
+            "p75": 17,
+            "p90": 22.299999999999955,
+            "p99": 31
           },
           "context_length": 262144,
           "max_completion_tokens": null
@@ -612,19 +577,19 @@
           "providerSlug": "siliconflow",
           "tag": "siliconflow/int4",
           "quantization": "int4",
-          "status": -5,
-          "uptime_last_30m": 76.75967025998732,
+          "status": -2,
+          "uptime_last_30m": 85.84658747735051,
           "latency_last_30m": {
-            "p50": 4093,
-            "p75": 7994,
-            "p90": 15877,
-            "p99": 43130.59999999992
+            "p50": 4001,
+            "p75": 8264.25,
+            "p90": 15395.600000000013,
+            "p99": 34042.59000000001
           },
           "throughput_last_30m": {
-            "p50": 3,
-            "p75": 4,
-            "p90": 13,
-            "p99": 19
+            "p50": 9,
+            "p75": 13,
+            "p90": 16,
+            "p99": 18
           },
           "context_length": 262144,
           "max_completion_tokens": 262144
@@ -634,19 +599,19 @@
           "providerSlug": "together",
           "tag": "together",
           "quantization": "unknown",
-          "status": 0,
-          "uptime_last_30m": 99.54721862871928,
+          "status": -5,
+          "uptime_last_30m": 75,
           "latency_last_30m": {
-            "p50": 1024,
-            "p75": 1732,
-            "p90": 3770.0000000000005,
-            "p99": 12932.320000000003
+            "p50": 1145,
+            "p75": 2150.25,
+            "p90": 3663.6000000000004,
+            "p99": 13577.68999999993
           },
           "throughput_last_30m": {
-            "p50": 24,
-            "p75": 35,
-            "p90": 47,
-            "p99": 74.72000000000003
+            "p50": 39,
+            "p75": 55,
+            "p90": 77,
+            "p99": 147.52999999999975
           },
           "context_length": 262144,
           "max_completion_tokens": null
@@ -657,18 +622,18 @@
           "tag": "venice",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.60880195599022,
+          "uptime_last_30m": 99.44459137794234,
           "latency_last_30m": {
-            "p50": 1599,
-            "p75": 2362.75,
-            "p90": 3694,
-            "p99": 10381.75
+            "p50": 1890,
+            "p75": 2635,
+            "p90": 3927.6000000000004,
+            "p99": 12558.630000000001
           },
           "throughput_last_30m": {
-            "p50": 30.5,
+            "p50": 30,
             "p75": 38,
-            "p90": 45,
-            "p99": 57
+            "p90": 46,
+            "p99": 59
           },
           "context_length": 256000,
           "max_completion_tokens": null
@@ -684,23 +649,45 @@
       "createdAt": "2026-02-11T16:59:42.000Z",
       "endpoints": [
         {
+          "providerName": "Ambient",
+          "providerSlug": "ambient",
+          "tag": "ambient/fp8",
+          "quantization": "fp8",
+          "status": -5,
+          "uptime_last_30m": 70.52631578947368,
+          "latency_last_30m": {
+            "p50": 3545.5,
+            "p75": 14353.5,
+            "p90": 34767.79999999998,
+            "p99": 66171.93999999997
+          },
+          "throughput_last_30m": {
+            "p50": 13,
+            "p75": 16,
+            "p90": 21.69999999999999,
+            "p99": 28
+          },
+          "context_length": 202752,
+          "max_completion_tokens": 131072
+        },
+        {
           "providerName": "AtlasCloud",
           "providerSlug": "atlas-cloud",
           "tag": "atlas-cloud/fp8",
           "quantization": "fp8",
           "status": -2,
-          "uptime_last_30m": 87.74013272790779,
+          "uptime_last_30m": 92.15181730459955,
           "latency_last_30m": {
-            "p50": 6757,
-            "p75": 11921,
-            "p90": 18556,
-            "p99": 40152.899999999994
+            "p50": 4813,
+            "p75": 7322,
+            "p90": 11620,
+            "p99": 24006.000000000015
           },
           "throughput_last_30m": {
-            "p50": 19,
-            "p75": 27,
-            "p90": 35,
-            "p99": 52
+            "p50": 21,
+            "p75": 29,
+            "p90": 37,
+            "p99": 50
           },
           "context_length": 202752,
           "max_completion_tokens": 202752
@@ -711,18 +698,18 @@
           "tag": "deepinfra/fp4",
           "quantization": "fp4",
           "status": 0,
-          "uptime_last_30m": 99.88917620982637,
+          "uptime_last_30m": 99.94515539305301,
           "latency_last_30m": {
-            "p50": 1228,
-            "p75": 1903,
-            "p90": 3873.7000000000016,
-            "p99": 14538.930000000011
+            "p50": 1120,
+            "p75": 1556,
+            "p90": 2690,
+            "p99": 9652.770000000008
           },
           "throughput_last_30m": {
-            "p50": 25,
+            "p50": 26,
             "p75": 32,
-            "p90": 40,
-            "p99": 59
+            "p90": 39,
+            "p99": 54
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -735,16 +722,16 @@
           "status": 0,
           "uptime_last_30m": null,
           "latency_last_30m": {
-            "p50": 1859,
-            "p75": 2311,
-            "p90": 2854,
-            "p99": 10181.400000000014
+            "p50": 1846,
+            "p75": 2538.5,
+            "p90": 5672.4000000000015,
+            "p99": 10864.879999999988
           },
           "throughput_last_30m": {
-            "p50": 78,
-            "p75": 89,
-            "p90": 97,
-            "p99": 104.80000000000001
+            "p50": 58,
+            "p75": 73,
+            "p90": 88,
+            "p99": 99.13999999999997
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -757,16 +744,16 @@
           "status": 0,
           "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 351,
-            "p75": 841,
-            "p90": 2174.4,
-            "p99": 10686.999999999993
+            "p50": 320,
+            "p75": 633,
+            "p90": 1587.6000000000004,
+            "p99": 10102.760000000058
           },
           "throughput_last_30m": {
-            "p50": 49,
-            "p75": 56,
-            "p90": 62,
-            "p99": 71
+            "p50": 61,
+            "p75": 66,
+            "p90": 71,
+            "p99": 80.6400000000001
           },
           "context_length": 202752,
           "max_completion_tokens": 202752
@@ -777,18 +764,18 @@
           "tag": "gmicloud/fp8",
           "quantization": "fp8",
           "status": -2,
-          "uptime_last_30m": 80.6930693069307,
+          "uptime_last_30m": 86.14457831325302,
           "latency_last_30m": {
-            "p50": 6662,
-            "p75": 10579,
-            "p90": 17859,
-            "p99": 35748.80000000009
+            "p50": 3121,
+            "p75": 7393.5,
+            "p90": 11090,
+            "p99": 24099.040000000106
           },
           "throughput_last_30m": {
-            "p50": 34,
-            "p75": 45,
-            "p90": 57,
-            "p99": 64
+            "p50": 38,
+            "p75": 50,
+            "p90": 60,
+            "p99": 78
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -799,18 +786,18 @@
           "tag": "novita/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 99.50592885375494,
+          "uptime_last_30m": 99.4475138121547,
           "latency_last_30m": {
-            "p50": 3555.5,
-            "p75": 5980.5,
-            "p90": 9284.599999999999,
-            "p99": 18662.049999999996
+            "p50": 4509,
+            "p75": 6954.25,
+            "p90": 10035.500000000004,
+            "p99": 18935.330000000005
           },
           "throughput_last_30m": {
-            "p50": 25,
-            "p75": 32,
-            "p90": 37,
-            "p99": 49
+            "p50": 19,
+            "p75": 29,
+            "p90": 36,
+            "p99": 47
           },
           "context_length": 202800,
           "max_completion_tokens": 131072
@@ -821,18 +808,18 @@
           "tag": "parasail/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 97.02048417132217,
+          "uptime_last_30m": 99.36051159072741,
           "latency_last_30m": {
-            "p50": 1212.5,
-            "p75": 2877,
-            "p90": 7181.5000000000055,
-            "p99": 22249.88999999999
+            "p50": 828,
+            "p75": 2032,
+            "p90": 5514,
+            "p99": 15003.949999999995
           },
           "throughput_last_30m": {
-            "p50": 26,
+            "p50": 28,
             "p75": 33,
-            "p90": 37,
-            "p99": 40
+            "p90": 36,
+            "p99": 38.549999999999955
           },
           "context_length": 202752,
           "max_completion_tokens": 131072
@@ -842,19 +829,19 @@
           "providerSlug": "phala",
           "tag": "phala",
           "quantization": "unknown",
-          "status": 0,
-          "uptime_last_30m": 95.86956521739131,
+          "status": -2,
+          "uptime_last_30m": 90.74446680080483,
           "latency_last_30m": {
-            "p50": 2680,
-            "p75": 4479,
-            "p90": 9111,
-            "p99": 45450.400000000154
+            "p50": 2306,
+            "p75": 2996,
+            "p90": 4890.400000000001,
+            "p99": 47209.62000000001
           },
           "throughput_last_30m": {
-            "p50": 19,
-            "p75": 23,
-            "p90": 28,
-            "p99": 37.60000000000002
+            "p50": 23,
+            "p75": 29,
+            "p90": 35,
+            "p99": 44
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -865,18 +852,18 @@
           "tag": "siliconflow/fp8",
           "quantization": "fp8",
           "status": -2,
-          "uptime_last_30m": 89.70632758098698,
+          "uptime_last_30m": 90.38336582196231,
           "latency_last_30m": {
-            "p50": 5047.5,
-            "p75": 8638.5,
-            "p90": 14996.599999999999,
-            "p99": 48420.02999999988
+            "p50": 4249,
+            "p75": 7409,
+            "p90": 11601.599999999999,
+            "p99": 34369.39999999988
           },
           "throughput_last_30m": {
-            "p50": 20,
+            "p50": 18,
             "p75": 28,
-            "p90": 33,
-            "p99": 40
+            "p90": 36,
+            "p99": 44
           },
           "context_length": 204800,
           "max_completion_tokens": 131072
@@ -886,19 +873,19 @@
           "providerSlug": "together",
           "tag": "together",
           "quantization": "unknown",
-          "status": 0,
-          "uptime_last_30m": 97.05882352941177,
+          "status": -5,
+          "uptime_last_30m": 79.38905673044646,
           "latency_last_30m": {
-            "p50": 1841,
-            "p75": 4834,
-            "p90": 9667,
-            "p99": 21184.400000000005
+            "p50": 1260,
+            "p75": 3615.5,
+            "p90": 7055.600000000001,
+            "p99": 22748.88000000002
           },
           "throughput_last_30m": {
-            "p50": 31,
-            "p75": 43,
-            "p90": 53,
-            "p99": 70
+            "p50": 35,
+            "p75": 53,
+            "p90": 67,
+            "p99": 92
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -909,18 +896,18 @@
           "tag": "venice/fp8",
           "quantization": "fp8",
           "status": -2,
-          "uptime_last_30m": 86.26845176793684,
+          "uptime_last_30m": 93.15673289183223,
           "latency_last_30m": {
-            "p50": 2034,
-            "p75": 4335.5,
-            "p90": 9090.60000000001,
-            "p99": 25701.44000000001
+            "p50": 1234.5,
+            "p75": 2285.75,
+            "p90": 6086.5,
+            "p99": 20981.800000000043
           },
           "throughput_last_30m": {
-            "p50": 17,
-            "p75": 22,
-            "p90": 25,
-            "p99": 29
+            "p50": 24,
+            "p75": 28,
+            "p90": 32,
+            "p99": 38
           },
           "context_length": 198000,
           "max_completion_tokens": null
@@ -931,24 +918,24 @@
           "tag": "z-ai",
           "quantization": "unknown",
           "status": -2,
-          "uptime_last_30m": 94.6700890834969,
+          "uptime_last_30m": 94.58184184835665,
           "latency_last_30m": {
-            "p50": 10669,
-            "p75": 14518,
-            "p90": 19304.800000000003,
-            "p99": 37627.839999999866
+            "p50": 9382.5,
+            "p75": 13267.75,
+            "p90": 17562.6,
+            "p99": 30199.160000000003
           },
           "throughput_last_30m": {
-            "p50": 17,
-            "p75": 20,
-            "p90": 25,
-            "p99": 37
+            "p50": 18,
+            "p75": 22,
+            "p90": 27,
+            "p99": 39
           },
           "context_length": 202752,
           "max_completion_tokens": 131072
         }
       ],
-      "providerCount": 12
+      "providerCount": 13
     },
     {
       "organization": "z-ai",
@@ -963,18 +950,18 @@
           "tag": "deepinfra/bf16",
           "quantization": "bf16",
           "status": 0,
-          "uptime_last_30m": 98.91304347826086,
+          "uptime_last_30m": 98.4670540239832,
           "latency_last_30m": {
-            "p50": 500,
-            "p75": 863,
-            "p90": 1622.2000000000003,
-            "p99": 12985
+            "p50": 663,
+            "p75": 1117,
+            "p90": 2732,
+            "p99": 13183.57
           },
           "throughput_last_30m": {
-            "p50": 58,
-            "p75": 73,
-            "p90": 83,
-            "p99": 96
+            "p50": 42.5,
+            "p75": 56,
+            "p90": 67,
+            "p99": 82
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -984,19 +971,19 @@
           "providerSlug": "novita",
           "tag": "novita/bf16",
           "quantization": "bf16",
-          "status": 0,
-          "uptime_last_30m": 96.48181276088252,
+          "status": -2,
+          "uptime_last_30m": 94.47713897691263,
           "latency_last_30m": {
-            "p50": 1175,
-            "p75": 2013.75,
-            "p90": 11981.900000000001,
-            "p99": 88886.87999999944
+            "p50": 1141.5,
+            "p75": 2461.75,
+            "p90": 11944.1,
+            "p99": 64832.18999999994
           },
           "throughput_last_30m": {
-            "p50": 41,
-            "p75": 53,
-            "p90": 65,
-            "p99": 83.86999999999989
+            "p50": 42,
+            "p75": 57,
+            "p90": 68,
+            "p99": 86
           },
           "context_length": 200000,
           "max_completion_tokens": 128000
@@ -1007,18 +994,18 @@
           "tag": "phala",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.76869699306091,
+          "uptime_last_30m": 98.78048780487805,
           "latency_last_30m": {
-            "p50": 1364,
-            "p75": 2145.75,
-            "p90": 3666.200000000002,
-            "p99": 17953.149999999976
+            "p50": 1734,
+            "p75": 3382,
+            "p90": 5169.799999999999,
+            "p99": 21500.05000000004
           },
           "throughput_last_30m": {
-            "p50": 14,
-            "p75": 27,
-            "p90": 36,
-            "p99": 45
+            "p50": 16,
+            "p75": 32,
+            "p90": 43,
+            "p99": 49
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -1029,18 +1016,18 @@
           "tag": "venice/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 99.73684210526315,
+          "uptime_last_30m": 98.25581395348837,
           "latency_last_30m": {
-            "p50": 744.5,
-            "p75": 1489.5,
-            "p90": 2947.600000000001,
-            "p99": 12894.020000000017
+            "p50": 709,
+            "p75": 1202.5,
+            "p90": 3531,
+            "p99": 14355.399999999969
           },
           "throughput_last_30m": {
-            "p50": 61,
-            "p75": 77,
-            "p90": 85,
-            "p99": 98.69000000000005
+            "p50": 52,
+            "p75": 63,
+            "p90": 73,
+            "p99": 88.09999999999997
           },
           "context_length": 128000,
           "max_completion_tokens": null
@@ -1050,19 +1037,19 @@
           "providerSlug": "z-ai",
           "tag": "z-ai",
           "quantization": "unknown",
-          "status": -5,
-          "uptime_last_30m": 59.79381443298969,
+          "status": 0,
+          "uptime_last_30m": null,
           "latency_last_30m": {
-            "p50": 6292,
-            "p75": 13016.25,
-            "p90": 30750.100000000024,
-            "p99": 64482.62000000004
+            "p50": 18070,
+            "p75": 41987,
+            "p90": 76190.20000000001,
+            "p99": 96777.22
           },
           "throughput_last_30m": {
-            "p50": 42.5,
-            "p75": 50.25,
-            "p90": 58.7,
-            "p99": 73.04000000000002
+            "p50": 12,
+            "p75": 22.5,
+            "p90": 37.20000000000001,
+            "p99": 60.300000000000004
           },
           "context_length": 200000,
           "max_completion_tokens": 131072
@@ -1083,18 +1070,18 @@
           "tag": "atlas-cloud/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 100,
+          "uptime_last_30m": 98.85664028144238,
           "latency_last_30m": {
-            "p50": 1169,
-            "p75": 1680.5,
-            "p90": 2344.6,
-            "p99": 12189.220000000018
+            "p50": 2358,
+            "p75": 4486,
+            "p90": 8364.4,
+            "p99": 15292.399999999996
           },
           "throughput_last_30m": {
-            "p50": 33,
-            "p75": 41,
-            "p90": 50,
-            "p99": 61
+            "p50": 16,
+            "p75": 22,
+            "p90": 27,
+            "p99": 59
           },
           "context_length": 202752,
           "max_completion_tokens": 202752
@@ -1107,16 +1094,16 @@
           "status": 0,
           "uptime_last_30m": null,
           "latency_last_30m": {
-            "p50": 2858.5,
-            "p75": 3798.25,
-            "p90": 8238.5,
-            "p99": 12859.27
+            "p50": 2664,
+            "p75": 4598,
+            "p90": 6736.900000000001,
+            "p99": 13867.880000000434
           },
           "throughput_last_30m": {
-            "p50": 21,
-            "p75": 23,
-            "p90": 24,
-            "p99": 27
+            "p50": 18.5,
+            "p75": 21,
+            "p90": 22,
+            "p99": 24
           },
           "context_length": 202752,
           "max_completion_tokens": 65535
@@ -1127,18 +1114,18 @@
           "tag": "deepinfra/fp4",
           "quantization": "fp4",
           "status": 0,
-          "uptime_last_30m": 99.69635627530364,
+          "uptime_last_30m": 99.96809189534142,
           "latency_last_30m": {
-            "p50": 1362,
-            "p75": 2003,
-            "p90": 3532.0000000000027,
-            "p99": 12910.680000000055
+            "p50": 1164,
+            "p75": 1679,
+            "p90": 2619.2000000000007,
+            "p99": 7625.310000000004
           },
           "throughput_last_30m": {
             "p50": 28,
-            "p75": 37,
-            "p90": 48.40000000000009,
-            "p99": 62
+            "p75": 42,
+            "p90": 58,
+            "p99": 80
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -1149,18 +1136,18 @@
           "tag": "google-vertex",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.93946731234867,
+          "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 701,
-            "p75": 1264,
-            "p90": 1589.9,
-            "p99": 5463.799999999999
+            "p50": 637,
+            "p75": 1193,
+            "p90": 1848.6000000000004,
+            "p99": 6688.23999999996
           },
           "throughput_last_30m": {
-            "p50": 136.5,
-            "p75": 173,
-            "p90": 196,
-            "p99": 249.28999999999996
+            "p50": 106,
+            "p75": 157,
+            "p90": 183,
+            "p99": 238.27999999999975
           },
           "context_length": 200000,
           "max_completion_tokens": 128000
@@ -1171,18 +1158,18 @@
           "tag": "io-net/bf16",
           "quantization": "bf16",
           "status": 0,
-          "uptime_last_30m": 99.73985431841832,
+          "uptime_last_30m": 99.13098770665536,
           "latency_last_30m": {
-            "p50": 1032.5,
-            "p75": 2032,
-            "p90": 4969.000000000013,
-            "p99": 18229.21
+            "p50": 979,
+            "p75": 1514,
+            "p90": 3825.800000000001,
+            "p99": 10952.199999999999
           },
           "throughput_last_30m": {
-            "p50": 34,
-            "p75": 41,
-            "p90": 46,
-            "p99": 51
+            "p50": 19,
+            "p75": 25,
+            "p90": 37,
+            "p99": 70
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -1195,16 +1182,16 @@
           "status": 0,
           "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 919.5,
-            "p75": 1289.5,
-            "p90": 2503.1000000000004,
-            "p99": 9455.709999999961
+            "p50": 798,
+            "p75": 1334.25,
+            "p90": 2593,
+            "p99": 7165.450000000004
           },
           "throughput_last_30m": {
-            "p50": 35,
-            "p75": 40.75,
-            "p90": 44,
-            "p99": 53
+            "p50": 52,
+            "p75": 57,
+            "p90": 65,
+            "p99": 76
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -1215,18 +1202,18 @@
           "tag": "nextbit/fp4",
           "quantization": "fp4",
           "status": 0,
-          "uptime_last_30m": 95.94594594594594,
+          "uptime_last_30m": null,
           "latency_last_30m": {
-            "p50": 3127,
-            "p75": 3690,
-            "p90": 7022,
-            "p99": 29710.599999999886
+            "p50": 2211,
+            "p75": 4621,
+            "p90": 7736.9,
+            "p99": 35761.91000000002
           },
           "throughput_last_30m": {
-            "p50": 13,
-            "p75": 15,
-            "p90": 17,
-            "p99": 19
+            "p50": 20,
+            "p75": 22,
+            "p90": 24,
+            "p99": 26
           },
           "context_length": 202752,
           "max_completion_tokens": 202752
@@ -1236,19 +1223,19 @@
           "providerSlug": "novita",
           "tag": "novita/fp8",
           "quantization": "fp8",
-          "status": -2,
-          "uptime_last_30m": 86.69527896995707,
+          "status": 0,
+          "uptime_last_30m": null,
           "latency_last_30m": {
-            "p50": 3167.5,
-            "p75": 11175,
-            "p90": 16156.400000000001,
-            "p99": 33432.780000000035
+            "p50": 3469,
+            "p75": 8190.5,
+            "p90": 19901.399999999987,
+            "p99": 33969.70000000002
           },
           "throughput_last_30m": {
-            "p50": 22,
-            "p75": 60,
-            "p90": 68,
-            "p99": 74.99000000000001
+            "p50": 17,
+            "p75": 44,
+            "p90": 61,
+            "p99": 70.98
           },
           "context_length": 204800,
           "max_completion_tokens": 131072
@@ -1259,18 +1246,18 @@
           "tag": "parasail/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 100,
+          "uptime_last_30m": 97.85714285714285,
           "latency_last_30m": {
-            "p50": 1012,
-            "p75": 1261,
-            "p90": 2960.0000000000014,
-            "p99": 19961.919999999976
+            "p50": 643,
+            "p75": 1421,
+            "p90": 3535.7999999999984,
+            "p99": 20394.799999999996
           },
           "throughput_last_30m": {
-            "p50": 68,
-            "p75": 77,
-            "p90": 88,
-            "p99": 111
+            "p50": 30,
+            "p75": 36,
+            "p90": 45.19999999999999,
+            "p99": 63
           },
           "context_length": 202752,
           "max_completion_tokens": 202752
@@ -1281,18 +1268,18 @@
           "tag": "siliconflow/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 95.56650246305419,
+          "uptime_last_30m": null,
           "latency_last_30m": {
-            "p50": 6163.5,
-            "p75": 10840.5,
-            "p90": 18374.4,
-            "p99": 34005.19
+            "p50": 11891,
+            "p75": 26324.5,
+            "p90": 39742.40000000002,
+            "p99": 72698.58000000005
           },
           "throughput_last_30m": {
-            "p50": 32,
-            "p75": 45.25,
-            "p90": 51,
-            "p99": 58
+            "p50": 30,
+            "p75": 40.5,
+            "p90": 49.20000000000002,
+            "p99": 55.260000000000005
           },
           "context_length": 204800,
           "max_completion_tokens": 204800
@@ -1303,18 +1290,18 @@
           "tag": "together",
           "quantization": "unknown",
           "status": -2,
-          "uptime_last_30m": 94.97354497354497,
+          "uptime_last_30m": 91.66666666666666,
           "latency_last_30m": {
-            "p50": 1175,
-            "p75": 3694,
-            "p90": 7057.600000000011,
-            "p99": 42703.52000000008
+            "p50": 2379.5,
+            "p75": 5188,
+            "p90": 7694.299999999997,
+            "p99": 28017.479999999978
           },
           "throughput_last_30m": {
-            "p50": 52,
-            "p75": 76,
-            "p90": 93,
-            "p99": 123.08000000000004
+            "p50": 44,
+            "p75": 61,
+            "p90": 76.3,
+            "p99": 110.71999999999997
           },
           "context_length": 202752,
           "max_completion_tokens": null
@@ -1325,18 +1312,18 @@
           "tag": "venice/fp4",
           "quantization": "fp4",
           "status": 0,
-          "uptime_last_30m": 100,
+          "uptime_last_30m": null,
           "latency_last_30m": {
-            "p50": 894,
-            "p75": 1383,
-            "p90": 1984.2,
-            "p99": 6954.9000000000015
+            "p50": 1212.5,
+            "p75": 1737.5,
+            "p90": 3962.8000000000043,
+            "p99": 10170.269999999997
           },
           "throughput_last_30m": {
-            "p50": 26,
-            "p75": 32,
-            "p90": 47,
-            "p99": 72.24000000000001
+            "p50": 72,
+            "p75": 82.75,
+            "p90": 96.50000000000003,
+            "p99": 107.08999999999997
           },
           "context_length": 198000,
           "max_completion_tokens": null
@@ -1346,19 +1333,19 @@
           "providerSlug": "z-ai",
           "tag": "z-ai",
           "quantization": "unknown",
-          "status": 0,
-          "uptime_last_30m": 97.81447304516756,
+          "status": -2,
+          "uptime_last_30m": 92.91759465478842,
           "latency_last_30m": {
-            "p50": 10858.5,
-            "p75": 18455.5,
-            "p90": 28430.600000000013,
-            "p99": 61395.559999999794
+            "p50": 8157,
+            "p75": 13058.5,
+            "p90": 21603.6,
+            "p99": 49749.64000000001
           },
           "throughput_last_30m": {
-            "p50": 10,
-            "p75": 16,
-            "p90": 21,
-            "p99": 32
+            "p50": 13,
+            "p75": 18,
+            "p90": 24,
+            "p99": 34
           },
           "context_length": 200000,
           "max_completion_tokens": 131072
@@ -1379,18 +1366,18 @@
           "tag": "atlas-cloud/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 99.70161977834611,
+          "uptime_last_30m": 99.8015029065646,
           "latency_last_30m": {
-            "p50": 3591,
-            "p75": 5059.25,
-            "p90": 7497.600000000002,
-            "p99": 14568.830000000016
+            "p50": 3387,
+            "p75": 4582.5,
+            "p90": 6847,
+            "p99": 12627.499999999993
           },
           "throughput_last_30m": {
-            "p50": 13,
-            "p75": 18,
-            "p90": 23,
-            "p99": 37
+            "p50": 18,
+            "p75": 27,
+            "p90": 35,
+            "p99": 49
           },
           "context_length": 196608,
           "max_completion_tokens": 196608
@@ -1401,33 +1388,43 @@
           "tag": "chutes/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 100,
+          "uptime_last_30m": 97.12793733681463,
           "latency_last_30m": {
-            "p50": 2171,
-            "p75": 2669.25,
-            "p90": 3798.2000000000003,
-            "p99": 13470.320000000003
+            "p50": 3074,
+            "p75": 5794,
+            "p90": 10755.800000000003,
+            "p99": 23159.059999999983
           },
           "throughput_last_30m": {
-            "p50": 38,
-            "p75": 48,
-            "p90": 53.900000000000006,
-            "p99": 65.09
+            "p50": 16,
+            "p75": 23,
+            "p90": 28.400000000000034,
+            "p99": 37
           },
           "context_length": 196608,
           "max_completion_tokens": 65536
         },
         {
-          "providerName": "Clarifai",
-          "providerSlug": "clarifai",
-          "tag": "clarifai",
-          "quantization": "unknown",
-          "status": -5,
-          "uptime_last_30m": 58.75,
-          "latency_last_30m": null,
-          "throughput_last_30m": null,
+          "providerName": "DeepInfra",
+          "providerSlug": "deepinfra",
+          "tag": "deepinfra/fp8",
+          "quantization": "fp8",
+          "status": 0,
+          "uptime_last_30m": 96.80327868852459,
+          "latency_last_30m": {
+            "p50": 1569,
+            "p75": 4673,
+            "p90": 8196.8,
+            "p99": 14490.759999999993
+          },
+          "throughput_last_30m": {
+            "p50": 6,
+            "p75": 8,
+            "p90": 12,
+            "p99": 17
+          },
           "context_length": 196608,
-          "max_completion_tokens": 196608
+          "max_completion_tokens": null
         },
         {
           "providerName": "Fireworks",
@@ -1435,18 +1432,18 @@
           "tag": "fireworks",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 98.59943977591037,
+          "uptime_last_30m": 99.07692307692308,
           "latency_last_30m": {
-            "p50": 1492.5,
-            "p75": 3503.5,
-            "p90": 7822,
-            "p99": 19412.85
+            "p50": 2858,
+            "p75": 5314.5,
+            "p90": 9134.000000000002,
+            "p99": 29395.559999999954
           },
           "throughput_last_30m": {
-            "p50": 90,
-            "p75": 141.5,
-            "p90": 178,
-            "p99": 258.69
+            "p50": 32,
+            "p75": 57.5,
+            "p90": 92.80000000000001,
+            "p99": 174.41999999999996
           },
           "context_length": 196608,
           "max_completion_tokens": null
@@ -1457,18 +1454,18 @@
           "tag": "friendli",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.98073959938367,
+          "uptime_last_30m": 99.96096799375488,
           "latency_last_30m": {
-            "p50": 670,
-            "p75": 1263.5,
-            "p90": 2082.800000000001,
-            "p99": 9797.640000000018
+            "p50": 898,
+            "p75": 1680.5,
+            "p90": 4033.2000000000007,
+            "p99": 12735.640000000025
           },
           "throughput_last_30m": {
-            "p50": 52,
-            "p75": 76,
-            "p90": 107,
-            "p99": 159
+            "p50": 29,
+            "p75": 45,
+            "p90": 65,
+            "p99": 124
           },
           "context_length": 196608,
           "max_completion_tokens": 196608
@@ -1479,18 +1476,18 @@
           "tag": "inceptron/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 99.90560694732868,
+          "uptime_last_30m": 99.95716121662144,
           "latency_last_30m": {
-            "p50": 611,
-            "p75": 1526.5,
-            "p90": 3624.8000000000047,
-            "p99": 6813.279999999992
+            "p50": 522,
+            "p75": 962,
+            "p90": 2139.4000000000015,
+            "p99": 6250.619999999986
           },
           "throughput_last_30m": {
-            "p50": 40,
-            "p75": 52,
-            "p90": 61,
-            "p99": 78
+            "p50": 33,
+            "p75": 42,
+            "p90": 50,
+            "p99": 61
           },
           "context_length": 196608,
           "max_completion_tokens": 196608
@@ -1501,18 +1498,18 @@
           "tag": "ionstream/fp8",
           "quantization": "fp8",
           "status": -2,
-          "uptime_last_30m": 80.68893528183716,
+          "uptime_last_30m": 87.14622641509435,
           "latency_last_30m": {
-            "p50": 4330,
-            "p75": 9539.25,
-            "p90": 18681.3,
-            "p99": 56411.709999999846
+            "p50": 2150.5,
+            "p75": 8507.75,
+            "p90": 16777.2,
+            "p99": 33591.69999999998
           },
           "throughput_last_30m": {
-            "p50": 6,
-            "p75": 9,
-            "p90": 11,
-            "p99": 14.289999999999964
+            "p50": 8,
+            "p75": 11,
+            "p90": 14,
+            "p99": 18
           },
           "context_length": 196608,
           "max_completion_tokens": 65536
@@ -1523,18 +1520,18 @@
           "tag": "minimax/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 99.508715928078,
+          "uptime_last_30m": 99.62029509951327,
           "latency_last_30m": {
-            "p50": 3257,
-            "p75": 6561,
-            "p90": 10652.200000000004,
-            "p99": 19438.380000000012
+            "p50": 3236,
+            "p75": 6611.5,
+            "p90": 10509.400000000003,
+            "p99": 18178.610000000004
           },
           "throughput_last_30m": {
             "p50": 24,
             "p75": 34,
-            "p90": 43,
-            "p99": 59
+            "p90": 44,
+            "p99": 60
           },
           "context_length": 204800,
           "max_completion_tokens": 131072
@@ -1545,18 +1542,18 @@
           "tag": "nextbit/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 99.14040114613181,
+          "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 945.5,
-            "p75": 2322.75,
-            "p90": 6530.300000000007,
-            "p99": 14914.34
+            "p50": 1126,
+            "p75": 2227.5,
+            "p90": 4732.000000000004,
+            "p99": 15090.080000000005
           },
           "throughput_last_30m": {
-            "p50": 24,
-            "p75": 42,
-            "p90": 53,
-            "p99": 68.76999999999998
+            "p50": 32,
+            "p75": 44,
+            "p90": 53.400000000000034,
+            "p99": 64
           },
           "context_length": 196608,
           "max_completion_tokens": 196608
@@ -1567,17 +1564,17 @@
           "tag": "novita/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 96.05231866825208,
+          "uptime_last_30m": 97.64295962287353,
           "latency_last_30m": {
-            "p50": 4081.5,
-            "p75": 7994.25,
-            "p90": 12627.500000000004,
-            "p99": 27002.65000000004
+            "p50": 3396,
+            "p75": 6610,
+            "p90": 11767,
+            "p99": 24022.719999999987
           },
           "throughput_last_30m": {
-            "p50": 17,
+            "p50": 18,
             "p75": 27,
-            "p90": 37,
+            "p90": 36,
             "p99": 54
           },
           "context_length": 204800,
@@ -1589,18 +1586,18 @@
           "tag": "parasail/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 98.04618117229128,
+          "uptime_last_30m": 99.43639291465378,
           "latency_last_30m": {
-            "p50": 1091,
-            "p75": 2772.25,
-            "p90": 7112.3,
-            "p99": 13794.720000000001
+            "p50": 945,
+            "p75": 2232,
+            "p90": 6184.200000000012,
+            "p99": 12953.940000000006
           },
           "throughput_last_30m": {
-            "p50": 30,
-            "p75": 53.75,
-            "p90": 77,
-            "p99": 119
+            "p50": 40,
+            "p75": 55,
+            "p90": 68,
+            "p99": 92.66000000000008
           },
           "context_length": 196608,
           "max_completion_tokens": 196608
@@ -1611,18 +1608,18 @@
           "tag": "sambanova",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 96.08988764044943,
+          "uptime_last_30m": 98.80505291908501,
           "latency_last_30m": {
-            "p50": 1013,
-            "p75": 2170.75,
-            "p90": 5727.899999999999,
-            "p99": 18832.33000000001
+            "p50": 1304,
+            "p75": 2101.75,
+            "p90": 4106.9,
+            "p99": 20952.45000000003
           },
           "throughput_last_30m": {
-            "p50": 136,
-            "p75": 247,
-            "p90": 324,
-            "p99": 388
+            "p50": 116,
+            "p75": 205.25,
+            "p90": 276.9000000000001,
+            "p99": 381
           },
           "context_length": 163840,
           "max_completion_tokens": 16384
@@ -1632,19 +1629,19 @@
           "providerSlug": "siliconflow",
           "tag": "siliconflow/fp8",
           "quantization": "fp8",
-          "status": 0,
-          "uptime_last_30m": 96.86547139895109,
+          "status": -2,
+          "uptime_last_30m": 87.94168096054888,
           "latency_last_30m": {
-            "p50": 6488,
-            "p75": 11968,
-            "p90": 20206.000000000007,
-            "p99": 35581.18
+            "p50": 9766,
+            "p75": 18387.25,
+            "p90": 29217.10000000006,
+            "p99": 52497.399999999994
           },
           "throughput_last_30m": {
-            "p50": 15,
-            "p75": 28,
-            "p90": 43,
-            "p99": 66
+            "p50": 10,
+            "p75": 18,
+            "p90": 32,
+            "p99": 61.789999999999964
           },
           "context_length": 196608,
           "max_completion_tokens": 131072
@@ -1655,18 +1652,18 @@
           "tag": "together",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.85994397759103,
+          "uptime_last_30m": 97.65765765765767,
           "latency_last_30m": {
-            "p50": 647,
-            "p75": 1554.5,
-            "p90": 4021.800000000008,
-            "p99": 8956.180000000002
+            "p50": 672,
+            "p75": 1341.5,
+            "p90": 3225.200000000002,
+            "p99": 8844.119999999999
           },
           "throughput_last_30m": {
-            "p50": 30,
-            "p75": 46,
-            "p90": 60,
-            "p99": 81
+            "p50": 36,
+            "p75": 57,
+            "p90": 74,
+            "p99": 102
           },
           "context_length": 196608,
           "max_completion_tokens": null
@@ -1677,18 +1674,18 @@
           "tag": "venice",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.73462002412545,
+          "uptime_last_30m": 98.25913242009132,
           "latency_last_30m": {
-            "p50": 1571,
-            "p75": 3102.75,
-            "p90": 6594.300000000002,
-            "p99": 11392.319999999996
+            "p50": 2203,
+            "p75": 5199,
+            "p90": 9487.600000000002,
+            "p99": 17753.20000000002
           },
           "throughput_last_30m": {
-            "p50": 15,
-            "p75": 21,
-            "p90": 27,
-            "p99": 38
+            "p50": 6,
+            "p75": 9,
+            "p90": 11,
+            "p99": 16
           },
           "context_length": 198000,
           "max_completion_tokens": null
@@ -1711,16 +1708,16 @@
           "status": 0,
           "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 748,
-            "p75": 985,
-            "p90": 1272.0000000000005,
-            "p99": 2499.8999999999896
+            "p50": 778.5,
+            "p75": 1027.25,
+            "p90": 1315.5,
+            "p99": 3128
           },
           "throughput_last_30m": {
-            "p50": 24,
-            "p75": 35,
-            "p90": 61.20000000000002,
-            "p99": 158
+            "p50": 26,
+            "p75": 37,
+            "p90": 49.5,
+            "p99": 104.5
           },
           "context_length": 65536,
           "max_completion_tokens": 2048
@@ -1741,18 +1738,18 @@
           "tag": "atlas-cloud/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 98.02631578947368,
+          "uptime_last_30m": 97.57085020242914,
           "latency_last_30m": {
-            "p50": 5544,
-            "p75": 9753,
-            "p90": 20775.800000000003,
-            "p99": 60941.52000000005
+            "p50": 4436.5,
+            "p75": 6159,
+            "p90": 10926.6,
+            "p99": 44070.720000000074
           },
           "throughput_last_30m": {
-            "p50": 17,
-            "p75": 27,
-            "p90": 37.60000000000005,
-            "p99": 83
+            "p50": 21,
+            "p75": 34,
+            "p90": 65,
+            "p99": 82.59
           },
           "context_length": 196608,
           "max_completion_tokens": 196608
@@ -1763,18 +1760,18 @@
           "tag": "deepinfra/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 100,
+          "uptime_last_30m": 99.7173144876325,
           "latency_last_30m": {
-            "p50": 564,
-            "p75": 796.75,
-            "p90": 1513.600000000004,
-            "p99": 9108.029999999995
+            "p50": 761,
+            "p75": 1042.5,
+            "p90": 1516.0000000000007,
+            "p99": 3521.57999999997
           },
           "throughput_last_30m": {
-            "p50": 35,
-            "p75": 42,
-            "p90": 49.90000000000009,
-            "p99": 62
+            "p50": 43,
+            "p75": 48,
+            "p90": 55,
+            "p99": 67
           },
           "context_length": 196608,
           "max_completion_tokens": null
@@ -1785,20 +1782,20 @@
           "tag": "fireworks",
           "quantization": "unknown",
           "status": 0,
-          "uptime_last_30m": 99.16782246879335,
+          "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 2591,
-            "p75": 4425,
-            "p90": 7583.4000000000015,
-            "p99": 13122.160000000007
+            "p50": 2219,
+            "p75": 4653.5,
+            "p90": 6865,
+            "p99": 8879.099999999995
           },
           "throughput_last_30m": {
-            "p50": 65,
-            "p75": 83,
-            "p90": 108,
-            "p99": 149.86
+            "p50": 82,
+            "p75": 104,
+            "p90": 131,
+            "p99": 182.79999999999973
           },
-          "context_length": 204800,
+          "context_length": 196608,
           "max_completion_tokens": null
         },
         {
@@ -1808,39 +1805,29 @@
           "quantization": "unknown",
           "status": 0,
           "uptime_last_30m": 100,
-          "latency_last_30m": {
-            "p50": 663,
-            "p75": 1660.5,
-            "p90": 2093,
-            "p99": 8601.819999999992
-          },
-          "throughput_last_30m": {
-            "p50": 39,
-            "p75": 49,
-            "p90": 58.20000000000002,
-            "p99": 72.43999999999994
-          },
+          "latency_last_30m": null,
+          "throughput_last_30m": null,
           "context_length": 196608,
           "max_completion_tokens": 196608
         },
         {
           "providerName": "Minimax",
           "providerSlug": "minimax",
-          "tag": "minimax/highspeed",
+          "tag": "minimax/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 100,
+          "uptime_last_30m": 98.07692307692307,
           "latency_last_30m": {
-            "p50": 2121,
-            "p75": 3191,
-            "p90": 5934,
-            "p99": 14811
+            "p50": 2507,
+            "p75": 4519,
+            "p90": 7638.2000000000035,
+            "p99": 15412.079999999976
           },
           "throughput_last_30m": {
-            "p50": 39,
-            "p75": 51,
-            "p90": 60,
-            "p99": 88
+            "p50": 24,
+            "p75": 34,
+            "p90": 44,
+            "p99": 61.63999999999987
           },
           "context_length": 204800,
           "max_completion_tokens": 131072
@@ -1853,16 +1840,16 @@
           "status": 0,
           "uptime_last_30m": null,
           "latency_last_30m": {
-            "p50": 487.5,
-            "p75": 807.25,
-            "p90": 986.7000000000004,
-            "p99": 5521.82
+            "p50": 332.5,
+            "p75": 539.5,
+            "p90": 724.2,
+            "p99": 2178.8700000000044
           },
           "throughput_last_30m": {
-            "p50": 82,
-            "p75": 92,
-            "p90": 95.1,
-            "p99": 99.61
+            "p50": 80,
+            "p75": 85,
+            "p90": 93,
+            "p99": 97.55000000000001
           },
           "context_length": 196608,
           "max_completion_tokens": null
@@ -1873,18 +1860,18 @@
           "tag": "novita/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 98.63013698630137,
+          "uptime_last_30m": 98.83585564610011,
           "latency_last_30m": {
-            "p50": 2656,
-            "p75": 5653,
-            "p90": 10428,
-            "p99": 21290.640000000007
+            "p50": 2881,
+            "p75": 5620,
+            "p90": 10229.800000000003,
+            "p99": 49400.839999999946
           },
           "throughput_last_30m": {
-            "p50": 21,
-            "p75": 29,
-            "p90": 34,
-            "p99": 49
+            "p50": 20,
+            "p75": 27,
+            "p90": 36,
+            "p99": 49.51999999999998
           },
           "context_length": 204800,
           "max_completion_tokens": 131072
@@ -1897,16 +1884,16 @@
           "status": 0,
           "uptime_last_30m": null,
           "latency_last_30m": {
-            "p50": 2957,
-            "p75": 5884,
-            "p90": 8447.4,
-            "p99": 42576.22999999981
+            "p50": 1309,
+            "p75": 2124.5,
+            "p90": 3271.5,
+            "p99": 4401.449999999999
           },
           "throughput_last_30m": {
-            "p50": 57.5,
-            "p75": 76.25,
-            "p90": 83.1,
-            "p99": 94.63999999999999
+            "p50": 77.5,
+            "p75": 82.5,
+            "p90": 95,
+            "p99": 116.04999999999998
           },
           "context_length": 196608,
           "max_completion_tokens": 131072
@@ -1919,22 +1906,54 @@
           "status": 0,
           "uptime_last_30m": null,
           "latency_last_30m": {
-            "p50": 1298,
-            "p75": 2746,
-            "p90": 5933.8,
-            "p99": 11534.909999999994
+            "p50": 822.5,
+            "p75": 1029.75,
+            "p90": 1142.8000000000002,
+            "p99": 1917.6599999999985
           },
           "throughput_last_30m": {
-            "p50": 26.5,
-            "p75": 33,
-            "p90": 37.7,
-            "p99": 48
+            "p50": 45.5,
+            "p75": 52.75,
+            "p90": 58,
+            "p99": 77.17999999999996
           },
           "context_length": 198000,
           "max_completion_tokens": null
         }
       ],
       "providerCount": 9
+    },
+    {
+      "organization": "bytedance-seed",
+      "id": "bytedance-seed/seed-2.0-lite",
+      "name": "ByteDance Seed: Seed-2.0-Lite",
+      "created": 1773157231,
+      "createdAt": "2026-03-10T15:40:31.000Z",
+      "endpoints": [
+        {
+          "providerName": "Seed",
+          "providerSlug": "seed",
+          "tag": "seed/fp8",
+          "quantization": "fp8",
+          "status": 0,
+          "uptime_last_30m": 100,
+          "latency_last_30m": {
+            "p50": 2004,
+            "p75": 2253.5,
+            "p90": 2743.0000000000014,
+            "p99": 8729.000000000007
+          },
+          "throughput_last_30m": {
+            "p50": 38,
+            "p75": 39,
+            "p90": 40,
+            "p99": 57.98000000000002
+          },
+          "context_length": 262144,
+          "max_completion_tokens": 131072
+        }
+      ],
+      "providerCount": 1
     },
     {
       "organization": "bytedance-seed",
@@ -1951,16 +1970,16 @@
           "status": 0,
           "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 1595,
-            "p75": 2535,
-            "p90": 3473,
-            "p99": 9536.599999999975
+            "p50": 1790,
+            "p75": 2635.5,
+            "p90": 4180,
+            "p99": 42513.60000000003
           },
           "throughput_last_30m": {
-            "p50": 36,
+            "p50": 37,
             "p75": 38,
             "p90": 41,
-            "p99": 100.99999999999932
+            "p99": 90.3000000000003
           },
           "context_length": 262144,
           "max_completion_tokens": 131072
@@ -1983,16 +2002,16 @@
           "status": 0,
           "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 652,
-            "p75": 836.5,
-            "p90": 1186.2000000000003,
-            "p99": 2290.2699999999995
+            "p50": 443,
+            "p75": 560,
+            "p90": 807,
+            "p99": 1854.6500000000033
           },
           "throughput_last_30m": {
-            "p50": 119,
-            "p75": 159,
-            "p90": 181,
-            "p99": 206
+            "p50": 168,
+            "p75": 183,
+            "p90": 195,
+            "p99": 215
           },
           "context_length": 262144,
           "max_completion_tokens": 32768
@@ -2015,16 +2034,16 @@
           "status": 0,
           "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 986,
-            "p75": 1455.5,
-            "p90": 2387.5,
-            "p99": 8238.550000000001
+            "p50": 805.5,
+            "p75": 1155.75,
+            "p90": 1519.9,
+            "p99": 2424.49
           },
           "throughput_last_30m": {
-            "p50": 39,
-            "p75": 47.75,
-            "p90": 54.900000000000006,
-            "p99": 67
+            "p50": 36,
+            "p75": 41,
+            "p90": 44,
+            "p99": 52.379999999999995
           },
           "context_length": 262144,
           "max_completion_tokens": 32768
@@ -2047,16 +2066,16 @@
           "status": 0,
           "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 156,
-            "p75": 224,
-            "p90": 376,
-            "p99": 1616.6200000000026
+            "p50": 150,
+            "p75": 203,
+            "p90": 333,
+            "p99": 972.2700000000004
           },
           "throughput_last_30m": {
-            "p50": 35,
-            "p75": 69,
-            "p90": 143,
-            "p99": 207
+            "p50": 32,
+            "p75": 64,
+            "p90": 154.90000000000055,
+            "p99": 206.09000000000015
           },
           "context_length": 32768,
           "max_completion_tokens": null
@@ -2079,16 +2098,16 @@
           "status": 0,
           "uptime_last_30m": 100,
           "latency_last_30m": {
-            "p50": 3587,
-            "p75": 5530,
-            "p90": 8025.399999999999,
-            "p99": 13521.8
+            "p50": 4389,
+            "p75": 7086.5,
+            "p90": 10465.400000000005,
+            "p99": 18767.13999999999
           },
           "throughput_last_30m": {
-            "p50": 59,
-            "p75": 91,
-            "p90": 113,
-            "p99": 139
+            "p50": 60,
+            "p75": 104,
+            "p90": 127.20000000000027,
+            "p99": 163.6199999999999
           },
           "context_length": 256000,
           "max_completion_tokens": 256000
@@ -2109,18 +2128,18 @@
           "tag": "stepfun/fp8",
           "quantization": "fp8",
           "status": 0,
-          "uptime_last_30m": 99.98726404366613,
+          "uptime_last_30m": 99.97104386853917,
           "latency_last_30m": {
-            "p50": 4157.5,
-            "p75": 6354.5,
-            "p90": 9033.800000000001,
-            "p99": 15593.720000000001
+            "p50": 4919.5,
+            "p75": 7588.5,
+            "p90": 10764.600000000002,
+            "p99": 20727.620000000003
           },
           "throughput_last_30m": {
-            "p50": 51,
-            "p75": 82,
-            "p90": 108,
-            "p99": 147
+            "p50": 43,
+            "p75": 74,
+            "p90": 100,
+            "p99": 142
           },
           "context_length": 256000,
           "max_completion_tokens": 256000
@@ -2129,5 +2148,7 @@
       "providerCount": 1
     }
   ],
-  "failures": []
+  "failures": [
+    "qwen/qwen3.5-122b-a10b: fetch failed"
+  ]
 }

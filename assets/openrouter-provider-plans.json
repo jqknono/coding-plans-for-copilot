@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-10T08:16:37.430Z",
-  "generatedAtBeijing": "2026年3月10日 16:16:37",
-  "sourceGeneratedAt": "2026-03-10T02:57:20.291Z",
-  "sourceGeneratedAtBeijing": "2026年3月10日 10:57:20",
-  "sourceMetricsGeneratedAt": "2026-03-10T08:16:22.381Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月10日 16:16:22",
+  "generatedAt": "2026-03-11T08:16:44.920Z",
+  "generatedAtBeijing": "2026年3月11日 16:16:44",
+  "sourceGeneratedAt": "2026-03-11T02:56:51.272Z",
+  "sourceGeneratedAtBeijing": "2026年3月11日 10:56:51",
+  "sourceMetricsGeneratedAt": "2026-03-11T08:16:26.587Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月11日 16:16:26",
   "summary": {
     "openrouterProviderCount": 74,
     "metricsProviderCount": 28,
@@ -55,7 +55,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1bbbcc91c84275942c86f5a7aefe8ec7.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ccfa1bc8ca5edde37082992c365c3ab8.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://www.alibabacloud.com"
       ],
@@ -438,7 +438,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DFiLBDXk.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-B8v9IB8T.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -521,7 +521,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.179/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.181/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -616,8 +616,8 @@
       ],
       "sourceUrls": [
         "https://bigmodel.cn/glm-coding",
-        "https://bigmodel.cn/js/app.8fd0ca4b.js",
-        "https://bigmodel.cn/js/chunk-0d4f69d1.465ec58a.js",
+        "https://bigmodel.cn/js/app.e7ddde98.js",
+        "https://bigmodel.cn/js/chunk-0d4f69d1.2231d1b0.js",
         "https://docs.bigmodel.cn/cn/coding-plan/overview",
         "https://chat.z.ai"
       ],
@@ -631,6 +631,15 @@
     }
   ],
   "pending": [
+    {
+      "slug": "ambient",
+      "openrouterName": "Ambient",
+      "providerId": null,
+      "officialWebsiteUrl": null,
+      "pricingPageUrl": null,
+      "reason": "OpenRouter 元数据中缺少可用官网地址",
+      "blocked": false
+    },
     {
       "slug": "atlas-cloud",
       "openrouterName": "AtlasCloud",
@@ -647,15 +656,6 @@
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
       "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.30 / $1.20）",
-      "blocked": false
-    },
-    {
-      "slug": "clarifai",
-      "openrouterName": "Clarifai",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.clarifai.com",
-      "pricingPageUrl": "https://www.clarifai.com/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.16 / $0.0708 / $0.1579）",
       "blocked": false
     },
     {
