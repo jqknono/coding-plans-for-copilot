@@ -151,8 +151,8 @@
 | `coding-plans.vendors[].models[].capabilities.tools` | `boolean` | `true` | 是否启用工具调用能力。 |
 | `coding-plans.vendors[].models[].capabilities.vision` | `boolean` | `false` | 是否启用视觉输入能力。 |
 | `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | 模型上下文窗口大小，推荐使用。 |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | - | 已废弃，改用 `contextSize`。 |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | - | 已废弃，改用 `contextSize`。 |
+| `coding-plans.vendors[].models[].maxInputTokens` | `number` | - | 模型最大输入 token 数。 |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | - | 模型最大输出 token 数。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示“生成 Commit 消息”命令。 |
 | `coding-plans.commitMessage.language` | `string` | `en` | 提交消息语言，支持 `en` / `zh-cn`。 |
 | `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | 是否参考最近 20 条 commit 风格。 |

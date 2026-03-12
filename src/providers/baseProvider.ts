@@ -24,11 +24,11 @@ export interface AIModelConfig {
    */
   contextSize?: number;
   /**
-   * @deprecated Use {@link AIModelConfig.contextSize}.
+   * Maximum input tokens.
    */
   maxInputTokens?: number;
   /**
-   * @deprecated Use {@link AIModelConfig.contextSize}.
+   * Maximum output tokens.
    */
   maxOutputTokens?: number;
   capabilities?: ModelCapabilities;

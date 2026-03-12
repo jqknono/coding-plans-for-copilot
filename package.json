@@ -262,11 +262,11 @@
                                         },
                                         "maxInputTokens": {
                                             "type": "number",
-                                            "deprecationMessage": "Deprecated: use contextSize instead."
+                                            "description": "Maximum input tokens."
                                         },
                                         "maxOutputTokens": {
                                             "type": "number",
-                                            "deprecationMessage": "Deprecated: use contextSize instead."
+                                            "description": "Maximum output tokens."
                                         }
                                     }
                                 },

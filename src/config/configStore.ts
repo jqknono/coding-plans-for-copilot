@@ -12,11 +12,11 @@ export interface VendorModelConfig {
    */
   contextSize?: number;
   /**
-   * @deprecated Use {@link VendorModelConfig.contextSize}.
+   * Maximum input tokens.
    */
   maxInputTokens?: number;
   /**
-   * @deprecated Use {@link VendorModelConfig.contextSize}.
+   * Maximum output tokens.
    */
   maxOutputTokens?: number;
 }

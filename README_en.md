@@ -146,8 +146,8 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
 | `coding-plans.vendors[].models[].capabilities.tools` | `boolean` | `true` | Whether to enable tool calling capability. |
 | `coding-plans.vendors[].models[].capabilities.vision` | `boolean` | `false` | Whether to enable vision input capability. |
 | `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | Context window size of the model. Recommended. |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | - | Deprecated. Use `contextSize` instead. |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | - | Deprecated. Use `contextSize` instead. |
+| `coding-plans.vendors[].models[].maxInputTokens` | `number` | - | Maximum input token limit for the model. |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | - | Maximum output token limit for the model. |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show the "Generate Commit Message" command. |
 | `coding-plans.commitMessage.language` | `string` | `en` | Commit message language, supports `en` / `zh-cn`. |
 | `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | Whether to reference the style of up to the last 7 commits (use all if fewer). |
