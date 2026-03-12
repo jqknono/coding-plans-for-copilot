@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-11T08:16:44.920Z",
-  "generatedAtBeijing": "2026年3月11日 16:16:44",
-  "sourceGeneratedAt": "2026-03-11T02:56:51.272Z",
-  "sourceGeneratedAtBeijing": "2026年3月11日 10:56:51",
-  "sourceMetricsGeneratedAt": "2026-03-11T08:16:26.587Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月11日 16:16:26",
+  "generatedAt": "2026-03-12T08:18:08.828Z",
+  "generatedAtBeijing": "2026年3月12日 16:18:08",
+  "sourceGeneratedAt": "2026-03-12T03:00:22.859Z",
+  "sourceGeneratedAtBeijing": "2026年3月12日 11:00:22",
+  "sourceMetricsGeneratedAt": "2026-03-12T08:17:54.374Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月12日 16:17:54",
   "summary": {
     "openrouterProviderCount": 74,
     "metricsProviderCount": 28,
@@ -55,7 +55,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ccfa1bc8ca5edde37082992c365c3ab8.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/bd97a846da116d564c391e434343000f.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://www.alibabacloud.com"
       ],
@@ -438,7 +438,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-B8v9IB8T.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BS_7yh6n.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -655,7 +655,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.30 / $1.20）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.30 / $0.75）",
       "blocked": false
     },
     {
