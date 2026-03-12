@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-11T07:44:56.960Z",
+  "generatedAt": "2026-03-12T03:00:22.859Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -56,7 +56,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-B8v9IB8T.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BS_7yh6n.js"
       ],
       "plans": [
         {
@@ -197,7 +197,7 @@
           "unit": "月",
           "notes": "首购优惠：¥7.9/月；次月迭代版价格与支持模型不变，流控将改为 5 小时/周/月请求次数",
           "serviceDetails": [
-            "支持模型: DeepSeek-V3.2、GLM-4.7-Flash、 GLM-5、MiniMax-M2.5、Kimi-K2.5",
+            "支持模型: 星火X2 、DeepSeek-V3.2、GLM-4.7-Flash、 GLM-5、MiniMax-M2.5、Kimi-K2.5",
             "日 Tokens 上限: 1,000 万 tokens/日",
             "QPS: 5",
             "支持升级与同档位叠加购买",
@@ -215,7 +215,7 @@
           "unit": "月",
           "notes": "首购优惠：¥39.9/月；次月迭代版价格与支持模型不变，流控将改为 5 小时/周/月请求次数",
           "serviceDetails": [
-            "支持模型: DeepSeek-V3.2、GLM-4.7-Flash、 GLM-5、MiniMax-M2.5、Kimi-K2.5",
+            "支持模型: 星火X2 、DeepSeek-V3.2、GLM-4.7-Flash、 GLM-5、MiniMax-M2.5、Kimi-K2.5",
             "日 Tokens 上限: 5,000 万 tokens/日",
             "QPS: 20",
             "支持升级与同档位叠加购买",
@@ -626,7 +626,7 @@
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ccfa1bc8ca5edde37082992c365c3ab8.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/bd97a846da116d564c391e434343000f.js",
         "https://t.aliyun.com/abs/promotion/queryPrice"
       ],
       "plans": [
@@ -659,42 +659,9 @@
           ]
         }
       ]
-    },
-    {
-      "provider": "infini-ai",
-      "sourceUrls": [
-        "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.a9ccd3f2.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.0f51dcf0.js",
-        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
-      ],
-      "plans": [
-        {
-          "name": "Infini Coding Lite",
-          "currentPrice": 40,
-          "currentPriceText": "¥40/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "1,000次/5小时、6,000次/7天、12,000次/1个月"
-          ]
-        },
-        {
-          "name": "Infini Coding Pro",
-          "currentPrice": 200,
-          "currentPriceText": "¥200/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "5,000次/5小时、30,000次/7天、60,000次/1个月"
-          ]
-        }
-      ]
     }
   ],
-  "failures": []
+  "failures": [
+    "infini-ai: Task timed out after 15000ms"
+  ]
 }
