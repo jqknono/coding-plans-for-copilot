@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-14T02:57:31.919Z",
+  "generatedAt": "2026-03-15T03:04:42.804Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -347,7 +347,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.194/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.198/index.js"
       ],
       "plans": [
         {
@@ -706,7 +706,7 @@
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/fa9413128313cc920dfcad484ef6b512.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/02f14bd374a0f4dd0773d7679789a231.js",
         "https://t.aliyun.com/abs/promotion/queryPrice"
       ],
       "plans": [
@@ -739,10 +739,49 @@
           ]
         }
       ]
+    },
+    {
+      "provider": "infini-ai",
+      "sourceUrls": [
+        "https://cloud.infini-ai.com/platform/ai",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.fb5fa1cf.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.c4da16ef.js",
+        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
+      ],
+      "plans": [
+        {
+          "name": "Infini Coding Lite",
+          "currentPrice": 19.9,
+          "currentPriceText": "¥19.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月",
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "1000次请求每5小时",
+            "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新..."
+          ]
+        },
+        {
+          "name": "Infini Coding Pro",
+          "currentPrice": 99.9,
+          "currentPriceText": "¥99.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "5000次请求每5小时",
+            "5倍Lite套餐用量",
+            "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新..."
+          ]
+        }
+      ]
     }
   ],
   "failures": [
-    "tencent-cloud-ai: Unable to locate Tencent coding plan price row",
-    "infini-ai: Task timed out after 15000ms"
+    "tencent-cloud-ai: Unable to locate Tencent coding plan price row"
   ]
 }
