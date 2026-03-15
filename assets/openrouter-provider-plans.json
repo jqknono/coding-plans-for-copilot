@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-14T08:12:12.439Z",
-  "generatedAtBeijing": "2026年3月14日 16:12:12",
-  "sourceGeneratedAt": "2026-03-14T02:57:31.919Z",
-  "sourceGeneratedAtBeijing": "2026年3月14日 10:57:31",
-  "sourceMetricsGeneratedAt": "2026-03-14T08:11:54.673Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月14日 16:11:54",
+  "generatedAt": "2026-03-15T08:15:03.371Z",
+  "generatedAtBeijing": "2026年3月15日 16:15:03",
+  "sourceGeneratedAt": "2026-03-15T03:04:42.804Z",
+  "sourceGeneratedAtBeijing": "2026年3月15日 11:04:42",
+  "sourceMetricsGeneratedAt": "2026-03-15T08:14:49.777Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月15日 16:14:49",
   "summary": {
     "openrouterProviderCount": 74,
     "metricsProviderCount": 28,
@@ -55,7 +55,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/fa9413128313cc920dfcad484ef6b512.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/02f14bd374a0f4dd0773d7679789a231.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://www.alibabacloud.com"
       ],
@@ -119,12 +119,12 @@
       ],
       "sourceUrls": [
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.D6PNUYy5.js",
-        "https://chutes.ai/_app/immutable/nodes/0.CLu-o0VI.js",
+        "https://chutes.ai/_app/immutable/entry/app.BFTxG3zs.js",
+        "https://chutes.ai/_app/immutable/nodes/0.BcW6V7LP.js",
         "https://chutes.ai/_app/immutable/chunks/D8exnHiZ.js",
         "https://chutes.ai/_app/immutable/chunks/Dl4XNryJ.js",
         "https://chutes.ai/_app/immutable/chunks/BjIJ6sth.js",
-        "https://chutes.ai/_app/immutable/chunks/CgX4jIuW.js",
+        "https://chutes.ai/_app/immutable/chunks/lcg7AGOT.js",
         "https://chutes.ai/_app/immutable/chunks/CgjQtA95.js",
         "https://chutes.ai/_app/immutable/chunks/Ca-8DU1S.js",
         "https://chutes.ai/_app/immutable/chunks/Dc3owAMq.js",
@@ -156,7 +156,7 @@
         "https://chutes.ai/_app/immutable/chunks/C90lPemf.js",
         "https://chutes.ai/_app/immutable/chunks/BrIpXUcu.js",
         "https://chutes.ai/_app/immutable/chunks/xtKrw8NG.js",
-        "https://chutes.ai/_app/immutable/nodes/21.BhKypzh5.js",
+        "https://chutes.ai/_app/immutable/nodes/21.d9dSoknc.js",
         "https://chutes.ai/_app/immutable/chunks/Z2UmyU3N.js",
         "https://chutes.ai"
       ],
@@ -521,7 +521,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.194/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.198/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
