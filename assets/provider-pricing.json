@@ -1,56 +1,6 @@
 {
-  "generatedAt": "2026-03-15T03:04:42.804Z",
+  "generatedAt": "2026-03-16T03:05:48.345Z",
   "providers": [
-    {
-      "provider": "zhipu-ai",
-      "sourceUrls": [
-        "https://bigmodel.cn/glm-coding",
-        "https://bigmodel.cn/js/app.537c3bfb.js",
-        "https://bigmodel.cn/js/chunk-0d4f69d1.2231d1b0.js",
-        "https://docs.bigmodel.cn/cn/coding-plan/overview"
-      ],
-      "plans": [
-        {
-          "name": "GLM Coding Lite (月)",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": 49,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "下个月度续费金额：¥49",
-          "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 80 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 400 次 prompts"
-          ]
-        },
-        {
-          "name": "GLM Coding Pro (月)",
-          "currentPrice": 149,
-          "currentPriceText": "¥149/月",
-          "originalPrice": 149,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "下个月度续费金额：¥149",
-          "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 400 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 2000 次 prompts"
-          ]
-        },
-        {
-          "name": "GLM Coding Max (月)",
-          "currentPrice": 469,
-          "currentPriceText": "¥469/月",
-          "originalPrice": 469,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "下个月度续费金额：¥469",
-          "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 1600 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 8000 次 prompts"
-          ]
-        }
-      ]
-    },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
@@ -347,7 +297,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.198/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.201/index.js"
       ],
       "plans": [
         {
@@ -739,49 +689,11 @@
           ]
         }
       ]
-    },
-    {
-      "provider": "infini-ai",
-      "sourceUrls": [
-        "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.fb5fa1cf.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.c4da16ef.js",
-        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
-      ],
-      "plans": [
-        {
-          "name": "Infini Coding Lite",
-          "currentPrice": 19.9,
-          "currentPriceText": "¥19.9/月",
-          "originalPrice": 40,
-          "originalPriceText": "¥40/月",
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "1000次请求每5小时",
-            "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
-            "适配Claude Code、Cline等主流编程工具，持续更新..."
-          ]
-        },
-        {
-          "name": "Infini Coding Pro",
-          "currentPrice": 99.9,
-          "currentPriceText": "¥99.9/月",
-          "originalPrice": 200,
-          "originalPriceText": "¥200/月",
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "5000次请求每5小时",
-            "5倍Lite套餐用量",
-            "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
-            "适配Claude Code、Cline等主流编程工具，持续更新..."
-          ]
-        }
-      ]
     }
   ],
   "failures": [
-    "tencent-cloud-ai: Unable to locate Tencent coding plan price row"
+    "zhipu-ai: Unable to locate Zhipu coding pricing chunk",
+    "tencent-cloud-ai: Unable to locate Tencent coding plan price row",
+    "infini-ai: Task timed out after 15000ms"
   ]
 }
