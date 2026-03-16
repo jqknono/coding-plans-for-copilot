@@ -28,7 +28,7 @@ jobs:
           CODING_PLANS_FOR_COPILOT: ${{ secrets.CODING_PLANS_FOR_COPILOT }}
           OPENROUTER_MODEL_ORGS: ${{ vars.OPENROUTER_MODEL_ORGS || 'deepseek,qwen,moonshotai,z-ai,minimax,bytedance,bytedance-seed,kwaipilot,meituan,mistralai,stepfun' }}
           OPENROUTER_MODEL_LIMIT: ${{ vars.OPENROUTER_MODEL_LIMIT || '5' }}
-          OPENROUTER_MODEL_MAX_AGE_DAYS: ${{ vars.OPENROUTER_MODEL_MAX_AGE_DAYS || '90' }}
+          OPENROUTER_MODEL_MAX_AGE_DAYS: ${{ vars.OPENROUTER_MODEL_MAX_AGE_DAYS || '180' }}
         run: npm run metrics:fetch
 
       - name: Fetch OpenRouter provider plans
