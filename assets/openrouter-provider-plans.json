@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-03-15T08:15:03.371Z",
-  "generatedAtBeijing": "2026年3月15日 16:15:03",
-  "sourceGeneratedAt": "2026-03-15T03:04:42.804Z",
-  "sourceGeneratedAtBeijing": "2026年3月15日 11:04:42",
-  "sourceMetricsGeneratedAt": "2026-03-15T08:14:49.777Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月15日 16:14:49",
+  "generatedAt": "2026-03-16T08:29:12.303Z",
+  "generatedAtBeijing": "2026年3月16日 16:29:12",
+  "sourceGeneratedAt": "2026-03-15T10:49:22.088Z",
+  "sourceGeneratedAtBeijing": "2026年3月15日 18:49:22",
+  "sourceMetricsGeneratedAt": "2026-03-16T08:28:54.714Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月16日 16:28:54",
   "summary": {
     "openrouterProviderCount": 74,
-    "metricsProviderCount": 28,
-    "resolvedMetricsProviderCount": 28,
+    "metricsProviderCount": 31,
+    "resolvedMetricsProviderCount": 31,
     "unresolvedMetricsProviderCount": 0,
-    "structuredProviderCount": 5,
+    "structuredProviderCount": 6,
     "heuristicProviderCount": 4,
-    "providersWithPlans": 9,
-    "pendingCount": 19,
+    "providersWithPlans": 10,
+    "pendingCount": 21,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -350,38 +350,53 @@
           ]
         },
         {
+          "name": "Andante (月)",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: LEVEL_TRIAL",
+            "更多 Agent 额度",
+            "Agent 4 倍速优先用",
+            "K2.5 提速并提升额度",
+            "Kimi Code 可调用"
+          ]
+        },
+        {
           "name": "Moderato (月)",
-          "currentPrice": 19,
-          "currentPriceText": "¥19/月",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 基础会员",
-            "更多 Agent 额度",
+            "Andante 权益基础上",
+            "2 倍 Agent 额度",
             "Agent 多任务并行",
-            "Agent 4 倍速优先用",
-            "K2.5 提速并提升额度",
-            "PPT 创意视觉 x Nano Banana",
-            "Kimi Code 可调用"
+            "2 倍 K2.5 模型使用额度",
+            "Kimi Code 4 倍额度"
           ]
         },
         {
           "name": "Allegretto (月)",
-          "currentPrice": 39,
-          "currentPriceText": "¥39/月",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 进阶会员",
-            "Moderato 权益基础上",
-            "2 倍 Agent 额度",
-            "2 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 5 倍额度",
+            "Andante 权益基础上",
+            "4 倍 Agent 额度",
+            "Agent 多任务并行",
+            "4 倍 K2.5 模型使用额度",
+            "Kimi Code 20 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -390,44 +405,19 @@
         },
         {
           "name": "Allegro (月)",
-          "currentPrice": 99,
-          "currentPriceText": "¥99/月",
+          "currentPrice": 699,
+          "currentPriceText": "¥699/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 高级会员",
-            "Moderato 权益基础上",
-            "5 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
-            "5 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 15 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
-          ]
-        },
-        {
-          "name": "Vivace (月)",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: 旗舰会员",
-            "Moderato 权益基础上",
+            "Andante 权益基础上",
             "10 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
+            "Agent 多任务并行",
             "10 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 30 倍额度",
+            "Kimi Code 60 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -529,6 +519,86 @@
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://docs.byteplus.com/en/docs/legal/docs-privacy-policy",
       "termsOfServiceUrl": "https://docs.byteplus.com/en/docs/legal/docs-terms-of-service",
+      "statusPageUrl": null,
+      "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "streamlake",
+      "openrouterName": "StreamLake",
+      "providerId": "kwaikat-ai",
+      "plans": [
+        {
+          "name": "KAT Coding Mini",
+          "currentPrice": 8.8,
+          "currentPriceText": "¥8.8/月",
+          "originalPrice": 29,
+          "originalPriceText": "¥29/月",
+          "unit": "月",
+          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V1；覆盖日常编码场景；¥40 Prompts/5小时",
+          "serviceDetails": [
+            "适合初次体验者的轻量化选择",
+            "最低成本体验 KAT-Coder-Pro V1",
+            "覆盖日常编码场景",
+            "40 Prompts / 5小时"
+          ]
+        },
+        {
+          "name": "KAT Coding Starter",
+          "currentPrice": 48,
+          "currentPriceText": "¥48/月",
+          "originalPrice": 70,
+          "originalPriceText": "¥70/月",
+          "unit": "月",
+          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V1 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
+          "serviceDetails": [
+            "适配日常核心开发场景的高效搭档",
+            "由最新旗舰模型 KAT-Coder-Pro V1 驱动",
+            "适配Claude Code等主流编程工具",
+            "100 Prompts / 5小时"
+          ]
+        },
+        {
+          "name": "KAT Coding Pro",
+          "currentPrice": 96,
+          "currentPriceText": "¥96/月",
+          "originalPrice": 140,
+          "originalPriceText": "¥140/月",
+          "unit": "月",
+          "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；¥300 Prompts/5小时",
+          "serviceDetails": [
+            "驱动复杂架构设计的进阶引擎",
+            "包含Starter套餐全部权益，性能全面提升",
+            "Starter套餐用量的3倍",
+            "300 Prompts / 5小时"
+          ]
+        },
+        {
+          "name": "KAT Coding Max",
+          "currentPrice": 240,
+          "currentPriceText": "¥240/月",
+          "originalPrice": 350,
+          "originalPriceText": "¥350/月",
+          "unit": "月",
+          "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；¥1000 Prompts/5小时",
+          "serviceDetails": [
+            "支持全天候高强度开发的旗舰配置",
+            "卓越的跨文件/仓库级代码深度理解",
+            "Pro套餐用量的3倍以上",
+            "1000 Prompts / 5小时"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.streamlake.com/marketing/coding-plan",
+        "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
+        "https://console.streamlake.com/api/common/describe-product-detail",
+        "https://www.streamlake.ai"
+      ],
+      "pricingPageUrl": "https://www.streamlake.com/marketing/coding-plan",
+      "officialWebsiteUrl": "https://www.streamlake.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.streamlake.ai/document/DOC/mgkci47q13qr66h9i54",
+      "termsOfServiceUrl": "https://www.streamlake.ai/document/DOC/mgkchnd89grpt1961fw",
       "statusPageUrl": null,
       "parseMode": "provider-pricing-structured"
     },
@@ -646,7 +716,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "官网价格页探测失败：https://www.atlascloud.ai/prices: HTTP 404",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.07 / $0.06 / $0.04）",
       "blocked": false
     },
     {
@@ -665,6 +735,15 @@
       "officialWebsiteUrl": "https://deepinfra.com",
       "pricingPageUrl": "https://deepinfra.com/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.26 / $0.13 / $0.38）",
+      "blocked": false
+    },
+    {
+      "slug": "deepseek",
+      "openrouterName": "DeepSeek",
+      "providerId": null,
+      "officialWebsiteUrl": "https://chat.deepseek.com",
+      "pricingPageUrl": "https://chat.deepseek.com/pricing",
+      "reason": "官网未发现可解析的套餐价格页",
       "blocked": false
     },
     {
@@ -755,6 +834,15 @@
       "officialWebsiteUrl": "https://novita.ai",
       "pricingPageUrl": "https://novita.ai/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.269 / $0.1345 / $0.4）",
+      "blocked": false
+    },
+    {
+      "slug": "open-inference",
+      "openrouterName": "OpenInference",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.openinference.xyz",
+      "pricingPageUrl": "https://www.openinference.xyz",
+      "reason": "官网价格页探测失败：https://www.openinference.xyz/pricing: HTTP 404",
       "blocked": false
     },
     {
