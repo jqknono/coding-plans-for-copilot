@@ -1,6 +1,56 @@
 {
-  "generatedAt": "2026-03-16T03:05:48.345Z",
+  "generatedAt": "2026-03-15T10:49:22.088Z",
   "providers": [
+    {
+      "provider": "zhipu-ai",
+      "sourceUrls": [
+        "https://bigmodel.cn/glm-coding",
+        "https://bigmodel.cn/js/app.537c3bfb.js",
+        "https://bigmodel.cn/js/chunk-0d4f69d1.2231d1b0.js",
+        "https://docs.bigmodel.cn/cn/coding-plan/overview"
+      ],
+      "plans": [
+        {
+          "name": "GLM Coding Lite (月)",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": 49,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "下个月度续费金额：¥49",
+          "serviceDetails": [
+            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 80 次 prompts",
+            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 400 次 prompts"
+          ]
+        },
+        {
+          "name": "GLM Coding Pro (月)",
+          "currentPrice": 149,
+          "currentPriceText": "¥149/月",
+          "originalPrice": 149,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "下个月度续费金额：¥149",
+          "serviceDetails": [
+            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 400 次 prompts",
+            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 2000 次 prompts"
+          ]
+        },
+        {
+          "name": "GLM Coding Max (月)",
+          "currentPrice": 469,
+          "currentPriceText": "¥469/月",
+          "originalPrice": 469,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "下个月度续费金额：¥469",
+          "serviceDetails": [
+            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 1600 次 prompts",
+            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 8000 次 prompts"
+          ]
+        }
+      ]
+    },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
@@ -27,38 +77,53 @@
           ]
         },
         {
+          "name": "Andante (月)",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: LEVEL_TRIAL",
+            "更多 Agent 额度",
+            "Agent 4 倍速优先用",
+            "K2.5 提速并提升额度",
+            "Kimi Code 可调用"
+          ]
+        },
+        {
           "name": "Moderato (月)",
-          "currentPrice": 19,
-          "currentPriceText": "¥19/月",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 基础会员",
-            "更多 Agent 额度",
+            "Andante 权益基础上",
+            "2 倍 Agent 额度",
             "Agent 多任务并行",
-            "Agent 4 倍速优先用",
-            "K2.5 提速并提升额度",
-            "PPT 创意视觉 x Nano Banana",
-            "Kimi Code 可调用"
+            "2 倍 K2.5 模型使用额度",
+            "Kimi Code 4 倍额度"
           ]
         },
         {
           "name": "Allegretto (月)",
-          "currentPrice": 39,
-          "currentPriceText": "¥39/月",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 进阶会员",
-            "Moderato 权益基础上",
-            "2 倍 Agent 额度",
-            "2 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 5 倍额度",
+            "Andante 权益基础上",
+            "4 倍 Agent 额度",
+            "Agent 多任务并行",
+            "4 倍 K2.5 模型使用额度",
+            "Kimi Code 20 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -67,44 +132,19 @@
         },
         {
           "name": "Allegro (月)",
-          "currentPrice": 99,
-          "currentPriceText": "¥99/月",
+          "currentPrice": 699,
+          "currentPriceText": "¥699/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 高级会员",
-            "Moderato 权益基础上",
-            "5 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
-            "5 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 15 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
-          ]
-        },
-        {
-          "name": "Vivace (月)",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: 旗舰会员",
-            "Moderato 权益基础上",
+            "Andante 权益基础上",
             "10 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
+            "Agent 多任务并行",
             "10 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 30 倍额度",
+            "Kimi Code 60 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -132,49 +172,7 @@
             "支持模型: DeepSeek-V3.2、GLM-4.7-Flash",
             "日 Tokens 上限: 2,000 万 tokens/日",
             "QPS: 20",
-            "支持升级与同档位叠加购买",
-            "5 小时流控: 按实际请求发生时间，滑动 5 小时窗口动态刷新",
-            "周流控: 每周一 00:00:00（UTC+8）重置",
-            "月流控: 每订阅月对应日的 00:00:00（UTC+8）重置",
-            "错误码: 原因",
-            "401-无效的身份验证: 身份验证无效。",
-            "401-提供的API密钥不正确: 请求的API密钥不正确。",
-            "403-不支持的国家、地区或领土: 您正在从不支持的国家、地区或领土访问API。",
-            "429-请求速率限制已达上限: 您发送请求过快。",
-            "429-超出当前配额，请检查计划和计费详情: 您的额度已用尽或已达到每月最高消费限制。",
-            "500-服务器处理请求时发生错误: 服务器内部出现问题。",
-            "503-引擎当前过载，请稍后重试: 服务器流量过大。",
-            "0: 成功",
-            "10000: 升级为ws出现错误",
-            "10001: 通过ws读取用户的消息 出错",
-            "10002: 通过ws向用户发送消息 出错",
-            "10003: 用户的消息格式有错误",
-            "10004: 用户数据的schema错误",
-            "10005: 用户参数值有错误",
-            "10006: 用户并发错误：当前用户已连接，同一用户不能多处同时连接。",
-            "10007: 用户流量受限：服务正在处理用户当前的问题，需等待处理完成后再发送新的请求。（必须要等大模型完全回复之后，才能发送下一个问题）",
-            "10008: 服务容量不足，联系服务商",
-            "10009: 和引擎建立连接失败",
-            "10010: 接收引擎数据的错误，或引擎处于排队状态",
-            "10011: 向引擎发送数据的错误",
-            "10012: 引擎内部错误",
-            "10013: 用户问题涉及敏感信息，审核不通过，拒绝处理此次请求。",
-            "10014: 回复结果涉及到敏感信息，审核不通过，后续结果无法展示给用户。（建议清空当前结果，并给用户提示/警告：该答案涉及到敏感/政治/恐怖/色情/暴力等方面，不予显示/回复）",
-            "10015: appid在黑名单中",
-            "10016: appid授权类的错误。比如：未开通此功能，未开通对应版本，token不足，并发超过授权等等。（联系我们开通授权或提高限制）",
-            "10018: 用户在5分钟内持续发送ping消息，但并没有实际请求数据，会返回该错误码并断开ws连接。短链接使用无需关注",
-            "10019: 该错误码表示返回结果疑似敏感，建议拒绝用户继续交互",
-            "10110: 服务忙，请稍后再试。",
-            "10163: 请求引擎的参数异常，引擎的schema检查不通过。",
-            "10222: 引擎网络异常",
-            "10223: LB找不到引擎节点",
-            "10404: 用户配置参数值有错误",
-            "10907: token数量超过上限。对话历史+问题的字数太多，需要精简输入。",
-            "10910: token数量超过上限。需要控制输入长度或输出长度。",
-            "11200: 授权错误：该appid没有相关功能的授权或者业务量超过限制（联系我们开通授权或提高限制）",
-            "11201: 授权错误：日流控超限。超过当日最大访问量的限制。（联系我们提高限制）",
-            "11202: 授权错误：秒级流控超限。秒级并发超过授权路数限制。（联系我们提高限制）",
-            "11203: 授权错误：并发流控超限。并发路数超过授权路数限制。（联系我们提高限制）"
+            "支持升级与同档位叠加购买"
           ]
         },
         {
@@ -189,49 +187,7 @@
             "支持模型: DeepSeek-V3.2、GLM-4.7-Flash、GLM-5、MiniMax-M2.5、Kimi-K2.5",
             "日 Tokens 上限: 1,000 万 tokens/日",
             "QPS: 5",
-            "支持升级与同档位叠加购买",
-            "5 小时流控: 按实际请求发生时间，滑动 5 小时窗口动态刷新",
-            "周流控: 每周一 00:00:00（UTC+8）重置",
-            "月流控: 每订阅月对应日的 00:00:00（UTC+8）重置",
-            "错误码: 原因",
-            "401-无效的身份验证: 身份验证无效。",
-            "401-提供的API密钥不正确: 请求的API密钥不正确。",
-            "403-不支持的国家、地区或领土: 您正在从不支持的国家、地区或领土访问API。",
-            "429-请求速率限制已达上限: 您发送请求过快。",
-            "429-超出当前配额，请检查计划和计费详情: 您的额度已用尽或已达到每月最高消费限制。",
-            "500-服务器处理请求时发生错误: 服务器内部出现问题。",
-            "503-引擎当前过载，请稍后重试: 服务器流量过大。",
-            "0: 成功",
-            "10000: 升级为ws出现错误",
-            "10001: 通过ws读取用户的消息 出错",
-            "10002: 通过ws向用户发送消息 出错",
-            "10003: 用户的消息格式有错误",
-            "10004: 用户数据的schema错误",
-            "10005: 用户参数值有错误",
-            "10006: 用户并发错误：当前用户已连接，同一用户不能多处同时连接。",
-            "10007: 用户流量受限：服务正在处理用户当前的问题，需等待处理完成后再发送新的请求。（必须要等大模型完全回复之后，才能发送下一个问题）",
-            "10008: 服务容量不足，联系服务商",
-            "10009: 和引擎建立连接失败",
-            "10010: 接收引擎数据的错误，或引擎处于排队状态",
-            "10011: 向引擎发送数据的错误",
-            "10012: 引擎内部错误",
-            "10013: 用户问题涉及敏感信息，审核不通过，拒绝处理此次请求。",
-            "10014: 回复结果涉及到敏感信息，审核不通过，后续结果无法展示给用户。（建议清空当前结果，并给用户提示/警告：该答案涉及到敏感/政治/恐怖/色情/暴力等方面，不予显示/回复）",
-            "10015: appid在黑名单中",
-            "10016: appid授权类的错误。比如：未开通此功能，未开通对应版本，token不足，并发超过授权等等。（联系我们开通授权或提高限制）",
-            "10018: 用户在5分钟内持续发送ping消息，但并没有实际请求数据，会返回该错误码并断开ws连接。短链接使用无需关注",
-            "10019: 该错误码表示返回结果疑似敏感，建议拒绝用户继续交互",
-            "10110: 服务忙，请稍后再试。",
-            "10163: 请求引擎的参数异常，引擎的schema检查不通过。",
-            "10222: 引擎网络异常",
-            "10223: LB找不到引擎节点",
-            "10404: 用户配置参数值有错误",
-            "10907: token数量超过上限。对话历史+问题的字数太多，需要精简输入。",
-            "10910: token数量超过上限。需要控制输入长度或输出长度。",
-            "11200: 授权错误：该appid没有相关功能的授权或者业务量超过限制（联系我们开通授权或提高限制）",
-            "11201: 授权错误：日流控超限。超过当日最大访问量的限制。（联系我们提高限制）",
-            "11202: 授权错误：秒级流控超限。秒级并发超过授权路数限制。（联系我们提高限制）",
-            "11203: 授权错误：并发流控超限。并发路数超过授权路数限制。（联系我们提高限制）"
+            "支持升级与同档位叠加购买"
           ]
         },
         {
@@ -246,49 +202,7 @@
             "支持模型: DeepSeek-V3.2、GLM-4.7-Flash、GLM-5、MiniMax-M2.5、Kimi-K2.5",
             "日 Tokens 上限: 5,000 万 tokens/日",
             "QPS: 20",
-            "支持升级与同档位叠加购买",
-            "5 小时流控: 按实际请求发生时间，滑动 5 小时窗口动态刷新",
-            "周流控: 每周一 00:00:00（UTC+8）重置",
-            "月流控: 每订阅月对应日的 00:00:00（UTC+8）重置",
-            "错误码: 原因",
-            "401-无效的身份验证: 身份验证无效。",
-            "401-提供的API密钥不正确: 请求的API密钥不正确。",
-            "403-不支持的国家、地区或领土: 您正在从不支持的国家、地区或领土访问API。",
-            "429-请求速率限制已达上限: 您发送请求过快。",
-            "429-超出当前配额，请检查计划和计费详情: 您的额度已用尽或已达到每月最高消费限制。",
-            "500-服务器处理请求时发生错误: 服务器内部出现问题。",
-            "503-引擎当前过载，请稍后重试: 服务器流量过大。",
-            "0: 成功",
-            "10000: 升级为ws出现错误",
-            "10001: 通过ws读取用户的消息 出错",
-            "10002: 通过ws向用户发送消息 出错",
-            "10003: 用户的消息格式有错误",
-            "10004: 用户数据的schema错误",
-            "10005: 用户参数值有错误",
-            "10006: 用户并发错误：当前用户已连接，同一用户不能多处同时连接。",
-            "10007: 用户流量受限：服务正在处理用户当前的问题，需等待处理完成后再发送新的请求。（必须要等大模型完全回复之后，才能发送下一个问题）",
-            "10008: 服务容量不足，联系服务商",
-            "10009: 和引擎建立连接失败",
-            "10010: 接收引擎数据的错误，或引擎处于排队状态",
-            "10011: 向引擎发送数据的错误",
-            "10012: 引擎内部错误",
-            "10013: 用户问题涉及敏感信息，审核不通过，拒绝处理此次请求。",
-            "10014: 回复结果涉及到敏感信息，审核不通过，后续结果无法展示给用户。（建议清空当前结果，并给用户提示/警告：该答案涉及到敏感/政治/恐怖/色情/暴力等方面，不予显示/回复）",
-            "10015: appid在黑名单中",
-            "10016: appid授权类的错误。比如：未开通此功能，未开通对应版本，token不足，并发超过授权等等。（联系我们开通授权或提高限制）",
-            "10018: 用户在5分钟内持续发送ping消息，但并没有实际请求数据，会返回该错误码并断开ws连接。短链接使用无需关注",
-            "10019: 该错误码表示返回结果疑似敏感，建议拒绝用户继续交互",
-            "10110: 服务忙，请稍后再试。",
-            "10163: 请求引擎的参数异常，引擎的schema检查不通过。",
-            "10222: 引擎网络异常",
-            "10223: LB找不到引擎节点",
-            "10404: 用户配置参数值有错误",
-            "10907: token数量超过上限。对话历史+问题的字数太多，需要精简输入。",
-            "10910: token数量超过上限。需要控制输入长度或输出长度。",
-            "11200: 授权错误：该appid没有相关功能的授权或者业务量超过限制（联系我们开通授权或提高限制）",
-            "11201: 授权错误：日流控超限。超过当日最大访问量的限制。（联系我们提高限制）",
-            "11202: 授权错误：秒级流控超限。秒级并发超过授权路数限制。（联系我们提高限制）",
-            "11203: 授权错误：并发流控超限。并发路数超过授权路数限制。（联系我们提高限制）"
+            "支持升级与同档位叠加购买"
           ]
         }
       ]
@@ -297,7 +211,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.201/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.198/index.js"
       ],
       "plans": [
         {
@@ -463,6 +377,43 @@
             "每周限额: 最多45000次请求",
             "每月限额: 最多90000次请求",
             "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "tencent-cloud-ai",
+      "sourceUrls": [
+        "https://cloud.tencent.com/document/product/1772/128947",
+        "https://cloud.tencent.com/act/pro/codingplan"
+      ],
+      "plans": [
+        {
+          "name": "Coding Plan Lite",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首月特惠 ¥7.9；次月续费 ¥20",
+          "serviceDetails": [
+            "用量限制: 每 5 小时：最多约 1,200 次请求 每周：最多约 9,000 次请求 每订阅月：最多约 18,000 次请求",
+            "支持模型: 选用 Tencent HY 2.0 Instruct、GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个最新模型，更多模型持续接入中",
+            "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具，更多工具持续接入中"
+          ]
+        },
+        {
+          "name": "Coding Plan Pro",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首月特惠 ¥39.9；次月续费 ¥100",
+          "serviceDetails": [
+            "用量限制: 每 5 小时：最多约 6,000 次请求 每周：最多约 45,000 次请求 每订阅月：最多约 90,000 次请求",
+            "支持模型: 选用 Tencent HY 2.0 Instruct、GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个最新模型，更多模型持续接入中",
+            "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具，更多工具持续接入中"
           ]
         }
       ]
@@ -689,11 +640,47 @@
           ]
         }
       ]
+    },
+    {
+      "provider": "infini-ai",
+      "sourceUrls": [
+        "https://cloud.infini-ai.com/platform/ai",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.fb5fa1cf.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.c4da16ef.js",
+        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
+      ],
+      "plans": [
+        {
+          "name": "Infini Coding Lite",
+          "currentPrice": 19.9,
+          "currentPriceText": "¥19.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月",
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "1000次请求每5小时",
+            "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新..."
+          ]
+        },
+        {
+          "name": "Infini Coding Pro",
+          "currentPrice": 99.9,
+          "currentPriceText": "¥99.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "5000次请求每5小时",
+            "5倍Lite套餐用量",
+            "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新..."
+          ]
+        }
+      ]
     }
   ],
-  "failures": [
-    "zhipu-ai: Unable to locate Zhipu coding pricing chunk",
-    "tencent-cloud-ai: Unable to locate Tencent coding plan price row",
-    "infini-ai: Task timed out after 15000ms"
-  ]
+  "failures": []
 }

@@ -413,6 +413,33 @@ function parseFirstPurchaseAndAddonPrices(rawValue) {
   };
 }
 
+function parseTencentPromoDetails(text) {
+  const value = normalizeText(text);
+  const details = new Map();
+  if (!value) {
+    return details;
+  }
+
+  for (const tier of ["Lite", "Pro"]) {
+    const blockMatch = value.match(
+      new RegExp(
+        `${tier}\\s*套餐特惠价[\\s\\S]{0,80}?首月\\s*([0-9]+(?:\\.[0-9]+)?)\\s*元\\s*\/\\s*月[\\s\\S]{0,80}?次月\\s*([0-9]+(?:\\.[0-9]+)?)\\s*元\\s*\/\\s*月[\\s\\S]{0,80}?原价\\s*([0-9]+(?:\\.[0-9]+)?)\\s*元\\s*\/\\s*月`,
+        "i",
+      ),
+    );
+    if (!blockMatch) {
+      continue;
+    }
+    details.set(tier, {
+      firstMonthAmount: Number(blockMatch[1]),
+      secondMonthAmount: Number(blockMatch[2]),
+      monthlyAmount: Number(blockMatch[3]),
+    });
+  }
+
+  return details;
+}
+
 function asPlan({
   name,
   currentPriceText,
@@ -690,8 +717,7 @@ async function parseXfyunCodingPlans() {
         normalizeText(row?.[2] || "") ? `支持模型: ${normalizeText(row[2])}` : null,
         normalizeText(row?.[3] || "") ? `日 Tokens 上限: ${normalizeText(row[3])}` : null,
         normalizeText(row?.[4] || "") ? `QPS: ${normalizeText(row[4])}` : null,
-        "支持升级与同档位叠加购买",
-        ...flowDetails,
+        /支持升级|叠加购买/i.test(html) ? "支持升级与同档位叠加购买" : null,
       ],
     });
   });
@@ -704,6 +730,60 @@ async function parseXfyunCodingPlans() {
   };
 }
 
+async function parseTencentCodingPlansWithPlaywright(pageUrl) {
+  let chromium;
+  try {
+    ({ chromium } = require("@playwright/test"));
+  } catch {
+    throw new Error("Playwright is unavailable for Tencent fallback");
+  }
+
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    await page.goto(pageUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 8_000,
+    });
+    await page.waitForSelector("table", { timeout: 5_000 });
+
+    const tableData = await page.evaluate(() => {
+      const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+      const tables = Array.from(document.querySelectorAll("table"));
+      for (const table of tables) {
+        const rows = Array.from(table.querySelectorAll("tr")).map((row) =>
+          Array.from(row.querySelectorAll("th,td")).map((cell) => normalize(cell.textContent)),
+        );
+        const header = rows.find(
+          (row) => row.some((cell) => /Lite\s*套餐/i.test(cell)) && row.some((cell) => /Pro\s*套餐/i.test(cell)),
+        );
+        if (header) {
+          return rows;
+        }
+      }
+      return [];
+    });
+
+    if (!Array.isArray(tableData) || tableData.length === 0) {
+      throw new Error("Unable to locate Tencent coding plan table via Playwright");
+    }
+
+    const pageText = await page.evaluate(() => String(document.body?.innerText || ""));
+    const buyHref = await page.evaluate(() => {
+      const link = Array.from(document.querySelectorAll("a")).find((anchor) => /购买页/.test(String(anchor.textContent || "")));
+      return link ? link.href : null;
+    });
+
+    return {
+      rows: tableData,
+      plainText: pageText,
+      buyUrl: buyHref || null,
+    };
+  } finally {
+    await browser.close();
+  }
+}
+
 async function parseZhipuCodingPlans() {
   const pageUrl = "https://bigmodel.cn/glm-coding";
   const html = await fetchText(pageUrl);
@@ -713,7 +793,6 @@ async function parseZhipuCodingPlans() {
   }
   const appUrl = absoluteUrl(appPath, pageUrl);
   const appJs = await fetchText(appUrl);
-
   const pricingChunkHash = appJs.match(/"chunk-0d4f69d1"\s*:\s*"([0-9a-f]+)"/i)?.[1];
   if (!pricingChunkHash) {
     throw new Error("Unable to locate Zhipu coding pricing chunk");
@@ -1035,14 +1114,49 @@ async function parseBaiduCodingPlans() {
 
 async function parseTencentCodingPlans() {
   const pageUrl = "https://cloud.tencent.com/document/product/1772/128947";
-  const html = await fetchText(pageUrl);
-  const rows = extractRows(html);
-  const planHeaderIndex = rows.findIndex(
+  let html = "";
+  let rows = [];
+  let plainText = "";
+  let buyUrlFromPage = null;
+  let primaryError = null;
+
+  try {
+    html = await fetchText(pageUrl);
+    rows = extractRows(html);
+    plainText = stripTags(html);
+  } catch (error) {
+    primaryError = error;
+  }
+
+  const ensureFallbackData = async () => {
+    const fallback = await parseTencentCodingPlansWithPlaywright(pageUrl).catch((error) => {
+      if (primaryError) {
+        throw new Error(`${primaryError.message}; Playwright fallback failed: ${error.message}`);
+      }
+      throw error;
+    });
+    rows = fallback.rows;
+    plainText = fallback.plainText || plainText;
+    buyUrlFromPage = fallback.buyUrl || buyUrlFromPage;
+  };
+
+  if (rows.length === 0) {
+    await ensureFallbackData();
+  }
+
+  let planHeaderIndex = rows.findIndex(
     (row) => /lite\s*套餐/i.test(row.join(" ")) && /pro\s*套餐/i.test(row.join(" ")),
   );
   if (planHeaderIndex < 0) {
+    await ensureFallbackData();
+    planHeaderIndex = rows.findIndex(
+      (row) => /lite\s*套餐/i.test(row.join(" ")) && /pro\s*套餐/i.test(row.join(" ")),
+    );
+  }
+  if (planHeaderIndex < 0) {
     throw new Error("Unable to locate Tencent coding plan table");
   }
+
   const planHeaderRow = rows[planHeaderIndex];
   const tierColumns = new Map();
   for (let column = 0; column < planHeaderRow.length; column += 1) {
@@ -1054,34 +1168,52 @@ async function parseTencentCodingPlans() {
     }
   }
 
-  const pricingRowLabels = new Set(["价格", "套餐价格", "刊例价", "限时特惠价格", "特惠价格", "优惠价格", "活动价格", "用量限制"]);
-  const pricingTableRows = [];
-  for (let rowIndex = planHeaderIndex + 1; rowIndex < rows.length; rowIndex += 1) {
-    const row = rows[rowIndex];
-    if (!row || row.length < planHeaderRow.length) {
-      continue;
+  const pricingRowLabels = new Set(["价格", "套餐价格", "刊例价", "原价", "限时特惠价格", "特惠价格", "优惠价格", "活动价格", "用量限制"]);
+  const collectPricingRows = () => {
+    const pricingTableRows = [];
+    for (let rowIndex = planHeaderIndex + 1; rowIndex < rows.length; rowIndex += 1) {
+      const row = rows[rowIndex];
+      if (!row || row.length < planHeaderRow.length) {
+        continue;
+      }
+      const label = normalizeText(row[0] || "");
+      if (label === "模型" || label === "AI 工具") {
+        break;
+      }
+      if (pricingRowLabels.has(label)) {
+        pricingTableRows.push(row);
+      }
     }
-    const label = normalizeText(row[0] || "");
-    if (label === "模型" || label === "AI 工具") {
-      break;
-    }
-    if (pricingRowLabels.has(label)) {
-      pricingTableRows.push(row);
-    }
-  }
+    return pricingTableRows;
+  };
 
-  const priceRow = pricingTableRows.find((row) => ["价格", "套餐价格", "刊例价"].includes(normalizeText(row?.[0] || "")));
-  const promoPriceRow = pricingTableRows.find((row) => /(?:限时)?特惠价格|优惠价格|活动价格/i.test(normalizeText(row?.[0] || "")));
-  const usageRow = pricingTableRows.find((row) => normalizeText(row?.[0] || "") === "用量限制");
+  let pricingTableRows = collectPricingRows();
+  let priceRow = pricingTableRows.find((row) => ["价格", "套餐价格", "刊例价", "原价"].includes(normalizeText(row?.[0] || "")));
+  if (!priceRow) {
+    await ensureFallbackData();
+    planHeaderIndex = rows.findIndex(
+      (row) => /lite\s*套餐/i.test(row.join(" ")) && /pro\s*套餐/i.test(row.join(" ")),
+    );
+    if (planHeaderIndex < 0) {
+      throw new Error("Unable to locate Tencent coding plan table");
+    }
+    pricingTableRows = collectPricingRows();
+    priceRow = pricingTableRows.find((row) => ["价格", "套餐价格", "刊例价", "原价"].includes(normalizeText(row?.[0] || "")));
+  }
   if (!priceRow) {
     throw new Error("Unable to locate Tencent coding plan price row");
   }
 
-  const plainText = stripTags(html);
+  const promoPriceRow = pricingTableRows.find((row) => /(?:限时)?特惠价格|优惠价格|活动价格/i.test(normalizeText(row?.[0] || "")));
+  const usageRow = pricingTableRows.find((row) => normalizeText(row?.[0] || "") === "用量限制");
   const modelIntro = normalizeText(plainText.match(/支持模型[：:]\s*([^。；\n]+)/i)?.[1] || "");
   const toolIntro = normalizeText(plainText.match(/适配工具[：:]\s*([^。；\n]+)/i)?.[1] || "");
-  const buyUrl = html.match(/https:\/\/buy\.cloud\.tencent\.com\/hunyuan[^\s"'<>]*/i)?.[0]
+  const buyUrl = buyUrlFromPage
+    || html.match(/https:\/\/buy\.cloud\.tencent\.com\/hunyuan[^\s"'<>]*/i)?.[0]
+    || html.match(/https:\/\/cloud\.tencent\.com\/act\/pro\/codingplan[^\s"'<>]*/i)?.[0]
     || "https://buy.cloud.tencent.com/hunyuan";
+
+  const promoDetailsByTier = parseTencentPromoDetails(plainText);
 
   const plans = [];
   for (const tier of ["Lite", "Pro"]) {
@@ -1091,15 +1223,22 @@ async function parseTencentCodingPlans() {
     }
     const basePriceInfo = parseTierPriceBreakdown(priceRow[column]);
     const promoPriceInfo = parseTierPriceBreakdown(promoPriceRow?.[column] || "");
-    const priceInfo = Number.isFinite(promoPriceInfo.monthlyAmount) ? promoPriceInfo : basePriceInfo;
+    const promoDetails = promoDetailsByTier.get(tier) || null;
+    const priceInfo = Number.isFinite(promoPriceInfo.monthlyAmount)
+      ? promoPriceInfo
+      : promoDetails && Number.isFinite(promoDetails.monthlyAmount)
+        ? promoDetails
+        : basePriceInfo;
     if (!Number.isFinite(priceInfo.monthlyAmount)) {
       continue;
     }
+
     const originalMonthlyAmount =
       Number.isFinite(basePriceInfo.monthlyAmount) && basePriceInfo.monthlyAmount > priceInfo.monthlyAmount
         ? basePriceInfo.monthlyAmount
         : null;
     const usageText = normalizeText(usageRow?.[column] || "").replace(/(\d)\s*,\s*(\d{3})/g, "$1,$2");
+
     plans.push(
       asPlan({
         name: `Coding Plan ${tier}`,
@@ -1108,7 +1247,15 @@ async function parseTencentCodingPlans() {
         originalPriceText: Number.isFinite(originalMonthlyAmount) ? `¥${formatAmount(originalMonthlyAmount)}/月` : null,
         originalPrice: originalMonthlyAmount,
         unit: "月",
-        notes: buildTierPriceNotes(priceInfo),
+        notes: buildTierPriceNotes({
+          ...priceInfo,
+          firstMonthAmount: Number.isFinite(priceInfo.firstMonthAmount)
+            ? priceInfo.firstMonthAmount
+            : promoDetails?.firstMonthAmount ?? null,
+          secondMonthAmount: Number.isFinite(priceInfo.secondMonthAmount)
+            ? priceInfo.secondMonthAmount
+            : promoDetails?.secondMonthAmount ?? null,
+        }),
         serviceDetails: normalizeServiceDetails([
           usageText ? `用量限制: ${usageText}` : null,
           modelIntro ? `支持模型: ${modelIntro}` : null,
