@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      issues: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,28 +24,114 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Fetch latest provider pricing
+        run: npm run pricing:fetch
+
       - name: Fetch OpenRouter provider metrics
+        id: fetch_metrics
+        run: |
+          set +e
+          npm run metrics:fetch 2>&1 | tee openrouter-metrics-fetch.log
+          status=${PIPESTATUS[0]}
+          echo "exit_code=${status}" >> "$GITHUB_OUTPUT"
+          exit 0
         env:
           CODING_PLANS_FOR_COPILOT: ${{ secrets.CODING_PLANS_FOR_COPILOT }}
           OPENROUTER_MODEL_ORGS: ${{ vars.OPENROUTER_MODEL_ORGS || 'deepseek,qwen,moonshotai,z-ai,minimax,bytedance,bytedance-seed,kwaipilot,meituan,mistralai,stepfun' }}
           OPENROUTER_MODEL_LIMIT: ${{ vars.OPENROUTER_MODEL_LIMIT || '5' }}
           OPENROUTER_MODEL_MAX_AGE_DAYS: ${{ vars.OPENROUTER_MODEL_MAX_AGE_DAYS || '180' }}
-        run: npm run metrics:fetch
 
       - name: Fetch OpenRouter provider plans
+        id: fetch_plans
+        if: steps.fetch_metrics.outputs.exit_code == '0'
+        run: |
+          set +e
+          npm run openrouter:plans:fetch 2>&1 | tee openrouter-plans-fetch.log
+          status=${PIPESTATUS[0]}
+          echo "exit_code=${status}" >> "$GITHUB_OUTPUT"
+          exit 0
         env:
           CODING_PLANS_FOR_COPILOT: ${{ secrets.CODING_PLANS_FOR_COPILOT }}
-        run: npm run openrouter:plans:fetch
+
+      - name: Detect OpenRouter failures
+        id: openrouter_failures
+        if: always()
+        run: |
+          node -e "const fs=require('node:fs');const path=require('node:path');const reasons=[];const add=(value)=>{const text=String(value||'').replace(/\r?\n/g,' ').trim();if(text&&!reasons.includes(text))reasons.push(text);};const readLastMeaningfulLine=(filePath)=>{try{const text=fs.readFileSync(filePath,'utf8');const lines=text.split(/\r?\n/g).map((line)=>line.trim()).filter(Boolean);return lines.length>0?lines[lines.length-1]:null;}catch{return null;}};const metricsExit=String(process.env.METRICS_EXIT_CODE||'').trim();const plansExit=String(process.env.PLANS_EXIT_CODE||'').trim();if(metricsExit&&metricsExit!=='0'){add('metrics:fetch exited with code '+metricsExit);add(readLastMeaningfulLine(path.resolve('openrouter-metrics-fetch.log')));}if(!metricsExit||metricsExit==='0'){try{const metrics=JSON.parse(fs.readFileSync('assets/openrouter-provider-metrics.json','utf8'));const failures=Array.isArray(metrics.failures)?metrics.failures:[];for(const item of failures){add(item);}}catch(error){add('Unable to read assets/openrouter-provider-metrics.json: '+(error&&error.message?error.message:error));}}if(plansExit&&plansExit!=='0'){add('openrouter:plans:fetch exited with code '+plansExit);add(readLastMeaningfulLine(path.resolve('openrouter-plans-fetch.log')));}const out=process.env.GITHUB_OUTPUT;fs.appendFileSync(out,'has_failure='+(reasons.length>0)+'\n');if(reasons.length>0){fs.appendFileSync(out,'reasons_json<<__EOF__\n'+JSON.stringify(reasons)+'\n__EOF__\n');}"
+        env:
+          METRICS_EXIT_CODE: ${{ steps.fetch_metrics.outputs.exit_code }}
+          PLANS_EXIT_CODE: ${{ steps.fetch_plans.outputs.exit_code }}
+
+      - name: Create issue for OpenRouter failures
+        if: steps.openrouter_failures.outputs.has_failure == 'true'
+        uses: actions/github-script@v7
+        env:
+          REASONS_JSON: ${{ steps.openrouter_failures.outputs.reasons_json }}
+        with:
+          script: |
+            const marker = '<!-- auto-openrouter-fetch-failure -->';
+            const title = '抓取失败：OpenRouter 数据更新失败';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const reasons = JSON.parse(process.env.REASONS_JSON || '[]')
+              .map((item) => String(item || '').replace(/`/g, "'"))
+              .filter(Boolean);
+            const reasonLines = reasons.length > 0
+              ? reasons.map((item) => `- \`${item}\``)
+              : ['- `unknown error`'];
+            const openIssues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+
+            const body = [
+              marker,
+              'OpenRouter 指标或套餐同步出现失败。',
+              '',
+              `- 失败数量：${reasons.length}`,
+              ...reasonLines,
+              `- 工作流运行：${runUrl}`,
+              `- 时间（UTC）：${new Date().toISOString()}`,
+              '',
+              '@jqknono 请检查 OpenRouter 抓取逻辑。',
+            ].join('\n');
+
+            const existing = openIssues.find((issue) => {
+              if (issue.pull_request) {
+                return false;
+              }
+              return issue.title === title && typeof issue.body === 'string' && issue.body.includes(marker);
+            });
+
+            if (existing) {
+              core.info(`OpenRouter failure issue already open: #${existing.number}`);
+              return;
+            }
+
+            const created = await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+            });
+            core.info(`Created issue #${created.data.number}`);
+
+      - name: Stop workflow on OpenRouter command failure
+        if: always() && (steps.fetch_metrics.outputs.exit_code != '0' || (steps.fetch_plans.outputs.exit_code != '' && steps.fetch_plans.outputs.exit_code != '0'))
+        run: |
+          echo "OpenRouter fetch command failed."
+          exit 1
 
       - name: Commit metrics changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add assets/openrouter-provider-metrics.json assets/openrouter-provider-plans.json
+          git add assets/provider-pricing.json assets/openrouter-provider-metrics.json assets/openrouter-provider-plans.json
           if git diff --cached --quiet; then
             echo "No metrics changes detected."
             exit 0
           fi
-          git commit -m "chore: update openrouter provider metrics"
+          git commit -m "chore: update provider pricing and openrouter metrics"
           BRANCH_NAME="${GITHUB_REF_NAME:-main}"
           git push origin "HEAD:${BRANCH_NAME}"

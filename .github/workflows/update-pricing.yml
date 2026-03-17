@@ -27,30 +27,38 @@ jobs:
       - name: Fetch latest provider pricing
         run: npm run pricing:fetch
 
-      - name: Detect Aliyun parsing failure
-        id: aliyun_failure
+      - name: Detect provider pricing parsing failures
+        id: pricing_failures
         run: |
-          node -e "const fs=require('node:fs');const data=JSON.parse(fs.readFileSync('assets/provider-pricing.json','utf8'));const failures=Array.isArray(data.failures)?data.failures:[];const aliyunFailures=failures.map(String).filter((msg)=>/Unable to (parse|locate).*Aliyun/i.test(msg));const out=process.env.GITHUB_OUTPUT;fs.appendFileSync(out,'has_failure='+(aliyunFailures.length>0)+'\n');if(aliyunFailures.length>0){const message=aliyunFailures.join(' | ').replace(/\r?\n/g,' ').trim();fs.appendFileSync(out,'failure_message='+message+'\n');}"
+          node -e "const fs=require('node:fs');const data=JSON.parse(fs.readFileSync('assets/provider-pricing.json','utf8'));const failures=(Array.isArray(data.failures)?data.failures:[]).map((item)=>String(item||'').replace(/\r?\n/g,' ').trim()).filter(Boolean);const out=process.env.GITHUB_OUTPUT;fs.appendFileSync(out,'has_failure='+(failures.length>0)+'\n');if(failures.length>0){fs.appendFileSync(out,'failures_json<<__EOF__\n'+JSON.stringify(failures)+'\n__EOF__\n');}"
 
-      - name: Create issue for Aliyun parsing failure
-        if: steps.aliyun_failure.outputs.has_failure == 'true'
+      - name: Create issue for provider pricing parsing failures
+        if: steps.pricing_failures.outputs.has_failure == 'true'
         uses: actions/github-script@v7
         env:
-          FAILURE_MESSAGE: ${{ steps.aliyun_failure.outputs.failure_message }}
+          FAILURES_JSON: ${{ steps.pricing_failures.outputs.failures_json }}
         with:
           script: |
-            const marker = '<!-- auto-pricing-aliyun-parse-failure -->';
-            const title = '抓取失败：Unable to parse Aliyun coding plans';
+            const marker = '<!-- auto-provider-pricing-parse-failures -->';
+            const title = '抓取失败：中文套餐解析失败';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
-            const failureMessage = process.env.FAILURE_MESSAGE || 'Unable to parse Aliyun coding plans';
-            const body = `${marker}
-            阿里云百炼的 coding 套餐页面可能已变更，自动抓取出现解析失败。
-
-            - 失败信息：\\`${failureMessage}\\`
-            - 工作流运行：${runUrl}
-            - 时间（UTC）：${new Date().toISOString()}
-
-            @jqknono 请检查页面结构并更新解析逻辑。`;
+            const failures = JSON.parse(process.env.FAILURES_JSON || '[]')
+              .map((item) => String(item || '').replace(/`/g, "'"))
+              .filter(Boolean);
+            const failureLines = failures.length > 0
+              ? failures.map((item) => `- \`${item}\``)
+              : ['- `unknown error`'];
+            const body = [
+              marker,
+              '中文套餐页面解析出现失败。',
+              '',
+              `- 失败数量：${failures.length}`,
+              ...failureLines,
+              `- 工作流运行：${runUrl}`,
+              `- 时间（UTC）：${new Date().toISOString()}`,
+              '',
+              '@jqknono 请检查页面结构并更新解析逻辑。',
+            ].join('\n');
 
             const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
@@ -59,15 +67,18 @@ jobs:
               per_page: 100,
             });
 
-            const existing = issues.find((issue) =>
-              !issue.pull_request &&
-              issue.title === title &&
-              typeof issue.body === 'string' &&
-              issue.body.includes(marker),
-            );
+            const existing = issues.find((issue) => {
+              if (issue.pull_request) {
+                return false;
+              }
+              if (issue.title === title && typeof issue.body === 'string' && issue.body.includes(marker)) {
+                return true;
+              }
+              return false;
+            });
 
             if (existing) {
-              core.info(`Aliyun parsing issue already open: #${existing.number}`);
+              core.info(`Provider pricing parsing issue already open: #${existing.number}`);
               return;
             }
 
