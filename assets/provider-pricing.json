@@ -1,62 +1,12 @@
 {
-  "generatedAt": "2026-03-15T10:49:22.088Z",
+  "generatedAt": "2026-03-17T03:00:48.412Z",
   "providers": [
-    {
-      "provider": "zhipu-ai",
-      "sourceUrls": [
-        "https://bigmodel.cn/glm-coding",
-        "https://bigmodel.cn/js/app.537c3bfb.js",
-        "https://bigmodel.cn/js/chunk-0d4f69d1.2231d1b0.js",
-        "https://docs.bigmodel.cn/cn/coding-plan/overview"
-      ],
-      "plans": [
-        {
-          "name": "GLM Coding Lite (月)",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": 49,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "下个月度续费金额：¥49",
-          "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 80 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 400 次 prompts"
-          ]
-        },
-        {
-          "name": "GLM Coding Pro (月)",
-          "currentPrice": 149,
-          "currentPriceText": "¥149/月",
-          "originalPrice": 149,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "下个月度续费金额：¥149",
-          "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 400 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 2000 次 prompts"
-          ]
-        },
-        {
-          "name": "GLM Coding Max (月)",
-          "currentPrice": 469,
-          "currentPriceText": "¥469/月",
-          "originalPrice": 469,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "下个月度续费金额：¥469",
-          "serviceDetails": [
-            "每 5 小时限额 （动态刷新，额度在请求消耗 5 小时后刷新重置）: 最多约 1600 次 prompts",
-            "每周限额 （自下单时开启，以 7 天为一个周期额度刷新重置）: 最多约 8000 次 prompts"
-          ]
-        }
-      ]
-    },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BPqQ4LQ6.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-6PIY06Tf.js"
       ],
       "plans": [
         {
@@ -77,53 +27,38 @@
           ]
         },
         {
-          "name": "Andante (月)",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: LEVEL_TRIAL",
-            "更多 Agent 额度",
-            "Agent 4 倍速优先用",
-            "K2.5 提速并提升额度",
-            "Kimi Code 可调用"
-          ]
-        },
-        {
           "name": "Moderato (月)",
-          "currentPrice": 99,
-          "currentPriceText": "¥99/月",
+          "currentPrice": 19,
+          "currentPriceText": "¥19/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 基础会员",
-            "Andante 权益基础上",
-            "2 倍 Agent 额度",
+            "更多 Agent 额度",
             "Agent 多任务并行",
-            "2 倍 K2.5 模型使用额度",
-            "Kimi Code 4 倍额度"
+            "Agent 4 倍速优先用",
+            "K2.5 提速并提升额度",
+            "PPT 创意视觉 x Nano Banana",
+            "Kimi Code 可调用"
           ]
         },
         {
           "name": "Allegretto (月)",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
+          "currentPrice": 39,
+          "currentPriceText": "¥39/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 进阶会员",
-            "Andante 权益基础上",
-            "4 倍 Agent 额度",
-            "Agent 多任务并行",
-            "4 倍 K2.5 模型使用额度",
-            "Kimi Code 20 倍额度",
+            "Moderato 权益基础上",
+            "2 倍 Agent 额度",
+            "2 倍 K2.5 模型使用额度",
+            "无限 PPT 创意视觉 x Nano Banana",
+            "Kimi Code 5 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -132,19 +67,44 @@
         },
         {
           "name": "Allegro (月)",
-          "currentPrice": 699,
-          "currentPriceText": "¥699/月",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 高级会员",
-            "Andante 权益基础上",
+            "Moderato 权益基础上",
+            "5 倍 Agent 额度",
+            "2 倍 Agent 任务并行",
+            "高峰时段获得优先回复",
+            "5 倍 K2.5 模型使用额度",
+            "无限 PPT 创意视觉 x Nano Banana",
+            "Kimi Code 15 倍额度",
+            "专属助理 一键部署 Kimi Claw",
+            "实验性功能 Agent 集群：",
+            "多 Agent 并行，数倍生产力",
+            "适用海量搜索、长文写作、批量处理"
+          ]
+        },
+        {
+          "name": "Vivace (月)",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: 旗舰会员",
+            "Moderato 权益基础上",
             "10 倍 Agent 额度",
-            "Agent 多任务并行",
+            "2 倍 Agent 任务并行",
+            "高峰时段获得优先回复",
             "10 倍 K2.5 模型使用额度",
-            "Kimi Code 60 倍额度",
+            "无限 PPT 创意视觉 x Nano Banana",
+            "Kimi Code 30 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -211,7 +171,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.198/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.202/index.js"
       ],
       "plans": [
         {
@@ -607,7 +567,7 @@
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/02f14bd374a0f4dd0773d7679789a231.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/c3c27cb014a251388adc9a019bf3947f.js",
         "https://t.aliyun.com/abs/promotion/queryPrice"
       ],
       "plans": [
@@ -682,5 +642,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "zhipu-ai: Unable to locate Zhipu coding pricing chunk"
+  ]
 }
