@@ -28,7 +28,6 @@ const HEURISTIC_MAX_SUBSCRIPTION_PRICE = 10000;
 
 // OpenRouter provider slug => provider-pricing.json provider id
 const OPENROUTER_TO_PRICING_PROVIDER = {
-  "z-ai": "zhipu-ai",
   moonshotai: "kimi-ai",
   minimax: "minimax-ai",
   streamlake: "kwaikat-ai",
@@ -45,6 +44,7 @@ const OFFICIAL_WEBSITE_OVERRIDES = {
   "io-net": "https://io.net",
   ionstream: "https://ionstream.ai",
   venice: "https://venice.ai",
+  "z-ai": "https://z.ai",
 };
 
 // Provider-specific pricing pages that should be probed first.
@@ -52,6 +52,7 @@ const PRICING_PAGE_OVERRIDES = {
   mistral: "https://mistral.ai/pricing",
   venice: "https://venice.ai/pricing",
   chutes: "https://chutes.ai/pricing",
+  "z-ai": "https://z.ai/subscribe",
 };
 
 const PROVIDER_PENDING_OVERRIDES = {
@@ -139,6 +140,31 @@ function parseProviderSlugFromTag(tag) {
 
 function unique(values) {
   return [...new Set(values.filter(Boolean))];
+}
+
+async function loadPlaywrightChromium(label) {
+  let chromium;
+  try {
+    ({ chromium } = require("@playwright/test"));
+  } catch {
+    throw new Error(`Playwright is unavailable for ${label}`);
+  }
+  return chromium;
+}
+
+async function blockNonEssentialPlaywrightRequests(page) {
+  await page.route("**/*", (route) => {
+    const request = route.request();
+    const resourceType = request.resourceType();
+    const url = request.url();
+    if (["image", "font", "media"].includes(resourceType)) {
+      return route.abort();
+    }
+    if (/google-analytics|googletagmanager|hm\.baidu|sentry|adjust|twitter|qiyukf|datasink/i.test(url)) {
+      return route.abort();
+    }
+    return route.continue();
+  });
 }
 
 async function fetchJson(url, options = {}) {
@@ -1389,11 +1415,111 @@ async function parseRedpillCustomPricing() {
   };
 }
 
+async function parseZAiCustomPricing() {
+  const sourceUrl = "https://z.ai/subscribe";
+  const docsUrl = "https://docs.z.ai/devpack/overview";
+  const chromium = await loadPlaywrightChromium("z.ai parser");
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    await blockNonEssentialPlaywrightRequests(page);
+    await page.goto(sourceUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 8_000,
+    });
+    await page.waitForFunction(
+      () => {
+        const text = String(document.body?.innerText || "");
+        return /GLM Coding Plan/i.test(text) && /Subscribe/i.test(text);
+      },
+      { timeout: 8_000 },
+    );
+    await page.evaluate(() => {
+      const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+      const monthlyTab = Array.from(document.querySelectorAll("*")).find((node) => normalize(node.textContent) === "Monthly");
+      if (monthlyTab) {
+        monthlyTab.click();
+      }
+    });
+    await page.waitForFunction(
+      () => /\$\s*[0-9]+(?:\.[0-9]+)?\s*\/\s*month from 2nd month/i.test(String(document.body?.innerText || "")),
+      { timeout: 5_000 },
+    );
+
+    const extractedPlans = await page.evaluate(() => {
+      const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+      const cleanup = (value) => normalize(value).replace(/^[^A-Za-z0-9\u4e00-\u9fa5$]+/, "");
+      const seen = new Set();
+      const cards = [];
+      const subscribeButtons = Array.from(document.querySelectorAll("button")).filter((node) => /Subscribe/i.test(normalize(node.textContent)));
+
+      for (const button of subscribeButtons) {
+        const card = button.parentElement?.parentElement || button.parentElement;
+        if (!card) {
+          continue;
+        }
+        const texts = Array.from(card.querySelectorAll("*"))
+          .map((node) => cleanup(node.textContent))
+          .filter(Boolean);
+        const tier = texts.find((text) => /^(Lite|Pro|Max)$/.test(text));
+        if (!tier || seen.has(tier)) {
+          continue;
+        }
+        seen.add(tier);
+
+        const priceText = texts.find((text) => /^\$\s*[0-9]+(?:\.[0-9]+)?\s*\/\s*month$/i.test(text)) || null;
+        const renewalText = texts.find((text) => /^\$\s*[0-9]+(?:\.[0-9]+)?\s*\/\s*month from 2nd month$/i.test(text)) || null;
+        const featureTitle =
+          texts
+            .filter((text) => /usage of the Claude Pro plan|Lite plan usage|Pro plan benefits/i.test(text))
+            .sort((left, right) => left.length - right.length)[0]
+          || null;
+        const serviceDetails = Array.from(card.querySelectorAll("li"))
+          .map((node) => cleanup(node.textContent))
+          .filter((text) => text && !/Subscribe/i.test(text) && !/\$\s*[0-9]+(?:\.[0-9]+)?/i.test(text));
+
+        cards.push({
+          tier,
+          priceText,
+          renewalText,
+          serviceDetails: featureTitle ? [featureTitle, ...serviceDetails] : serviceDetails,
+        });
+      }
+
+      return cards;
+    });
+
+    if (!Array.isArray(extractedPlans) || extractedPlans.length === 0) {
+      throw new Error("Unable to parse z.ai subscribe plans via Playwright");
+    }
+
+    const plans = extractedPlans.map((plan) => ({
+      name: `GLM Coding ${plan.tier}`,
+      currentPrice: parsePriceAmount(plan.priceText),
+      currentPriceText: String(plan.priceText || "").replace(/\s+/g, ""),
+      originalPrice: null,
+      originalPriceText: null,
+      unit: "月",
+      notes: compactText(plan.renewalText),
+      serviceDetails: unique((plan.serviceDetails || []).map((item) => compactText(item)).filter(Boolean)),
+    }));
+
+    return {
+      plans,
+      sourceUrls: unique([sourceUrl, docsUrl]),
+      pricingPageUrl: sourceUrl,
+    };
+  } finally {
+    await browser.close();
+  }
+}
+
 const PROVIDER_CUSTOM_PARSERS = {
   mistral: parseMistralCustomPricing,
   chutes: parseChutesCustomPricing,
   venice: parseVeniceCustomPricing,
   phala: parseRedpillCustomPricing,
+  "z-ai": parseZAiCustomPricing,
 };
 
 async function probeOfficialPricing(openrouterProvider, officialWebsiteUrl) {

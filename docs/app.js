@@ -406,6 +406,16 @@ function getOpenrouterBuyUrl(provider) {
   return null;
 }
 
+function getPricingFailureBuyUrl(failureItem) {
+  const text = String(failureItem || "").trim();
+  if (!text) {
+    return null;
+  }
+  const colonIndex = text.indexOf(":");
+  const providerId = (colonIndex >= 0 ? text.slice(0, colonIndex) : text).trim();
+  return PROVIDER_BUY_URLS[providerId] || null;
+}
+
 function mergeAllProviderData(pricingData, openrouterData) {
   const providerMap = new Map();
   const refMap = new Map();
@@ -681,7 +691,20 @@ function renderPricingFailures() {
   }
 
   for (const item of failures) {
-    listEl.append(createElement("li", "", String(item)));
+    const line = createElement("li", "", "");
+    line.append(document.createTextNode(String(item)));
+
+    const buyUrl = getPricingFailureBuyUrl(item);
+    if (buyUrl) {
+      line.append(document.createTextNode(" "));
+      const link = createElement("a", "buy-link", "价格官网");
+      link.href = buyUrl;
+      link.target = "_blank";
+      link.rel = "noopener noreferrer";
+      line.append(link);
+    }
+
+    listEl.append(line);
   }
   panel.classList.remove("hidden");
   panel.removeAttribute("open");
@@ -1740,4 +1763,3 @@ const initialTab = readTabFromHash();
 syncHashForTab(initialTab, "replace");
 switchTab(initialTab);
 loadDataForActiveTab();
-

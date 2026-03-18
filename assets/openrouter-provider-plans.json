@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-03-17T08:20:54.312Z",
-  "generatedAtBeijing": "2026年3月17日 16:20:54",
-  "sourceGeneratedAt": "2026-03-17T03:00:48.412Z",
-  "sourceGeneratedAtBeijing": "2026年3月17日 11:00:48",
-  "sourceMetricsGeneratedAt": "2026-03-17T08:20:38.566Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月17日 16:20:38",
+  "generatedAt": "2026-03-18T03:51:18.717Z",
+  "generatedAtBeijing": "2026年3月18日 11:51:18",
+  "sourceGeneratedAt": "2026-03-18T03:47:57.182Z",
+  "sourceGeneratedAtBeijing": "2026年3月18日 11:47:57",
+  "sourceMetricsGeneratedAt": "2026-03-18T03:48:15.449Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月18日 11:48:15",
   "summary": {
     "openrouterProviderCount": 74,
     "metricsProviderCount": 31,
     "resolvedMetricsProviderCount": 31,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 5,
-    "heuristicProviderCount": 4,
-    "providersWithPlans": 9,
-    "pendingCount": 22,
+    "heuristicProviderCount": 5,
+    "providersWithPlans": 10,
+    "pendingCount": 21,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -55,7 +55,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/c3c27cb014a251388adc9a019bf3947f.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/d902563d7fc5f350f59c64d15dd2ed08.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://www.alibabacloud.com"
       ],
@@ -119,12 +119,12 @@
       ],
       "sourceUrls": [
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.CGdDNn0W.js",
-        "https://chutes.ai/_app/immutable/nodes/0.DtjkLWu1.js",
+        "https://chutes.ai/_app/immutable/entry/app.IMBBuvD1.js",
+        "https://chutes.ai/_app/immutable/nodes/0.Dr0fwJxI.js",
         "https://chutes.ai/_app/immutable/chunks/A6Bqj6r0.js",
         "https://chutes.ai/_app/immutable/chunks/D9oMPIpw.js",
         "https://chutes.ai/_app/immutable/chunks/CQyVzz8P.js",
-        "https://chutes.ai/_app/immutable/chunks/CbXdimQ7.js",
+        "https://chutes.ai/_app/immutable/chunks/C_AFMvVy.js",
         "https://chutes.ai/_app/immutable/chunks/BEigO3Uw.js",
         "https://chutes.ai/_app/immutable/chunks/Ca-8DU1S.js",
         "https://chutes.ai/_app/immutable/chunks/ahf1KeVi.js",
@@ -156,7 +156,7 @@
         "https://chutes.ai/_app/immutable/chunks/DW-pNwoA.js",
         "https://chutes.ai/_app/immutable/chunks/D69XjJvu.js",
         "https://chutes.ai/_app/immutable/chunks/ZvjxrGzD.js",
-        "https://chutes.ai/_app/immutable/nodes/21.yAdvKNxy.js",
+        "https://chutes.ai/_app/immutable/nodes/21.BkLSvmgL.js",
         "https://chutes.ai/_app/immutable/chunks/CxnRpbWT.js",
         "https://chutes.ai"
       ],
@@ -350,38 +350,53 @@
           ]
         },
         {
+          "name": "Andante (月)",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: LEVEL_TRIAL",
+            "更多 Agent 额度",
+            "Agent 4 倍速优先用",
+            "K2.5 提速并提升额度",
+            "Kimi Code 可调用"
+          ]
+        },
+        {
           "name": "Moderato (月)",
-          "currentPrice": 19,
-          "currentPriceText": "¥19/月",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 基础会员",
-            "更多 Agent 额度",
+            "Andante 权益基础上",
+            "2 倍 Agent 额度",
             "Agent 多任务并行",
-            "Agent 4 倍速优先用",
-            "K2.5 提速并提升额度",
-            "PPT 创意视觉 x Nano Banana",
-            "Kimi Code 可调用"
+            "2 倍 K2.5 模型使用额度",
+            "Kimi Code 4 倍额度"
           ]
         },
         {
           "name": "Allegretto (月)",
-          "currentPrice": 39,
-          "currentPriceText": "¥39/月",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 进阶会员",
-            "Moderato 权益基础上",
-            "2 倍 Agent 额度",
-            "2 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 5 倍额度",
+            "Andante 权益基础上",
+            "4 倍 Agent 额度",
+            "Agent 多任务并行",
+            "4 倍 K2.5 模型使用额度",
+            "Kimi Code 20 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -390,44 +405,19 @@
         },
         {
           "name": "Allegro (月)",
-          "currentPrice": 99,
-          "currentPriceText": "¥99/月",
+          "currentPrice": 699,
+          "currentPriceText": "¥699/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 高级会员",
-            "Moderato 权益基础上",
-            "5 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
-            "5 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 15 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
-          ]
-        },
-        {
-          "name": "Vivace (月)",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: 旗舰会员",
-            "Moderato 权益基础上",
+            "Andante 权益基础上",
             "10 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
+            "Agent 多任务并行",
             "10 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 30 倍额度",
+            "Kimi Code 60 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -438,7 +428,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-6PIY06Tf.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C8pVTl5l.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -521,7 +511,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.202/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.203/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -648,6 +638,73 @@
       "termsOfServiceUrl": "https://venice.ai/legal/tos",
       "statusPageUrl": null,
       "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "z-ai",
+      "openrouterName": "Z.AI",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "GLM Coding Lite",
+          "currentPrice": 10,
+          "currentPriceText": "$10/month",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "$10 / month from 2nd month",
+          "serviceDetails": [
+            "3× usage of the Claude Pro plan",
+            "Managing lightweight workloads",
+            "Regular updates with new models and features",
+            "Compatible with over 20 coding tools, including Claude Code、Cursor、Cline、Kilo Code、OpenClaw..."
+          ]
+        },
+        {
+          "name": "GLM Coding Pro",
+          "currentPrice": 30,
+          "currentPriceText": "$30/month",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "$30 / month from 2nd month",
+          "serviceDetails": [
+            "5× Lite plan usage",
+            "Managing complex workloads",
+            "All Lite plan benefits",
+            "Priority access to new models and features",
+            "40%–60% faster compared to Lite",
+            "Access Vision Analyze, Web Search, Web Reader and Zread MCP"
+          ]
+        },
+        {
+          "name": "GLM Coding Max",
+          "currentPrice": 80,
+          "currentPriceText": "$80/month",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "$80 / month from 2nd month",
+          "serviceDetails": [
+            "All Pro plan benefits",
+            "4× Pro plan usage",
+            "Managing high-volume workloads for advanced developers",
+            "First access to new models and features",
+            "Guaranteed peak-hour performance"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://z.ai/subscribe",
+        "https://docs.z.ai/devpack/overview",
+        "https://z.ai"
+      ],
+      "pricingPageUrl": "https://z.ai/subscribe",
+      "officialWebsiteUrl": "https://z.ai",
+      "websiteSource": "override",
+      "privacyPolicyUrl": "https://chat.z.ai/legal-agreement/privacy-policy",
+      "termsOfServiceUrl": "https://chat.z.ai/legal-agreement/terms-of-service",
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
     }
   ],
   "pending": [
@@ -666,7 +723,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.07 / $0.06 / $0.04）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.012 / $0.011 / $0.07）",
       "blocked": false
     },
     {
@@ -838,15 +895,6 @@
       "officialWebsiteUrl": "https://www.together.ai",
       "pricingPageUrl": "https://www.together.ai/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.27 / $0.85 / $0.30）",
-      "blocked": false
-    },
-    {
-      "slug": "z-ai",
-      "openrouterName": "Z.AI",
-      "providerId": "zhipu-ai",
-      "officialWebsiteUrl": "https://chat.z.ai",
-      "pricingPageUrl": "https://chat.z.ai/pricing",
-      "reason": "官网未发现可解析的套餐价格页",
       "blocked": false
     }
   ]

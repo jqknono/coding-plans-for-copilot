@@ -8,7 +8,7 @@ const path = require("node:path");
 
 const OUTPUT_FILE = path.resolve(__dirname, "..", "assets", "provider-pricing.json");
 const REQUEST_TIMEOUT_MS = 15_000;
-const TASK_TIMEOUT_MS = 15_000;
+const TASK_TIMEOUT_MS = 30_000;
 
 const PROVIDER_IDS = {
   ZHIPU: "zhipu-ai",
@@ -476,6 +476,31 @@ function unique(values) {
   return [...new Set(values.filter(Boolean))];
 }
 
+async function loadPlaywrightChromium(label) {
+  let chromium;
+  try {
+    ({ chromium } = require("@playwright/test"));
+  } catch {
+    throw new Error(`Playwright is unavailable for ${label}`);
+  }
+  return chromium;
+}
+
+async function blockNonEssentialPlaywrightRequests(page) {
+  await page.route("**/*", (route) => {
+    const request = route.request();
+    const resourceType = request.resourceType();
+    const url = request.url();
+    if (["image", "font", "media"].includes(resourceType)) {
+      return route.abort();
+    }
+    if (/google-analytics|googletagmanager|hm\.baidu|sentry|qiyukf|datasink/i.test(url)) {
+      return route.abort();
+    }
+    return route.continue();
+  });
+}
+
 function timeUnitLabel(value) {
   if (value === "TIME_UNIT_MONTH") {
     return "月";
@@ -784,7 +809,98 @@ async function parseTencentCodingPlansWithPlaywright(pageUrl) {
   }
 }
 
-async function parseZhipuCodingPlans() {
+async function parseZhipuCodingPlansWithPlaywright() {
+  const pageUrl = "https://bigmodel.cn/glm-coding";
+  const docsUrl = "https://docs.bigmodel.cn/cn/coding-plan/overview";
+  const chromium = await loadPlaywrightChromium("Zhipu parser");
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    await blockNonEssentialPlaywrightRequests(page);
+    await page.goto(pageUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 8_000,
+    });
+    await page.waitForFunction(
+      () => {
+        const text = String(document.body?.innerText || "");
+        return /即刻与\s*GLM\s*一起\s*Coding/.test(text) && /特惠订阅/.test(text);
+      },
+      { timeout: 8_000 },
+    );
+    await page.evaluate(() => {
+      const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+      const monthlyTab = Array.from(document.querySelectorAll("*")).find((node) => normalize(node.textContent) === "连续包月");
+      if (monthlyTab) {
+        monthlyTab.click();
+      }
+    });
+    await page.waitForFunction(() => String(document.body?.innerText || "").includes("下个月度续费金额"), { timeout: 5_000 });
+
+    const extractedPlans = await page.evaluate(() => {
+      const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+      const cleanup = (value) => normalize(value).replace(/^[^A-Za-z0-9\u4e00-\u9fa5¥￥]+/, "");
+      const seen = new Set();
+      const cards = [];
+      const subscribeButtons = Array.from(document.querySelectorAll("button")).filter((node) => /特惠订阅/.test(normalize(node.textContent)));
+
+      for (const button of subscribeButtons) {
+        const card = button.closest(".package-card") || button.parentElement?.parentElement || button.parentElement;
+        if (!card) {
+          continue;
+        }
+        const texts = Array.from(card.querySelectorAll("*"))
+          .map((node) => cleanup(node.textContent))
+          .filter(Boolean);
+        const tier = texts.find((text) => /^(Lite|Pro|Max)$/.test(text));
+        if (!tier || seen.has(tier)) {
+          continue;
+        }
+        seen.add(tier);
+
+        const currentPriceText = texts.find((text) => /^￥\s*[0-9]+(?:\.[0-9]+)?\s*\/\s*月$/.test(text)) || null;
+        const renewalNote = texts.find((text) => /^下个?月度?续费金额[:：]/.test(text)) || null;
+        const featureTitle = texts.find((text) => /Claude Pro 用量额度|Lite 用量额度|Pro 全量权益/.test(text)) || null;
+        const serviceDetails = Array.from(card.querySelectorAll("li"))
+          .map((node) => cleanup(node.textContent))
+          .filter(Boolean);
+
+        cards.push({
+          tier,
+          currentPriceText,
+          notes: renewalNote,
+          serviceDetails: featureTitle ? [featureTitle, ...serviceDetails] : serviceDetails,
+        });
+      }
+
+      return cards;
+    });
+
+    if (!Array.isArray(extractedPlans) || extractedPlans.length === 0) {
+      throw new Error("Unable to parse Zhipu coding pricing cards via Playwright");
+    }
+
+    return {
+      provider: PROVIDER_IDS.ZHIPU,
+      sourceUrls: unique([pageUrl, docsUrl]),
+      fetchedAt: new Date().toISOString(),
+      plans: dedupePlans(
+        extractedPlans.map((plan) =>
+          asPlan({
+            name: `GLM Coding ${plan.tier}`,
+            currentPriceText: plan.currentPriceText,
+            notes: plan.notes,
+            serviceDetails: plan.serviceDetails,
+          }),
+        ),
+      ),
+    };
+  } finally {
+    await browser.close();
+  }
+}
+
+async function parseZhipuCodingPlansFromLegacyBundle() {
   const pageUrl = "https://bigmodel.cn/glm-coding";
   const html = await fetchText(pageUrl);
   const appPath = html.match(/\/js\/app\.[0-9a-f]+\.js/i)?.[0];
@@ -936,6 +1052,26 @@ async function parseZhipuCodingPlans() {
     fetchedAt: new Date().toISOString(),
     plans: dedupePlans(plans),
   };
+}
+
+async function parseZhipuCodingPlans() {
+  let playwrightError = null;
+  try {
+    return await parseZhipuCodingPlansWithPlaywright();
+  } catch (error) {
+    playwrightError = error;
+  }
+
+  try {
+    return await parseZhipuCodingPlansFromLegacyBundle();
+  } catch (legacyError) {
+    const reasons = [];
+    if (playwrightError) {
+      reasons.push(`Playwright parse failed: ${playwrightError.message || playwrightError}`);
+    }
+    reasons.push(`Legacy bundle parse failed: ${legacyError.message || legacyError}`);
+    throw new Error(reasons.join("; "));
+  }
 }
 
 function parseMinimaxOriginalPrice(priceText, currentText) {
@@ -2292,4 +2428,3 @@ main().catch((error) => {
   console.error("[pricing] fatal:", error);
   process.exit(1);
 });
-
