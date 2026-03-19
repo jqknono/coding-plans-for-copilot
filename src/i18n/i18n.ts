@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import * as fs from 'fs/promises';
-import * as path from 'path';
+import messagesEn from './messages.en.json';
+import messagesZhCn from './messages.zh-cn.json';
 import { logger } from '../logging/outputChannelLogger';
 
 interface Messages {
@@ -16,31 +16,11 @@ export async function initI18n(): Promise<void> {
   currentLocale = locale;
 
   try {
-    const messageFile = locale === 'zh-cn' ? 'messages.zh-cn.json' : 'messages.en.json';
-    const candidatePaths = [
-      path.join(__dirname, 'i18n', messageFile),
-      path.join(__dirname, messageFile)
-    ];
-
-    let loaded: Messages | undefined;
-    for (const candidatePath of candidatePaths) {
-      try {
-        const fileContent = await fs.readFile(candidatePath, 'utf8');
-        loaded = JSON.parse(fileContent) as Messages;
-        break;
-      } catch {
-        // Try next candidate path.
-      }
-    }
-
-    if (!loaded) {
-      throw new Error(`Message file not found: ${messageFile}`);
-    }
-    currentMessages = loaded;
+    currentMessages = locale === 'zh-cn' ? messagesZhCn : messagesEn;
   } catch (error) {
     logger.error('Failed to load messages', error);
     // 回退到英文
-    currentMessages = {};
+    currentMessages = messagesEn;
   }
 }
 

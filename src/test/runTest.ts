@@ -11,16 +11,25 @@ type UpdateCall = {
 type VendorModelRecord = {
   name: string;
   description?: string;
+  apiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
+  temperature?: number;
+  topP?: number;
   capabilities?: {
     tools?: boolean;
     vision?: boolean;
   };
-  contextSize?: number;
+  maxInputTokens?: number;
+  maxOutputTokens?: number;
 };
 
 type VendorRecord = {
   name: string;
   baseUrl: string;
+  defaultApiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
+  defaultTemperature?: number;
+  defaultTopP?: number;
+  defaultVision?: boolean;
+  apiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
   models: VendorModelRecord[];
 };
 
@@ -32,6 +41,8 @@ type MockState = {
 
 type ConfigStoreModule = typeof import('../config/configStore');
 type ConfigStoreCtor = ConfigStoreModule['ConfigStore'];
+type TokenUsageModule = typeof import('../providers/tokenUsage');
+type ProtocolsModule = typeof import('../providers/genericProviderProtocols');
 
 type TestContext = {
   state: MockState;
@@ -92,10 +103,113 @@ function createVscodeMock() {
     Global: 3
   };
 
+  class FakeLanguageModelTextPart {
+    constructor(public readonly value: string) {}
+  }
+
+  class FakeLanguageModelToolCallPart {
+    constructor(
+      public readonly callId: string,
+      public readonly name: string,
+      public readonly input: unknown
+    ) {}
+  }
+
+  class FakeLanguageModelToolResultPart {
+    constructor(
+      public readonly callId: string,
+      public readonly content: unknown[]
+    ) {}
+  }
+
+  class FakeLanguageModelDataPart {
+    constructor(
+      public readonly data: Uint8Array,
+      public readonly mimeType: string
+    ) {}
+  }
+
+  class FakeLanguageModelChatMessage {
+    public readonly content: unknown[];
+
+    constructor(
+      public readonly role: number,
+      content: string | unknown[],
+      public readonly name?: string
+    ) {
+      this.content = typeof content === 'string' ? [new FakeLanguageModelTextPart(content)] : content;
+    }
+  }
+
+  const fakeLanguageModelChatMessageCtor = FakeLanguageModelChatMessage as unknown as Record<string, unknown>;
+  fakeLanguageModelChatMessageCtor['User'] = (content: string | unknown[], name?: string) => new FakeLanguageModelChatMessage(1, content, name);
+  fakeLanguageModelChatMessageCtor['Assistant'] = (content: string | unknown[], name?: string) => new FakeLanguageModelChatMessage(2, content, name);
+
+  class FakeChatRequestTurn {
+    constructor(public readonly prompt: string) {}
+  }
+
+  class FakeMarkdownString {
+    constructor(public readonly value: string) {}
+  }
+
+  class FakeChatResponseMarkdownPart {
+    constructor(value: string) {
+      this.value = new FakeMarkdownString(value);
+    }
+
+    public readonly value: FakeMarkdownString;
+  }
+
+  class FakeChatResponseTurn {
+    constructor(public readonly response: unknown[]) {}
+  }
+
+  class FakeLanguageModelError extends Error {}
+
   return {
     EventEmitter: FakeEventEmitter,
     Disposable: FakeDisposable,
     ConfigurationTarget: configurationTarget,
+    LanguageModelTextPart: FakeLanguageModelTextPart,
+    LanguageModelToolCallPart: FakeLanguageModelToolCallPart,
+    LanguageModelToolResultPart: FakeLanguageModelToolResultPart,
+    LanguageModelDataPart: FakeLanguageModelDataPart,
+    LanguageModelChatMessage: FakeLanguageModelChatMessage,
+    LanguageModelChatToolMode: {
+      Auto: 1,
+      Required: 2
+    },
+    LanguageModelChatMessageRole: {
+      User: 1,
+      Assistant: 2
+    },
+    ChatRequestTurn: FakeChatRequestTurn,
+    ChatResponseTurn: FakeChatResponseTurn,
+    ChatResponseMarkdownPart: FakeChatResponseMarkdownPart,
+    LanguageModelError: FakeLanguageModelError,
+    Uri: {
+      joinPath(...parts: unknown[]): string {
+        return parts.map(String).join('/');
+      }
+    },
+    window: {
+      createOutputChannel() {
+        return {
+          appendLine(): void {
+            return undefined;
+          },
+          dispose(): void {
+            return undefined;
+          }
+        };
+      }
+    },
+    lm: {
+      async invokeTool(_name: string, _options: unknown): Promise<{ content: unknown[] }> {
+        return { content: [new FakeLanguageModelTextPart('tool-result')] };
+      }
+    },
     workspace: {
       onDidChangeConfiguration(listener: ConfigChangeListener): FakeDisposable {
         activeState.listeners.add(listener);
@@ -173,8 +287,11 @@ function createVendorWithSpacedModelName(): VendorRecord {
       {
         name: ' gpt-4o ',
         description: 'Keep me',
+        temperature: 0.25,
+        topP: 0.95,
         capabilities: { tools: true, vision: false },
-        contextSize: 128000
+        maxInputTokens: 64000,
+        maxOutputTokens: 64000
       }
     ]
   };
@@ -209,7 +326,8 @@ const testCases: TestCase[] = [
             name: 'GPT-4o',
             description: 'Case stable',
             capabilities: { tools: true, vision: false },
-            contextSize: 128000
+            maxInputTokens: 64000,
+            maxOutputTokens: 64000
           }
         ]
       }
@@ -233,8 +351,11 @@ const testCases: TestCase[] = [
 
       assert.ok(existingModel, '已有模型应保留且名称被规范化');
       assert.equal(existingModel?.description, 'Keep me');
+      assert.equal(existingModel?.temperature, 0.25);
+      assert.equal(existingModel?.topP, 0.95);
       assert.deepEqual(existingModel?.capabilities, { tools: true, vision: false });
-      assert.equal(existingModel?.contextSize, 128000);
+      assert.equal(existingModel?.maxInputTokens, 64000);
+      assert.equal(existingModel?.maxOutputTokens, 64000);
       assert.ok(newModel, '新模型应被追加到配置中');
       assert.equal(newModel?.description, undefined);
       assert.ok(!updatedVendor.models.some(model => model.name === ' gpt-4o '), '写回配置时不应保留带空格名称');
@@ -245,12 +366,13 @@ const testCases: TestCase[] = [
     initialVendors: [createVendorWithSpacedModelName()],
     discoveredModels: [
       { name: 'gpt-4o' },
-      {
-        name: 'gpt-4.1',
-        description: 'Fresh from /models',
-        capabilities: { tools: true, vision: true },
-        contextSize: 256000
-      }
+        {
+          name: 'gpt-4.1',
+          description: 'Fresh from /models',
+          capabilities: { tools: true, vision: true },
+          maxInputTokens: 128000,
+          maxOutputTokens: 128000
+        }
     ],
     verify(context) {
       assert.equal(context.state.updates.length, 1, '新增模型时应写回一次 vendors 配置');
@@ -260,8 +382,11 @@ const testCases: TestCase[] = [
 
       assert.ok(newModel, '新增模型应被写回到配置');
       assert.equal(newModel?.description, 'Fresh from /models');
+      assert.equal(newModel?.temperature, undefined);
+      assert.equal(newModel?.topP, undefined);
       assert.deepEqual(newModel?.capabilities, { tools: true, vision: true });
-      assert.equal(newModel?.contextSize, 256000);
+      assert.equal(newModel?.maxInputTokens, 128000);
+      assert.equal(newModel?.maxOutputTokens, 128000);
     }
   },
   {
@@ -448,24 +573,374 @@ async function runTestCase(configStoreCtor: ConfigStoreCtor, testCase: TestCase)
   }
 }
 
+async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Promise<void> {
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    apiStyle: 'anthropic',
+    defaultVision: true,
+    models: [{ name: 'claude-3' }]
+  }]);
+
+  let configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    assert.equal(vendor?.defaultApiStyle, 'anthropic');
+    assert.equal(vendor?.models[0]?.apiStyle, 'anthropic');
+    assert.deepEqual(vendor?.models[0]?.capabilities, { tools: true, vision: true });
+    assert.equal(vendor?.defaultTemperature, undefined);
+    assert.equal(vendor?.defaultTopP, undefined);
+    console.log('PASS 兼容旧 apiStyle 并补齐模型默认能力');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'r1',
+      apiStyle: 'anthropic',
+      capabilities: { tools: false }
+    }]
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    assert.equal(vendor?.models[0]?.apiStyle, 'anthropic');
+    assert.deepEqual(vendor?.models[0]?.capabilities, { tools: false, vision: false });
+    assert.equal(vendor?.models[0]?.temperature, undefined);
+    assert.equal(vendor?.models[0]?.topP, undefined);
+    console.log('PASS 模型级 apiStyle 覆盖供应商默认值');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-responses',
+    defaultVision: true,
+    models: []
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    await configStore.updateVendorModels('Vendor', [{ name: 'gpt-4.1' } as VendorModelRecord]);
+    const updatedVendor = getUpdatedVendor(activeState);
+    assert.equal(updatedVendor.models[0]?.apiStyle, 'openai-responses');
+    assert.deepEqual(updatedVendor.models[0]?.capabilities, { tools: true, vision: true });
+    assert.equal(updatedVendor.models[0]?.temperature, undefined);
+    assert.equal(updatedVendor.models[0]?.topP, undefined);
+    console.log('PASS updateVendorModels 写回模型默认 apiStyle 与 capabilities');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    defaultTemperature: 0.2,
+    defaultTopP: 1,
+    models: [{
+      name: 'coder',
+      temperature: 0.35,
+      topP: 0.92,
+      capabilities: { tools: true, vision: false }
+    }]
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    assert.equal(vendor?.defaultTemperature, 0.2);
+    assert.equal(vendor?.defaultTopP, 1);
+    assert.equal(vendor?.models[0]?.temperature, 0.35);
+    assert.equal(vendor?.models[0]?.topP, 0.92);
+    console.log('PASS 供应商级与模型级采样参数可正确归一化');
+  } finally {
+    configStore.dispose();
+  }
+}
+
+function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
+  const {
+    createOpenAIChatStreamState,
+    applyOpenAIChatStreamChunk,
+    finalizeOpenAIChatStreamState,
+    createOpenAIResponsesStreamState,
+    applyOpenAIResponsesStreamEvent,
+    finalizeOpenAIResponsesStreamState,
+    createAnthropicStreamState,
+    applyAnthropicStreamEvent,
+    finalizeAnthropicStreamState
+  } = protocolsModule;
+
+  const openAIChatState = createOpenAIChatStreamState();
+  const chatDelta = applyOpenAIChatStreamChunk(openAIChatState, {
+    id: 'chat_1',
+    choices: [{
+      index: 0,
+      delta: {
+        content: 'hello ',
+        tool_calls: [{
+          index: 0,
+          id: 'call_1',
+          function: {
+            name: 'search',
+            arguments: '{'
+          }
+        }]
+      }
+    }]
+  }, () => 'generated_call');
+  applyOpenAIChatStreamChunk(openAIChatState, {
+    choices: [{
+      index: 0,
+      delta: {
+        content: 'world',
+        tool_calls: [{
+          index: 0,
+          function: {
+            arguments: '"q":"repo"}'
+          }
+        }]
+      },
+      finish_reason: 'stop'
+    }],
+    usage: {
+      prompt_tokens: 10,
+      completion_tokens: 4,
+      total_tokens: 14
+    }
+  }, () => 'generated_call');
+  const finalizedChat = finalizeOpenAIChatStreamState(openAIChatState, () => 'generated_call');
+  assert.equal(chatDelta.textDelta, 'hello ');
+  assert.equal(finalizedChat.content, 'hello world');
+  assert.deepEqual(finalizedChat.toolCalls, [{
+    id: 'call_1',
+    type: 'function',
+    function: {
+      name: 'search',
+      arguments: '{"q":"repo"}'
+    }
+  }]);
+  assert.deepEqual(finalizedChat.usage, {
+    prompt_tokens: 10,
+    completion_tokens: 4,
+    total_tokens: 14
+  });
+  console.log('PASS openai-chat 流式文本与工具调用可正确累积');
+
+  const responsesState = createOpenAIResponsesStreamState();
+  const responsesDelta = applyOpenAIResponsesStreamEvent(responsesState, 'response.output_text.delta', {
+    delta: 'partial '
+  }, () => 'resp_call');
+  applyOpenAIResponsesStreamEvent(responsesState, 'response.function_call_arguments.delta', {
+    item: {
+      id: 'item_1',
+      call_id: 'resp_call',
+      name: 'lookup'
+    },
+    delta: '{"id":'
+  }, () => 'resp_call');
+  applyOpenAIResponsesStreamEvent(responsesState, 'response.output_item.done', {
+    item: {
+      id: 'item_1',
+      type: 'function_call',
+      call_id: 'resp_call',
+      name: 'lookup',
+      arguments: '{"id":42}'
+    }
+  }, () => 'resp_call');
+  applyOpenAIResponsesStreamEvent(responsesState, 'response.completed', {
+    response: {
+      id: 'resp_1',
+      output_text: 'partial done',
+      usage: {
+        input_tokens: 12,
+        output_tokens: 5,
+        total_tokens: 17
+      }
+    }
+  }, () => 'resp_call');
+  const finalizedResponses = finalizeOpenAIResponsesStreamState(responsesState, () => 'resp_call');
+  assert.equal(responsesDelta.textDelta, 'partial ');
+  assert.equal(finalizedResponses.content, 'partial ');
+  assert.deepEqual(finalizedResponses.toolCalls, [{
+    id: 'resp_call',
+    type: 'function',
+    function: {
+      name: 'lookup',
+      arguments: '{"id":42}'
+    }
+  }]);
+  assert.deepEqual(finalizedResponses.usage, {
+    input_tokens: 12,
+    output_tokens: 5,
+    total_tokens: 17
+  });
+  console.log('PASS openai-responses 流式事件可正确累积文本与工具调用');
+
+  const anthropicState = createAnthropicStreamState();
+  const anthropicDelta = applyAnthropicStreamEvent(anthropicState, 'content_block_start', {
+    index: 0,
+    content_block: {
+      type: 'text',
+      text: 'Hi '
+    }
+  });
+  applyAnthropicStreamEvent(anthropicState, 'content_block_delta', {
+    index: 0,
+    delta: {
+      type: 'text_delta',
+      text: 'there'
+    }
+  });
+  applyAnthropicStreamEvent(anthropicState, 'content_block_start', {
+    index: 1,
+    content_block: {
+      type: 'tool_use',
+      id: 'toolu_1',
+      name: 'run'
+    }
+  });
+  applyAnthropicStreamEvent(anthropicState, 'content_block_delta', {
+    index: 1,
+    delta: {
+      type: 'input_json_delta',
+      partial_json: '{"cmd":"npm test"}'
+    }
+  });
+  applyAnthropicStreamEvent(anthropicState, 'message_delta', {
+    usage: {
+      input_tokens: 9,
+      output_tokens: 3
+    },
+    delta: {
+      type: 'message_delta',
+      stop_reason: 'end_turn'
+    }
+  });
+  const finalizedAnthropic = finalizeAnthropicStreamState(anthropicState, () => 'tool_generated');
+  assert.equal(anthropicDelta.textDelta, 'Hi ');
+  assert.equal(finalizedAnthropic.content, 'Hi there');
+  assert.deepEqual(finalizedAnthropic.toolCalls, [{
+    id: 'toolu_1',
+    type: 'function',
+    function: {
+      name: 'run',
+      arguments: '{"cmd":"npm test"}'
+    }
+  }]);
+  assert.deepEqual(finalizedAnthropic.usage, {
+    input_tokens: 9,
+    output_tokens: 3
+  });
+  console.log('PASS anthropic 流式事件可正确累积文本与工具调用');
+}
+
+function runTokenUsageNormalizationTests(tokenUsageModule: TokenUsageModule): void {
+  const { normalizeTokenUsage, readAttachedTokenUsage, attachTokenUsage } = tokenUsageModule;
+
+  const openAIChatUsage = normalizeTokenUsage('openai-chat', {
+    prompt_tokens: 1014,
+    completion_tokens: 140,
+    total_tokens: 1154
+  }, 200000);
+  assert.deepEqual(openAIChatUsage, {
+    promptTokens: 1014,
+    completionTokens: 140,
+    totalTokens: 1154,
+    outputBuffer: 200000
+  });
+  console.log('PASS openai-chat usage 正常映射');
+
+  const openAIResponsesUsage = normalizeTokenUsage('openai-responses', {
+    input_tokens: 1147,
+    output_tokens: 104,
+    total_tokens: 1251
+  }, 65500);
+  assert.deepEqual(openAIResponsesUsage, {
+    promptTokens: 1147,
+    completionTokens: 104,
+    totalTokens: 1251,
+    outputBuffer: 65500
+  });
+  console.log('PASS openai-responses usage 正常映射');
+
+  const anthropicUsage = normalizeTokenUsage('anthropic', {
+    input_tokens: 321,
+    output_tokens: 79
+  }, 8192);
+  assert.deepEqual(anthropicUsage, {
+    promptTokens: 321,
+    completionTokens: 79,
+    totalTokens: 400,
+    outputBuffer: 8192
+  });
+  console.log('PASS anthropic usage 正常映射');
+
+  const correctedUsage = normalizeTokenUsage('openai-chat', {
+    prompt_tokens: 1000,
+    completion_tokens: 100,
+    total_tokens: 1300
+  });
+  assert.deepEqual(correctedUsage, {
+    promptTokens: 1000,
+    completionTokens: 300,
+    totalTokens: 1300,
+    outputBuffer: undefined
+  });
+  console.log('PASS totalTokens 与 prompt+completion 不一致时按 totalTokens 纠偏');
+
+  const fallbackUsage = normalizeTokenUsage('openai-responses', {
+    input_tokens: 900,
+    output_tokens: 120
+  });
+  assert.deepEqual(fallbackUsage, {
+    promptTokens: 900,
+    completionTokens: 120,
+    totalTokens: 1020,
+    outputBuffer: undefined
+  });
+  console.log('PASS 缺失 totalTokens 时回退到 prompt+completion');
+
+  const attachedRecord: Record<string, unknown> = {};
+  attachTokenUsage(attachedRecord, correctedUsage);
+  assert.deepEqual(readAttachedTokenUsage(attachedRecord), correctedUsage);
+  console.log('PASS 响应对象可读回归一化 usage');
+}
+
 async function main(): Promise<void> {
   const restore = installVscodeMock();
   try {
     const { ConfigStore } = require('../config/configStore') as ConfigStoreModule;
+    const tokenUsageModule = require('../providers/tokenUsage') as TokenUsageModule;
+    const protocolsModule = require('../providers/genericProviderProtocols') as ProtocolsModule;
     for (const testCase of testCases) {
       await runTestCase(ConfigStore, testCase);
     }
+    await runConfigNormalizationTests(ConfigStore);
+    runProtocolStreamTests(protocolsModule);
+    runTokenUsageNormalizationTests(tokenUsageModule);
   } finally {
     restore();
   }
 
-  console.log('ConfigStore tests passed.');
+  console.log('All tests passed.');
 }
 
 void main().catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;
 });
+
 
 
 

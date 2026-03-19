@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - "docs/**"
+      - "pages/**"
       - "assets/provider-pricing.json"
       - "assets/openrouter-provider-metrics.json"
       - "assets/openrouter-provider-plans.json"
@@ -43,14 +43,14 @@ jobs:
 
       - name: Sync pricing data for Pages
         run: |
-          cp assets/provider-pricing.json docs/provider-pricing.json
-          cp assets/openrouter-provider-metrics.json docs/openrouter-provider-metrics.json
-          cp assets/openrouter-provider-plans.json docs/openrouter-provider-plans.json
+          cp assets/provider-pricing.json pages/provider-pricing.json
+          cp assets/openrouter-provider-metrics.json pages/openrouter-provider-metrics.json
+          cp assets/openrouter-provider-plans.json pages/openrouter-provider-plans.json
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: "./docs"
+          path: "./pages"
 
       - name: Deploy to GitHub Pages
         id: deployment

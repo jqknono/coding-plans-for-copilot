@@ -6,12 +6,6 @@
 npm run compile
 ```
 
-## 监听模式
-
-```bash
-npm run watch
-```
-
 ## 代码检查
 
 ```bash
@@ -32,6 +26,12 @@ npm run test:pages
 npm run package:vsix
 ```
 
+打包预览版：
+
+```bash
+npm run package:vsix:pre
+```
+
 发布到插件市场：
 
 ```bash
@@ -44,7 +44,27 @@ $env:VSCE_PAT="your_pat"
 npm run publish:marketplace
 ```
 
+发布预览版到插件市场：
+
+```bash
+# Linux / macOS
+export VSCE_PAT=your_pat
+npm run publish:marketplace:pre
+
+# PowerShell
+$env:VSCE_PAT="your_pat"
+npm run publish:marketplace:pre
+```
+
 说明：`npm run publish:marketplace` 会在发布前自动更新 `CHANGELOG.md`（按当前 `package.json` 版本生成对应条目）。
+
+预发布通道约定：
+
+- 本项目使用 VS Code Marketplace 的同一扩展 `Pre-Release` 通道，不额外拆分扩展 ID。
+- 只有在 Marketplace 上已经存在至少一个预发布版本时，用户安装扩展后，才可在扩展详情页的齿轮菜单中切换 `Switch to Pre-Release Version` / `Switch to Release Version`。
+- 如果当前详情页没有该入口，说明市场上还没有可切换的预发布包，这通常不是扩展清单问题，而是尚未执行过一次 `publish --pre-release`。
+- 预发布版和正式版必须使用不同版本号；建议采用“奇数 minor 预发布、偶数 minor 正式”的约定，例如 `0.7.x` 为预览通道，`0.8.x` 为正式通道。
+- `npm run publish:marketplace:pre` 只负责按当前 `package.json` 版本发布为预发布，不会自动修改版本号。
 
 ## 提交消息高级配置示例
 
@@ -69,17 +89,41 @@ npm run publish:marketplace
 
 - `assets/provider-pricing.json`（扩展和 GitHub Pages 的统一数据源）
 
-GitHub Pages 部署时会将 `assets/provider-pricing.json` 同步到 `docs/provider-pricing.json` 作为站点构建产物（不入库）。
+GitHub Pages 部署时会将 `assets/provider-pricing.json` 同步到 `pages/provider-pricing.json` 作为站点构建产物（不入库）。
+
+## Copilot Chat Context
+
+- 本扩展不再维护独立的原生 Context Agent。
+- 上下文展示直接复用 Copilot Chat 自带的 Context Window / 上下文展示器。
+- 相关展示能力与细节以 VS Code / Copilot Chat 当前内置实现为准。
+- 关于 Context Window 的实际使用方式、上下文来源和本仓库内的落地建议，见 [docs/copilot-chat-context-window.md](docs/copilot-chat-context-window.md)。
+
+## Context 面板语义
+
+- `System Instructions`：指 system prompt、模式说明、策略提示、插件额外注入说明等 System 类输入，占用 prompt tokens。
+- `Tool Definitions`：指工具定义本身的 schema 占用，占用 prompt tokens。
+- `Reserved Output`：指预留给模型输出的 token 预算，对应 `outputBuffer`，在 UI 中单独显示。
+- `Context Window X / Y tokens`：`X` 是当前会话实际已用 token，总量按“已用总上下文”计算，优先对齐上游 `total_tokens`；`Y` 是当前模型的总上下文窗口，对应 `maxInputTokens + maxOutputTokens`。
+- VS Code 官方文档说明：hover 到上下文窗口控件时，会显示“精确 token 数 / 总上下文”和按类别拆分；上下文满时会触发 compaction。
+- 若后续 VS Code / Copilot Chat 调整上下文展示结构，应以其内置行为为准同步更新文档描述。
 
 ## 多协议供应商接入说明
 
-- `coding-plans.vendors[].apiStyle` 用于声明供应商协议风格：
+- 调试请求链路时，可通过 `coding-plans.logLevel` 控制输出面板日志级别；需要完整追踪时切到 `debug`，日常建议保持 `info`。
+- `coding-plans.vendors[].defaultApiStyle` 用于声明供应商默认协议风格，模型也可以通过 `coding-plans.vendors[].models[].apiStyle` 单独覆盖：
   - `openai-chat`：请求 `baseUrl + /chat/completions`
   - `openai-responses`：请求 `baseUrl + /responses`
   - `anthropic`：请求 `baseUrl + /messages`
-- 当前无需考虑旧枚举兼容，未配置 `apiStyle` 时默认按 `openai-chat` 处理。
+- 新增采样参数：
+  - `coding-plans.vendors[].defaultTemperature` / `defaultTopP`：供应商默认采样值
+  - `coding-plans.vendors[].models[].temperature` / `topP`：模型级覆盖值
+  - 继承顺序固定为 `models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > 内置默认值 `0.2/1.0`
+  - 建议：代码生成/重构优先 `temperature 0.1-0.3`、`topP 1.0`；平衡创造性与稳定性可用 `temperature 0.3-0.5`、`topP 0.9-1.0`
+- 需兼容旧字段 `apiStyle`；未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
-- 当 `useModelsEndpoint: true` 时，刷新模型列表只按 `name` 同步增删；设置中已有模型项的 `description`、`capabilities`、`contextSize` 等字段应保持原样。
+- 请求链路默认优先上游真实流式传输；若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志，不新增单独的 stream 配置开关。
+- `capabilities` 现在按必填语义处理；对旧配置要在归一化时自动补齐 `tools=true` 与 `vision=defaultVision`。
+- 当 `useModelsEndpoint: true` 时，刷新模型列表只按 `name` 同步增删；设置中已有模型项的 `description`、`temperature`、`topP`、`capabilities`、`maxInputTokens`、`maxOutputTokens` 等字段应保持原样，新发现模型不应自动写入采样参数。
 - 若修改协议相关行为，请同步检查：
   - `src/providers/genericProvider.ts`
   - `src/config/configStore.ts`

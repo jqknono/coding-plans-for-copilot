@@ -32,6 +32,14 @@
 
 [访问 VS Code 插件市场](https://marketplace.visualstudio.com/items?itemName=techfetch-dev.coding-plans-for-copilot)
 
+### 预览版通道
+
+- 本扩展已支持通过 VS Code Marketplace 的同一扩展发布预发布通道。
+- 只有当发布者已经在 Marketplace 实际发布过至少一个 pre-release 版本后，扩展详情页右上角齿轮菜单里才会出现 `Switch to Pre-Release Version`。
+- 若当前没有看到该入口，通常表示 Marketplace 上暂时还没有可切换的预发布包。
+- 发布过 pre-release 后，可在同一位置切换 `Switch to Pre-Release Version` / `Switch to Release Version`。
+- 预览版会比正式版更早包含新功能，也可能包含未完全稳定的改动。
+
 ### 配置
 
 1. 按 `Ctrl+Shift+P`，输入 `编码套餐: 管理编码套餐配置`
@@ -39,6 +47,21 @@
 3. 选择「设置 API Key」，粘贴你的 API Key
 4. 打开 Copilot Chat（`Ctrl+L`），切换到「编码套餐」提供商
 
+### Copilot Chat 上下文展示器
+
+1. 正常打开 Copilot Chat 并使用本扩展提供的模型
+2. 在聊天界面查看 Copilot Chat 自带的 Context Window / 上下文展示器
+3. 本扩展不再提供单独的 Agent 入口或自定义原生 Context usage 明细
+4. 上下文展示能力和呈现细节以 VS Code / Copilot Chat 当前版本的内置行为为准
+
+### Context 面板术语说明
+
+- System Instructions：System 类提示词占用，通常指系统提示、模式说明、策略提示、额外注入说明等。它属于 prompt tokens 的一部分。
+- Tool Definitions：工具定义占用，通常是传给模型的 tool/function schema（工具名、描述、参数 JSON Schema）。它也属于 prompt tokens 的一部分。
+- Reserved Output：为本轮回答预留的输出 token 预算。它不是已经生成出来的回复内容，而是为了避免模型输出超限而预留的空间。
+- Context Window 4.0K / 400K tokens：表示当前会话实际已使用约 4.0K token，而当前所选模型的总上下文窗口约为 400K token。分子按“已用总上下文”计算，优先对齐上游返回的 `total_tokens`；分母由当前模型的 `maxInputTokens + maxOutputTokens` 决定。
+- 悬浮到 Context Window 指示器时，VS Code 会显示当前 token 总量以及按类别拆分的明细；当上下文接近上限时，VS Code 可能自动触发 conversation compaction（压缩历史）。
+- 本扩展直接复用 Copilot Chat 自带的上下文展示器，不再额外提供独立的 Agent 路径或自定义 usage 明细。
 ### 配置入口
 
 1. 按 `Ctrl+Shift+P`，输入 `编码套餐: 管理编码套餐配置`
@@ -53,17 +76,22 @@
     {
       "name": "zhipu",
       "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
-      "apiStyle": "openai-chat",
+      "defaultApiStyle": "openai-chat",
+      "defaultTemperature": 0.2,
+      "defaultTopP": 1.0,
       "useModelsEndpoint": false,
       "models": [
         {
           "name": "glm-4.7",
           "description": "智谱 GLM-4.7",
+          "temperature": 0.15,
+          "topP": 1.0,
           "capabilities": {
             "tools": true,
             "vision": false
           },
-          "contextSize": 128000
+          "maxInputTokens": 64000,
+          "maxOutputTokens": 64000
         }
       ]
     }
@@ -86,16 +114,19 @@
     {
       "name": "deepseek",
       "baseUrl": "https://api.deepseek.com/anthropic",
-      "apiStyle": "anthropic",
+      "defaultApiStyle": "anthropic",
       "useModelsEndpoint": false,
       "models": [
         {
           "name": "deepseek-chat",
+          "temperature": 0.2,
+          "topP": 1.0,
           "capabilities": {
             "tools": true,
             "vision": false
           },
-          "contextSize": 200000
+          "maxInputTokens": 100000,
+          "maxOutputTokens": 100000
         },
         {
           "name": "deepseek-reasoner",
@@ -103,7 +134,8 @@
             "tools": true,
             "vision": false
           },
-          "contextSize": 200000
+          "maxInputTokens": 100000,
+          "maxOutputTokens": 100000
         }
       ]
     }
@@ -119,16 +151,19 @@
     {
       "name": "openai-responses-demo",
       "baseUrl": "https://api.openai.com/v1",
-      "apiStyle": "openai-responses",
+      "defaultApiStyle": "openai-responses",
       "useModelsEndpoint": false,
       "models": [
         {
           "name": "gpt-5",
+          "temperature": 0.2,
+          "topP": 1.0,
           "capabilities": {
             "tools": true,
             "vision": false
           },
-          "contextSize": 400000
+          "maxInputTokens": 200000,
+          "maxOutputTokens": 200000
         }
       ]
     }
@@ -140,20 +175,28 @@
 
 | 配置键 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
+| `coding-plans.logLevel` | `string` | `info` | 输出面板日志级别，支持 `debug` / `info` / `warn` / `error`。排查 `openai-responses` 等链路问题时建议临时切到 `debug`。 |
 | `coding-plans.vendors` | `array` | 内置供应商模板 | 供应商配置列表。 |
 | `coding-plans.vendors[].name` | `string` | 必填 | 供应商唯一名称（用于匹配与选择）。 |
 | `coding-plans.vendors[].baseUrl` | `string` | 必填 | 供应商 API 基础地址，可填写自建中转站。 |
-| `coding-plans.vendors[].apiStyle` | `string` | `openai-chat` | 接口协议风格，支持 `openai-chat` / `openai-responses` / `anthropic`。分别对应 `/chat/completions`、`/responses`、`/messages`。 |
+| `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | 供应商默认接口协议风格，支持 `openai-chat` / `openai-responses` / `anthropic`。分别对应 `/chat/completions`、`/responses`、`/messages`。 |
+| `coding-plans.vendors[].defaultTemperature` | `number` | `0.2` | 供应商默认 temperature；模型未单独配置时继承。代码生成/重构建议 `0.1-0.3`，更灵活表达可用 `0.3-0.5`。 |
+| `coding-plans.vendors[].defaultTopP` | `number` | `1.0` | 供应商默认 topP；模型未单独配置时继承。编码场景通常建议 `1.0`，平衡创造性与稳定性可用 `0.9-1.0`。 |
+| `coding-plans.vendors[].models[].apiStyle` | `string` | 继承供应商 | 模型级协议风格；已配置时覆盖 `defaultApiStyle`。 |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | 为 `true` 时刷新模型会请求 `/models`；刷新只按 `name` 同步模型增删，已有模型对象的其它字段会保留。 |
-| `coding-plans.vendors[].models` | `array` | `[]` | 手动模型清单。 |
+| `coding-plans.vendors[].models` | `array` | `[]` | 手动模型清单；其中 `capabilities` 为必填，旧配置会在运行时自动补齐。 |
 | `coding-plans.vendors[].models[].name` | `string` | 必填 | 模型名称。 |
 | `coding-plans.vendors[].models[].description` | `string` | 空 | 模型描述。 |
-| `coding-plans.vendors[].models[].capabilities.tools` | `boolean` | `true` | 是否启用工具调用能力。 |
-| `coding-plans.vendors[].models[].capabilities.vision` | `boolean` | `false` | 是否启用视觉输入能力。 |
-| `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | 模型上下文窗口大小，推荐使用。 |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | - | 模型最大输入 token 数。 |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | - | 模型最大输出 token 数。 |
+| `coding-plans.vendors[].models[].temperature` | `number` | 继承供应商/`0.2` | 模型级 temperature 覆盖项，优先级高于 `defaultTemperature`。 |
+| `coding-plans.vendors[].models[].topP` | `number` | 继承供应商/`1.0` | 模型级 topP 覆盖项，优先级高于 `defaultTopP`。 |
+| `coding-plans.vendors[].models[].capabilities.tools` | `boolean` | `true` | 是否启用工具调用能力；旧配置缺失时运行时自动补齐。 |
+| `coding-plans.vendors[].models[].capabilities.vision` | `boolean` | `defaultVision` | 是否启用视觉输入能力；旧配置缺失时运行时回填为供应商 `defaultVision`。 |
+| `coding-plans.vendors[].models[].maxInputTokens` | `number` | `396000` | 模型最大输入 token 数；未配置时会为响应预留少量输出窗口。 |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `8000` | 模型最大输出 token 数；未配置时默认保守预留。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示“生成 Commit 消息”命令。 |
+
+模型 `capabilities` 现在是必填项；为兼容旧配置，插件会在运行时自动补齐 `tools=true`，并将 `vision` 回填为供应商的 `defaultVision`。供应商级 `defaultApiStyle` 也可被模型级 `apiStyle` 覆盖。采样参数继承顺序固定为：`models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > 内置默认值 `0.2/1.0`。
+
 | `coding-plans.commitMessage.language` | `string` | `en` | 提交消息语言，支持 `en` / `zh-cn`。 |
 | `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | 是否参考最近 20 条 commit 风格。 |
 | `coding-plans.commitMessage.modelVendor` | `string` | 空 | 生成提交消息时优先使用的供应商名。 |
@@ -174,7 +217,7 @@
 
 `API Key` 不在 `settings.json` 明文存储。请通过「设置 API Key」写入 VS Code Secret Storage。
 
-说明：当前多协议支持重点覆盖聊天与工具调用；对 `anthropic` 与 `openai-responses`，通常建议搭配 `useModelsEndpoint: false` 并手动填写 `models` 列表。
+说明：当前多协议支持重点覆盖聊天与工具调用；对 `anthropic` 与 `openai-responses`，通常建议搭配 `useModelsEndpoint: false` 并手动填写 `models` 列表。运行时默认优先使用上游流式传输；若少数兼容服务商明确不支持流式，插件会自动回退到非流式请求并记录告警日志，无需额外配置。
 
 ## 高级功能
 
@@ -243,17 +286,17 @@ npm install
 # 编译
 npm run compile
 
-# 监听模式（开发时使用）
-npm run watch
-
 # 代码检查
 npm run lint
 
 # GitHub Pages 冒烟测试
 npm run test:pages
 
-# 打包发布
+# 打包正式版
 npm run package:vsix
+
+# 打包预览版
+npm run package:vsix:pre
 ```
 
 ---
@@ -285,4 +328,5 @@ MIT License
 3. 提交变更 (`git commit -m 'Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 提交 Pull Request
+
 

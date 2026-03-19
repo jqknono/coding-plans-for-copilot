@@ -11,3 +11,5 @@ moonshot-sitemap.xml
 .playwright-cli/
 .env
 output/playwright/
+output/tmp/
+

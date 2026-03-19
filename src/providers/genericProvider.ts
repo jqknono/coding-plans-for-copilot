@@ -5,222 +5,64 @@ import {
   AIModelConfig,
   ChatMessage,
   ChatToolCall,
-  ChatToolDefinition,
   getCompactErrorMessage,
   normalizeHttpBaseUrl
 } from './baseProvider';
-import { ConfigStore, VendorConfig, VendorModelConfig } from '../config/configStore';
+import { ConfigStore, VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
 import { getMessage, isChinese } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
-
-interface OpenAIChatRequest {
-  model: string;
-  messages: ChatMessage[];
-  tools?: ChatToolDefinition[];
-  tool_choice?: 'auto' | 'required';
-  temperature?: number;
-  top_p?: number;
-  max_tokens?: number;
-  stream?: boolean;
-}
-
-interface OpenAIChatResponse {
-  id: string;
-  created: number;
-  model: string;
-  choices: Array<{
-    index: number;
-    message: {
-      role: string;
-      content: string;
-      tool_calls?: ChatToolCall[];
-    };
-    finish_reason: string;
-  }>;
-  usage?: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-}
-
-interface OpenAIResponsesToolDefinition {
-  type: 'function';
-  name: string;
-  description?: string;
-  parameters?: object;
-}
-
-interface OpenAIResponsesInputTextContent {
-  type: 'input_text';
-  text: string;
-}
-
-interface OpenAIResponsesInputToolCallContent {
-  type: 'function_call';
-  call_id: string;
-  name: string;
-  arguments: string;
-}
-
-interface OpenAIResponsesInputToolResultContent {
-  type: 'function_call_output';
-  call_id: string;
-  output: string;
-}
-
-type OpenAIResponsesInputContent = OpenAIResponsesInputTextContent;
-
-interface OpenAIResponsesInputMessage {
-  type?: 'message';
-  role: 'system' | 'user' | 'assistant';
-  content: string | OpenAIResponsesInputContent[];
-}
-
-type OpenAIResponsesInputItem =
-  | OpenAIResponsesInputMessage
-  | OpenAIResponsesInputToolCallContent
-  | OpenAIResponsesInputToolResultContent;
-
-interface OpenAIResponsesRequest {
-  model: string;
-  input: OpenAIResponsesInputItem[];
-  tools?: OpenAIResponsesToolDefinition[];
-  tool_choice?: 'auto' | 'required';
-  temperature?: number;
-  top_p?: number;
-  max_output_tokens?: number;
-}
-
-interface OpenAIResponsesOutputTextContent {
-  type: 'output_text';
-  text?: string;
-}
-
-interface OpenAIResponsesFunctionCallItem {
-  type: 'function_call';
-  call_id?: string;
-  name?: string;
-  arguments?: string;
-}
-
-interface OpenAIResponsesMessageItem {
-  type: 'message';
-  role?: string;
-  content?: Array<{
-    type?: string;
-    text?: string;
-  }>;
-}
-
-type OpenAIResponsesOutputItem = OpenAIResponsesFunctionCallItem | OpenAIResponsesMessageItem;
-
-interface OpenAIResponsesResponse {
-  id: string;
-  output?: OpenAIResponsesOutputItem[];
-  output_text?: string;
-  usage?: {
-    input_tokens?: number;
-    output_tokens?: number;
-    total_tokens?: number;
-  };
-}
-
-interface AnthropicToolDefinition {
-  name: string;
-  description?: string;
-  input_schema?: object;
-}
-
-interface AnthropicTextContentBlock {
-  type: 'text';
-  text: string;
-}
-
-interface AnthropicToolUseContentBlock {
-  type: 'tool_use';
-  id: string;
-  name: string;
-  input?: unknown;
-}
-
-interface AnthropicToolResultContentBlock {
-  type: 'tool_result';
-  tool_use_id: string;
-  content: string;
-}
-
-type AnthropicRequestContentBlock =
-  | AnthropicTextContentBlock
-  | AnthropicToolUseContentBlock
-  | AnthropicToolResultContentBlock;
-
-interface AnthropicChatMessage {
-  role: 'user' | 'assistant';
-  content: string | AnthropicRequestContentBlock[];
-}
-
-interface AnthropicChatRequest {
-  model: string;
-  max_tokens: number;
-  system?: string;
-  messages: AnthropicChatMessage[];
-  tools?: AnthropicToolDefinition[];
-  tool_choice?: AnthropicToolChoice;
-}
-
-interface AnthropicToolChoice {
-  type: 'auto' | 'any' | 'tool' | 'none';
-  name?: string;
-}
-
-interface AnthropicResponseTextContentBlock {
-  type: 'text';
-  text?: string;
-}
-
-interface AnthropicResponseToolUseContentBlock {
-  type: 'tool_use';
-  id?: string;
-  name?: string;
-  input?: unknown;
-}
-
-type AnthropicResponseContentBlock = AnthropicResponseTextContentBlock | AnthropicResponseToolUseContentBlock;
-
-interface AnthropicChatResponse {
-  id: string;
-  role: 'assistant';
-  content: AnthropicResponseContentBlock[];
-  stop_reason?: string;
-  usage?: {
-    input_tokens?: number;
-    output_tokens?: number;
-  };
-}
+import {
+  ModelDiscoveryResult,
+  ModelVendorMapping,
+  VendorDiscoveryState,
+  buildVendorDiscoverySignature,
+  mergeConfiguredModelOverrides,
+  shouldSuppressDiscoveryRetry,
+  toVendorModelConfigs,
+  toVendorStateKey
+} from './genericProviderDiscovery';
+import {
+  AnthropicStreamEvent,
+  AnthropicChatRequest,
+  AnthropicChatResponse,
+  OpenAIChatStreamChunk,
+  OpenAIChatRequest,
+  OpenAIChatResponse,
+  OpenAIResponsesInputItem,
+  OpenAIResponsesStreamEvent,
+  OpenAIResponsesRequest,
+  OpenAIResponsesResponse,
+  applyAnthropicStreamEvent,
+  applyOpenAIChatStreamChunk,
+  applyOpenAIResponsesStreamEvent,
+  buildAnthropicToolChoice,
+  buildAnthropicToolDefinitions,
+  buildOpenAIResponsesToolDefinitions,
+  createAnthropicStreamState,
+  createOpenAIChatStreamState,
+  createOpenAIResponsesStreamState,
+  finalizeAnthropicStreamState,
+  finalizeOpenAIChatStreamState,
+  finalizeOpenAIResponsesStreamState,
+  parseAnthropicResponse,
+  parseOpenAIResponsesResponse,
+  summarizeAnthropicResponseForLogging,
+  summarizeOpenAIChatResponse,
+  summarizeOpenAIResponsesResponse,
+  toAnthropicMessages,
+  toOpenAIResponsesInput
+} from './genericProviderProtocols';
+import {
+  attachTokenUsage,
+  normalizeTokenUsage,
+  NormalizedTokenUsage
+} from './tokenUsage';
 
 interface GenericChatRequest {
   modelId: string;
   messages: vscode.LanguageModelChatMessage[];
   options?: vscode.LanguageModelChatRequestOptions;
   capabilities: vscode.LanguageModelChatCapabilities;
-}
-
-interface ModelVendorMapping {
-  vendor: VendorConfig;
-  modelName: string;
-}
-
-interface ModelDiscoveryResult {
-  models: AIModelConfig[];
-  failed: boolean;
-  status?: number;
-}
-
-interface VendorDiscoveryState {
-  signature: string;
-  suppressRetry: boolean;
-  cachedModels: AIModelConfig[];
 }
 
 interface RefreshModelsOptions {
@@ -232,12 +74,104 @@ interface RetryWithV1PromptResult {
   vendor: VendorConfig;
 }
 
-const DEFAULT_CONTEXT_SIZE = 200000;
+interface RequestTraceContext {
+  traceId: string;
+  vendorName: string;
+  modelId: string;
+  modelName: string;
+  protocol: VendorApiStyle;
+}
+
+interface ResolvedSamplingOptions {
+  temperature: number;
+  topP: number;
+}
+
+interface ParsedSseEvent {
+  event?: string;
+  data: string;
+}
+
+interface StreamingCompletionResult {
+  content: string;
+  toolCalls: ChatToolCall[];
+  usage?: Record<string, unknown>;
+  responseId?: string;
+}
+
 const DEFAULT_CONTEXT_WINDOW_SIZE = 400000;
-const DEFAULT_MAX_TOKENS = 4000;
+const DEFAULT_MAX_TOKENS = 200000;
 const DEFAULT_MODEL_TOOLS = true;
-const DEFAULT_MODEL_VISION = true;
-const NON_RETRYABLE_DISCOVERY_STATUS_CODES = new Set([400, 401, 403, 404]);
+const DEFAULT_TEMPERATURE = 0.2;
+const DEFAULT_TOP_P = 1.0;
+const RESPONSE_TRACE_ID_FIELD = '__codingPlansTraceId';
+
+class AsyncIterableQueue<T> implements AsyncIterable<T> {
+  private readonly items: T[] = [];
+  private readonly waiters: Array<{
+    resolve: (result: IteratorResult<T>) => void;
+    reject: (reason?: unknown) => void;
+  }> = [];
+  private closed = false;
+  private failure: unknown;
+
+  push(item: T): void {
+    if (this.closed || this.failure) {
+      return;
+    }
+
+    const waiter = this.waiters.shift();
+    if (waiter) {
+      waiter.resolve({ value: item, done: false });
+      return;
+    }
+
+    this.items.push(item);
+  }
+
+  close(): void {
+    if (this.closed || this.failure) {
+      return;
+    }
+    this.closed = true;
+    while (this.waiters.length > 0) {
+      const waiter = this.waiters.shift();
+      waiter?.resolve({ value: undefined as T, done: true });
+    }
+  }
+
+  fail(error: unknown): void {
+    if (this.closed || this.failure) {
+      return;
+    }
+    this.failure = error;
+    while (this.waiters.length > 0) {
+      const waiter = this.waiters.shift();
+      waiter?.reject(error);
+    }
+  }
+
+  [Symbol.asyncIterator](): AsyncIterator<T> {
+    return {
+      next: () => {
+        if (this.items.length > 0) {
+          const value = this.items.shift() as T;
+          return Promise.resolve({ value, done: false });
+        }
+        if (this.failure) {
+          return Promise.reject(this.failure);
+        }
+        if (this.closed) {
+          return Promise.resolve({ value: undefined as T, done: true });
+        }
+
+        return new Promise<IteratorResult<T>>((resolve, reject) => {
+          this.waiters.push({ resolve, reject });
+        });
+      }
+    };
+  }
+}
 
 export class GenericLanguageModel extends BaseLanguageModel {
   constructor(provider: BaseAIProvider, modelInfo: AIModelConfig) {
@@ -353,7 +287,7 @@ export class GenericAIProvider extends BaseAIProvider {
     logger.info('Refreshing Coding Plans vendor models', { vendorCount: vendors.length });
     this.modelVendorMap.clear();
     const allModelConfigs: AIModelConfig[] = [];
-    const activeVendorKeys = new Set(vendors.map(vendor => this.toVendorStateKey(vendor.name)));
+    const activeVendorKeys = new Set(vendors.map(vendor => toVendorStateKey(vendor.name)));
 
     for (const vendorKey of Array.from(this.vendorDiscoveryState.keys())) {
       if (!activeVendorKeys.has(vendorKey)) {
@@ -366,7 +300,7 @@ export class GenericAIProvider extends BaseAIProvider {
         logger.warn('Skip vendor with empty baseUrl', { vendor: vendor.name });
         continue;
       }
-      const vendorKey = this.toVendorStateKey(vendor.name);
+      const vendorKey = toVendorStateKey(vendor.name);
       const configuredModels = this.buildConfiguredModelsForVendor(vendor);
       logger.info('Evaluating vendor models', {
         vendor: vendor.name,
@@ -395,7 +329,7 @@ export class GenericAIProvider extends BaseAIProvider {
         continue;
       }
 
-      const signature = this.buildVendorDiscoverySignature(vendor, apiKey);
+      const signature = buildVendorDiscoverySignature(vendor, apiKey);
       const previousState = this.vendorDiscoveryState.get(vendorKey);
 
       if (previousState && previousState.signature === signature && previousState.suppressRetry && !forceDiscoveryRetry) {
@@ -429,7 +363,7 @@ export class GenericAIProvider extends BaseAIProvider {
         });
         this.vendorDiscoveryState.set(vendorKey, {
           signature,
-          suppressRetry: this.shouldSuppressDiscoveryRetry(discovered.status),
+          suppressRetry: shouldSuppressDiscoveryRetry(discovered.status),
           cachedModels: fallbackModels
         });
         this.appendResolvedModels(vendor, fallbackModels, allModelConfigs);
@@ -438,10 +372,10 @@ export class GenericAIProvider extends BaseAIProvider {
 
       // When useModelsEndpoint is enabled, discovered model names are the source of truth.
       // Existing configured entries are preserved verbatim; only newly discovered names are appended.
-      const discoveredVendorModels = this.toVendorModelConfigs(discovered.models);
-      const mergedVendorModels = this.mergeConfiguredModelOverrides(vendor.models, discoveredVendorModels, vendor.defaultVision);
+      const discoveredVendorModels = toVendorModelConfigs(discovered.models);
+      const mergedVendorModels = mergeConfiguredModelOverrides(vendor.models, discoveredVendorModels, vendor.defaultVision);
       const resolvedModels = this.buildConfiguredModelsFromVendorModels(vendor, mergedVendorModels);
-      const discoveredSignature = this.buildVendorDiscoverySignature({ ...vendor, models: mergedVendorModels }, apiKey);
+      const discoveredSignature = buildVendorDiscoverySignature({ ...vendor, models: mergedVendorModels }, apiKey);
       logger.info('Using /models discovery results for vendor', {
         vendor: vendor.name,
         discoveredCount: discovered.models.length,
@@ -487,15 +421,43 @@ export class GenericAIProvider extends BaseAIProvider {
       throw new vscode.LanguageModelError(getMessage('apiKeyRequired', mapping.vendor.name));
     }
 
-    if (mapping.vendor.apiStyle === 'anthropic') {
-      return this.sendAnthropicRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, token);
+    const traceId = this.generateTraceId('lmreq');
+    const trace: RequestTraceContext = {
+      traceId,
+      vendorName: mapping.vendor.name,
+      modelId: request.modelId,
+      modelName: mapping.modelName,
+      protocol: mapping.apiStyle
+    };
+    this.attachCancellationLogging(token, trace);
+    logger.info('Language model request start', {
+      ...trace,
+      baseUrl,
+      request: this.summarizeGenericChatRequest(request)
+    });
+
+    if (mapping.apiStyle === 'anthropic') {
+      return this.sendAnthropicRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, trace, token);
     }
 
-    if (mapping.vendor.apiStyle === 'openai-responses') {
-      return this.sendOpenAIResponsesRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, token);
+    if (mapping.apiStyle === 'openai-responses') {
+      return this.sendOpenAIResponsesRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, trace, token);
     }
 
-    return this.sendOpenAIChatRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, token);
+    return this.sendOpenAIChatRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, trace, token);
+  }
+
+  private findConfiguredModel(vendor: VendorConfig, modelName: string): VendorModelConfig | undefined {
+    const normalizedModelName = modelName.trim().toLowerCase();
+    return vendor.models.find(model => model.name.trim().toLowerCase() === normalizedModelName);
+  }
+
+  private resolveSamplingOptions(vendor: VendorConfig, modelName: string): ResolvedSamplingOptions {
+    const model = this.findConfiguredModel(vendor, modelName);
+    return {
+      temperature: model?.temperature ?? vendor.defaultTemperature ?? DEFAULT_TEMPERATURE,
+      topP: model?.topP ?? vendor.defaultTopP ?? DEFAULT_TOP_P
+    };
   }
 
   protected createModel(modelInfo: AIModelConfig): BaseLanguageModel {
@@ -507,12 +469,15 @@ export class GenericAIProvider extends BaseAIProvider {
     vendor: VendorConfig,
     compositeId: string
   ): AIModelConfig {
-    const maxInputTokens = model.maxInputTokens ?? DEFAULT_CONTEXT_SIZE;
-    const maxOutputTokens = model.maxOutputTokens ?? DEFAULT_CONTEXT_SIZE;
-    const configuredContextSize = model.contextSize ?? DEFAULT_CONTEXT_WINDOW_SIZE;
-    const contextSize = Math.max(configuredContextSize, maxInputTokens, maxOutputTokens);
+    const resolvedTokens = this.resolveTokenWindowLimits(
+      model.maxInputTokens !== undefined && model.maxOutputTokens !== undefined
+        ? model.maxInputTokens + model.maxOutputTokens
+        : DEFAULT_CONTEXT_WINDOW_SIZE,
+      model.maxInputTokens,
+      model.maxOutputTokens
+    );
     const toolCalling = model.capabilities?.tools ?? DEFAULT_MODEL_TOOLS;
-    const imageInput = model.capabilities?.vision ?? DEFAULT_MODEL_VISION;
+    const imageInput = model.capabilities?.vision ?? vendor.defaultVision;
 
     return {
       id: compositeId,
@@ -520,11 +485,12 @@ export class GenericAIProvider extends BaseAIProvider {
       family: vendor.name,
       name: model.name,
       version: vendor.name,
-      maxTokens: contextSize,
-      contextSize,
-      maxInputTokens,
-      maxOutputTokens,
+      maxTokens: resolvedTokens.maxTokens,
+      maxInputTokens: resolvedTokens.maxInputTokens,
+      maxOutputTokens: resolvedTokens.maxOutputTokens,
       capabilities: { toolCalling, imageInput },
+      apiStyle: model.apiStyle ?? vendor.defaultApiStyle,
+      countTokensMode: 'server-estimate',
       description: model.description || getMessage('genericDynamicModelDescription', vendor.name, model.name)
     };
   }
@@ -547,9 +513,15 @@ export class GenericAIProvider extends BaseAIProvider {
     models: AIModelConfig[],
     target: AIModelConfig[]
   ): void {
+    const configuredApiStyleByName = new Map<string, VendorApiStyle>();
+    for (const vendorModel of vendor.models) {
+      configuredApiStyleByName.set(vendorModel.name.trim().toLowerCase(), vendorModel.apiStyle ?? vendor.defaultApiStyle);
+    }
+
     for (const model of models) {
       const actualName = model.id.includes('/') ? model.id.substring(model.id.indexOf('/') + 1) : model.id;
-      this.modelVendorMap.set(model.id, { vendor, modelName: actualName });
+      const apiStyle = configuredApiStyleByName.get(actualName.trim().toLowerCase()) ?? vendor.defaultApiStyle;
+      this.modelVendorMap.set(model.id, { vendor, modelName: actualName, apiStyle });
     }
     target.push(...models);
   }
@@ -564,7 +536,7 @@ export class GenericAIProvider extends BaseAIProvider {
       const resolved = await this.withOptionalV1Retry(vendor, baseUrl, async retryBaseUrl => {
         const response = await this.fetchJson<any>(`${retryBaseUrl}/models`, {
           method: 'GET',
-          ...this.buildRequestInit(apiKey, vendor.apiStyle)
+          ...this.buildRequestInit(apiKey, vendor.defaultApiStyle)
         });
         return { response, baseUrl: retryBaseUrl };
       });
@@ -582,10 +554,7 @@ export class GenericAIProvider extends BaseAIProvider {
       const seen = new Set<string>();
 
       for (const entry of entries) {
-        const modelId =
-          typeof entry.id === 'string' ? entry.id.trim() :
-          typeof entry.model === 'string' ? entry.model.trim() :
-          typeof entry.name === 'string' ? entry.name.trim() : '';
+        const modelId = this.readModelId(entry);
         if (!modelId || seen.has(modelId.toLowerCase())) {
           continue;
         }
@@ -594,6 +563,12 @@ export class GenericAIProvider extends BaseAIProvider {
         }
         seen.add(modelId.toLowerCase());
 
+        const runtime = this.readRuntimeFromGenericModelEntry(entry);
+        const resolvedTokens = this.resolveTokenWindowLimits(
+          runtime.maxTokens,
+          runtime.maxInputTokens,
+          runtime.maxOutputTokens
+        );
         const compositeId = `${vendor.name}/${modelId}`;
         models.push({
           id: compositeId,
@@ -601,11 +576,15 @@ export class GenericAIProvider extends BaseAIProvider {
           family: vendor.name,
           name: modelId,
           version: vendor.name,
-          maxTokens: DEFAULT_CONTEXT_WINDOW_SIZE,
-          contextSize: DEFAULT_CONTEXT_WINDOW_SIZE,
-          maxInputTokens: DEFAULT_CONTEXT_SIZE,
-          maxOutputTokens: DEFAULT_CONTEXT_SIZE,
-          capabilities: { toolCalling: DEFAULT_MODEL_TOOLS },
+          maxTokens: resolvedTokens.maxTokens,
+          maxInputTokens: resolvedTokens.maxInputTokens,
+          maxOutputTokens: resolvedTokens.maxOutputTokens,
+          capabilities: {
+            toolCalling: runtime.toolCalling ?? DEFAULT_MODEL_TOOLS,
+            imageInput: runtime.imageInput ?? vendor.defaultVision
+          },
+          apiStyle: vendor.defaultApiStyle,
+          countTokensMode: 'server-estimate',
           description: getMessage('genericDynamicModelDescription', vendor.name, modelId)
         });
       }
@@ -623,177 +602,170 @@ export class GenericAIProvider extends BaseAIProvider {
     }
   }
 
-  private shouldSuppressDiscoveryRetry(status: number | undefined): boolean {
-    return typeof status === 'number' && NON_RETRYABLE_DISCOVERY_STATUS_CODES.has(status);
-  }
-
-  private toVendorModelConfigs(discoveredModels: AIModelConfig[]): VendorModelConfig[] {
-    const normalized: VendorModelConfig[] = [];
-    const seen = new Set<string>();
-
-    for (const model of discoveredModels) {
-      const discovered = this.toVendorModelConfig(model);
-      if (!discovered) {
-        continue;
-      }
-
-      const key = discovered.name.toLowerCase();
-      if (seen.has(key)) {
-        continue;
-      }
-
-      seen.add(key);
-      normalized.push(discovered);
-    }
-
-    return normalized;
-  }
-
-  private toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefined {
-    const name = model.name.trim();
-    if (name.length === 0) {
-      return undefined;
-    }
-
-    const toolCalling = model.capabilities?.toolCalling;
-    const tools = typeof toolCalling === 'number' ? toolCalling > 0 : (toolCalling ?? DEFAULT_MODEL_TOOLS);
-    const imageInput = model.capabilities?.imageInput;
-    const vision = typeof imageInput === 'boolean' ? imageInput : undefined;
-    const contextSize = this.readPositiveTokenInteger(model.contextSize ?? model.maxTokens);
-
-    return {
-      name,
-      description: model.description?.trim() || undefined,
-      contextSize,
-      maxInputTokens: this.readPositiveTokenInteger(model.maxInputTokens) ?? DEFAULT_CONTEXT_SIZE,
-      maxOutputTokens: this.readPositiveTokenInteger(model.maxOutputTokens) ?? DEFAULT_CONTEXT_SIZE,
-      capabilities: {
-        tools,
-        vision
-      }
-    };
-  }
-
-  private mergeConfiguredModelOverrides(
-    currentModels: VendorModelConfig[],
-    discoveredModels: VendorModelConfig[],
-    defaultVisionForNewModels: boolean
-  ): VendorModelConfig[] {
-    const configuredByName = new Map<string, VendorModelConfig>();
-    for (const model of currentModels) {
-      const key = model.name.trim().toLowerCase();
-      if (!key || configuredByName.has(key)) {
-        continue;
-      }
-      configuredByName.set(key, model);
-    }
-
-    return discoveredModels.map(discovered => {
-      const configured = configuredByName.get(discovered.name.trim().toLowerCase());
-      if (!configured) {
-        const discoveredVision = discovered.capabilities?.vision;
-        if (typeof discoveredVision === 'boolean') {
-          return discovered;
-        }
-        return {
-          ...discovered,
-          capabilities: {
-            ...discovered.capabilities,
-            vision: defaultVisionForNewModels
-          }
-        };
-      }
-
-      return configured;
-    });
-  }
-
-  private readPositiveTokenInteger(value: number | undefined): number | undefined {
-    if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
-      return undefined;
-    }
-    return Math.floor(value);
-  }
-
-  private toVendorStateKey(vendorName: string): string {
-    return vendorName.trim().toLowerCase();
-  }
-
-  private buildVendorDiscoverySignature(vendor: VendorConfig, apiKey: string): string {
-    const normalizedBaseUrl = normalizeHttpBaseUrl(vendor.baseUrl) || vendor.baseUrl.trim();
-    const modelsSignature = this.hashText(JSON.stringify(vendor.models));
-    const endpointFlag = vendor.useModelsEndpoint ? '1' : '0';
-    return `${this.toVendorStateKey(vendor.name)}|${normalizedBaseUrl.toLowerCase()}|${vendor.apiStyle}|${endpointFlag}|${modelsSignature}|${this.hashText(apiKey.trim())}`;
-  }
-
-  private hashText(value: string): string {
-    let hash = 2166136261;
-    for (let i = 0; i < value.length; i++) {
-      hash ^= value.charCodeAt(i);
-      hash = Math.imul(hash, 16777619);
-    }
-    return (hash >>> 0).toString(16);
-  }
-
   private async sendOpenAIChatRequest(
     request: GenericChatRequest,
     vendor: VendorConfig,
     modelName: string,
     baseUrl: string,
     apiKey: string,
+    trace: RequestTraceContext,
     token?: vscode.CancellationToken
   ): Promise<vscode.LanguageModelChatResponse> {
     const messages = this.convertMessages(request.messages);
     const supportsToolCalling = !!request.capabilities.toolCalling;
+    const sampling = this.resolveSamplingOptions(vendor, modelName);
 
     const payload: OpenAIChatRequest = {
       model: modelName,
       messages,
       tools: supportsToolCalling ? this.buildToolDefinitions(request.options) : undefined,
       tool_choice: supportsToolCalling ? this.buildToolChoice(request.options) : undefined,
-      stream: false,
-      temperature: 0.7,
-      top_p: 0.9,
+      stream: true,
+      temperature: sampling.temperature,
+      top_p: sampling.topP,
       max_tokens: DEFAULT_MAX_TOKENS
     };
 
     try {
+      logger.debug('Prepared OpenAI chat payload', {
+        ...trace,
+        baseUrl,
+        payload: {
+          temperature: payload.temperature,
+          topP: payload.top_p,
+          maxTokens: payload.max_tokens,
+          stream: payload.stream,
+          toolChoice: payload.tool_choice,
+          toolCount: payload.tools?.length ?? 0,
+          messages: this.summarizeProviderMessages(messages)
+        }
+      });
       const requestInit = this.buildRequestInit(apiKey, 'openai-chat', token);
       const response = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
-        this.postWithRetry(`${retryBaseUrl}/chat/completions`, payload, requestInit)
-      ));
-      const responseMessage = response.choices[0]?.message;
-      const content = responseMessage?.content || '';
-      const usageData = response.usage;
-      const responseParts = this.buildResponseParts(content, responseMessage?.tool_calls);
-
-      async function* streamText(text: string): AsyncIterable<string> {
-        if (text.trim().length > 0) {
-          yield text;
-        }
+        this.postWithRetry(`${retryBaseUrl}/chat/completions`, payload, requestInit, trace)
+      ), trace);
+      if (this.isSseResponse(response)) {
+        return this.buildStreamingChatResponse(
+          trace,
+          'openai-chat',
+          request,
+          vendor,
+          modelName,
+          payload.max_tokens,
+          async queue => {
+            const state = createOpenAIChatStreamState();
+            for await (const event of this.readSseEvents(response)) {
+              if (event.data === '[DONE]') {
+                break;
+              }
+              const chunk = this.tryParseJson<OpenAIChatStreamChunk>(event.data);
+              if (!chunk) {
+                continue;
+              }
+              const update = applyOpenAIChatStreamChunk(state, chunk, () => this.generateToolCallId());
+              if (update.textDelta.length > 0) {
+                queue.push(new vscode.LanguageModelTextPart(update.textDelta));
+              }
+            }
+            const finalized = finalizeOpenAIChatStreamState(state, () => this.generateToolCallId());
+            this.logUpstreamResponseSummary('openai-chat', vendor, modelName, {
+              mode: 'stream',
+              responseId: state.responseId,
+              contentLength: finalized.content.length,
+              toolCallCount: finalized.toolCalls.length,
+              usage: finalized.usage
+            });
+            return {
+              content: finalized.content,
+              toolCalls: finalized.toolCalls,
+              usage: finalized.usage as Record<string, unknown> | undefined,
+              responseId: state.responseId
+            };
+          }
+        );
       }
 
-      async function* streamParts(parts: vscode.LanguageModelResponsePart[]): AsyncIterable<vscode.LanguageModelResponsePart> {
-        for (const part of parts) {
-          yield part;
-        }
-      }
-
-      const result: vscode.LanguageModelChatResponse = {
-        stream: streamParts(responseParts),
-        text: streamText(content)
-      };
-
-      if (usageData) {
-        (result as any).promptTokens = usageData.prompt_tokens;
-        (result as any).completionTokens = usageData.completion_tokens;
-        (result as any).totalTokens = usageData.total_tokens;
-      }
-
-      return result;
+      logger.warn('OpenAI chat stream request returned non-SSE response; falling back to non-stream parsing', trace);
+      const parsedResponse = await this.readParsedResponse<OpenAIChatResponse>(response);
+      return this.buildOpenAIChatResponseFromPayload(
+        request,
+        vendor,
+        modelName,
+        trace,
+        parsedResponse,
+        payload.max_tokens
+      );
     } catch (error: any) {
-      throw this.toProviderError(error);
+      if (this.shouldFallbackToNonStream(error)) {
+        logger.warn('OpenAI chat stream is unsupported upstream; retrying without stream', {
+          ...trace,
+          error: this.summarizeError(error)
+        });
+        try {
+          const fallbackPayload: OpenAIChatRequest = { ...payload, stream: false };
+          const requestInit = this.buildRequestInit(apiKey, 'openai-chat', token);
+          const fallbackResponse = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
+            this.postWithRetry(`${retryBaseUrl}/chat/completions`, fallbackPayload, requestInit, trace)
+          ), trace);
+          const parsedFallback = await this.readParsedResponse<OpenAIChatResponse>(fallbackResponse);
+          return this.buildOpenAIChatResponseFromPayload(
+            request,
+            vendor,
+            modelName,
+            trace,
+            parsedFallback,
+            fallbackPayload.max_tokens
+          );
+        } catch (fallbackError) {
+          const providerError = this.toProviderError(fallbackError);
+          logger.error('OpenAI chat fallback request failed', {
+            ...trace,
+            error: this.summarizeError(fallbackError),
+            translatedError: providerError.message
+          });
+          throw providerError;
+        }
+      }
+
+      const providerError = this.toProviderError(error);
+      logger.error('OpenAI chat request failed', {
+        ...trace,
+        error: this.summarizeError(error),
+        translatedError: providerError.message
+      });
+      throw providerError;
     }
+  }
+
+  private buildOpenAIChatResponseFromPayload(
+    request: GenericChatRequest,
+    vendor: VendorConfig,
+    modelName: string,
+    trace: RequestTraceContext,
+    response: OpenAIChatResponse,
+    maxTokens: number | undefined
+  ): vscode.LanguageModelChatResponse {
+    const responseMessage = response.choices[0]?.message;
+    const content = responseMessage?.content || '';
+    const usageData = response.usage;
+    this.logUpstreamResponseSummary('openai-chat', vendor, modelName, summarizeOpenAIChatResponse(response));
+    logger.debug('Parsed OpenAI chat response', {
+      ...trace,
+      responseId: response.id,
+      contentLength: content.length,
+      toolCallCount: responseMessage?.tool_calls?.length ?? 0,
+      usage: usageData
+    });
+    const responseParts = this.buildResponseParts(content, responseMessage?.tool_calls);
+    const result = this.buildLoggedChatResponse(trace, content, responseParts);
+    const normalizedUsage = normalizeTokenUsage(
+      'openai-chat',
+      usageData as Record<string, unknown> | undefined,
+      this.resolveOutputBuffer(request, maxTokens)
+    );
+    attachTokenUsage(result as unknown as Record<string, unknown>, normalizedUsage);
+    this.logModelTokenUsage(request, vendor, modelName, normalizedUsage);
+    return result;
   }
 
   private async sendOpenAIResponsesRequest(
@@ -802,55 +774,171 @@ export class GenericAIProvider extends BaseAIProvider {
     modelName: string,
     baseUrl: string,
     apiKey: string,
+    trace: RequestTraceContext,
     token?: vscode.CancellationToken
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
+    const sampling = this.resolveSamplingOptions(vendor, modelName);
     const payload: OpenAIResponsesRequest = {
       model: modelName,
-      input: this.toOpenAIResponsesInput(providerMessages),
-      tools: request.capabilities.toolCalling ? this.buildOpenAIResponsesToolDefinitions(request.options) : undefined,
+      input: toOpenAIResponsesInput(providerMessages, () => this.generateToolCallId()),
+      tools: request.capabilities.toolCalling ? buildOpenAIResponsesToolDefinitions(this.buildToolDefinitions(request.options)) : undefined,
       tool_choice: request.capabilities.toolCalling ? this.buildToolChoice(request.options) : undefined,
-      temperature: 0.7,
-      top_p: 0.9,
-      max_output_tokens: DEFAULT_MAX_TOKENS
+      temperature: sampling.temperature,
+      top_p: sampling.topP,
+      max_output_tokens: DEFAULT_MAX_TOKENS,
+      stream: true
     };
 
     try {
+      logger.debug('Prepared OpenAI responses payload', {
+        ...trace,
+        baseUrl,
+        payload: {
+          temperature: payload.temperature,
+          topP: payload.top_p,
+          maxOutputTokens: payload.max_output_tokens,
+          toolChoice: payload.tool_choice,
+          toolCount: payload.tools?.length ?? 0,
+          providerMessages: this.summarizeProviderMessages(providerMessages),
+          input: this.summarizeOpenAIResponsesInput(payload.input)
+        }
+      });
       const requestInit = this.buildRequestInit(apiKey, 'openai-responses', token);
       const response = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
-        this.postWithRetry(`${retryBaseUrl}/responses`, payload, requestInit)
-      ));
-      const parsed = this.parseOpenAIResponsesResponse(response);
-      const responseParts = this.buildResponseParts(parsed.content, parsed.toolCalls);
-
-      async function* streamText(text: string): AsyncIterable<string> {
-        if (text.trim().length > 0) {
-          yield text;
-        }
+        this.postWithRetry(`${retryBaseUrl}/responses`, payload, requestInit, trace)
+      ), trace);
+      if (this.isSseResponse(response)) {
+        return this.buildStreamingChatResponse(
+          trace,
+          'openai-responses',
+          request,
+          vendor,
+          modelName,
+          payload.max_output_tokens,
+          async queue => {
+            const state = createOpenAIResponsesStreamState();
+            for await (const event of this.readSseEvents(response)) {
+              if (event.data === '[DONE]') {
+                break;
+              }
+              const streamEvent = this.tryParseJson<OpenAIResponsesStreamEvent>(event.data);
+              if (!streamEvent) {
+                continue;
+              }
+              const update = applyOpenAIResponsesStreamEvent(state, event.event, streamEvent, () => this.generateToolCallId());
+              if (update.textDelta.length > 0) {
+                queue.push(new vscode.LanguageModelTextPart(update.textDelta));
+              }
+            }
+            const finalized = finalizeOpenAIResponsesStreamState(state, () => this.generateToolCallId());
+            this.logUpstreamResponseSummary('openai-responses', vendor, modelName, {
+              mode: 'stream',
+              responseId: state.responseId,
+              contentLength: finalized.content.length,
+              toolCallCount: finalized.toolCalls.length,
+              usage: finalized.usage
+            });
+            return {
+              content: finalized.content,
+              toolCalls: finalized.toolCalls,
+              usage: finalized.usage as Record<string, unknown> | undefined,
+              responseId: state.responseId
+            };
+          }
+        );
       }
 
-      async function* streamParts(parts: vscode.LanguageModelResponsePart[]): AsyncIterable<vscode.LanguageModelResponsePart> {
-        for (const part of parts) {
-          yield part;
-        }
-      }
-
-      const result: vscode.LanguageModelChatResponse = {
-        stream: streamParts(responseParts),
-        text: streamText(parsed.content)
-      };
-
-      if (response.usage) {
-        (result as any).promptTokens = response.usage.input_tokens;
-        (result as any).completionTokens = response.usage.output_tokens;
-        (result as any).totalTokens = response.usage.total_tokens
-          ?? ((response.usage.input_tokens || 0) + (response.usage.output_tokens || 0));
-      }
-
-      return result;
+      logger.warn('OpenAI responses stream request returned non-SSE response; falling back to non-stream parsing', trace);
+      const parsedResponse = await this.readParsedResponse<OpenAIResponsesResponse>(response);
+      return this.buildOpenAIResponsesResponseFromPayload(
+        request,
+        vendor,
+        modelName,
+        trace,
+        parsedResponse,
+        payload.max_output_tokens
+      );
     } catch (error: any) {
-      throw this.toProviderError(error);
+      if (this.shouldFallbackToNonStream(error)) {
+        logger.warn('OpenAI responses stream is unsupported upstream; retrying without stream', {
+          ...trace,
+          error: this.summarizeError(error)
+        });
+        try {
+          const fallbackPayload: OpenAIResponsesRequest = { ...payload, stream: false };
+          const requestInit = this.buildRequestInit(apiKey, 'openai-responses', token);
+          const fallbackResponse = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
+            this.postWithRetry(`${retryBaseUrl}/responses`, fallbackPayload, requestInit, trace)
+          ), trace);
+          const parsedFallback = await this.readParsedResponse<OpenAIResponsesResponse>(fallbackResponse);
+          return this.buildOpenAIResponsesResponseFromPayload(
+            request,
+            vendor,
+            modelName,
+            trace,
+            parsedFallback,
+            fallbackPayload.max_output_tokens
+          );
+        } catch (fallbackError) {
+          const providerError = this.toProviderError(fallbackError);
+          logger.error('OpenAI responses fallback request failed', {
+            ...trace,
+            error: this.summarizeError(fallbackError),
+            translatedError: providerError.message
+          });
+          throw providerError;
+        }
+      }
+
+      const providerError = this.toProviderError(error);
+      logger.error('OpenAI responses request failed', {
+        ...trace,
+        error: this.summarizeError(error),
+        translatedError: providerError.message
+      });
+      throw providerError;
     }
+  }
+
+  private buildOpenAIResponsesResponseFromPayload(
+    request: GenericChatRequest,
+    vendor: VendorConfig,
+    modelName: string,
+    trace: RequestTraceContext,
+    response: OpenAIResponsesResponse,
+    maxOutputTokens: number | undefined
+  ): vscode.LanguageModelChatResponse {
+    this.logUpstreamResponseSummary('openai-responses', vendor, modelName, summarizeOpenAIResponsesResponse(response));
+    const parsed = parseOpenAIResponsesResponse(response, () => this.generateToolCallId());
+    logger.debug('Parsed OpenAI responses payload', {
+      ...trace,
+      responseId: response.id,
+      outputCount: response.output?.length ?? 0,
+      outputTextLength: typeof response.output_text === 'string' ? response.output_text.length : 0,
+      parsedContentLength: parsed.content.length,
+      parsedToolCallCount: parsed.toolCalls.length,
+      parsedToolCalls: parsed.toolCalls.map(toolCall => ({
+        id: toolCall.id,
+        name: toolCall.function.name,
+        argumentsLength: typeof toolCall.function.arguments === 'string' ? toolCall.function.arguments.length : 0
+      })),
+      usage: response.usage
+    });
+    const responseParts = this.buildResponseParts(parsed.content, parsed.toolCalls);
+    logger.debug('Built OpenAI responses result parts', {
+      ...trace,
+      responseParts: this.summarizeResponseParts(responseParts)
+    });
+    const result = this.buildLoggedChatResponse(trace, parsed.content, responseParts);
+    const normalizedUsage = normalizeTokenUsage(
+      'openai-responses',
+      response.usage as Record<string, unknown> | undefined,
+      this.resolveOutputBuffer(request, maxOutputTokens)
+    );
+    attachTokenUsage(result as unknown as Record<string, unknown>, normalizedUsage);
+    this.logModelTokenUsage(request, vendor, modelName, normalizedUsage);
+    return result;
   }
 
   private async sendAnthropicRequest(
@@ -859,119 +947,347 @@ export class GenericAIProvider extends BaseAIProvider {
     modelName: string,
     baseUrl: string,
     apiKey: string,
+    trace: RequestTraceContext,
     token?: vscode.CancellationToken
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
-    const { system, messages } = this.toAnthropicMessages(providerMessages);
-    const tools = request.capabilities.toolCalling ? this.buildAnthropicToolDefinitions(request.options) : undefined;
+    const sampling = this.resolveSamplingOptions(vendor, modelName);
+    const { system, messages } = toAnthropicMessages(providerMessages, () => this.generateToolCallId());
+    const tools = request.capabilities.toolCalling ? buildAnthropicToolDefinitions(this.buildToolDefinitions(request.options)) : undefined;
     const payload: AnthropicChatRequest = {
       model: modelName,
       max_tokens: DEFAULT_MAX_TOKENS,
       system: system || undefined,
       messages,
       tools,
-      tool_choice: tools ? this.buildAnthropicToolChoice(request.options) : undefined
+      tool_choice: tools ? buildAnthropicToolChoice(request.options) : undefined,
+      temperature: sampling.temperature,
+      top_p: sampling.topP,
+      stream: true
     };
 
     try {
+      logger.debug('Prepared Anthropic payload', {
+        ...trace,
+        baseUrl,
+        payload: {
+          maxTokens: payload.max_tokens,
+          temperature: payload.temperature,
+          topP: payload.top_p,
+          stream: payload.stream,
+          toolChoice: payload.tool_choice,
+          toolCount: payload.tools?.length ?? 0,
+          systemLength: typeof payload.system === 'string' ? payload.system.length : 0,
+          providerMessages: this.summarizeProviderMessages(providerMessages),
+          messageCount: payload.messages.length
+        }
+      });
       const requestInit = this.buildRequestInit(apiKey, 'anthropic', token);
       const response = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
-        this.postWithRetry(`${retryBaseUrl}/messages`, payload, requestInit)
-      ));
-      const parsed = this.parseAnthropicResponse(response);
-      const responseParts = this.buildResponseParts(parsed.content, parsed.toolCalls);
-
-      async function* streamText(text: string): AsyncIterable<string> {
-        if (text.trim().length > 0) {
-          yield text;
-        }
+        this.postWithRetry(`${retryBaseUrl}/messages`, payload, requestInit, trace)
+      ), trace);
+      if (this.isSseResponse(response)) {
+        return this.buildStreamingChatResponse(
+          trace,
+          'anthropic',
+          request,
+          vendor,
+          modelName,
+          payload.max_tokens,
+          async queue => {
+            const state = createAnthropicStreamState();
+            for await (const event of this.readSseEvents(response)) {
+              if (event.data === '[DONE]') {
+                break;
+              }
+              const streamEvent = this.tryParseJson<AnthropicStreamEvent>(event.data);
+              if (!streamEvent) {
+                continue;
+              }
+              const update = applyAnthropicStreamEvent(state, event.event, streamEvent);
+              if (update.textDelta.length > 0) {
+                queue.push(new vscode.LanguageModelTextPart(update.textDelta));
+              }
+            }
+            const finalized = finalizeAnthropicStreamState(state, () => this.generateToolCallId());
+            this.logUpstreamResponseSummary('anthropic', vendor, modelName, {
+              mode: 'stream',
+              responseId: state.responseId,
+              contentLength: finalized.content.length,
+              toolCallCount: finalized.toolCalls.length,
+              usage: finalized.usage,
+              stopReason: state.stopReason
+            });
+            return {
+              content: finalized.content,
+              toolCalls: finalized.toolCalls,
+              usage: finalized.usage as Record<string, unknown> | undefined,
+              responseId: state.responseId
+            };
+          }
+        );
       }
 
-      async function* streamParts(parts: vscode.LanguageModelResponsePart[]): AsyncIterable<vscode.LanguageModelResponsePart> {
-        for (const part of parts) {
-          yield part;
-        }
-      }
-
-      const result: vscode.LanguageModelChatResponse = {
-        stream: streamParts(responseParts),
-        text: streamText(parsed.content)
-      };
-
-      if (response.usage) {
-        const promptTokens = response.usage.input_tokens;
-        const completionTokens = response.usage.output_tokens;
-        (result as any).promptTokens = promptTokens;
-        (result as any).completionTokens = completionTokens;
-        if (typeof promptTokens === 'number' || typeof completionTokens === 'number') {
-          (result as any).totalTokens = (promptTokens || 0) + (completionTokens || 0);
-        }
-      }
-
-      return result;
+      logger.warn('Anthropic stream request returned non-SSE response; falling back to non-stream parsing', trace);
+      const parsedResponse = await this.readParsedResponse<AnthropicChatResponse>(response);
+      return this.buildAnthropicResponseFromPayload(
+        request,
+        vendor,
+        modelName,
+        trace,
+        parsedResponse,
+        payload.max_tokens
+      );
     } catch (error: any) {
-      throw this.toProviderError(error);
+      if (this.shouldFallbackToNonStream(error)) {
+        logger.warn('Anthropic stream is unsupported upstream; retrying without stream', {
+          ...trace,
+          error: this.summarizeError(error)
+        });
+        try {
+          const fallbackPayload: AnthropicChatRequest = { ...payload, stream: false };
+          const requestInit = this.buildRequestInit(apiKey, 'anthropic', token);
+          const fallbackResponse = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
+            this.postWithRetry(`${retryBaseUrl}/messages`, fallbackPayload, requestInit, trace)
+          ), trace);
+          const parsedFallback = await this.readParsedResponse<AnthropicChatResponse>(fallbackResponse);
+          return this.buildAnthropicResponseFromPayload(
+            request,
+            vendor,
+            modelName,
+            trace,
+            parsedFallback,
+            fallbackPayload.max_tokens
+          );
+        } catch (fallbackError) {
+          const providerError = this.toProviderError(fallbackError);
+          logger.error('Anthropic fallback request failed', {
+            ...trace,
+            error: this.summarizeError(fallbackError),
+            translatedError: providerError.message
+          });
+          throw providerError;
+        }
+      }
+
+      const providerError = this.toProviderError(error);
+      logger.error('Anthropic request failed', {
+        ...trace,
+        error: this.summarizeError(error),
+        translatedError: providerError.message
+      });
+      throw providerError;
     }
+  }
+
+  private buildAnthropicResponseFromPayload(
+    request: GenericChatRequest,
+    vendor: VendorConfig,
+    modelName: string,
+    trace: RequestTraceContext,
+    response: AnthropicChatResponse,
+    maxTokens: number | undefined
+  ): vscode.LanguageModelChatResponse {
+    this.logUpstreamResponseSummary('anthropic', vendor, modelName, summarizeAnthropicResponseForLogging(response));
+    logger.debug('Anthropic raw response shape', {
+      ...trace,
+      responseShape: this.summarizeRawResponseShape(response)
+    });
+    const parsed = parseAnthropicResponse(response, () => this.generateToolCallId());
+    logger.debug('Parsed Anthropic response', {
+      ...trace,
+      responseId: response.id,
+      parsedContentLength: parsed.content.length,
+      parsedToolCallCount: parsed.toolCalls.length,
+      usage: response.usage
+    });
+    const responseParts = this.buildResponseParts(parsed.content, parsed.toolCalls);
+    const result = this.buildLoggedChatResponse(trace, parsed.content, responseParts);
+    const normalizedUsage = normalizeTokenUsage(
+      'anthropic',
+      response.usage as Record<string, unknown> | undefined,
+      this.resolveOutputBuffer(request, maxTokens)
+    );
+    attachTokenUsage(result as unknown as Record<string, unknown>, normalizedUsage);
+    this.logModelTokenUsage(request, vendor, modelName, normalizedUsage);
+    return result;
   }
 
   private async postWithRetry(
     url: string,
     payload: unknown,
-    requestInit: RequestInit
-  ): Promise<any> {
+    requestInit: RequestInit,
+    trace?: RequestTraceContext
+  ): Promise<Response> {
     const maxRetries = 2;
     let attempt = 0;
 
     while (true) {
+      const startedAt = Date.now();
+      logger.debug('Upstream POST attempt start', {
+        ...trace,
+        attempt: attempt + 1,
+        maxAttempts: maxRetries + 1,
+        url,
+        payloadSize: JSON.stringify(payload).length
+      });
       try {
-        const response = await this.fetchJson<any>(url, {
+        const response = await this.fetchResponse(url, {
           ...requestInit,
           method: 'POST',
           body: JSON.stringify(payload)
         });
-        return response.data;
+        logger.info('Upstream POST attempt success', {
+          ...trace,
+          attempt: attempt + 1,
+          url,
+          status: response.status,
+          durationMs: Date.now() - startedAt
+        });
+        return response;
       } catch (error: any) {
         if (this.isAbortError(error)) {
+          logger.warn('Upstream POST aborted', {
+            ...trace,
+            attempt: attempt + 1,
+            url,
+            durationMs: Date.now() - startedAt
+          });
           throw error;
         }
 
         const status = error?.response?.status;
         const shouldRetry = (status === 429 || (typeof status === 'number' && status >= 500)) && attempt < maxRetries;
+        logger.warn('Upstream POST attempt failed', {
+          ...trace,
+          attempt: attempt + 1,
+          url,
+          status,
+          durationMs: Date.now() - startedAt,
+          shouldRetry,
+          error: this.summarizeError(error)
+        });
         if (!shouldRetry) {
           throw error;
         }
 
         const delayMs = 800 * (attempt + 1);
+        logger.info('Scheduling upstream POST retry', {
+          ...trace,
+          nextAttempt: attempt + 2,
+          delayMs,
+          url
+        });
         await new Promise(resolve => setTimeout(resolve, delayMs));
         attempt += 1;
       }
     }
   }
 
+  private logUpstreamResponseSummary(
+    protocol: 'openai-chat' | 'openai-responses' | 'anthropic',
+    vendor: VendorConfig,
+    modelName: string,
+    summary: Record<string, unknown>
+  ): void {
+    logger.debug('Language model upstream response summary', {
+      protocol,
+      vendor: vendor.name,
+      modelName,
+      ...summary
+    });
+  }
+
+  private logModelTokenUsage(
+    request: GenericChatRequest,
+    vendor: VendorConfig,
+    modelName: string,
+    usage: NormalizedTokenUsage | undefined
+  ): void {
+    const model = this.getModel(request.modelId);
+    const totalContextWindow = model ? model.maxInputTokens + model.maxOutputTokens : undefined;
+    logger.debug('Language model token usage', {
+      vendor: vendor.name,
+      modelId: request.modelId,
+      modelName,
+      maxInputTokens: model?.maxInputTokens,
+      maxOutputTokens: model?.maxOutputTokens,
+      totalContextWindow,
+      promptTokens: usage?.promptTokens,
+      completionTokens: usage?.completionTokens,
+      totalTokens: usage?.totalTokens,
+      outputBuffer: usage?.outputBuffer,
+      contextWindowPercentage: totalContextWindow && usage
+        ? Number(((usage.totalTokens / totalContextWindow) * 100).toFixed(4))
+        : undefined
+    });
+  }
+
+  private resolveOutputBuffer(
+    request: GenericChatRequest,
+    requestedOutputLimit: number | undefined
+  ): number | undefined {
+    const model = this.getModel(request.modelId);
+    if (!model) {
+      return requestedOutputLimit;
+    }
+
+    if (requestedOutputLimit === undefined) {
+      return model.maxOutputTokens;
+    }
+
+    return Math.max(0, Math.min(model.maxOutputTokens, Math.floor(requestedOutputLimit)));
+  }
+
   private async withOptionalV1Retry<T>(
     vendor: VendorConfig,
     baseUrl: string,
-    execute: (resolvedBaseUrl: string) => Promise<T>
+    execute: (resolvedBaseUrl: string) => Promise<T>,
+    trace?: RequestTraceContext
   ): Promise<T> {
     let currentBaseUrl = baseUrl;
     let retriedWithV1 = false;
 
     while (true) {
       try {
+        logger.debug('Executing upstream request', {
+          ...trace,
+          baseUrl: currentBaseUrl,
+          retriedWithV1
+        });
         return await execute(currentBaseUrl);
       } catch (error: any) {
+        logger.warn('Upstream request failed before optional /v1 retry handling', {
+          ...trace,
+          baseUrl: currentBaseUrl,
+          retriedWithV1,
+          status: error?.response?.status,
+          error: this.summarizeError(error)
+        });
         if (retriedWithV1 || !this.shouldOfferV1Retry(currentBaseUrl, error)) {
           throw error;
         }
 
+        logger.info('Attempting optional /v1 retry flow', {
+          ...trace,
+          baseUrl: currentBaseUrl
+        });
         const retryTarget = await this.promptToAppendV1(vendor, currentBaseUrl);
         if (!retryTarget) {
+          logger.warn('Optional /v1 retry declined or unavailable', {
+            ...trace,
+            baseUrl: currentBaseUrl
+          });
           throw error;
         }
 
         currentBaseUrl = retryTarget.baseUrl;
         vendor = retryTarget.vendor;
         retriedWithV1 = true;
+        logger.info('Optional /v1 retry accepted', {
+          ...trace,
+          nextBaseUrl: currentBaseUrl
+        });
       }
     }
   }
@@ -1066,7 +1382,7 @@ export class GenericAIProvider extends BaseAIProvider {
 
   private buildRequestInit(
     apiKey: string,
-    apiStyle: 'openai-chat' | 'openai-responses' | 'anthropic',
+    apiStyle: VendorApiStyle,
     token?: vscode.CancellationToken
   ): RequestInit {
     const headers: Record<string, string> = {
@@ -1142,229 +1458,478 @@ export class GenericAIProvider extends BaseAIProvider {
     return undefined;
   }
 
-  private buildAnthropicToolDefinitions(
-    options?: vscode.LanguageModelChatRequestOptions
-  ): AnthropicToolDefinition[] | undefined {
-    const tools = this.buildToolDefinitions(options);
-    if (!tools || tools.length === 0) {
-      return undefined;
-    }
-
-    return tools.map(tool => ({
-      name: tool.function.name,
-      description: tool.function.description,
-      input_schema: tool.function.parameters
-    }));
+  private generateToolCallId(): string {
+    return `tool_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
   }
 
-  private buildAnthropicToolChoice(
-    options?: vscode.LanguageModelChatRequestOptions
-  ): AnthropicToolChoice | undefined {
-    if (!options?.tools || options.tools.length === 0) {
-      return undefined;
-    }
-
-    if (options.toolMode === vscode.LanguageModelChatToolMode.Required) {
-      return { type: 'any' };
-    }
-
-    return { type: 'auto' };
+  private generateTraceId(prefix: string): string {
+    return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
   }
 
-  private buildOpenAIResponsesToolDefinitions(
-    options?: vscode.LanguageModelChatRequestOptions
-  ): OpenAIResponsesToolDefinition[] | undefined {
-    const tools = this.buildToolDefinitions(options);
-    if (!tools || tools.length === 0) {
-      return undefined;
+  private attachCancellationLogging(token: vscode.CancellationToken | undefined, trace: RequestTraceContext): void {
+    if (!token) {
+      return;
     }
 
-    return tools.map(tool => ({
-      type: 'function',
-      name: tool.function.name,
-      description: tool.function.description,
-      parameters: tool.function.parameters
-    }));
+    if (token.isCancellationRequested) {
+      logger.warn('Language model request already cancelled before dispatch', trace);
+      return;
+    }
+
+    token.onCancellationRequested(() => {
+      logger.warn('Language model cancellation requested', trace);
+    });
   }
 
-  private toOpenAIResponsesInput(messages: ChatMessage[]): OpenAIResponsesInputItem[] {
-    const input: OpenAIResponsesInputItem[] = [];
-
-    for (const message of messages) {
-      if (message.role === 'tool') {
-        input.push({
-          type: 'function_call_output',
-          call_id: message.tool_call_id || this.generateToolCallId(),
-          output: message.content
-        });
-        continue;
-      }
-
-      if (message.role === 'assistant' && message.tool_calls && message.tool_calls.length > 0) {
-        if (message.content.trim().length > 0) {
-          input.push({
-            type: 'message',
-            role: 'assistant',
-            content: message.content
-          });
-        }
-
-        for (const toolCall of message.tool_calls) {
-          input.push({
-            type: 'function_call',
-            call_id: toolCall.id || this.generateToolCallId(),
-            name: toolCall.function.name,
-            arguments: toolCall.function.arguments
-          });
-        }
-        continue;
-      }
-
-      input.push({
-        type: 'message',
+  private summarizeGenericChatRequest(request: GenericChatRequest): Record<string, unknown> {
+    return {
+      messageCount: request.messages.length,
+      messages: request.messages.map(message => ({
         role: message.role,
-        content: message.content
+        name: message.name,
+        partCount: message.content.length,
+        parts: message.content.map(part => this.summarizeInputPart(part))
+      })),
+      toolCount: request.options?.tools?.length ?? 0,
+      toolMode: request.options?.toolMode,
+      capabilities: request.capabilities
+    };
+  }
+
+  private summarizeInputPart(part: vscode.LanguageModelInputPart): Record<string, unknown> {
+    if (part instanceof vscode.LanguageModelTextPart) {
+      return {
+        type: 'text',
+        length: part.value.length
+      };
+    }
+
+    if (part instanceof vscode.LanguageModelToolCallPart) {
+      return {
+        type: 'tool_call',
+        callId: part.callId,
+        name: part.name,
+        inputKeys: part.input && typeof part.input === 'object' ? Object.keys(part.input as object) : []
+      };
+    }
+
+    if (part instanceof vscode.LanguageModelToolResultPart) {
+      return {
+        type: 'tool_result',
+        callId: part.callId,
+        partCount: part.content.length
+      };
+    }
+
+    if (part instanceof vscode.LanguageModelDataPart) {
+      return {
+        type: 'data',
+        mimeType: part.mimeType,
+        bytes: part.data.byteLength
+      };
+    }
+
+    const unknownPart = part as unknown as { constructor?: { name?: string } };
+    return {
+      type: unknownPart.constructor?.name ?? typeof part
+    };
+  }
+
+  private summarizeProviderMessages(messages: ChatMessage[]): Array<Record<string, unknown>> {
+    return messages.map(message => ({
+      role: message.role,
+      contentLength: message.content.length,
+      toolCallCount: message.tool_calls?.length ?? 0,
+      toolCalls: (message.tool_calls ?? []).map(toolCall => ({
+        id: toolCall.id,
+        name: toolCall.function.name,
+        argumentsLength: typeof toolCall.function.arguments === 'string' ? toolCall.function.arguments.length : 0
+      })),
+      toolCallId: message.tool_call_id
+    }));
+  }
+
+  private summarizeOpenAIResponsesInput(input: OpenAIResponsesInputItem[]): Array<Record<string, unknown>> {
+    return input.map(item => {
+      if (item.type === 'function_call') {
+        return {
+          type: item.type,
+          callId: item.call_id,
+          name: item.name,
+          argumentsLength: typeof item.arguments === 'string' ? item.arguments.length : 0
+        };
+      }
+
+      if (item.type === 'function_call_output') {
+        return {
+          type: item.type,
+          callId: item.call_id,
+          outputLength: typeof item.output === 'string' ? item.output.length : 0
+        };
+      }
+
+      return {
+        type: item.type ?? 'message',
+        role: item.role,
+        contentKind: Array.isArray(item.content) ? 'array' : typeof item.content,
+        contentLength: typeof item.content === 'string'
+          ? item.content.length
+          : Array.isArray(item.content)
+            ? item.content.reduce((total, part) => total + (typeof part.text === 'string' ? part.text.length : 0), 0)
+            : 0
+      };
+    });
+  }
+
+  private summarizeResponseParts(parts: vscode.LanguageModelResponsePart[]): Array<Record<string, unknown>> {
+    return parts.map(part => this.summarizeResponsePart(part));
+  }
+
+  private summarizeResponsePart(part: vscode.LanguageModelResponsePart): Record<string, unknown> {
+    if (part instanceof vscode.LanguageModelTextPart) {
+      return {
+        type: 'text',
+        length: part.value.length
+      };
+    }
+
+    if (part instanceof vscode.LanguageModelToolCallPart) {
+      return {
+        type: 'tool_call',
+        callId: part.callId,
+        name: part.name,
+        inputKeys: part.input && typeof part.input === 'object' ? Object.keys(part.input as object) : []
+      };
+    }
+
+    const unknownPart = part as unknown as { constructor?: { name?: string } };
+    return {
+      type: unknownPart.constructor?.name ?? typeof part
+    };
+  }
+
+  private buildLoggedChatResponse(
+    trace: RequestTraceContext,
+    content: string,
+    responseParts: vscode.LanguageModelResponsePart[]
+  ): vscode.LanguageModelChatResponse {
+    const provider = this;
+
+    async function* streamText(text: string): AsyncIterable<string> {
+      logger.debug('Language model response.text iterator start', {
+        ...trace,
+        textLength: text.length
+      });
+      if (text.trim().length > 0) {
+        logger.debug('Language model response.text iterator yield', {
+          ...trace,
+          textLength: text.length
+        });
+        yield text;
+      }
+      logger.debug('Language model response.text iterator complete', {
+        ...trace,
+        yielded: text.trim().length > 0
       });
     }
 
-    return input;
-  }
-
-  private parseOpenAIResponsesResponse(response: OpenAIResponsesResponse): { content: string; toolCalls: ChatToolCall[] } {
-    const textParts: string[] = [];
-    const toolCalls: ChatToolCall[] = [];
-
-    for (const item of response.output ?? []) {
-      if (item.type === 'function_call' && typeof item.name === 'string' && item.name.trim().length > 0) {
-        toolCalls.push({
-          id: typeof item.call_id === 'string' && item.call_id.trim().length > 0 ? item.call_id : this.generateToolCallId(),
-          type: 'function',
-          function: {
-            name: item.name,
-            arguments: typeof item.arguments === 'string' ? item.arguments : '{}'
-          }
+    async function* streamParts(parts: vscode.LanguageModelResponsePart[]): AsyncIterable<vscode.LanguageModelResponsePart> {
+      logger.debug('Language model response.stream iterator start', {
+        ...trace,
+        partCount: parts.length,
+        parts: provider.summarizeResponseParts(parts)
+      });
+      for (const [index, part] of parts.entries()) {
+        logger.debug('Language model response.stream iterator yield', {
+          ...trace,
+          index,
+          part: provider.summarizeResponsePart(part)
         });
-        continue;
+        yield part;
       }
-
-      if (item.type === 'message') {
-        for (const contentPart of item.content ?? []) {
-          if ((contentPart.type === 'output_text' || contentPart.type === 'text') && typeof contentPart.text === 'string' && contentPart.text.trim().length > 0) {
-            textParts.push(contentPart.text);
-          }
-        }
-      }
+      logger.debug('Language model response.stream iterator complete', {
+        ...trace,
+        yieldedPartCount: parts.length
+      });
     }
 
-    if (textParts.length === 0 && typeof response.output_text === 'string' && response.output_text.trim().length > 0) {
-      textParts.push(response.output_text);
-    }
-
-    return {
-      content: textParts.join(''),
-      toolCalls
-    };
+    const result = {
+      stream: streamParts(responseParts),
+      text: streamText(content)
+    } as vscode.LanguageModelChatResponse & Record<string, unknown>;
+    result[RESPONSE_TRACE_ID_FIELD] = trace.traceId;
+    logger.info('Language model request response created', {
+      ...trace,
+      contentLength: content.length,
+      responsePartCount: responseParts.length
+    });
+    return result;
   }
 
-  private toAnthropicMessages(messages: ChatMessage[]): { system: string; messages: AnthropicChatMessage[] } {
-    const systemParts: string[] = [];
-    const normalizedMessages: AnthropicChatMessage[] = [];
+  private buildStreamingChatResponse(
+    trace: RequestTraceContext,
+    protocol: VendorApiStyle,
+    request: GenericChatRequest,
+    vendor: VendorConfig,
+    modelName: string,
+    requestedOutputLimit: number | undefined,
+    execute: (queue: AsyncIterableQueue<vscode.LanguageModelResponsePart>) => Promise<StreamingCompletionResult>
+  ): vscode.LanguageModelChatResponse {
+    const provider = this;
+    const queue = new AsyncIterableQueue<vscode.LanguageModelResponsePart>();
+    const result = {} as vscode.LanguageModelChatResponse & Record<string, unknown>;
+    result[RESPONSE_TRACE_ID_FIELD] = trace.traceId;
 
-    for (const message of messages) {
-      if (message.role === 'system') {
-        if (message.content.trim().length > 0) {
-          systemParts.push(message.content);
+    const completion = (async () => {
+      try {
+        const finalized = await execute(queue);
+        for (const part of provider.buildResponseParts('', finalized.toolCalls)) {
+          queue.push(part);
         }
-        continue;
-      }
 
-      if (message.role === 'tool') {
-        normalizedMessages.push({
-          role: 'user',
-          content: [{
-            type: 'tool_result',
-            tool_use_id: message.tool_call_id || this.generateToolCallId(),
-            content: message.content
-          }]
+        const normalizedUsage = normalizeTokenUsage(
+          protocol,
+          finalized.usage,
+          provider.resolveOutputBuffer(request, requestedOutputLimit)
+        );
+        attachTokenUsage(result, normalizedUsage);
+        provider.logModelTokenUsage(request, vendor, modelName, normalizedUsage);
+        logger.info('Language model streaming response completed', {
+          ...trace,
+          responseId: finalized.responseId,
+          contentLength: finalized.content.length,
+          toolCallCount: finalized.toolCalls.length,
+          usage: normalizedUsage
         });
-        continue;
-      }
-
-      if (message.role === 'assistant' && message.tool_calls && message.tool_calls.length > 0) {
-        const contentBlocks: AnthropicRequestContentBlock[] = [];
-        if (message.content.trim().length > 0) {
-          contentBlocks.push({ type: 'text', text: message.content });
-        }
-        for (const toolCall of message.tool_calls) {
-          contentBlocks.push({
-            type: 'tool_use',
-            id: toolCall.id || this.generateToolCallId(),
-            name: toolCall.function.name,
-            input: this.parseToolArgumentsSafe(toolCall.function.arguments)
-          });
-        }
-        normalizedMessages.push({ role: 'assistant', content: contentBlocks });
-        continue;
-      }
-
-      const role = message.role === 'assistant' ? 'assistant' : 'user';
-      normalizedMessages.push({ role, content: message.content });
-    }
-
-    return {
-      system: systemParts.join('\n\n').trim(),
-      messages: normalizedMessages
-    };
-  }
-
-  private parseAnthropicResponse(response: AnthropicChatResponse): { content: string; toolCalls: ChatToolCall[] } {
-    const textParts: string[] = [];
-    const toolCalls: ChatToolCall[] = [];
-
-    for (const block of response.content ?? []) {
-      if (block.type === 'text') {
-        if (typeof block.text === 'string' && block.text.trim().length > 0) {
-          textParts.push(block.text);
-        }
-        continue;
-      }
-
-      if (block.type === 'tool_use' && typeof block.name === 'string' && block.name.trim().length > 0) {
-        toolCalls.push({
-          id: typeof block.id === 'string' && block.id.trim().length > 0 ? block.id : this.generateToolCallId(),
-          type: 'function',
-          function: {
-            name: block.name,
-            arguments: JSON.stringify(block.input ?? {})
-          }
+        queue.close();
+        return finalized;
+      } catch (error) {
+        const providerError = error instanceof vscode.LanguageModelError ? error : provider.toProviderError(error);
+        logger.error('Language model streaming response failed', {
+          ...trace,
+          error: provider.summarizeError(error)
         });
+        queue.fail(providerError);
+        throw providerError;
       }
-    }
+    })();
 
-    return {
-      content: textParts.join(''),
-      toolCalls
-    };
+    result.stream = queue;
+    result.text = (async function* streamText(): AsyncIterable<string> {
+      const finalized = await completion;
+      if (finalized.content.trim().length > 0) {
+        yield finalized.content;
+      }
+    })();
+
+    logger.info('Language model streaming response created', trace);
+    return result;
   }
 
-  private parseToolArgumentsSafe(rawArgs: string): object {
-    if (!rawArgs) {
-      return {};
+  private isSseResponse(response: Response): boolean {
+    const contentType = response.headers.get('content-type') || '';
+    return contentType.toLowerCase().includes('text/event-stream');
+  }
+
+  private shouldFallbackToNonStream(error: any): boolean {
+    const status = typeof error?.response?.status === 'number' ? error.response.status : undefined;
+    if (status !== 400 && status !== 404 && status !== 415 && status !== 422 && status !== 501) {
+      return false;
+    }
+
+    const detail = [
+      this.readApiErrorMessage(error),
+      typeof error?.response?.data === 'string' ? error.response.data : undefined
+    ]
+      .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+      .join(' ')
+      .toLowerCase();
+
+    return /(stream|streaming|sse|event-stream)/i.test(detail)
+      && /(unsupported|not support|not supported|invalid|unknown|only|expect)/i.test(detail);
+  }
+
+  private tryParseJson<T>(raw: string): T | undefined {
+    const trimmed = raw.trim();
+    if (trimmed.length === 0) {
+      return undefined;
     }
 
     try {
-      const parsed = JSON.parse(rawArgs);
-      if (parsed && typeof parsed === 'object') {
-        return parsed as object;
-      }
-      return { value: parsed };
+      return JSON.parse(trimmed) as T;
     } catch {
-      return { raw: rawArgs };
+      return undefined;
     }
   }
 
-  private generateToolCallId(): string {
-    return `tool_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+  private async readParsedResponse<T>(response: Response): Promise<T> {
+    const data = await this.readResponseData(response);
+    return data as T;
+  }
+
+  private async *readSseEvents(response: Response): AsyncIterable<ParsedSseEvent> {
+    if (!response.body) {
+      return;
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { value, done } = await reader.read();
+      buffer += decoder.decode(value ?? new Uint8Array(), { stream: !done });
+
+      while (true) {
+        const match = /\r?\n\r?\n/.exec(buffer);
+        if (!match) {
+          break;
+        }
+        const block = buffer.slice(0, match.index);
+        buffer = buffer.slice(match.index + match[0].length);
+        const parsed = this.parseSseEventBlock(block);
+        if (parsed) {
+          yield parsed;
+        }
+      }
+
+      if (done) {
+        break;
+      }
+    }
+
+    const trailing = buffer.trim();
+    if (trailing.length > 0) {
+      const parsed = this.parseSseEventBlock(trailing);
+      if (parsed) {
+        yield parsed;
+      }
+    }
+  }
+
+  private parseSseEventBlock(block: string): ParsedSseEvent | undefined {
+    const lines = block
+      .split(/\r?\n/)
+      .map(line => line.trimEnd())
+      .filter(line => line.length > 0 && !line.startsWith(':'));
+    if (lines.length === 0) {
+      return undefined;
+    }
+
+    let event: string | undefined;
+    const dataLines: string[] = [];
+    for (const line of lines) {
+      if (line.startsWith('event:')) {
+        event = line.slice('event:'.length).trim();
+        continue;
+      }
+      if (line.startsWith('data:')) {
+        dataLines.push(line.slice('data:'.length).trimStart());
+        continue;
+      }
+      dataLines.push(line);
+    }
+
+    return {
+      event,
+      data: dataLines.join('\n')
+    };
+  }
+
+  private summarizeError(error: any): Record<string, unknown> {
+    return {
+      name: error?.name,
+      message: getCompactErrorMessage(error),
+      status: error?.response?.status,
+      response: this.summarizeErrorResponseData(error?.response?.data)
+    };
+  }
+
+  private summarizeErrorResponseData(data: unknown): unknown {
+    if (typeof data === 'string') {
+      return {
+        type: 'string',
+        length: data.length,
+        preview: data.slice(0, 200)
+      };
+    }
+
+    if (data && typeof data === 'object') {
+      const source = data as Record<string, unknown>;
+      return {
+        keys: Object.keys(source),
+        errorType: typeof source.error === 'object' && source.error
+          ? (source.error as Record<string, unknown>).type
+          : undefined,
+        errorCode: typeof source.error === 'object' && source.error
+          ? (source.error as Record<string, unknown>).code
+          : undefined,
+        message: this.readApiErrorMessage({ response: { data } })
+      };
+    }
+
+    return data;
+  }
+
+  private summarizeRawResponseShape(response: unknown): Record<string, unknown> {
+    if (typeof response === 'string') {
+      return {
+        type: 'string',
+        rawPreview: this.truncateForLog(response, 100)
+      };
+    }
+
+    if (!response || typeof response !== 'object') {
+      return {
+        type: typeof response
+      };
+    }
+
+    const source = response as Record<string, unknown>;
+    return {
+      keys: Object.keys(source),
+      contentType: Array.isArray(source.content) ? 'array' : typeof source.content,
+      contentBlockCount: Array.isArray(source.content) ? source.content.length : undefined,
+      contentPreview: this.extractContentPreview(source, 100),
+      usageKeys: source.usage && typeof source.usage === 'object'
+        ? Object.keys(source.usage as Record<string, unknown>)
+        : undefined
+    };
+  }
+
+  private extractContentPreview(source: Record<string, unknown>, maxLength: number): string | undefined {
+    if (typeof source.content === 'string') {
+      return this.truncateForLog(source.content, maxLength);
+    }
+
+    if (Array.isArray(source.content)) {
+      const text = source.content
+        .map(item => {
+          if (!item || typeof item !== 'object') {
+            return '';
+          }
+
+          const block = item as Record<string, unknown>;
+          return typeof block.text === 'string' ? block.text : '';
+        })
+        .filter(textPart => textPart.length > 0)
+        .join('');
+      return text.length > 0 ? this.truncateForLog(text, maxLength) : undefined;
+    }
+
+    if (typeof source.output_text === 'string') {
+      return this.truncateForLog(source.output_text, maxLength);
+    }
+
+    return undefined;
+  }
+
+  private truncateForLog(value: string, maxLength: number): string {
+    if (value.length <= maxLength) {
+      return value;
+    }
+
+    return `${value.slice(0, maxLength)}...`;
   }
 
   private isAbortError(error: any): boolean {
@@ -1372,16 +1937,20 @@ export class GenericAIProvider extends BaseAIProvider {
   }
 
   private async fetchJson<T>(url: string, init: RequestInit): Promise<{ data: T; status: number }> {
-    const response = await fetch(url, init);
+    const response = await this.fetchResponse(url, init);
     const data = await this.readResponseData(response);
+    return { data: data as T, status: response.status };
+  }
 
+  private async fetchResponse(url: string, init: RequestInit): Promise<Response> {
+    const response = await fetch(url, init);
     if (!response.ok) {
+      const data = await this.readResponseData(response);
       const error: any = new Error(`Request failed with status ${response.status}`);
       error.response = { status: response.status, data };
       throw error;
     }
-
-    return { data: data as T, status: response.status };
+    return response;
   }
 
   private async readResponseData(response: Response): Promise<any> {
@@ -1397,4 +1966,3 @@ export class GenericAIProvider extends BaseAIProvider {
     }
   }
 }
-

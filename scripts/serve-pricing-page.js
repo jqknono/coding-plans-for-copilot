@@ -6,7 +6,7 @@ const fs = require("node:fs/promises");
 const http = require("node:http");
 const path = require("node:path");
 
-const DOCS_DIR = path.resolve(__dirname, "..", "docs");
+const PAGES_DIR = path.resolve(__dirname, "..", "pages");
 const PRICING_JSON = path.resolve(__dirname, "..", "assets", "provider-pricing.json");
 const METRICS_JSON = path.resolve(__dirname, "..", "assets", "openrouter-provider-metrics.json");
 const OPENROUTER_PROVIDER_PLANS_JSON = path.resolve(__dirname, "..", "assets", "openrouter-provider-plans.json");
@@ -34,9 +34,9 @@ async function sendFile(res, filePath, statusCode = 200) {
   res.end(data);
 }
 
-function resolveDocsFilePath(requestPath) {
-  const normalized = path.normalize(path.join(DOCS_DIR, requestPath));
-  if (!normalized.startsWith(DOCS_DIR)) {
+function resolvePagesFilePath(requestPath) {
+  const normalized = path.normalize(path.join(PAGES_DIR, requestPath));
+  if (!normalized.startsWith(PAGES_DIR)) {
     return null;
   }
   return normalized;
@@ -58,7 +58,7 @@ async function handleRequest(req, res) {
     }
 
     const requestedPath = pathname === "/" ? "/index.html" : pathname;
-    const filePath = resolveDocsFilePath(requestedPath);
+    const filePath = resolvePagesFilePath(requestedPath);
     if (!filePath) {
       res.writeHead(403, { "Content-Type": "text/plain; charset=utf-8" });
       res.end("Forbidden");
@@ -79,7 +79,7 @@ async function handleRequest(req, res) {
 }
 
 async function ensureFilesReady() {
-  await fs.access(path.join(DOCS_DIR, "index.html"));
+  await fs.access(path.join(PAGES_DIR, "index.html"));
   await fs.access(PRICING_JSON);
   await fs.access(METRICS_JSON);
   await fs.access(OPENROUTER_PROVIDER_PLANS_JSON);

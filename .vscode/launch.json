@@ -5,13 +5,33 @@
       "name": "Run Extension",
       "type": "extensionHost",
       "request": "launch",
+      "env": {
+        "NODE_OPTIONS": "--enable-source-maps"
+      },
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}"
       ],
       "outFiles": [
         "${workspaceFolder}/out/**/*.js"
       ],
-      "preLaunchTask": "npm: watch"
+      "sourceMaps": true,
+      "pauseForSourceMap": true,
+      "smartStep": true,
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/out/**/*.js",
+        "!**/node_modules/**",
+        "!**/.vscode/extensions/**",
+        "!**/.vscode-server/extensions/**"
+      ],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**",
+        "**/.vscode/extensions/github.copilot-*/**",
+        "**/.vscode/extensions/github.copilot-chat-*/**",
+        "**/.vscode-server/extensions/github.copilot-*/**",
+        "**/.vscode-server/extensions/github.copilot-chat-*/**"
+      ],
+      "preLaunchTask": "npm: compile"
     }
   ]
 }

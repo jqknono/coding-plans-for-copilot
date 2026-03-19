@@ -2,8 +2,14 @@ import * as vscode from 'vscode';
 import { BaseAIProvider, BaseLanguageModel, MODEL_VERSION_LABEL, getCompactErrorMessage } from './baseProvider';
 import { ConfigStore } from '../config/configStore';
 import { getMessage } from '../i18n/i18n';
+import { logger } from '../logging/outputChannelLogger';
+import { NormalizedTokenUsage, readAttachedTokenUsage } from './tokenUsage';
 
 let hasShownVendorNotConfiguredWarning = false;
+const RESPONSE_TRACE_ID_FIELD = '__codingPlansTraceId';
+// VS Code stable typings do not formally expose Context Window usage reporting for LanguageModelChatProvider.
+// Keep this disabled until the API is officially available and stable.
+const ENABLE_CONTEXT_WINDOW_USAGE_REPORTING = false;
 
 interface ProviderPickerConfiguration {
   name?: unknown;
@@ -17,14 +23,13 @@ interface PrepareLanguageModelChatModelOptionsWithConfiguration extends vscode.P
 }
 
 function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChatInformation {
-  const info: vscode.LanguageModelChatInformation & { readonly contextSize?: number } = {
+  const info: vscode.LanguageModelChatInformation = {
     id: model.id,
     name: model.name,
     family: model.family,
     tooltip: model.description,
     detail: model.version,
     version: model.version,
-    contextSize: model.contextSize,
     maxInputTokens: model.maxInputTokens,
     maxOutputTokens: model.maxOutputTokens,
     capabilities: model.capabilities
@@ -66,14 +71,13 @@ function isPlaceholderModel(vendor: string, modelId: string): boolean {
 
 function getPlaceholderModel(vendor: string): vscode.LanguageModelChatInformation {
   const providerName = getProviderDisplayName(vendor);
-  const info: vscode.LanguageModelChatInformation & { readonly contextSize?: number } = {
+  const info: vscode.LanguageModelChatInformation = {
     id: getPlaceholderModelId(vendor),
     name: getMessage('setupModelName'),
     family: 'setup',
     tooltip: getMessage('setupModelTooltip', providerName),
     detail: getMessage('setupModelDetail'),
     version: MODEL_VERSION_LABEL,
-    contextSize: 1,
     maxInputTokens: 1,
     maxOutputTokens: 1,
     capabilities: {
@@ -86,14 +90,13 @@ function getPlaceholderModel(vendor: string): vscode.LanguageModelChatInformatio
 
 function getNoModelsPlaceholderModel(vendor: string): vscode.LanguageModelChatInformation {
   const providerName = getProviderDisplayName(vendor);
-  const info: vscode.LanguageModelChatInformation & { readonly contextSize?: number } = {
+  const info: vscode.LanguageModelChatInformation = {
     id: getNoModelsPlaceholderModelId(vendor),
     name: getMessage('noModelName'),
     family: 'no-models',
     tooltip: getMessage('noModelTooltip', providerName),
     detail: getMessage('noModelDetail'),
     version: MODEL_VERSION_LABEL,
-    contextSize: 1,
     maxInputTokens: 1,
     maxOutputTokens: 1,
     capabilities: {
@@ -106,14 +109,13 @@ function getNoModelsPlaceholderModel(vendor: string): vscode.LanguageModelChatIn
 
 function getUnsupportedPlaceholderModel(vendor: string): vscode.LanguageModelChatInformation {
   const providerName = getProviderDisplayName(vendor);
-  const info: vscode.LanguageModelChatInformation & { readonly contextSize?: number } = {
+  const info: vscode.LanguageModelChatInformation = {
     id: getUnsupportedPlaceholderModelId(vendor),
     name: getMessage('unsupportedModelName'),
     family: 'unsupported',
     tooltip: getMessage('unsupportedModelTooltip', providerName),
     detail: getMessage('unsupportedModelDetail'),
     version: MODEL_VERSION_LABEL,
-    contextSize: 1,
     maxInputTokens: 1,
     maxOutputTokens: 1,
     capabilities: {
@@ -125,14 +127,13 @@ function getUnsupportedPlaceholderModel(vendor: string): vscode.LanguageModelCha
 }
 
 function getVendorNotConfiguredPlaceholderModel(vendor: string): vscode.LanguageModelChatInformation {
-  const info: vscode.LanguageModelChatInformation & { readonly contextSize?: number } = {
+  const info: vscode.LanguageModelChatInformation = {
     id: getVendorNotConfiguredPlaceholderModelId(vendor),
     name: getMessage('vendorNotConfiguredName'),
     family: 'vendor-not-configured',
     tooltip: getMessage('vendorNotConfiguredTooltip'),
     detail: getMessage('vendorNotConfiguredDetail'),
     version: MODEL_VERSION_LABEL,
-    contextSize: 1,
     maxInputTokens: 1,
     maxOutputTokens: 1,
     capabilities: {
@@ -263,17 +264,63 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       throw vscode.LanguageModelError.NotFound(`Model not found: ${model.id}`);
     }
 
+    let traceId = this.generateTraceId('adapter');
+    logger.info('Adapter received language model chat request', {
+      traceId,
+      provider: vendor,
+      modelId: model.id,
+      modelName: model.name,
+      messageCount: messages.length,
+      messages: messages.map(message => this.summarizeRequestMessage(message)),
+      toolCount: options?.tools?.length ?? 0,
+      toolMode: options?.toolMode
+    });
+
     try {
       const response = await targetModel.sendRequest(
         messages.map(message => this.toChatMessage(message)),
         options as unknown as vscode.LanguageModelChatRequestOptions,
         token
       );
-
-      for await (const part of response.stream) {
-        progress.report(part as vscode.LanguageModelResponsePart);
+      const responseTraceId = (response as unknown as Record<string, unknown>)[RESPONSE_TRACE_ID_FIELD];
+      if (typeof responseTraceId === 'string' && responseTraceId.trim().length > 0) {
+        traceId = responseTraceId;
       }
+      logger.info('Adapter received language model response object', {
+        traceId,
+        provider: vendor,
+        modelId: model.id,
+        hasStream: !!response.stream,
+        hasText: !!response.text
+      });
+      this.reportUsageToProgress(progress, response, traceId, vendor, model);
+
+      let reportedPartCount = 0;
+      for await (const part of response.stream as AsyncIterable<vscode.LanguageModelResponsePart>) {
+        logger.debug('Adapter reporting response part to VS Code', {
+          traceId,
+          provider: vendor,
+          modelId: model.id,
+          index: reportedPartCount,
+          part: this.summarizeResponsePart(part)
+        });
+        progress.report(part as vscode.LanguageModelResponsePart);
+        reportedPartCount += 1;
+      }
+      logger.info('Adapter completed language model response stream', {
+        traceId,
+        provider: vendor,
+        modelId: model.id,
+        reportedPartCount
+      });
+      this.reportUsageToProgress(progress, response, traceId, vendor, model);
     } catch (error) {
+      logger.error('Adapter failed to provide language model chat response', {
+        traceId,
+        provider: vendor,
+        modelId: model.id,
+        error: this.summarizeError(error)
+      });
       throw this.toCompactLanguageModelError(error);
     }
   }
@@ -478,5 +525,155 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     this.disposables.forEach(disposable => disposable.dispose());
     this.disposables.length = 0;
     this.onDidChangeLanguageModelChatInformationEmitter.dispose();
+  }
+
+  private generateTraceId(prefix: string): string {
+    return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
+  }
+
+  private summarizeRequestMessage(message: vscode.LanguageModelChatRequestMessage): Record<string, unknown> {
+    return {
+      role: message.role,
+      name: message.name,
+      partCount: message.content.length,
+      parts: [...message.content].map(part => this.summarizeInputPart(part as vscode.LanguageModelInputPart))
+    };
+  }
+
+  private summarizeInputPart(part: vscode.LanguageModelInputPart): Record<string, unknown> {
+    if (part instanceof vscode.LanguageModelTextPart) {
+      return {
+        type: 'text',
+        length: part.value.length
+      };
+    }
+
+    if (part instanceof vscode.LanguageModelToolCallPart) {
+      return {
+        type: 'tool_call',
+        callId: part.callId,
+        name: part.name,
+        inputKeys: part.input && typeof part.input === 'object' ? Object.keys(part.input as object) : []
+      };
+    }
+
+    if (part instanceof vscode.LanguageModelToolResultPart) {
+      return {
+        type: 'tool_result',
+        callId: part.callId,
+        partCount: part.content.length
+      };
+    }
+
+    if (part instanceof vscode.LanguageModelDataPart) {
+      return {
+        type: 'data',
+        mimeType: part.mimeType,
+        bytes: part.data.byteLength
+      };
+    }
+
+    const unknownPart = part as unknown as { constructor?: { name?: string } };
+    return {
+      type: unknownPart.constructor?.name ?? typeof part
+    };
+  }
+
+  private summarizeResponsePart(part: vscode.LanguageModelResponsePart): Record<string, unknown> {
+    if (part instanceof vscode.LanguageModelTextPart) {
+      return {
+        type: 'text',
+        length: part.value.length
+      };
+    }
+
+    if (part instanceof vscode.LanguageModelToolCallPart) {
+      return {
+        type: 'tool_call',
+        callId: part.callId,
+        name: part.name,
+        inputKeys: part.input && typeof part.input === 'object' ? Object.keys(part.input as object) : []
+      };
+    }
+
+    const unknownPart = part as unknown as { constructor?: { name?: string } };
+    return {
+      type: unknownPart.constructor?.name ?? typeof part
+    };
+  }
+
+  private summarizeError(error: unknown): Record<string, unknown> {
+    if (error instanceof Error) {
+      return {
+        name: error.name,
+        message: getCompactErrorMessage(error)
+      };
+    }
+
+    return {
+      type: typeof error,
+      message: getCompactErrorMessage(error)
+    };
+  }
+
+  private reportUsageToProgress(
+    progress: vscode.Progress<vscode.LanguageModelResponsePart>,
+    response: vscode.LanguageModelChatResponse,
+    traceId: string,
+    vendor: string,
+    model: vscode.LanguageModelChatInformation
+  ): void {
+    if (!ENABLE_CONTEXT_WINDOW_USAGE_REPORTING) {
+      logger.debug('Context Window usage reporting is disabled by feature flag', {
+        traceId,
+        provider: vendor,
+        modelId: model.id
+      });
+      return;
+    }
+
+    const usage = readAttachedTokenUsage(response);
+    if (!usage) {
+      return;
+    }
+
+    const runtimeProgress = progress as vscode.Progress<vscode.LanguageModelResponsePart> & {
+      usage?: (usage: {
+        promptTokens: number;
+        completionTokens: number;
+        outputBuffer?: number;
+      }) => void;
+    };
+
+    if (typeof runtimeProgress.usage === 'function') {
+      runtimeProgress.usage({
+        promptTokens: usage.promptTokens,
+        completionTokens: usage.completionTokens,
+        outputBuffer: usage.outputBuffer
+      });
+      logger.debug('Adapter reported response usage to VS Code', {
+        traceId,
+        provider: vendor,
+        modelId: model.id,
+        usage: this.summarizeUsage(usage)
+      });
+      return;
+    }
+
+    logger.debug('Adapter found response usage but current VS Code progress object does not expose usage reporting', {
+      traceId,
+      provider: vendor,
+      modelId: model.id,
+      usage: this.summarizeUsage(usage)
+    });
+  }
+
+  private summarizeUsage(usage: NormalizedTokenUsage): Record<string, unknown> {
+    return {
+      promptTokens: usage.promptTokens,
+      completionTokens: usage.completionTokens,
+      totalTokens: usage.totalTokens,
+      outputBuffer: usage.outputBuffer
+    };
   }
 }

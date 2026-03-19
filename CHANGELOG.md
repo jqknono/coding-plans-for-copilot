@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.2] - 2026-03-19
+- fix(provider-pricing): 更新供应商定价数据及资源链接
+- fix(#8): 更新 OpenRouter 指标采集流程
+- build(workflow): 更新 OpenRouter 指标与套餐抓取流程
+- feat(ci): 调整 OpenRouter 模型数据最大缓存天数
+- fix(provider-pricing): 更新模型定价数据和爬虫逻辑
+- fix(docs): 更新废弃字段 maxInputTokens 和 maxOutputTokens 的描述信息
+
+## [0.6.1] - 2026-03-19
+- fix(docs): 更新废弃字段 maxInputTokens 和 maxOutputTokens 的描述信息
+
+## [0.6.0] - 2026-03-19
+- feat(ci): 调整 OpenRouter 模型数据最大缓存天数
+- fix(provider-pricing): 更新模型定价数据和爬虫逻辑
+- fix(docs): 更新废弃字段 maxInputTokens 和 maxOutputTokens 的描述信息
+- feat(metrics): 添加指标页面失败项显示区域
+
 ## [0.5.2] - 2026-03-11
 - feat(pages): 添加 GitHub Pages 冒烟测试和更新定价数据
 - feat(config): 改进模型配置处理逻辑
@@ -42,27 +59,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.4.12] - 2026-03-02
 - Maintenance updates
-
-## [0.4.11] - 2026-02-28
-- feat(core): 添加统一日志系统并增强模型刷新机制
-
-## [0.4.10] - 2026-02-28
-- fix(extension): 添加模型刷新错误处理并通知信息变更
-- feat: 更新编码套餐数据抓取与展示，支持多语言
-- chore(changelog): add 0.4.9 release notes
-
-## [0.4.9] - 2026-02-26
-- refactor: update commit message options and add Chinese README
-- refactor(config): 更新默认模型设置并合并供应商模型
-- feat(config): add useModelsEndpoint and improve model discovery
-- feat(commitMessage): 支持命令可见性控制及模仿最近提交风格
-- feat(commit-msg): 改进生成提交信息时的进度反馈
-- refactor(core): 拆分上下文配置为独立的输入输出令牌限制
-- feat(core): implement unified config and generic provider
-- chore(ci): update pricing data and consolidate source of truth
-- ci: add version tagging workflow and pricing failure detection
-- feat!: rebrand to "Coding Plans for Copilot" and rename namespace to coding-plans
-- feat: 添加生成提交消息功能，支持选择模型和语言设置
-- chore: update version
-- feat(docs): 添加 github 仓库链接按钮
-- chore: 更新 GitHub Pages 访问路径，删除 Lint 问题修复计划文档

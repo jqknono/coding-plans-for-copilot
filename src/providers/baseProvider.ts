@@ -6,6 +6,7 @@ export const DEFAULT_CONFIGURED_MODELS: readonly string[] = [];
 
 const DEFAULT_MODEL_CONTEXT_SIZE = 200000;
 const DEFAULT_MODEL_CONTEXT_WINDOW_SIZE = 400000;
+const DEFAULT_MODEL_RESERVED_OUTPUT_TOKENS = 8000;
 
 export interface ModelCapabilities {
   toolCalling?: boolean | number;
@@ -17,12 +18,13 @@ export interface AIModelConfig {
   vendor: string;
   family: string;
   name: string;
+  apiStyle?: string;
+  countTokensMode?: 'exact' | 'estimated' | 'server-estimate';
   version?: string;
-  maxTokens: number;
   /**
    * Total context window size in tokens.
    */
-  contextSize?: number;
+  maxTokens: number;
   /**
    * Maximum input tokens.
    */
@@ -121,8 +123,9 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   public readonly vendor: string;
   public readonly family: string;
   public readonly name: string;
+  public readonly apiStyle?: string;
+  public readonly countTokensMode: 'exact' | 'estimated' | 'server-estimate';
   public readonly version: string;
-  public readonly contextSize: number;
   public readonly maxInputTokens: number;
   public readonly maxOutputTokens: number;
   public readonly capabilities: vscode.LanguageModelChatCapabilities;
@@ -136,10 +139,11 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
     this.vendor = modelInfo.vendor;
     this.family = modelInfo.family;
     this.name = modelInfo.name;
+    this.apiStyle = typeof modelInfo.apiStyle === 'string' ? modelInfo.apiStyle : undefined;
+    this.countTokensMode = modelInfo.countTokensMode ?? 'server-estimate';
     this.version = modelInfo.version || MODEL_VERSION_LABEL;
-    this.contextSize = modelInfo.contextSize ?? modelInfo.maxTokens ?? modelInfo.maxInputTokens ?? modelInfo.maxOutputTokens;
-    this.maxInputTokens = modelInfo.maxInputTokens ?? this.contextSize;
-    this.maxOutputTokens = modelInfo.maxOutputTokens ?? this.contextSize;
+    this.maxInputTokens = Math.max(1, Math.floor(modelInfo.maxInputTokens ?? DEFAULT_MODEL_CONTEXT_SIZE));
+    this.maxOutputTokens = Math.max(1, Math.floor(modelInfo.maxOutputTokens ?? DEFAULT_MODEL_CONTEXT_SIZE));
     this.capabilities = modelInfo.capabilities ?? {
       toolCalling: true,
       imageInput: true
@@ -154,21 +158,11 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   ): Promise<vscode.LanguageModelChatResponse>;
 
   countTokens(
-    text: string | vscode.LanguageModelChatMessage,
+    _text: string | vscode.LanguageModelChatMessage,
     _token?: vscode.CancellationToken
   ): Promise<number> {
-    let contentText: string;
-
-    if (typeof text === 'string') {
-      contentText = text;
-    } else {
-      contentText = typeof text.content === 'string'
-        ? text.content
-        : text.content.map(part => 'value' in part ? (part as any).value : '').join('');
-    }
-
-    // 简单的 token 估算：每个字符约 0.5 个 token。
-    return Promise.resolve(Math.ceil(contentText.length * 0.5));
+    // Token usage is sourced from upstream API responses. Pre-request counting is not available locally.
+    return Promise.resolve(0);
   }
 }
 
@@ -202,9 +196,9 @@ interface GenericModelListEntry {
 }
 
 interface ResolvedModelRuntimeSettings {
+  maxTokens: number;
   maxInputTokens: number;
   maxOutputTokens: number;
-  contextSize: number;
   toolCalling: boolean | number;
   imageInput: boolean;
 }
@@ -406,8 +400,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       family: this.inferModelFamily(modelId, fallbackFamily),
       name: modelId,
       version: MODEL_VERSION_LABEL,
-      maxTokens: runtime.contextSize,
-      contextSize: runtime.contextSize,
+      maxTokens: runtime.maxTokens,
       maxInputTokens: runtime.maxInputTokens,
       maxOutputTokens: runtime.maxOutputTokens,
       capabilities: {
@@ -424,29 +417,70 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     modelSettings: Map<string, Partial<ResolvedModelRuntimeSettings>>
   ): ResolvedModelRuntimeSettings {
     const override = modelSettings.get(modelId.toLowerCase());
-    const maxInputTokenLimitFromDiscovery = discovered?.maxInputTokens;
-    const maxInputTokenLimit = override?.maxInputTokens
-      ?? maxInputTokenLimitFromDiscovery
-      ?? DEFAULT_MODEL_CONTEXT_SIZE;
-
-    const maxInputTokens = Math.max(1, Math.floor(maxInputTokenLimit));
-    const maxOutputTokens = Math.max(
-      1,
-      Math.floor(override?.maxOutputTokens ?? discovered?.maxOutputTokens ?? maxInputTokens)
+    const resolvedTokens = this.resolveTokenWindowLimits(
+      override?.maxTokens ?? discovered?.maxTokens,
+      override?.maxInputTokens ?? discovered?.maxInputTokens,
+      override?.maxOutputTokens ?? discovered?.maxOutputTokens
     );
-    const contextSizeLimit = override?.contextSize
-      ?? discovered?.contextSize
-      ?? DEFAULT_MODEL_CONTEXT_WINDOW_SIZE;
-    const contextSize = Math.max(1, Math.floor(contextSizeLimit), maxInputTokens, maxOutputTokens);
     const toolCalling = override?.toolCalling ?? discovered?.toolCalling ?? true;
     const imageInput = override?.imageInput ?? discovered?.imageInput ?? true;
 
     return {
-      maxInputTokens,
-      maxOutputTokens,
-      contextSize,
+      maxTokens: resolvedTokens.maxTokens,
+      maxInputTokens: resolvedTokens.maxInputTokens,
+      maxOutputTokens: resolvedTokens.maxOutputTokens,
       toolCalling,
       imageInput
+    };
+  }
+
+  protected resolveTokenWindowLimits(
+    totalContextWindow: number | undefined,
+    explicitMaxInputTokens: number | undefined,
+    explicitMaxOutputTokens: number | undefined
+  ): Pick<ResolvedModelRuntimeSettings, 'maxTokens' | 'maxInputTokens' | 'maxOutputTokens'> {
+    const hasExplicitTotalContextWindow = totalContextWindow !== undefined;
+    const fallbackTotal = Math.max(2, Math.floor(totalContextWindow ?? DEFAULT_MODEL_CONTEXT_WINDOW_SIZE));
+    const defaultReservedOutputTokens = Math.max(1, Math.min(DEFAULT_MODEL_RESERVED_OUTPUT_TOKENS, fallbackTotal - 1));
+    const maxInputTokens = explicitMaxInputTokens === undefined ? undefined : Math.max(1, Math.floor(explicitMaxInputTokens));
+    const maxOutputTokens = explicitMaxOutputTokens === undefined ? undefined : Math.max(1, Math.floor(explicitMaxOutputTokens));
+
+    if (maxInputTokens !== undefined && maxOutputTokens !== undefined) {
+      return {
+        maxTokens: Math.max(fallbackTotal, maxInputTokens + maxOutputTokens),
+        maxInputTokens,
+        maxOutputTokens
+      };
+    }
+
+    if (maxInputTokens !== undefined) {
+      const derivedMaxOutputTokens = hasExplicitTotalContextWindow
+        ? Math.max(1, fallbackTotal - maxInputTokens)
+        : defaultReservedOutputTokens;
+      return {
+        maxTokens: Math.max(maxInputTokens + derivedMaxOutputTokens, hasExplicitTotalContextWindow ? fallbackTotal : 0),
+        maxInputTokens,
+        maxOutputTokens: derivedMaxOutputTokens
+      };
+    }
+
+    if (maxOutputTokens !== undefined) {
+      const derivedMaxInputTokens = hasExplicitTotalContextWindow
+        ? Math.max(1, fallbackTotal - maxOutputTokens)
+        : Math.max(1, DEFAULT_MODEL_CONTEXT_WINDOW_SIZE - maxOutputTokens);
+      return {
+        maxTokens: Math.max(derivedMaxInputTokens + maxOutputTokens, hasExplicitTotalContextWindow ? fallbackTotal : 0),
+        maxInputTokens: derivedMaxInputTokens,
+        maxOutputTokens
+      };
+    }
+
+    const derivedMaxOutputTokens = defaultReservedOutputTokens;
+    const derivedMaxInputTokens = Math.max(1, fallbackTotal - derivedMaxOutputTokens);
+    return {
+      maxTokens: derivedMaxInputTokens + derivedMaxOutputTokens,
+      maxInputTokens: derivedMaxInputTokens,
+      maxOutputTokens: derivedMaxOutputTokens
     };
   }
 
@@ -477,9 +511,9 @@ export abstract class BaseAIProvider implements vscode.Disposable {
         } | unknown;
       };
 
-      const contextSize = this.readPositiveInteger(parsed.contextSize);
-      const maxInputTokens = this.readPositiveInteger(parsed.maxInputTokens) ?? contextSize;
-      const maxOutputTokens = this.readPositiveInteger(parsed.maxOutputTokens) ?? contextSize;
+      const legacyContextWindow = this.readPositiveInteger(parsed.contextSize);
+      const maxInputTokens = this.readPositiveInteger(parsed.maxInputTokens);
+      const maxOutputTokens = this.readPositiveInteger(parsed.maxOutputTokens);
 
       const capabilities = parsed.capabilities && typeof parsed.capabilities === 'object'
         ? parsed.capabilities as {
@@ -494,14 +528,11 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       const imageInput = this.readBooleanValue(capabilities?.imageInput ?? capabilities?.vision);
 
       const normalized: Partial<ResolvedModelRuntimeSettings> = {};
-      if (contextSize !== undefined) {
-        normalized.contextSize = contextSize;
-      }
-      if (maxInputTokens !== undefined) {
-        normalized.maxInputTokens = maxInputTokens;
-      }
-      if (maxOutputTokens !== undefined) {
-        normalized.maxOutputTokens = maxOutputTokens;
+      if (legacyContextWindow !== undefined || maxInputTokens !== undefined || maxOutputTokens !== undefined) {
+        const resolvedTokens = this.resolveTokenWindowLimits(legacyContextWindow, maxInputTokens, maxOutputTokens);
+        normalized.maxTokens = resolvedTokens.maxTokens;
+        normalized.maxInputTokens = resolvedTokens.maxInputTokens;
+        normalized.maxOutputTokens = resolvedTokens.maxOutputTokens;
       }
       if (toolCalling !== undefined) {
         normalized.toolCalling = toolCalling;
@@ -518,7 +549,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return settingsByModel;
   }
 
-  private readGenericModelEntries(payload: unknown): GenericModelListEntry[] {
+  protected readGenericModelEntries(payload: unknown): GenericModelListEntry[] {
     if (Array.isArray(payload)) {
       return payload as GenericModelListEntry[];
     }
@@ -540,7 +571,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return [];
   }
 
-  private readModelId(entry: GenericModelListEntry): string | undefined {
+  protected readModelId(entry: GenericModelListEntry): string | undefined {
     const candidates = [entry.id, entry.model, entry.name];
     for (const candidate of candidates) {
       if (typeof candidate === 'string') {
@@ -553,23 +584,18 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return undefined;
   }
 
-  private readRuntimeFromGenericModelEntry(entry: GenericModelListEntry): Partial<ResolvedModelRuntimeSettings> {
-    const contextSize = this.pickPositiveInteger([
+  protected readRuntimeFromGenericModelEntry(entry: GenericModelListEntry): Partial<ResolvedModelRuntimeSettings> {
+    const maxTokens = this.pickPositiveInteger([
       entry.context_length,
       entry.max_tokens
     ]);
     const maxInputTokens = this.pickPositiveInteger([
       entry.max_input_tokens,
-      entry.input_token_limit,
-      entry.context_length,
-      entry.max_tokens
+      entry.input_token_limit
     ]);
     const maxOutputTokens = this.pickPositiveInteger([
       entry.max_output_tokens,
-      entry.output_token_limit,
-      entry.context_length,
-      entry.max_tokens,
-      maxInputTokens
+      entry.output_token_limit
     ]);
     const toolCalling = this.readToolCallingValue(
       this.readFromCapabilities(entry, 'tool_calling')
@@ -585,8 +611,8 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     );
 
     const runtime: Partial<ResolvedModelRuntimeSettings> = {};
-    if (contextSize !== undefined) {
-      runtime.contextSize = contextSize;
+    if (maxTokens !== undefined) {
+      runtime.maxTokens = maxTokens;
     }
     if (maxInputTokens !== undefined) {
       runtime.maxInputTokens = maxInputTokens;
@@ -604,14 +630,14 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return runtime;
   }
 
-  private readFromCapabilities(entry: GenericModelListEntry, key: 'tool_calling' | 'function_calling' | 'image_input' | 'vision'): unknown {
+  protected readFromCapabilities(entry: GenericModelListEntry, key: 'tool_calling' | 'function_calling' | 'image_input' | 'vision'): unknown {
     if (!entry.capabilities || typeof entry.capabilities !== 'object') {
       return undefined;
     }
     return (entry.capabilities as Record<string, unknown>)[key];
   }
 
-  private readToolCallingValue(value: unknown): boolean | number | undefined {
+  protected readToolCallingValue(value: unknown): boolean | number | undefined {
     if (typeof value === 'boolean') {
       return value;
     }
@@ -637,7 +663,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return undefined;
   }
 
-  private readBooleanValue(value: unknown): boolean | undefined {
+  protected readBooleanValue(value: unknown): boolean | undefined {
     if (typeof value === 'boolean') {
       return value;
     }
@@ -935,3 +961,4 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     this.modelChangedEmitter.dispose();
   }
 }
+

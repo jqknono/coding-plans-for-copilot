@@ -1,6 +1,14 @@
 import * as vscode from 'vscode';
 
 type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
+type ConfiguredLogLevel = 'debug' | 'info' | 'warn' | 'error';
+
+const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
+  DEBUG: 10,
+  INFO: 20,
+  WARN: 30,
+  ERROR: 40
+};
 
 class OutputChannelLogger implements vscode.Disposable {
   private channel: vscode.OutputChannel | undefined;
@@ -36,9 +44,30 @@ class OutputChannelLogger implements vscode.Disposable {
   }
 
   private write(level: LogLevel, message: string, data?: unknown): void {
+    if (!this.shouldWrite(level)) {
+      return;
+    }
+
     const timestamp = new Date().toISOString();
     const suffix = data === undefined ? '' : ` ${this.stringify(data)}`;
     this.getChannel().appendLine(`${timestamp} [${level}] ${message}${suffix}`);
+  }
+
+  private shouldWrite(level: LogLevel): boolean {
+    return LOG_LEVEL_PRIORITY[level] >= LOG_LEVEL_PRIORITY[this.getConfiguredLogLevel().toUpperCase() as LogLevel];
+  }
+
+  private getConfiguredLogLevel(): ConfiguredLogLevel {
+    const configured = vscode.workspace.getConfiguration('coding-plans').get<string>('logLevel', 'info');
+    switch (configured) {
+      case 'debug':
+      case 'info':
+      case 'warn':
+      case 'error':
+        return configured;
+      default:
+        return 'info';
+    }
   }
 
   private stringify(data: unknown): string {

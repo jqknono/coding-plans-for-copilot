@@ -1,6 +1,61 @@
 {
-  "generatedAt": "2026-03-19T08:19:15.328Z",
+  "generatedAt": "2026-03-19T10:13:35.816Z",
   "providers": [
+    {
+      "provider": "zhipu-ai",
+      "sourceUrls": [
+        "https://bigmodel.cn/glm-coding",
+        "https://docs.bigmodel.cn/cn/coding-plan/overview"
+      ],
+      "plans": [
+        {
+          "name": "GLM Coding Lite",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "下个月度续费金额：¥49",
+          "serviceDetails": [
+            "3x Claude Pro 用量额度",
+            "适合小型 Repo 轻量级迭代",
+            "逐步开放最新旗舰模型及功能",
+            "支持 Claude Code 等 20+ 编程工具"
+          ]
+        },
+        {
+          "name": "GLM Coding Pro",
+          "currentPrice": 149,
+          "currentPriceText": "¥149/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "下个月度续费金额：¥149",
+          "serviceDetails": [
+            "5x Lite 用量额度 + Lite 全量权益",
+            "适合中型 Repo 日常开发",
+            "优先体验最新旗舰模型及功能",
+            "覆盖多款精选 MCP 工具",
+            "更快生成速度"
+          ]
+        },
+        {
+          "name": "GLM Coding Max",
+          "currentPrice": 469,
+          "currentPriceText": "¥469/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "下个月度续费金额：¥469",
+          "serviceDetails": [
+            "20x Lite 用量额度 + Pro 全量权益",
+            "适合高阶用户中大型 Repo 深度开发",
+            "首发接入最新旗舰模型及功能",
+            "高峰期专属资源优先保障"
+          ]
+        }
+      ]
+    },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
@@ -27,38 +82,53 @@
           ]
         },
         {
+          "name": "Andante (月)",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: LEVEL_TRIAL",
+            "更多 Agent 额度",
+            "Agent 4 倍速优先用",
+            "K2.5 提速并提升额度",
+            "Kimi Code 可调用"
+          ]
+        },
+        {
           "name": "Moderato (月)",
-          "currentPrice": 19,
-          "currentPriceText": "¥19/月",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 基础会员",
-            "更多 Agent 额度",
+            "Andante 权益基础上",
+            "2 倍 Agent 额度",
             "Agent 多任务并行",
-            "Agent 4 倍速优先用",
-            "K2.5 提速并提升额度",
-            "PPT 创意视觉 x Nano Banana",
-            "Kimi Code 可调用"
+            "2 倍 K2.5 模型使用额度",
+            "Kimi Code 4 倍额度"
           ]
         },
         {
           "name": "Allegretto (月)",
-          "currentPrice": 39,
-          "currentPriceText": "¥39/月",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 进阶会员",
-            "Moderato 权益基础上",
-            "2 倍 Agent 额度",
-            "2 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 5 倍额度",
+            "Andante 权益基础上",
+            "4 倍 Agent 额度",
+            "Agent 多任务并行",
+            "4 倍 K2.5 模型使用额度",
+            "Kimi Code 20 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -67,44 +137,19 @@
         },
         {
           "name": "Allegro (月)",
-          "currentPrice": 99,
-          "currentPriceText": "¥99/月",
+          "currentPrice": 699,
+          "currentPriceText": "¥699/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 高级会员",
-            "Moderato 权益基础上",
-            "5 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
-            "5 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 15 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
-          ]
-        },
-        {
-          "name": "Vivace (月)",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: 旗舰会员",
-            "Moderato 权益基础上",
+            "Andante 权益基础上",
             "10 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
+            "Agent 多任务并行",
             "10 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 30 倍额度",
+            "Kimi Code 60 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -649,7 +694,5 @@
       ]
     }
   ],
-  "failures": [
-    "zhipu-ai: Pure JS parse failed: Unable to locate Zhipu coding plan cards in ClaudeCode chunk; Legacy JS parse failed: Unable to locate Zhipu coding pricing chunk; Playwright parse failed: page.goto: Timeout 8000ms exceeded.\nCall log:\n  - navigating to \"https://bigmodel.cn/glm-coding\", waiting until \"domcontentloaded\"\n"
-  ]
+  "failures": []
 }

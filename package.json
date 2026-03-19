@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.5.2",
+    "version": "0.6.2",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",
@@ -193,6 +193,24 @@
                     "description": "%configuration.coding-plans.commitMessage.options.description%",
                     "order": 5
                 },
+                "coding-plans.logLevel": {
+                    "type": "string",
+                    "default": "info",
+                    "enum": [
+                        "debug",
+                        "info",
+                        "warn",
+                        "error"
+                    ],
+                    "enumDescriptions": [
+                        "Show all logs, including request tracing details.",
+                        "Show informational logs, warnings, and errors.",
+                        "Show only warnings and errors.",
+                        "Show only errors."
+                    ],
+                    "description": "%configuration.coding-plans.logLevel.description%",
+                    "order": 6
+                },
                 "coding-plans.vendors": {
                     "type": "array",
                     "items": {
@@ -208,16 +226,6 @@
                             "baseUrl": {
                                 "type": "string"
                             },
-                            "apiStyle": {
-                                "type": "string",
-                                "enum": [
-                                    "openai-chat",
-                                    "openai-responses",
-                                    "anthropic"
-                                ],
-                                "default": "openai-chat",
-                                "description": "API protocol style used by this vendor. Use openai-chat for /chat/completions, openai-responses for /responses, or anthropic for /messages-compatible endpoints."
-                            },
                             "useModelsEndpoint": {
                                 "type": "boolean",
                                 "default": false,
@@ -228,12 +236,25 @@
                                 "default": false,
                                 "description": "Whether newly discovered models for this vendor should have vision capabilities by default."
                             },
+                            "defaultTemperature": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 2,
+                                "description": "%configuration.coding-plans.vendors.defaultTemperature.description%"
+                            },
+                            "defaultTopP": {
+                                "type": "number",
+                                "minimum": 0,
+                                "maximum": 1,
+                                "description": "%configuration.coding-plans.vendors.defaultTopP.description%"
+                            },
                             "models": {
                                 "type": "array",
                                 "items": {
                                     "type": "object",
                                     "required": [
-                                        "name"
+                                        "name",
+                                        "capabilities"
                                     ],
                                     "properties": {
                                         "name": {
@@ -242,23 +263,36 @@
                                         "description": {
                                             "type": "string"
                                         },
+                                        "temperature": {
+                                            "type": "number",
+                                            "minimum": 0,
+                                            "maximum": 2,
+                                            "description": "%configuration.coding-plans.vendors.models.temperature.description%"
+                                        },
+                                        "topP": {
+                                            "type": "number",
+                                            "minimum": 0,
+                                            "maximum": 1,
+                                            "description": "%configuration.coding-plans.vendors.models.topP.description%"
+                                        },
                                         "capabilities": {
                                             "type": "object",
                                             "properties": {
                                                 "tools": {
                                                     "type": "boolean",
-                                                    "default": true
+                                                    "default": true,
+                                                    "description": "Whether to enable tool calling capability."
                                                 },
                                                 "vision": {
                                                     "type": "boolean",
-                                                    "default": false
+                                                    "default": false,
+                                                    "description": "Whether to enable vision input capability. Legacy configs without this field are backfilled from vendor defaultVision at runtime."
                                                 }
-                                            }
-                                        },
-                                        "contextSize": {
-                                            "type": "number",
-                                            "default": 400000,
-                                            "description": "Context window size in tokens."
+                                            },
+                                            "required": [
+                                                "tools",
+                                                "vision"
+                                            ]
                                         },
                                         "maxInputTokens": {
                                             "type": "number",
@@ -267,10 +301,29 @@
                                         "maxOutputTokens": {
                                             "type": "number",
                                             "description": "Maximum output tokens."
+                                        },
+                                        "apiStyle": {
+                                            "type": "string",
+                                            "enum": [
+                                                "openai-chat",
+                                                "openai-responses",
+                                                "anthropic"
+                                            ],
+                                            "description": "Optional per-model API protocol style. When set, it overrides the vendor defaultApiStyle. For openai-responses models, request usage is read from the /responses result when available."
                                         }
                                     }
                                 },
                                 "default": []
+                            },
+                            "defaultApiStyle": {
+                                "type": "string",
+                                "enum": [
+                                    "openai-chat",
+                                    "openai-responses",
+                                    "anthropic"
+                                ],
+                                "default": "openai-chat",
+                                "description": "Default API protocol style for this vendor. Models can override it with models[].apiStyle. Use openai-chat for /chat/completions, openai-responses for /responses, or anthropic for /messages-compatible endpoints. For openai-responses models, request usage is read from the /responses result when available."
                             }
                         }
                     },
@@ -285,7 +338,8 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                        "contextSize": 128000
+                                    "maxInputTokens": 64000,
+                                    "maxOutputTokens": 64000
                                 },
                                 {
                                     "name": "glm-5",
@@ -293,9 +347,11 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                        "contextSize": 128000
+                                    "maxInputTokens": 64000,
+                                    "maxOutputTokens": 64000
                                 }
-                            ]
+                            ],
+                            "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "z.ai",
@@ -308,7 +364,8 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                        "contextSize": 128000
+                                    "maxInputTokens": 64000,
+                                    "maxOutputTokens": 64000
                                 },
                                 {
                                     "name": "glm-5",
@@ -317,44 +374,53 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                        "contextSize": 128000
+                                    "maxInputTokens": 64000,
+                                    "maxOutputTokens": 64000
                                 }
-                            ]
+                            ],
+                            "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "火山引擎",
                             "baseUrl": "https://ark.cn-beijing.volces.com/api/coding/v3",
-                            "models": []
+                            "models": [],
+                            "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "Volcengine Overseas",
                             "baseUrl": "https://ark.ap-southeast.bytepluses.com/api/coding/v3",
-                            "models": []
+                            "models": [],
+                            "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "MiniMax Mainland",
                             "baseUrl": "https://api.minimaxi.com/v1",
-                            "models": []
+                            "models": [],
+                            "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "MiniMax Overseas",
                             "baseUrl": "https://api.minimax.io/v1",
-                            "models": []
+                            "models": [],
+                            "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "Kimi Mainland",
                             "baseUrl": "https://api.moonshot.cn/v1",
-                            "models": []
+                            "models": [],
+                            "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "Kimi Overseas",
                             "baseUrl": "https://api.moonshot.ai/v1",
-                            "models": []
+                            "models": [],
+                            "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "Aliyun",
                             "baseUrl": "https://coding.dashscope.aliyuncs.com/v1",
-                            "models": []
+                            "models": [],
+                            "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "OpenRouter",
@@ -367,7 +433,8 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                        "contextSize": 131000
+                                    "maxInputTokens": 65500,
+                                    "maxOutputTokens": 65500
                                 },
                                 {
                                     "name": "openai/gpt-oss-120b:free",
@@ -376,13 +443,15 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                        "contextSize": 131000
+                                    "maxInputTokens": 65500,
+                                    "maxOutputTokens": 65500
                                 }
-                            ]
+                            ],
+                            "defaultApiStyle": "openai-chat"
                         }
                     ],
                     "description": "%configuration.coding-plans.vendors.description%",
-                    "order": 6
+                    "order": 7
                 }
             }
         }
@@ -391,18 +460,17 @@
         "vscode:prepublish": "npm run package",
         "typecheck": "tsc -p ./ --noEmit",
         "bundle": "node ./scripts/esbuild.js",
-        "bundle:watch": "node ./scripts/esbuild.js --watch",
         "bundle:prod": "node ./scripts/esbuild.js --production",
-        "compile": "npm run typecheck && npm run bundle && npm run copy-i18n",
-        "watch": "npm run copy-i18n && npm run bundle:watch",
-        "copy-i18n": "copyfiles -u 1 \"src/i18n/*.json\" out/",
+        "compile": "npm run typecheck && npm run bundle",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
         "test": "node ./out/test/runTest.js",
         "changelog:update": "node ./scripts/update-changelog.js",
-        "package": "npm run bundle:prod && npm run copy-i18n",
+        "package": "npm run bundle:prod",
         "package:vsix": "npm run package && npx @vscode/vsce package",
+        "package:vsix:pre": "npm run package && npx @vscode/vsce package --pre-release",
         "publish:marketplace": "npm run changelog:update && npm run package && npx @vscode/vsce publish",
+        "publish:marketplace:pre": "npm run changelog:update && npm run package && npx @vscode/vsce publish --pre-release",
         "pricing:fetch": "node ./scripts/fetch-provider-pricing.js",
         "metrics:fetch": "node ./scripts/fetch-openrouter-provider-metrics.js",
         "openrouter:plans:fetch": "node ./scripts/fetch-openrouter-provider-plans.js",
@@ -416,7 +484,6 @@
         "@types/vscode": "^1.109.0",
         "@typescript-eslint/eslint-plugin": "^7.13.1",
         "@typescript-eslint/parser": "^7.13.1",
-        "copyfiles": "^2.4.1",
         "esbuild": "^0.25.10",
         "eslint": "^8.57.0",
         "typescript": "^5.4.5"
@@ -425,4 +492,3 @@
         "axios": "^1.7.2"
     }
 }
-
