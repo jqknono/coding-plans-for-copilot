@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-03-18T08:20:57.051Z",
-  "generatedAtBeijing": "2026年3月18日 16:20:57",
-  "sourceGeneratedAt": "2026-03-18T08:20:40.090Z",
-  "sourceGeneratedAtBeijing": "2026年3月18日 16:20:40",
-  "sourceMetricsGeneratedAt": "2026-03-18T08:20:40.807Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月18日 16:20:40",
+  "generatedAt": "2026-03-19T08:19:33.096Z",
+  "generatedAtBeijing": "2026年3月19日 16:19:33",
+  "sourceGeneratedAt": "2026-03-19T08:19:15.328Z",
+  "sourceGeneratedAtBeijing": "2026年3月19日 16:19:15",
+  "sourceMetricsGeneratedAt": "2026-03-19T08:19:16.008Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月19日 16:19:16",
   "summary": {
     "openrouterProviderCount": 74,
     "metricsProviderCount": 31,
     "resolvedMetricsProviderCount": 31,
     "unresolvedMetricsProviderCount": 0,
-    "structuredProviderCount": 4,
-    "heuristicProviderCount": 6,
+    "structuredProviderCount": 5,
+    "heuristicProviderCount": 5,
     "providersWithPlans": 10,
     "pendingCount": 21,
     "blockedPendingCount": 0,
@@ -119,27 +119,27 @@
       ],
       "sourceUrls": [
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.IMBBuvD1.js",
-        "https://chutes.ai/_app/immutable/nodes/0.Dr0fwJxI.js",
+        "https://chutes.ai/_app/immutable/entry/app.CdMXGEtY.js",
+        "https://chutes.ai/_app/immutable/nodes/0.ChL4sJz1.js",
         "https://chutes.ai/_app/immutable/chunks/A6Bqj6r0.js",
         "https://chutes.ai/_app/immutable/chunks/D9oMPIpw.js",
         "https://chutes.ai/_app/immutable/chunks/CQyVzz8P.js",
-        "https://chutes.ai/_app/immutable/chunks/C_AFMvVy.js",
+        "https://chutes.ai/_app/immutable/chunks/DniCK0zc.js",
         "https://chutes.ai/_app/immutable/chunks/BEigO3Uw.js",
         "https://chutes.ai/_app/immutable/chunks/Ca-8DU1S.js",
         "https://chutes.ai/_app/immutable/chunks/ahf1KeVi.js",
         "https://chutes.ai/_app/immutable/chunks/DZvtVDhc.js",
         "https://chutes.ai/_app/immutable/chunks/Bz600ZIY.js",
         "https://chutes.ai/_app/immutable/chunks/DTyD7y5X.js",
-        "https://chutes.ai/_app/immutable/chunks/CGPBA-xh.js",
+        "https://chutes.ai/_app/immutable/chunks/BPyTRY8Y.js",
         "https://chutes.ai/_app/immutable/chunks/DwSQu5NW.js",
         "https://chutes.ai/_app/immutable/chunks/BBTPfE_P.js",
         "https://chutes.ai/_app/immutable/chunks/BtvNEnsL.js",
-        "https://chutes.ai/_app/immutable/nodes/2.DMf1R2JV.js",
+        "https://chutes.ai/_app/immutable/nodes/2.C0FSLSBQ.js",
         "https://chutes.ai/_app/immutable/chunks/B7_fQw99.js",
         "https://chutes.ai/_app/immutable/chunks/Ca6kX3Ml.js",
-        "https://chutes.ai/_app/immutable/chunks/CbVEGvAU.js",
-        "https://chutes.ai/_app/immutable/chunks/CGxfU2kp.js",
+        "https://chutes.ai/_app/immutable/chunks/Yb5tKNzO.js",
+        "https://chutes.ai/_app/immutable/chunks/Ve7eqfsK.js",
         "https://chutes.ai/_app/immutable/chunks/B8Y0FgmK.js",
         "https://chutes.ai/_app/immutable/chunks/CqxbOeXv.js",
         "https://chutes.ai/_app/immutable/chunks/BGFdVicR.js",
@@ -156,8 +156,8 @@
         "https://chutes.ai/_app/immutable/chunks/DW-pNwoA.js",
         "https://chutes.ai/_app/immutable/chunks/D69XjJvu.js",
         "https://chutes.ai/_app/immutable/chunks/ZvjxrGzD.js",
-        "https://chutes.ai/_app/immutable/nodes/21.BkLSvmgL.js",
-        "https://chutes.ai/_app/immutable/chunks/CxnRpbWT.js",
+        "https://chutes.ai/_app/immutable/nodes/21.DhJg59_i.js",
+        "https://chutes.ai/_app/immutable/chunks/Dp0sm0oq.js",
         "https://chutes.ai"
       ],
       "pricingPageUrl": "https://chutes.ai/pricing",
@@ -174,47 +174,120 @@
       "providerId": "minimax-ai",
       "plans": [
         {
-          "name": "Starter",
-          "currentPrice": 29,
-          "currentPriceText": "¥ 29/月",
+          "name": "Plus-极速版",
+          "currentPrice": 98,
+          "currentPriceText": "¥98/月",
           "originalPrice": null,
           "originalPriceText": null,
-          "unit": null,
-          "notes": "来源: https://www.minimax.io/pricing",
-          "serviceDetails": null
+          "unit": "月",
+          "notes": "用量: 1500次模型调用/5 小时",
+          "serviceDetails": [
+            "1500次模型调用 / 5 小时",
+            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
+            "2.5 倍 Starter 套餐用量",
+            "适合专业开发场景满足复杂开发任务需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
+        },
+        {
+          "name": "Max-极速版",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 4500次模型调用/5 小时",
+          "serviceDetails": [
+            "4500次模型调用 / 5 小时",
+            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
+            "7.5 倍 Starter 套餐用量",
+            "适合有高级开发场景满足大量编程辅助需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
+        },
+        {
+          "name": "Ultra-极速版",
+          "currentPrice": 899,
+          "currentPriceText": "¥899/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 30000次模型调用/5 小时",
+          "serviceDetails": [
+            "30000次模型调用 / 5 小时",
+            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
+            "50 倍 Starter 套餐用量",
+            "适合硬核开发者超大量编程辅助需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
+        },
+        {
+          "name": "Starter",
+          "currentPrice": 29,
+          "currentPriceText": "¥29/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 600次模型调用/5小时",
+          "serviceDetails": [
+            "600次模型调用 / 5小时",
+            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
+            "适合入门级开发场景满足基础开发需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
         },
         {
           "name": "Plus",
           "currentPrice": 49,
-          "currentPriceText": "¥ 49/月",
+          "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
-          "unit": null,
-          "notes": null,
-          "serviceDetails": null
+          "unit": "月",
+          "notes": "用量: 1500次模型调用/5 小时",
+          "serviceDetails": [
+            "1500次模型调用 / 5 小时",
+            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
+            "2.5 倍 Starter 套餐用量",
+            "适合专业开发场景满足复杂开发任务需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
         },
         {
-          "name": "Starter",
+          "name": "Max",
           "currentPrice": 119,
-          "currentPriceText": "¥ 119/月",
+          "currentPriceText": "¥119/月",
           "originalPrice": null,
           "originalPriceText": null,
-          "unit": null,
-          "notes": null,
-          "serviceDetails": null
+          "unit": "月",
+          "notes": "用量: 4500次模型调用/5 小时",
+          "serviceDetails": [
+            "4500次模型调用 / 5 小时",
+            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
+            "7.5 倍 Starter 套餐用量",
+            "适合有高级开发场景满足大量编程辅助需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
         }
       ],
       "sourceUrls": [
-        "https://www.minimax.io",
-        "https://www.minimax.io/pricing"
+        "https://platform.minimaxi.com/subscribe/token-plan",
+        "https://platform.minimaxi.com/docs/token-plan/intro",
+        "https://www.minimaxi.com/public/api/openplatform/charge/combo/products?cycle_type=1&biz_line=2&resource_package_type=7",
+        "https://www.minimax.io"
       ],
-      "pricingPageUrl": "https://www.minimax.io/pricing",
+      "pricingPageUrl": "https://platform.minimaxi.com/subscribe/token-plan",
       "officialWebsiteUrl": "https://www.minimax.io",
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://www.minimax.io/platform/protocol/privacy-policy",
       "termsOfServiceUrl": "https://www.minimax.io/platform/protocol/terms-of-service",
       "statusPageUrl": null,
-      "parseMode": "official-website-heuristic"
+      "parseMode": "provider-pricing-structured"
     },
     {
       "slug": "mistral",
@@ -377,7 +450,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C8pVTl5l.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-9crGaA87.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
