@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-19T02:16:53.853Z",
+  "generatedAt": "2026-03-19T03:04:30.976Z",
   "providers": [
     {
       "provider": "kimi-ai",
@@ -650,7 +650,6 @@
     }
   ],
   "failures": [
-    "zhipu-ai: Playwright parse failed: page.goto: Timeout 8000ms exceeded.\nCall log:\n  - navigating to \"https://bigmodel.cn/glm-coding\", waiting until \"domcontentloaded\"\n; Legacy bundle parse failed: Unable to locate Zhipu coding pricing chunk",
-    "minimax-ai: Request failed: https://platform.minimaxi.com/docs/guides/pricing-coding-plan -> 404"
+    "zhipu-ai: Pure JS parse failed: Unable to locate Zhipu coding plan cards in ClaudeCode chunk; Legacy JS parse failed: Unable to locate Zhipu coding pricing chunk; Playwright parse failed: page.goto: Timeout 8000ms exceeded.\nCall log:\n  - navigating to \"https://bigmodel.cn/glm-coding\", waiting until \"domcontentloaded\"\n"
   ]
 }
