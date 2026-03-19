@@ -36,7 +36,7 @@ const PROVIDER_BUY_URLS = {
   "kimi-ai": "https://www.kimi.com/code/zh",
   "xfyun-ai": "https://maas.xfyun.cn/modelSquare",
   "volcengine-ai": "https://www.volcengine.com/activity/codingplan",
-  "minimax-ai": "https://platform.minimaxi.com/subscribe/coding-plan",
+  "minimax-ai": "https://platform.minimaxi.com/subscribe/token-plan",
   "aliyun-ai": "https://common-buy.aliyun.com/?commodityCode=sfm_codingplan_public_cn#/buy",
   "baidu-qianfan-ai": "https://cloud.baidu.com/product/codingplan.html",
   "tencent-cloud-ai": "https://buy.cloud.tencent.com/hunyuan",

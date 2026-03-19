@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-03-18T08:20:40.090Z",
+  "generatedAt": "2026-03-19T02:16:53.853Z",
   "providers": [
     {
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C8pVTl5l.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-Di-RZmMW.js"
       ],
       "plans": [
         {
@@ -200,6 +200,117 @@
             "能力: 包含lite套餐全部权益",
             "适配: 满足高阶用户的大规模编程需求",
             "用量: 用量达 Claude Max（5x）的 3 倍，lite 套餐用量的5倍"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "minimax-ai",
+      "sourceUrls": [
+        "https://platform.minimaxi.com/subscribe/token-plan",
+        "https://platform.minimaxi.com/docs/token-plan/intro",
+        "https://www.minimaxi.com/public/api/openplatform/charge/combo/products?cycle_type=1&biz_line=2&resource_package_type=7"
+      ],
+      "plans": [
+        {
+          "name": "Plus-极速版",
+          "currentPrice": 98,
+          "currentPriceText": "¥98/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 1500次模型调用/5 小时",
+          "serviceDetails": [
+            "1500次模型调用 / 5 小时",
+            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
+            "2.5 倍 Starter 套餐用量",
+            "适合专业开发场景满足复杂开发任务需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
+        },
+        {
+          "name": "Max-极速版",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 4500次模型调用/5 小时",
+          "serviceDetails": [
+            "4500次模型调用 / 5 小时",
+            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
+            "7.5 倍 Starter 套餐用量",
+            "适合有高级开发场景满足大量编程辅助需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
+        },
+        {
+          "name": "Ultra-极速版",
+          "currentPrice": 899,
+          "currentPriceText": "¥899/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 30000次模型调用/5 小时",
+          "serviceDetails": [
+            "30000次模型调用 / 5 小时",
+            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
+            "50 倍 Starter 套餐用量",
+            "适合硬核开发者超大量编程辅助需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
+        },
+        {
+          "name": "Starter",
+          "currentPrice": 29,
+          "currentPriceText": "¥29/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 600次模型调用/5小时",
+          "serviceDetails": [
+            "600次模型调用 / 5小时",
+            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
+            "适合入门级开发场景满足基础开发需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
+        },
+        {
+          "name": "Plus",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 1500次模型调用/5 小时",
+          "serviceDetails": [
+            "1500次模型调用 / 5 小时",
+            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
+            "2.5 倍 Starter 套餐用量",
+            "适合专业开发场景满足复杂开发任务需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
+          ]
+        },
+        {
+          "name": "Max",
+          "currentPrice": 119,
+          "currentPriceText": "¥119/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 4500次模型调用/5 小时",
+          "serviceDetails": [
+            "4500次模型调用 / 5 小时",
+            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
+            "7.5 倍 Starter 套餐用量",
+            "适合有高级开发场景满足大量编程辅助需求",
+            "支持主流的编程工具，并持续扩展中",
+            "支持图像理解、联网搜索 MCP"
           ]
         }
       ]
@@ -506,8 +617,8 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.fb5fa1cf.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.c4da16ef.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.7469d0a5.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.01e79369.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -520,9 +631,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "1000次请求每5小时",
-            "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
-            "适配Claude Code、Cline等主流编程工具，持续更新..."
+            "1000次请求每5小时"
           ]
         },
         {
@@ -534,10 +643,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "5000次请求每5小时",
-            "5倍Lite套餐用量",
-            "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
-            "适配Claude Code、Cline等主流编程工具，持续更新..."
+            "5000次请求每5小时"
           ]
         }
       ]

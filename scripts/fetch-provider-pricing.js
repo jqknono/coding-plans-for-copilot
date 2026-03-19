@@ -1054,92 +1054,245 @@ async function parseZhipuCodingPlansFromLegacyBundle() {
   };
 }
 
-async function parseZhipuCodingPlans() {
-  let playwrightError = null;
+async function parseZhipuCodingPlansFromClaudeCodeBundle() {
+  const pageUrl = "https://bigmodel.cn/glm-coding";
+  const docsUrl = "https://docs.bigmodel.cn/cn/coding-plan/overview";
+  const html = await fetchText(pageUrl);
+  const appPath = html.match(/\/js\/app\.[0-9a-f]+\.js/i)?.[0];
+  if (!appPath) {
+    throw new Error("Unable to locate Zhipu app script");
+  }
+
+  const appUrl = absoluteUrl(appPath, pageUrl);
+  const appJs = await fetchText(appUrl);
+  const claudeCodeChunkHash =
+    appJs.match(/(?:^|[,\{])ClaudeCode:"([0-9a-f]+)"/i)?.[1]
+    || appJs.match(/"ClaudeCode":"([0-9a-f]+)"/i)?.[1];
+  if (!claudeCodeChunkHash) {
+    throw new Error("Unable to locate Zhipu ClaudeCode chunk");
+  }
+
+  const pricingChunkUrl = absoluteUrl(`/js/ClaudeCode.${claudeCodeChunkHash}.js`, pageUrl);
+  const pricingChunkText = await fetchText(pricingChunkUrl);
+
+  const extractStringField = (body, key) => {
+    const match = body.match(new RegExp(`${key}:"([^"]*)"`));
+    return match ? match[1] : null;
+  };
+  const extractNumberField = (body, key) => {
+    const match = body.match(new RegExp(`${key}:([0-9]+(?:\.[0-9]+)?)`));
+    return match ? Number(match[1]) : null;
+  };
+
+  const cardRegex = /Object\(i\["a"\]\)\(\{([\s\S]*?)\},n\.(lite|pro|max)\)/g;
+  const cardItems = [];
+  let cardMatch;
+  while ((cardMatch = cardRegex.exec(pricingChunkText)) !== null) {
+    const body = cardMatch[1];
+    const productName = extractStringField(body, "productName");
+    const unit = extractStringField(body, "unit");
+    if (!productName || !unit || !/^(Lite|Pro|Max)$/.test(productName)) {
+      continue;
+    }
+    cardItems.push({
+      productId: extractStringField(body, "productId"),
+      productName,
+      salePrice: extractNumberField(body, "salePrice"),
+      originalPrice: extractNumberField(body, "originalPrice"),
+      renewAmount: extractNumberField(body, "renewAmount"),
+      tagText: extractStringField(body, "tagText"),
+      attrTitle: extractStringField(body, "attrTitle"),
+      unit,
+      unitText: extractStringField(body, "unitText") || timeUnitLabel(unit),
+      monthStep: extractNumberField(body, "monthStep"),
+      stepUnit: extractStringField(body, "stepUnit"),
+      version: extractStringField(body, "version"),
+      tierHint: cardMatch[2],
+    });
+  }
+
+  if (cardItems.length === 0) {
+    throw new Error("Unable to locate Zhipu coding plan cards in ClaudeCode chunk");
+  }
+
+  const serviceDetailsByTier = new Map();
   try {
-    return await parseZhipuCodingPlansWithPlaywright();
+    const docsHtml = await fetchText(docsUrl);
+    const docsRows = extractRows(docsHtml);
+    const headerRow = docsRows.find((row) => normalizeText(row?.[0] || "") === "套餐类型" && row.length >= 3) || null;
+    if (headerRow) {
+      for (const row of docsRows) {
+        const tierMatch = normalizeText(row?.[0] || "").match(/^(Lite|Pro|Max)\s*套餐$/i);
+        if (!tierMatch) {
+          continue;
+        }
+        const serviceDetails = [];
+        for (let column = 1; column < Math.min(headerRow.length, row.length); column += 1) {
+          const label = normalizeText(headerRow[column]);
+          const value = normalizeText(row[column]);
+          if (!label || !value) {
+            continue;
+          }
+          serviceDetails.push(`${label}: ${value}`);
+        }
+        serviceDetailsByTier.set(tierMatch[1], normalizeServiceDetails(serviceDetails));
+      }
+    }
+  } catch {
+    // Keep pricing fetch resilient when docs service metadata is temporarily unavailable.
+  }
+
+  const versionedMonthlyCards = cardItems.filter((item) => item.version === "v2" && item.unit === "month");
+  const versionedCards = cardItems.filter((item) => item.version === "v2");
+  const monthlyCards = cardItems.filter((item) => item.unit === "month");
+  const cardsToBuild =
+    versionedMonthlyCards.length > 0
+      ? versionedMonthlyCards
+      : versionedCards.length > 0
+        ? versionedCards
+        : monthlyCards.length > 0
+          ? monthlyCards
+          : cardItems;
+
+  const renewLabelByUnit = {
+    month: "下个月度续费金额",
+    quarter: "下个季度续费金额",
+    year: "下个年度续费金额",
+  };
+  const unitOrder = { month: 0, quarter: 1, year: 2 };
+  const tierOrder = { Lite: 0, Pro: 1, Max: 2 };
+  const plans = dedupePlans(
+    cardsToBuild
+      .filter((card) => Number.isFinite(card.salePrice) && card.unitText)
+      .sort((left, right) => {
+        const unitCompare = (unitOrder[left.unit] ?? 99) - (unitOrder[right.unit] ?? 99);
+        if (unitCompare !== 0) {
+          return unitCompare;
+        }
+        return (tierOrder[left.productName] ?? 99) - (tierOrder[right.productName] ?? 99);
+      })
+      .map((card) => {
+        const monthlyAmount = Number.isFinite(card.monthStep) && card.monthStep > 0 ? card.salePrice / card.monthStep : card.salePrice;
+        const monthlyOriginalAmount =
+          Number.isFinite(card.originalPrice) && Number.isFinite(card.monthStep) && card.monthStep > 0
+            ? card.originalPrice / card.monthStep
+            : card.originalPrice;
+        const unitLabel = card.stepUnit || card.unitText;
+        const notes = [
+          card.tagText || "",
+          Number.isFinite(card.renewAmount) ? `${renewLabelByUnit[card.unit] || "续费金额"}：¥${formatAmount(card.renewAmount)}` : "",
+        ]
+          .filter(Boolean)
+          .join("；");
+        const serviceDetails = serviceDetailsByTier.get(card.productName);
+        const normalizedServiceDetails = normalizeServiceDetails(serviceDetails || [card.attrTitle || ""].filter(Boolean));
+
+        return asPlan({
+          name: `GLM Coding ${card.productName}`,
+          currentPriceText: `¥${formatAmount(monthlyAmount)}/${unitLabel}`,
+          currentPrice: monthlyAmount,
+          originalPriceText:
+            Number.isFinite(monthlyOriginalAmount) && monthlyOriginalAmount > monthlyAmount
+              ? `¥${formatAmount(monthlyOriginalAmount)}/${unitLabel}`
+              : null,
+          originalPrice: Number.isFinite(monthlyOriginalAmount) ? monthlyOriginalAmount : null,
+          unit: unitLabel,
+          notes,
+          serviceDetails: normalizedServiceDetails,
+        });
+      }),
+  );
+
+  if (plans.length === 0) {
+    throw new Error("Unable to build Zhipu coding plans from ClaudeCode chunk");
+  }
+
+  return {
+    provider: PROVIDER_IDS.ZHIPU,
+    sourceUrls: unique([pageUrl, appUrl, pricingChunkUrl, docsUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans,
+  };
+}
+
+async function parseZhipuCodingPlans() {
+  let bundleError = null;
+  try {
+    return await parseZhipuCodingPlansFromClaudeCodeBundle();
   } catch (error) {
-    playwrightError = error;
+    bundleError = error;
+  }
+
+  let legacyError = null;
+  try {
+    return await parseZhipuCodingPlansFromLegacyBundle();
+  } catch (error) {
+    legacyError = error;
   }
 
   try {
-    return await parseZhipuCodingPlansFromLegacyBundle();
-  } catch (legacyError) {
+    return await parseZhipuCodingPlansWithPlaywright();
+  } catch (playwrightError) {
     const reasons = [];
-    if (playwrightError) {
-      reasons.push(`Playwright parse failed: ${playwrightError.message || playwrightError}`);
+    if (bundleError) {
+      reasons.push(`Pure JS parse failed: ${bundleError.message || bundleError}`);
     }
-    reasons.push(`Legacy bundle parse failed: ${legacyError.message || legacyError}`);
+    if (legacyError) {
+      reasons.push(`Legacy JS parse failed: ${legacyError.message || legacyError}`);
+    }
+    reasons.push(`Playwright parse failed: ${playwrightError.message || playwrightError}`);
     throw new Error(reasons.join("; "));
   }
 }
 
-function parseMinimaxOriginalPrice(priceText, currentText) {
-  const originalMatch = priceText.match(/原价\s*([¥￥]?\s*[0-9]+(?:\.[0-9]+)?(?:\s*\/\s*[年月])?)/i);
-  if (!originalMatch) {
-    return null;
-  }
-  let original = normalizeText(originalMatch[1]);
-  if (!/\/\s*[年月]/.test(original)) {
-    const unitMatch = currentText.match(/\/\s*([年月])/);
-    if (unitMatch) {
-      original = `${original} /${unitMatch[1]}`;
-    }
-  }
-  return original;
-}
-
 async function parseMinimaxCodingPlans() {
-  const pageUrl = "https://platform.minimaxi.com/docs/guides/pricing-coding-plan";
-  const html = await fetchText(pageUrl);
-  const buyUrl = html.match(/https:\/\/platform\.minimaxi\.com\/subscribe\/coding-plan/)?.[0] || null;
-  const rows = extractRows(html);
-  const plans = [];
-  for (let index = 0; index < rows.length; index += 1) {
-    const headerRow = rows[index];
-    const priceRow = rows[index + 1];
-    if (!headerRow || !priceRow) {
-      continue;
-    }
-    if (headerRow[0] !== "套餐类型" || priceRow[0] !== "价格") {
-      continue;
-    }
-    const nextHeaderOffset = rows
-      .slice(index + 1)
-      .findIndex((row) => normalizeText(row?.[0] || "") === "套餐类型");
-    const blockEnd = nextHeaderOffset >= 0 ? index + 1 + nextHeaderOffset : rows.length;
-    const serviceRows = rows.slice(index + 2, blockEnd);
-    const usageRow = serviceRows.find((row) => normalizeText(row?.[0] || "") === "用量") || null;
+  const pageUrl = "https://platform.minimaxi.com/subscribe/token-plan";
+  const docsUrl = "https://platform.minimaxi.com/docs/token-plan/intro";
+  const apiUrl = "https://www.minimaxi.com/public/api/openplatform/charge/combo/products?cycle_type=1&biz_line=2&resource_package_type=7";
+  const data = await fetchJson(apiUrl);
+  const packages = Array.isArray(data?.cycle_resource_packages) ? data.cycle_resource_packages : [];
+  const plans = dedupePlans(
+    packages
+      .filter((item) => item && item.visible !== false)
+      .map((item) => {
+        const priceTag = normalizeText(item?.price_data?.price_tag || "");
+        const originalPriceTag = normalizeText(item?.price_data?.original_price_tag || "");
+        const renewPriceTag = normalizeText(item?.price_data?.renew_price_tag || "");
+        const currentPrice = priceTag ? Number(priceTag) : null;
+        const originalPrice = originalPriceTag ? Number(originalPriceTag) : null;
+        const renewPrice = renewPriceTag ? Number(renewPriceTag) : null;
+        const usageText = normalizeText(Array.isArray(item.credit_benefit) ? item.credit_benefit[0] : "");
 
-    for (let column = 1; column < headerRow.length; column += 1) {
-      const rawName = normalizeText(headerRow[column] || "");
-      const rawPriceCell = normalizeText(priceRow[column] || "");
-      if (!rawName || !rawPriceCell || !isPriceLike(rawPriceCell)) {
-        continue;
-      }
-      const currentText = normalizeText(rawPriceCell.replace(/\(\s*原价[^)）]+\)/g, ""));
-      if (!/\/\s*月/i.test(currentText) || /首月/i.test(currentText)) {
-        continue;
-      }
-      const originalText = parseMinimaxOriginalPrice(rawPriceCell, currentText);
-      plans.push(
-        asPlan({
-          name: rawName,
-          currentPriceText: currentText,
-          originalPriceText: originalText,
-          notes: usageRow && usageRow[column] ? `用量: ${normalizeText(usageRow[column])}` : null,
-          serviceDetails: buildServiceDetailsFromRows(serviceRows, column),
-        }),
-      );
-    }
-    index = blockEnd - 1;
+        return asPlan({
+          name: item.title,
+          currentPriceText: Number.isFinite(currentPrice) ? `¥${formatAmount(currentPrice)}/月` : normalizeText(item.instruction),
+          currentPrice,
+          originalPriceText:
+            Number.isFinite(originalPrice) && Number.isFinite(currentPrice) && originalPrice > currentPrice
+              ? `¥${formatAmount(originalPrice)}/月`
+              : null,
+          originalPrice:
+            Number.isFinite(originalPrice) && Number.isFinite(currentPrice) && originalPrice > currentPrice ? originalPrice : null,
+          unit: "月",
+          notes: usageText ? `用量: ${usageText}` : Number.isFinite(renewPrice) ? `续费金额：¥${formatAmount(renewPrice)}/月` : null,
+          serviceDetails: normalizeServiceDetails([
+            ...(Array.isArray(item.credit_benefit) ? item.credit_benefit : []),
+            ...(item.feature_title ? [item.feature_title] : []),
+            ...(Array.isArray(item.feature_benefit) ? item.feature_benefit : []),
+          ]),
+        });
+      }),
+  );
+
+  if (plans.length === 0) {
+    throw new Error("Unable to build MiniMax token plans from combo products API");
   }
 
   return {
     provider: PROVIDER_IDS.MINIMAX,
-    sourceUrls: unique([pageUrl, buyUrl]),
+    sourceUrls: unique([pageUrl, docsUrl, apiUrl]),
     fetchedAt: new Date().toISOString(),
-    plans: dedupePlans(plans),
+    plans,
   };
 }
 
