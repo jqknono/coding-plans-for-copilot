@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-20T02:59:59.801Z",
+  "generatedAt": "2026-03-20T08:17:31.171Z",
   "providers": [
     {
       "provider": "kimi-ai",
@@ -579,7 +579,7 @@
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/f4028fb79e662a696a3ddbc0a1d82ce0.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3e7f515fbc2023519a2b5bd619bcd77a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice"
       ],
       "plans": [

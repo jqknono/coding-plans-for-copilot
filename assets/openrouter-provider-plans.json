@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-19T08:19:33.096Z",
-  "generatedAtBeijing": "2026年3月19日 16:19:33",
-  "sourceGeneratedAt": "2026-03-19T08:19:15.328Z",
-  "sourceGeneratedAtBeijing": "2026年3月19日 16:19:15",
-  "sourceMetricsGeneratedAt": "2026-03-19T08:19:16.008Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月19日 16:19:16",
+  "generatedAt": "2026-03-20T08:17:48.279Z",
+  "generatedAtBeijing": "2026年3月20日 16:17:48",
+  "sourceGeneratedAt": "2026-03-20T08:17:31.171Z",
+  "sourceGeneratedAtBeijing": "2026年3月20日 16:17:31",
+  "sourceMetricsGeneratedAt": "2026-03-20T08:17:31.739Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月20日 16:17:31",
   "summary": {
     "openrouterProviderCount": 74,
     "metricsProviderCount": 31,
@@ -33,9 +33,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "能力: 支持 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus、MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等模型",
-            "场景: 面向处理轻量级工作负载的个人开发者",
-            "工具: Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具"
+            "百炼Coding Plan"
           ]
         },
         {
@@ -47,15 +45,13 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "权益: 享受 Lite 套餐的全部能力与权益",
-            "额度: 用量是 Lite 版的 5 倍",
-            "场景: 适合大型开发任务，专业级 AI 编程体验"
+            "百炼Coding Plan"
           ]
         }
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/324e20569c2f87ef0a4c4ba9e227db00.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3e7f515fbc2023519a2b5bd619bcd77a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://www.alibabacloud.com"
       ],
@@ -745,7 +741,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.012 / $0.011 / $0.07）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.02 / $0.01 / $0.04）",
       "blocked": false
     },
     {
