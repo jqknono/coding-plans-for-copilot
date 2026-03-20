@@ -20,6 +20,7 @@ tsconfig.json
 **/test/**
 .github/**
 docs/**
+pages/**
 minimax-sitemap.xml
 moonshot-sitemap.xml
 assets/icon.svg

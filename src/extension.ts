@@ -9,18 +9,16 @@ import {
   invalidateCommitMessageModelSelectionCache,
   selectCommitMessageModel
 } from './commitMessageGenerator';
+import {
+  COMMIT_MESSAGE_SHOW_GENERATE_CONTEXT_KEY,
+  COMMIT_MESSAGE_SHOW_GENERATE_SETTING_KEY,
+  LANGUAGE_MODELS_REFRESH_LOG_PREFIX,
+  PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS,
+  REFRESH_MODELS_COMMAND
+} from './constants';
 import { logger } from './logging/outputChannelLogger';
 
 let providers: Map<string, GenericAIProvider> = new Map();
-const COMMIT_MESSAGE_SHOW_GENERATE_SETTING_KEY = 'commitMessage.showGenerateCommand';
-const COMMIT_MESSAGE_SHOW_GENERATE_CONTEXT_KEY = 'codingPlans.showGenerateCommitMessage';
-const LANGUAGE_MODELS_REFRESH_LOG_PREFIX = '[coding-plans][language-models-refresh]';
-const REFRESH_MODELS_COMMAND = 'coding-plans.refreshModels';
-const PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS = [
-  'workbench.action.chat.refreshLanguageModels',
-  'workbench.action.languageModels.refresh',
-  'workbench.action.chat.languageModels.refresh'
-];
 let refreshModelsCommandInProgress = false;
 let languageModelProviderRegistration: vscode.Disposable | undefined;
 let reRegisterLanguageModelProviderInProgress = false;

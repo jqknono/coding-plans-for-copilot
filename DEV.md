@@ -103,9 +103,10 @@ GitHub Pages 部署时会将 `assets/provider-pricing.json` 同步到 `pages/pro
 - `System Instructions`：指 system prompt、模式说明、策略提示、插件额外注入说明等 System 类输入，占用 prompt tokens。
 - `Tool Definitions`：指工具定义本身的 schema 占用，占用 prompt tokens。
 - `Reserved Output`：指预留给模型输出的 token 预算，对应 `outputBuffer`，在 UI 中单独显示。
-- `Context Window X / Y tokens`：`X` 是当前会话实际已用 token，总量按“已用总上下文”计算，优先对齐上游 `total_tokens`；`Y` 是当前模型的总上下文窗口，对应 `maxInputTokens + maxOutputTokens`。
+- `Context Window X / Y tokens`：`X` 是当前会话实际已用 token，总量按“已用总上下文”计算，优先对齐上游 `total_tokens`；`Y` 是当前模型的总上下文窗口，优先取模型配置中的 `contextSize`，未提供时再回退到归一化后的 token window。
 - VS Code 官方文档说明：hover 到上下文窗口控件时，会显示“精确 token 数 / 总上下文”和按类别拆分；上下文满时会触发 compaction。
 - 若后续 VS Code / Copilot Chat 调整上下文展示结构，应以其内置行为为准同步更新文档描述。
+- 当前实现已完全停止本地 prompt token 估算与本地 token 计数；若上游不返回 usage，只能显示“无 usage 数据”，不会再做近似补算。
 
 ## 多协议供应商接入说明
 
@@ -114,16 +115,19 @@ GitHub Pages 部署时会将 `assets/provider-pricing.json` 同步到 `pages/pro
   - `openai-chat`：请求 `baseUrl + /chat/completions`
   - `openai-responses`：请求 `baseUrl + /responses`
   - `anthropic`：请求 `baseUrl + /messages`
+- `coding-plans.vendors[].models[].contextSize` 现在是描述模型上下文的首选字段。
+- `coding-plans.vendors[].models[].maxInputTokens` / `maxOutputTokens` 已标记为 deprecated，保留兼容旧配置与特殊覆盖用途。两者仍允许配置为 `0`。其中 `maxInputTokens: 0` 的语义为“未设置”；`maxOutputTokens` 默认值就是 `0`，表示“未设置”，且不要向上游下发 `max_tokens` / `max_output_tokens`。`maxInputTokens` 仍仅用于本地元数据和预算，不直接传给 API。
 - 新增采样参数：
   - `coding-plans.vendors[].defaultTemperature` / `defaultTopP`：供应商默认采样值
   - `coding-plans.vendors[].models[].temperature` / `topP`：模型级覆盖值
   - 继承顺序固定为 `models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > 内置默认值 `0.2/1.0`
   - 建议：代码生成/重构优先 `temperature 0.1-0.3`、`topP 1.0`；平衡创造性与稳定性可用 `temperature 0.3-0.5`、`topP 0.9-1.0`
 - 需兼容旧字段 `apiStyle`；未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
+- 需继续兼容旧字段 `maxInputTokens` / `maxOutputTokens`；当模型同时提供 `contextSize` 与这两个旧字段时，总上下文窗口优先按 `contextSize` 处理，仅在输入或输出上限超过 `contextSize` 时才收敛。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
 - 请求链路默认优先上游真实流式传输；若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志，不新增单独的 stream 配置开关。
 - `capabilities` 现在按必填语义处理；对旧配置要在归一化时自动补齐 `tools=true` 与 `vision=defaultVision`。
-- 当 `useModelsEndpoint: true` 时，刷新模型列表只按 `name` 同步增删；设置中已有模型项的 `description`、`temperature`、`topP`、`capabilities`、`maxInputTokens`、`maxOutputTokens` 等字段应保持原样，新发现模型不应自动写入采样参数。
+- 当 `useModelsEndpoint: true` 时，刷新模型列表只按 `name` 同步增删；设置中已有模型项的 `description`、`temperature`、`topP`、`capabilities`、`contextSize`、`maxInputTokens`、`maxOutputTokens` 等字段应保持原样，新发现模型不应自动写入采样参数。
 - 若修改协议相关行为，请同步检查：
   - `src/providers/genericProvider.ts`
   - `src/config/configStore.ts`

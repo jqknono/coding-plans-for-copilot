@@ -12,4 +12,5 @@ moonshot-sitemap.xml
 .env
 output/playwright/
 output/tmp/
+temp/
 

@@ -111,7 +111,7 @@
 - 只提供部分字段时，会推导剩余部分
 - 没配时，会回退到默认值
 
-因此，如果供应商模型的 `maxInputTokens`、`maxOutputTokens`、或兼容旧字段的总上下文配置不准确，Copilot Chat 里看到的 `X / Y tokens` 也可能与真实模型能力不一致。
+因此，如果供应商模型的 `contextSize`、`maxInputTokens`、`maxOutputTokens` 配置不准确，Copilot Chat 里看到的 `X / Y tokens` 也可能与真实模型能力不一致。本仓库当前推荐用 `contextSize` 作为描述模型上下文的主字段；`maxInputTokens` / `maxOutputTokens` 仅保留兼容旧配置。运行时会优先使用 `contextSize` 作为总上下文窗口；只有当 `maxInputTokens` 或 `maxOutputTokens` 超过它时，才会自动收敛到 `contextSize`。
 
 ### 2.5 分子按“已用总上下文”理解更直观
 
@@ -122,6 +122,8 @@
 - 对 `anthropic`：回退为 `input_tokens + output_tokens`
 
 如果上游同时返回了 `prompt/input`、`completion/output` 和 `total_tokens`，且两者不一致，会以 `total_tokens` 为准做归一化，确保显示比例更符合“当前已经占了多少上下文”的直觉。
+
+同时，本仓库已经停止本地 prompt token 估算和本地 token 计数。如果上游接口没有返回 usage，扩展不会再自行补一个估算值。
 
 ### 3. 对这个项目最实用的上下文组织方式
 

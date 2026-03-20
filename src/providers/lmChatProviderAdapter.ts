@@ -1,15 +1,17 @@
 import * as vscode from 'vscode';
-import { BaseAIProvider, BaseLanguageModel, MODEL_VERSION_LABEL, getCompactErrorMessage } from './baseProvider';
+import { BaseAIProvider, BaseLanguageModel, getCompactErrorMessage } from './baseProvider';
 import { ConfigStore } from '../config/configStore';
+import {
+  ENABLE_CONTEXT_WINDOW_USAGE_REPORTING,
+  MODEL_VERSION_LABEL,
+  RESPONSE_TRACE_ID_FIELD
+} from '../constants';
 import { getMessage } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
 import { NormalizedTokenUsage, readAttachedTokenUsage } from './tokenUsage';
 
 let hasShownVendorNotConfiguredWarning = false;
-const RESPONSE_TRACE_ID_FIELD = '__codingPlansTraceId';
-// VS Code stable typings do not formally expose Context Window usage reporting for LanguageModelChatProvider.
-// Keep this disabled until the API is officially available and stable.
-const ENABLE_CONTEXT_WINDOW_USAGE_REPORTING = false;
+let hasShownUsageReportingUnsupportedWarning = false;
 
 interface ProviderPickerConfiguration {
   name?: unknown;
@@ -326,24 +328,11 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   }
 
   provideTokenCount(
-    model: vscode.LanguageModelChatInformation,
-    text: string | vscode.LanguageModelChatRequestMessage,
-    token: vscode.CancellationToken
+    _model: vscode.LanguageModelChatInformation,
+    _text: string | vscode.LanguageModelChatRequestMessage,
+    _token: vscode.CancellationToken
   ): Thenable<number> {
-    if (isPlaceholderModel(this.provider.getVendor(), model.id)) {
-      return Promise.resolve(0);
-    }
-
-    const targetModel = this.provider.getModel(model.id);
-    if (!targetModel) {
-      return Promise.reject(vscode.LanguageModelError.NotFound(`Model not found: ${model.id}`));
-    }
-
-    if (typeof text === 'string') {
-      return targetModel.countTokens(text, token);
-    }
-
-    return targetModel.countTokens(this.toChatMessage(text), token);
+    return Promise.resolve(0);
   }
 
   private hasConfigurationPayload(configuration: ProviderPickerConfiguration | undefined): boolean {
@@ -644,9 +633,20 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         outputBuffer?: number;
       }) => void;
     };
+    const host = this.summarizeHostEnvironment();
+    const reportUsage = runtimeProgress.usage;
+    const progressUsageSupported = typeof reportUsage === 'function';
 
-    if (typeof runtimeProgress.usage === 'function') {
-      runtimeProgress.usage({
+    logger.debug('Adapter Context Window usage reporting capability', {
+      traceId,
+      provider: vendor,
+      modelId: model.id,
+      progressUsageSupported,
+      host
+    });
+
+    if (progressUsageSupported) {
+      reportUsage({
         promptTokens: usage.promptTokens,
         completionTokens: usage.completionTokens,
         outputBuffer: usage.outputBuffer
@@ -660,12 +660,44 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       return;
     }
 
+    if (!hasShownUsageReportingUnsupportedWarning) {
+      hasShownUsageReportingUnsupportedWarning = true;
+      logger.warn('Native Context Window usage reporting is unavailable in the current VS Code host', {
+        traceId,
+        provider: vendor,
+        modelId: model.id,
+        host,
+        usage: this.summarizeUsage(usage)
+      });
+    }
+
     logger.debug('Adapter found response usage but current VS Code progress object does not expose usage reporting', {
       traceId,
       provider: vendor,
       modelId: model.id,
+      host,
       usage: this.summarizeUsage(usage)
     });
+  }
+
+  private summarizeHostEnvironment(): Record<string, unknown> {
+    return {
+      vscodeVersion: vscode.version,
+      appName: vscode.env.appName,
+      uiKind: this.describeUiKind(vscode.env.uiKind),
+      remoteName: vscode.env.remoteName ?? null
+    };
+  }
+
+  private describeUiKind(uiKind: vscode.UIKind): string {
+    switch (uiKind) {
+      case vscode.UIKind.Desktop:
+        return 'desktop';
+      case vscode.UIKind.Web:
+        return 'web';
+      default:
+        return `unknown(${String(uiKind)})`;
+    }
   }
 
   private summarizeUsage(usage: NormalizedTokenUsage): Record<string, unknown> {

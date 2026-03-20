@@ -1,3 +1,5 @@
+import { RESPONSE_USAGE_FIELD } from '../constants';
+
 export interface NormalizedTokenUsage {
   promptTokens: number;
   completionTokens: number;
@@ -6,8 +8,6 @@ export interface NormalizedTokenUsage {
 }
 
 export type SupportedUsageProtocol = 'openai-chat' | 'openai-responses' | 'anthropic';
-
-export const RESPONSE_USAGE_FIELD = '__codingPlansUsage';
 
 type NumericUsageRecord = Record<string, unknown>;
 

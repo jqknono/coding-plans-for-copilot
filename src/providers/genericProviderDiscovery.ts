@@ -1,5 +1,10 @@
 import { AIModelConfig, normalizeHttpBaseUrl } from './baseProvider';
 import { VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
+import {
+  DEFAULT_TOKEN_SIDE_LIMIT,
+  DEFAULT_MODEL_TOOLS,
+  NON_RETRYABLE_DISCOVERY_STATUS_CODES
+} from '../constants';
 
 export interface ModelVendorMapping {
   vendor: VendorConfig;
@@ -18,10 +23,6 @@ export interface VendorDiscoveryState {
   suppressRetry: boolean;
   cachedModels: AIModelConfig[];
 }
-
-const DEFAULT_CONTEXT_SIZE = 200000;
-const DEFAULT_MODEL_TOOLS = true;
-const NON_RETRYABLE_DISCOVERY_STATUS_CODES = new Set([400, 401, 403, 404]);
 
 export function shouldSuppressDiscoveryRetry(status: number | undefined): boolean {
   return typeof status === 'number' && NON_RETRYABLE_DISCOVERY_STATUS_CODES.has(status);
@@ -107,8 +108,9 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
   return {
     name,
     description: model.description?.trim() || undefined,
-    maxInputTokens: readPositiveTokenInteger(model.maxInputTokens) ?? DEFAULT_CONTEXT_SIZE,
-    maxOutputTokens: readPositiveTokenInteger(model.maxOutputTokens) ?? DEFAULT_CONTEXT_SIZE,
+    contextSize: readPositiveTokenInteger(model.maxTokens),
+    maxInputTokens: readPositiveTokenInteger(model.maxInputTokens) ?? DEFAULT_TOKEN_SIDE_LIMIT,
+    maxOutputTokens: readPositiveTokenInteger(model.maxOutputTokens) ?? DEFAULT_TOKEN_SIDE_LIMIT,
     capabilities: {
       tools,
       vision

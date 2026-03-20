@@ -146,7 +146,7 @@ export interface AnthropicChatMessage {
 
 export interface AnthropicChatRequest {
   model: string;
-  max_tokens: number;
+  max_tokens?: number;
   system?: string;
   messages: AnthropicChatMessage[];
   tools?: AnthropicToolDefinition[];

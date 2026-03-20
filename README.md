@@ -59,9 +59,10 @@
 - System Instructions：System 类提示词占用，通常指系统提示、模式说明、策略提示、额外注入说明等。它属于 prompt tokens 的一部分。
 - Tool Definitions：工具定义占用，通常是传给模型的 tool/function schema（工具名、描述、参数 JSON Schema）。它也属于 prompt tokens 的一部分。
 - Reserved Output：为本轮回答预留的输出 token 预算。它不是已经生成出来的回复内容，而是为了避免模型输出超限而预留的空间。
-- Context Window 4.0K / 400K tokens：表示当前会话实际已使用约 4.0K token，而当前所选模型的总上下文窗口约为 400K token。分子按“已用总上下文”计算，优先对齐上游返回的 `total_tokens`；分母由当前模型的 `maxInputTokens + maxOutputTokens` 决定。
+- Context Window 4.0K / 400K tokens：表示当前会话实际已使用约 4.0K token，而当前所选模型的总上下文窗口约为 400K token。分子按“已用总上下文”计算，优先对齐上游返回的 `total_tokens`；分母优先使用模型配置中的 `contextSize`，未提供时再按当前归一化后的 token window 计算。
 - 悬浮到 Context Window 指示器时，VS Code 会显示当前 token 总量以及按类别拆分的明细；当上下文接近上限时，VS Code 可能自动触发 conversation compaction（压缩历史）。
 - 本扩展直接复用 Copilot Chat 自带的上下文展示器，不再额外提供独立的 Agent 路径或自定义 usage 明细。
+- 本扩展不会再本地估算 prompt token 或自行计数；若上游接口未返回 usage，界面也不会由插件补算一个近似值。
 ### 配置入口
 
 1. 按 `Ctrl+Shift+P`，输入 `编码套餐: 管理编码套餐配置`
@@ -90,8 +91,7 @@
             "tools": true,
             "vision": false
           },
-          "maxInputTokens": 64000,
-          "maxOutputTokens": 64000
+          "contextSize": 128000
         }
       ]
     }
@@ -125,8 +125,7 @@
             "tools": true,
             "vision": false
           },
-          "maxInputTokens": 100000,
-          "maxOutputTokens": 100000
+          "contextSize": 200000
         },
         {
           "name": "deepseek-reasoner",
@@ -134,8 +133,7 @@
             "tools": true,
             "vision": false
           },
-          "maxInputTokens": 100000,
-          "maxOutputTokens": 100000
+          "contextSize": 200000
         }
       ]
     }
@@ -162,8 +160,7 @@
             "tools": true,
             "vision": false
           },
-          "maxInputTokens": 200000,
-          "maxOutputTokens": 200000
+          "contextSize": 400000
         }
       ]
     }
@@ -191,11 +188,12 @@
 | `coding-plans.vendors[].models[].topP` | `number` | 继承供应商/`1.0` | 模型级 topP 覆盖项，优先级高于 `defaultTopP`。 |
 | `coding-plans.vendors[].models[].capabilities.tools` | `boolean` | `true` | 是否启用工具调用能力；旧配置缺失时运行时自动补齐。 |
 | `coding-plans.vendors[].models[].capabilities.vision` | `boolean` | `defaultVision` | 是否启用视觉输入能力；旧配置缺失时运行时回填为供应商 `defaultVision`。 |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | `396000` | 模型最大输入 token 数；未配置时会为响应预留少量输出窗口。 |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `8000` | 模型最大输出 token 数；未配置时默认保守预留。 |
+| `coding-plans.vendors[].models[].contextSize` | `number` | 空 | 模型总上下文窗口；推荐优先使用这个字段描述模型上下文，language model 的 context size 展示也直接使用它。 |
+| `coding-plans.vendors[].models[].maxInputTokens` | `number` | `396000` | 已废弃。旧版最大输入 token 覆盖项；推荐改用 `contextSize`。若同时配置 `contextSize` 且该值更大，会自动收敛到 `contextSize`。设为 `0` 时视为未设置。 |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | 已废弃。旧版最大输出 token 覆盖项；推荐改用 `contextSize`。若同时配置 `contextSize` 且该值更大，会自动收敛到 `contextSize`。默认值就是 `0`，表示未设置，且不会向上游发送 `max_tokens` / `max_output_tokens`。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示“生成 Commit 消息”命令。 |
 
-模型 `capabilities` 现在是必填项；为兼容旧配置，插件会在运行时自动补齐 `tools=true`，并将 `vision` 回填为供应商的 `defaultVision`。供应商级 `defaultApiStyle` 也可被模型级 `apiStyle` 覆盖。采样参数继承顺序固定为：`models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > 内置默认值 `0.2/1.0`。
+模型 `capabilities` 现在是必填项；为兼容旧配置，插件会在运行时自动补齐 `tools=true`，并将 `vision` 回填为供应商的 `defaultVision`。供应商级 `defaultApiStyle` 也可被模型级 `apiStyle` 覆盖。采样参数继承顺序固定为：`models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > 内置默认值 `0.2/1.0`。模型上下文建议统一通过 `contextSize` 描述；`maxInputTokens` / `maxOutputTokens` 已废弃，仅作为兼容旧配置或特殊覆盖项保留。若模型同时提供 `contextSize` 与 `maxInputTokens` / `maxOutputTokens`，总上下文窗口优先采用 `contextSize`，仅在输入或输出上限超过 `contextSize` 时才自动收敛。`maxInputTokens: 0` 会被视为未设置，不参与本地限制推导；`maxOutputTokens: 0` 除了表示未设置外，还会禁止向上游发送 `max_tokens` / `max_output_tokens`。
 
 | `coding-plans.commitMessage.language` | `string` | `en` | 提交消息语言，支持 `en` / `zh-cn`。 |
 | `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | 是否参考最近 20 条 commit 风格。 |

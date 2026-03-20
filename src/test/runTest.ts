@@ -18,6 +18,7 @@ type VendorModelRecord = {
     tools?: boolean;
     vision?: boolean;
   };
+  contextSize?: number;
   maxInputTokens?: number;
   maxOutputTokens?: number;
 };
@@ -41,6 +42,8 @@ type MockState = {
 
 type ConfigStoreModule = typeof import('../config/configStore');
 type ConfigStoreCtor = ConfigStoreModule['ConfigStore'];
+type BaseProviderModule = typeof import('../providers/baseProvider');
+type GenericProviderModule = typeof import('../providers/genericProvider');
 type TokenUsageModule = typeof import('../providers/tokenUsage');
 type ProtocolsModule = typeof import('../providers/genericProviderProtocols');
 
@@ -588,9 +591,10 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     assert.equal(vendor?.defaultApiStyle, 'anthropic');
     assert.equal(vendor?.models[0]?.apiStyle, 'anthropic');
     assert.deepEqual(vendor?.models[0]?.capabilities, { tools: true, vision: true });
+    assert.equal(vendor?.models[0]?.maxOutputTokens, 0);
     assert.equal(vendor?.defaultTemperature, undefined);
     assert.equal(vendor?.defaultTopP, undefined);
-    console.log('PASS 兼容旧 apiStyle 并补齐模型默认能力');
+    console.log('PASS 兼容旧 apiStyle、补齐模型默认能力并将 maxOutputTokens 默认归一化为 0');
   } finally {
     configStore.dispose();
   }
@@ -633,9 +637,10 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     const updatedVendor = getUpdatedVendor(activeState);
     assert.equal(updatedVendor.models[0]?.apiStyle, 'openai-responses');
     assert.deepEqual(updatedVendor.models[0]?.capabilities, { tools: true, vision: true });
+    assert.equal(updatedVendor.models[0]?.maxOutputTokens, 0);
     assert.equal(updatedVendor.models[0]?.temperature, undefined);
     assert.equal(updatedVendor.models[0]?.topP, undefined);
-    console.log('PASS updateVendorModels 写回模型默认 apiStyle 与 capabilities');
+    console.log('PASS updateVendorModels 写回模型默认 apiStyle、capabilities 与 maxOutputTokens=0');
   } finally {
     configStore.dispose();
   }
@@ -666,6 +671,446 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
   } finally {
     configStore.dispose();
   }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'context-capped',
+      contextSize: 64000,
+      maxInputTokens: 128000,
+      maxOutputTokens: 96000
+    }]
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    assert.equal(vendor?.models[0]?.contextSize, 64000);
+    assert.equal(vendor?.models[0]?.maxInputTokens, 64000);
+    assert.equal(vendor?.models[0]?.maxOutputTokens, 64000);
+    console.log('PASS contextSize 存在时会收敛超出的输入输出上限');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'context-preserved',
+      contextSize: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000
+    }]
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    assert.equal(vendor?.models[0]?.contextSize, 64000);
+    assert.equal(vendor?.models[0]?.maxInputTokens, 32000);
+    assert.equal(vendor?.models[0]?.maxOutputTokens, 16000);
+    console.log('PASS contextSize 存在且输入输出均较小时保持原值');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'zero-unset',
+      contextSize: 131072,
+      maxInputTokens: 0,
+      maxOutputTokens: 0
+    }]
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    assert.equal(vendor?.models[0]?.contextSize, 131072);
+    assert.equal(vendor?.models[0]?.maxInputTokens, 0);
+    assert.equal(vendor?.models[0]?.maxOutputTokens, 0);
+    console.log('PASS maxInputTokens/maxOutputTokens 为 0 时保留为显式 unset 配置');
+  } finally {
+    configStore.dispose();
+  }
+}
+
+function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): void {
+  const { BaseAIProvider } = baseProviderModule;
+
+  class TestProvider extends BaseAIProvider {
+    getVendor(): string {
+      return 'test';
+    }
+
+    getConfigSection(): string {
+      return 'test';
+    }
+
+    getBaseUrl(): string {
+      return 'https://example.test/v1';
+    }
+
+    getApiKey(): string {
+      return 'configured';
+    }
+
+    getPredefinedModels(): any[] {
+      return [];
+    }
+
+    convertMessages(_messages: any[]): any[] {
+      return [];
+    }
+
+    async sendRequest(): Promise<never> {
+      throw new Error('not implemented');
+    }
+
+    protected createModel(_modelInfo: any): any {
+      throw new Error('not implemented');
+    }
+  }
+
+  const provider = new TestProvider(createExtensionContext() as never) as unknown as {
+    resolveTokenWindowLimits(
+      totalContextWindow: number | undefined,
+      explicitMaxInputTokens: number | undefined,
+      explicitMaxOutputTokens: number | undefined
+    ): {
+      maxTokens: number;
+      maxInputTokens: number;
+      maxOutputTokens: number;
+    };
+    dispose(): void;
+  };
+
+  try {
+    const capped = provider.resolveTokenWindowLimits(64000, 128000, 96000);
+    assert.deepEqual(capped, {
+      maxTokens: 64000,
+      maxInputTokens: 64000,
+      maxOutputTokens: 64000
+    });
+    console.log('PASS runtime token window 解析优先使用 contextSize');
+
+    const preserved = provider.resolveTokenWindowLimits(64000, 32000, 16000);
+    assert.deepEqual(preserved, {
+      maxTokens: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000
+    });
+    console.log('PASS runtime token window 在上下限较小时保持原值');
+  } finally {
+    provider.dispose();
+  }
+}
+
+function runGenericProviderContextSizeTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule
+): void {
+  const { GenericAIProvider } = genericProviderModule;
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'context-priority',
+      contextSize: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000
+    }]
+  }]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+    buildConfiguredModelsForVendor(vendor: VendorRecord): Array<{
+      maxTokens: number;
+      maxInputTokens: number;
+      maxOutputTokens: number;
+    }>;
+    dispose(): void;
+  };
+
+  try {
+    const vendor = configStore.getVendors()[0] as VendorRecord;
+    const models = provider.buildConfiguredModelsForVendor(vendor);
+    assert.equal(models[0]?.maxTokens, 64000);
+    assert.equal(models[0]?.maxInputTokens, 32000);
+    assert.equal(models[0]?.maxOutputTokens, 16000);
+    console.log('PASS GenericAIProvider 构建 language model 配置时优先使用 contextSize');
+  } finally {
+    provider.dispose();
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'context-output-capped',
+      contextSize: 131072,
+      maxInputTokens: 200000,
+      maxOutputTokens: 200000
+    }]
+  }]);
+
+  const cappedConfigStore = new configStoreCtor(createExtensionContext() as never);
+  const cappedProvider = new GenericAIProvider(createExtensionContext() as never, cappedConfigStore) as unknown as {
+    buildConfiguredModelsForVendor(vendor: VendorRecord): Array<{
+      id: string;
+      maxTokens: number;
+      maxInputTokens: number;
+      maxOutputTokens: number;
+    }>;
+    models: Array<{
+      id: string;
+      maxTokens: number;
+      maxOutputTokens: number;
+    }>;
+    resolveRequestedOutputLimit(request: { modelId: string }): number;
+    dispose(): void;
+  };
+
+  try {
+    const vendor = cappedConfigStore.getVendors()[0] as VendorRecord;
+    const models = cappedProvider.buildConfiguredModelsForVendor(vendor);
+    cappedProvider.models = models as Array<{ id: string; maxTokens: number; maxOutputTokens: number }>;
+    assert.equal(models[0]?.maxTokens, 131072);
+    assert.equal(models[0]?.maxOutputTokens, 131072);
+    assert.equal(cappedProvider.resolveRequestedOutputLimit({ modelId: models[0]!.id }), 131072);
+    console.log('PASS GenericAIProvider 请求上游时不再做本地 prompt token 预算裁剪');
+  } finally {
+    cappedProvider.dispose();
+    cappedConfigStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'zero-unset-runtime',
+      contextSize: 131072,
+      maxInputTokens: 0,
+      maxOutputTokens: 0
+    }]
+  }]);
+
+  const zeroUnsetConfigStore = new configStoreCtor(createExtensionContext() as never);
+  const zeroUnsetProvider = new GenericAIProvider(createExtensionContext() as never, zeroUnsetConfigStore) as unknown as {
+    buildConfiguredModelsForVendor(vendor: VendorRecord): Array<{
+      maxTokens: number;
+      maxInputTokens: number;
+      maxOutputTokens: number;
+    }>;
+    dispose(): void;
+  };
+
+  try {
+    const vendor = zeroUnsetConfigStore.getVendors()[0] as VendorRecord;
+    const models = zeroUnsetProvider.buildConfiguredModelsForVendor(vendor);
+    assert.equal(models[0]?.maxTokens, 131072);
+    assert.equal(models[0]?.maxInputTokens, 123072);
+    assert.equal(models[0]?.maxOutputTokens, 8000);
+    console.log('PASS 运行时会把 0 视为未设置并按 contextSize 推导默认输入输出上限');
+  } finally {
+    zeroUnsetProvider.dispose();
+    zeroUnsetConfigStore.dispose();
+  }
+}
+
+function runGenericProviderEmptyResponseTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule
+): void {
+  const { GenericAIProvider } = genericProviderModule;
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'empty-response-guard',
+      contextSize: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000
+    }]
+  }]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+    ensureNonEmptyCompletion(
+      protocol: 'openai-chat' | 'openai-responses' | 'anthropic',
+      trace: { traceId: string },
+      vendor: VendorRecord,
+      modelName: string,
+      content: string,
+      toolCalls: unknown[] | undefined
+    ): void;
+    dispose(): void;
+  };
+
+  const vendor = configStore.getVendors()[0] as VendorRecord;
+
+  try {
+    assert.throws(
+      () => provider.ensureNonEmptyCompletion(
+        'openai-chat',
+        { traceId: 'trace_empty' },
+        vendor,
+        'empty-response-guard',
+        '   ',
+        []
+      ),
+      /requestFailed|empty response|空响应/i
+    );
+    console.log('PASS GenericAIProvider 会把空 completion 视为上游错误');
+
+    assert.doesNotThrow(() => provider.ensureNonEmptyCompletion(
+      'openai-chat',
+      { traceId: 'trace_text' },
+      vendor,
+      'empty-response-guard',
+      'fix: keep content',
+      []
+    ));
+
+    assert.doesNotThrow(() => provider.ensureNonEmptyCompletion(
+      'openai-chat',
+      { traceId: 'trace_tool' },
+      vendor,
+      'empty-response-guard',
+      '',
+      [{}]
+    ));
+    console.log('PASS GenericAIProvider 在存在文本或工具调用时保留 completion');
+  } finally {
+    provider.dispose();
+    configStore.dispose();
+  }
+}
+
+async function runGenericProviderOutputLimitToggleTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const originalFetch = globalThis.fetch;
+
+  async function capturePayload(vendors: VendorRecord[], modelId: string): Promise<Record<string, unknown>> {
+    activeState = createState(vendors);
+    const configStore = new configStoreCtor(createExtensionContext() as never);
+    const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+      refreshModels(): Promise<void>;
+      sendRequest(
+        request: {
+          modelId: string;
+          messages: Array<{ role: string; content: Array<{ value: string }> }>;
+          capabilities: { toolCalling: boolean; imageInput: boolean };
+          options?: { tools?: unknown[] };
+        }
+      ): Promise<unknown>;
+      dispose(): void;
+    };
+
+    let payload: Record<string, unknown> | undefined;
+    globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+      payload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
+      return new Response(JSON.stringify({
+        id: 'chatcmpl_test',
+        created: 0,
+        model: 'coder',
+        choices: [{
+          index: 0,
+          message: {
+            role: 'assistant',
+            content: 'ok'
+          },
+          finish_reason: 'stop'
+        }],
+        usage: {
+          prompt_tokens: 1,
+          completion_tokens: 1,
+          total_tokens: 2
+        }
+      }), {
+        status: 200,
+        headers: {
+          'content-type': 'application/json'
+        }
+      });
+    }) as typeof globalThis.fetch;
+
+    try {
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
+        vendorName === 'Vendor' ? 'configured' : ''
+      );
+      await provider.refreshModels();
+      await provider.sendRequest({
+        modelId,
+        messages: [{
+          role: 'user',
+          content: [{ value: 'reply with ok' }]
+        }],
+        capabilities: { toolCalling: false, imageInput: false },
+        options: { tools: [] }
+      });
+      assert.ok(payload);
+      return payload;
+    } finally {
+      globalThis.fetch = originalFetch;
+      provider.dispose();
+      configStore.dispose();
+    }
+  }
+
+  const zeroOutputDisabledPayload = await capturePayload([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'coder',
+      contextSize: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 0,
+      capabilities: { tools: true, vision: false }
+    }]
+  }], 'Vendor/coder');
+  assert.equal('max_tokens' in zeroOutputDisabledPayload, false);
+  console.log('PASS maxOutputTokens 为 0 时不会向 openai-chat 下发 max_tokens');
+
+  const positiveOutputPayload = await capturePayload([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'coder',
+      contextSize: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000,
+      capabilities: { tools: true, vision: false }
+    }]
+  }], 'Vendor/coder');
+  assert.equal(positiveOutputPayload.max_tokens, 16000);
+  console.log('PASS maxOutputTokens 为正数时会向 openai-chat 下发 max_tokens');
 }
 
 function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
@@ -921,12 +1366,18 @@ async function main(): Promise<void> {
   const restore = installVscodeMock();
   try {
     const { ConfigStore } = require('../config/configStore') as ConfigStoreModule;
+    const baseProviderModule = require('../providers/baseProvider') as BaseProviderModule;
+    const genericProviderModule = require('../providers/genericProvider') as GenericProviderModule;
     const tokenUsageModule = require('../providers/tokenUsage') as TokenUsageModule;
     const protocolsModule = require('../providers/genericProviderProtocols') as ProtocolsModule;
     for (const testCase of testCases) {
       await runTestCase(ConfigStore, testCase);
     }
     await runConfigNormalizationTests(ConfigStore);
+    runTokenWindowResolutionTests(baseProviderModule);
+    runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
+    runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
+    await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule);
     runProtocolStreamTests(protocolsModule);
     runTokenUsageNormalizationTests(tokenUsageModule);
   } finally {

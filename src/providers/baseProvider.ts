@@ -1,12 +1,14 @@
 import * as vscode from 'vscode';
+import {
+  DEFAULT_CONFIGURED_MODELS,
+  DEFAULT_CONTEXT_WINDOW_SIZE,
+  DEFAULT_RESERVED_OUTPUT_TOKENS,
+  DEFAULT_TOKEN_SIDE_LIMIT,
+  MODEL_VERSION_LABEL
+} from '../constants';
 import { logger } from '../logging/outputChannelLogger';
 
-export const MODEL_VERSION_LABEL = 'Coding Plans for Copilot';
-export const DEFAULT_CONFIGURED_MODELS: readonly string[] = [];
-
-const DEFAULT_MODEL_CONTEXT_SIZE = 200000;
-const DEFAULT_MODEL_CONTEXT_WINDOW_SIZE = 400000;
-const DEFAULT_MODEL_RESERVED_OUTPUT_TOKENS = 8000;
+export { MODEL_VERSION_LABEL, DEFAULT_CONFIGURED_MODELS };
 
 export interface ModelCapabilities {
   toolCalling?: boolean | number;
@@ -19,18 +21,17 @@ export interface AIModelConfig {
   family: string;
   name: string;
   apiStyle?: string;
-  countTokensMode?: 'exact' | 'estimated' | 'server-estimate';
   version?: string;
   /**
    * Total context window size in tokens.
    */
   maxTokens: number;
   /**
-   * Maximum input tokens.
+   * @deprecated Prefer the model total context window instead of per-direction limits when configuring models.
    */
   maxInputTokens?: number;
   /**
-   * Maximum output tokens.
+   * @deprecated Prefer the model total context window instead of per-direction limits when configuring models.
    */
   maxOutputTokens?: number;
   capabilities?: ModelCapabilities;
@@ -124,8 +125,8 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   public readonly family: string;
   public readonly name: string;
   public readonly apiStyle?: string;
-  public readonly countTokensMode: 'exact' | 'estimated' | 'server-estimate';
   public readonly version: string;
+  public readonly maxTokens: number;
   public readonly maxInputTokens: number;
   public readonly maxOutputTokens: number;
   public readonly capabilities: vscode.LanguageModelChatCapabilities;
@@ -140,10 +141,10 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
     this.family = modelInfo.family;
     this.name = modelInfo.name;
     this.apiStyle = typeof modelInfo.apiStyle === 'string' ? modelInfo.apiStyle : undefined;
-    this.countTokensMode = modelInfo.countTokensMode ?? 'server-estimate';
     this.version = modelInfo.version || MODEL_VERSION_LABEL;
-    this.maxInputTokens = Math.max(1, Math.floor(modelInfo.maxInputTokens ?? DEFAULT_MODEL_CONTEXT_SIZE));
-    this.maxOutputTokens = Math.max(1, Math.floor(modelInfo.maxOutputTokens ?? DEFAULT_MODEL_CONTEXT_SIZE));
+    this.maxTokens = Math.max(1, Math.floor(modelInfo.maxTokens));
+    this.maxInputTokens = Math.max(1, Math.floor(modelInfo.maxInputTokens ?? DEFAULT_TOKEN_SIDE_LIMIT));
+    this.maxOutputTokens = Math.max(1, Math.floor(modelInfo.maxOutputTokens ?? DEFAULT_TOKEN_SIDE_LIMIT));
     this.capabilities = modelInfo.capabilities ?? {
       toolCalling: true,
       imageInput: true
@@ -161,7 +162,7 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
     _text: string | vscode.LanguageModelChatMessage,
     _token?: vscode.CancellationToken
   ): Promise<number> {
-    // Token usage is sourced from upstream API responses. Pre-request counting is not available locally.
+    // Local token counting is intentionally disabled. Usage is sourced only from upstream API responses.
     return Promise.resolve(0);
   }
 }
@@ -440,14 +441,21 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     explicitMaxOutputTokens: number | undefined
   ): Pick<ResolvedModelRuntimeSettings, 'maxTokens' | 'maxInputTokens' | 'maxOutputTokens'> {
     const hasExplicitTotalContextWindow = totalContextWindow !== undefined;
-    const fallbackTotal = Math.max(2, Math.floor(totalContextWindow ?? DEFAULT_MODEL_CONTEXT_WINDOW_SIZE));
-    const defaultReservedOutputTokens = Math.max(1, Math.min(DEFAULT_MODEL_RESERVED_OUTPUT_TOKENS, fallbackTotal - 1));
-    const maxInputTokens = explicitMaxInputTokens === undefined ? undefined : Math.max(1, Math.floor(explicitMaxInputTokens));
-    const maxOutputTokens = explicitMaxOutputTokens === undefined ? undefined : Math.max(1, Math.floor(explicitMaxOutputTokens));
+    const fallbackTotal = Math.max(2, Math.floor(totalContextWindow ?? DEFAULT_CONTEXT_WINDOW_SIZE));
+    const defaultReservedOutputTokens = Math.max(1, Math.min(DEFAULT_RESERVED_OUTPUT_TOKENS, fallbackTotal - 1));
+    const normalizeTokenValue = (value: number | undefined): number | undefined => {
+      if (value === undefined) {
+        return undefined;
+      }
+      const normalized = Math.max(1, Math.floor(value));
+      return hasExplicitTotalContextWindow ? Math.min(normalized, fallbackTotal) : normalized;
+    };
+    const maxInputTokens = normalizeTokenValue(explicitMaxInputTokens);
+    const maxOutputTokens = normalizeTokenValue(explicitMaxOutputTokens);
 
     if (maxInputTokens !== undefined && maxOutputTokens !== undefined) {
       return {
-        maxTokens: Math.max(fallbackTotal, maxInputTokens + maxOutputTokens),
+        maxTokens: hasExplicitTotalContextWindow ? fallbackTotal : Math.max(fallbackTotal, maxInputTokens + maxOutputTokens),
         maxInputTokens,
         maxOutputTokens
       };
@@ -467,7 +475,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     if (maxOutputTokens !== undefined) {
       const derivedMaxInputTokens = hasExplicitTotalContextWindow
         ? Math.max(1, fallbackTotal - maxOutputTokens)
-        : Math.max(1, DEFAULT_MODEL_CONTEXT_WINDOW_SIZE - maxOutputTokens);
+        : Math.max(1, DEFAULT_CONTEXT_WINDOW_SIZE - maxOutputTokens);
       return {
         maxTokens: Math.max(derivedMaxInputTokens + maxOutputTokens, hasExplicitTotalContextWindow ? fallbackTotal : 0),
         maxInputTokens: derivedMaxInputTokens,

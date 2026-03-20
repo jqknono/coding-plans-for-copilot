@@ -23,5 +23,6 @@
   "configuration.coding-plans.commitMessage.modelVendor.description": "Preferred vendor name for commit message generation (e.g. Zhipu). Leave empty to always prompt.",
   "configuration.coding-plans.commitMessage.modelId.description": "Preferred model name for commit message generation (e.g. glm-4-flash). Used together with modelVendor.",
   "configuration.coding-plans.commitMessage.options.description": "Advanced commit-message options as a JSON object (prompt, maxDiffLines, pipelineMode, summary* thresholds, max bullet count, subject length, validation switches, llmMaxPromptLength budget).",
-  "configuration.coding-plans.logLevel.description": "Controls the minimum log level written to the Coding Plans output channel."
+  "configuration.coding-plans.logLevel.description": "Controls the minimum log level written to the Coding Plans output channel.",
+  "configuration.coding-plans.advanced.description": "Advanced settings as a JSON object (defaultReservedOutput)."
 }

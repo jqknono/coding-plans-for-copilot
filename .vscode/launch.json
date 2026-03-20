@@ -9,6 +9,7 @@
         "NODE_OPTIONS": "--enable-source-maps"
       },
       "args": [
+        "${workspaceFolder}/temp",
         "--extensionDevelopmentPath=${workspaceFolder}"
       ],
       "outFiles": [

@@ -54,9 +54,10 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
 - `System Instructions`: token usage from system-style instructions, such as the system prompt, mode guidance, policy hints, or extra injected instructions. This is part of the prompt token total.
 - `Tool Definitions`: token usage from the tool/function schemas sent to the model, including tool names, descriptions, and JSON schema parameters. This is also part of the prompt token total.
 - `Reserved Output`: output token budget reserved for the model response. This is not already-generated response text; it is headroom reserved to avoid output-limit overflow.
-- `Context Window 4.0K / 400K tokens`: the current chat session has actually used about 4.0K tokens out of roughly 400K total tokens available for the selected model. The numerator is treated as total used context and is aligned to upstream `total_tokens` when available; the denominator comes from `maxInputTokens + maxOutputTokens`.
+- `Context Window 4.0K / 400K tokens`: the current chat session has actually used about 4.0K tokens out of roughly 400K total tokens available for the selected model. The numerator is treated as total used context and is aligned to upstream `total_tokens` when available; the denominator prefers the model's `contextSize` when provided, and otherwise falls back to the normalized token window.
 - When you hover the context window indicator, VS Code shows the exact token count and a category breakdown. When the context window gets full, VS Code might automatically compact conversation history.
 - This extension now relies on the built-in Copilot Chat context viewer instead of providing a separate Agent path or custom usage breakdown.
+- This extension no longer estimates prompt tokens or performs local token counting. If the upstream API does not return usage, the extension will not fabricate an approximate usage value.
 
 ### Configuration Entry
 
@@ -86,8 +87,7 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
             "tools": true,
             "vision": false
           },
-          "maxInputTokens": 64000,
-          "maxOutputTokens": 64000
+          "contextSize": 128000
         }
       ]
     }
@@ -121,8 +121,7 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
             "tools": true,
             "vision": false
           },
-          "maxInputTokens": 100000,
-          "maxOutputTokens": 100000
+          "contextSize": 200000
         },
         {
           "name": "deepseek-reasoner",
@@ -130,8 +129,7 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
             "tools": true,
             "vision": false
           },
-          "maxInputTokens": 100000,
-          "maxOutputTokens": 100000
+          "contextSize": 200000
         }
       ]
     }
@@ -158,8 +156,7 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
             "tools": true,
             "vision": false
           },
-          "maxInputTokens": 200000,
-          "maxOutputTokens": 200000
+          "contextSize": 400000
         }
       ]
     }
@@ -187,11 +184,12 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
 | `coding-plans.vendors[].models[].topP` | `number` | Inherit vendor/`1.0` | Per-model top-p override with higher priority than `defaultTopP`. |
 | `coding-plans.vendors[].models[].capabilities.tools` | `boolean` | `true` | Whether to enable tool calling capability; runtime backfills legacy configs when missing. |
 | `coding-plans.vendors[].models[].capabilities.vision` | `boolean` | `defaultVision` | Whether to enable vision input capability; legacy configs are backfilled from vendor `defaultVision` at runtime. |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | `396000` | Maximum input token limit for the model; when omitted, a small response reserve is kept. |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `8000` | Maximum output token limit for the model; when omitted, a conservative reserve is used. |
+| `coding-plans.vendors[].models[].contextSize` | `number` | Empty | Preferred total context window for the model. Use this field to describe model context; language model context-size display uses it directly when provided. |
+| `coding-plans.vendors[].models[].maxInputTokens` | `number` | `396000` | Deprecated. Legacy maximum input token override; prefer `contextSize`. When `contextSize` is also set and this value exceeds it, it is capped to `contextSize`. Set it to `0` to treat it as unset. |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | Deprecated. Legacy maximum output token override; prefer `contextSize`. When `contextSize` is also set and this value exceeds it, it is capped to `contextSize`. It defaults to `0`, which treats it as unset and suppresses sending `max_tokens` / `max_output_tokens` upstream. |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show the "Generate Commit Message" command. |
 
-Model `capabilities` is now required. For backward compatibility, the extension backfills `tools=true` and `vision=defaultVision` at runtime when legacy configs omit them. Vendor-level `defaultApiStyle` can also be overridden per model with `apiStyle`. Sampling inheritance is fixed as: `models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > built-in defaults `0.2/1.0`.
+Model `capabilities` is now required. For backward compatibility, the extension backfills `tools=true` and `vision=defaultVision` at runtime when legacy configs omit them. Vendor-level `defaultApiStyle` can also be overridden per model with `apiStyle`. Sampling inheritance is fixed as: `models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > built-in defaults `0.2/1.0`. Prefer `contextSize` as the single source of truth for model context; `maxInputTokens` / `maxOutputTokens` are deprecated and retained only for legacy compatibility or specialized overrides. When a model provides both `contextSize` and `maxInputTokens` / `maxOutputTokens`, the total context window prefers `contextSize`, and the input/output limits are only capped when they exceed it. `maxInputTokens: 0` is treated as unset; `maxOutputTokens: 0` is treated as unset and also suppresses sending `max_tokens` / `max_output_tokens` upstream.
 
 | `coding-plans.commitMessage.language` | `string` | `en` | Commit message language, supports `en` / `zh-cn`. |
 | `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | Whether to reference the style of up to the last 7 commits (use all if fewer). |

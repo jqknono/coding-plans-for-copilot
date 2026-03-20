@@ -1,14 +1,8 @@
 import * as vscode from 'vscode';
+import { LOG_LEVEL_PRIORITY } from '../constants';
 
 type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
 type ConfiguredLogLevel = 'debug' | 'info' | 'warn' | 'error';
-
-const LOG_LEVEL_PRIORITY: Record<LogLevel, number> = {
-  DEBUG: 10,
-  INFO: 20,
-  WARN: 30,
-  ERROR: 40
-};
 
 class OutputChannelLogger implements vscode.Disposable {
   private channel: vscode.OutputChannel | undefined;

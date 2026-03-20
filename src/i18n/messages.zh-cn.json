@@ -31,6 +31,7 @@
   "invalidRequest": "请求参数错误: {0}",
   "unknownError": "未知错误",
   "requestFailed": "请求失败: {0}",
+  "emptyModelResponse": "上游模型返回了空响应。",
   "retryWithV1Prompt": "{0} 返回了 404。当前 baseUrl 似乎缺少 /v1，是否改为 {1} 并立即重试？",
   "retryWithV1Action": "添加 /v1 并重试",
   "setupModelName": "配置 API Key",

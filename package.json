@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.6.2",
+    "version": "0.6.3",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",
@@ -211,6 +211,21 @@
                     "description": "%configuration.coding-plans.logLevel.description%",
                     "order": 6
                 },
+                "coding-plans.advanced": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "defaultReservedOutput": {
+                            "type": "number",
+                            "minimum": 0
+                        }
+                    },
+                    "default": {
+                        "defaultReservedOutput": 0
+                    },
+                    "description": "%configuration.coding-plans.advanced.description%",
+                    "order": 100
+                },
                 "coding-plans.vendors": {
                     "type": "array",
                     "items": {
@@ -294,13 +309,20 @@
                                                 "vision"
                                             ]
                                         },
+                                        "contextSize": {
+                                            "type": "number",
+                                            "description": "Preferred total context window size for the model. Language model context display uses this value directly when provided."
+                                        },
                                         "maxInputTokens": {
                                             "type": "number",
-                                            "description": "Maximum input tokens."
+                                            "description": "Deprecated: legacy maximum input tokens override. Prefer contextSize for model context. When contextSize is provided and this value exceeds it, it will be capped to contextSize. Set to 0 to treat it as unset.",
+                                            "deprecationMessage": "Deprecated: prefer contextSize to describe model context. Keep maxInputTokens only for legacy per-direction overrides."
                                         },
                                         "maxOutputTokens": {
                                             "type": "number",
-                                            "description": "Maximum output tokens."
+                                            "default": 0,
+                                            "description": "Deprecated: legacy maximum output tokens override. Prefer contextSize for model context. When contextSize is provided and this value exceeds it, it will be capped to contextSize. Defaults to 0, which treats it as unset and suppresses sending max token output limits upstream.",
+                                            "deprecationMessage": "Deprecated: prefer contextSize to describe model context. Keep maxOutputTokens only when you need a legacy output-cap override."
                                         },
                                         "apiStyle": {
                                             "type": "string",
@@ -338,8 +360,7 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                    "maxInputTokens": 64000,
-                                    "maxOutputTokens": 64000
+                                    "contextSize": 128000
                                 },
                                 {
                                     "name": "glm-5",
@@ -347,8 +368,7 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                    "maxInputTokens": 64000,
-                                    "maxOutputTokens": 64000
+                                    "contextSize": 128000
                                 }
                             ],
                             "defaultApiStyle": "openai-chat"
@@ -364,8 +384,7 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                    "maxInputTokens": 64000,
-                                    "maxOutputTokens": 64000
+                                    "contextSize": 128000
                                 },
                                 {
                                     "name": "glm-5",
@@ -374,8 +393,7 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                    "maxInputTokens": 64000,
-                                    "maxOutputTokens": 64000
+                                    "contextSize": 128000
                                 }
                             ],
                             "defaultApiStyle": "openai-chat"
@@ -433,8 +451,7 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                    "maxInputTokens": 65500,
-                                    "maxOutputTokens": 65500
+                                    "contextSize": 131000
                                 },
                                 {
                                     "name": "openai/gpt-oss-120b:free",
@@ -443,8 +460,7 @@
                                         "tools": true,
                                         "vision": false
                                     },
-                                    "maxInputTokens": 65500,
-                                    "maxOutputTokens": 65500
+                                    "contextSize": 131000
                                 }
                             ],
                             "defaultApiStyle": "openai-chat"

@@ -1,4 +1,13 @@
 import * as vscode from 'vscode';
+import {
+  ADVANCED_OPTIONS_SETTING_KEY,
+  DEFAULT_ADVANCED_RESERVED_OUTPUT,
+  DEFAULT_MODEL_CAPABILITIES_TOOLS,
+  DEFAULT_MODEL_CAPABILITIES_VISION,
+  DEFAULT_CONTEXT_WINDOW_SIZE,
+  DEFAULT_RESERVED_OUTPUT_TOKENS,
+  VENDOR_API_KEY_PREFIX
+} from '../constants';
 
 export type VendorApiStyle = 'openai-chat' | 'openai-responses' | 'anthropic';
 
@@ -13,11 +22,15 @@ export interface VendorModelConfig {
     vision?: boolean;
   };
   /**
-   * Maximum input tokens.
+   * Total context window size in tokens.
+   */
+  contextSize?: number;
+  /**
+   * @deprecated Prefer contextSize for total model context. Keep this only for legacy per-direction overrides.
    */
   maxInputTokens?: number;
   /**
-   * Maximum output tokens.
+   * @deprecated Prefer contextSize for total model context. Keep this only for legacy output-cap overrides.
    */
   maxOutputTokens?: number;
 }
@@ -33,12 +46,9 @@ export interface VendorConfig {
   models: VendorModelConfig[];
 }
 
-const VENDOR_API_KEY_PREFIX = 'coding-plans.vendor.apiKey.';
-const DEFAULT_MODEL_MAX_INPUT_TOKENS = 200000;
-const DEFAULT_MODEL_MAX_OUTPUT_TOKENS = 200000;
-const DEFAULT_MODEL_CONTEXT_WINDOW_TOKENS = DEFAULT_MODEL_MAX_INPUT_TOKENS + DEFAULT_MODEL_MAX_OUTPUT_TOKENS;
-const DEFAULT_MODEL_CAPABILITIES_TOOLS = true;
-const DEFAULT_MODEL_CAPABILITIES_VISION = false;
+export interface AdvancedOptions {
+  defaultReservedOutput: number;
+}
 
 export class ConfigStore implements vscode.Disposable {
   private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
@@ -53,6 +63,17 @@ export class ConfigStore implements vscode.Disposable {
         }
       })
     );
+  }
+
+  getAdvancedOptions(): AdvancedOptions {
+    const config = vscode.workspace.getConfiguration('coding-plans');
+    const raw = config.get<Record<string, unknown> | undefined>(ADVANCED_OPTIONS_SETTING_KEY, undefined);
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+      return { defaultReservedOutput: DEFAULT_ADVANCED_RESERVED_OUTPUT };
+    }
+    return {
+      defaultReservedOutput: this.readNonNegativeInteger(raw.defaultReservedOutput) ?? DEFAULT_ADVANCED_RESERVED_OUTPUT
+    };
   }
 
   getVendors(): VendorConfig[] {
@@ -385,13 +406,17 @@ export class ConfigStore implements vscode.Disposable {
         ? obj.description.trim()
         : undefined;
     const legacyContextWindow = this.readPositiveNumber(obj.contextSize);
-    const explicitMaxInputTokens = this.readPositiveNumber(obj.maxInputTokens);
-    const explicitMaxOutputTokens = this.readPositiveNumber(obj.maxOutputTokens);
-    const { maxInputTokens, maxOutputTokens } = this.resolveTokenWindow(
-      legacyContextWindow,
-      explicitMaxInputTokens,
-      explicitMaxOutputTokens
-    );
+    const rawMaxInputTokens = this.readNonNegativeInteger(obj.maxInputTokens);
+    const rawMaxOutputTokens = this.readNonNegativeInteger(obj.maxOutputTokens);
+    const explicitMaxInputTokens = rawMaxInputTokens !== undefined && rawMaxInputTokens > 0 ? rawMaxInputTokens : undefined;
+    const explicitMaxOutputTokens = rawMaxOutputTokens !== undefined && rawMaxOutputTokens > 0 ? rawMaxOutputTokens : undefined;
+    const resolvedTokenWindow = explicitMaxInputTokens !== undefined || explicitMaxOutputTokens !== undefined
+      ? this.resolveTokenWindow(
+          legacyContextWindow,
+          explicitMaxInputTokens,
+          explicitMaxOutputTokens
+        )
+      : { maxInputTokens: undefined, maxOutputTokens: undefined };
     const apiStyle = this.normalizeApiStyle(obj.apiStyle, defaultApiStyle);
     const temperature = this.readSamplingNumber(obj.temperature, 0, 2);
     const topP = this.readSamplingNumber(obj.topP, 0, 1);
@@ -411,8 +436,9 @@ export class ConfigStore implements vscode.Disposable {
       temperature,
       topP,
       capabilities,
-      maxInputTokens,
-      maxOutputTokens
+      contextSize: legacyContextWindow === undefined ? undefined : Math.max(2, Math.floor(legacyContextWindow)),
+      maxInputTokens: rawMaxInputTokens === 0 ? 0 : resolvedTokenWindow.maxInputTokens,
+      maxOutputTokens: rawMaxOutputTokens === 0 ? 0 : resolvedTokenWindow.maxOutputTokens
     }, defaultVision, defaultApiStyle);
   }
 
@@ -421,16 +447,15 @@ export class ConfigStore implements vscode.Disposable {
     defaultVision = DEFAULT_MODEL_CAPABILITIES_VISION,
     defaultApiStyle: VendorApiStyle = 'openai-chat'
   ): VendorModelConfig {
-    const maxInputTokens = model.maxInputTokens ?? DEFAULT_MODEL_MAX_INPUT_TOKENS;
-    const maxOutputTokens = model.maxOutputTokens ?? DEFAULT_MODEL_MAX_OUTPUT_TOKENS;
     return {
       name: model.name,
       description: model.description,
       apiStyle: this.normalizeApiStyle(model.apiStyle, defaultApiStyle),
       temperature: model.temperature,
       topP: model.topP,
-      maxInputTokens,
-      maxOutputTokens,
+      contextSize: model.contextSize,
+      maxInputTokens: model.maxInputTokens,
+      maxOutputTokens: model.maxOutputTokens ?? 0,
       capabilities: {
         tools: model.capabilities?.tools ?? DEFAULT_MODEL_CAPABILITIES_TOOLS,
         vision: model.capabilities?.vision ?? defaultVision
@@ -454,10 +479,17 @@ export class ConfigStore implements vscode.Disposable {
     explicitMaxOutputTokens: number | undefined
   ): { maxInputTokens: number; maxOutputTokens: number } {
     const hasExplicitTotalContextWindow = legacyContextWindow !== undefined;
-    const fallbackTotal = Math.max(2, Math.floor(legacyContextWindow ?? DEFAULT_MODEL_CONTEXT_WINDOW_TOKENS));
-    const defaultReservedOutputTokens = Math.max(1, Math.min(DEFAULT_MODEL_MAX_OUTPUT_TOKENS, fallbackTotal - 1));
-    const maxInputTokens = explicitMaxInputTokens === undefined ? undefined : Math.max(1, Math.floor(explicitMaxInputTokens));
-    const maxOutputTokens = explicitMaxOutputTokens === undefined ? undefined : Math.max(1, Math.floor(explicitMaxOutputTokens));
+    const fallbackTotal = Math.max(2, Math.floor(legacyContextWindow ?? DEFAULT_CONTEXT_WINDOW_SIZE));
+    const defaultReservedOutputTokens = Math.max(1, Math.min(DEFAULT_RESERVED_OUTPUT_TOKENS, fallbackTotal - 1));
+    const normalizeTokenValue = (value: number | undefined): number | undefined => {
+      if (value === undefined) {
+        return undefined;
+      }
+      const normalized = Math.max(1, Math.floor(value));
+      return hasExplicitTotalContextWindow ? Math.min(normalized, fallbackTotal) : normalized;
+    };
+    const maxInputTokens = normalizeTokenValue(explicitMaxInputTokens);
+    const maxOutputTokens = normalizeTokenValue(explicitMaxOutputTokens);
 
     if (maxInputTokens !== undefined && maxOutputTokens !== undefined) {
       return { maxInputTokens, maxOutputTokens };
@@ -476,7 +508,7 @@ export class ConfigStore implements vscode.Disposable {
       return {
         maxInputTokens: hasExplicitTotalContextWindow
           ? Math.max(1, fallbackTotal - maxOutputTokens)
-          : Math.max(1, DEFAULT_MODEL_CONTEXT_WINDOW_TOKENS - maxOutputTokens),
+          : Math.max(1, DEFAULT_CONTEXT_WINDOW_SIZE - maxOutputTokens),
         maxOutputTokens
       };
     }
@@ -500,6 +532,19 @@ export class ConfigStore implements vscode.Disposable {
       return vscode.ConfigurationTarget.Global;
     }
     return vscode.ConfigurationTarget.Global;
+  }
+
+  private readNonNegativeInteger(value: unknown): number | undefined {
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+      return Math.floor(value);
+    }
+    if (typeof value === 'string') {
+      const parsed = Number(value.trim());
+      if (Number.isFinite(parsed) && parsed >= 0) {
+        return Math.floor(parsed);
+      }
+    }
+    return undefined;
   }
 
   private readPositiveNumber(value: unknown): number | undefined {

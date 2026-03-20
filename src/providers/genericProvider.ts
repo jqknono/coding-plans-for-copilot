@@ -9,6 +9,14 @@ import {
   normalizeHttpBaseUrl
 } from './baseProvider';
 import { ConfigStore, VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
+import {
+  DEFAULT_CONTEXT_WINDOW_SIZE,
+  DEFAULT_MODEL_TOOLS,
+  DEFAULT_REQUEST_MAX_TOKENS,
+  DEFAULT_TEMPERATURE,
+  DEFAULT_TOP_P,
+  RESPONSE_TRACE_ID_FIELD
+} from '../constants';
 import { getMessage, isChinese } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
 import {
@@ -98,13 +106,6 @@ interface StreamingCompletionResult {
   usage?: Record<string, unknown>;
   responseId?: string;
 }
-
-const DEFAULT_CONTEXT_WINDOW_SIZE = 400000;
-const DEFAULT_MAX_TOKENS = 200000;
-const DEFAULT_MODEL_TOOLS = true;
-const DEFAULT_TEMPERATURE = 0.2;
-const DEFAULT_TOP_P = 1.0;
-const RESPONSE_TRACE_ID_FIELD = '__codingPlansTraceId';
 
 class AsyncIterableQueue<T> implements AsyncIterable<T> {
   private readonly items: T[] = [];
@@ -460,6 +461,11 @@ export class GenericAIProvider extends BaseAIProvider {
     };
   }
 
+  private shouldSendOutputTokenLimit(vendor: VendorConfig, modelName: string): boolean {
+    const model = this.findConfiguredModel(vendor, modelName);
+    return model?.maxOutputTokens !== 0;
+  }
+
   protected createModel(modelInfo: AIModelConfig): BaseLanguageModel {
     return new GenericLanguageModel(this, modelInfo);
   }
@@ -469,12 +475,19 @@ export class GenericAIProvider extends BaseAIProvider {
     vendor: VendorConfig,
     compositeId: string
   ): AIModelConfig {
+    const explicitMaxInputTokens = model.maxInputTokens !== undefined && model.maxInputTokens > 0
+      ? model.maxInputTokens
+      : undefined;
+    const explicitMaxOutputTokens = model.maxOutputTokens !== undefined && model.maxOutputTokens > 0
+      ? model.maxOutputTokens
+      : undefined;
     const resolvedTokens = this.resolveTokenWindowLimits(
-      model.maxInputTokens !== undefined && model.maxOutputTokens !== undefined
-        ? model.maxInputTokens + model.maxOutputTokens
-        : DEFAULT_CONTEXT_WINDOW_SIZE,
-      model.maxInputTokens,
-      model.maxOutputTokens
+      model.contextSize
+        ?? (explicitMaxInputTokens !== undefined && explicitMaxOutputTokens !== undefined
+          ? explicitMaxInputTokens + explicitMaxOutputTokens
+          : DEFAULT_CONTEXT_WINDOW_SIZE),
+      explicitMaxInputTokens,
+      explicitMaxOutputTokens
     );
     const toolCalling = model.capabilities?.tools ?? DEFAULT_MODEL_TOOLS;
     const imageInput = model.capabilities?.vision ?? vendor.defaultVision;
@@ -490,7 +503,6 @@ export class GenericAIProvider extends BaseAIProvider {
       maxOutputTokens: resolvedTokens.maxOutputTokens,
       capabilities: { toolCalling, imageInput },
       apiStyle: model.apiStyle ?? vendor.defaultApiStyle,
-      countTokensMode: 'server-estimate',
       description: model.description || getMessage('genericDynamicModelDescription', vendor.name, model.name)
     };
   }
@@ -584,7 +596,6 @@ export class GenericAIProvider extends BaseAIProvider {
             imageInput: runtime.imageInput ?? vendor.defaultVision
           },
           apiStyle: vendor.defaultApiStyle,
-          countTokensMode: 'server-estimate',
           description: getMessage('genericDynamicModelDescription', vendor.name, modelId)
         });
       }
@@ -614,16 +625,22 @@ export class GenericAIProvider extends BaseAIProvider {
     const messages = this.convertMessages(request.messages);
     const supportsToolCalling = !!request.capabilities.toolCalling;
     const sampling = this.resolveSamplingOptions(vendor, modelName);
+    const tools = supportsToolCalling ? this.buildToolDefinitions(request.options) : undefined;
+    const toolChoice = supportsToolCalling ? this.buildToolChoice(request.options) : undefined;
+    const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName)
+      ? this.resolveRequestedOutputLimit(request)
+      : undefined;
+    const maxTokens = requestedOutputLimit;
 
     const payload: OpenAIChatRequest = {
       model: modelName,
       messages,
-      tools: supportsToolCalling ? this.buildToolDefinitions(request.options) : undefined,
-      tool_choice: supportsToolCalling ? this.buildToolChoice(request.options) : undefined,
+      tools,
+      tool_choice: toolChoice,
       stream: true,
       temperature: sampling.temperature,
       top_p: sampling.topP,
-      max_tokens: DEFAULT_MAX_TOKENS
+      ...(maxTokens === undefined ? {} : { max_tokens: maxTokens })
     };
 
     try {
@@ -748,6 +765,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const responseMessage = response.choices[0]?.message;
     const content = responseMessage?.content || '';
     const usageData = response.usage;
+    this.ensureNonEmptyCompletion('openai-chat', trace, vendor, modelName, content, responseMessage?.tool_calls);
     this.logUpstreamResponseSummary('openai-chat', vendor, modelName, summarizeOpenAIChatResponse(response));
     logger.debug('Parsed OpenAI chat response', {
       ...trace,
@@ -761,7 +779,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const normalizedUsage = normalizeTokenUsage(
       'openai-chat',
       usageData as Record<string, unknown> | undefined,
-      this.resolveOutputBuffer(request, maxTokens)
+      maxTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxTokens)
     );
     attachTokenUsage(result as unknown as Record<string, unknown>, normalizedUsage);
     this.logModelTokenUsage(request, vendor, modelName, normalizedUsage);
@@ -779,15 +797,23 @@ export class GenericAIProvider extends BaseAIProvider {
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
     const sampling = this.resolveSamplingOptions(vendor, modelName);
+    const tools = request.capabilities.toolCalling
+      ? buildOpenAIResponsesToolDefinitions(this.buildToolDefinitions(request.options))
+      : undefined;
+    const toolChoice = request.capabilities.toolCalling ? this.buildToolChoice(request.options) : undefined;
+    const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName)
+      ? this.resolveRequestedOutputLimit(request)
+      : undefined;
+    const maxOutputTokens = requestedOutputLimit;
     const payload: OpenAIResponsesRequest = {
       model: modelName,
       input: toOpenAIResponsesInput(providerMessages, () => this.generateToolCallId()),
-      tools: request.capabilities.toolCalling ? buildOpenAIResponsesToolDefinitions(this.buildToolDefinitions(request.options)) : undefined,
-      tool_choice: request.capabilities.toolCalling ? this.buildToolChoice(request.options) : undefined,
+      tools,
+      tool_choice: toolChoice,
       temperature: sampling.temperature,
       top_p: sampling.topP,
-      max_output_tokens: DEFAULT_MAX_TOKENS,
-      stream: true
+      stream: true,
+      ...(maxOutputTokens === undefined ? {} : { max_output_tokens: maxOutputTokens })
     };
 
     try {
@@ -911,6 +937,7 @@ export class GenericAIProvider extends BaseAIProvider {
   ): vscode.LanguageModelChatResponse {
     this.logUpstreamResponseSummary('openai-responses', vendor, modelName, summarizeOpenAIResponsesResponse(response));
     const parsed = parseOpenAIResponsesResponse(response, () => this.generateToolCallId());
+    this.ensureNonEmptyCompletion('openai-responses', trace, vendor, modelName, parsed.content, parsed.toolCalls);
     logger.debug('Parsed OpenAI responses payload', {
       ...trace,
       responseId: response.id,
@@ -934,7 +961,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const normalizedUsage = normalizeTokenUsage(
       'openai-responses',
       response.usage as Record<string, unknown> | undefined,
-      this.resolveOutputBuffer(request, maxOutputTokens)
+      maxOutputTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxOutputTokens)
     );
     attachTokenUsage(result as unknown as Record<string, unknown>, normalizedUsage);
     this.logModelTokenUsage(request, vendor, modelName, normalizedUsage);
@@ -954,16 +981,20 @@ export class GenericAIProvider extends BaseAIProvider {
     const sampling = this.resolveSamplingOptions(vendor, modelName);
     const { system, messages } = toAnthropicMessages(providerMessages, () => this.generateToolCallId());
     const tools = request.capabilities.toolCalling ? buildAnthropicToolDefinitions(this.buildToolDefinitions(request.options)) : undefined;
+    const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName)
+      ? this.resolveRequestedOutputLimit(request)
+      : undefined;
+    const maxTokens = requestedOutputLimit;
     const payload: AnthropicChatRequest = {
       model: modelName,
-      max_tokens: DEFAULT_MAX_TOKENS,
       system: system || undefined,
       messages,
       tools,
       tool_choice: tools ? buildAnthropicToolChoice(request.options) : undefined,
       temperature: sampling.temperature,
       top_p: sampling.topP,
-      stream: true
+      stream: true,
+      ...(maxTokens === undefined ? {} : { max_tokens: maxTokens })
     };
 
     try {
@@ -1094,6 +1125,7 @@ export class GenericAIProvider extends BaseAIProvider {
       responseShape: this.summarizeRawResponseShape(response)
     });
     const parsed = parseAnthropicResponse(response, () => this.generateToolCallId());
+    this.ensureNonEmptyCompletion('anthropic', trace, vendor, modelName, parsed.content, parsed.toolCalls);
     logger.debug('Parsed Anthropic response', {
       ...trace,
       responseId: response.id,
@@ -1106,7 +1138,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const normalizedUsage = normalizeTokenUsage(
       'anthropic',
       response.usage as Record<string, unknown> | undefined,
-      this.resolveOutputBuffer(request, maxTokens)
+      maxTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxTokens)
     );
     attachTokenUsage(result as unknown as Record<string, unknown>, normalizedUsage);
     this.logModelTokenUsage(request, vendor, modelName, normalizedUsage);
@@ -1205,11 +1237,12 @@ export class GenericAIProvider extends BaseAIProvider {
     usage: NormalizedTokenUsage | undefined
   ): void {
     const model = this.getModel(request.modelId);
-    const totalContextWindow = model ? model.maxInputTokens + model.maxOutputTokens : undefined;
+    const totalContextWindow = model?.maxTokens;
     logger.debug('Language model token usage', {
       vendor: vendor.name,
       modelId: request.modelId,
       modelName,
+      maxTokens: model?.maxTokens,
       maxInputTokens: model?.maxInputTokens,
       maxOutputTokens: model?.maxOutputTokens,
       totalContextWindow,
@@ -1221,6 +1254,18 @@ export class GenericAIProvider extends BaseAIProvider {
         ? Number(((usage.totalTokens / totalContextWindow) * 100).toFixed(4))
         : undefined
     });
+  }
+
+  private resolveRequestedOutputLimit(request: GenericChatRequest): number {
+    const advanced = this.configStore.getAdvancedOptions();
+    if (advanced.defaultReservedOutput > 0) {
+      return advanced.defaultReservedOutput;
+    }
+    const model = this.getModel(request.modelId);
+    if (!model) {
+      return DEFAULT_REQUEST_MAX_TOKENS;
+    }
+    return Math.max(1, Math.floor(model.maxOutputTokens));
   }
 
   private resolveOutputBuffer(
@@ -1666,6 +1711,27 @@ export class GenericAIProvider extends BaseAIProvider {
     return result;
   }
 
+  private ensureNonEmptyCompletion(
+    protocol: VendorApiStyle,
+    trace: RequestTraceContext,
+    vendor: VendorConfig,
+    modelName: string,
+    content: string,
+    toolCalls: ChatToolCall[] | undefined
+  ): void {
+    if (content.trim().length > 0 || (toolCalls?.length ?? 0) > 0) {
+      return;
+    }
+
+    logger.warn('Language model returned empty completion', {
+      ...trace,
+      protocol,
+      vendor: vendor.name,
+      modelName
+    });
+    throw new vscode.LanguageModelError(getMessage('requestFailed', getMessage('emptyModelResponse')));
+  }
+
   private buildStreamingChatResponse(
     trace: RequestTraceContext,
     protocol: VendorApiStyle,
@@ -1683,6 +1749,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const completion = (async () => {
       try {
         const finalized = await execute(queue);
+        provider.ensureNonEmptyCompletion(protocol, trace, vendor, modelName, finalized.content, finalized.toolCalls);
         for (const part of provider.buildResponseParts('', finalized.toolCalls)) {
           queue.push(part);
         }
