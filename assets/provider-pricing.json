@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-22T08:12:49.234Z",
+  "generatedAt": "2026-03-20T03:53:11.204Z",
   "providers": [
     {
       "provider": "kimi-ai",
@@ -579,8 +579,9 @@
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/9b891afbfdb7b3eb35efaf9aa08d31fd.js",
-        "https://t.aliyun.com/abs/promotion/queryPrice"
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/f4028fb79e662a696a3ddbc0a1d82ce0.js",
+        "https://t.aliyun.com/abs/promotion/queryPrice",
+        "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
       "plans": [
         {
@@ -592,7 +593,10 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "百炼Coding Plan"
+            "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
+            "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
+            "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
+            "状态: Lite 基础套餐将停止接受新购订单。已购买用户的使用、续费及套餐升级权益保持不变"
           ]
         },
         {
@@ -604,7 +608,11 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "百炼Coding Plan"
+            "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
+            "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
+            "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
+            "支持的模型: 推荐模型： qwen3.5-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
+            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
           ]
         }
       ]

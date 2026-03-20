@@ -13,12 +13,12 @@ jobs:
       issues: write
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: "20"
+          node-version: "24"
           cache: npm
 
       - name: Install dependencies
@@ -37,7 +37,7 @@ jobs:
 
       - name: Create issue for provider pricing parsing failures
         if: steps.pricing_failures.outputs.has_failure == 'true'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           FAILURES_JSON: ${{ steps.pricing_failures.outputs.failures_json }}
         with:

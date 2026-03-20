@@ -818,65 +818,76 @@ async function parseZhipuCodingPlansWithPlaywright() {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);
     await page.goto(pageUrl, {
-      waitUntil: "domcontentloaded",
-      timeout: 8_000,
+      waitUntil: "commit",
+      timeout: 20_000,
     });
     await page.waitForFunction(
       () => {
         const text = String(document.body?.innerText || "");
-        return /即刻与\s*GLM\s*一起\s*Coding/.test(text) && /特惠订阅/.test(text);
+        return /即刻与\s*GLM\s*一起\s*Coding/.test(text) && /连续包[月季年]/.test(text) && /特惠订阅/.test(text);
       },
-      { timeout: 8_000 },
+      { timeout: 20_000 },
     );
     await page.evaluate(() => {
       const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
-      const monthlyTab = Array.from(document.querySelectorAll("*")).find((node) => normalize(node.textContent) === "连续包月");
-      if (monthlyTab) {
-        monthlyTab.click();
+      const monthlyTab =
+        Array.from(document.querySelectorAll(".switch-tab-item")).find((node) => /连续包月/.test(normalize(node.textContent)))
+        || Array.from(document.querySelectorAll("*")).find((node) => normalize(node.textContent) === "连续包月");
+      const clickable = monthlyTab?.closest?.(".switch-tab-item") || monthlyTab?.parentElement || monthlyTab;
+      if (clickable && typeof clickable.click === "function") {
+        clickable.click();
       }
     });
-    await page.waitForFunction(() => String(document.body?.innerText || "").includes("下个月度续费金额"), { timeout: 5_000 });
+    await page.waitForFunction(
+      () => {
+        const activeTabText = String(document.querySelector(".switch-tab-item.active")?.textContent || "");
+        const cards = Array.from(document.querySelectorAll(".claude-code-package-box .package-card"));
+        return /连续包月/.test(activeTabText) && cards.length >= 3;
+      },
+      { timeout: 10_000 },
+    );
 
-    const extractedPlans = await page.evaluate(() => {
+    const extracted = await page.evaluate(() => {
       const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
       const cleanup = (value) => normalize(value).replace(/^[^A-Za-z0-9\u4e00-\u9fa5¥￥]+/, "");
-      const seen = new Set();
-      const cards = [];
-      const subscribeButtons = Array.from(document.querySelectorAll("button")).filter((node) => /特惠订阅/.test(normalize(node.textContent)));
-
-      for (const button of subscribeButtons) {
-        const card = button.closest(".package-card") || button.parentElement?.parentElement || button.parentElement;
-        if (!card) {
-          continue;
-        }
-        const texts = Array.from(card.querySelectorAll("*"))
-          .map((node) => cleanup(node.textContent))
-          .filter(Boolean);
-        const tier = texts.find((text) => /^(Lite|Pro|Max)$/.test(text));
-        if (!tier || seen.has(tier)) {
-          continue;
-        }
-        seen.add(tier);
-
-        const currentPriceText = texts.find((text) => /^￥\s*[0-9]+(?:\.[0-9]+)?\s*\/\s*月$/.test(text)) || null;
-        const renewalNote = texts.find((text) => /^下个?月度?续费金额[:：]/.test(text)) || null;
-        const featureTitle = texts.find((text) => /Claude Pro 用量额度|Lite 用量额度|Pro 全量权益/.test(text)) || null;
-        const serviceDetails = Array.from(card.querySelectorAll("li"))
+      const cards = Array.from(document.querySelectorAll(".claude-code-package-box .package-card")).map((card) => {
+        const tier = cleanup(card.querySelector(".package-card-title .font-prompt")?.textContent || "");
+        const currentPriceText = cleanup(card.querySelector(".package-card-sale-price")?.textContent || "");
+        const originalPriceText = cleanup(card.querySelector(".package-card-original-price")?.textContent || "");
+        const notes = cleanup(card.querySelector(".package-card-next-price-box")?.textContent || "");
+        const featureTitle = cleanup(card.querySelector(".package-card-attr-title span")?.textContent || "");
+        const serviceDetails = Array.from(card.querySelectorAll(".package-card-attr-item"))
           .map((node) => cleanup(node.textContent))
           .filter(Boolean);
 
-        cards.push({
+        return {
           tier,
           currentPriceText,
-          notes: renewalNote,
+          originalPriceText,
+          notes,
           serviceDetails: featureTitle ? [featureTitle, ...serviceDetails] : serviceDetails,
-        });
-      }
+        };
+      });
 
-      return cards;
+      return {
+        activeTabText: normalize(document.querySelector(".switch-tab-item.active")?.textContent || ""),
+        cards,
+      };
     });
 
-    if (!Array.isArray(extractedPlans) || extractedPlans.length === 0) {
+    if (!/连续包月/.test(extracted?.activeTabText || "")) {
+      throw new Error(`Unable to switch Zhipu pricing page to monthly tab (active: ${extracted?.activeTabText || "unknown"})`);
+    }
+
+    const extractedPlans = Array.isArray(extracted?.cards)
+      ? extracted.cards.filter(
+          (plan) =>
+            /^(Lite|Pro|Max)$/.test(plan?.tier || "")
+            && /^￥\s*[0-9]+(?:\.[0-9]+)?\s*\/\s*月$/.test(plan?.currentPriceText || ""),
+        )
+      : [];
+
+    if (extractedPlans.length === 0) {
       throw new Error("Unable to parse Zhipu coding pricing cards via Playwright");
     }
 
@@ -889,6 +900,7 @@ async function parseZhipuCodingPlansWithPlaywright() {
           asPlan({
             name: `GLM Coding ${plan.tier}`,
             currentPriceText: plan.currentPriceText,
+            originalPriceText: plan.originalPriceText,
             notes: plan.notes,
             serviceDetails: plan.serviceDetails,
           }),
@@ -1216,6 +1228,13 @@ async function parseZhipuCodingPlansFromClaudeCodeBundle() {
 }
 
 async function parseZhipuCodingPlans() {
+  let playwrightError = null;
+  try {
+    return await parseZhipuCodingPlansWithPlaywright();
+  } catch (error) {
+    playwrightError = error;
+  }
+
   let bundleError = null;
   try {
     return await parseZhipuCodingPlansFromClaudeCodeBundle();
@@ -1231,16 +1250,18 @@ async function parseZhipuCodingPlans() {
   }
 
   try {
-    return await parseZhipuCodingPlansWithPlaywright();
-  } catch (playwrightError) {
+    throw new Error("Unreachable");
+  } catch {
     const reasons = [];
+    if (playwrightError) {
+      reasons.push(`Playwright parse failed: ${playwrightError.message || playwrightError}`);
+    }
     if (bundleError) {
       reasons.push(`Pure JS parse failed: ${bundleError.message || bundleError}`);
     }
     if (legacyError) {
       reasons.push(`Legacy JS parse failed: ${legacyError.message || legacyError}`);
     }
-    reasons.push(`Playwright parse failed: ${playwrightError.message || playwrightError}`);
     throw new Error(reasons.join("; "));
   }
 }
@@ -2083,54 +2104,90 @@ async function parseInfiniCodingPlans() {
 }
 
 function parseAliyunServiceDetailsFromPageHtml(html) {
+  const featureMatches = [
+    {
+      label: "能力",
+      titlePattern: /支持<em>\s*更多模型\s*<\/em>|支持\s*更多模型/,
+      descPattern:
+        /支持千问系列模型[\s\S]*?Qwen3\.5-Plus[\s\S]*?更多模型持续接入中。/,
+    },
+    {
+      label: "工具",
+      titlePattern: /适配更多\s*AI\s*工具/,
+      descPattern:
+        /支持\s*Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。/,
+    },
+    {
+      label: "权益",
+      titlePattern: /价格更加优惠/,
+      descPattern: /更大容量，更快、更稳，专为 AI Coding 场景打造。/,
+    },
+  ];
+
+  const details = [];
+  for (const item of featureMatches) {
+    const titleMatch = html.match(item.titlePattern);
+    const descMatch = html.match(item.descPattern);
+    if (!titleMatch || !descMatch) {
+      continue;
+    }
+    const desc = normalizeText(stripTags(descMatch[0]));
+    if (!desc) {
+      continue;
+    }
+    details.push(`${item.label}: ${desc}`);
+  }
+
+  const normalized = normalizeServiceDetails(details);
   const detailsByTier = new Map();
-  const candidates = [];
-  const listRegex = /<ul class="[^"]*feature-list[^"]*">([\s\S]*?)<\/ul>/gi;
-  let listMatch;
-  while ((listMatch = listRegex.exec(html)) !== null) {
-    const listHtml = listMatch[1];
-    const features = [];
-    const featureRegex = /class="[^"]*feature-label[^"]*">([^<]+)<\/span>[\s\S]*?class="[^"]*feature-desc[^"]*">([^<]+)<\/span>/gi;
-    let featureMatch;
-    while ((featureMatch = featureRegex.exec(listHtml)) !== null) {
-      const label = normalizeText(featureMatch[1]);
-      const desc = normalizeText(featureMatch[2]);
-      if (!label || !desc) {
+  if (normalized) {
+    detailsByTier.set("Lite", normalized);
+    detailsByTier.set("Pro", normalized);
+  }
+  return detailsByTier;
+}
+
+function parseAliyunServiceDetailsFromDocsHtml(html) {
+  const detailsByTier = new Map();
+  const rows = extractRows(html);
+  const cleanupDocsValue = (value) =>
+    normalizeText(
+      String(value || "")
+        .replace(/\\+&nbsp;?/gi, " ")
+        .replace(/\\+/g, " ")
+        .replace(/\s+/g, " "),
+    );
+  const proColumn =
+    rows.find((row) => row.some((cell) => /Pro\s*高级套餐/i.test(cleanupDocsValue(cell || ""))))?.findIndex((cell) =>
+      /Pro\s*高级套餐/i.test(cleanupDocsValue(cell || "")),
+    ) ?? -1;
+
+  if (proColumn > 0) {
+    const proDetails = [];
+    for (const row of rows) {
+      const label = cleanupDocsValue(row?.[0] || "");
+      const value = cleanupDocsValue(row?.[proColumn] || "");
+      if (!label || !value || label === "价格") {
         continue;
       }
-      features.push(`${label}: ${desc}`);
+      proDetails.push(`${label}: ${value}`);
     }
-    if (features.length === 0) {
-      continue;
-    }
-    const prefix = html.slice(Math.max(0, listMatch.index - 1800), listMatch.index);
-    candidates.push({
-      features: normalizeServiceDetails(features),
-      hasOnlyTwoTenthsOff: /首月仅2折/.test(prefix),
-      hasSavePercent: /立省\d+%/.test(prefix),
-    });
-  }
-
-  for (const candidate of candidates) {
-    if (!candidate.features || candidate.features.length === 0) {
-      continue;
-    }
-    const featureText = candidate.features.join(" ");
-    if (/权益:|额度:|Lite\s*套餐|Lite\s*版/.test(featureText) || candidate.hasSavePercent) {
-      detailsByTier.set("Pro", candidate.features);
-      continue;
-    }
-    if (/能力:/.test(featureText) || /工具:/.test(featureText) || candidate.hasOnlyTwoTenthsOff) {
-      detailsByTier.set("Lite", candidate.features);
+    const normalizedProDetails = normalizeServiceDetails(proDetails);
+    if (normalizedProDetails) {
+      detailsByTier.set("Pro", normalizedProDetails);
     }
   }
 
-  const unassigned = candidates.map((item) => item.features).filter(Boolean);
-  if (!detailsByTier.get("Lite") && unassigned[0]) {
-    detailsByTier.set("Lite", unassigned[0]);
-  }
-  if (!detailsByTier.get("Pro") && unassigned[1]) {
-    detailsByTier.set("Pro", unassigned[1]);
+  const liteDiscontinuedMatch = html.match(
+    /Lite\s*基础套餐将停止接受新购订单[\s\S]*?已购买用户的使用、续费及套餐升级权益保持不变/,
+  );
+  if (liteDiscontinuedMatch) {
+    detailsByTier.set(
+      "Lite",
+      normalizeServiceDetails([
+        `状态: ${normalizeText(stripTags(liteDiscontinuedMatch[0]))}`,
+      ]),
+    );
   }
 
   return detailsByTier;
@@ -2138,8 +2195,21 @@ function parseAliyunServiceDetailsFromPageHtml(html) {
 
 async function parseAliyunCodingPlans() {
   const pageUrl = "https://www.aliyun.com/benefit/scene/codingplan";
+  const docsUrl = "https://help.aliyun.com/zh/model-studio/coding-plan";
   const html = await fetchText(pageUrl);
   const serviceDetailsByTier = parseAliyunServiceDetailsFromPageHtml(html);
+  try {
+    const docsHtml = await fetchText(docsUrl);
+    const docsDetailsByTier = parseAliyunServiceDetailsFromDocsHtml(docsHtml);
+    for (const [tier, details] of docsDetailsByTier.entries()) {
+      const merged = normalizeServiceDetails([...(serviceDetailsByTier.get(tier) || []), ...(details || [])]);
+      if (merged) {
+        serviceDetailsByTier.set(tier, merged);
+      }
+    }
+  } catch {
+    // Keep pricing fetch resilient when docs metadata is temporarily unavailable.
+  }
   const rawEntryUrl = html.match(/(?:https?:)?\/\/cloud-assets\.alicdn\.com\/lowcode\/entry\/prod\/[^"'\s]+\.js/i)?.[0];
   const entryUrl = rawEntryUrl
     ? absoluteUrl(rawEntryUrl.startsWith("//") ? `https:${rawEntryUrl}` : rawEntryUrl, pageUrl)
@@ -2275,7 +2345,7 @@ async function parseAliyunCodingPlans() {
 
   return {
     provider: PROVIDER_IDS.ALIYUN,
-    sourceUrls: unique([pageUrl, entryUrl, queryPriceUrl]),
+    sourceUrls: unique([pageUrl, entryUrl, queryPriceUrl, docsUrl]),
     fetchedAt: new Date().toISOString(),
     plans: dedupePlans(plans),
   };

@@ -1,0 +1,55 @@
+{
+    "coding-plans.commitMessage.useRecentCommitStyle": true,
+    "coding-plans.logLevel": "debug",
+    "coding-plans.vendors": [
+        {
+            "name": "cliproxyapi",
+            "baseUrl": "http://100.64.0.2:34046/v1",
+            "useModelsEndpoint": false,
+            "defaultVision": true,
+            "models": [
+                {
+                    "name": "nvidia/nemotron-3-nano-30b-a3b:free",
+                    "description": "cliproxyapi model: nvidia/nemotron-3-nano-30b-a3b:free",
+                    "apiStyle": "openai-chat",
+                    "contextSize": 131072,
+                    "capabilities": {
+                        "tools": true,
+                        "vision": false
+                    }
+                },
+                {
+                    "name": "nvidia/nemotron-3-super-120b-a12b:free",
+                    "description": "cliproxyapi model: nvidia/nemotron-3-super-120b-a12b:free",
+                    "apiStyle": "openai-chat",
+                    "contextSize": 131072,
+                    "capabilities": {
+                        "tools": true,
+                        "vision": false
+                    }
+                },
+                {
+                    "name": "qwen3-coder-flash",
+                    "description": "cliproxyapi model: qwen3-coder-flash",
+                    "apiStyle": "openai-chat",
+                    "contextSize": 131072,
+                    "chatTransport": "chat-participant",
+                    "capabilities": {
+                        "tools": true,
+                        "vision": false
+                    }
+                },
+                {
+                    "name": "z-ai/glm-4.5-air:free",
+                    "description": "cliproxyapi model: z-ai/glm-4.5-air:free",
+                    "apiStyle": "openai-responses",
+                    "contextSize": 131072,
+                    "capabilities": {
+                        "tools": true,
+                        "vision": false
+                    }
+                }
+            ]
+        }
+    ],
+}
