@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-20T08:17:31.171Z",
+  "generatedAt": "2026-03-21T02:55:45.335Z",
   "providers": [
     {
       "provider": "kimi-ai",
@@ -171,7 +171,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.203/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.206/index.js"
       ],
       "plans": [
         {
@@ -579,7 +579,7 @@
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3e7f515fbc2023519a2b5bd619bcd77a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/9b891afbfdb7b3eb35efaf9aa08d31fd.js",
         "https://t.aliyun.com/abs/promotion/queryPrice"
       ],
       "plans": [
