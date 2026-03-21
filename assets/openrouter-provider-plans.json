@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-03-20T08:17:48.279Z",
-  "generatedAtBeijing": "2026年3月20日 16:17:48",
-  "sourceGeneratedAt": "2026-03-20T08:17:31.171Z",
-  "sourceGeneratedAtBeijing": "2026年3月20日 16:17:31",
-  "sourceMetricsGeneratedAt": "2026-03-20T08:17:31.739Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月20日 16:17:31",
+  "generatedAt": "2026-03-21T08:12:01.919Z",
+  "generatedAtBeijing": "2026年3月21日 16:12:01",
+  "sourceGeneratedAt": "2026-03-21T08:11:44.185Z",
+  "sourceGeneratedAtBeijing": "2026年3月21日 16:11:44",
+  "sourceMetricsGeneratedAt": "2026-03-21T08:11:45.097Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月21日 16:11:45",
   "summary": {
-    "openrouterProviderCount": 74,
-    "metricsProviderCount": 31,
-    "resolvedMetricsProviderCount": 31,
+    "openrouterProviderCount": 75,
+    "metricsProviderCount": 33,
+    "resolvedMetricsProviderCount": 33,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 5,
     "heuristicProviderCount": 5,
     "providersWithPlans": 10,
-    "pendingCount": 21,
+    "pendingCount": 23,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -51,7 +51,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3e7f515fbc2023519a2b5bd619bcd77a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/9b891afbfdb7b3eb35efaf9aa08d31fd.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://www.alibabacloud.com"
       ],
@@ -529,7 +529,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.203/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.206/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -727,6 +727,15 @@
   ],
   "pending": [
     {
+      "slug": "akashml",
+      "openrouterName": "AkashML",
+      "providerId": null,
+      "officialWebsiteUrl": "https://akashml.com",
+      "pricingPageUrl": "https://akashml.com",
+      "reason": "官网价格页探测失败：https://akashml.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "ambient",
       "openrouterName": "Ambient",
       "providerId": null,
@@ -832,6 +841,15 @@
       "officialWebsiteUrl": "https://ionstream.ai",
       "pricingPageUrl": "https://ionstream.ai",
       "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "modelrun",
+      "openrouterName": "ModelRun",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.runmodelrun.com",
+      "pricingPageUrl": "https://www.runmodelrun.com",
+      "reason": "官网价格页探测失败：https://www.runmodelrun.com/pricing: HTTP 404",
       "blocked": false
     },
     {
