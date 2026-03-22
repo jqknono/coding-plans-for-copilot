@@ -1,5 +1,8 @@
 name: GitHub Pages Smoke Tests
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
 on:
   workflow_dispatch:
 
@@ -9,12 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: "24"
           cache: npm
 
       - name: Install dependencies
@@ -45,7 +48,7 @@ jobs:
 
       - name: Upload Playwright artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: github-pages-smoke-report
           path: |

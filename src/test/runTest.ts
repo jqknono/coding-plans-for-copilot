@@ -1215,6 +1215,49 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   });
   console.log('PASS openai-chat 流式文本与工具调用可正确累积');
 
+  const reasoningOnlyChatState = createOpenAIChatStreamState();
+  const reasoningOnlyChatDelta = applyOpenAIChatStreamChunk(reasoningOnlyChatState, {
+    choices: [{
+      index: 0,
+      delta: {
+        reasoning_content: [{ type: 'reasoning', text: 'fallback ' }]
+      }
+    }]
+  }, () => 'generated_call');
+  applyOpenAIChatStreamChunk(reasoningOnlyChatState, {
+    choices: [{
+      index: 0,
+      message: {
+        reasoning: [{ type: 'reasoning', text: 'text' }]
+      }
+    }]
+  }, () => 'generated_call');
+  const finalizedReasoningOnlyChat = finalizeOpenAIChatStreamState(reasoningOnlyChatState, () => 'generated_call');
+  assert.equal(reasoningOnlyChatDelta.textDelta, '');
+  assert.equal(finalizedReasoningOnlyChat.content, 'fallback text');
+
+  const mixedProxyChatState = createOpenAIChatStreamState();
+  applyOpenAIChatStreamChunk(mixedProxyChatState, {
+    choices: [{
+      index: 0,
+      delta: {
+        reasoning_content: [{ type: 'reasoning', text: 'proxy ' }]
+      }
+    }]
+  }, () => 'generated_call');
+  const mixedProxyChatDelta = applyOpenAIChatStreamChunk(mixedProxyChatState, {
+    choices: [{
+      index: 0,
+      message: {
+        content: [{ type: 'text', text: 'reply' }]
+      }
+    }]
+  }, () => 'generated_call');
+  const finalizedMixedProxyChat = finalizeOpenAIChatStreamState(mixedProxyChatState, () => 'generated_call');
+  assert.equal(mixedProxyChatDelta.textDelta, 'reply');
+  assert.equal(finalizedMixedProxyChat.content, 'reply');
+  console.log('PASS openai-chat 可兼容代理常见的非标准 chunk 字段');
+
   const responsesState = createOpenAIResponsesStreamState();
   const responsesDelta = applyOpenAIResponsesStreamEvent(responsesState, 'response.output_text.delta', {
     delta: 'partial '

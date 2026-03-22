@@ -54,6 +54,7 @@ import {
   finalizeOpenAIResponsesStreamState,
   parseAnthropicResponse,
   parseOpenAIResponsesResponse,
+  readOpenAIChatMessageText,
   summarizeAnthropicResponseForLogging,
   summarizeOpenAIChatResponse,
   summarizeOpenAIResponsesResponse,
@@ -763,7 +764,7 @@ export class GenericAIProvider extends BaseAIProvider {
     maxTokens: number | undefined
   ): vscode.LanguageModelChatResponse {
     const responseMessage = response.choices[0]?.message;
-    const content = responseMessage?.content || '';
+    const content = readOpenAIChatMessageText(responseMessage);
     const usageData = response.usage;
     this.ensureNonEmptyCompletion('openai-chat', trace, vendor, modelName, content, responseMessage?.tool_calls);
     this.logUpstreamResponseSummary('openai-chat', vendor, modelName, summarizeOpenAIChatResponse(response));

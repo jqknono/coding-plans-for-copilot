@@ -20,7 +20,9 @@ export interface OpenAIChatResponse {
     index: number;
     message: {
       role: string;
-      content: string;
+      content?: unknown;
+      reasoning_content?: unknown;
+      reasoning?: unknown;
       tool_calls?: ChatToolCall[];
     };
     finish_reason: string;
@@ -193,7 +195,9 @@ export interface OpenAIChatStreamChunk {
     index?: number;
     delta?: {
       role?: string;
-      content?: string;
+      content?: unknown;
+      reasoning_content?: unknown;
+      reasoning?: unknown;
       tool_calls?: Array<{
         index?: number;
         id?: string;
@@ -206,9 +210,13 @@ export interface OpenAIChatStreamChunk {
     };
     message?: {
       role?: string;
-      content?: string;
+      content?: unknown;
+      reasoning_content?: unknown;
+      reasoning?: unknown;
       tool_calls?: ChatToolCall[];
     };
+    text?: unknown;
+    output_text?: unknown;
     finish_reason?: string | null;
   }>;
   usage?: OpenAIChatResponse['usage'];
@@ -256,6 +264,7 @@ export interface AnthropicStreamEvent {
 
 export interface OpenAIChatStreamState {
   content: string;
+  fallbackContent: string;
   responseId?: string;
   usage?: OpenAIChatResponse['usage'];
   finishReason?: string;
@@ -298,8 +307,57 @@ type GenerateToolCallId = () => string;
 export function createOpenAIChatStreamState(): OpenAIChatStreamState {
   return {
     content: '',
+    fallbackContent: '',
     toolCalls: new Map()
   };
+}
+
+function readOpenAICompatibleText(value: unknown): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(part => readOpenAICompatibleText(part)).join('');
+  }
+
+  if (!value || typeof value !== 'object') {
+    return '';
+  }
+
+  const record = value as Record<string, unknown>;
+  if (typeof record.text === 'string') {
+    return record.text;
+  }
+  if (typeof record.value === 'string') {
+    return record.value;
+  }
+  if (typeof record.content === 'string') {
+    return record.content;
+  }
+  if (Array.isArray(record.content)) {
+    return record.content.map(part => readOpenAICompatibleText(part)).join('');
+  }
+
+  return '';
+}
+
+export function readOpenAIChatMessageText(
+  message:
+    | {
+      content?: unknown;
+      reasoning_content?: unknown;
+      reasoning?: unknown;
+    }
+    | undefined
+): string {
+  if (!message) {
+    return '';
+  }
+
+  return readOpenAICompatibleText(message.content)
+    || readOpenAICompatibleText(message.reasoning_content)
+    || readOpenAICompatibleText(message.reasoning);
 }
 
 export function applyOpenAIChatStreamChunk(
@@ -316,16 +374,21 @@ export function applyOpenAIChatStreamChunk(
   }
 
   for (const choice of chunk.choices ?? []) {
-    const directContent = typeof choice.message?.content === 'string'
-      ? choice.message.content
-      : undefined;
-    const deltaContent = typeof choice.delta?.content === 'string'
-      ? choice.delta.content
-      : undefined;
-    const nextText = deltaContent ?? directContent ?? '';
+    const nextText = readOpenAICompatibleText(choice.delta?.content)
+      || readOpenAICompatibleText(choice.message?.content)
+      || readOpenAICompatibleText(choice.text)
+      || readOpenAICompatibleText(choice.output_text);
     if (nextText.length > 0) {
       state.content += nextText;
       textDelta += nextText;
+    }
+
+    const fallbackText = readOpenAICompatibleText(choice.delta?.reasoning_content)
+      || readOpenAICompatibleText(choice.message?.reasoning_content)
+      || readOpenAICompatibleText(choice.delta?.reasoning)
+      || readOpenAICompatibleText(choice.message?.reasoning);
+    if (fallbackText.length > 0) {
+      state.fallbackContent += fallbackText;
     }
 
     const toolCalls = choice.delta?.tool_calls
@@ -357,14 +420,6 @@ export function applyOpenAIChatStreamChunk(
     }
   }
 
-  if (textDelta.length === 0 && state.content.length === 0) {
-    const fallbackText = chunk.choices?.map(choice => choice.message?.content ?? '').join('') ?? '';
-    if (fallbackText.length > 0) {
-      state.content = fallbackText;
-      textDelta = fallbackText;
-    }
-  }
-
   if (state.toolCalls.size === 0 && chunk.choices?.some(choice => Array.isArray(choice.message?.tool_calls))) {
     for (const choice of chunk.choices) {
       for (const [index, toolCall] of (choice.message?.tool_calls ?? []).entries()) {
@@ -385,7 +440,7 @@ export function finalizeOpenAIChatStreamState(
   generateToolCallId: GenerateToolCallId
 ): { content: string; toolCalls: ChatToolCall[]; usage?: OpenAIChatResponse['usage'] } {
   return {
-    content: state.content,
+    content: state.content || state.fallbackContent,
     toolCalls: [...state.toolCalls.entries()]
       .sort((left, right) => left[0] - right[0])
       .map(([, toolCall]) => ({
@@ -874,7 +929,7 @@ export function summarizeOpenAIChatResponse(response: OpenAIChatResponse): Recor
       index: choice.index,
       finishReason: choice.finish_reason,
       role: choice.message?.role,
-      contentLength: typeof choice.message?.content === 'string' ? choice.message.content.length : 0,
+      contentLength: readOpenAIChatMessageText(choice.message).length,
       toolCallCount: choice.message?.tool_calls?.length ?? 0,
       toolCalls: (choice.message?.tool_calls ?? []).map(toolCall => ({
         id: toolCall.id,
