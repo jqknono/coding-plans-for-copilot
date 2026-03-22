@@ -113,17 +113,18 @@
 
 因此，如果供应商模型的 `contextSize`、`maxInputTokens`、`maxOutputTokens` 配置不准确，Copilot Chat 里看到的 `X / Y tokens` 也可能与真实模型能力不一致。本仓库当前推荐用 `contextSize` 作为描述模型上下文的主字段；`maxInputTokens` / `maxOutputTokens` 仅保留兼容旧配置。运行时会优先使用 `contextSize` 作为总上下文窗口；只有当 `maxInputTokens` 或 `maxOutputTokens` 超过它时，才会自动收敛到 `contextSize`。
 
-### 2.5 分子按“已用总上下文”理解更直观
+### 2.5 当前不再维护原生 Context Window 分子
 
-本仓库现在会优先使用上游返回的 `total_tokens` 作为“当前轮已用总上下文”。
+本仓库当前不再尝试把上游返回的 `usage` 回填到 VS Code 原生 `Context Window X / Y tokens` 的 `X`。
 
-- 对 `openai-chat`：优先使用 `total_tokens`
-- 对 `openai-responses`：优先使用 `total_tokens`
-- 对 `anthropic`：回退为 `input_tokens + output_tokens`
+原因不是上游没有 usage，而是当前公开的 VS Code Chat / Language Model 扩展 API 没有提供“把 prompt/completion/total/outputBuffer 这类 usage 明细写回原生 Context Window”的公开接口。公开接口要求扩展实现的只有：
 
-如果上游同时返回了 `prompt/input`、`completion/output` 和 `total_tokens`，且两者不一致，会以 `total_tokens` 为准做归一化，确保显示比例更符合“当前已经占了多少上下文”的直觉。
+- 通过 `LanguageModelChatProvider.provideLanguageModelChatResponse(...)` 回传响应流
+- 通过 `LanguageModelChatProvider.provideTokenCount(...)` 返回一个 token 数
 
-同时，本仓库已经停止本地 prompt token 估算和本地 token 计数。如果上游接口没有返回 usage，扩展不会再自行补一个估算值。
+而 `provideTokenCount(...)` 本质上是“对输入做 tokenizer 计数”的接口，不是“上报上一轮真实 usage”的接口。本仓库已经明确停止本地 prompt token 估算和本地 token 计数，因此这里直接返回 `0`，不再继续做上一轮 usage 回填这种妥协方案。
+
+如果上游接口返回了 usage，本仓库会把最近一次已完成请求的真实 usage 展示到状态栏 `CodingPlans Context`，用于查看实际占比和明细。后续若 VS Code 开放了原生 usage/context 写回 API，再恢复这一块，见 [todo/vscode-chat-api-follow-up.md](../todo/vscode-chat-api-follow-up.md)。
 
 ### 3. 对这个项目最实用的上下文组织方式
 

@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { ContextStatusBarController, ContextUsageState } from './contextUsageState';
 import { GenericAIProvider } from './providers/genericProvider';
 import { LMChatProviderAdapter } from './providers/lmChatProviderAdapter';
 import { ConfigStore } from './config/configStore';
@@ -198,6 +199,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   const configStore = new ConfigStore(context);
   context.subscriptions.push(configStore);
+  const contextUsageState = new ContextUsageState();
+  context.subscriptions.push(contextUsageState);
+  const contextStatusBarController = new ContextStatusBarController(contextUsageState);
+  context.subscriptions.push(contextStatusBarController);
 
   const genericProvider = new GenericAIProvider(context, configStore);
   void genericProvider.initialize().catch(error => {
@@ -205,7 +210,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   });
   providers.set('coding-plans', genericProvider);
 
-  const adapter = new LMChatProviderAdapter(genericProvider, configStore);
+  const adapter = new LMChatProviderAdapter(genericProvider, configStore, contextUsageState);
   context.subscriptions.push(adapter);
   registerLanguageModelProvider(adapter);
   context.subscriptions.push(new vscode.Disposable(() => {

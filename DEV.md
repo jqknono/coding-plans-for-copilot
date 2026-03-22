@@ -97,16 +97,18 @@ GitHub Pages 部署时会将 `assets/provider-pricing.json` 同步到 `pages/pro
 - 上下文展示直接复用 Copilot Chat 自带的 Context Window / 上下文展示器。
 - 相关展示能力与细节以 VS Code / Copilot Chat 当前内置实现为准。
 - 关于 Context Window 的实际使用方式、上下文来源和本仓库内的落地建议，见 [docs/copilot-chat-context-window.md](docs/copilot-chat-context-window.md)。
+- 关于当前公开 Chat API 的能力边界与后续待跟进项，见 [todo/vscode-chat-api-follow-up.md](todo/vscode-chat-api-follow-up.md)。
 
 ## Context 面板语义
 
 - `System Instructions`：指 system prompt、模式说明、策略提示、插件额外注入说明等 System 类输入，占用 prompt tokens。
 - `Tool Definitions`：指工具定义本身的 schema 占用，占用 prompt tokens。
 - `Reserved Output`：指预留给模型输出的 token 预算，对应 `outputBuffer`，在 UI 中单独显示。
-- `Context Window X / Y tokens`：`X` 是当前会话实际已用 token，总量按“已用总上下文”计算，优先对齐上游 `total_tokens`；`Y` 是当前模型的总上下文窗口，优先取模型配置中的 `contextSize`，未提供时再回退到归一化后的 token window。
+- `Context Window X / Y tokens`：`Y` 是当前模型的总上下文窗口，优先取模型配置中的 `contextSize`，未提供时再回退到归一化后的 token window。当前公开 API 只要求扩展实现 `provideTokenCount`，没有提供把上游 usage 明细写回原生 Context Window 的公开接口，因此本仓库不再维护 `X`。
 - VS Code 官方文档说明：hover 到上下文窗口控件时，会显示“精确 token 数 / 总上下文”和按类别拆分；上下文满时会触发 compaction。
 - 若后续 VS Code / Copilot Chat 调整上下文展示结构，应以其内置行为为准同步更新文档描述。
 - 当前实现已完全停止本地 prompt token 估算与本地 token 计数；若上游不返回 usage，只能显示“无 usage 数据”，不会再做近似补算。
+- 若需要看最近一次真实请求的 usage 比例与明细，以状态栏 `CodingPlans Context` 为准。
 
 ## 多协议供应商接入说明
 

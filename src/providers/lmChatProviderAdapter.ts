@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
+import { ContextUsageState, LastContextUsageSnapshot } from '../contextUsageState';
 import { BaseAIProvider, BaseLanguageModel, getCompactErrorMessage } from './baseProvider';
 import { ConfigStore } from '../config/configStore';
 import {
-  ENABLE_CONTEXT_WINDOW_USAGE_REPORTING,
   MODEL_VERSION_LABEL,
   RESPONSE_TRACE_ID_FIELD
 } from '../constants';
@@ -11,7 +11,6 @@ import { logger } from '../logging/outputChannelLogger';
 import { NormalizedTokenUsage, readAttachedTokenUsage } from './tokenUsage';
 
 let hasShownVendorNotConfiguredWarning = false;
-let hasShownUsageReportingUnsupportedWarning = false;
 
 interface ProviderPickerConfiguration {
   name?: unknown;
@@ -154,7 +153,8 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
 
   constructor(
     private readonly provider: BaseAIProvider,
-    private readonly configStore?: ConfigStore
+    private readonly configStore?: ConfigStore,
+    private readonly contextUsageState?: ContextUsageState
   ) {
     this.disposables.push(
       this.provider.onDidChangeModels(() => {
@@ -295,7 +295,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         hasStream: !!response.stream,
         hasText: !!response.text
       });
-      this.reportUsageToProgress(progress, response, traceId, vendor, model);
+      this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens);
 
       let reportedPartCount = 0;
       for await (const part of response.stream as AsyncIterable<vscode.LanguageModelResponsePart>) {
@@ -315,7 +315,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         modelId: model.id,
         reportedPartCount
       });
-      this.reportUsageToProgress(progress, response, traceId, vendor, model);
+      this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens);
     } catch (error) {
       logger.error('Adapter failed to provide language model chat response', {
         traceId,
@@ -328,10 +328,13 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   }
 
   provideTokenCount(
-    _model: vscode.LanguageModelChatInformation,
+    model: vscode.LanguageModelChatInformation,
     _text: string | vscode.LanguageModelChatRequestMessage,
     _token: vscode.CancellationToken
   ): Thenable<number> {
+    if (isPlaceholderModel(this.provider.getVendor(), model.id)) {
+      return Promise.resolve(0);
+    }
     return Promise.resolve(0);
   }
 
@@ -606,106 +609,65 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   }
 
   private reportUsageToProgress(
-    progress: vscode.Progress<vscode.LanguageModelResponsePart>,
+    _progress: vscode.Progress<vscode.LanguageModelResponsePart>,
     response: vscode.LanguageModelChatResponse,
     traceId: string,
     vendor: string,
-    model: vscode.LanguageModelChatInformation
+    model: vscode.LanguageModelChatInformation,
+    totalContextWindow: number
   ): void {
-    if (!ENABLE_CONTEXT_WINDOW_USAGE_REPORTING) {
-      logger.debug('Context Window usage reporting is disabled by feature flag', {
-        traceId,
-        provider: vendor,
-        modelId: model.id
-      });
-      return;
-    }
-
     const usage = readAttachedTokenUsage(response);
     if (!usage) {
       return;
     }
 
-    const runtimeProgress = progress as vscode.Progress<vscode.LanguageModelResponsePart> & {
-      usage?: (usage: {
-        promptTokens: number;
-        completionTokens: number;
-        outputBuffer?: number;
-      }) => void;
-    };
-    const host = this.summarizeHostEnvironment();
-    const reportUsage = runtimeProgress.usage;
-    const progressUsageSupported = typeof reportUsage === 'function';
+    this.updateContextUsageState(traceId, vendor, model, usage, totalContextWindow);
+  }
 
-    logger.debug('Adapter Context Window usage reporting capability', {
-      traceId,
-      provider: vendor,
-      modelId: model.id,
-      progressUsageSupported,
-      host
-    });
-
-    if (progressUsageSupported) {
-      reportUsage({
-        promptTokens: usage.promptTokens,
-        completionTokens: usage.completionTokens,
-        outputBuffer: usage.outputBuffer
-      });
-      logger.debug('Adapter reported response usage to VS Code', {
-        traceId,
-        provider: vendor,
-        modelId: model.id,
-        usage: this.summarizeUsage(usage)
-      });
+  private updateContextUsageState(
+    traceId: string,
+    vendor: string,
+    model: vscode.LanguageModelChatInformation,
+    usage: NormalizedTokenUsage,
+    totalContextWindow: number
+  ): void {
+    if (!this.contextUsageState) {
       return;
     }
 
-    if (!hasShownUsageReportingUnsupportedWarning) {
-      hasShownUsageReportingUnsupportedWarning = true;
-      logger.warn('Native Context Window usage reporting is unavailable in the current VS Code host', {
-        traceId,
-        provider: vendor,
-        modelId: model.id,
-        host,
-        usage: this.summarizeUsage(usage)
-      });
-    }
-
-    logger.debug('Adapter found response usage but current VS Code progress object does not expose usage reporting', {
-      traceId,
+    const snapshot: LastContextUsageSnapshot = {
       provider: vendor,
       modelId: model.id,
-      host,
-      usage: this.summarizeUsage(usage)
-    });
-  }
-
-  private summarizeHostEnvironment(): Record<string, unknown> {
-    return {
-      vscodeVersion: vscode.version,
-      appName: vscode.env.appName,
-      uiKind: this.describeUiKind(vscode.env.uiKind),
-      remoteName: vscode.env.remoteName ?? null
-    };
-  }
-
-  private describeUiKind(uiKind: vscode.UIKind): string {
-    switch (uiKind) {
-      case vscode.UIKind.Desktop:
-        return 'desktop';
-      case vscode.UIKind.Web:
-        return 'web';
-      default:
-        return `unknown(${String(uiKind)})`;
-    }
-  }
-
-  private summarizeUsage(usage: NormalizedTokenUsage): Record<string, unknown> {
-    return {
+      modelName: model.name,
+      totalContextWindow,
+      traceId,
+      recordedAt: Date.now(),
       promptTokens: usage.promptTokens,
       completionTokens: usage.completionTokens,
       totalTokens: usage.totalTokens,
       outputBuffer: usage.outputBuffer
+    };
+    this.contextUsageState.update(snapshot);
+    logger.info('Adapter cached last completed request usage for CodingPlans Context status bar', {
+      traceId,
+      provider: vendor,
+      modelId: model.id,
+      snapshot: this.summarizeSnapshot(snapshot)
+    });
+  }
+
+  private summarizeSnapshot(snapshot: LastContextUsageSnapshot): Record<string, unknown> {
+    return {
+      provider: snapshot.provider,
+      modelId: snapshot.modelId,
+      modelName: snapshot.modelName,
+      totalContextWindow: snapshot.totalContextWindow,
+      promptTokens: snapshot.promptTokens,
+      completionTokens: snapshot.completionTokens,
+      totalTokens: snapshot.totalTokens,
+      outputBuffer: snapshot.outputBuffer,
+      recordedAt: new Date(snapshot.recordedAt).toISOString(),
+      traceId: snapshot.traceId
     };
   }
 }

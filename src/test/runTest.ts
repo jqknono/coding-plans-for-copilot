@@ -46,6 +46,8 @@ type BaseProviderModule = typeof import('../providers/baseProvider');
 type GenericProviderModule = typeof import('../providers/genericProvider');
 type TokenUsageModule = typeof import('../providers/tokenUsage');
 type ProtocolsModule = typeof import('../providers/genericProviderProtocols');
+type ContextUsageStateModule = typeof import('../contextUsageState');
+type LMChatProviderAdapterModule = typeof import('../providers/lmChatProviderAdapter');
 
 type TestContext = {
   state: MockState;
@@ -104,6 +106,10 @@ function createVscodeMock() {
     WorkspaceFolder: 1,
     Workspace: 2,
     Global: 3
+  };
+  const statusBarAlignment = {
+    Left: 1,
+    Right: 2
   };
 
   class FakeLanguageModelTextPart {
@@ -174,6 +180,7 @@ function createVscodeMock() {
     EventEmitter: FakeEventEmitter,
     Disposable: FakeDisposable,
     ConfigurationTarget: configurationTarget,
+    StatusBarAlignment: statusBarAlignment,
     LanguageModelTextPart: FakeLanguageModelTextPart,
     LanguageModelToolCallPart: FakeLanguageModelToolCallPart,
     LanguageModelToolResultPart: FakeLanguageModelToolResultPart,
@@ -200,6 +207,22 @@ function createVscodeMock() {
       createOutputChannel() {
         return {
           appendLine(): void {
+            return undefined;
+          },
+          dispose(): void {
+            return undefined;
+          }
+        };
+      },
+      createStatusBarItem() {
+        return {
+          text: '',
+          tooltip: '',
+          name: '',
+          show(): void {
+            return undefined;
+          },
+          hide(): void {
             return undefined;
           },
           dispose(): void {
@@ -926,9 +949,9 @@ function runGenericProviderContextSizeTests(
     const vendor = zeroUnsetConfigStore.getVendors()[0] as VendorRecord;
     const models = zeroUnsetProvider.buildConfiguredModelsForVendor(vendor);
     assert.equal(models[0]?.maxTokens, 131072);
-    assert.equal(models[0]?.maxInputTokens, 123072);
-    assert.equal(models[0]?.maxOutputTokens, 8000);
-    console.log('PASS 运行时会把 0 视为未设置并按 contextSize 推导默认输入输出上限');
+    assert.equal(models[0]?.maxInputTokens, 131071);
+    assert.equal(models[0]?.maxOutputTokens, 1);
+    console.log('PASS 运行时会把 0 视为未设置并保留最小输出窗口');
   } finally {
     zeroUnsetProvider.dispose();
     zeroUnsetConfigStore.dispose();
@@ -1008,12 +1031,17 @@ function runGenericProviderEmptyResponseTests(
 
 async function runGenericProviderOutputLimitToggleTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
+  tokenUsageModule: TokenUsageModule
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
+  const { readAttachedTokenUsage } = tokenUsageModule;
   const originalFetch = globalThis.fetch;
 
-  async function capturePayload(vendors: VendorRecord[], modelId: string): Promise<Record<string, unknown>> {
+  async function capturePayload(
+    vendors: VendorRecord[],
+    modelId: string
+  ): Promise<{ payload: Record<string, unknown>; response: unknown }> {
     activeState = createState(vendors);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
@@ -1062,7 +1090,7 @@ async function runGenericProviderOutputLimitToggleTests(
         vendorName === 'Vendor' ? 'configured' : ''
       );
       await provider.refreshModels();
-      await provider.sendRequest({
+      const response = await provider.sendRequest({
         modelId,
         messages: [{
           role: 'user',
@@ -1072,7 +1100,10 @@ async function runGenericProviderOutputLimitToggleTests(
         options: { tools: [] }
       });
       assert.ok(payload);
-      return payload;
+      return {
+        payload,
+        response
+      };
     } finally {
       globalThis.fetch = originalFetch;
       provider.dispose();
@@ -1080,7 +1111,7 @@ async function runGenericProviderOutputLimitToggleTests(
     }
   }
 
-  const zeroOutputDisabledPayload = await capturePayload([{
+  const zeroOutputDisabledResult = await capturePayload([{
     name: 'Vendor',
     baseUrl: 'https://example.test/v1',
     defaultApiStyle: 'openai-chat',
@@ -1093,10 +1124,11 @@ async function runGenericProviderOutputLimitToggleTests(
       capabilities: { tools: true, vision: false }
     }]
   }], 'Vendor/coder');
-  assert.equal('max_tokens' in zeroOutputDisabledPayload, false);
-  console.log('PASS maxOutputTokens 为 0 时不会向 openai-chat 下发 max_tokens');
+  assert.equal('max_tokens' in zeroOutputDisabledResult.payload, false);
+  assert.equal(readAttachedTokenUsage(zeroOutputDisabledResult.response)?.outputBuffer, undefined);
+  console.log('PASS maxOutputTokens 为 0 时不会向 openai-chat 下发 max_tokens，且不显示 Reserved Output');
 
-  const positiveOutputPayload = await capturePayload([{
+  const positiveOutputResult = await capturePayload([{
     name: 'Vendor',
     baseUrl: 'https://example.test/v1',
     defaultApiStyle: 'openai-chat',
@@ -1109,7 +1141,8 @@ async function runGenericProviderOutputLimitToggleTests(
       capabilities: { tools: true, vision: false }
     }]
   }], 'Vendor/coder');
-  assert.equal(positiveOutputPayload.max_tokens, 16000);
+  assert.equal(positiveOutputResult.payload.max_tokens, 16000);
+  assert.equal(readAttachedTokenUsage(positiveOutputResult.response)?.outputBuffer, 16000);
   console.log('PASS maxOutputTokens 为正数时会向 openai-chat 下发 max_tokens');
 }
 
@@ -1362,6 +1395,109 @@ function runTokenUsageNormalizationTests(tokenUsageModule: TokenUsageModule): vo
   console.log('PASS 响应对象可读回归一化 usage');
 }
 
+function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateModule): void {
+  const {
+    ContextUsageState,
+    buildContextStatusText,
+    buildContextStatusTooltip
+  } = contextUsageStateModule;
+
+  const state = new ContextUsageState();
+  assert.equal(buildContextStatusText(undefined), 'CodingPlans Context --');
+  assert.match(buildContextStatusTooltip(undefined), /CodingPlans Context/);
+
+  state.update({
+    provider: 'coding-plans',
+    modelId: 'vendor/model',
+    modelName: 'model',
+    totalContextWindow: 131072,
+    traceId: 'trace-1',
+    recordedAt: Date.UTC(2026, 2, 20, 8, 52, 11),
+    promptTokens: 21770,
+    completionTokens: 8,
+    totalTokens: 21778,
+    outputBuffer: 1
+  });
+
+  const snapshot = state.getSnapshot();
+  assert.ok(snapshot);
+  assert.equal(buildContextStatusText(snapshot), 'CodingPlans Context 17%');
+  const tooltip = buildContextStatusTooltip(snapshot);
+  assert.match(tooltip, /16\.6% of 131\.1K/);
+  assert.match(tooltip, /- Prompt: 21\.8K/);
+  assert.match(tooltip, /- Completion: 8/);
+  assert.match(tooltip, /- Total: 21\.8K/);
+  assert.match(tooltip, /- Reserved Output: 1/);
+  assert.match(tooltip, /- Model: model/);
+  assert.match(tooltip, /- Updated: 2026-03-20T08:52:11\.000Z/);
+  state.dispose();
+  console.log('PASS ContextUsageState 与状态栏文案正常生成');
+}
+
+async function runLMChatProviderAdapterProvideTokenCountTests(
+  contextUsageStateModule: ContextUsageStateModule,
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule
+): Promise<void> {
+  const vscode = require('vscode') as {
+    Disposable: new (callback?: () => void) => { dispose(): void };
+  };
+  const { ContextUsageState } = contextUsageStateModule;
+  const { LMChatProviderAdapter } = lmChatProviderAdapterModule;
+
+  const fakeProvider = {
+    getVendor(): string {
+      return 'coding-plans';
+    },
+    onDidChangeModels(): { dispose(): void } {
+      return new vscode.Disposable();
+    }
+  };
+
+  const usageState = new ContextUsageState();
+  const adapter = new LMChatProviderAdapter(fakeProvider as never, undefined, usageState);
+  const model = {
+    id: 'vendor/model',
+    name: 'model'
+  } as never;
+
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
+
+  usageState.update({
+    provider: 'coding-plans',
+    modelId: 'vendor/model',
+    modelName: 'model',
+    totalContextWindow: 131072,
+    traceId: 'trace-2',
+    recordedAt: Date.now(),
+    promptTokens: 1000,
+    completionTokens: 20,
+    totalTokens: 1020,
+    outputBuffer: 10
+  });
+
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
+
+  usageState.update({
+    provider: 'coding-plans',
+    modelId: 'vendor/model',
+    modelName: 'model',
+    totalContextWindow: 131072,
+    traceId: 'trace-3',
+    recordedAt: Date.now(),
+    promptTokens: 1200,
+    completionTokens: 30,
+    totalTokens: 1230,
+    outputBuffer: 12
+  });
+
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
+  adapter.dispose();
+  usageState.dispose();
+  console.log('PASS LMChatProviderAdapter 的 provideTokenCount 固定返回 0');
+}
+
 async function main(): Promise<void> {
   const restore = installVscodeMock();
   try {
@@ -1370,6 +1506,8 @@ async function main(): Promise<void> {
     const genericProviderModule = require('../providers/genericProvider') as GenericProviderModule;
     const tokenUsageModule = require('../providers/tokenUsage') as TokenUsageModule;
     const protocolsModule = require('../providers/genericProviderProtocols') as ProtocolsModule;
+    const contextUsageStateModule = require('../contextUsageState') as ContextUsageStateModule;
+    const lmChatProviderAdapterModule = require('../providers/lmChatProviderAdapter') as LMChatProviderAdapterModule;
     for (const testCase of testCases) {
       await runTestCase(ConfigStore, testCase);
     }
@@ -1377,9 +1515,11 @@ async function main(): Promise<void> {
     runTokenWindowResolutionTests(baseProviderModule);
     runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
     runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
-    await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule);
+    await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule, tokenUsageModule);
     runProtocolStreamTests(protocolsModule);
     runTokenUsageNormalizationTests(tokenUsageModule);
+    runContextUsageStateTests(contextUsageStateModule);
+    await runLMChatProviderAdapterProvideTokenCountTests(contextUsageStateModule, lmChatProviderAdapterModule);
   } finally {
     restore();
   }

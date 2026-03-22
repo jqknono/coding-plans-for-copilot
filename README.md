@@ -59,10 +59,11 @@
 - System Instructions：System 类提示词占用，通常指系统提示、模式说明、策略提示、额外注入说明等。它属于 prompt tokens 的一部分。
 - Tool Definitions：工具定义占用，通常是传给模型的 tool/function schema（工具名、描述、参数 JSON Schema）。它也属于 prompt tokens 的一部分。
 - Reserved Output：为本轮回答预留的输出 token 预算。它不是已经生成出来的回复内容，而是为了避免模型输出超限而预留的空间。
-- Context Window 4.0K / 400K tokens：表示当前会话实际已使用约 4.0K token，而当前所选模型的总上下文窗口约为 400K token。分子按“已用总上下文”计算，优先对齐上游返回的 `total_tokens`；分母优先使用模型配置中的 `contextSize`，未提供时再按当前归一化后的 token window 计算。
+- Context Window 4.0K / 400K tokens：分母优先使用模型配置中的 `contextSize`，未提供时再按当前归一化后的 token window 计算。由于扩展不再尝试本地计数或回填上一轮 usage，原生 Context Window 的分子不再由本扩展维护。
 - 悬浮到 Context Window 指示器时，VS Code 会显示当前 token 总量以及按类别拆分的明细；当上下文接近上限时，VS Code 可能自动触发 conversation compaction（压缩历史）。
 - 本扩展直接复用 Copilot Chat 自带的上下文展示器，不再额外提供独立的 Agent 路径或自定义 usage 明细。
 - 本扩展不会再本地估算 prompt token 或自行计数；若上游接口未返回 usage，界面也不会由插件补算一个近似值。
+- 状态栏会额外显示 `CodingPlans Context`，它基于最近一次已完成请求的真实 usage 展示比例和详情；若你需要看实际使用占比，请以这里为准。
 ### 配置入口
 
 1. 按 `Ctrl+Shift+P`，输入 `编码套餐: 管理编码套餐配置`

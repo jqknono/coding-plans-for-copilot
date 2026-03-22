@@ -54,10 +54,11 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
 - `System Instructions`: token usage from system-style instructions, such as the system prompt, mode guidance, policy hints, or extra injected instructions. This is part of the prompt token total.
 - `Tool Definitions`: token usage from the tool/function schemas sent to the model, including tool names, descriptions, and JSON schema parameters. This is also part of the prompt token total.
 - `Reserved Output`: output token budget reserved for the model response. This is not already-generated response text; it is headroom reserved to avoid output-limit overflow.
-- `Context Window 4.0K / 400K tokens`: the current chat session has actually used about 4.0K tokens out of roughly 400K total tokens available for the selected model. The numerator is treated as total used context and is aligned to upstream `total_tokens` when available; the denominator prefers the model's `contextSize` when provided, and otherwise falls back to the normalized token window.
+- `Context Window 4.0K / 400K tokens`: the denominator prefers the model's `contextSize` when provided, and otherwise falls back to the normalized token window. Because the extension no longer attempts local counting or backfills usage from the previous turn, it no longer maintains the built-in Context Window numerator.
 - When you hover the context window indicator, VS Code shows the exact token count and a category breakdown. When the context window gets full, VS Code might automatically compact conversation history.
 - This extension now relies on the built-in Copilot Chat context viewer instead of providing a separate Agent path or custom usage breakdown.
 - This extension no longer estimates prompt tokens or performs local token counting. If the upstream API does not return usage, the extension will not fabricate an approximate usage value.
+- The status bar also shows `CodingPlans Context`, based on the most recent completed request usage. Use this as the actual usage ratio display.
 
 ### Configuration Entry
 

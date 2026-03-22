@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.4] - 2026-03-22
+- fix(docs): 更新上下文窗口文档与状态栏显示逻辑
+- feat: 支持 contextSize 配置并优化上下文窗口处理
+
 ## [0.6.2] - 2026-03-19
 - fix(provider-pricing): 更新供应商定价数据及资源链接
 - fix(#8): 更新 OpenRouter 指标采集流程
@@ -56,6 +60,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.4.13] - 2026-03-03
 - feat(commit-message): 增强模型选择缓存与日志
-
-## [0.4.12] - 2026-03-02
-- Maintenance updates

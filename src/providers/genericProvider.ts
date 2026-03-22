@@ -1757,7 +1757,7 @@ export class GenericAIProvider extends BaseAIProvider {
         const normalizedUsage = normalizeTokenUsage(
           protocol,
           finalized.usage,
-          provider.resolveOutputBuffer(request, requestedOutputLimit)
+          requestedOutputLimit === undefined ? undefined : provider.resolveOutputBuffer(request, requestedOutputLimit)
         );
         attachTokenUsage(result, normalizedUsage);
         provider.logModelTokenUsage(request, vendor, modelName, normalizedUsage);
