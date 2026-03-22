@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-03-21T08:11:44.185Z",
+  "generatedAt": "2026-03-22T03:04:39.898Z",
   "providers": [
     {
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-9crGaA87.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CNIfVo7o.js"
       ],
       "plans": [
         {
