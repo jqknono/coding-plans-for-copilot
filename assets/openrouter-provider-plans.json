@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-22T08:13:03.754Z",
-  "generatedAtBeijing": "2026年3月22日 16:13:03",
-  "sourceGeneratedAt": "2026-03-22T08:12:49.234Z",
-  "sourceGeneratedAtBeijing": "2026年3月22日 16:12:49",
-  "sourceMetricsGeneratedAt": "2026-03-22T08:12:49.856Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月22日 16:12:49",
+  "generatedAt": "2026-03-23T08:25:43.198Z",
+  "generatedAtBeijing": "2026年3月23日 16:25:43",
+  "sourceGeneratedAt": "2026-03-23T08:25:25.469Z",
+  "sourceGeneratedAtBeijing": "2026年3月23日 16:25:25",
+  "sourceMetricsGeneratedAt": "2026-03-23T08:25:26.435Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月23日 16:25:26",
   "summary": {
     "openrouterProviderCount": 75,
     "metricsProviderCount": 33,
@@ -33,7 +33,10 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "百炼Coding Plan"
+            "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
+            "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
+            "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
+            "状态: Lite 基础套餐将停止接受新购订单。已购买用户的使用、续费及套餐升级权益保持不变"
           ]
         },
         {
@@ -45,14 +48,19 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "百炼Coding Plan"
+            "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
+            "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
+            "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
+            "支持的模型: 推荐模型： qwen3.5-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
+            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
           ]
         }
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/9b891afbfdb7b3eb35efaf9aa08d31fd.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7b90eaba32d8923c7184868c2d8b3990.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
+        "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
       ],
       "pricingPageUrl": "https://www.aliyun.com/benefit/scene/codingplan",
@@ -446,7 +454,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CNIfVo7o.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C_fjGL9H.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -839,8 +847,8 @@
       "openrouterName": "Ionstream",
       "providerId": null,
       "officialWebsiteUrl": "https://ionstream.ai",
-      "pricingPageUrl": "https://ionstream.ai/pricing",
-      "reason": "官网未发现可解析的套餐价格页",
+      "pricingPageUrl": "https://ionstream.ai",
+      "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
       "blocked": false
     },
     {
