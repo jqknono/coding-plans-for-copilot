@@ -96,6 +96,8 @@ export const NON_RETRYABLE_DISCOVERY_STATUS_CODES = new Set([400, 401, 403, 404]
 export const DEFAULT_TEMPERATURE = 0.2;
 export const DEFAULT_TOP_P = 1.0;
 export const RESPONSE_TRACE_ID_FIELD = '__codingPlansTraceId';
+export const REQUEST_SOURCE_MODEL_OPTION_KEY = '__codingPlansRequestSource';
+export const REQUEST_SOURCE_COMMIT_MESSAGE = 'commit-message';
 
 export const ENABLE_CONTEXT_WINDOW_USAGE_REPORTING = true;
 export const RESPONSE_USAGE_FIELD = '__codingPlansUsage';

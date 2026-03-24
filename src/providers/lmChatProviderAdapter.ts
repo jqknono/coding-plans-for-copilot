@@ -4,6 +4,8 @@ import { BaseAIProvider, BaseLanguageModel, getCompactErrorMessage } from './bas
 import { ConfigStore } from '../config/configStore';
 import {
   MODEL_VERSION_LABEL,
+  REQUEST_SOURCE_COMMIT_MESSAGE,
+  REQUEST_SOURCE_MODEL_OPTION_KEY,
   RESPONSE_TRACE_ID_FIELD
 } from '../constants';
 import { getMessage } from '../i18n/i18n';
@@ -21,6 +23,10 @@ interface ProviderPickerConfiguration {
 interface PrepareLanguageModelChatModelOptionsWithConfiguration extends vscode.PrepareLanguageModelChatModelOptions {
   group?: unknown;
   configuration?: ProviderPickerConfiguration;
+}
+
+interface CodingPlansRequestModelOptions {
+  [REQUEST_SOURCE_MODEL_OPTION_KEY]?: unknown;
 }
 
 function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChatInformation {
@@ -279,9 +285,10 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     });
 
     try {
+      const forwardedOptions = this.toForwardedRequestOptions(options);
       const response = await targetModel.sendRequest(
         messages.map(message => this.toChatMessage(message)),
-        options as unknown as vscode.LanguageModelChatRequestOptions,
+        forwardedOptions,
         token
       );
       const responseTraceId = (response as unknown as Record<string, unknown>)[RESPONSE_TRACE_ID_FIELD];
@@ -295,7 +302,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         hasStream: !!response.stream,
         hasText: !!response.text
       });
-      this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens);
+      this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
 
       let reportedPartCount = 0;
       for await (const part of response.stream as AsyncIterable<vscode.LanguageModelResponsePart>) {
@@ -315,7 +322,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         modelId: model.id,
         reportedPartCount
       });
-      this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens);
+      this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
     } catch (error) {
       logger.error('Adapter failed to provide language model chat response', {
         traceId,
@@ -614,8 +621,18 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     traceId: string,
     vendor: string,
     model: vscode.LanguageModelChatInformation,
-    totalContextWindow: number
+    totalContextWindow: number,
+    options?: vscode.ProvideLanguageModelChatResponseOptions
   ): void {
+    if (!this.shouldTrackContextUsage(options)) {
+      logger.debug('Adapter skipped CodingPlans Context usage update for excluded request', {
+        traceId,
+        provider: vendor,
+        modelId: model.id
+      });
+      return;
+    }
+
     const usage = readAttachedTokenUsage(response);
     if (!usage) {
       return;
@@ -669,5 +686,36 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       recordedAt: new Date(snapshot.recordedAt).toISOString(),
       traceId: snapshot.traceId
     };
+  }
+
+  private shouldTrackContextUsage(options?: vscode.ProvideLanguageModelChatResponseOptions): boolean {
+    return this.readRequestSource(options) !== REQUEST_SOURCE_COMMIT_MESSAGE;
+  }
+
+  private readRequestSource(options?: vscode.ProvideLanguageModelChatResponseOptions): string | undefined {
+    const modelOptions = options?.modelOptions as CodingPlansRequestModelOptions | undefined;
+    const source = modelOptions?.[REQUEST_SOURCE_MODEL_OPTION_KEY];
+    return typeof source === 'string' && source.trim().length > 0 ? source.trim() : undefined;
+  }
+
+  private toForwardedRequestOptions(
+    options: vscode.ProvideLanguageModelChatResponseOptions
+  ): vscode.LanguageModelChatRequestOptions {
+    const modelOptions = options?.modelOptions;
+    if (!modelOptions || typeof modelOptions !== 'object' || Array.isArray(modelOptions)) {
+      return options as unknown as vscode.LanguageModelChatRequestOptions;
+    }
+
+    const forwardedModelOptions = { ...modelOptions } as Record<string, unknown>;
+    delete forwardedModelOptions[REQUEST_SOURCE_MODEL_OPTION_KEY];
+
+    if (Object.keys(forwardedModelOptions).length === Object.keys(modelOptions).length) {
+      return options as unknown as vscode.LanguageModelChatRequestOptions;
+    }
+
+    return {
+      ...options,
+      modelOptions: Object.keys(forwardedModelOptions).length > 0 ? forwardedModelOptions : undefined
+    } as unknown as vscode.LanguageModelChatRequestOptions;
   }
 }

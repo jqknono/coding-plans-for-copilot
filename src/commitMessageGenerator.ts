@@ -46,6 +46,8 @@ import {
   LEGACY_COMMIT_MESSAGE_SUMMARY_TRIGGER_LINES_SETTING_KEY,
   LEGACY_COMMIT_MESSAGE_WARN_ON_VALIDATION_FAILURE_SETTING_KEY,
   PLACEHOLDER_MODEL_ID_SUFFIXES,
+  REQUEST_SOURCE_COMMIT_MESSAGE,
+  REQUEST_SOURCE_MODEL_OPTION_KEY,
   RECENT_COMMIT_STYLE_MAX_ENTRY_LENGTH,
   REQUEST_CANCELLED_ERROR_CODE,
   SELECT_CHAT_MODELS_CACHE_TTL_MS,
@@ -1690,7 +1692,13 @@ async function sendPrompt(
   const messages = [vscode.LanguageModelChatMessage.User(promptForModel)];
   let response: vscode.LanguageModelChatResponse;
   try {
-    response = await model.sendRequest(messages, { justification }, token);
+    const requestOptions: vscode.LanguageModelChatRequestOptions = { justification };
+    if (model.vendor === CODING_PLANS_VENDOR) {
+      requestOptions.modelOptions = {
+        [REQUEST_SOURCE_MODEL_OPTION_KEY]: REQUEST_SOURCE_COMMIT_MESSAGE
+      };
+    }
+    response = await model.sendRequest(messages, requestOptions, token);
   } catch (error: unknown) {
     if (isLanguageModelBlockedError(error) && isCopilotVendor(model.vendor)) {
       throw new Error(getMessage('commitMessageCopilotQuotaExceeded'));
