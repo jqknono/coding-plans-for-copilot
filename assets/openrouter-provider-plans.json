@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-23T08:25:43.198Z",
-  "generatedAtBeijing": "2026年3月23日 16:25:43",
-  "sourceGeneratedAt": "2026-03-23T08:25:25.469Z",
-  "sourceGeneratedAtBeijing": "2026年3月23日 16:25:25",
-  "sourceMetricsGeneratedAt": "2026-03-23T08:25:26.435Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月23日 16:25:26",
+  "generatedAt": "2026-03-24T08:21:35.446Z",
+  "generatedAtBeijing": "2026年3月24日 16:21:35",
+  "sourceGeneratedAt": "2026-03-24T08:21:16.052Z",
+  "sourceGeneratedAtBeijing": "2026年3月24日 16:21:16",
+  "sourceMetricsGeneratedAt": "2026-03-24T08:21:16.891Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月24日 16:21:16",
   "summary": {
     "openrouterProviderCount": 75,
     "metricsProviderCount": 33,
@@ -84,11 +84,7 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://chutes.ai/pricing",
-          "serviceDetails": [
-            "Up to 300 requests/day",
-            "5X the value of pay-as-you-go",
-            "PAYG requests beyond limit"
-          ]
+          "serviceDetails": null
         },
         {
           "name": "Plus",
@@ -98,12 +94,7 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
-          "serviceDetails": [
-            "Up to 2,000 requests/day",
-            "5X the value of pay-as-you-go",
-            "Access to frontier models",
-            "PAYG requests beyond limit"
-          ]
+          "serviceDetails": null
         },
         {
           "name": "Pro",
@@ -113,56 +104,23 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
-          "serviceDetails": [
-            "Up to 5,000 requests/day",
-            "5X the value of pay-as-you-go",
-            "Access to frontier models",
-            "PAYG requests beyond limit"
-          ]
+          "serviceDetails": null
         }
       ],
       "sourceUrls": [
+        "https://chutes.ai",
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.CdMXGEtY.js",
-        "https://chutes.ai/_app/immutable/nodes/0.ChL4sJz1.js",
-        "https://chutes.ai/_app/immutable/chunks/A6Bqj6r0.js",
-        "https://chutes.ai/_app/immutable/chunks/D9oMPIpw.js",
-        "https://chutes.ai/_app/immutable/chunks/CQyVzz8P.js",
-        "https://chutes.ai/_app/immutable/chunks/DniCK0zc.js",
-        "https://chutes.ai/_app/immutable/chunks/BEigO3Uw.js",
-        "https://chutes.ai/_app/immutable/chunks/Ca-8DU1S.js",
-        "https://chutes.ai/_app/immutable/chunks/ahf1KeVi.js",
-        "https://chutes.ai/_app/immutable/chunks/DZvtVDhc.js",
-        "https://chutes.ai/_app/immutable/chunks/Bz600ZIY.js",
-        "https://chutes.ai/_app/immutable/chunks/DTyD7y5X.js",
-        "https://chutes.ai/_app/immutable/chunks/BPyTRY8Y.js",
-        "https://chutes.ai/_app/immutable/chunks/DwSQu5NW.js",
-        "https://chutes.ai/_app/immutable/chunks/BBTPfE_P.js",
-        "https://chutes.ai/_app/immutable/chunks/BtvNEnsL.js",
-        "https://chutes.ai/_app/immutable/nodes/2.C0FSLSBQ.js",
-        "https://chutes.ai/_app/immutable/chunks/B7_fQw99.js",
-        "https://chutes.ai/_app/immutable/chunks/Ca6kX3Ml.js",
-        "https://chutes.ai/_app/immutable/chunks/Yb5tKNzO.js",
-        "https://chutes.ai/_app/immutable/chunks/Ve7eqfsK.js",
-        "https://chutes.ai/_app/immutable/chunks/B8Y0FgmK.js",
-        "https://chutes.ai/_app/immutable/chunks/CqxbOeXv.js",
-        "https://chutes.ai/_app/immutable/chunks/BGFdVicR.js",
-        "https://chutes.ai/_app/immutable/chunks/CKi61T_S.js",
-        "https://chutes.ai/_app/immutable/chunks/wW-ps0Gh.js",
-        "https://chutes.ai/_app/immutable/chunks/DX6rZLP_.js",
-        "https://chutes.ai/_app/immutable/chunks/Da5i1ZgH.js",
-        "https://chutes.ai/_app/immutable/chunks/B86Qvfd8.js",
-        "https://chutes.ai/_app/immutable/chunks/DnO13N5R.js",
-        "https://chutes.ai/_app/immutable/chunks/BIjzv_Jj.js",
-        "https://chutes.ai/_app/immutable/chunks/DCbvei8V.js",
-        "https://chutes.ai/_app/immutable/chunks/WWqh4RGU.js",
-        "https://chutes.ai/_app/immutable/chunks/Dr6OF9m9.js",
-        "https://chutes.ai/_app/immutable/chunks/DW-pNwoA.js",
-        "https://chutes.ai/_app/immutable/chunks/D69XjJvu.js",
-        "https://chutes.ai/_app/immutable/chunks/ZvjxrGzD.js",
-        "https://chutes.ai/_app/immutable/nodes/21.DhJg59_i.js",
-        "https://chutes.ai/_app/immutable/chunks/Dp0sm0oq.js",
-        "https://chutes.ai"
+        "https://chutes.ai/_app/immutable/entry/start.s7Mltp4I.js",
+        "https://chutes.ai/_app/immutable/entry/app.MbuK9C7K.js",
+        "https://chutes.ai/_app/immutable/chunks/D3JLxCVq.js",
+        "https://chutes.ai/_app/immutable/nodes/0.B0TbRCsb.js",
+        "https://chutes.ai/_app/immutable/chunks/DsnmJJEf.js",
+        "https://chutes.ai/_app/immutable/chunks/55RRjmia.js",
+        "https://chutes.ai/_app/immutable/chunks/BEoANtaO.js",
+        "https://chutes.ai/_app/immutable/chunks/CEB_FjRe.js",
+        "https://chutes.ai/_app/immutable/chunks/BIyq6cQx.js",
+        "https://chutes.ai/_app/immutable/chunks/B3EvIoGl.js",
+        "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js"
       ],
       "pricingPageUrl": "https://chutes.ai/pricing",
       "officialWebsiteUrl": "https://chutes.ai",
@@ -189,9 +147,10 @@
             "1500次模型调用 / 5 小时",
             "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
             "2.5 倍 Starter 套餐用量",
-            "适合专业开发场景满足复杂开发任务需求",
+            "约支持1~2个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "生成图像和语音"
           ]
         },
         {
@@ -206,9 +165,10 @@
             "4500次模型调用 / 5 小时",
             "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
             "7.5 倍 Starter 套餐用量",
-            "适合有高级开发场景满足大量编程辅助需求",
+            "约支持2~3个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "生成图片、语音、音乐和视频"
           ]
         },
         {
@@ -223,9 +183,10 @@
             "30000次模型调用 / 5 小时",
             "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
             "50 倍 Starter 套餐用量",
-            "适合硬核开发者超大量编程辅助需求",
+            "约支持4~5个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "生成图片、语音、音乐和视频"
           ]
         },
         {
@@ -239,7 +200,7 @@
           "serviceDetails": [
             "600次模型调用 / 5小时",
             "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
-            "适合入门级开发场景满足基础开发需求",
+            "约支持1个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP"
           ]
@@ -256,9 +217,10 @@
             "1500次模型调用 / 5 小时",
             "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
             "2.5 倍 Starter 套餐用量",
-            "适合专业开发场景满足复杂开发任务需求",
+            "约支持1~2个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "生成图像和语音"
           ]
         },
         {
@@ -273,9 +235,10 @@
             "4500次模型调用 / 5 小时",
             "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
             "7.5 倍 Starter 套餐用量",
-            "适合有高级开发场景满足大量编程辅助需求",
+            "约支持2~3个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "生成图像、语音、音乐和视频"
           ]
         }
       ],
@@ -454,7 +417,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C_fjGL9H.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CwIqN9lL.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -537,7 +500,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.206/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.208/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -847,8 +810,8 @@
       "openrouterName": "Ionstream",
       "providerId": null,
       "officialWebsiteUrl": "https://ionstream.ai",
-      "pricingPageUrl": "https://ionstream.ai",
-      "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
+      "pricingPageUrl": "https://ionstream.ai/pricing",
+      "reason": "官网未发现可解析的套餐价格页",
       "blocked": false
     },
     {
