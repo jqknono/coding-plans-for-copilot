@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-23T08:25:25.469Z",
+  "generatedAt": "2026-03-24T03:01:32.062Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -61,7 +61,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C_fjGL9H.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CwIqN9lL.js"
       ],
       "plans": [
         {
@@ -226,7 +226,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.206/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.208/index.js"
       ],
       "plans": [
         {
@@ -279,9 +279,10 @@
             "1500次模型调用 / 5 小时",
             "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
             "2.5 倍 Starter 套餐用量",
-            "适合专业开发场景满足复杂开发任务需求",
+            "约支持1~2个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "生成图像和语音"
           ]
         },
         {
@@ -296,9 +297,10 @@
             "4500次模型调用 / 5 小时",
             "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
             "7.5 倍 Starter 套餐用量",
-            "适合有高级开发场景满足大量编程辅助需求",
+            "约支持2~3个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "生成图片、语音、音乐和视频"
           ]
         },
         {
@@ -313,9 +315,10 @@
             "30000次模型调用 / 5 小时",
             "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
             "50 倍 Starter 套餐用量",
-            "适合硬核开发者超大量编程辅助需求",
+            "约支持4~5个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "生成图片、语音、音乐和视频"
           ]
         },
         {
@@ -329,7 +332,7 @@
           "serviceDetails": [
             "600次模型调用 / 5小时",
             "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
-            "适合入门级开发场景满足基础开发需求",
+            "约支持1个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP"
           ]
@@ -346,9 +349,10 @@
             "1500次模型调用 / 5 小时",
             "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
             "2.5 倍 Starter 套餐用量",
-            "适合专业开发场景满足复杂开发任务需求",
+            "约支持1~2个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "生成图像和语音"
           ]
         },
         {
@@ -363,9 +367,10 @@
             "4500次模型调用 / 5 小时",
             "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
             "7.5 倍 Starter 套餐用量",
-            "适合有高级开发场景满足大量编程辅助需求",
+            "约支持2~3个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "生成图像、语音、音乐和视频"
           ]
         }
       ]
@@ -676,8 +681,8 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.92eda7c7.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.c770a9b9.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.6f8fa4fb.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.d52d219e.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
