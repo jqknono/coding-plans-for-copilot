@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-25T05:09:45.426Z",
+  "generatedAt": "2026-03-25T08:20:31.817Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -82,53 +82,38 @@
           ]
         },
         {
-          "name": "Andante (月)",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: LEVEL_TRIAL",
-            "更多 Agent 额度",
-            "Agent 4 倍速优先用",
-            "K2.5 提速并提升额度",
-            "Kimi Code 可调用"
-          ]
-        },
-        {
           "name": "Moderato (月)",
-          "currentPrice": 99,
-          "currentPriceText": "¥99/月",
+          "currentPrice": 19,
+          "currentPriceText": "¥19/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 基础会员",
-            "Andante 权益基础上",
-            "2 倍 Agent 额度",
+            "更多 Agent 额度",
             "Agent 多任务并行",
-            "2 倍 K2.5 模型使用额度",
-            "Kimi Code 4 倍额度"
+            "Agent 4 倍速优先用",
+            "K2.5 提速并提升额度",
+            "PPT 创意视觉 x Nano Banana",
+            "Kimi Code 可调用"
           ]
         },
         {
           "name": "Allegretto (月)",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
+          "currentPrice": 39,
+          "currentPriceText": "¥39/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 进阶会员",
-            "Andante 权益基础上",
-            "4 倍 Agent 额度",
-            "Agent 多任务并行",
-            "4 倍 K2.5 模型使用额度",
-            "Kimi Code 20 倍额度",
+            "Moderato 权益基础上",
+            "2 倍 Agent 额度",
+            "2 倍 K2.5 模型使用额度",
+            "无限 PPT 创意视觉 x Nano Banana",
+            "Kimi Code 5 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -137,19 +122,44 @@
         },
         {
           "name": "Allegro (月)",
-          "currentPrice": 699,
-          "currentPriceText": "¥699/月",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "会员等级: 高级会员",
-            "Andante 权益基础上",
+            "Moderato 权益基础上",
+            "5 倍 Agent 额度",
+            "2 倍 Agent 任务并行",
+            "高峰时段获得优先回复",
+            "5 倍 K2.5 模型使用额度",
+            "无限 PPT 创意视觉 x Nano Banana",
+            "Kimi Code 15 倍额度",
+            "专属助理 一键部署 Kimi Claw",
+            "实验性功能 Agent 集群：",
+            "多 Agent 并行，数倍生产力",
+            "适用海量搜索、长文写作、批量处理"
+          ]
+        },
+        {
+          "name": "Vivace (月)",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "会员等级: 旗舰会员",
+            "Moderato 权益基础上",
             "10 倍 Agent 额度",
-            "Agent 多任务并行",
+            "2 倍 Agent 任务并行",
+            "高峰时段获得优先回复",
             "10 倍 K2.5 模型使用额度",
-            "Kimi Code 60 倍额度",
+            "无限 PPT 创意视觉 x Nano Banana",
+            "Kimi Code 30 倍额度",
             "专属助理 一键部署 Kimi Claw",
             "实验性功能 Agent 集群：",
             "多 Agent 并行，数倍生产力",
@@ -467,7 +477,7 @@
           "originalPrice": 200,
           "originalPriceText": "¥200/月",
           "unit": "月",
-          "notes": "产品首购；可购1个；立即抢购",
+          "notes": "产品首购；可购1个；已售罄 点击预约",
           "serviceDetails": [
             "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
             "权益：享受 Lite 套餐的全部能力与权益",
