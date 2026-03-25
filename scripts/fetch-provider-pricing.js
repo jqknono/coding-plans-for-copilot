@@ -19,6 +19,7 @@ const PROVIDER_IDS = {
   ALIYUN: "aliyun-ai",
   BAIDU: "baidu-qianfan-ai",
   TENCENT: "tencent-cloud-ai",
+  JDCLOUD: "jdcloud-ai",
   KWAIKAT: "kwaikat-ai",
   XAIO: "x-aio",
   COMPSHARE: "compshare-ai",
@@ -1587,6 +1588,91 @@ async function parseTencentCodingPlans() {
   };
 }
 
+async function parseJdCloudCodingPlans() {
+  const pageUrl = "https://www.jdcloud.com/cn/pages/codingplan";
+  const chromium = await loadPlaywrightChromium("JD Cloud parser");
+  const browser = await chromium.launch({ headless: true });
+
+  try {
+    const page = await browser.newPage();
+    await blockNonEssentialPlaywrightRequests(page);
+    await page.goto(pageUrl, {
+      waitUntil: "domcontentloaded",
+      timeout: 20_000,
+    });
+    await page.waitForFunction(
+      () => {
+        const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+        const titles = Array.from(document.querySelectorAll(".flashsale-custom-wrap .titleview-title")).map((node) =>
+          normalize(node.textContent),
+        );
+        return titles.some((text) => /Coding\s*Plan\s*Lite/i.test(text))
+          && titles.some((text) => /Coding\s*Plan\s*Pro/i.test(text));
+      },
+      { timeout: 20_000 },
+    );
+
+    const rawPlans = await page.evaluate(() => {
+      const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
+      return Array.from(document.querySelectorAll(".flashsale-custom-wrap"))
+        .map((card) => {
+          const title = normalize(card.querySelector(".titleview-title")?.textContent || "");
+          if (!/Coding\s*Plan/i.test(title)) {
+            return null;
+          }
+
+          const detailLines = Array.from(card.querySelectorAll(".bottom-left-wrap > div"))
+            .map((row) => normalize(row.textContent))
+            .filter(Boolean);
+
+          return {
+            name: title.replace(/\s{2,}/g, " "),
+            description: normalize(card.querySelector(".specview-content")?.textContent || ""),
+            priceLine: normalize(card.querySelector(".custom-price-wrap")?.textContent || ""),
+            originalPriceLine: normalize(card.querySelector(".original-price-wrap")?.textContent || ""),
+            tagTexts: Array.from(card.querySelectorAll(".titleview-tag-wrap span"))
+              .map((node) => normalize(node.textContent))
+              .filter(Boolean),
+            buttonText: normalize(card.querySelector(".bottom-button-border-wrap")?.textContent || ""),
+            detailLines,
+          };
+        })
+        .filter(Boolean);
+    });
+
+    const plans = rawPlans
+      .map((item) => {
+        const currentAmount = Number(item.priceLine.match(/([0-9]+(?:\.[0-9]+)?)/)?.[1]);
+        const originalAmount = Number(item.originalPriceLine.match(/([0-9]+(?:\.[0-9]+)?)/)?.[1]);
+        return asPlan({
+          name: item.name,
+          currentPriceText: Number.isFinite(currentAmount) ? `¥${formatAmount(currentAmount)}/月` : item.priceLine,
+          currentPrice: Number.isFinite(currentAmount) ? currentAmount : null,
+          originalPriceText:
+            Number.isFinite(originalAmount) && originalAmount > currentAmount ? `¥${formatAmount(originalAmount)}/月` : null,
+          originalPrice: Number.isFinite(originalAmount) ? originalAmount : null,
+          unit: "月",
+          notes: [...item.tagTexts, item.buttonText].filter(Boolean).join("；"),
+          serviceDetails: [item.description, ...item.detailLines],
+        });
+      })
+      .filter((plan) => plan.name && plan.currentPriceText);
+
+    if (plans.length === 0) {
+      throw new Error("Unable to parse JD Cloud coding plan cards");
+    }
+
+    return {
+      provider: PROVIDER_IDS.JDCLOUD,
+      sourceUrls: [pageUrl],
+      fetchedAt: new Date().toISOString(),
+      plans: dedupePlans(plans),
+    };
+  } finally {
+    await browser.close();
+  }
+}
+
 async function parseKwaikatCodingPlans() {
   const pageUrl = "https://www.streamlake.com/marketing/coding-plan";
   const configUrl =
@@ -2582,6 +2668,7 @@ async function main() {
     { provider: PROVIDER_IDS.MINIMAX, fn: parseMinimaxCodingPlans },
     { provider: PROVIDER_IDS.BAIDU, fn: parseBaiduCodingPlans },
     { provider: PROVIDER_IDS.TENCENT, fn: parseTencentCodingPlans },
+    { provider: PROVIDER_IDS.JDCLOUD, fn: parseJdCloudCodingPlans },
     { provider: PROVIDER_IDS.KWAIKAT, fn: parseKwaikatCodingPlans },
     { provider: PROVIDER_IDS.XAIO, fn: parseXAioCodingPlans },
     { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans },
