@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-27T03:05:40.078Z",
+  "generatedAt": "2026-03-27T08:21:34.272Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -451,6 +451,42 @@
       ]
     },
     {
+      "provider": "jdcloud-ai",
+      "sourceUrls": [
+        "https://www.jdcloud.com/cn/pages/codingplan"
+      ],
+      "plans": [
+        {
+          "name": "Coding Plan Lite",
+          "currentPrice": 7.9,
+          "currentPriceText": "¥7.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月",
+          "unit": "月",
+          "notes": "产品首购；可购1个；已售罄，请预约",
+          "serviceDetails": [
+            "每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求",
+            "模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等",
+            "工具：Claude Code、OpenCode、OpenClaw、Roo Code、Cursor"
+          ]
+        },
+        {
+          "name": "Coding Plan Pro",
+          "currentPrice": 39.9,
+          "currentPriceText": "¥39.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
+          "unit": "月",
+          "notes": "产品首购；可购1个；已售罄 点击预约",
+          "serviceDetails": [
+            "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
+            "权益：享受 Lite 套餐的全部能力与权益",
+            "月用量： Lite 版的 5 倍用量"
+          ]
+        }
+      ]
+    },
+    {
       "provider": "kwaikat-ai",
       "sourceUrls": [
         "https://www.streamlake.com/marketing/coding-plan",
@@ -460,40 +496,40 @@
       "plans": [
         {
           "name": "KAT Coding Mini",
-          "currentPrice": 8.8,
-          "currentPriceText": "¥8.8/月",
+          "currentPrice": 29,
+          "currentPriceText": "¥29/月",
           "originalPrice": 29,
-          "originalPriceText": "¥29/月",
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V1；覆盖日常编码场景；¥40 Prompts/5小时",
+          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V2；覆盖日常编码场景；¥40 Prompts/5小时",
           "serviceDetails": [
             "适合初次体验者的轻量化选择",
-            "最低成本体验 KAT-Coder-Pro V1",
+            "最低成本体验 KAT-Coder-Pro V2",
             "覆盖日常编码场景",
             "40 Prompts / 5小时"
           ]
         },
         {
           "name": "KAT Coding Starter",
-          "currentPrice": 48,
-          "currentPriceText": "¥48/月",
+          "currentPrice": 70,
+          "currentPriceText": "¥70/月",
           "originalPrice": 70,
-          "originalPriceText": "¥70/月",
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V1 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
+          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V2 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
           "serviceDetails": [
             "适配日常核心开发场景的高效搭档",
-            "由最新旗舰模型 KAT-Coder-Pro V1 驱动",
+            "由最新旗舰模型 KAT-Coder-Pro V2 驱动",
             "适配Claude Code等主流编程工具",
             "100 Prompts / 5小时"
           ]
         },
         {
           "name": "KAT Coding Pro",
-          "currentPrice": 96,
-          "currentPriceText": "¥96/月",
+          "currentPrice": 140,
+          "currentPriceText": "¥140/月",
           "originalPrice": 140,
-          "originalPriceText": "¥140/月",
+          "originalPriceText": null,
           "unit": "月",
           "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；¥300 Prompts/5小时",
           "serviceDetails": [
@@ -505,10 +541,10 @@
         },
         {
           "name": "KAT Coding Max",
-          "currentPrice": 240,
-          "currentPriceText": "¥240/月",
+          "currentPrice": 350,
+          "currentPriceText": "¥350/月",
           "originalPrice": 350,
-          "originalPriceText": "¥350/月",
+          "originalPriceText": null,
           "unit": "月",
           "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；¥1000 Prompts/5小时",
           "serviceDetails": [
@@ -713,7 +749,5 @@
       ]
     }
   ],
-  "failures": [
-    "jdcloud-ai: page.goto: Timeout 20000ms exceeded.\nCall log:\n  - navigating to \"https://www.jdcloud.com/cn/pages/codingplan\", waiting until \"domcontentloaded\"\n"
-  ]
+  "failures": []
 }

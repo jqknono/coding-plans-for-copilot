@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-03-26T08:24:06.322Z",
-  "generatedAtBeijing": "2026年3月26日 16:24:06",
-  "sourceGeneratedAt": "2026-03-26T08:23:45.541Z",
-  "sourceGeneratedAtBeijing": "2026年3月26日 16:23:45",
-  "sourceMetricsGeneratedAt": "2026-03-26T08:23:46.420Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月26日 16:23:46",
+  "generatedAt": "2026-03-27T08:21:53.747Z",
+  "generatedAtBeijing": "2026年3月27日 16:21:53",
+  "sourceGeneratedAt": "2026-03-27T08:21:34.272Z",
+  "sourceGeneratedAtBeijing": "2026年3月27日 16:21:34",
+  "sourceMetricsGeneratedAt": "2026-03-27T08:21:34.879Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月27日 16:21:34",
   "summary": {
     "openrouterProviderCount": 75,
-    "metricsProviderCount": 33,
-    "resolvedMetricsProviderCount": 33,
+    "metricsProviderCount": 32,
+    "resolvedMetricsProviderCount": 32,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 5,
     "heuristicProviderCount": 5,
     "providersWithPlans": 10,
-    "pendingCount": 23,
+    "pendingCount": 22,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -58,7 +58,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7b90eaba32d8923c7184868c2d8b3990.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ffae92eece62b1177b2af8845f366a45.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -110,15 +110,15 @@
       "sourceUrls": [
         "https://chutes.ai",
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/start.BYefrk90.js",
-        "https://chutes.ai/_app/immutable/entry/app.CEu6oRPv.js",
-        "https://chutes.ai/_app/immutable/chunks/CisoVDXe.js",
-        "https://chutes.ai/_app/immutable/nodes/0._BIT17LF.js",
+        "https://chutes.ai/_app/immutable/entry/start.BhcUAobK.js",
+        "https://chutes.ai/_app/immutable/entry/app.BOkiVoyA.js",
+        "https://chutes.ai/_app/immutable/chunks/BaqTGBbx.js",
+        "https://chutes.ai/_app/immutable/nodes/0.Cz0XaCaP.js",
         "https://chutes.ai/_app/immutable/chunks/DsnmJJEf.js",
         "https://chutes.ai/_app/immutable/chunks/BgoEvGGg.js",
         "https://chutes.ai/_app/immutable/chunks/DoUkhPN4.js",
         "https://chutes.ai/_app/immutable/chunks/BZ9_IqD1.js",
-        "https://chutes.ai/_app/immutable/chunks/B85hAcPb.js",
+        "https://chutes.ai/_app/immutable/chunks/DSVESUNS.js",
         "https://chutes.ai/_app/immutable/chunks/C9SH1AXZ.js",
         "https://chutes.ai/_app/immutable/chunks/CfDd1Qzv.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js"
@@ -519,40 +519,40 @@
       "plans": [
         {
           "name": "KAT Coding Mini",
-          "currentPrice": 8.8,
-          "currentPriceText": "¥8.8/月",
+          "currentPrice": 29,
+          "currentPriceText": "¥29/月",
           "originalPrice": 29,
-          "originalPriceText": "¥29/月",
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V1；覆盖日常编码场景；¥40 Prompts/5小时",
+          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V2；覆盖日常编码场景；¥40 Prompts/5小时",
           "serviceDetails": [
             "适合初次体验者的轻量化选择",
-            "最低成本体验 KAT-Coder-Pro V1",
+            "最低成本体验 KAT-Coder-Pro V2",
             "覆盖日常编码场景",
             "40 Prompts / 5小时"
           ]
         },
         {
           "name": "KAT Coding Starter",
-          "currentPrice": 48,
-          "currentPriceText": "¥48/月",
+          "currentPrice": 70,
+          "currentPriceText": "¥70/月",
           "originalPrice": 70,
-          "originalPriceText": "¥70/月",
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V1 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
+          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V2 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
           "serviceDetails": [
             "适配日常核心开发场景的高效搭档",
-            "由最新旗舰模型 KAT-Coder-Pro V1 驱动",
+            "由最新旗舰模型 KAT-Coder-Pro V2 驱动",
             "适配Claude Code等主流编程工具",
             "100 Prompts / 5小时"
           ]
         },
         {
           "name": "KAT Coding Pro",
-          "currentPrice": 96,
-          "currentPriceText": "¥96/月",
+          "currentPrice": 140,
+          "currentPriceText": "¥140/月",
           "originalPrice": 140,
-          "originalPriceText": "¥140/月",
+          "originalPriceText": null,
           "unit": "月",
           "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；¥300 Prompts/5小时",
           "serviceDetails": [
@@ -564,10 +564,10 @@
         },
         {
           "name": "KAT Coding Max",
-          "currentPrice": 240,
-          "currentPriceText": "¥240/月",
+          "currentPrice": 350,
+          "currentPriceText": "¥350/月",
           "originalPrice": 350,
-          "originalPriceText": "¥350/月",
+          "originalPriceText": null,
           "unit": "月",
           "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；¥1000 Prompts/5小时",
           "serviceDetails": [
@@ -722,7 +722,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.02 / $0.01 / $0.04）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.026 / $0.013 / $0.02）",
       "blocked": false
     },
     {
@@ -795,15 +795,6 @@
       "officialWebsiteUrl": "https://www.inceptron.io",
       "pricingPageUrl": "https://www.inceptron.io/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3/h / $5/h / $8/h）",
-      "blocked": false
-    },
-    {
-      "slug": "io-net",
-      "openrouterName": "Io Net",
-      "providerId": null,
-      "officialWebsiteUrl": "https://io.net",
-      "pricingPageUrl": "https://io.net",
-      "reason": "官网价格页探测失败：https://io.net/pricing: HTTP 404",
       "blocked": false
     },
     {
