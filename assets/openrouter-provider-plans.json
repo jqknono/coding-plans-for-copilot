@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-03-27T08:21:53.747Z",
-  "generatedAtBeijing": "2026年3月27日 16:21:53",
-  "sourceGeneratedAt": "2026-03-27T08:21:34.272Z",
-  "sourceGeneratedAtBeijing": "2026年3月27日 16:21:34",
-  "sourceMetricsGeneratedAt": "2026-03-27T08:21:34.879Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月27日 16:21:34",
+  "generatedAt": "2026-03-28T08:17:20.822Z",
+  "generatedAtBeijing": "2026年3月28日 16:17:20",
+  "sourceGeneratedAt": "2026-03-28T08:16:53.583Z",
+  "sourceGeneratedAtBeijing": "2026年3月28日 16:16:53",
+  "sourceMetricsGeneratedAt": "2026-03-28T08:17:03.926Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月28日 16:17:03",
   "summary": {
     "openrouterProviderCount": 75,
-    "metricsProviderCount": 32,
-    "resolvedMetricsProviderCount": 32,
+    "metricsProviderCount": 33,
+    "resolvedMetricsProviderCount": 33,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 5,
     "heuristicProviderCount": 5,
     "providersWithPlans": 10,
-    "pendingCount": 22,
+    "pendingCount": 23,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -110,15 +110,15 @@
       "sourceUrls": [
         "https://chutes.ai",
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/start.BhcUAobK.js",
-        "https://chutes.ai/_app/immutable/entry/app.BOkiVoyA.js",
-        "https://chutes.ai/_app/immutable/chunks/BaqTGBbx.js",
-        "https://chutes.ai/_app/immutable/nodes/0.Cz0XaCaP.js",
+        "https://chutes.ai/_app/immutable/entry/start.C3oWmV63.js",
+        "https://chutes.ai/_app/immutable/entry/app.JhqOBqcv.js",
+        "https://chutes.ai/_app/immutable/chunks/DWYkpdij.js",
+        "https://chutes.ai/_app/immutable/nodes/0.DkGRDCTu.js",
         "https://chutes.ai/_app/immutable/chunks/DsnmJJEf.js",
         "https://chutes.ai/_app/immutable/chunks/BgoEvGGg.js",
         "https://chutes.ai/_app/immutable/chunks/DoUkhPN4.js",
         "https://chutes.ai/_app/immutable/chunks/BZ9_IqD1.js",
-        "https://chutes.ai/_app/immutable/chunks/DSVESUNS.js",
+        "https://chutes.ai/_app/immutable/chunks/ZvI0jvbz.js",
         "https://chutes.ai/_app/immutable/chunks/C9SH1AXZ.js",
         "https://chutes.ai/_app/immutable/chunks/CfDd1Qzv.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js"
@@ -418,7 +418,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CwIqN9lL.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-YoLbP_it.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -795,6 +795,15 @@
       "officialWebsiteUrl": "https://www.inceptron.io",
       "pricingPageUrl": "https://www.inceptron.io/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3/h / $5/h / $8/h）",
+      "blocked": false
+    },
+    {
+      "slug": "io-net",
+      "openrouterName": "Io Net",
+      "providerId": null,
+      "officialWebsiteUrl": "https://io.net",
+      "pricingPageUrl": "https://io.net",
+      "reason": "官网价格页探测失败：https://io.net/pricing: HTTP 404",
       "blocked": false
     },
     {
