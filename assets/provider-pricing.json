@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-27T08:21:34.272Z",
+  "generatedAt": "2026-03-28T03:03:03.732Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -61,7 +61,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CwIqN9lL.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-YoLbP_it.js"
       ],
       "plans": [
         {
