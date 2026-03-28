@@ -798,6 +798,17 @@ h1 {
   line-height: 1.45;
 }
 
+.provider-stale-note {
+  margin: 0.8rem 0 0;
+  padding: 0.55rem 0.68rem;
+  border-radius: 10px;
+  border: 1px solid rgba(228, 70, 70, 0.24);
+  background: rgba(255, 238, 238, 0.7);
+  color: #9f2f2f;
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
 .plan-services {
   margin-top: 0.46rem;
   border: 1px solid rgba(12, 124, 89, 0.2);

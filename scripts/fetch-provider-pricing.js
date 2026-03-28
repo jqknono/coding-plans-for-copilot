@@ -52,6 +52,7 @@ const HTML_ENTITIES = {
 
 const CNY_CURRENCY_HINT = /(¥|￥|元|人民币|\b(?:CNY|RMB)\b)/i;
 const USD_CURRENCY_HINT = /(\$|\b(?:USD|US\$)\b|美元|dollar)/i;
+const STALE_PROVIDER_NOTICE = "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。";
 
 function decodeHtml(value) {
   if (typeof value !== "string") {
@@ -475,6 +476,67 @@ function absoluteUrl(url, baseUrl) {
 
 function unique(values) {
   return [...new Set(values.filter(Boolean))];
+}
+
+async function loadExistingPricingSnapshot(outputFile = OUTPUT_FILE) {
+  try {
+    const raw = await fs.readFile(outputFile, "utf8");
+    const parsed = JSON.parse(raw);
+    return {
+      providers: Array.isArray(parsed?.providers) ? parsed.providers : [],
+      failures: Array.isArray(parsed?.failures) ? parsed.failures : [],
+    };
+  } catch {
+    return {
+      providers: [],
+      failures: [],
+    };
+  }
+}
+
+function extractProviderIdFromFailure(failureMessage) {
+  const matched = String(failureMessage || "").match(/^([^:]+):/);
+  return matched ? matched[1].trim() : "";
+}
+
+function buildStaleProviderFallback(provider, failureMessage) {
+  if (!provider || typeof provider !== "object") {
+    return null;
+  }
+
+  return {
+    ...provider,
+    sourceUrls: unique(provider.sourceUrls || []),
+    staleReason: STALE_PROVIDER_NOTICE,
+    staleFailure: normalizeText(String(failureMessage || "")) || null,
+  };
+}
+
+function restoreFailedProvidersFromSnapshot(providers, failures, snapshotProviders) {
+  const restored = [...(providers || [])];
+  const existingIds = new Set(restored.map((provider) => String(provider?.provider || "").trim()).filter(Boolean));
+  const snapshotMap = new Map(
+    (snapshotProviders || [])
+      .filter((provider) => provider && typeof provider === "object")
+      .map((provider) => [String(provider.provider || "").trim(), provider]),
+  );
+
+  for (const failure of failures || []) {
+    const providerId = extractProviderIdFromFailure(failure);
+    if (!providerId || existingIds.has(providerId) || !snapshotMap.has(providerId)) {
+      continue;
+    }
+
+    const fallback = buildStaleProviderFallback(snapshotMap.get(providerId), failure);
+    if (!fallback) {
+      continue;
+    }
+
+    restored.push(fallback);
+    existingIds.add(providerId);
+  }
+
+  return restored;
 }
 
 async function loadPlaywrightChromium(label) {
@@ -1597,19 +1659,20 @@ async function parseJdCloudCodingPlans() {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);
     await page.goto(pageUrl, {
-      waitUntil: "domcontentloaded",
-      timeout: 20_000,
+      waitUntil: "commit",
+      timeout: 60_000,
     });
     await page.waitForFunction(
       () => {
         const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
-        const titles = Array.from(document.querySelectorAll(".flashsale-custom-wrap .titleview-title")).map((node) =>
-          normalize(node.textContent),
-        );
+        const titles = Array.from(document.querySelectorAll(".flashsale-custom-wrap .titleview-title, .titleview-title"))
+          .map((node) => normalize(node.textContent));
+        const bodyText = normalize(document.body?.innerText || "");
         return titles.some((text) => /Coding\s*Plan\s*Lite/i.test(text))
-          && titles.some((text) => /Coding\s*Plan\s*Pro/i.test(text));
+          && titles.some((text) => /Coding\s*Plan\s*Pro/i.test(text))
+          || (/Coding\s*Plan\s*Lite/i.test(bodyText) && /Coding\s*Plan\s*Pro/i.test(bodyText));
       },
-      { timeout: 20_000 },
+      { timeout: 45_000 },
     );
 
     const rawPlans = await page.evaluate(() => {
@@ -1624,6 +1687,11 @@ async function parseJdCloudCodingPlans() {
           const detailLines = Array.from(card.querySelectorAll(".bottom-left-wrap > div"))
             .map((row) => normalize(row.textContent))
             .filter(Boolean);
+          const fallbackDetailLines = detailLines.length > 0
+            ? detailLines
+            : Array.from(card.querySelectorAll(".bottom-left-wrap *"))
+                .map((row) => normalize(row.textContent))
+                .filter(Boolean);
 
           return {
             name: title.replace(/\s{2,}/g, " "),
@@ -1634,7 +1702,7 @@ async function parseJdCloudCodingPlans() {
               .map((node) => normalize(node.textContent))
               .filter(Boolean),
             buttonText: normalize(card.querySelector(".bottom-button-border-wrap")?.textContent || ""),
-            detailLines,
+            detailLines: fallbackDetailLines,
           };
         })
         .filter(Boolean);
@@ -2658,6 +2726,7 @@ async function runTaskWithTimeout(task) {
 }
 
 async function main() {
+  const existingSnapshot = await loadExistingPricingSnapshot();
   const providers = [];
   const failures = [];
   const tasks = [
@@ -2715,9 +2784,15 @@ async function main() {
     }
   }
 
+  const providersWithFallback = restoreFailedProvidersFromSnapshot(
+    providers,
+    failures,
+    existingSnapshot.providers,
+  );
+
   const output = {
     generatedAt: new Date().toISOString(),
-    providers: normalizeProviderCurrencySymbols(providers),
+    providers: normalizeProviderCurrencySymbols(providersWithFallback),
     failures,
   };
 
@@ -2726,7 +2801,7 @@ async function main() {
   await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
   await fs.writeFile(OUTPUT_FILE, outputText, "utf8");
 
-  const summary = providers.map((provider) => `${provider.provider}: ${provider.plans.length}`).join(", ");
+  const summary = providersWithFallback.map((provider) => `${provider.provider}: ${provider.plans.length}`).join(", ");
   console.log(`[pricing] wrote ${OUTPUT_FILE}`);
   console.log(`[pricing] plans -> ${summary}`);
   if (failures.length > 0) {
@@ -2734,7 +2809,16 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error("[pricing] fatal:", error);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error("[pricing] fatal:", error);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  STALE_PROVIDER_NOTICE,
+  buildStaleProviderFallback,
+  extractProviderIdFromFailure,
+  restoreFailedProvidersFromSnapshot,
+};

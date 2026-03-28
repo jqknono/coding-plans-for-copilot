@@ -452,6 +452,9 @@ function mergeAllProviderData(pricingData, openrouterData) {
           existing.plans.push(plan);
         }
       }
+      existing.sourceUrls = Array.from(new Set([...(existing.sourceUrls || []), ...(p.sourceUrls || [])]));
+      existing.staleReason = p.staleReason || existing.staleReason || null;
+      existing.staleFailure = p.staleFailure || existing.staleFailure || null;
       if (!existing.buyUrl) {
         existing.buyUrl = getProviderBuyUrl(p);
       }
@@ -465,6 +468,8 @@ function mergeAllProviderData(pricingData, openrouterData) {
         sourceUrls: p.sourceUrls || [],
         buyUrl: PROVIDER_BUY_URLS[p.provider] || getProviderBuyUrl(p),
         pricingPageUrl: null,
+        staleReason: p.staleReason || null,
+        staleFailure: p.staleFailure || null,
       };
       providerMap.set(p.provider, entry);
       refMap.set(p.provider, entry);
@@ -649,6 +654,14 @@ function renderCurrencyFilteredTab(gridEl, providers, primarySymbol, foldedLabel
       summary.textContent = `${foldedLabel} (${secondaryPlans.length})`;
       details.append(summary, buildPlanList(secondaryPlans, { hideSourceUrl: hideSourceUrlNotes }));
       card.append(details);
+    }
+
+    if (provider.staleReason) {
+      const staleNote = createElement("p", "provider-stale-note", provider.staleReason);
+      if (provider.staleFailure) {
+        staleNote.title = provider.staleFailure;
+      }
+      card.append(staleNote);
     }
 
     gridEl.append(card);
