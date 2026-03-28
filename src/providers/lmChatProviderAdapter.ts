@@ -13,6 +13,7 @@ import { logger } from '../logging/outputChannelLogger';
 import { NormalizedTokenUsage, readAttachedTokenUsage } from './tokenUsage';
 
 let hasShownVendorNotConfiguredWarning = false;
+const PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS = 30000;
 
 interface ProviderPickerConfiguration {
   name?: unknown;
@@ -86,7 +87,7 @@ function getPlaceholderModel(vendor: string): vscode.LanguageModelChatInformatio
     detail: getMessage('setupModelDetail'),
     version: MODEL_VERSION_LABEL,
     maxInputTokens: 1,
-    maxOutputTokens: 1,
+    maxOutputTokens: PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS,
     capabilities: {
       toolCalling: false,
       imageInput: false
@@ -105,7 +106,7 @@ function getNoModelsPlaceholderModel(vendor: string): vscode.LanguageModelChatIn
     detail: getMessage('noModelDetail'),
     version: MODEL_VERSION_LABEL,
     maxInputTokens: 1,
-    maxOutputTokens: 1,
+    maxOutputTokens: PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS,
     capabilities: {
       toolCalling: false,
       imageInput: false
@@ -124,7 +125,7 @@ function getUnsupportedPlaceholderModel(vendor: string): vscode.LanguageModelCha
     detail: getMessage('unsupportedModelDetail'),
     version: MODEL_VERSION_LABEL,
     maxInputTokens: 1,
-    maxOutputTokens: 1,
+    maxOutputTokens: PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS,
     capabilities: {
       toolCalling: false,
       imageInput: false
@@ -142,7 +143,7 @@ function getVendorNotConfiguredPlaceholderModel(vendor: string): vscode.Language
     detail: getMessage('vendorNotConfiguredDetail'),
     version: MODEL_VERSION_LABEL,
     maxInputTokens: 1,
-    maxOutputTokens: 1,
+    maxOutputTokens: PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS,
     capabilities: {
       toolCalling: false,
       imageInput: false
@@ -273,15 +274,21 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     }
 
     let traceId = this.generateTraceId('adapter');
+    const requestMessageSummaries = messages.map(message => this.summarizeRequestMessage(message));
     logger.info('Adapter received language model chat request', {
       traceId,
       provider: vendor,
       modelId: model.id,
       modelName: model.name,
       messageCount: messages.length,
-      messages: messages.map(message => this.summarizeRequestMessage(message)),
       toolCount: options?.tools?.length ?? 0,
       toolMode: options?.toolMode
+    });
+    logger.debug('Adapter request message details', {
+      traceId,
+      provider: vendor,
+      modelId: model.id,
+      messages: requestMessageSummaries
     });
 
     try {

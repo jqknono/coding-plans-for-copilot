@@ -67,7 +67,7 @@ export function buildContextStatusText(snapshot: LastContextUsageSnapshot | unde
     return 'CodingPlans Context --';
   }
 
-  const percentage = Math.min(100, Math.max(0, Math.round((snapshot.totalTokens / snapshot.totalContextWindow) * 100)));
+  const percentage = Math.min(100, Math.max(0, Math.round((readOccupiedContextTokens(snapshot) / snapshot.totalContextWindow) * 100)));
   return `CodingPlans Context ${percentage}%`;
 }
 
@@ -80,7 +80,8 @@ export function buildContextStatusTooltip(snapshot: LastContextUsageSnapshot | u
     ].join('\n');
   }
 
-  const ratio = Number(((snapshot.totalTokens / snapshot.totalContextWindow) * 100).toFixed(1));
+  const occupiedContextTokens = readOccupiedContextTokens(snapshot);
+  const ratio = Number(((occupiedContextTokens / snapshot.totalContextWindow) * 100).toFixed(1));
   const recordedAt = new Date(snapshot.recordedAt).toISOString();
 
   return [
@@ -92,9 +93,17 @@ export function buildContextStatusTooltip(snapshot: LastContextUsageSnapshot | u
     `- Completion: ${formatCompactTokens(snapshot.completionTokens)}`,
     `- Total: ${formatCompactTokens(snapshot.totalTokens)}`,
     `- Reserved Output: ${snapshot.outputBuffer === undefined ? '--' : formatCompactTokens(snapshot.outputBuffer)}`,
+    `- Occupied Context: ${formatCompactTokens(occupiedContextTokens)}`,
     `- Model: ${snapshot.modelName}`,
     `- Updated: ${recordedAt}`
   ].join('\n');
+}
+
+function readOccupiedContextTokens(snapshot: LastContextUsageSnapshot): number {
+  return Math.min(
+    snapshot.totalContextWindow,
+    snapshot.totalTokens + Math.max(snapshot.outputBuffer ?? 0, 0)
+  );
 }
 
 function formatCompactTokens(value: number): string {

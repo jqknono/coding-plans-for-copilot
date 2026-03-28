@@ -119,6 +119,27 @@ function sanitizeErrorMessage(value: string): string {
   return collapsed;
 }
 
+function sanitizeUnresolvedPlaceholderText(value: string): string {
+  return value.replace(/\{\d+\}/g, 'value');
+}
+
+function sanitizeToolMetadataValue(value: unknown): unknown {
+  if (typeof value === 'string') {
+    return sanitizeUnresolvedPlaceholderText(value);
+  }
+
+  if (Array.isArray(value)) {
+    return value.map(item => sanitizeToolMetadataValue(item));
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, nestedValue]) => [key, sanitizeToolMetadataValue(nestedValue)])
+    );
+  }
+
+  return value;
+}
 export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   public readonly id: string;
   public readonly vendor: string;
@@ -864,12 +885,14 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       type: 'function',
       function: {
         name: tool.name,
-        description: tool.description,
-        parameters: tool.inputSchema || {
+        description: typeof sanitizeToolMetadataValue(tool.description) === 'string'
+          ? sanitizeToolMetadataValue(tool.description) as string
+          : undefined,
+        parameters: sanitizeToolMetadataValue(tool.inputSchema || {
           type: 'object',
           properties: {},
           additionalProperties: true
-        }
+        }) as object
       }
     }));
   }

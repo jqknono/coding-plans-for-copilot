@@ -96,6 +96,8 @@ interface ResolvedSamplingOptions {
   topP: number;
 }
 
+type OutputLimitProtocol = 'openai-chat' | 'openai-responses' | 'anthropic';
+
 interface ParsedSseEvent {
   event?: string;
   data: string;
@@ -432,10 +434,17 @@ export class GenericAIProvider extends BaseAIProvider {
       protocol: mapping.apiStyle
     };
     this.attachCancellationLogging(token, trace);
+    const requestSummary = this.summarizeGenericChatRequest(request);
     logger.info('Language model request start', {
       ...trace,
       baseUrl,
-      request: this.summarizeGenericChatRequest(request)
+      messageCount: request.messages.length,
+      toolCount: request.options?.tools?.length ?? 0,
+      toolMode: request.options?.toolMode
+    });
+    logger.debug('Language model request payload details', {
+      ...trace,
+      request: requestSummary
     });
 
     if (mapping.apiStyle === 'anthropic') {
@@ -462,7 +471,15 @@ export class GenericAIProvider extends BaseAIProvider {
     };
   }
 
-  private shouldSendOutputTokenLimit(vendor: VendorConfig, modelName: string): boolean {
+  private shouldSendOutputTokenLimit(
+    vendor: VendorConfig,
+    modelName: string,
+    protocol: OutputLimitProtocol
+  ): boolean {
+    if (protocol === 'anthropic') {
+      // Anthropic-compatible endpoints require max_tokens in request payloads.
+      return true;
+    }
     const model = this.findConfiguredModel(vendor, modelName);
     return model?.maxOutputTokens !== 0;
   }
@@ -628,7 +645,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const sampling = this.resolveSamplingOptions(vendor, modelName);
     const tools = supportsToolCalling ? this.buildToolDefinitions(request.options) : undefined;
     const toolChoice = supportsToolCalling ? this.buildToolChoice(request.options) : undefined;
-    const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName)
+    const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName, 'openai-chat')
       ? this.resolveRequestedOutputLimit(request)
       : undefined;
     const maxTokens = requestedOutputLimit;
@@ -745,6 +762,41 @@ export class GenericAIProvider extends BaseAIProvider {
         }
       }
 
+      if (payload.max_tokens === undefined && this.shouldRetryWithRequiredMaxTokens(error)) {
+        logger.warn('OpenAI chat request requires explicit max_tokens; retrying with fallback output limit', {
+          ...trace,
+          error: this.summarizeError(error)
+        });
+        try {
+          const fallbackPayload: OpenAIChatRequest = {
+            ...payload,
+            stream: false,
+            max_tokens: this.resolveRequiredOutputLimit(request)
+          };
+          const requestInit = this.buildRequestInit(apiKey, 'openai-chat', token);
+          const fallbackResponse = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
+            this.postWithRetry(`${retryBaseUrl}/chat/completions`, fallbackPayload, requestInit, trace)
+          ), trace);
+          const parsedFallback = await this.readParsedResponse<OpenAIChatResponse>(fallbackResponse);
+          return this.buildOpenAIChatResponseFromPayload(
+            request,
+            vendor,
+            modelName,
+            trace,
+            parsedFallback,
+            fallbackPayload.max_tokens
+          );
+        } catch (fallbackError) {
+          const providerError = this.toProviderError(fallbackError);
+          logger.error('OpenAI chat max_tokens recovery retry failed', {
+            ...trace,
+            error: this.summarizeError(fallbackError),
+            translatedError: providerError.message
+          });
+          throw providerError;
+        }
+      }
+
       const providerError = this.toProviderError(error);
       logger.error('OpenAI chat request failed', {
         ...trace,
@@ -771,6 +823,7 @@ export class GenericAIProvider extends BaseAIProvider {
     logger.debug('Parsed OpenAI chat response', {
       ...trace,
       responseId: response.id,
+      content,
       contentLength: content.length,
       toolCallCount: responseMessage?.tool_calls?.length ?? 0,
       usage: usageData
@@ -802,7 +855,7 @@ export class GenericAIProvider extends BaseAIProvider {
       ? buildOpenAIResponsesToolDefinitions(this.buildToolDefinitions(request.options))
       : undefined;
     const toolChoice = request.capabilities.toolCalling ? this.buildToolChoice(request.options) : undefined;
-    const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName)
+    const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName, 'openai-responses')
       ? this.resolveRequestedOutputLimit(request)
       : undefined;
     const maxOutputTokens = requestedOutputLimit;
@@ -943,7 +996,9 @@ export class GenericAIProvider extends BaseAIProvider {
       ...trace,
       responseId: response.id,
       outputCount: response.output?.length ?? 0,
+      outputText: response.output_text,
       outputTextLength: typeof response.output_text === 'string' ? response.output_text.length : 0,
+      parsedContent: parsed.content,
       parsedContentLength: parsed.content.length,
       parsedToolCallCount: parsed.toolCalls.length,
       parsedToolCalls: parsed.toolCalls.map(toolCall => ({
@@ -982,7 +1037,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const sampling = this.resolveSamplingOptions(vendor, modelName);
     const { system, messages } = toAnthropicMessages(providerMessages, () => this.generateToolCallId());
     const tools = request.capabilities.toolCalling ? buildAnthropicToolDefinitions(this.buildToolDefinitions(request.options)) : undefined;
-    const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName)
+    const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName, 'anthropic')
       ? this.resolveRequestedOutputLimit(request)
       : undefined;
     const maxTokens = requestedOutputLimit;
@@ -1042,6 +1097,24 @@ export class GenericAIProvider extends BaseAIProvider {
               }
             }
             const finalized = finalizeAnthropicStreamState(state, () => this.generateToolCallId());
+            if (this.hasMalformedAnthropicStreamToolArguments(finalized.toolCalls)) {
+              logger.warn('Anthropic stream produced malformed tool arguments; retrying without stream', {
+                ...trace,
+                responseId: state.responseId,
+                toolCallCount: finalized.toolCalls.length
+              });
+              const fallbackPayload: AnthropicChatRequest = { ...payload, stream: false };
+              const fallbackResponse = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
+                this.postWithRetry(`${retryBaseUrl}/messages`, fallbackPayload, requestInit, trace)
+              ), trace);
+              const parsedFallback = await this.readParsedResponse<AnthropicChatResponse>(fallbackResponse);
+              return this.parseAnthropicCompletion(
+                vendor,
+                modelName,
+                trace,
+                parsedFallback
+              );
+            }
             this.logUpstreamResponseSummary('anthropic', vendor, modelName, {
               mode: 'stream',
               responseId: state.responseId,
@@ -1102,6 +1175,41 @@ export class GenericAIProvider extends BaseAIProvider {
         }
       }
 
+      if (payload.max_tokens === undefined && this.shouldRetryWithRequiredMaxTokens(error)) {
+        logger.warn('Anthropic request requires explicit max_tokens; retrying with fallback output limit', {
+          ...trace,
+          error: this.summarizeError(error)
+        });
+        try {
+          const fallbackPayload: AnthropicChatRequest = {
+            ...payload,
+            stream: false,
+            max_tokens: this.resolveRequiredOutputLimit(request)
+          };
+          const requestInit = this.buildRequestInit(apiKey, 'anthropic', token);
+          const fallbackResponse = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
+            this.postWithRetry(`${retryBaseUrl}/messages`, fallbackPayload, requestInit, trace)
+          ), trace);
+          const parsedFallback = await this.readParsedResponse<AnthropicChatResponse>(fallbackResponse);
+          return this.buildAnthropicResponseFromPayload(
+            request,
+            vendor,
+            modelName,
+            trace,
+            parsedFallback,
+            fallbackPayload.max_tokens
+          );
+        } catch (fallbackError) {
+          const providerError = this.toProviderError(fallbackError);
+          logger.error('Anthropic max_tokens recovery retry failed', {
+            ...trace,
+            error: this.summarizeError(fallbackError),
+            translatedError: providerError.message
+          });
+          throw providerError;
+        }
+      }
+
       const providerError = this.toProviderError(error);
       logger.error('Anthropic request failed', {
         ...trace,
@@ -1120,30 +1228,47 @@ export class GenericAIProvider extends BaseAIProvider {
     response: AnthropicChatResponse,
     maxTokens: number | undefined
   ): vscode.LanguageModelChatResponse {
+    const finalized = this.parseAnthropicCompletion(vendor, modelName, trace, response);
+    const responseParts = this.buildResponseParts(finalized.content, finalized.toolCalls);
+    const result = this.buildLoggedChatResponse(trace, finalized.content, responseParts);
+    const normalizedUsage = normalizeTokenUsage(
+      'anthropic',
+      finalized.usage,
+      maxTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxTokens)
+    );
+    attachTokenUsage(result as unknown as Record<string, unknown>, normalizedUsage);
+    this.logModelTokenUsage(request, vendor, modelName, normalizedUsage);
+    return result;
+  }
+
+  private parseAnthropicCompletion(
+    vendor: VendorConfig,
+    modelName: string,
+    trace: RequestTraceContext,
+    response: AnthropicChatResponse
+  ): StreamingCompletionResult {
     this.logUpstreamResponseSummary('anthropic', vendor, modelName, summarizeAnthropicResponseForLogging(response));
     logger.debug('Anthropic raw response shape', {
       ...trace,
-      responseShape: this.summarizeRawResponseShape(response)
+      responseShape: this.summarizeRawResponseShape(response),
+      responseContent: response.content
     });
     const parsed = parseAnthropicResponse(response, () => this.generateToolCallId());
     this.ensureNonEmptyCompletion('anthropic', trace, vendor, modelName, parsed.content, parsed.toolCalls);
     logger.debug('Parsed Anthropic response', {
       ...trace,
       responseId: response.id,
+      parsedContent: parsed.content,
       parsedContentLength: parsed.content.length,
       parsedToolCallCount: parsed.toolCalls.length,
       usage: response.usage
     });
-    const responseParts = this.buildResponseParts(parsed.content, parsed.toolCalls);
-    const result = this.buildLoggedChatResponse(trace, parsed.content, responseParts);
-    const normalizedUsage = normalizeTokenUsage(
-      'anthropic',
-      response.usage as Record<string, unknown> | undefined,
-      maxTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxTokens)
-    );
-    attachTokenUsage(result as unknown as Record<string, unknown>, normalizedUsage);
-    this.logModelTokenUsage(request, vendor, modelName, normalizedUsage);
-    return result;
+    return {
+      content: parsed.content,
+      toolCalls: parsed.toolCalls,
+      usage: response.usage as Record<string, unknown> | undefined,
+      responseId: response.id
+    };
   }
 
   private async postWithRetry(
@@ -1259,14 +1384,36 @@ export class GenericAIProvider extends BaseAIProvider {
 
   private resolveRequestedOutputLimit(request: GenericChatRequest): number {
     const advanced = this.configStore.getAdvancedOptions();
-    if (advanced.defaultReservedOutput > 0) {
-      return advanced.defaultReservedOutput;
-    }
     const model = this.getModel(request.modelId);
+
+    if (advanced.defaultReservedOutput > 0) {
+      const desired = Math.max(1, Math.floor(advanced.defaultReservedOutput));
+      if (!model) {
+        return desired;
+      }
+      return Math.max(1, Math.min(desired, Math.floor(model.maxOutputTokens)));
+    }
+
     if (!model) {
       return DEFAULT_REQUEST_MAX_TOKENS;
     }
     return Math.max(1, Math.floor(model.maxOutputTokens));
+  }
+
+  private resolveRequiredOutputLimit(request: GenericChatRequest): number {
+    const requested = this.resolveRequestedOutputLimit(request);
+    if (requested > 1) {
+      return requested;
+    }
+
+    const model = this.getModel(request.modelId);
+    if (!model) {
+      return requested;
+    }
+
+    const contextWindow = Math.max(1, Math.floor(model.maxTokens));
+    const fallback = Math.max(1, Math.min(contextWindow, 4096));
+    return Math.max(requested, fallback);
   }
 
   private resolveOutputBuffer(
@@ -1476,6 +1623,22 @@ export class GenericAIProvider extends BaseAIProvider {
 
     const message = compactDetail || getCompactErrorMessage(error) || getMessage('unknownError');
     return new vscode.LanguageModelError(getMessage('requestFailed', message));
+  }
+
+  private shouldRetryWithRequiredMaxTokens(error: any): boolean {
+    const detail = this.readApiErrorMessage(error) || getCompactErrorMessage(error);
+    const normalized = detail.trim().toLowerCase();
+    if (normalized.length === 0) {
+      return false;
+    }
+
+    if (normalized.includes('missing field max_tokens')) {
+      return true;
+    }
+
+    const mentionsMaxTokens = /max[_\s-]?tokens/.test(normalized);
+    const indicatesRequired = /(required|missing|must provide|expected)/.test(normalized);
+    return mentionsMaxTokens && indicatesRequired;
   }
 
   private readApiErrorMessage(error: any): string | undefined {
@@ -1817,6 +1980,20 @@ export class GenericAIProvider extends BaseAIProvider {
       && /(unsupported|not support|not supported|invalid|unknown|only|expect)/i.test(detail);
   }
 
+  private hasMalformedAnthropicStreamToolArguments(toolCalls: ChatToolCall[]): boolean {
+    return toolCalls.some(toolCall => this.isRawToolArgumentsPayload(toolCall.function.arguments));
+  }
+
+  private isRawToolArgumentsPayload(rawArguments: string): boolean {
+    const parsed = this.tryParseJson<Record<string, unknown>>(rawArguments);
+    if (!parsed || Array.isArray(parsed)) {
+      return false;
+    }
+
+    const keys = Object.keys(parsed);
+    return keys.length === 1 && keys[0] === 'raw' && typeof parsed.raw === 'string';
+  }
+
   private tryParseJson<T>(raw: string): T | undefined {
     const trimmed = raw.trim();
     if (trimmed.length === 0) {
@@ -2034,3 +2211,6 @@ export class GenericAIProvider extends BaseAIProvider {
     }
   }
 }
+
+
+

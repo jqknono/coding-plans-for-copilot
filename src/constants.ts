@@ -47,7 +47,7 @@ export const RECENT_COMMIT_STYLE_MAX_ENTRY_LENGTH = 500;
 export const DEFAULT_LLM_MAX_PROMPT_LENGTH = 5000;
 export const COMMIT_LOG_ENTRY_SEPARATOR = '\u001e';
 export const SELECT_CHAT_MODELS_TIMEOUT_MS = 10000;
-export const SELECT_CHAT_MODELS_CACHE_TTL_MS = 60000;
+export const SELECT_CHAT_MODELS_CACHE_TTL_MS = 30000;
 export const REQUEST_CANCELLED_ERROR_CODE = 'coding-plans.requestCancelled';
 export const COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX = '[coding-plans][commit-message-model-selection]';
 export const CODING_PLANS_VENDOR = 'coding-plans';
@@ -73,12 +73,12 @@ export const PLACEHOLDER_MODEL_ID_SUFFIXES = ['__setup_api_key__', '__no_models_
 export const CONVENTIONAL_COMMIT_SUBJECT_RE = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9_.\-\/]+\))?!?: .+/i;
 
 export const ADVANCED_OPTIONS_SETTING_KEY = 'advanced';
-export const DEFAULT_ADVANCED_RESERVED_OUTPUT = 0;
+export const DEFAULT_ADVANCED_RESERVED_OUTPUT = 30000;
 export const VENDOR_API_KEY_PREFIX = 'coding-plans.vendor.apiKey.';
 export const DEFAULT_TOKEN_SIDE_LIMIT = 200000;
 export const DEFAULT_CONTEXT_WINDOW_SIZE = DEFAULT_TOKEN_SIDE_LIMIT;
 export const DEFAULT_REQUEST_MAX_TOKENS = DEFAULT_TOKEN_SIDE_LIMIT;
-export const DEFAULT_RESERVED_OUTPUT_TOKENS = 0;
+export const DEFAULT_RESERVED_OUTPUT_TOKENS = 30000;
 export const DEFAULT_MODEL_CAPABILITIES_TOOLS = true;
 export const DEFAULT_MODEL_CAPABILITIES_VISION = false;
 

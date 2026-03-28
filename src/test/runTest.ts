@@ -660,10 +660,11 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     const updatedVendor = getUpdatedVendor(activeState);
     assert.equal(updatedVendor.models[0]?.apiStyle, 'openai-responses');
     assert.deepEqual(updatedVendor.models[0]?.capabilities, { tools: true, vision: true });
-    assert.equal(updatedVendor.models[0]?.maxOutputTokens, 0);
+    assert.equal(updatedVendor.models[0]?.maxInputTokens, undefined);
+    assert.equal(updatedVendor.models[0]?.maxOutputTokens, undefined);
     assert.equal(updatedVendor.models[0]?.temperature, undefined);
     assert.equal(updatedVendor.models[0]?.topP, undefined);
-    console.log('PASS updateVendorModels 写回模型默认 apiStyle、capabilities 与 maxOutputTokens=0');
+    console.log('PASS updateVendorModels 写回模型默认 apiStyle、capabilities，但不再默认落 maxInputTokens/maxOutputTokens');
   } finally {
     configStore.dispose();
   }
@@ -815,6 +816,14 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
       maxInputTokens: number;
       maxOutputTokens: number;
     };
+    buildToolDefinitions(options?: { tools?: Array<{ name: string; description?: string; inputSchema?: object }> }): Array<{
+      type: 'function';
+      function: {
+        name: string;
+        description?: string;
+        parameters?: object;
+      };
+    }> | undefined;
     dispose(): void;
   };
 
@@ -834,6 +843,38 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
       maxOutputTokens: 16000
     });
     console.log('PASS runtime token window 在上下限较小时保持原值');
+    const sanitizedTools = provider.buildToolDefinitions({
+      tools: [{
+        name: 'search_codebase',
+        description: 'Searching codebase for "{1}"',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'Use "{1}" as the semantic query.'
+            }
+          }
+        }
+      }]
+    });
+    assert.deepEqual(sanitizedTools, [{
+      type: 'function',
+      function: {
+        name: 'search_codebase',
+        description: 'Searching codebase for "value"',
+        parameters: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'Use "value" as the semantic query.'
+            }
+          }
+        }
+      }
+    }]);
+    console.log('PASS 工具定义中的未替换占位符会在转发前被清洗');
   } finally {
     provider.dispose();
   }
@@ -915,8 +956,8 @@ function runGenericProviderContextSizeTests(
     cappedProvider.models = models as Array<{ id: string; maxTokens: number; maxOutputTokens: number }>;
     assert.equal(models[0]?.maxTokens, 131072);
     assert.equal(models[0]?.maxOutputTokens, 131072);
-    assert.equal(cappedProvider.resolveRequestedOutputLimit({ modelId: models[0]!.id }), 131072);
-    console.log('PASS GenericAIProvider 请求上游时不再做本地 prompt token 预算裁剪');
+    assert.equal(cappedProvider.resolveRequestedOutputLimit({ modelId: models[0]!.id }), 30000);
+    console.log('PASS GenericAIProvider 请求上游时默认输出预算会按配置与模型上限收敛');
   } finally {
     cappedProvider.dispose();
     cappedConfigStore.dispose();
@@ -949,9 +990,9 @@ function runGenericProviderContextSizeTests(
     const vendor = zeroUnsetConfigStore.getVendors()[0] as VendorRecord;
     const models = zeroUnsetProvider.buildConfiguredModelsForVendor(vendor);
     assert.equal(models[0]?.maxTokens, 131072);
-    assert.equal(models[0]?.maxInputTokens, 131071);
-    assert.equal(models[0]?.maxOutputTokens, 1);
-    console.log('PASS 运行时会把 0 视为未设置并保留最小输出窗口');
+    assert.equal(models[0]?.maxInputTokens, 101072);
+    assert.equal(models[0]?.maxOutputTokens, 30000);
+    console.log('PASS 运行时会把 0 视为未设置并应用默认输出预算');
   } finally {
     zeroUnsetProvider.dispose();
     zeroUnsetConfigStore.dispose();
@@ -1111,6 +1152,96 @@ async function runGenericProviderOutputLimitToggleTests(
     }
   }
 
+  async function capturePayloadWithRequiredMaxTokensRetry(
+    vendors: VendorRecord[],
+    modelId: string
+  ): Promise<{ payloads: Record<string, unknown>[]; response: unknown }> {
+    activeState = createState(vendors);
+    const configStore = new configStoreCtor(createExtensionContext() as never);
+    const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+      refreshModels(): Promise<void>;
+      sendRequest(
+        request: {
+          modelId: string;
+          messages: Array<{ role: string; content: Array<{ value: string }> }>;
+          capabilities: { toolCalling: boolean; imageInput: boolean };
+          options?: { tools?: unknown[] };
+        }
+      ): Promise<unknown>;
+      dispose(): void;
+    };
+
+    const payloads: Record<string, unknown>[] = [];
+    let callCount = 0;
+    globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+      const payload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
+      payloads.push(payload);
+      callCount += 1;
+
+      if (callCount === 1) {
+        return new Response(JSON.stringify({
+          error: {
+            type: 'invalid_request_error',
+            message: 'missing field max_tokens at line 1 column 42'
+          }
+        }), {
+          status: 400,
+          headers: {
+            'content-type': 'application/json'
+          }
+        });
+      }
+
+      return new Response(JSON.stringify({
+        id: 'chatcmpl_test',
+        created: 0,
+        model: 'coder',
+        choices: [{
+          index: 0,
+          message: {
+            role: 'assistant',
+            content: 'ok'
+          },
+          finish_reason: 'stop'
+        }],
+        usage: {
+          prompt_tokens: 1,
+          completion_tokens: 1,
+          total_tokens: 2
+        }
+      }), {
+        status: 200,
+        headers: {
+          'content-type': 'application/json'
+        }
+      });
+    }) as typeof globalThis.fetch;
+
+    try {
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
+        vendorName === 'Vendor' ? 'configured' : ''
+      );
+      await provider.refreshModels();
+      const response = await provider.sendRequest({
+        modelId,
+        messages: [{
+          role: 'user',
+          content: [{ value: 'reply with ok' }]
+        }],
+        capabilities: { toolCalling: false, imageInput: false },
+        options: { tools: [] }
+      });
+      return {
+        payloads,
+        response
+      };
+    } finally {
+      globalThis.fetch = originalFetch;
+      provider.dispose();
+      configStore.dispose();
+    }
+  }
+
   const zeroOutputDisabledResult = await capturePayload([{
     name: 'Vendor',
     baseUrl: 'https://example.test/v1',
@@ -1127,6 +1258,26 @@ async function runGenericProviderOutputLimitToggleTests(
   assert.equal('max_tokens' in zeroOutputDisabledResult.payload, false);
   assert.equal(readAttachedTokenUsage(zeroOutputDisabledResult.response)?.outputBuffer, undefined);
   console.log('PASS maxOutputTokens 为 0 时不会向 openai-chat 下发 max_tokens，且不显示 Reserved Output');
+
+  const requiredMaxTokensRetryResult = await capturePayloadWithRequiredMaxTokensRetry([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'coder',
+      contextSize: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 0,
+      capabilities: { tools: true, vision: false }
+    }]
+  }], 'Vendor/coder');
+  assert.equal(requiredMaxTokensRetryResult.payloads.length, 2);
+  assert.equal('max_tokens' in requiredMaxTokensRetryResult.payloads[0], false);
+  assert.equal(requiredMaxTokensRetryResult.payloads[1]?.max_tokens, 30000);
+  assert.equal(requiredMaxTokensRetryResult.payloads[1]?.stream, false);
+  assert.equal(readAttachedTokenUsage(requiredMaxTokensRetryResult.response)?.outputBuffer, 30000);
+  console.log('PASS 上游要求 max_tokens 时会自动重试并补发 max_tokens');
 
   const positiveOutputResult = await capturePayload([{
     name: 'Vendor',
@@ -1146,6 +1297,164 @@ async function runGenericProviderOutputLimitToggleTests(
   console.log('PASS maxOutputTokens 为正数时会向 openai-chat 下发 max_tokens');
 }
 
+async function runGenericProviderAnthropicStreamFallbackTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const originalFetch = globalThis.fetch;
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/anthropic/v1',
+    defaultApiStyle: 'anthropic',
+    defaultVision: false,
+    models: [{
+      name: 'coder',
+      contextSize: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000,
+      capabilities: { tools: true, vision: false }
+    }]
+  }]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+    refreshModels(): Promise<void>;
+    sendRequest(
+      request: {
+        modelId: string;
+        messages: Array<{ role: string; content: Array<{ value: string }> }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options?: { tools?: unknown[] };
+      }
+    ): Promise<{ text: AsyncIterable<string> }>;
+    dispose(): void;
+  };
+
+  const payloads: Record<string, unknown>[] = [];
+  let callCount = 0;
+  globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+    const payload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
+    payloads.push(payload);
+    callCount += 1;
+
+    if (callCount === 1) {
+      const sseBody = [
+        'event: message_start',
+        `data: ${JSON.stringify({
+          type: 'message_start',
+          message: {
+            id: 'msg_stream',
+            type: 'message',
+            role: 'assistant',
+            model: 'coder',
+            content: [],
+            usage: {
+              input_tokens: 11,
+              output_tokens: 2
+            }
+          }
+        })}`,
+        '',
+        'event: content_block_start',
+        `data: ${JSON.stringify({
+          type: 'content_block_start',
+          index: 0,
+          content_block: {
+            type: 'tool_use',
+            id: 'toolu_stream',
+            name: 'read_file'
+          }
+        })}`,
+        '',
+        'event: content_block_delta',
+        `data: ${JSON.stringify({
+          type: 'content_block_delta',
+          index: 0,
+          delta: {
+            type: 'input_json_delta',
+            partial_json: '{1}'
+          }
+        })}`,
+        '',
+        'event: message_delta',
+        `data: ${JSON.stringify({
+          type: 'message_delta',
+          delta: {
+            stop_reason: 'tool_use'
+          },
+          usage: {
+            input_tokens: 11,
+            output_tokens: 2
+          }
+        })}`,
+        '',
+        'data: [DONE]',
+        ''
+      ].join('\n');
+
+      return new Response(sseBody, {
+        status: 200,
+        headers: {
+          'content-type': 'text/event-stream'
+        }
+      });
+    }
+
+    return new Response(JSON.stringify({
+      id: 'msg_fallback',
+      type: 'message',
+      role: 'assistant',
+      model: 'coder',
+      content: [{
+        type: 'text',
+        text: 'fallback answer'
+      }],
+      stop_reason: 'end_turn',
+      usage: {
+        input_tokens: 13,
+        output_tokens: 4
+      }
+    }), {
+      status: 200,
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+  }) as typeof globalThis.fetch;
+
+  try {
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
+      vendorName === 'Vendor' ? 'configured' : ''
+    );
+    await provider.refreshModels();
+    const response = await provider.sendRequest({
+      modelId: 'Vendor/coder',
+      messages: [{
+        role: 'user',
+        content: [{ value: 'read the file' }]
+      }],
+      capabilities: { toolCalling: true, imageInput: false },
+      options: { tools: [] }
+    });
+    const textChunks: string[] = [];
+    for await (const chunk of response.text) {
+      textChunks.push(chunk);
+    }
+
+    assert.equal(payloads.length, 2);
+    assert.equal(payloads[0]?.stream, true);
+    assert.equal(payloads[1]?.stream, false);
+    assert.deepEqual(textChunks, ['fallback answer']);
+    console.log('PASS anthropic 流式 tool 参数退化为 raw 时会自动回退非流式，避免持续 Working');
+  } finally {
+    globalThis.fetch = originalFetch;
+    provider.dispose();
+    configStore.dispose();
+  }
+}
+
 function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   const {
     createOpenAIChatStreamState,
@@ -1156,7 +1465,8 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
     finalizeOpenAIResponsesStreamState,
     createAnthropicStreamState,
     applyAnthropicStreamEvent,
-    finalizeAnthropicStreamState
+    finalizeAnthropicStreamState,
+    toAnthropicMessages
   } = protocolsModule;
 
   const openAIChatState = createOpenAIChatStreamState();
@@ -1308,6 +1618,88 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   });
   console.log('PASS openai-responses 流式事件可正确累积文本与工具调用');
 
+  const anthropicNormalized = toAnthropicMessages([
+    {
+      role: 'assistant',
+      content: '',
+      tool_calls: [{
+        id: 'call_1',
+        type: 'function',
+        function: {
+          name: 'read_file',
+          arguments: '{"path":"/tmp/a"}'
+        }
+      }, {
+        id: 'call_2',
+        type: 'function',
+        function: {
+          name: 'read_file',
+          arguments: '{"path":"/tmp/b"}'
+        }
+      }]
+    },
+    {
+      role: 'tool',
+      tool_call_id: 'call_1',
+      content: 'A'
+    },
+    {
+      role: 'tool',
+      tool_call_id: 'call_2',
+      content: 'B'
+    }
+  ], () => 'generated_call');
+  assert.equal(anthropicNormalized.messages.length, 2);
+  const mergedToolResults = anthropicNormalized.messages[1]?.content;
+  assert.ok(Array.isArray(mergedToolResults));
+  assert.equal(mergedToolResults.length, 2);
+  assert.deepEqual(mergedToolResults[0], {
+    type: 'tool_result',
+    tool_use_id: 'call_1',
+    content: 'A'
+  });
+  assert.deepEqual(mergedToolResults[1], {
+    type: 'tool_result',
+    tool_use_id: 'call_2',
+    content: 'B'
+  });
+  console.log('PASS anthropic 会将同一轮连续 tool_result 合并到一个 user 消息');
+  const anthropicMergedTurn = toAnthropicMessages([
+    {
+      role: 'assistant',
+      content: '',
+      tool_calls: [{
+        id: 'call_3',
+        type: 'function',
+        function: {
+          name: 'read_file',
+          arguments: '{"path":"/tmp/c"}'
+        }
+      }]
+    },
+    {
+      role: 'tool',
+      tool_call_id: 'call_3',
+      content: 'C'
+    },
+    {
+      role: 'user',
+      content: '继续总结 C'
+    }
+  ], () => 'generated_call');
+  assert.equal(anthropicMergedTurn.messages.length, 2);
+  const mergedTurnContent = anthropicMergedTurn.messages[1]?.content;
+  assert.ok(Array.isArray(mergedTurnContent));
+  assert.deepEqual(mergedTurnContent, [{
+    type: 'tool_result',
+    tool_use_id: 'call_3',
+    content: 'C'
+  }, {
+    type: 'text',
+    text: '继续总结 C'
+  }]);
+  console.log('PASS anthropic 会将同一轮的 tool_result 与后续用户文本合并为单个 user turn');
+
   const anthropicState = createAnthropicStreamState();
   const anthropicDelta = applyAnthropicStreamEvent(anthropicState, 'content_block_start', {
     index: 0,
@@ -1364,6 +1756,33 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
     output_tokens: 3
   });
   console.log('PASS anthropic 流式事件可正确累积文本与工具调用');
+
+  const anthropicCompatState = createAnthropicStreamState();
+  applyAnthropicStreamEvent(anthropicCompatState, 'content_block_start', {
+    index: 0,
+    content_block: {
+      type: 'text',
+      text: ''
+    }
+  });
+  const compatDeltaWithoutType = applyAnthropicStreamEvent(anthropicCompatState, 'content_block_delta', {
+    index: 0,
+    delta: {
+      text: 'compat '
+    }
+  });
+  applyAnthropicStreamEvent(anthropicCompatState, 'content_block_delta', {
+    index: 0,
+    delta: {
+      type: 'unsupported_delta_type',
+      text: 'text'
+    }
+  });
+  const finalizedAnthropicCompat = finalizeAnthropicStreamState(anthropicCompatState, () => 'tool_generated');
+  assert.equal(compatDeltaWithoutType.textDelta, 'compat ');
+  assert.equal(finalizedAnthropicCompat.content, 'compat text');
+  assert.deepEqual(finalizedAnthropicCompat.toolCalls, []);
+  console.log('PASS anthropic 流式文本兼容无 type/非标准 delta.type 事件');
 }
 
 function runTokenUsageNormalizationTests(tokenUsageModule: TokenUsageModule): void {
@@ -1406,6 +1825,35 @@ function runTokenUsageNormalizationTests(tokenUsageModule: TokenUsageModule): vo
     outputBuffer: 8192
   });
   console.log('PASS anthropic usage 正常映射');
+
+  const anthropicCompatUsage = normalizeTokenUsage('anthropic', {
+    input_tokens: 350,
+    cache_read_input_tokens: 23296,
+    completion_tokens: 525,
+    prompt_tokens: 331,
+    total_tokens: 856
+  }, 30000);
+  assert.deepEqual(anthropicCompatUsage, {
+    promptTokens: 331,
+    completionTokens: 525,
+    totalTokens: 856,
+    outputBuffer: 30000
+  });
+  console.log('PASS anthropic 兼容接口会优先使用 prompt/completion/total 统计');
+
+  const anthropicCachedUsage = normalizeTokenUsage('anthropic', {
+    input_tokens: 350,
+    cache_creation_input_tokens: 24,
+    cache_read_input_tokens: 23296,
+    output_tokens: 75
+  });
+  assert.deepEqual(anthropicCachedUsage, {
+    promptTokens: 23670,
+    completionTokens: 75,
+    totalTokens: 23745,
+    outputBuffer: undefined
+  });
+  console.log('PASS anthropic 缺失 prompt_tokens 时会把 cache 输入计入上下文占用');
 
   const correctedUsage = normalizeTokenUsage('openai-chat', {
     prompt_tokens: 1000,
@@ -1471,6 +1919,19 @@ function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateMod
   assert.match(tooltip, /- Completion: 8/);
   assert.match(tooltip, /- Total: 21\.8K/);
   assert.match(tooltip, /- Reserved Output: 1/);
+  assert.match(tooltip, /- Occupied Context: 21\.8K/);
+  const reservedSnapshot = {
+    ...snapshot,
+    totalContextWindow: 128000,
+    promptTokens: 331,
+    completionTokens: 525,
+    totalTokens: 856,
+    outputBuffer: 60000
+  };
+  assert.equal(buildContextStatusText(reservedSnapshot), 'CodingPlans Context 48%');
+  const reservedTooltip = buildContextStatusTooltip(reservedSnapshot);
+  assert.match(reservedTooltip, /47\.5% of 128K/);
+  assert.match(reservedTooltip, /- Occupied Context: 60\.9K/);
   assert.match(tooltip, /- Model: model/);
   assert.match(tooltip, /- Updated: 2026-03-20T08:52:11\.000Z/);
   state.dispose();
@@ -1559,6 +2020,7 @@ async function main(): Promise<void> {
     runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
     runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
     await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule, tokenUsageModule);
+    await runGenericProviderAnthropicStreamFallbackTests(ConfigStore, genericProviderModule);
     runProtocolStreamTests(protocolsModule);
     runTokenUsageNormalizationTests(tokenUsageModule);
     runContextUsageStateTests(contextUsageStateModule);
@@ -1574,6 +2036,11 @@ void main().catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;
 });
+
+
+
+
+
 
 
 

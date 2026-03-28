@@ -174,6 +174,7 @@
 | 配置键 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
 | `coding-plans.logLevel` | `string` | `info` | 输出面板日志级别，支持 `debug` / `info` / `warn` / `error`。排查 `openai-responses` 等链路问题时建议临时切到 `debug`。 |
+| `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | 全局默认输出 token 预算（上游输出上限）。请求会按模型可用上限自动收敛，避免超过模型可承载范围。 |
 | `coding-plans.vendors` | `array` | 内置供应商模板 | 供应商配置列表。 |
 | `coding-plans.vendors[].name` | `string` | 必填 | 供应商唯一名称（用于匹配与选择）。 |
 | `coding-plans.vendors[].baseUrl` | `string` | 必填 | 供应商 API 基础地址，可填写自建中转站。 |
@@ -191,10 +192,10 @@
 | `coding-plans.vendors[].models[].capabilities.vision` | `boolean` | `defaultVision` | 是否启用视觉输入能力；旧配置缺失时运行时回填为供应商 `defaultVision`。 |
 | `coding-plans.vendors[].models[].contextSize` | `number` | 空 | 模型总上下文窗口；推荐优先使用这个字段描述模型上下文，language model 的 context size 展示也直接使用它。 |
 | `coding-plans.vendors[].models[].maxInputTokens` | `number` | `396000` | 已废弃。旧版最大输入 token 覆盖项；推荐改用 `contextSize`。若同时配置 `contextSize` 且该值更大，会自动收敛到 `contextSize`。设为 `0` 时视为未设置。 |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | 已废弃。旧版最大输出 token 覆盖项；推荐改用 `contextSize`。若同时配置 `contextSize` 且该值更大，会自动收敛到 `contextSize`。默认值就是 `0`，表示未设置，且不会向上游发送 `max_tokens` / `max_output_tokens`。 |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | 已废弃。旧版最大输出 token 覆盖项；推荐改用 `contextSize`。若同时配置 `contextSize` 且该值更大，会自动收敛到 `contextSize`。默认值就是 `0`，表示未设置；对 `openai-chat` / `openai-responses` 不会主动发送 `max_tokens` / `max_output_tokens`，但若上游明确要求（如部分 Anthropic 兼容端点）会按协议自动补发。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示“生成 Commit 消息”命令。 |
 
-模型 `capabilities` 现在是必填项；为兼容旧配置，插件会在运行时自动补齐 `tools=true`，并将 `vision` 回填为供应商的 `defaultVision`。供应商级 `defaultApiStyle` 也可被模型级 `apiStyle` 覆盖。采样参数继承顺序固定为：`models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > 内置默认值 `0.2/1.0`。模型上下文建议统一通过 `contextSize` 描述；`maxInputTokens` / `maxOutputTokens` 已废弃，仅作为兼容旧配置或特殊覆盖项保留。若模型同时提供 `contextSize` 与 `maxInputTokens` / `maxOutputTokens`，总上下文窗口优先采用 `contextSize`，仅在输入或输出上限超过 `contextSize` 时才自动收敛。`maxInputTokens: 0` 会被视为未设置，不参与本地限制推导；`maxOutputTokens: 0` 除了表示未设置外，还会禁止向上游发送 `max_tokens` / `max_output_tokens`。
+模型 `capabilities` 现在是必填项；为兼容旧配置，插件会在运行时自动补齐 `tools=true`，并将 `vision` 回填为供应商的 `defaultVision`。供应商级 `defaultApiStyle` 也可被模型级 `apiStyle` 覆盖。采样参数继承顺序固定为：`models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > 内置默认值 `0.2/1.0`。模型上下文建议统一通过 `contextSize` 描述；`maxInputTokens` / `maxOutputTokens` 已废弃，仅作为兼容旧配置或特殊覆盖项保留。若模型同时提供 `contextSize` 与 `maxInputTokens` / `maxOutputTokens`，总上下文窗口优先采用 `contextSize`，仅在输入或输出上限超过 `contextSize` 时才自动收敛。`maxInputTokens: 0` 会被视为未设置，不参与本地限制推导；`maxOutputTokens: 0` 在 `openai-chat` / `openai-responses` 下表示不主动发送输出上限，但遇到上游强制要求 `max_tokens` 的协议端点时会自动补发兼容值。自动刷新/写回 `vendors` 配置时不会再默认补入 `maxInputTokens` / `maxOutputTokens`，只有显式配置或上游发现结果明确提供时才会写回。
 
 | `coding-plans.commitMessage.language` | `string` | `en` | 提交消息语言，支持 `en` / `zh-cn`。 |
 | `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | 是否参考最近 20 条 commit 风格。 |
@@ -327,5 +328,6 @@ MIT License
 3. 提交变更 (`git commit -m 'Add some AmazingFeature'`)
 4. 推送到分支 (`git push origin feature/AmazingFeature`)
 5. 提交 Pull Request
+
 
 

@@ -20,15 +20,9 @@ export function normalizeTokenUsage(
     return undefined;
   }
 
-  const promptTokens = protocol === 'openai-chat'
-    ? readNonNegativeInteger(usage.prompt_tokens)
-    : readNonNegativeInteger(usage.input_tokens);
-  const completionTokens = protocol === 'openai-chat'
-    ? readNonNegativeInteger(usage.completion_tokens)
-    : readNonNegativeInteger(usage.output_tokens);
-  const explicitTotalTokens = protocol === 'anthropic'
-    ? undefined
-    : readNonNegativeInteger(usage.total_tokens);
+  const promptTokens = readPromptTokens(protocol, usage);
+  const completionTokens = readCompletionTokens(protocol, usage);
+  const explicitTotalTokens = readExplicitTotalTokens(protocol, usage, promptTokens, completionTokens);
 
   if (promptTokens === undefined && completionTokens === undefined && explicitTotalTokens === undefined) {
     return undefined;
@@ -103,6 +97,73 @@ function normalizeAttachedUsage(record: Record<string, unknown>): NormalizedToke
     totalTokens: normalizedTotalTokens,
     outputBuffer
   };
+}
+
+function readPromptTokens(protocol: SupportedUsageProtocol, usage: NumericUsageRecord): number | undefined {
+  if (protocol === 'openai-chat') {
+    return readNonNegativeInteger(usage.prompt_tokens);
+  }
+
+  if (protocol === 'anthropic') {
+    return readNonNegativeInteger(usage.prompt_tokens)
+      ?? readAnthropicEffectiveInputTokens(usage)
+      ?? readNonNegativeInteger(usage.input_tokens);
+  }
+
+  return readNonNegativeInteger(usage.input_tokens);
+}
+
+function readCompletionTokens(protocol: SupportedUsageProtocol, usage: NumericUsageRecord): number | undefined {
+  if (protocol === 'openai-chat') {
+    return readNonNegativeInteger(usage.completion_tokens);
+  }
+
+  if (protocol === 'anthropic') {
+    return readNonNegativeInteger(usage.completion_tokens)
+      ?? readNonNegativeInteger(usage.output_tokens);
+  }
+
+  return readNonNegativeInteger(usage.output_tokens);
+}
+
+function readExplicitTotalTokens(
+  protocol: SupportedUsageProtocol,
+  usage: NumericUsageRecord,
+  promptTokens: number | undefined,
+  completionTokens: number | undefined
+): number | undefined {
+  const totalTokens = readNonNegativeInteger(usage.total_tokens);
+  if (totalTokens !== undefined) {
+    return totalTokens;
+  }
+
+  if (protocol !== 'anthropic') {
+    return undefined;
+  }
+
+  const effectivePromptTokens = readAnthropicEffectiveInputTokens(usage) ?? promptTokens;
+  if (effectivePromptTokens === undefined && completionTokens === undefined) {
+    return undefined;
+  }
+
+  return (effectivePromptTokens ?? 0) + (completionTokens ?? 0);
+}
+
+function readAnthropicEffectiveInputTokens(usage: NumericUsageRecord): number | undefined {
+  const promptTokens = readNonNegativeInteger(usage.prompt_tokens);
+  if (promptTokens !== undefined) {
+    return promptTokens;
+  }
+
+  const directInputTokens = readNonNegativeInteger(usage.input_tokens);
+  const cacheCreationInputTokens = readNonNegativeInteger(usage.cache_creation_input_tokens) ?? 0;
+  const cacheReadInputTokens = readNonNegativeInteger(usage.cache_read_input_tokens) ?? 0;
+
+  if (directInputTokens === undefined && cacheCreationInputTokens === 0 && cacheReadInputTokens === 0) {
+    return undefined;
+  }
+
+  return (directInputTokens ?? 0) + cacheCreationInputTokens + cacheReadInputTokens;
 }
 
 function readNonNegativeInteger(value: unknown): number | undefined {

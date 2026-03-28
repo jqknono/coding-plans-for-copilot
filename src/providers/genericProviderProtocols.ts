@@ -642,10 +642,11 @@ export function applyAnthropicStreamEvent(
       return { textDelta };
     }
 
-    if (payload.delta?.type === 'text_delta' && typeof payload.delta.text === 'string') {
-      block.text += payload.delta.text;
-      state.content += payload.delta.text;
-      textDelta = payload.delta.text;
+    const deltaText = typeof payload.delta?.text === 'string' ? payload.delta.text : '';
+    if (block.type === 'text' && deltaText.length > 0) {
+      block.text += deltaText;
+      state.content += deltaText;
+      textDelta = deltaText;
       return { textDelta };
     }
 
@@ -832,6 +833,19 @@ export function parseOpenAIResponsesResponse(
   };
 }
 
+function appendAnthropicTextBlock(message: AnthropicChatMessage, text: string): void {
+  if (text.trim().length === 0) {
+    return;
+  }
+
+  if (Array.isArray(message.content)) {
+    message.content.push({ type: 'text', text });
+    return;
+  }
+
+  message.content = `${message.content}${text}`;
+}
+
 export function toAnthropicMessages(
   messages: ChatMessage[],
   generateToolCallId: GenerateToolCallId
@@ -848,14 +862,29 @@ export function toAnthropicMessages(
     }
 
     if (message.role === 'tool') {
-      normalizedMessages.push({
-        role: 'user',
-        content: [{
-          type: 'tool_result',
-          tool_use_id: message.tool_call_id || generateToolCallId(),
-          content: message.content
-        }]
-      });
+      const toolResultBlock: AnthropicToolResultContentBlock = {
+        type: 'tool_result',
+        tool_use_id: message.tool_call_id || generateToolCallId(),
+        content: message.content
+      };
+      const lastMessage = normalizedMessages[normalizedMessages.length - 1];
+      if (lastMessage?.role === 'user') {
+        if (Array.isArray(lastMessage.content)) {
+          lastMessage.content.push(toolResultBlock);
+        } else if (typeof lastMessage.content === 'string') {
+          const blocks: AnthropicRequestContentBlock[] = [];
+          if (lastMessage.content.trim().length > 0) {
+            blocks.push({ type: 'text', text: lastMessage.content });
+          }
+          blocks.push(toolResultBlock);
+          lastMessage.content = blocks;
+        }
+      } else {
+        normalizedMessages.push({
+          role: 'user',
+          content: [toolResultBlock]
+        });
+      }
       continue;
     }
 
@@ -877,6 +906,12 @@ export function toAnthropicMessages(
     }
 
     const role = message.role === 'assistant' ? 'assistant' : 'user';
+    const lastMessage = normalizedMessages[normalizedMessages.length - 1];
+    if (role === 'user' && lastMessage?.role === 'user') {
+      appendAnthropicTextBlock(lastMessage, message.content);
+      continue;
+    }
+
     normalizedMessages.push({ role, content: message.content });
   }
 

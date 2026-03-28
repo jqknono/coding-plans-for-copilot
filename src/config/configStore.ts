@@ -247,15 +247,53 @@ export class ConfigStore implements vscode.Disposable {
     defaultVision: boolean,
     defaultApiStyle: VendorApiStyle
   ): VendorModelConfig {
-    const normalized = this.normalizeModel(raw, defaultVision, defaultApiStyle);
-    if (!normalized) {
-      return this.withModelDefaults({ name }, defaultVision, defaultApiStyle);
+    if (!raw || typeof raw !== 'object') {
+      return this.buildStoredModelEntry({ name }, name, defaultVision, defaultApiStyle);
     }
 
     return {
-      ...normalized,
+      ...(raw as VendorModelConfig),
       name
     };
+  }
+
+  private buildStoredModelEntry(
+    raw: unknown,
+    name: string,
+    defaultVision: boolean,
+    defaultApiStyle: VendorApiStyle
+  ): VendorModelConfig {
+    const normalized = this.normalizeModel(raw, defaultVision, defaultApiStyle);
+    if (!normalized) {
+      return {
+        name,
+        apiStyle: this.normalizeApiStyle(undefined, defaultApiStyle),
+        capabilities: {
+          tools: DEFAULT_MODEL_CAPABILITIES_TOOLS,
+          vision: defaultVision
+        }
+      };
+    }
+
+    const stored: VendorModelConfig = {
+      name,
+      description: normalized.description,
+      apiStyle: normalized.apiStyle,
+      temperature: normalized.temperature,
+      topP: normalized.topP,
+      contextSize: normalized.contextSize,
+      capabilities: normalized.capabilities
+    };
+
+    const rawObject = raw && typeof raw === 'object' ? raw as Record<string, unknown> : undefined;
+    if (rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'maxInputTokens') && normalized.maxInputTokens !== undefined) {
+      stored.maxInputTokens = normalized.maxInputTokens;
+    }
+    if (rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'maxOutputTokens') && normalized.maxOutputTokens !== undefined) {
+      stored.maxOutputTokens = normalized.maxOutputTokens;
+    }
+
+    return stored;
   }
 
   private buildUpdatedModelEntries(
@@ -320,7 +358,7 @@ export class ConfigStore implements vscode.Disposable {
       const canonical = existingNameByKey.get(key) ?? name;
       const inputModel = inputModelByKey.get(key);
       if (inputModel) {
-        normalized.push(this.cloneModelWithNormalizedName({
+        normalized.push(this.buildStoredModelEntry({
           ...inputModel,
           temperature: undefined,
           topP: undefined
@@ -328,7 +366,7 @@ export class ConfigStore implements vscode.Disposable {
         continue;
       }
 
-      normalized.push(this.withModelDefaults({ name: canonical }, defaultVision, defaultApiStyle));
+      normalized.push(this.buildStoredModelEntry({ name: canonical }, canonical, defaultVision, defaultApiStyle));
     }
 
     return this.sortRawModelsByName(normalized);
@@ -600,3 +638,4 @@ export class ConfigStore implements vscode.Disposable {
     this.onDidChangeEmitter.dispose();
   }
 }
+

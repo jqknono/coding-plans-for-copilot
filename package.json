@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.6.6",
+    "version": "0.6.17",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",
@@ -221,7 +221,7 @@
                         }
                     },
                     "default": {
-                        "defaultReservedOutput": 0
+                        "defaultReservedOutput": 60000
                     },
                     "description": "%configuration.coding-plans.advanced.description%",
                     "order": 100
@@ -321,7 +321,7 @@
                                         "maxOutputTokens": {
                                             "type": "number",
                                             "default": 0,
-                                            "description": "Deprecated: legacy maximum output tokens override. Prefer contextSize for model context. When contextSize is provided and this value exceeds it, it will be capped to contextSize. Defaults to 0, which treats it as unset and suppresses sending max token output limits upstream.",
+                                            "description": "Deprecated: legacy maximum output tokens override. Prefer contextSize for model context. When contextSize is provided and this value exceeds it, it will be capped to contextSize. Defaults to 0, which treats it as unset. For openai-chat/openai-responses it suppresses proactively sending output-token limits, while protocol endpoints that require max_tokens will trigger an automatic compatible retry.",
                                             "deprecationMessage": "Deprecated: prefer contextSize to describe model context. Keep maxOutputTokens only when you need a legacy output-cap override."
                                         },
                                         "apiStyle": {

@@ -118,7 +118,8 @@ GitHub Pages 部署时会将 `assets/provider-pricing.json` 同步到 `pages/pro
   - `openai-responses`：请求 `baseUrl + /responses`
   - `anthropic`：请求 `baseUrl + /messages`
 - `coding-plans.vendors[].models[].contextSize` 现在是描述模型上下文的首选字段。
-- `coding-plans.vendors[].models[].maxInputTokens` / `maxOutputTokens` 已标记为 deprecated，保留兼容旧配置与特殊覆盖用途。两者仍允许配置为 `0`。其中 `maxInputTokens: 0` 的语义为“未设置”；`maxOutputTokens` 默认值就是 `0`，表示“未设置”，且不要向上游下发 `max_tokens` / `max_output_tokens`。`maxInputTokens` 仍仅用于本地元数据和预算，不直接传给 API。
+- `coding-plans.advanced.defaultReservedOutput` 的默认值为 `60000`，用于全局输出预算；发送请求时会自动按模型上限收敛。
+- `coding-plans.vendors[].models[].maxInputTokens` / `maxOutputTokens` 已标记为 deprecated，保留兼容旧配置与特殊覆盖用途。两者仍允许配置为 `0`。其中 `maxInputTokens: 0` 的语义为“未设置”；`maxOutputTokens` 默认值就是 `0`，表示“未设置”；在 `openai-chat` / `openai-responses` 下不主动下发 `max_tokens` / `max_output_tokens`，但当上游协议端点强制要求 `max_tokens` 时需自动补发兼容值。`maxInputTokens` 仍仅用于本地元数据和预算，不直接传给 API。自动刷新/写回 `vendors` 配置时不再默认补入这两个字段，除非用户显式配置或上游模型发现结果明确返回。
 - 新增采样参数：
   - `coding-plans.vendors[].defaultTemperature` / `defaultTopP`：供应商默认采样值
   - `coding-plans.vendors[].models[].temperature` / `topP`：模型级覆盖值
@@ -136,3 +137,4 @@ GitHub Pages 部署时会将 `assets/provider-pricing.json` 同步到 `pages/pro
   - `package.json`
   - `README.md`
   - `README_en.md`
+
