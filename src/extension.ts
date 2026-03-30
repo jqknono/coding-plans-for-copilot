@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
-import { ContextStatusBarController, ContextUsageState } from './contextUsageState';
+import { ContextUsageState } from './contextUsageState';
 import { GenericAIProvider } from './providers/genericProvider';
 import { LMChatProviderAdapter } from './providers/lmChatProviderAdapter';
 import { ConfigStore } from './config/configStore';
+import { CodingPlanStatusBarController, PlanUsagePollingController, PlanUsageState, showCodingPlanDetails } from './planUsageStatus';
 import { initI18n, getMessage } from './i18n/i18n';
 import { getCompactErrorMessage } from './providers/baseProvider';
 import {
@@ -23,6 +24,7 @@ let providers: Map<string, GenericAIProvider> = new Map();
 let refreshModelsCommandInProgress = false;
 let languageModelProviderRegistration: vscode.Disposable | undefined;
 let reRegisterLanguageModelProviderInProgress = false;
+const SHOW_STATUS_DETAILS_COMMAND = 'coding-plans.showStatusDetails';
 
 function shouldShowGenerateCommitMessageCommand(): boolean {
   return vscode.workspace
@@ -201,8 +203,21 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(configStore);
   const contextUsageState = new ContextUsageState();
   context.subscriptions.push(contextUsageState);
-  const contextStatusBarController = new ContextStatusBarController(contextUsageState);
-  context.subscriptions.push(contextStatusBarController);
+  const planUsageState = new PlanUsageState();
+  context.subscriptions.push(planUsageState);
+  context.subscriptions.push(
+    vscode.commands.registerCommand(SHOW_STATUS_DETAILS_COMMAND, () => {
+      showCodingPlanDetails(contextUsageState.getSnapshot(), planUsageState.getSnapshot());
+    })
+  );
+  const codingPlanStatusBarController = new CodingPlanStatusBarController(
+    contextUsageState,
+    planUsageState,
+    SHOW_STATUS_DETAILS_COMMAND
+  );
+  context.subscriptions.push(codingPlanStatusBarController);
+  const planUsagePollingController = new PlanUsagePollingController(configStore, planUsageState, contextUsageState);
+  context.subscriptions.push(planUsagePollingController);
 
   const genericProvider = new GenericAIProvider(context, configStore);
   void genericProvider.initialize().catch(error => {

@@ -63,7 +63,8 @@
 - 悬浮到 Context Window 指示器时，VS Code 会显示当前 token 总量以及按类别拆分的明细；当上下文接近上限时，VS Code 可能自动触发 conversation compaction（压缩历史）。
 - 本扩展直接复用 Copilot Chat 自带的上下文展示器，不再额外提供独立的 Agent 路径或自定义 usage 明细。
 - 本扩展不会再本地估算 prompt token 或自行计数；若上游接口未返回 usage，界面也不会由插件补算一个近似值。
-- 状态栏会额外显示 `CodingPlans Context`，它基于最近一次已完成请求的真实 usage 展示比例和详情；若你需要看实际使用占比，请以这里为准。
+- 状态栏会显示统一的 `CodingPlans` 条目：正文以简洁百分比展示套餐 usage 与 context 占比，悬浮后可查看合并后的详细信息。
+- 若供应商配置了 `usageUrl`，`CodingPlans` 会额外展示套餐额度。当前已先接入智谱 coding plan usage，可展示 5 小时额度与 MCP/次数额度的百分比。
 ### 配置入口
 
 1. 按 `Ctrl+Shift+P`，输入 `编码套餐: 管理编码套餐配置`
@@ -78,6 +79,7 @@
     {
       "name": "zhipu",
       "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+      "usageUrl": "https://open.bigmodel.cn/api/monitor/usage/quota/limit",
       "defaultApiStyle": "openai-chat",
       "defaultTemperature": 0.2,
       "defaultTopP": 1.0,
@@ -178,6 +180,7 @@
 | `coding-plans.vendors` | `array` | 内置供应商模板 | 供应商配置列表。 |
 | `coding-plans.vendors[].name` | `string` | 必填 | 供应商唯一名称（用于匹配与选择）。 |
 | `coding-plans.vendors[].baseUrl` | `string` | 必填 | 供应商 API 基础地址，可填写自建中转站。 |
+| `coding-plans.vendors[].usageUrl` | `string` | 空 | 可选的套餐 usage 接口地址。配置后会轮询并在状态栏显示套餐额度百分比。当前已验证智谱 `https://open.bigmodel.cn/api/monitor/usage/quota/limit`。 |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | 供应商默认接口协议风格，支持 `openai-chat` / `openai-responses` / `anthropic`。分别对应 `/chat/completions`、`/responses`、`/messages`。 |
 | `coding-plans.vendors[].defaultTemperature` | `number` | `0.2` | 供应商默认 temperature；模型未单独配置时继承。代码生成/重构建议 `0.1-0.3`，更灵活表达可用 `0.3-0.5`。 |
 | `coding-plans.vendors[].defaultTopP` | `number` | `1.0` | 供应商默认 topP；模型未单独配置时继承。编码场景通常建议 `1.0`，平衡创造性与稳定性可用 `0.9-1.0`。 |

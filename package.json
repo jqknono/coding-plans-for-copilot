@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.6.17",
+    "version": "0.6.25",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",
@@ -241,6 +241,10 @@
                             "baseUrl": {
                                 "type": "string"
                             },
+                            "usageUrl": {
+                                "type": "string",
+                                "description": "Optional vendor usage endpoint. When configured, the extension fetches coding-plan quota usage and shows percentage summaries in the status bar. Currently verified for Zhipu usage APIs."
+                            },
                             "useModelsEndpoint": {
                                 "type": "boolean",
                                 "default": false,
@@ -353,6 +357,7 @@
                         {
                             "name": "zhipu",
                             "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+                            "usageUrl": "https://open.bigmodel.cn/api/monitor/usage/quota/limit",
                             "models": [
                                 {
                                     "name": "glm-4.7",

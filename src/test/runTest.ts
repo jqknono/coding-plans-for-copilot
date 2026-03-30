@@ -26,6 +26,7 @@ type VendorModelRecord = {
 type VendorRecord = {
   name: string;
   baseUrl: string;
+  usageUrl?: string;
   defaultApiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
   defaultTemperature?: number;
   defaultTopP?: number;
@@ -48,6 +49,7 @@ type TokenUsageModule = typeof import('../providers/tokenUsage');
 type ProtocolsModule = typeof import('../providers/genericProviderProtocols');
 type ContextUsageStateModule = typeof import('../contextUsageState');
 type LMChatProviderAdapterModule = typeof import('../providers/lmChatProviderAdapter');
+type PlanUsageStatusModule = typeof import('../planUsageStatus');
 
 type TestContext = {
   state: MockState;
@@ -767,6 +769,24 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
   } finally {
     configStore.dispose();
   }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    usageUrl: ' https://example.test/usage ',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: []
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    assert.equal(vendor?.usageUrl, 'https://example.test/usage');
+    console.log('PASS usageUrl 可被归一化并保留');
+  } finally {
+    configStore.dispose();
+  }
 }
 
 function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): void {
@@ -1429,7 +1449,7 @@ async function runGenericProviderAnthropicStreamFallbackTests(
       vendorName === 'Vendor' ? 'configured' : ''
     );
     await provider.refreshModels();
-    const response = await provider.sendRequest({
+    const firstResponse = await provider.sendRequest({
       modelId: 'Vendor/coder',
       messages: [{
         role: 'user',
@@ -1439,15 +1459,147 @@ async function runGenericProviderAnthropicStreamFallbackTests(
       options: { tools: [] }
     });
     const textChunks: string[] = [];
-    for await (const chunk of response.text) {
+    for await (const chunk of firstResponse.text) {
       textChunks.push(chunk);
     }
 
-    assert.equal(payloads.length, 2);
+    const secondResponse = await provider.sendRequest({
+      modelId: 'Vendor/coder',
+      messages: [{
+        role: 'user',
+        content: [{ value: 'read the file again' }]
+      }],
+      capabilities: { toolCalling: true, imageInput: false },
+      options: { tools: [] }
+    });
+    const secondTextChunks: string[] = [];
+    for await (const chunk of secondResponse.text) {
+      secondTextChunks.push(chunk);
+    }
+
+    assert.equal(payloads.length, 3);
     assert.equal(payloads[0]?.stream, true);
     assert.equal(payloads[1]?.stream, false);
+    assert.equal(payloads[2]?.stream, false);
     assert.deepEqual(textChunks, ['fallback answer']);
-    console.log('PASS anthropic 流式 tool 参数退化为 raw 时会自动回退非流式，避免持续 Working');
+    assert.deepEqual(secondTextChunks, ['fallback answer']);
+    console.log('PASS anthropic 流式 tool 参数退化后当前会话会持续使用非流式');
+  } finally {
+    globalThis.fetch = originalFetch;
+    provider.dispose();
+    configStore.dispose();
+  }
+}
+
+async function runGenericProviderAnthropicStreamErrorEventTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const originalFetch = globalThis.fetch;
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/anthropic/v1',
+    defaultApiStyle: 'anthropic',
+    defaultVision: false,
+    models: [{
+      name: 'coder',
+      contextSize: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000,
+      capabilities: { tools: true, vision: false }
+    }]
+  }]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+    refreshModels(): Promise<void>;
+    sendRequest(
+      request: {
+        modelId: string;
+        messages: Array<{ role: string; content: Array<{ value: string }> }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options?: { tools?: unknown[] };
+      }
+    ): Promise<{ text: AsyncIterable<string> }>;
+    dispose(): void;
+  };
+  const payloads: Record<string, unknown>[] = [];
+
+  globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+    payloads.push(JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>);
+    const sseBody = [
+      'event: error',
+      `data: ${JSON.stringify({
+        type: 'error',
+        error: {
+          type: 'overloaded_error',
+          message: 'model overloaded'
+        },
+        request_id: 'req_stream_error'
+      })}`,
+      '',
+      'data: [DONE]',
+      ''
+    ].join('\n');
+
+    return new Response(sseBody, {
+      status: 200,
+      headers: {
+        'content-type': 'text/event-stream'
+      }
+    });
+  }) as typeof globalThis.fetch;
+
+  try {
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
+      vendorName === 'Vendor' ? 'configured' : ''
+    );
+    await provider.refreshModels();
+    const response = await provider.sendRequest({
+      modelId: 'Vendor/coder',
+      messages: [{
+        role: 'user',
+        content: [{ value: 'hello' }]
+      }],
+      capabilities: { toolCalling: true, imageInput: false },
+      options: { tools: [] }
+    });
+
+    await assert.rejects(async () => {
+      for await (const chunk of response.text) {
+        void chunk;
+        // consume stream
+      }
+    }, error => {
+      const message = error instanceof Error ? error.message : String(error);
+      assert.match(message, /requestFailed/);
+      assert.doesNotMatch(message, /emptyModelResponse/);
+      return true;
+    });
+
+    const secondResponse = await provider.sendRequest({
+      modelId: 'Vendor/coder',
+      messages: [{
+        role: 'user',
+        content: [{ value: 'hello again' }]
+      }],
+      capabilities: { toolCalling: true, imageInput: false },
+      options: { tools: [] }
+    });
+    await assert.rejects(async () => {
+      for await (const chunk of secondResponse.text) {
+        void chunk;
+      }
+    }, error => {
+      const message = error instanceof Error ? error.message : String(error);
+      assert.match(message, /requestFailed/);
+      return true;
+    });
+    assert.equal(payloads[0]?.stream, true);
+    assert.equal(payloads[1]?.stream, false);
+    console.log('PASS anthropic 流式 error 事件后当前会话会持续使用非流式');
   } finally {
     globalThis.fetch = originalFetch;
     provider.dispose();
@@ -1757,6 +1909,34 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   });
   console.log('PASS anthropic 流式事件可正确累积文本与工具调用');
 
+  const anthropicServerToolState = createAnthropicStreamState();
+  applyAnthropicStreamEvent(anthropicServerToolState, 'content_block_start', {
+    index: 0,
+    content_block: {
+      type: 'server_tool_use',
+      id: 'srvtool_1',
+      name: 'str_replace_editor'
+    }
+  });
+  applyAnthropicStreamEvent(anthropicServerToolState, 'content_block_delta', {
+    index: 0,
+    delta: {
+      type: 'input_json_delta',
+      partial_json: '{"command":"view","path":"README.md"}'
+    }
+  });
+  const finalizedAnthropicServerTool = finalizeAnthropicStreamState(anthropicServerToolState, () => 'tool_generated');
+  assert.equal(finalizedAnthropicServerTool.content, '');
+  assert.deepEqual(finalizedAnthropicServerTool.toolCalls, [{
+    id: 'srvtool_1',
+    type: 'function',
+    function: {
+      name: 'str_replace_editor',
+      arguments: '{"command":"view","path":"README.md"}'
+    }
+  }]);
+  console.log('PASS anthropic 流式事件可兼容 server_tool_use 工具块');
+
   const anthropicCompatState = createAnthropicStreamState();
   applyAnthropicStreamEvent(anthropicCompatState, 'content_block_start', {
     index: 0,
@@ -1783,6 +1963,31 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   assert.equal(finalizedAnthropicCompat.content, 'compat text');
   assert.deepEqual(finalizedAnthropicCompat.toolCalls, []);
   console.log('PASS anthropic 流式文本兼容无 type/非标准 delta.type 事件');
+
+  const parsedAnthropicServerTool = protocolsModule.parseAnthropicResponse({
+    id: 'msg_server_tool',
+    role: 'assistant',
+    content: [{
+      type: 'server_tool_use',
+      id: 'srvtool_2',
+      name: 'web_fetch',
+      input: {
+        url: 'https://example.test'
+      }
+    }]
+  }, () => 'tool_generated');
+  assert.deepEqual(parsedAnthropicServerTool, {
+    content: '',
+    toolCalls: [{
+      id: 'srvtool_2',
+      type: 'function',
+      function: {
+        name: 'web_fetch',
+        arguments: '{"url":"https://example.test"}'
+      }
+    }]
+  });
+  console.log('PASS anthropic 非流式响应可兼容 server_tool_use 工具块');
 }
 
 function runTokenUsageNormalizationTests(tokenUsageModule: TokenUsageModule): void {
@@ -1938,6 +2143,133 @@ function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateMod
   console.log('PASS ContextUsageState 与状态栏文案正常生成');
 }
 
+function runPlanUsageStatusTests(planUsageStatusModule: PlanUsageStatusModule): void {
+  const {
+    buildCodingPlanDetailsHtml,
+    buildCodingPlanStatusText,
+    buildCodingPlanStatusTooltip,
+    buildPlanUsageStatusText,
+    buildPlanUsageStatusTooltip,
+    parseVendorPlanUsageSnapshot
+  } = planUsageStatusModule;
+
+  assert.equal(buildPlanUsageStatusText(undefined), 'CodingPlans Usage --');
+  assert.match(buildPlanUsageStatusTooltip(undefined), /CodingPlans Usage/);
+
+  const snapshot = parseVendorPlanUsageSnapshot(
+    'zhipu',
+    'https://open.bigmodel.cn/api/monitor/usage/quota/limit',
+    {
+      code: 200,
+      success: true,
+      data: {
+        productName: 'GLM Coding Max',
+        limits: [
+          {
+            type: 'TOKENS_LIMIT',
+            unit: 3,
+            number: 5,
+            usage: 800000000,
+            currentValue: 127694464,
+            remaining: 672305536,
+            percentage: 15,
+            nextResetTime: Date.UTC(2026, 2, 30, 10, 0, 0)
+          },
+          {
+            type: 'TIME_LIMIT',
+            unit: 5,
+            number: 1,
+            usage: 4000,
+            currentValue: 1828,
+            remaining: 2172,
+            percentage: 45,
+            usageDetails: [
+              { modelCode: 'search-prime', usage: 1433 },
+              { modelCode: 'web-reader', usage: 395 }
+            ]
+          }
+        ]
+      }
+    },
+    Date.UTC(2026, 2, 30, 8, 0, 0)
+  );
+
+  assert.ok(snapshot, '智谱 usage 响应应可被解析');
+  assert.equal(snapshot?.vendor, 'zhipu');
+  assert.equal(snapshot?.productName, 'GLM Coding Max');
+  assert.deepEqual(
+    snapshot?.limits.map(limit => ({
+      label: limit.label,
+      percentage: limit.percentage,
+      used: limit.used,
+      limit: limit.limit
+    })),
+    [
+      {
+        label: '5h',
+        percentage: 15,
+        used: 127694464,
+        limit: 800000000
+      },
+      {
+        label: 'MCP',
+        percentage: 45,
+        used: 1828,
+        limit: 4000
+      }
+    ]
+  );
+
+  assert.equal(buildPlanUsageStatusText(snapshot), 'CodingPlans Usage 5h 15% | MCP 45%');
+  const tooltip = buildPlanUsageStatusTooltip(snapshot);
+  assert.match(tooltip, /GLM Coding Max/);
+  assert.match(tooltip, /- 5h: 15% \(127\.7M \/ 800M\)/);
+  assert.match(tooltip, /- MCP: 45% \(1828 \/ 4000\)/);
+  assert.match(tooltip, /search-prime: 1433/);
+  assert.match(tooltip, /web-reader: 395/);
+  assert.match(tooltip, /Updated: 2026-03-30T08:00:00\.000Z/);
+  assert.doesNotMatch(tooltip, /Source:/);
+  assert.doesNotMatch(tooltip, /open\.bigmodel\.cn\/api\/monitor\/usage\/quota\/limit/);
+
+  const contextSnapshot = {
+    provider: 'coding-plans',
+    modelId: 'zhipu/glm-4.7',
+    modelName: 'glm-4.7',
+    totalContextWindow: 131072,
+    traceId: 'trace-usage-1',
+    recordedAt: Date.UTC(2026, 2, 30, 8, 2, 0),
+    promptTokens: 21770,
+    completionTokens: 8,
+    totalTokens: 21778,
+    outputBuffer: 1
+  };
+  assert.equal(
+    buildCodingPlanStatusText(contextSnapshot, snapshot),
+    'CodingPlans 5h 15% | MCP 45% | Ctx 17%'
+  );
+  const mergedTooltip = buildCodingPlanStatusTooltip(contextSnapshot, snapshot);
+  assert.match(mergedTooltip, /\*\*Plan Usage\*\*/);
+  assert.match(mergedTooltip, /\*\*Context\*\*/);
+  assert.match(mergedTooltip, /- 5h: 15% \(127\.7M \/ 800M\)/);
+  assert.match(mergedTooltip, /- MCP: 45% \(1828 \/ 4000\)/);
+  assert.match(mergedTooltip, /- Context: 16\.6% of 131\.1K/);
+  assert.match(mergedTooltip, /- Prompt: 21\.8K/);
+  assert.match(mergedTooltip, /- Model: glm-4\.7/);
+  assert.match(mergedTooltip, /Click the status bar item to keep these details open/);
+  assert.doesNotMatch(mergedTooltip, /Source:/);
+  assert.doesNotMatch(mergedTooltip, /open\.bigmodel\.cn\/api\/monitor\/usage\/quota\/limit/);
+
+  const detailsHtml = buildCodingPlanDetailsHtml(contextSnapshot, snapshot);
+  assert.match(detailsHtml, /Pinned details for the status bar item/);
+  assert.match(detailsHtml, /<h2>Plan Usage<\/h2>/);
+  assert.match(detailsHtml, /<h2>Context<\/h2>/);
+  assert.match(detailsHtml, /GLM Coding Max/);
+  assert.match(detailsHtml, /glm-4\.7/);
+  assert.doesNotMatch(detailsHtml, /Source:/);
+  assert.doesNotMatch(detailsHtml, /open\.bigmodel\.cn\/api\/monitor\/usage\/quota\/limit/);
+  console.log('PASS 智谱 usage 响应与状态栏文案可正确解析');
+}
+
 async function runLMChatProviderAdapterProvideTokenCountTests(
   contextUsageStateModule: ContextUsageStateModule,
   lmChatProviderAdapterModule: LMChatProviderAdapterModule
@@ -2012,6 +2344,7 @@ async function main(): Promise<void> {
     const protocolsModule = require('../providers/genericProviderProtocols') as ProtocolsModule;
     const contextUsageStateModule = require('../contextUsageState') as ContextUsageStateModule;
     const lmChatProviderAdapterModule = require('../providers/lmChatProviderAdapter') as LMChatProviderAdapterModule;
+    const planUsageStatusModule = require('../planUsageStatus') as PlanUsageStatusModule;
     for (const testCase of testCases) {
       await runTestCase(ConfigStore, testCase);
     }
@@ -2021,9 +2354,11 @@ async function main(): Promise<void> {
     runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
     await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule, tokenUsageModule);
     await runGenericProviderAnthropicStreamFallbackTests(ConfigStore, genericProviderModule);
+    await runGenericProviderAnthropicStreamErrorEventTests(ConfigStore, genericProviderModule);
     runProtocolStreamTests(protocolsModule);
     runTokenUsageNormalizationTests(tokenUsageModule);
     runContextUsageStateTests(contextUsageStateModule);
+    runPlanUsageStatusTests(planUsageStatusModule);
     await runLMChatProviderAdapterProvideTokenCountTests(contextUsageStateModule, lmChatProviderAdapterModule);
   } finally {
     restore();

@@ -108,7 +108,8 @@ GitHub Pages 部署时会将 `assets/provider-pricing.json` 同步到 `pages/pro
 - VS Code 官方文档说明：hover 到上下文窗口控件时，会显示“精确 token 数 / 总上下文”和按类别拆分；上下文满时会触发 compaction。
 - 若后续 VS Code / Copilot Chat 调整上下文展示结构，应以其内置行为为准同步更新文档描述。
 - 当前实现已完全停止本地 prompt token 估算与本地 token 计数；若上游不返回 usage，只能显示“无 usage 数据”，不会再做近似补算。
-- 若需要看最近一次真实请求的 usage 比例与明细，以状态栏 `CodingPlans Context` 为准。
+- 若需要看最近一次真实请求的 usage 比例与明细，以统一状态栏 `CodingPlans` 为准；正文显示简洁百分比，tooltip 合并展示套餐 usage 与 context 明细。
+- 若供应商配置了 `coding-plans.vendors[].usageUrl`，`CodingPlans` 会额外展示套餐额度。当前先支持智谱 coding plan usage，已兼容 5 小时额度与 MCP/次数额度两类展示。
 
 ## 多协议供应商接入说明
 
@@ -117,6 +118,7 @@ GitHub Pages 部署时会将 `assets/provider-pricing.json` 同步到 `pages/pro
   - `openai-chat`：请求 `baseUrl + /chat/completions`
   - `openai-responses`：请求 `baseUrl + /responses`
   - `anthropic`：请求 `baseUrl + /messages`
+- `coding-plans.vendors[].usageUrl` 为可选套餐 usage 接口；当前默认按 `Authorization: Bearer <API Key>` 轮询，并将识别到的小时额度、周额度或次数额度以百分比显示在状态栏。
 - `coding-plans.vendors[].models[].contextSize` 现在是描述模型上下文的首选字段。
 - `coding-plans.advanced.defaultReservedOutput` 的默认值为 `60000`，用于全局输出预算；发送请求时会自动按模型上限收敛。
 - `coding-plans.vendors[].models[].maxInputTokens` / `maxOutputTokens` 已标记为 deprecated，保留兼容旧配置与特殊覆盖用途。两者仍允许配置为 `0`。其中 `maxInputTokens: 0` 的语义为“未设置”；`maxOutputTokens` 默认值就是 `0`，表示“未设置”；在 `openai-chat` / `openai-responses` 下不主动下发 `max_tokens` / `max_output_tokens`，但当上游协议端点强制要求 `max_tokens` 时需自动补发兼容值。`maxInputTokens` 仍仅用于本地元数据和预算，不直接传给 API。自动刷新/写回 `vendors` 配置时不再默认补入这两个字段，除非用户显式配置或上游模型发现结果明确返回。

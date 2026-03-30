@@ -38,6 +38,7 @@ export interface VendorModelConfig {
 export interface VendorConfig {
   name: string;
   baseUrl: string;
+  usageUrl?: string;
   defaultApiStyle: VendorApiStyle;
   defaultTemperature?: number;
   defaultTopP?: number;
@@ -413,6 +414,9 @@ export class ConfigStore implements vscode.Disposable {
       return undefined;
     }
     const baseUrl = typeof obj.baseUrl === 'string' ? obj.baseUrl.trim() : '';
+    const usageUrl = typeof obj.usageUrl === 'string' && obj.usageUrl.trim().length > 0
+      ? obj.usageUrl.trim()
+      : undefined;
     const defaultApiStyle = this.normalizeApiStyle(obj.defaultApiStyle ?? obj.apiStyle);
     const defaultTemperature = this.readSamplingNumber(obj.defaultTemperature, 0, 2);
     const defaultTopP = this.readSamplingNumber(obj.defaultTopP, 0, 1);
@@ -423,7 +427,7 @@ export class ConfigStore implements vscode.Disposable {
           .map(m => this.normalizeModel(m, defaultVision, defaultApiStyle))
           .filter((m): m is VendorModelConfig => m !== undefined)
       : [];
-    return { name, baseUrl, defaultApiStyle, defaultTemperature, defaultTopP, useModelsEndpoint, defaultVision, models };
+    return { name, baseUrl, usageUrl, defaultApiStyle, defaultTemperature, defaultTopP, useModelsEndpoint, defaultVision, models };
   }
 
   private normalizeModel(

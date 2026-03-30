@@ -58,7 +58,8 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
 - When you hover the context window indicator, VS Code shows the exact token count and a category breakdown. When the context window gets full, VS Code might automatically compact conversation history.
 - This extension now relies on the built-in Copilot Chat context viewer instead of providing a separate Agent path or custom usage breakdown.
 - This extension no longer estimates prompt tokens or performs local token counting. If the upstream API does not return usage, the extension will not fabricate an approximate usage value.
-- The status bar also shows `CodingPlans Context`, based on the most recent completed request usage. Use this as the actual usage ratio display.
+- The status bar now shows a single `CodingPlans` entry: the text uses compact percentages for both plan usage and context occupancy, while the tooltip merges the detailed breakdown.
+- When a vendor config includes `usageUrl`, `CodingPlans` also shows plan quotas. This first implementation is wired for Zhipu coding plan usage and displays the 5-hour quota plus MCP/count quota percentages.
 
 ### Configuration Entry
 
@@ -74,6 +75,7 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
     {
       "name": "zhipu",
       "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+      "usageUrl": "https://open.bigmodel.cn/api/monitor/usage/quota/limit",
       "defaultApiStyle": "openai-chat",
       "defaultTemperature": 0.2,
       "defaultTopP": 1.0,
@@ -174,6 +176,7 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
 | `coding-plans.vendors` | `array` | Built-in vendor template | Vendor configuration list. |
 | `coding-plans.vendors[].name` | `string` | Required | Unique vendor name (used for matching and selection). |
 | `coding-plans.vendors[].baseUrl` | `string` | Required | Vendor API base URL; can fill in self-built relay station. |
+| `coding-plans.vendors[].usageUrl` | `string` | Empty | Optional coding-plan usage endpoint. When set, the extension polls it and shows quota percentages in the status bar. Currently verified for Zhipu `https://open.bigmodel.cn/api/monitor/usage/quota/limit`. |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Default protocol style for the vendor. Supports `openai-chat`, `openai-responses`, and `anthropic`, mapping to `/chat/completions`, `/responses`, and `/messages`. |
 | `coding-plans.vendors[].defaultTemperature` | `number` | `0.2` | Vendor-level default temperature. Models inherit it unless overridden. Recommended: `0.1-0.3` for coding/refactoring, `0.3-0.5` for more creative output. |
 | `coding-plans.vendors[].defaultTopP` | `number` | `1.0` | Vendor-level default top-p. Models inherit it unless overridden. Recommended: `1.0` for coding, `0.9-1.0` when balancing creativity and stability. |

@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.17] - 2026-03-28
+- feat(定价数据): 更新定价数据并增强错误处理机制
+- feat(config): 优化模型配置与输出预算管理
+- feat(provider): 新增京东云支持并更新 Kimi 价格数据
+
 ## [0.6.6] - 2026-03-24
 - feat(provider): 为提交信息生成请求添加来源标识并优化用量统计
 
@@ -54,7 +59,3 @@ All notable changes to this project will be documented in this file.
 - feat(generator): 优化提示词处理和提交风格参考
 - feat: 添加OpenRouter模型性能看板
 - feat(provider): 添加强制模型发现重试功能
-
-## [0.4.15] - 2026-03-05
-- feat(config): 为供应商模型添加默认视觉能力配置
-- feat(pricing): 支持人民币/美元符号自动识别并统一价格格式

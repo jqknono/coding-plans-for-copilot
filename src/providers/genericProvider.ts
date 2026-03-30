@@ -209,6 +209,7 @@ export class GenericLanguageModel extends BaseLanguageModel {
 export class GenericAIProvider extends BaseAIProvider {
   private modelVendorMap = new Map<string, ModelVendorMapping>();
   private readonly vendorDiscoveryState = new Map<string, VendorDiscoveryState>();
+  private readonly disabledStreamingModelIds = new Set<string>();
   private refreshModelsInFlight: Promise<void> | undefined;
   private refreshModelsPending = false;
   private forceDiscoveryRetryRequested = false;
@@ -732,6 +733,7 @@ export class GenericAIProvider extends BaseAIProvider {
       );
     } catch (error: any) {
       if (this.shouldFallbackToNonStream(error)) {
+        this.disableStreamingForSession(request.modelId, 'anthropic_stream_unsupported', trace);
         logger.warn('OpenAI chat stream is unsupported upstream; retrying without stream', {
           ...trace,
           error: this.summarizeError(error)
@@ -941,6 +943,7 @@ export class GenericAIProvider extends BaseAIProvider {
       );
     } catch (error: any) {
       if (this.shouldFallbackToNonStream(error)) {
+        this.disableStreamingForSession(request.modelId, 'anthropic_stream_unsupported', trace);
         logger.warn('OpenAI responses stream is unsupported upstream; retrying without stream', {
           ...trace,
           error: this.summarizeError(error)
@@ -1037,6 +1040,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const sampling = this.resolveSamplingOptions(vendor, modelName);
     const { system, messages } = toAnthropicMessages(providerMessages, () => this.generateToolCallId());
     const tools = request.capabilities.toolCalling ? buildAnthropicToolDefinitions(this.buildToolDefinitions(request.options)) : undefined;
+    const streamAllowed = !this.isStreamingDisabledForSession(request.modelId);
     const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName, 'anthropic')
       ? this.resolveRequestedOutputLimit(request)
       : undefined;
@@ -1049,7 +1053,7 @@ export class GenericAIProvider extends BaseAIProvider {
       tool_choice: tools ? buildAnthropicToolChoice(request.options) : undefined,
       temperature: sampling.temperature,
       top_p: sampling.topP,
-      stream: true,
+      stream: streamAllowed,
       ...(maxTokens === undefined ? {} : { max_tokens: maxTokens })
     };
 
@@ -1083,6 +1087,7 @@ export class GenericAIProvider extends BaseAIProvider {
           payload.max_tokens,
           async queue => {
             const state = createAnthropicStreamState();
+            const streamEventSummaries: Array<Record<string, unknown>> = [];
             for await (const event of this.readSseEvents(response)) {
               if (event.data === '[DONE]') {
                 break;
@@ -1091,13 +1096,38 @@ export class GenericAIProvider extends BaseAIProvider {
               if (!streamEvent) {
                 continue;
               }
+              const eventSummary = this.summarizeAnthropicStreamEvent(event.event, streamEvent);
+              if (streamEventSummaries.length < 40) {
+                streamEventSummaries.push(eventSummary);
+              }
+              logger.debug('Anthropic stream event received', {
+                ...trace,
+                event: eventSummary
+              });
+              if (this.isAnthropicErrorStreamEvent(event.event, streamEvent)) {
+                logger.warn('Anthropic stream returned error event', {
+                  ...trace,
+                  event: eventSummary
+                });
+                throw this.toProviderError(this.buildAnthropicStreamError(streamEvent));
+              }
               const update = applyAnthropicStreamEvent(state, event.event, streamEvent);
               if (update.textDelta.length > 0) {
                 queue.push(new vscode.LanguageModelTextPart(update.textDelta));
               }
             }
             const finalized = finalizeAnthropicStreamState(state, () => this.generateToolCallId());
+            if (finalized.content.trim().length === 0 && finalized.toolCalls.length === 0) {
+              logger.warn('Anthropic stream finalized without text or tool calls', {
+                ...trace,
+                responseId: state.responseId,
+                stopReason: state.stopReason,
+                usage: state.usage,
+                recentEvents: streamEventSummaries
+              });
+            }
             if (this.hasMalformedAnthropicStreamToolArguments(finalized.toolCalls)) {
+              this.disableStreamingForSession(request.modelId, 'anthropic_malformed_tool_arguments', trace);
               logger.warn('Anthropic stream produced malformed tool arguments; retrying without stream', {
                 ...trace,
                 responseId: state.responseId,
@@ -1145,6 +1175,7 @@ export class GenericAIProvider extends BaseAIProvider {
       );
     } catch (error: any) {
       if (this.shouldFallbackToNonStream(error)) {
+        this.disableStreamingForSession(request.modelId, 'anthropic_stream_unsupported', trace);
         logger.warn('Anthropic stream is unsupported upstream; retrying without stream', {
           ...trace,
           error: this.summarizeError(error)
@@ -1794,6 +1825,114 @@ export class GenericAIProvider extends BaseAIProvider {
     return parts.map(part => this.summarizeResponsePart(part));
   }
 
+  private summarizeAnthropicStreamEvent(
+    eventType: string | undefined,
+    payload: AnthropicStreamEvent
+  ): Record<string, unknown> {
+    const payloadRecord = payload as unknown as Record<string, unknown>;
+    const payloadError = payloadRecord.error && typeof payloadRecord.error === 'object'
+      ? payloadRecord.error as Record<string, unknown>
+      : undefined;
+    return {
+      eventType,
+      payloadType: payload.type,
+      index: payload.index,
+      hasMessage: !!payload.message,
+      messageContentBlocks: Array.isArray(payload.message?.content) ? payload.message?.content.length : undefined,
+      deltaType: payload.delta?.type,
+      deltaTextLength: typeof payload.delta?.text === 'string' ? payload.delta.text.length : 0,
+      hasPartialJson: typeof payload.delta?.partial_json === 'string' && payload.delta.partial_json.length > 0,
+      contentBlockType: payload.content_block?.type,
+      contentBlockName: payload.content_block?.name,
+      contentBlockTextLength: typeof payload.content_block?.text === 'string' ? payload.content_block.text.length : 0,
+      hasContentBlockInput: payload.content_block?.input !== undefined,
+      usage: payload.usage,
+      errorType: typeof payloadError?.type === 'string' ? payloadError.type : undefined,
+      errorMessage: typeof payloadError?.message === 'string'
+        ? payloadError.message
+        : (typeof payloadRecord.message === 'string' ? payloadRecord.message : undefined),
+      requestId: typeof payloadRecord.request_id === 'string' ? payloadRecord.request_id : undefined
+    };
+  }
+
+  private isStreamingDisabledForSession(modelId: string): boolean {
+    return this.disabledStreamingModelIds.has(modelId);
+  }
+
+  private disableStreamingForSession(
+    modelId: string,
+    reason: string,
+    trace?: RequestTraceContext
+  ): void {
+    if (this.disabledStreamingModelIds.has(modelId)) {
+      return;
+    }
+
+    this.disabledStreamingModelIds.add(modelId);
+    logger.warn('Disabled streaming for current session', {
+      ...trace,
+      modelId,
+      reason
+    });
+  }
+
+  private isAnthropicErrorStreamEvent(
+    eventType: string | undefined,
+    payload: AnthropicStreamEvent
+  ): boolean {
+    if (eventType === 'error' || payload.type === 'error') {
+      return true;
+    }
+
+    const payloadRecord = payload as unknown as Record<string, unknown>;
+    return !!payloadRecord.error;
+  }
+
+  private buildAnthropicStreamError(payload: AnthropicStreamEvent): Error & { response?: { status?: number; data: unknown } } {
+    const payloadRecord = payload as unknown as Record<string, unknown>;
+    const payloadError = payloadRecord.error && typeof payloadRecord.error === 'object'
+      ? payloadRecord.error as Record<string, unknown>
+      : undefined;
+    const message = (
+      (typeof payloadError?.message === 'string' && payloadError.message.trim().length > 0 ? payloadError.message.trim() : undefined)
+      ?? (typeof payloadRecord.message === 'string' && payloadRecord.message.trim().length > 0 ? payloadRecord.message.trim() : undefined)
+      ?? 'Anthropic stream returned an error event.'
+    );
+    const status = this.readAnthropicStreamErrorStatus(payloadRecord, payloadError);
+    const error: Error & { response?: { status?: number; data: unknown } } = new Error(message);
+    error.response = {
+      ...(status === undefined ? {} : { status }),
+      data: payloadRecord
+    };
+    return error;
+  }
+
+  private readAnthropicStreamErrorStatus(
+    payload: Record<string, unknown>,
+    payloadError?: Record<string, unknown>
+  ): number | undefined {
+    const directStatus = typeof payload.status === 'number' && Number.isFinite(payload.status)
+      ? payload.status
+      : undefined;
+    if (directStatus !== undefined) {
+      return directStatus;
+    }
+
+    const nestedStatus = typeof payloadError?.status === 'number' && Number.isFinite(payloadError.status)
+      ? payloadError.status
+      : undefined;
+    if (nestedStatus !== undefined) {
+      return nestedStatus;
+    }
+
+    const errorType = typeof payloadError?.type === 'string' ? payloadError.type.trim().toLowerCase() : '';
+    if (errorType === 'overloaded_error') {
+      return 529;
+    }
+
+    return undefined;
+  }
+
   private summarizeResponsePart(part: vscode.LanguageModelResponsePart): Record<string, unknown> {
     if (part instanceof vscode.LanguageModelTextPart) {
       return {
@@ -1935,6 +2074,7 @@ export class GenericAIProvider extends BaseAIProvider {
         queue.close();
         return finalized;
       } catch (error) {
+        provider.disableStreamingForSession(request.modelId, `${protocol}_stream_error`, trace);
         const providerError = error instanceof vscode.LanguageModelError ? error : provider.toProviderError(error);
         logger.error('Language model streaming response failed', {
           ...trace,
@@ -2211,6 +2351,18 @@ export class GenericAIProvider extends BaseAIProvider {
     }
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

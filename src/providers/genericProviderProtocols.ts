@@ -164,12 +164,12 @@ export interface AnthropicToolChoice {
 }
 
 interface AnthropicResponseTextContentBlock {
-  type: 'text';
+  type: string;
   text?: string;
 }
 
 interface AnthropicResponseToolUseContentBlock {
-  type: 'tool_use';
+  type: string;
   id?: string;
   name?: string;
   input?: unknown;
@@ -610,7 +610,7 @@ export function applyAnthropicStreamEvent(
   }
 
   if (resolvedEventType === 'content_block_start' && typeof payload.index === 'number' && payload.content_block) {
-    if (payload.content_block.type === 'tool_use') {
+    if (isAnthropicToolUseBlock(payload.content_block)) {
       state.blocks.set(payload.index, {
         type: 'tool_use',
         text: '',
@@ -623,7 +623,9 @@ export function applyAnthropicStreamEvent(
       return { textDelta };
     }
 
-    const initialText = typeof payload.content_block.text === 'string' ? payload.content_block.text : '';
+    const initialText = typeof (payload.content_block as { text?: unknown }).text === 'string'
+      ? (payload.content_block as { text: string }).text
+      : '';
     state.blocks.set(payload.index, {
       type: 'text',
       text: initialText,
@@ -929,14 +931,14 @@ export function parseAnthropicResponse(
   const toolCalls: ChatToolCall[] = [];
 
   for (const block of response.content ?? []) {
-    if (block.type === 'text') {
+    if (isAnthropicTextBlock(block)) {
       if (typeof block.text === 'string' && block.text.trim().length > 0) {
         textParts.push(block.text);
       }
       continue;
     }
 
-    if (block.type === 'tool_use' && typeof block.name === 'string' && block.name.trim().length > 0) {
+    if (isAnthropicToolUseBlock(block) && typeof block.name === 'string' && block.name.trim().length > 0) {
       toolCalls.push({
         id: typeof block.id === 'string' && block.id.trim().length > 0 ? block.id : generateToolCallId(),
         type: 'function',
@@ -952,6 +954,35 @@ export function parseAnthropicResponse(
     content: textParts.join(''),
     toolCalls
   };
+}
+
+function isAnthropicTextBlock(block: AnthropicResponseContentBlock): block is AnthropicResponseTextContentBlock {
+  const text = (block as { text?: unknown }).text;
+  return block.type === 'text'
+    || (
+      typeof text === 'string'
+      && !isAnthropicToolUseType(block.type)
+    );
+}
+
+function isAnthropicToolUseBlock(
+  block: { type?: string; name?: string; input?: unknown }
+): boolean {
+  return isAnthropicToolUseType(block.type)
+    || (
+      typeof block.name === 'string'
+      && block.name.trim().length > 0
+      && block.input !== undefined
+    );
+}
+
+function isAnthropicToolUseType(type: string | undefined): boolean {
+  if (typeof type !== 'string') {
+    return false;
+  }
+
+  const normalized = type.trim().toLowerCase();
+  return normalized === 'tool_use' || normalized.endsWith('_tool_use');
 }
 
 export function summarizeOpenAIChatResponse(response: OpenAIChatResponse): Record<string, unknown> {
@@ -1022,8 +1053,8 @@ export function summarizeAnthropicResponseForLogging(response: AnthropicChatResp
     })),
     contentTextPreview: buildPreview(
       content
-        .filter((block): block is AnthropicResponseTextContentBlock => block.type === 'text' && typeof block.text === 'string')
-        .map(block => block.text)
+        .filter((block): block is AnthropicResponseTextContentBlock => isAnthropicTextBlock(block))
+        .map(block => block.text ?? '')
         .join(''),
       100
     ),
