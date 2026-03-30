@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-29T08:16:32.994Z",
+  "generatedAt": "2026-03-30T03:06:04.786Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -463,7 +463,7 @@
           "originalPrice": 40,
           "originalPriceText": "¥40/月",
           "unit": "月",
-          "notes": "产品首购；可购1个；已售罄，请预约",
+          "notes": "产品首购；可购1个；未开售，点击预约",
           "serviceDetails": [
             "每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求",
             "模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等",
@@ -717,8 +717,8 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.b97669b4.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.ff99df17.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.84937ec5.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.b079bc95.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
