@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.6.25",
+    "version": "0.6.26",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",
@@ -356,118 +356,74 @@
                     "default": [
                         {
                             "name": "zhipu",
-                            "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+                            "baseUrl": "https://open.bigmodel.cn/api/anthropic/v1",
                             "usageUrl": "https://open.bigmodel.cn/api/monitor/usage/quota/limit",
-                            "models": [
-                                {
-                                    "name": "glm-4.7",
-                                    "capabilities": {
-                                        "tools": true,
-                                        "vision": false
-                                    },
-                                    "contextSize": 128000
-                                },
-                                {
-                                    "name": "glm-5",
-                                    "capabilities": {
-                                        "tools": true,
-                                        "vision": false
-                                    },
-                                    "contextSize": 128000
-                                }
-                            ],
-                            "defaultApiStyle": "openai-chat"
+                            "defaultApiStyle": "anthropic",
+                            "defaultVision": false,
+                            "useModelsEndpoint": true,
+                            "models": []
                         },
                         {
                             "name": "z.ai",
                             "baseUrl": "https://api.z.ai/api/coding/paas/v4",
-                            "models": [
-                                {
-                                    "name": "glm-4.7",
-                                    "description": "GLM-4.7",
-                                    "capabilities": {
-                                        "tools": true,
-                                        "vision": false
-                                    },
-                                    "contextSize": 128000
-                                },
-                                {
-                                    "name": "glm-5",
-                                    "description": "GLM-5",
-                                    "capabilities": {
-                                        "tools": true,
-                                        "vision": false
-                                    },
-                                    "contextSize": 128000
-                                }
-                            ],
+                            "models": [],
+                            "useModelsEndpoint": true,
                             "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "火山引擎",
                             "baseUrl": "https://ark.cn-beijing.volces.com/api/coding/v3",
                             "models": [],
+                            "useModelsEndpoint": true,
                             "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "Volcengine Overseas",
                             "baseUrl": "https://ark.ap-southeast.bytepluses.com/api/coding/v3",
                             "models": [],
+                            "useModelsEndpoint": true,
                             "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "MiniMax Mainland",
                             "baseUrl": "https://api.minimaxi.com/v1",
                             "models": [],
+                            "useModelsEndpoint": true,
                             "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "MiniMax Overseas",
                             "baseUrl": "https://api.minimax.io/v1",
                             "models": [],
+                            "useModelsEndpoint": true,
                             "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "Kimi Mainland",
                             "baseUrl": "https://api.moonshot.cn/v1",
                             "models": [],
+                            "useModelsEndpoint": true,
                             "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "Kimi Overseas",
                             "baseUrl": "https://api.moonshot.ai/v1",
                             "models": [],
+                            "useModelsEndpoint": true,
                             "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "Aliyun",
                             "baseUrl": "https://coding.dashscope.aliyuncs.com/v1",
                             "models": [],
+                            "useModelsEndpoint": true,
                             "defaultApiStyle": "openai-chat"
                         },
                         {
                             "name": "OpenRouter",
                             "baseUrl": "https://openrouter.ai/api/v1",
-                            "models": [
-                                {
-                                    "name": "openai/gpt-oss-20b:free",
-                                    "description": "https://openrouter.ai/openai/gpt-oss-20b:free",
-                                    "capabilities": {
-                                        "tools": true,
-                                        "vision": false
-                                    },
-                                    "contextSize": 131000
-                                },
-                                {
-                                    "name": "openai/gpt-oss-120b:free",
-                                    "description": "https://openrouter.ai/openai/gpt-oss-120b:free",
-                                    "capabilities": {
-                                        "tools": true,
-                                        "vision": false
-                                    },
-                                    "contextSize": 131000
-                                }
-                            ],
+                            "models": [],
+                            "useModelsEndpoint": true,
                             "defaultApiStyle": "openai-chat"
                         }
                     ],

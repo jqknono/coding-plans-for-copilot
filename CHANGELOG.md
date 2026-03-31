@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.25] - 2026-03-30
+- feat(套餐使用): 新增套餐使用状态栏与轮询功能
+
 ## [0.6.17] - 2026-03-28
 - feat(定价数据): 更新定价数据并增强错误处理机制
 - feat(config): 优化模型配置与输出预算管理
@@ -50,12 +53,3 @@ All notable changes to this project will be documented in this file.
 - #6 feat(pricing): 添加讯飞星辰定价信息
 - chore(pricing): 更新定价数据和脚本名称
 - feat(model): 保留已配置模型对象的完整字段
-
-## [0.5.0] - 2026-03-06
-- feat(provider): 支持多协议供应商接入
-- feat(scripts): 增加 Redpill 自定义解析及界面调整
-- chore(docs): 更新价格指标文档与数据
-- feat(config): 优化模型配置存储逻辑，仅持久化模型名称
-- feat(generator): 优化提示词处理和提交风格参考
-- feat: 添加OpenRouter模型性能看板
-- feat(provider): 添加强制模型发现重试功能
