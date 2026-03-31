@@ -13,4 +13,4 @@ moonshot-sitemap.xml
 output/playwright/
 output/tmp/
 temp/
-
+.playwright-mcp/

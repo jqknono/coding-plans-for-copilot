@@ -2,20 +2,19 @@
 
 **Switch between multiple AI model vendors with one click, breaking Copilot plan limitations.**
 
-Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Minimax, and Alibaba Cloud, as well as **any** vendor compatible with OpenAI Chat, OpenAI Responses, or Anthropic-style APIs. No need to change usage habits; seamlessly call directly in VS Code Copilot Chat.
+Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcano Cloud, Minimax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Infini, Qiniu, as well as **any** vendor compatible with OpenAI Chat, OpenAI Responses, or Anthropic API styles. No need to change usage habits; seamlessly call directly in VS Code Copilot Chat.
 
 ---
 
 ## Core Features
 
-- **Unified multi-vendor access**: Supports **any** provider that complies with OpenAI Chat, OpenAI Responses, or Anthropic-style API specifications. Configure once, use anywhere.
-- **Coding Plans Dashboard**: Visit the [GitHub Page Dashboard](https://jqknono.github.io/coding-plans-for-copilot/) to explore available AI plans and pricing in the market.
-- **Model Provider Performance Dashboard**: A new tab on the same page shows provider-level `latency_last_30m` and `throughput_last_30m` for selected models.
-- **Zero learning curve**: Fully integrated into VS Code Copilot Chat, no change to any operating habits
-- **Flexible model management**: Supports dynamically fetching the `/models` endpoint, and also allows custom model lists and parameters
-- **Smart Commit generation**: Automatically generates commit messages that comply with Conventional Commits specification based on Git changes
-- **Bilingual support (Chinese/English)**: Automatically switches based on VS Code language settings (default Chinese)
-- **Enterprise-grade security**: API Keys are stored locally using VS Code Secret Storage, not uploaded to the cloud or shared
+- **Multi-Protocol Unified Access**: Supports OpenAI Chat (`/chat/completions`), OpenAI Responses (`/responses`), and Anthropic (`/messages`) three protocol styles, adapting to any compatible vendor.
+- **Claude Code Priority Endpoint**: Built-in vendors default to Anthropic-compatible endpoints, compatible with both Claude Code and Copilot Chat.
+- **Zero Learning Curve**: Fully integrated into VS Code Copilot Chat without changing any operational habits.
+- **Flexible Model Management**: Supports dynamic fetching from `/models` endpoint, or custom model lists.
+- **Intelligent Commit Generation**: Automatically generates Conventional Commits-compliant commit messages based on Git changes.
+- **Coding Plans Dashboard**: Visit [GitHub Pages Dashboard](https://jqknono.github.io/coding-plans-for-copilot/) to view monthly fees and benefits from multiple coding plans, as well as OpenRouter vendor performance metrics.
+- **Key Security**: API Keys are stored locally using VS Code Secret Storage, not uploaded to the cloud or shared.
 
 ---
 
@@ -23,116 +22,79 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
 
 ### Installation
 
-**Recommended method**: Search for "Coding Plans" or `Coding Plans for Copilot` directly in the VS Code Marketplace and install.
+**Recommended Method**: Search "Coding Plans" or `Coding Plans for Copilot` directly in the VS Code Marketplace.
 
-[Visit VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=techfetch-dev.coding-plans-for-copilot)
+#### Method 1: Install within VS Code (Recommended)
 
-### Pre-Release Channel
+1. Open VS Code
+2. Press `Ctrl+Shift+X` to open the Extensions panel
+3. Type `Coding Plans for Copilot` or `编码套餐` in the search box
+4. Click **Install** to install
+5. After installation, press `Ctrl+Shift+P` and type `编码套餐` to see related commands
 
-- This extension supports publishing pre-release builds through the built-in VS Code Marketplace pre-release channel on the same extension listing.
-- The gear menu only shows `Switch to Pre-Release Version` after the publisher has actually published at least one pre-release build to Marketplace.
-- If the option is missing, it usually means there is currently no live pre-release package for this extension in Marketplace.
-- After a pre-release build is published, you can switch with `Switch to Pre-Release Version` / `Switch to Release Version` from the same menu.
-- Pre-release builds receive features earlier than stable, but may also include changes that are not fully stabilized yet.
+#### Method 2: Command Line Installation
+
+```bash
+code --install-extension techfetch-dev.coding-plans-for-copilot
+```
+
+#### Method 3: Install from Marketplace Page
+
+👉 [VS Code Marketplace Direct Link](https://marketplace.visualstudio.com/items?itemName=techfetch-dev.coding-plans-for-copilot)
+
+Click the **Install** button on the marketplace page, which will automatically open the extension in VS Code and install it.
+
+> **Prerequisites**: Requires VS Code ≥ 1.109.0 and the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension installed.
 
 ### Configuration
 
-1. Press `Ctrl+Shift+P`, enter `Coding Plans: Manage Coding Plans Configuration`
-2. Select "Select Vendor", choose the platform you have registered with (such as Zhipu AI, Kimi, etc.)
+1. Press `Ctrl+Shift+P`, type `编码套餐: 管理编码套餐配置`
+2. Select "Select Vendor", choose the platform you've registered with (e.g., Zhipu, Kimi, Volcano Engine, etc.)
 3. Select "Set API Key", paste your API Key
-4. Open Copilot Chat (`Ctrl+L`), switch to the "Coding Plans" provider
+4. Open Copilot Chat (`Ctrl+L`), switch to "Coding Plans" provider
 
-### Copilot Chat Context Viewer
+You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 
-1. Open Copilot Chat normally and use a model provided by this extension
-2. Inspect the built-in Context Window / context viewer in Copilot Chat
-3. This extension no longer provides a separate Agent entry or custom native context usage reporting
-4. Context visualization behavior depends on the current built-in behavior of VS Code and Copilot Chat
+### Built-in Vendor Endpoints
 
-### Context Panel Terms
+The following vendors come with built-in default configurations and are ready to use after installation:
 
-- `System Instructions`: token usage from system-style instructions, such as the system prompt, mode guidance, policy hints, or extra injected instructions. This is part of the prompt token total.
-- `Tool Definitions`: token usage from the tool/function schemas sent to the model, including tool names, descriptions, and JSON schema parameters. This is also part of the prompt token total.
-- `Reserved Output`: output token budget reserved for the model response. This is not already-generated response text; it is headroom reserved to avoid output-limit overflow.
-- `Context Window 4.0K / 400K tokens`: the denominator prefers the model's `contextSize` when provided, and otherwise falls back to the normalized token window. Because the extension no longer attempts local counting or backfills usage from the previous turn, it no longer maintains the built-in Context Window numerator.
-- When you hover the context window indicator, VS Code shows the exact token count and a category breakdown. When the context window gets full, VS Code might automatically compact conversation history.
-- This extension now relies on the built-in Copilot Chat context viewer instead of providing a separate Agent path or custom usage breakdown.
-- This extension no longer estimates prompt tokens or performs local token counting. If the upstream API does not return usage, the extension will not fabricate an approximate usage value.
-- The status bar now shows a single `CodingPlans` entry: the text uses compact percentages for both plan usage and context occupancy, while the tooltip merges the detailed breakdown.
-- When a vendor config includes `usageUrl`, `CodingPlans` also shows plan quotas. This first implementation is wired for Zhipu coding plan usage and displays the 5-hour quota plus MCP/count quota percentages.
+| Vendor | Default Endpoint (Anthropic) | OpenAI Compatible Endpoint |
+| --- | --- | --- |
+| Zhipu (zhipu) | `https://open.bigmodel.cn/api/anthropic/v1` | `https://open.bigmodel.cn/api/coding/paas/v4` |
+| z.ai | `https://api.z.ai/api/anthropic` | `https://api.z.ai/api/coding/paas/v4` |
+| Volcano Engine | `https://ark.cn-beijing.volces.com/api/coding` | `https://ark.cn-beijing.volces.com/api/coding/v3` |
+| Volcengine Overseas | `https://ark.ap-southeast.bytepluses.com/api/coding` | `https://ark.ap-southeast.bytepluses.com/api/coding/v3` |
+| MiniMax Mainland | `https://api.minimaxi.com/anthropic` | `https://api.minimaxi.com/v1` |
+| MiniMax Overseas | `https://api.minimax.io/anthropic` | `https://api.minimax.io/v1` |
+| Kimi Mainland | `https://api.moonshot.cn/anthropic` | `https://api.moonshot.cn/v1` |
+| Kimi Overseas | `https://api.moonshot.ai/anthropic` | `https://api.moonshot.ai/v1` |
+| Alibaba Cloud (Aliyun) | `https://coding.dashscope.aliyuncs.com/apps/anthropic` | `https://coding.dashscope.aliyuncs.com/v1` |
+| Tencent Cloud | `https://api.lkeap.cloud.tencent.com/coding/anthropic` | — |
+| Infini (无问芯穹) | `https://cloud.infini-ai.com` | — |
+| Qiniu (七牛) | `https://api.qnaigc.com` | — |
+| OpenRouter | `https://openrouter.ai/api` | `https://openrouter.ai/api/v1` |
 
-### Configuration Entry
+To switch to OpenAI-compatible endpoints, modify the vendor's `baseUrl` and `defaultApiStyle`.
 
-1. Press `Ctrl+Shift+P`, enter `Coding Plans: Manage Coding Plans Configuration`
-2. The extension will open the settings page and navigate to `coding-plans.vendors`
-3. You can also directly edit `settings.json`
+### Configuration Examples
 
-### Basic Configuration Example (settings.json)
+**Anthropic Style (Default)**
 
 ```json
 {
   "coding-plans.vendors": [
     {
       "name": "zhipu",
-      "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
+      "baseUrl": "https://open.bigmodel.cn/api/anthropic/v1",
       "usageUrl": "https://open.bigmodel.cn/api/monitor/usage/quota/limit",
-      "defaultApiStyle": "openai-chat",
-      "defaultTemperature": 0.2,
-      "defaultTopP": 1.0,
-      "useModelsEndpoint": false,
-      "models": [
-        {
-          "name": "glm-4.7",
-          "description": "Zhipu GLM-4.7",
-          "temperature": 0.15,
-          "topP": 1.0,
-          "capabilities": {
-            "tools": true,
-            "vision": false
-          },
-          "contextSize": 128000
-        }
-      ]
-    }
-  ],
-  "coding-plans.commitMessage.showGenerateCommand": true,
-  "coding-plans.commitMessage.language": "zh-cn",
-  "coding-plans.commitMessage.options": {
-    "pipelineMode": "single",
-    "maxBodyBulletCount": 7,
-    "subjectMaxLength": 72
-  }
-}
-```
-
-### Anthropic-style Configuration Example
-
-```json
-{
-  "coding-plans.vendors": [
-    {
-      "name": "deepseek",
-      "baseUrl": "https://api.deepseek.com/anthropic",
       "defaultApiStyle": "anthropic",
       "useModelsEndpoint": false,
       "models": [
         {
-          "name": "deepseek-chat",
-          "temperature": 0.2,
-          "topP": 1.0,
-          "capabilities": {
-            "tools": true,
-            "vision": false
-          },
-          "contextSize": 200000
-        },
-        {
-          "name": "deepseek-reasoner",
-          "capabilities": {
-            "tools": true,
-            "vision": false
-          },
-          "contextSize": 200000
+          "name": "glm-4.7",
+          "capabilities": { "tools": true, "vision": false },
+          "contextSize": 128000
         }
       ]
     }
@@ -140,7 +102,23 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
 }
 ```
 
-### OpenAI Responses-style Configuration Example
+**OpenAI Chat Style**
+
+```json
+{
+  "coding-plans.vendors": [
+    {
+      "name": "my-openai-vendor",
+      "baseUrl": "https://api.example.com/v1",
+      "defaultApiStyle": "openai-chat",
+      "useModelsEndpoint": true,
+      "models": []
+    }
+  ]
+}
+```
+
+**OpenAI Responses Style**
 
 ```json
 {
@@ -153,12 +131,7 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
       "models": [
         {
           "name": "gpt-5",
-          "temperature": 0.2,
-          "topP": 1.0,
-          "capabilities": {
-            "tools": true,
-            "vision": false
-          },
+          "capabilities": { "tools": true, "vision": false },
           "contextSize": 400000
         }
       ]
@@ -167,129 +140,93 @@ Supports major domestic AI vendors such as Zhipu z.ai, Kimi, Volcano Cloud, Mini
 }
 ```
 
-### Configuration Options
+### Configurable Items
 
-| Config Key | Type | Default | Description |
+| Config Key | Type | Default Value | Description |
 | --- | --- | --- | --- |
-| `coding-plans.logLevel` | `string` | `info` | Output-channel log level. Supports `debug` / `info` / `warn` / `error`. Temporarily switch to `debug` when tracing `openai-responses` or similar request flows. |
-| `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Global default output-token budget (upstream output limit). The request limit is automatically clamped to the selected model's available output capacity. |
-| `coding-plans.vendors` | `array` | Built-in vendor template | Vendor configuration list. |
-| `coding-plans.vendors[].name` | `string` | Required | Unique vendor name (used for matching and selection). |
-| `coding-plans.vendors[].baseUrl` | `string` | Required | Vendor API base URL; can fill in self-built relay station. |
-| `coding-plans.vendors[].usageUrl` | `string` | Empty | Optional coding-plan usage endpoint. When set, the extension polls it and shows quota percentages in the status bar. Currently verified for Zhipu `https://open.bigmodel.cn/api/monitor/usage/quota/limit`. |
-| `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Default protocol style for the vendor. Supports `openai-chat`, `openai-responses`, and `anthropic`, mapping to `/chat/completions`, `/responses`, and `/messages`. |
-| `coding-plans.vendors[].defaultTemperature` | `number` | `0.2` | Vendor-level default temperature. Models inherit it unless overridden. Recommended: `0.1-0.3` for coding/refactoring, `0.3-0.5` for more creative output. |
-| `coding-plans.vendors[].defaultTopP` | `number` | `1.0` | Vendor-level default top-p. Models inherit it unless overridden. Recommended: `1.0` for coding, `0.9-1.0` when balancing creativity and stability. |
-| `coding-plans.vendors[].models[].apiStyle` | `string` | Inherit vendor | Per-model protocol style; when set, it overrides `defaultApiStyle`. |
-| `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | When `true`, refreshing models will request `/models`; refresh only syncs membership by `name` and preserves the other fields of existing model entries. |
-| `coding-plans.vendors[].models` | `array` | `[]` | Manual model list; `capabilities` is now required, while legacy configs are backfilled at runtime. |
+| `coding-plans.logLevel` | `string` | `info` | Log level: `debug` / `info` / `warn` / `error`. |
+| `coding-plans.vendors` | `array` | Built-in vendor templates | Vendor configuration list. |
+| `coding-plans.vendors[].name` | `string` | Required | Vendor unique name. |
+| `coding-plans.vendors[].baseUrl` | `string` | Required | API base address. |
+| `coding-plans.vendors[].usageUrl` | `string` | Empty | Plan usage API address; when configured, status bar displays quota percentage. |
+| `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Protocol style: `openai-chat` / `openai-responses` / `anthropic`. |
+| `coding-plans.vendors[].defaultTemperature` | `number` | `0.2` | Vendor default temperature. |
+| `coding-plans.vendors[].defaultTopP` | `number` | `1.0` | Vendor default topP. |
+| `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | Whether to fetch model list from `/models`. |
 | `coding-plans.vendors[].models[].name` | `string` | Required | Model name. |
 | `coding-plans.vendors[].models[].description` | `string` | Empty | Model description. |
-| `coding-plans.vendors[].models[].temperature` | `number` | Inherit vendor/`0.2` | Per-model temperature override with higher priority than `defaultTemperature`. |
-| `coding-plans.vendors[].models[].topP` | `number` | Inherit vendor/`1.0` | Per-model top-p override with higher priority than `defaultTopP`. |
-| `coding-plans.vendors[].models[].capabilities.tools` | `boolean` | `true` | Whether to enable tool calling capability; runtime backfills legacy configs when missing. |
-| `coding-plans.vendors[].models[].capabilities.vision` | `boolean` | `defaultVision` | Whether to enable vision input capability; legacy configs are backfilled from vendor `defaultVision` at runtime. |
-| `coding-plans.vendors[].models[].contextSize` | `number` | Empty | Preferred total context window for the model. Use this field to describe model context; language model context-size display uses it directly when provided. |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | `396000` | Deprecated. Legacy maximum input token override; prefer `contextSize`. When `contextSize` is also set and this value exceeds it, it is capped to `contextSize`. Set it to `0` to treat it as unset. |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | Deprecated. Legacy maximum output token override; prefer `contextSize`. When `contextSize` is also set and this value exceeds it, it is capped to `contextSize`. It defaults to `0`, which treats it as unset. For `openai-chat` / `openai-responses` it suppresses proactively sending `max_tokens` / `max_output_tokens`, but if an upstream protocol endpoint explicitly requires `max_tokens` (for example some Anthropic-compatible endpoints), the extension automatically retries with a compatible limit. |
-| `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show the "Generate Commit Message" command. |
-
-Model `capabilities` is now required. For backward compatibility, the extension backfills `tools=true` and `vision=defaultVision` at runtime when legacy configs omit them. Vendor-level `defaultApiStyle` can also be overridden per model with `apiStyle`. Sampling inheritance is fixed as: `models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > built-in defaults `0.2/1.0`. Prefer `contextSize` as the single source of truth for model context; `maxInputTokens` / `maxOutputTokens` are deprecated and retained only for legacy compatibility or specialized overrides. When a model provides both `contextSize` and `maxInputTokens` / `maxOutputTokens`, the total context window prefers `contextSize`, and the input/output limits are only capped when they exceed it. `maxInputTokens: 0` is treated as unset; `maxOutputTokens: 0` is treated as unset and suppresses proactive output-limit fields for `openai-chat` / `openai-responses`, while protocol endpoints that require `max_tokens` trigger an automatic compatible retry. Auto-refresh/writeback for `vendors` no longer injects `maxInputTokens` / `maxOutputTokens` by default; they are only persisted when explicitly configured or explicitly returned by model discovery.
-
-| `coding-plans.commitMessage.language` | `string` | `en` | Commit message language, supports `en` / `zh-cn`. |
-| `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | Whether to reference the style of up to the last 7 commits (use all if fewer). |
-| `coding-plans.commitMessage.modelVendor` | `string` | Empty | Vendor name to prioritize when generating commit messages. |
-| `coding-plans.commitMessage.modelId` | `string` | Empty | Model name to prioritize when generating commit messages. |
+| `coding-plans.vendors[].models[].apiStyle` | `string` | Inherit from vendor | Model-level protocol style override. |
+| `coding-plans.vendors[].models[].temperature` | `number` | Inherit from vendor | Model-level temperature override. |
+| `coding-plans.vendors[].models[].topP` | `number` | Inherit from vendor | Model-level topP override. |
+| `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | Model capability declaration. |
+| `coding-plans.vendors[].models[].contextSize` | `number` | Empty | Model total context window. |
+| `coding-plans.vendors[].models[].maxInputTokens` | `number` | Empty | Deprecated,建议使用 `contextSize`. |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | Deprecated,建议使用 `contextSize`. |
+| `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Global default output token budget. |
+| `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show "Generate Commit Message" command. |
+| `coding-plans.commitMessage.language` | `string` | `en` | Commit message language: `en` / `zh-cn`. |
+| `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | Whether to reference the style of the last 20 commits. |
+| `coding-plans.commitMessage.modelVendor` | `string` | Empty | Preferred vendor name when generating commit messages. |
+| `coding-plans.commitMessage.modelId` | `string` | Empty | Preferred model name when generating commit messages. |
 | `coding-plans.commitMessage.options.prompt` | `string` | Built-in prompt | Override generation prompt. |
 | `coding-plans.commitMessage.options.maxDiffLines` | `number` | `3000` | Maximum number of lines to read from diff. |
 | `coding-plans.commitMessage.options.pipelineMode` | `string` | `single` | Generation pipeline: `single` / `two-stage` / `auto`. |
-| `coding-plans.commitMessage.options.summaryTriggerLines` | `number` | `1200` | Diff line count threshold to trigger summary mode. |
-| `coding-plans.commitMessage.options.summaryChunkLines` | `number` | `800` | Number of lines per chunk in summary mode. |
-| `coding-plans.commitMessage.options.summaryMaxChunks` | `number` | `12` | Maximum number of summary chunks. |
-| `coding-plans.commitMessage.options.maxBodyBulletCount` | `number` | `7` | Maximum number of bullet points in the body. |
-| `coding-plans.commitMessage.options.subjectMaxLength` | `number` | `72` | Maximum title length. |
+| `coding-plans.commitMessage.options.maxBodyBulletCount` | `number` | `7` | Maximum number of body bullets. |
+| `coding-plans.commitMessage.options.subjectMaxLength` | `number` | `72` | Maximum subject length. |
 | `coding-plans.commitMessage.options.requireConventionalType` | `boolean` | `true` | Whether to enforce Conventional Commits type. |
-| `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | Whether to show warning when validation fails. |
-| `coding-plans.commitMessage.options.llmMaxPromptLength` | `number` | `5000` | Maximum prompt length (characters) sent to the model each time; over-limit prompts are truncated with warning. |
-| `coding-plans.models` | `array` | `[]` | Advanced fallback: When `/models` is unavailable, serves as an optional model list. |
-| `coding-plans.modelSettings` | `object` | `{}` | Advanced fallback: Override token and capability parameters per model. |
+| `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | Whether to show warning on validation failure. |
 
-`API Key` is not stored in plain text in `settings.json`. Please write it to VS Code Secret Storage via 'Set API Key'.
+`API Key` is not stored in plaintext in `settings.json`. Please write it to VS Code Secret Storage via "Set API Key".
 
-Note: Multi-protocol support currently focuses on chat and tool calling. For `anthropic` and `openai-responses`, in most cases use `useModelsEndpoint: false` and configure the model list explicitly. Runtime behavior now prefers upstream streaming by default; when a compatible vendor explicitly does not support streaming, the extension transparently falls back to a non-stream request and logs a warning.
+### Context Window Display
+
+Limited by VS Code's public API, this extension additionally implements context window display:
+
+- **System Instructions**: System-class prompts occupy (system prompts, mode descriptions, strategy prompts, etc.), counted as prompt tokens.
+- **Tool Definitions**: Tool definitions occupy (tool names, descriptions, parameter JSON Schema), counted as prompt tokens.
+- **Reserved Output**: Output token budget reserved for this round of response, not the actual generated reply content.
+- **Context Window**: The denominator prioritizes `contextSize` from model configuration. The current public API does not provide an interface to return upstream usage breakdown to the native Context Window, so this extension maintains the numerator display of the context window itself.
+- Status bar displays a unified `CodingPlans` entry: the body shows a concise percentage of plan usage and context ratio; hover to view detailed information.
+- If the vendor has `usageUrl` configured, it additionally displays plan quota percentage.
 
 ## Advanced Features
 
-### Smart Commit Message Generation
+### Intelligent Commit Message Generation
 
-1. Press `Ctrl+Shift+P`, enter `Coding Plans: Generate Commit Message`
-2. The extension will analyze current Git changes and automatically generate a compliant commit message
-3. You can select the model to use (by default uses the currently configured vendor)
+1. Press `Ctrl+Shift+P`, type `编码套餐: 生成 Commit 消息`
+2. The extension analyzes current Git changes and automatically generates a Conventional Commits-compliant commit message
+3. You can select the model to use (defaults to the currently configured vendor)
 
-### Multi-workspace Independent Configuration
+### Multi-Workspace Independent Configuration
 
-Vendor configurations can be saved per workspace/folder; API Keys are saved by vendor name in VS Code Secret Storage (local).
+Vendor configurations can be saved per workspace/folder; API Keys are stored in VS Code Secret Storage (local) by vendor name.
 
-### Dashboard (Pricing + Model Performance)
+## Dashboard
 
-Visit [GitHub Pages Plan Dashboard](https://jqknono.github.io/coding-plans-for-copilot/):
-- `Plan Pricing` tab: pricing and update time for coding plans.
-- `Model Provider Performance` tab: OpenRouter provider-level latency/throughput for selected models (last 30 minutes), with filters for organization/model/provider.
-- `p50/p90/p99` are shown in table columns with percentile explanations.
-- Performance data is scheduled daily at `16:00` Beijing time.
-
-Use environment variable `CODING_PLANS_FOR_COPILOT` as the OpenRouter API key when fetching metrics:
-
-```bash
-npm run metrics:fetch
-```
-
-Optional environment variables:
-- `OPENROUTER_MODEL_ORGS`: comma-separated organization list (default `deepseek,qwen,moonshotai,z-ai,minimax,bytedance,bytedance-seed,kwaipilot,meituan,mistralai,stepfun`).
-- `OPENROUTER_MODEL_LIMIT`: latest model count per organization (default `5`).
-- `OPENROUTER_MODEL_MAX_AGE_DAYS`: only fetch models published in the last N days (default `90`, set `0` to disable age filtering).
+Visit [GitHub Pages Plans Dashboard](https://jqknono.github.io/coding-plans-for-copilot/):
+- `大陆套餐供应商` Tab: Shows publicly available monthly plan pricing in RMB.
+- `海外供应商` Tab: Shows USD-priced plans; restricted items are placed in Pending collapsible section.
+- `Provider 性能指标` Tab: Shows OpenRouter model performance metrics (availability, latency, throughput p50/p90/p99) for different vendors over the last 30 minutes, with filtering by model vendor/model/vendor.
 
 ---
 
-## Development Guide
+## Development
 
-For detailed development documentation, see [DEV.md](DEV.md)
-
-### Quick Commands
-
-```bash
-# Install dependencies
-npm install
-
-# Compile
-npm run compile
-
-# Lint
-npm run lint
-
-# GitHub Pages smoke tests
-npm run test:pages
-
-# Package stable
-npm run package:vsix
-
-# Package pre-release
-npm run package:vsix:pre
-```
+Detailed development documentation can be found in [DEV.md](DEV.md).
 
 ---
 
 ## Changelog
 
-See [CHANGELOG.md](CHANGELOG.md) for version update details.
+Check [CHANGELOG.md](CHANGELOG.md) for version update details.
 
 ---
 
 ## Feedback
 
-- **Feature suggestions**: Submit an [Issue](https://github.com/jqknono/coding-plans-for-copilot/issues)
-- **Usage issues**: Include error logs and relevant configuration snippets from `settings.json` (with sensitive information redacted) in the Issue
-- **Vendor integration**: Pull Requests are welcome
+- **Feature Suggestions**: Submit [Issue](https://github.com/jqknono/coding-plans-for-copilot/issues)
+- **Usage Questions**: Include error logs and relevant `settings.json` configuration snippets (with sensitive information redacted) in the Issue
+- **Vendor Integration**: Pull Requests are welcome
 
 ---
 
@@ -299,11 +236,10 @@ MIT License
 
 ---
 
-## Contributing Guide
+## Contribution Guidelines
 
 1. Fork this repository
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Submit a Pull Request
-
+5. Open a Pull Request

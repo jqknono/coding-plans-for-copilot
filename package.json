@@ -365,66 +365,87 @@
                         },
                         {
                             "name": "z.ai",
-                            "baseUrl": "https://api.z.ai/api/coding/paas/v4",
+                            "baseUrl": "https://api.z.ai/api/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "openai-chat"
+                            "defaultApiStyle": "anthropic"
                         },
                         {
                             "name": "火山引擎",
-                            "baseUrl": "https://ark.cn-beijing.volces.com/api/coding/v3",
+                            "baseUrl": "https://ark.cn-beijing.volces.com/api/coding",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "openai-chat"
+                            "defaultApiStyle": "anthropic"
                         },
                         {
                             "name": "Volcengine Overseas",
-                            "baseUrl": "https://ark.ap-southeast.bytepluses.com/api/coding/v3",
+                            "baseUrl": "https://ark.ap-southeast.bytepluses.com/api/coding",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "openai-chat"
+                            "defaultApiStyle": "anthropic"
                         },
                         {
                             "name": "MiniMax Mainland",
-                            "baseUrl": "https://api.minimaxi.com/v1",
+                            "baseUrl": "https://api.minimaxi.com/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "openai-chat"
+                            "defaultApiStyle": "anthropic"
                         },
                         {
                             "name": "MiniMax Overseas",
-                            "baseUrl": "https://api.minimax.io/v1",
+                            "baseUrl": "https://api.minimax.io/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "openai-chat"
+                            "defaultApiStyle": "anthropic"
                         },
                         {
                             "name": "Kimi Mainland",
-                            "baseUrl": "https://api.moonshot.cn/v1",
+                            "baseUrl": "https://api.moonshot.cn/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "openai-chat"
+                            "defaultApiStyle": "anthropic"
                         },
                         {
                             "name": "Kimi Overseas",
-                            "baseUrl": "https://api.moonshot.ai/v1",
+                            "baseUrl": "https://api.moonshot.ai/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "openai-chat"
+                            "defaultApiStyle": "anthropic"
                         },
                         {
                             "name": "Aliyun",
-                            "baseUrl": "https://coding.dashscope.aliyuncs.com/v1",
+                            "baseUrl": "https://coding.dashscope.aliyuncs.com/apps/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "openai-chat"
+                            "defaultApiStyle": "anthropic"
                         },
                         {
                             "name": "OpenRouter",
-                            "baseUrl": "https://openrouter.ai/api/v1",
+                            "baseUrl": "https://openrouter.ai/api",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "openai-chat"
+                            "defaultApiStyle": "anthropic"
+                        },
+                        {
+                            "name": "腾讯云",
+                            "baseUrl": "https://api.lkeap.cloud.tencent.com/coding/anthropic",
+                            "models": [],
+                            "useModelsEndpoint": true,
+                            "defaultApiStyle": "anthropic"
+                        },
+                        {
+                            "name": "Infini",
+                            "baseUrl": "https://cloud.infini-ai.com",
+                            "models": [],
+                            "useModelsEndpoint": true,
+                            "defaultApiStyle": "anthropic"
+                        },
+                        {
+                            "name": "Qiniu",
+                            "baseUrl": "https://api.qnaigc.com",
+                            "models": [],
+                            "useModelsEndpoint": true,
+                            "defaultApiStyle": "anthropic"
                         }
                     ],
                     "description": "%configuration.coding-plans.vendors.description%",
