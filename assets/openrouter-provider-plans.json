@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-30T08:39:24.907Z",
-  "generatedAtBeijing": "2026年3月30日 16:39:24",
-  "sourceGeneratedAt": "2026-03-30T08:39:07.664Z",
-  "sourceGeneratedAtBeijing": "2026年3月30日 16:39:07",
-  "sourceMetricsGeneratedAt": "2026-03-30T08:39:08.216Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月30日 16:39:08",
+  "generatedAt": "2026-03-31T08:30:37.302Z",
+  "generatedAtBeijing": "2026年3月31日 16:30:37",
+  "sourceGeneratedAt": "2026-03-31T08:30:18.493Z",
+  "sourceGeneratedAtBeijing": "2026年3月31日 16:30:18",
+  "sourceMetricsGeneratedAt": "2026-03-31T08:30:19.600Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年3月31日 16:30:19",
   "summary": {
     "openrouterProviderCount": 75,
     "metricsProviderCount": 33,
@@ -58,7 +58,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ffae92eece62b1177b2af8845f366a45.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/e897d7d3f6d11766c2f332c65af26047.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -418,7 +418,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-YoLbP_it.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C1E6gAis.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -613,7 +613,7 @@
             "Remove image watermark",
             "High-resolution upscaling",
             "Up to 1000 images per day with Free & Pro models",
-            "One-time grant of 1000 Credits with upgrade (for video or API)"
+            "One-time grant of 1000 credits to use with our API or pay-per-use features"
           ]
         }
       ],
@@ -902,7 +902,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.together.ai",
       "pricingPageUrl": "https://www.together.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.27 / $0.85 / $0.30）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.30 / $0.06 / $1.20）",
       "blocked": false
     }
   ]
