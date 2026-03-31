@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-03-30T08:39:07.664Z",
+  "generatedAt": "2026-03-31T03:05:54.420Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -717,8 +717,8 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.84937ec5.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.b079bc95.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.d7a624f3.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.eb6d086d.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
