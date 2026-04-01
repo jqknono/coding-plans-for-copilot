@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-03-31T08:30:37.302Z",
-  "generatedAtBeijing": "2026年3月31日 16:30:37",
-  "sourceGeneratedAt": "2026-03-31T08:30:18.493Z",
-  "sourceGeneratedAtBeijing": "2026年3月31日 16:30:18",
-  "sourceMetricsGeneratedAt": "2026-03-31T08:30:19.600Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年3月31日 16:30:19",
+  "generatedAt": "2026-04-01T08:35:10.897Z",
+  "generatedAtBeijing": "2026年4月1日 16:35:10",
+  "sourceGeneratedAt": "2026-04-01T08:34:51.739Z",
+  "sourceGeneratedAtBeijing": "2026年4月1日 16:34:51",
+  "sourceMetricsGeneratedAt": "2026-04-01T08:34:55.384Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月1日 16:34:55",
   "summary": {
     "openrouterProviderCount": 75,
     "metricsProviderCount": 33,
@@ -58,7 +58,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/e897d7d3f6d11766c2f332c65af26047.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/d9fe872fe987e0084e8f9d6c128b25fa.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -110,15 +110,15 @@
       "sourceUrls": [
         "https://chutes.ai",
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/start.C3oWmV63.js",
-        "https://chutes.ai/_app/immutable/entry/app.JhqOBqcv.js",
-        "https://chutes.ai/_app/immutable/chunks/DWYkpdij.js",
-        "https://chutes.ai/_app/immutable/nodes/0.DkGRDCTu.js",
+        "https://chutes.ai/_app/immutable/entry/start.CAf_kJ3q.js",
+        "https://chutes.ai/_app/immutable/entry/app.D_YJeLTi.js",
+        "https://chutes.ai/_app/immutable/chunks/DT8KiIKb.js",
+        "https://chutes.ai/_app/immutable/nodes/0.Vr_ZBl52.js",
         "https://chutes.ai/_app/immutable/chunks/DsnmJJEf.js",
         "https://chutes.ai/_app/immutable/chunks/BgoEvGGg.js",
         "https://chutes.ai/_app/immutable/chunks/DoUkhPN4.js",
         "https://chutes.ai/_app/immutable/chunks/BZ9_IqD1.js",
-        "https://chutes.ai/_app/immutable/chunks/ZvI0jvbz.js",
+        "https://chutes.ai/_app/immutable/chunks/Cs5rIFEt.js",
         "https://chutes.ai/_app/immutable/chunks/C9SH1AXZ.js",
         "https://chutes.ai/_app/immutable/chunks/CfDd1Qzv.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js"
@@ -418,7 +418,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C1E6gAis.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-LU3s2DSM.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
