@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-01T08:35:10.897Z",
-  "generatedAtBeijing": "2026年4月1日 16:35:10",
-  "sourceGeneratedAt": "2026-04-01T08:34:51.739Z",
-  "sourceGeneratedAtBeijing": "2026年4月1日 16:34:51",
-  "sourceMetricsGeneratedAt": "2026-04-01T08:34:55.384Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月1日 16:34:55",
+  "generatedAt": "2026-04-02T08:32:21.953Z",
+  "generatedAtBeijing": "2026年4月2日 16:32:21",
+  "sourceGeneratedAt": "2026-04-02T08:32:01.980Z",
+  "sourceGeneratedAtBeijing": "2026年4月2日 16:32:01",
+  "sourceMetricsGeneratedAt": "2026-04-02T08:32:05.208Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月2日 16:32:05",
   "summary": {
     "openrouterProviderCount": 75,
     "metricsProviderCount": 33,
@@ -110,23 +110,24 @@
       "sourceUrls": [
         "https://chutes.ai",
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/start.CAf_kJ3q.js",
-        "https://chutes.ai/_app/immutable/entry/app.D_YJeLTi.js",
-        "https://chutes.ai/_app/immutable/chunks/DT8KiIKb.js",
-        "https://chutes.ai/_app/immutable/nodes/0.Vr_ZBl52.js",
+        "https://chutes.ai/_app/immutable/entry/start.Cy6takCK.js",
+        "https://chutes.ai/_app/immutable/entry/app.C24i87wD.js",
+        "https://chutes.ai/_app/immutable/chunks/BwAGwjrh.js",
+        "https://chutes.ai/_app/immutable/nodes/0.Bar173XI.js",
         "https://chutes.ai/_app/immutable/chunks/DsnmJJEf.js",
-        "https://chutes.ai/_app/immutable/chunks/BgoEvGGg.js",
-        "https://chutes.ai/_app/immutable/chunks/DoUkhPN4.js",
-        "https://chutes.ai/_app/immutable/chunks/BZ9_IqD1.js",
-        "https://chutes.ai/_app/immutable/chunks/Cs5rIFEt.js",
-        "https://chutes.ai/_app/immutable/chunks/C9SH1AXZ.js",
-        "https://chutes.ai/_app/immutable/chunks/CfDd1Qzv.js",
+        "https://chutes.ai/_app/immutable/chunks/DEStpq0a.js",
+        "https://chutes.ai/_app/immutable/chunks/CWIHRLZS.js",
+        "https://chutes.ai/_app/immutable/chunks/BICcWcUb.js",
+        "https://chutes.ai/_app/immutable/chunks/DWRPVVOi.js",
+        "https://chutes.ai/_app/immutable/chunks/CNJJknXi.js",
+        "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
+        "https://chutes.ai/_app/immutable/chunks/D9GwJNgk.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js"
       ],
       "pricingPageUrl": "https://chutes.ai/pricing",
       "officialWebsiteUrl": "https://chutes.ai",
       "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": null,
+      "privacyPolicyUrl": "https://chutes.ai/privacy",
       "termsOfServiceUrl": "https://chutes.ai/tos",
       "statusPageUrl": null,
       "parseMode": "official-website-heuristic"
@@ -288,7 +289,6 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "Up to 200 flash answers /user/day.",
             "Up to 30GB of storage /user.",
             "Domain name verification.",
             "Data export."
@@ -418,7 +418,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-LU3s2DSM.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-R2pwPFND.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -722,7 +722,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.026 / $0.013 / $0.02）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.125 / $0.088 / $0.05）",
       "blocked": false
     },
     {
