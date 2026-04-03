@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-02T08:32:21.953Z",
-  "generatedAtBeijing": "2026年4月2日 16:32:21",
-  "sourceGeneratedAt": "2026-04-02T08:32:01.980Z",
-  "sourceGeneratedAtBeijing": "2026年4月2日 16:32:01",
-  "sourceMetricsGeneratedAt": "2026-04-02T08:32:05.208Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月2日 16:32:05",
+  "generatedAt": "2026-04-03T08:24:07.857Z",
+  "generatedAtBeijing": "2026年4月3日 16:24:07",
+  "sourceGeneratedAt": "2026-04-03T08:23:45.779Z",
+  "sourceGeneratedAtBeijing": "2026年4月3日 16:23:45",
+  "sourceMetricsGeneratedAt": "2026-04-03T08:23:47.184Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月3日 16:23:47",
   "summary": {
     "openrouterProviderCount": 75,
     "metricsProviderCount": 33,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 5,
     "providersWithPlans": 10,
     "pendingCount": 23,
-    "blockedPendingCount": 0,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -110,18 +110,18 @@
       "sourceUrls": [
         "https://chutes.ai",
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/start.Cy6takCK.js",
-        "https://chutes.ai/_app/immutable/entry/app.C24i87wD.js",
-        "https://chutes.ai/_app/immutable/chunks/BwAGwjrh.js",
-        "https://chutes.ai/_app/immutable/nodes/0.Bar173XI.js",
+        "https://chutes.ai/_app/immutable/entry/start.B7jB9WoN.js",
+        "https://chutes.ai/_app/immutable/entry/app.c0D61zIi.js",
+        "https://chutes.ai/_app/immutable/chunks/UJ2zu0rs.js",
+        "https://chutes.ai/_app/immutable/nodes/0.wm7shroE.js",
         "https://chutes.ai/_app/immutable/chunks/DsnmJJEf.js",
         "https://chutes.ai/_app/immutable/chunks/DEStpq0a.js",
         "https://chutes.ai/_app/immutable/chunks/CWIHRLZS.js",
         "https://chutes.ai/_app/immutable/chunks/BICcWcUb.js",
         "https://chutes.ai/_app/immutable/chunks/DWRPVVOi.js",
-        "https://chutes.ai/_app/immutable/chunks/CNJJknXi.js",
+        "https://chutes.ai/_app/immutable/chunks/gTu-NpUq.js",
         "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
-        "https://chutes.ai/_app/immutable/chunks/D9GwJNgk.js",
+        "https://chutes.ai/_app/immutable/chunks/q-Q3Tas7.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js"
       ],
       "pricingPageUrl": "https://chutes.ai/pricing",
@@ -704,8 +704,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://akashml.com",
       "pricingPageUrl": "https://akashml.com",
-      "reason": "官网价格页探测失败：https://akashml.com/pricing: HTTP 404",
-      "blocked": false
+      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
+      "blocked": true
     },
     {
       "slug": "ambient",
@@ -766,9 +766,9 @@
       "openrouterName": "Friendli",
       "providerId": null,
       "officialWebsiteUrl": "https://friendli.ai",
-      "pricingPageUrl": "https://friendli.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.1 / $0.6 / $0.2）",
-      "blocked": false
+      "pricingPageUrl": "https://friendli.ai",
+      "reason": "官网价格页探测失败：https://friendli.ai/pricing: Request timeout after 9000ms",
+      "blocked": true
     },
     {
       "slug": "gmicloud",
@@ -819,9 +819,9 @@
       "slug": "modelrun",
       "openrouterName": "ModelRun",
       "providerId": null,
-      "officialWebsiteUrl": "https://www.runmodelrun.com",
-      "pricingPageUrl": "https://www.runmodelrun.com",
-      "reason": "官网价格页探测失败：https://www.runmodelrun.com/pricing: HTTP 404",
+      "officialWebsiteUrl": "https://modelrun.org",
+      "pricingPageUrl": "https://modelrun.org",
+      "reason": "官网价格页探测失败：https://modelrun.org/pricing: HTTP 404",
       "blocked": false
     },
     {
