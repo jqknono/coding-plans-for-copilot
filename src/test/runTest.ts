@@ -50,6 +50,7 @@ type ProtocolsModule = typeof import('../providers/genericProviderProtocols');
 type ContextUsageStateModule = typeof import('../contextUsageState');
 type LMChatProviderAdapterModule = typeof import('../providers/lmChatProviderAdapter');
 type PlanUsageStatusModule = typeof import('../planUsageStatus');
+type CommitMessageGeneratorModule = typeof import('../commitMessageGenerator');
 
 type TestContext = {
   state: MockState;
@@ -2270,6 +2271,73 @@ function runPlanUsageStatusTests(planUsageStatusModule: PlanUsageStatusModule): 
   console.log('PASS 智谱 usage 响应与状态栏文案可正确解析');
 }
 
+function runCommitMessageGeneratorTests(commitMessageGeneratorModule: CommitMessageGeneratorModule): void {
+  const { commitMessageTestUtils } = commitMessageGeneratorModule;
+
+  const normalizedMessage = commitMessageTestUtils.sanitizeGeneratedCommitMessage([
+    '```',
+    'fix(bridge):移除手动认证配置需求并完善本地桥接架构',
+    '- 删除旧版认证配置说明',
+    '- 新增 bridge 命令行工具',
+    '```'
+  ].join('\n'));
+  assert.equal(
+    normalizedMessage,
+    [
+      'fix(bridge): 移除手动认证配置需求并完善本地桥接架构',
+      '',
+      '- 删除旧版认证配置说明',
+      '- 新增 bridge 命令行工具'
+    ].join('\n')
+  );
+  console.log('PASS commit message 题头会自动补齐 Conventional Commits 冒号后的空格');
+
+  const prompt = commitMessageTestUtils.buildDiffGenerationPrompt(
+    'diff --git a/src/bridge.ts b/src/bridge.ts',
+    'zh-cn',
+    {
+      pipelineMode: 'single',
+      maxDiffLines: 3000,
+      summaryTriggerLines: 1200,
+      summaryChunkLines: 800,
+      summaryMaxChunks: 12,
+      maxBodyBulletCount: 7,
+      subjectMaxLength: 72,
+      requireConventionalType: true,
+      warnOnValidationFailure: true,
+      llmMaxPromptLength: 20000
+    },
+    false
+  );
+  assert.match(prompt, /Prefer no body or 1 bullet for narrow changes such as deleting, renaming, or moving a single file\./);
+  assert.match(prompt, /Prefer 2 or 3 bullet points only when the diff clearly contains multiple meaningful change groups\./);
+  assert.match(prompt, /Each bullet should group related edits by intent or outcome, not narrate the diff file-by-file\./);
+  assert.match(prompt, /Avoid mechanical verb-led bullets such as "add", "remove", "update", "完善了", "删除了", or "新增了" unless required for clarity\./);
+  assert.match(prompt, /For narrow changes such as deleting or renaming a single file, the body may be omitted entirely\./);
+  assert.match(prompt, /Never invent motivations, architecture changes, or side effects that are not directly supported by the diff\./);
+  console.log('PASS commit message prompt 会明确要求聚合式高信号摘要');
+
+  const noBodyIssues = commitMessageTestUtils.validateCommitMessage(
+    'chore: 删除已完成说明文件',
+    'zh-cn',
+    {
+      pipelineMode: 'single',
+      maxDiffLines: 3000,
+      summaryTriggerLines: 1200,
+      summaryChunkLines: 800,
+      summaryMaxChunks: 12,
+      maxBodyBulletCount: 7,
+      subjectMaxLength: 72,
+      requireConventionalType: true,
+      warnOnValidationFailure: true,
+      llmMaxPromptLength: 20000
+    },
+    false
+  );
+  assert.deepEqual(noBodyIssues, []);
+  console.log('PASS commit message 校验允许窄变更仅输出题头');
+}
+
 async function runLMChatProviderAdapterProvideTokenCountTests(
   contextUsageStateModule: ContextUsageStateModule,
   lmChatProviderAdapterModule: LMChatProviderAdapterModule
@@ -2345,6 +2413,7 @@ async function main(): Promise<void> {
     const contextUsageStateModule = require('../contextUsageState') as ContextUsageStateModule;
     const lmChatProviderAdapterModule = require('../providers/lmChatProviderAdapter') as LMChatProviderAdapterModule;
     const planUsageStatusModule = require('../planUsageStatus') as PlanUsageStatusModule;
+    const commitMessageGeneratorModule = require('../commitMessageGenerator') as CommitMessageGeneratorModule;
     for (const testCase of testCases) {
       await runTestCase(ConfigStore, testCase);
     }
@@ -2359,6 +2428,7 @@ async function main(): Promise<void> {
     runTokenUsageNormalizationTests(tokenUsageModule);
     runContextUsageStateTests(contextUsageStateModule);
     runPlanUsageStatusTests(planUsageStatusModule);
+    runCommitMessageGeneratorTests(commitMessageGeneratorModule);
     await runLMChatProviderAdapterProvideTokenCountTests(contextUsageStateModule, lmChatProviderAdapterModule);
   } finally {
     restore();

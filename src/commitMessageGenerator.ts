@@ -297,17 +297,33 @@ function getGenerationStructureBlock(settings: CommitMessageSettings, breakingCh
       ? '2) Subject MUST follow Conventional Commits.'
       : '2) Subject SHOULD be concise and descriptive.',
     `3) Subject length SHOULD be <= ${settings.subjectMaxLength} characters.`,
-    '4) Add one blank line after the subject.',
-    `5) Then provide 2 to ${settings.maxBodyBulletCount} short bullet points, each prefixed with "- ".`,
-    '6) Keep each bullet focused on concrete code changes.'
+    '4) The body is optional. If you include it, add one blank line after the subject.',
+    `5) If a body is needed, provide 1 to ${settings.maxBodyBulletCount} short bullet points, each prefixed with "- ".`,
+    '6) Prefer no body or 1 bullet for narrow changes such as deleting, renaming, or moving a single file.',
+    '7) Prefer 2 or 3 bullet points only when the diff clearly contains multiple meaningful change groups.',
+    '8) Each bullet should group related edits by intent or outcome, not narrate the diff file-by-file.',
+    '9) Keep each bullet focused on concrete code changes and resulting behavior.',
+    '10) Avoid repetitive file-by-file bullets. Verb-led bullets are acceptable when they stay concise and strictly reflect the diff.',
+    '11) Mention low-level implementation details only when they are necessary to understand the change.',
+    '12) For narrow changes such as deleting or renaming a single file, the body may be omitted entirely.',
+    '13) Never invent motivations, architecture changes, or side effects that are not directly supported by the diff.'
   ];
 
   if (breakingChangeExpected) {
-    lines.push('7) Add a footer line: "BREAKING CHANGE: <impact summary>".');
+    lines.push('14) Add a footer line: "BREAKING CHANGE: <impact summary>".');
   }
 
   lines.push('Do not include markdown code fences.');
   return lines.join('\n');
+}
+
+function getEvidenceBoundaryBlock(): string {
+  return [
+    'EVIDENCE BOUNDARY (strict):',
+    'Only describe facts that are directly supported by the diff or structured summary.',
+    'If the evidence is weak, keep the message minimal and generic.',
+    'Do not infer motivations, architecture changes, business impact, or completed workflows unless they are explicitly shown in the changes.'
+  ].join('\n');
 }
 
 function buildDiffGenerationPrompt(
@@ -320,6 +336,7 @@ function buildDiffGenerationPrompt(
   const languageEnforcementBlock = getCommitLanguageEnforcementBlock(language);
   const formatPrompt = getCommitFormatPrompt();
   const structureBlock = getGenerationStructureBlock(settings, breakingChangeExpected);
+  const evidenceBoundaryBlock = getEvidenceBoundaryBlock();
 
   const promptSections = [
     COMMIT_MESSAGE_TASK_BLOCK,
@@ -328,7 +345,9 @@ function buildDiffGenerationPrompt(
     '',
     formatPrompt,
     '',
-    structureBlock
+    structureBlock,
+    '',
+    evidenceBoundaryBlock
   ];
 
   if (styleReferenceBlock) {
@@ -358,6 +377,7 @@ function buildSummaryGenerationPrompt(
   const languageEnforcementBlock = getCommitLanguageEnforcementBlock(language);
   const formatPrompt = getCommitFormatPrompt();
   const structureBlock = getGenerationStructureBlock(settings, summary.breakingChange);
+  const evidenceBoundaryBlock = getEvidenceBoundaryBlock();
 
   const promptSections = [
     COMMIT_MESSAGE_TASK_BLOCK,
@@ -366,7 +386,9 @@ function buildSummaryGenerationPrompt(
     '',
     formatPrompt,
     '',
-    structureBlock
+    structureBlock,
+    '',
+    evidenceBoundaryBlock
   ];
 
   if (styleReferenceBlock) {
@@ -404,6 +426,8 @@ function buildChunkSummaryPrompt(chunk: string, chunkIndex: number, totalChunks:
     '',
     `Chunk ${chunkIndex + 1} of ${totalChunks}.`,
     'Focus on concrete code changes, behavior changes, and risks.',
+    'Only include facts directly evidenced by the diff chunk.',
+    'If the chunk only shows low-information changes, keep arrays short or empty.',
     '',
     '--- BEGIN DIFF CHUNK ---',
     chunk,
@@ -420,6 +444,8 @@ function buildAggregateSummaryPrompt(chunkSummaries: DiffSummary[]): string {
     'Rules:',
     '- Deduplicate files and repeated changes.',
     '- Keep majorChanges concise and actionable.',
+    '- Keep the result conservative: only retain items supported by the chunk summaries.',
+    '- If the combined evidence is weak, prefer fewer summary items.',
     '- Set breakingChange=true only when the combined changes clearly indicate a breaking change.',
     '',
     '--- BEGIN CHUNK SUMMARIES JSON ---',
@@ -676,7 +702,7 @@ function sanitizeGeneratedCommitMessage(raw: string): string {
     return '';
   }
 
-  const subject = lines[startIndex].trim();
+  const subject = normalizeConventionalCommitSubject(lines[startIndex].trim());
   const rest = lines.slice(startIndex + 1).map(line => line.trimEnd());
   while (rest.length > 0 && rest[rest.length - 1].trim().length === 0) {
     rest.pop();
@@ -689,6 +715,13 @@ function sanitizeGeneratedCommitMessage(raw: string): string {
     rest.unshift('');
   }
   return [subject, ...rest].join('\n').trim();
+}
+
+function normalizeConventionalCommitSubject(subject: string): string {
+  return subject.replace(
+    /^((?:feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(?:\([^)]+\))?!?):(?=\S)/i,
+    '$1: '
+  );
 }
 
 function getBulletCount(message: string): number {
@@ -736,9 +769,6 @@ function validateCommitMessage(
   }
 
   const bulletCount = getBulletCount(normalized);
-  if (bulletCount < 2) {
-    issues.push('body should contain at least 2 bullet lines');
-  }
   if (bulletCount > settings.maxBodyBulletCount) {
     issues.push(`body should contain at most ${settings.maxBodyBulletCount} bullet lines`);
   }
@@ -1824,6 +1854,12 @@ function maybeWarnOnValidationFailure(
 function getCommitMessagePreview(message: string): string {
   return getSubjectLine(message);
 }
+
+export const commitMessageTestUtils = {
+  buildDiffGenerationPrompt,
+  sanitizeGeneratedCommitMessage,
+  validateCommitMessage
+};
 
 export async function selectCommitMessageModel(): Promise<void> {
   const startedAt = Date.now();
