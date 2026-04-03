@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.6.28] - 2026-04-03
+- fix(config): 模型写回时不再默认落 apiStyle/maxInputTokens/maxOutputTokens，仅保留用户显式配置的字段
+
 ## [0.6.26] - 2026-03-31
 - feat(config): 更新供应商配置并优化模型管理
 

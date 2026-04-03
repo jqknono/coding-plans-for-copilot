@@ -391,7 +391,7 @@ const testCases: TestCase[] = [
     }
   },
   {
-    name: '新增模型写回时保留发现到的字段',
+    name: '新增模型写回时保留必要发现字段但不落 token 上限',
     initialVendors: [createVendorWithSpacedModelName()],
     discoveredModels: [
       { name: 'gpt-4o' },
@@ -414,8 +414,8 @@ const testCases: TestCase[] = [
       assert.equal(newModel?.temperature, undefined);
       assert.equal(newModel?.topP, undefined);
       assert.deepEqual(newModel?.capabilities, { tools: true, vision: true });
-      assert.equal(newModel?.maxInputTokens, 128000);
-      assert.equal(newModel?.maxOutputTokens, 128000);
+      assert.equal(newModel?.maxInputTokens, undefined);
+      assert.equal(newModel?.maxOutputTokens, undefined);
     }
   },
   {
@@ -661,13 +661,13 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
   try {
     await configStore.updateVendorModels('Vendor', [{ name: 'gpt-4.1' } as VendorModelRecord]);
     const updatedVendor = getUpdatedVendor(activeState);
-    assert.equal(updatedVendor.models[0]?.apiStyle, 'openai-responses');
+    assert.equal(updatedVendor.models[0]?.apiStyle, undefined);
     assert.deepEqual(updatedVendor.models[0]?.capabilities, { tools: true, vision: true });
     assert.equal(updatedVendor.models[0]?.maxInputTokens, undefined);
     assert.equal(updatedVendor.models[0]?.maxOutputTokens, undefined);
     assert.equal(updatedVendor.models[0]?.temperature, undefined);
     assert.equal(updatedVendor.models[0]?.topP, undefined);
-    console.log('PASS updateVendorModels 写回模型默认 apiStyle、capabilities，但不再默认落 maxInputTokens/maxOutputTokens');
+    console.log('PASS updateVendorModels 写回新模型时不再默认落 apiStyle/maxInputTokens/maxOutputTokens，仅补齐 capabilities');
   } finally {
     configStore.dispose();
   }
