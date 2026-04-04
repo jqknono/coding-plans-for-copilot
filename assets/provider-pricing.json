@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-04T08:17:59.831Z",
+  "generatedAt": "2026-04-04T07:04:28.938Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -396,10 +396,9 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "每 5 小时限额: 最多1200次请求",
-            "每周限额: 最多9000次请求",
-            "每月限额: 最多18000次请求",
-            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等"
+            "用量限制: 最多18000次请求",
+            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
+            "适配工具: Claude Code等AI开发工具"
           ]
         },
         {
@@ -411,10 +410,9 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "每 5 小时限额: 最多6000次请求",
-            "每周限额: 最多45000次请求",
-            "每月限额: 最多90000次请求",
-            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等"
+            "用量限制: 最多90000次请求",
+            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
+            "适配工具: Claude Code等AI开发工具"
           ]
         }
       ]
@@ -452,6 +450,75 @@
             "用量限制: 每 5 小时：最多约 6,000 次请求 每周：最多约 45,000 次请求 每订阅月：最多约 90,000 次请求",
             "支持模型: 选用 Tencent HY 2.0 Instruct、GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个模型",
             "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "tencent-cloud-token-plan",
+      "sourceUrls": [
+        "https://cloud.tencent.com/document/product/1772/129449",
+        "https://cloud.tencent.com/act/pro/tokenplan"
+      ],
+      "plans": [
+        {
+          "name": "Token Plan Lite",
+          "currentPrice": 39,
+          "currentPriceText": "¥39/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "用量限制: 每订阅月 3,500 万 Tokens",
+            "新手尝鲜，入门首选。适合首次体验龙虾能力",
+            "支持模型: Tencent HY 2.0 Instruct、Tencent HY 2.0 Think、Kimi-K2.5、MiniMax-M2.5、GLM-5、Hunyuan-T1、Hunyuan-TurboS",
+            "适配工具: OpenClaw、Claude Code、OpenCode、Cline、Cursor、Roo Code、Kilo Code、Codex CLI"
+          ]
+        },
+        {
+          "name": "Token Plan Standard",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "用量限制: 每订阅月 1 亿 Tokens",
+            "日常使用，高性价比。适合日常用龙虾办公和轻量开发",
+            "支持模型: Tencent HY 2.0 Instruct、Tencent HY 2.0 Think、Kimi-K2.5、MiniMax-M2.5、GLM-5、Hunyuan-T1、Hunyuan-TurboS",
+            "适配工具: OpenClaw、Claude Code、OpenCode、Cline、Cursor、Roo Code、Kilo Code、Codex CLI"
+          ]
+        },
+        {
+          "name": "Token Plan Pro",
+          "currentPrice": 299,
+          "currentPriceText": "¥299/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "用量限制: 每订阅月 3.2 亿 Tokens",
+            "高频 AI 开发，Token 配额提升至 3 倍",
+            "支持模型: Tencent HY 2.0 Instruct、Tencent HY 2.0 Think、Kimi-K2.5、MiniMax-M2.5、GLM-5、Hunyuan-T1、Hunyuan-TurboS",
+            "适配工具: OpenClaw、Claude Code、OpenCode、Cline、Cursor、Roo Code、Kilo Code、Codex CLI"
+          ]
+        },
+        {
+          "name": "Token Plan Max",
+          "currentPrice": 599,
+          "currentPriceText": "¥599/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "用量限制: 每订阅月 6.5 亿 Tokens",
+            "更多额度加持，重度 AI 开发首选",
+            "支持模型: Tencent HY 2.0 Instruct、Tencent HY 2.0 Think、Kimi-K2.5、MiniMax-M2.5、GLM-5、Hunyuan-T1、Hunyuan-TurboS",
+            "适配工具: OpenClaw、Claude Code、OpenCode、Cline、Cursor、Roo Code、Kilo Code、Codex CLI"
           ]
         }
       ]
@@ -723,41 +790,137 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.d7a624f3.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.eb6d086d.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.cc04a56b.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.017c8b24.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
         {
           "name": "Infini Coding Lite",
-          "currentPrice": 19.9,
-          "currentPriceText": "¥19.9/月",
-          "originalPrice": 40,
-          "originalPriceText": "¥40/月",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "暂不可购买",
           "serviceDetails": [
-            "1000次请求每5小时"
+            "1000次请求每5小时",
+            "当前状态: 暂不可购买"
           ]
         },
         {
           "name": "Infini Coding Pro",
-          "currentPrice": 99.9,
-          "currentPriceText": "¥99.9/月",
-          "originalPrice": 200,
-          "originalPriceText": "¥200/月",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "暂不可购买",
           "serviceDetails": [
-            "5000次请求每5小时"
+            "5000次请求每5小时",
+            "当前状态: 暂不可购买"
           ]
         }
+      ]
+    },
+    {
+      "provider": "xiaomi-mimo",
+      "sourceUrls": [
+        "https://mimo.xiaomi.com",
+        "https://www.ithome.com/0/935/666.htm"
       ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "infini-ai: Task timed out after 30000ms"
+      "plans": [
+        {
+          "name": "MiMo Token Plan Lite",
+          "currentPrice": 39,
+          "currentPriceText": "¥39/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首次购买享 88 折优惠",
+          "serviceDetails": [
+            "Credits: 0.6 亿（60M）Credits/月",
+            "可执行约 120 个中等~复杂任务",
+            "适合刚接触 AI 开发的探索者",
+            "支持模型: MiMo-V2-Omni（1x）、MiMo-V2-Pro（2x/4x）、MiMo-V2-TTS（0x 限时免费）",
+            "无 5 小时 token 使用限额，支持集中消耗"
+          ]
+        },
+        {
+          "name": "MiMo Token Plan Standard",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首次购买享 88 折优惠",
+          "serviceDetails": [
+            "Credits: 2 亿（200M）Credits/月",
+            "可执行约 400 个中等~复杂任务",
+            "为日常依赖 AI 提效的办公与开发者用户打造的主力方案",
+            "支持模型: MiMo-V2-Omni（1x）、MiMo-V2-Pro（2x/4x）、MiMo-V2-TTS（0x 限时免费）",
+            "无 5 小时 token 使用限额，支持集中消耗"
+          ]
+        },
+        {
+          "name": "MiMo Token Plan Pro",
+          "currentPrice": 329,
+          "currentPriceText": "¥329/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首次购买享 88 折优惠",
+          "serviceDetails": [
+            "Credits: 7 亿（700M）Credits/月",
+            "可执行约 1,400 个中等~复杂任务",
+            "面向将 AI 深度嵌入工作流的专业用户",
+            "支持模型: MiMo-V2-Omni（1x）、MiMo-V2-Pro（2x/4x）、MiMo-V2-TTS（0x 限时免费）",
+            "无 5 小时 token 使用限额，支持集中消耗"
+          ]
+        },
+        {
+          "name": "MiMo Token Plan Max",
+          "currentPrice": 659,
+          "currentPriceText": "¥659/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首次购买享 88 折优惠",
+          "serviceDetails": [
+            "Credits: 16 亿（1600M）Credits/月",
+            "可执行约 3,200 个中等~复杂任务",
+            "为全天候高强度使用的开发者准备，近乎无限制的使用体验",
+            "支持模型: MiMo-V2-Omni（1x）、MiMo-V2-Pro（2x/4x）、MiMo-V2-TTS（0x 限时免费）",
+            "无 5 小时 token 使用限额，支持集中消耗"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "opencode",
+      "sourceUrls": [
+        "https://opencode.ai/go",
+        "https://opencode.ai"
+      ],
+      "plans": [
+        {
+          "name": "OpenCode Go",
+          "currentPrice": 10,
+          "currentPriceText": "$10/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首月 $5",
+          "serviceDetails": [
+            "首月 $5，之后 $10/月",
+            "支持模型: GLM-5、Kimi K2.5、MiMo-V2-Pro、MiMo-V2-Omni、MiniMax M2.5、MiniMax M2.7",
+            "每 5 小时请求数: 1,150~20,000（按模型不同）",
+            "可充值 Credit，随时取消",
+            "适配任何 AI 编程工具"
+          ]
+        }
+      ]
     }
   ],
-  "failures": [
-    "infini-ai: Task timed out after 30000ms"
-  ]
+  "failures": []
 }

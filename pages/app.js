@@ -11,11 +11,14 @@ const PROVIDER_LABELS = {
   "aliyun-ai": "阿里云通义千问",
   "baidu-qianfan-ai": "百度智能云千帆",
   "tencent-cloud-ai": "腾讯云 Coding Plan",
+  "tencent-cloud-token-plan": "腾讯云 Token Plan",
   "jdcloud-ai": "京东云 Coding Plan",
   "kwaikat-ai": "快手 KwaiKAT",
   "x-aio": "X-AIO",
   "compshare-ai": "优云智算",
   "infini-ai": "无问芯穹",
+  "xiaomi-mimo": "小米 MiMo",
+  "opencode": "OpenCode",
 };
 
 const MODEL_ORG_LABELS = {
@@ -41,6 +44,7 @@ const PROVIDER_BUY_URLS = {
   "aliyun-ai": "https://common-buy.aliyun.com/?commodityCode=sfm_codingplan_public_cn#/buy",
   "baidu-qianfan-ai": "https://cloud.baidu.com/product/codingplan.html",
   "tencent-cloud-ai": "https://buy.cloud.tencent.com/hunyuan",
+  "tencent-cloud-token-plan": "https://cloud.tencent.com/act/pro/tokenplan",
   "jdcloud-ai": "https://www.jdcloud.com/cn/pages/codingplan",
   "kwaikat-ai": "https://www.streamlake.com/marketing/coding-plan",
   "x-aio": "https://code.x-aio.com/",

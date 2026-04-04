@@ -19,11 +19,15 @@ const PROVIDER_IDS = {
   ALIYUN: "aliyun-ai",
   BAIDU: "baidu-qianfan-ai",
   TENCENT: "tencent-cloud-ai",
+  TENCENT_TOKEN: "tencent-cloud-token-plan",
   JDCLOUD: "jdcloud-ai",
   KWAIKAT: "kwaikat-ai",
   XAIO: "x-aio",
   COMPSHARE: "compshare-ai",
   INFINI: "infini-ai",
+  XIAOMI: "xiaomi-mimo",
+  OPENCODE: "opencode",
+  ROOCODE: "roocode",
 };
 
 const KIMI_MEMBERSHIP_LEVEL_LABELS = {
@@ -1416,6 +1420,22 @@ async function parseBaiduCodingPlans() {
   if (!priceRow) {
     throw new Error("Unable to locate Baidu coding plan price row");
   }
+  const promoPriceRow = serviceRows.find((row) =>
+    /(?:限时)?特惠价格|优惠价格|活动价格/i.test(normalizeText(row?.[0] || "")),
+  );
+  const usageRow = serviceRows.find((row) =>
+    /每月限额|月用量|用量限制/i.test(normalizeText(row?.[0] || "")),
+  );
+  const modelRow = serviceRows.find((row) =>
+    /支持模型/i.test(normalizeText(row?.[0] || "")),
+  );
+  const plainText = stripTags(html);
+  const toolIntro = normalizeText(
+    plainText.match(/适配\s*(Claude\s*Code[^\s,，。；\n]*)/i)?.[1]
+      || plainText.match(/适配工具[：:]*\s*([^\n。；,，]{2,40}?)(?:\s+模型|\s*$)/i)?.[1]
+      || "",
+  );
+  const promoDetailsByTier = parseTencentPromoDetails(plainText);
 
   const firstMonthByTier = new Map();
   const firstMonthRegex =
@@ -1438,37 +1458,46 @@ async function parseBaiduCodingPlans() {
     if (!Number.isInteger(column)) {
       continue;
     }
-    const priceInfo = parseTierPriceBreakdown(priceRow[column]);
-    if (!Number.isFinite(priceInfo.monthlyAmount)) {
-      const firstMonthAmount = firstMonthByTier.get(tier);
-      if (Number.isFinite(firstMonthAmount)) {
-        const fallbackRenewal = renewalByFirstMonth.get(firstMonthAmount);
-        if (Number.isFinite(fallbackRenewal)) {
-          priceInfo.monthlyAmount = fallbackRenewal;
-        }
-      }
-    }
+    const basePriceInfo = parseTierPriceBreakdown(priceRow[column]);
+    const promoPriceInfo = parseTierPriceBreakdown(promoPriceRow?.[column] || "");
+    const promoDetails = promoDetailsByTier.get(tier) || null;
+    const priceInfo = Number.isFinite(promoPriceInfo.monthlyAmount)
+      ? promoPriceInfo
+      : promoDetails && Number.isFinite(promoDetails.monthlyAmount)
+        ? promoDetails
+        : basePriceInfo;
     if (!Number.isFinite(priceInfo.monthlyAmount)) {
       continue;
     }
 
-    const firstMonthAmount = Number.isFinite(priceInfo.firstMonthAmount)
-      ? priceInfo.firstMonthAmount
-      : firstMonthByTier.get(tier) || null;
-    const notes = buildTierPriceNotes({
-      firstMonthAmount,
-      secondMonthAmount: priceInfo.secondMonthAmount,
-    });
+    const originalMonthlyAmount =
+      Number.isFinite(basePriceInfo.monthlyAmount) && basePriceInfo.monthlyAmount > priceInfo.monthlyAmount
+        ? basePriceInfo.monthlyAmount
+        : null;
+    const usageText = normalizeText(usageRow?.[column] || "").replace(/(\d)\s*,\s*(\d{3})/g, "$1,$2");
+
     plans.push(
       asPlan({
         name: `Coding Plan ${tier}`,
         currentPriceText: `¥${formatAmount(priceInfo.monthlyAmount)}/月`,
         currentPrice: priceInfo.monthlyAmount,
+        originalPriceText: Number.isFinite(originalMonthlyAmount) ? `¥${formatAmount(originalMonthlyAmount)}/月` : null,
+        originalPrice: originalMonthlyAmount,
         unit: "月",
-        notes,
-        serviceDetails: buildServiceDetailsFromRows(serviceRows, column, {
-          excludeLabels: ["套餐价格", "价格", "开始使用"],
+        notes: buildTierPriceNotes({
+          ...priceInfo,
+          firstMonthAmount: Number.isFinite(priceInfo.firstMonthAmount)
+            ? priceInfo.firstMonthAmount
+            : promoDetails?.firstMonthAmount ?? null,
+          secondMonthAmount: Number.isFinite(priceInfo.secondMonthAmount)
+            ? priceInfo.secondMonthAmount
+            : promoDetails?.secondMonthAmount ?? null,
         }),
+        serviceDetails: normalizeServiceDetails([
+          usageText ? `用量限制: ${usageText}` : null,
+          modelRow ? `支持模型: ${normalizeText(modelRow[column] || "")}` : null,
+          toolIntro ? `适配工具: ${toolIntro}` : null,
+        ]),
       }),
     );
   }
@@ -2725,6 +2754,178 @@ async function runTaskWithTimeout(task) {
   }
 }
 
+async function parseTencentTokenPlans() {
+  const pageUrl = "https://cloud.tencent.com/document/product/1772/129449";
+  const actUrl = "https://cloud.tencent.com/act/pro/tokenplan";
+
+  // Tencent Token Plan pricing from official documentation
+  // Source: https://cloud.tencent.com/document/product/1772/129449
+  const plans = [
+    asPlan({
+      name: "Token Plan Lite",
+      currentPriceText: "¥39/月",
+      currentPrice: 39,
+      unit: "月",
+      notes: null,
+      serviceDetails: [
+        "用量限制: 每订阅月 3,500 万 Tokens",
+        "新手尝鲜，入门首选。适合首次体验龙虾能力",
+        "支持模型: Tencent HY 2.0 Instruct、Tencent HY 2.0 Think、Kimi-K2.5、MiniMax-M2.5、GLM-5、Hunyuan-T1、Hunyuan-TurboS",
+        "适配工具: OpenClaw、Claude Code、OpenCode、Cline、Cursor、Roo Code、Kilo Code、Codex CLI",
+      ],
+    }),
+    asPlan({
+      name: "Token Plan Standard",
+      currentPriceText: "¥99/月",
+      currentPrice: 99,
+      unit: "月",
+      notes: null,
+      serviceDetails: [
+        "用量限制: 每订阅月 1 亿 Tokens",
+        "日常使用，高性价比。适合日常用龙虾办公和轻量开发",
+        "支持模型: Tencent HY 2.0 Instruct、Tencent HY 2.0 Think、Kimi-K2.5、MiniMax-M2.5、GLM-5、Hunyuan-T1、Hunyuan-TurboS",
+        "适配工具: OpenClaw、Claude Code、OpenCode、Cline、Cursor、Roo Code、Kilo Code、Codex CLI",
+      ],
+    }),
+    asPlan({
+      name: "Token Plan Pro",
+      currentPriceText: "¥299/月",
+      currentPrice: 299,
+      unit: "月",
+      notes: null,
+      serviceDetails: [
+        "用量限制: 每订阅月 3.2 亿 Tokens",
+        "高频 AI 开发，Token 配额提升至 3 倍",
+        "支持模型: Tencent HY 2.0 Instruct、Tencent HY 2.0 Think、Kimi-K2.5、MiniMax-M2.5、GLM-5、Hunyuan-T1、Hunyuan-TurboS",
+        "适配工具: OpenClaw、Claude Code、OpenCode、Cline、Cursor、Roo Code、Kilo Code、Codex CLI",
+      ],
+    }),
+    asPlan({
+      name: "Token Plan Max",
+      currentPriceText: "¥599/月",
+      currentPrice: 599,
+      unit: "月",
+      notes: null,
+      serviceDetails: [
+        "用量限制: 每订阅月 6.5 亿 Tokens",
+        "更多额度加持，重度 AI 开发首选",
+        "支持模型: Tencent HY 2.0 Instruct、Tencent HY 2.0 Think、Kimi-K2.5、MiniMax-M2.5、GLM-5、Hunyuan-T1、Hunyuan-TurboS",
+        "适配工具: OpenClaw、Claude Code、OpenCode、Cline、Cursor、Roo Code、Kilo Code、Codex CLI",
+      ],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.TENCENT_TOKEN,
+    sourceUrls: unique([pageUrl, actUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
+async function parseXiaomiMimoTokenPlans() {
+  const pageUrl = "https://mimo.xiaomi.com";
+  const newsUrl = "https://www.ithome.com/0/935/666.htm";
+
+  // MiMo Token Plan pricing from official announcement
+  // Source: IT之家 2026-04-03 report and official announcement
+  const plans = [
+    asPlan({
+      name: "MiMo Token Plan Lite",
+      currentPriceText: "¥39/月",
+      currentPrice: 39,
+      unit: "月",
+      notes: "首次购买享 88 折优惠",
+      serviceDetails: [
+        "Credits: 0.6 亿（60M）Credits/月",
+        "可执行约 120 个中等~复杂任务",
+        "适合刚接触 AI 开发的探索者",
+        "支持模型: MiMo-V2-Omni（1x）、MiMo-V2-Pro（2x/4x）、MiMo-V2-TTS（0x 限时免费）",
+        "无 5 小时 token 使用限额，支持集中消耗",
+      ],
+    }),
+    asPlan({
+      name: "MiMo Token Plan Standard",
+      currentPriceText: "¥99/月",
+      currentPrice: 99,
+      unit: "月",
+      notes: "首次购买享 88 折优惠",
+      serviceDetails: [
+        "Credits: 2 亿（200M）Credits/月",
+        "可执行约 400 个中等~复杂任务",
+        "为日常依赖 AI 提效的办公与开发者用户打造的主力方案",
+        "支持模型: MiMo-V2-Omni（1x）、MiMo-V2-Pro（2x/4x）、MiMo-V2-TTS（0x 限时免费）",
+        "无 5 小时 token 使用限额，支持集中消耗",
+      ],
+    }),
+    asPlan({
+      name: "MiMo Token Plan Pro",
+      currentPriceText: "¥329/月",
+      currentPrice: 329,
+      unit: "月",
+      notes: "首次购买享 88 折优惠",
+      serviceDetails: [
+        "Credits: 7 亿（700M）Credits/月",
+        "可执行约 1,400 个中等~复杂任务",
+        "面向将 AI 深度嵌入工作流的专业用户",
+        "支持模型: MiMo-V2-Omni（1x）、MiMo-V2-Pro（2x/4x）、MiMo-V2-TTS（0x 限时免费）",
+        "无 5 小时 token 使用限额，支持集中消耗",
+      ],
+    }),
+    asPlan({
+      name: "MiMo Token Plan Max",
+      currentPriceText: "¥659/月",
+      currentPrice: 659,
+      unit: "月",
+      notes: "首次购买享 88 折优惠",
+      serviceDetails: [
+        "Credits: 16 亿（1600M）Credits/月",
+        "可执行约 3,200 个中等~复杂任务",
+        "为全天候高强度使用的开发者准备，近乎无限制的使用体验",
+        "支持模型: MiMo-V2-Omni（1x）、MiMo-V2-Pro（2x/4x）、MiMo-V2-TTS（0x 限时免费）",
+        "无 5 小时 token 使用限额，支持集中消耗",
+      ],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.XIAOMI,
+    sourceUrls: unique([pageUrl, newsUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
+async function parseOpenCodePlans() {
+  const goPageUrl = "https://opencode.ai/go";
+  const mainPageUrl = "https://opencode.ai";
+
+  // OpenCode Go pricing from official page
+  const plans = [
+    asPlan({
+      name: "OpenCode Go",
+      currentPriceText: "$10/月",
+      currentPrice: 10,
+      unit: "月",
+      notes: "首月 $5",
+      serviceDetails: [
+        "首月 $5，之后 $10/月",
+        "支持模型: GLM-5、Kimi K2.5、MiMo-V2-Pro、MiMo-V2-Omni、MiniMax M2.5、MiniMax M2.7",
+        "每 5 小时请求数: 1,150~20,000（按模型不同）",
+        "可充值 Credit，随时取消",
+        "适配任何 AI 编程工具",
+      ],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.OPENCODE,
+    sourceUrls: unique([goPageUrl, mainPageUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
 async function main() {
   const existingSnapshot = await loadExistingPricingSnapshot();
   const providers = [];
@@ -2737,12 +2938,15 @@ async function main() {
     { provider: PROVIDER_IDS.MINIMAX, fn: parseMinimaxCodingPlans },
     { provider: PROVIDER_IDS.BAIDU, fn: parseBaiduCodingPlans },
     { provider: PROVIDER_IDS.TENCENT, fn: parseTencentCodingPlans },
+    { provider: PROVIDER_IDS.TENCENT_TOKEN, fn: parseTencentTokenPlans },
     { provider: PROVIDER_IDS.JDCLOUD, fn: parseJdCloudCodingPlans },
     { provider: PROVIDER_IDS.KWAIKAT, fn: parseKwaikatCodingPlans },
     { provider: PROVIDER_IDS.XAIO, fn: parseXAioCodingPlans },
     { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans },
     { provider: PROVIDER_IDS.ALIYUN, fn: parseAliyunCodingPlans },
     { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
+    { provider: PROVIDER_IDS.XIAOMI, fn: parseXiaomiMimoTokenPlans },
+    { provider: PROVIDER_IDS.OPENCODE, fn: parseOpenCodePlans },
   ];
 
   const results = await Promise.allSettled(tasks.map((task) => runTaskWithTimeout(task.fn)));
