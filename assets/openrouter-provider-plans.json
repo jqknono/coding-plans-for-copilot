@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-04-03T08:24:07.857Z",
-  "generatedAtBeijing": "2026年4月3日 16:24:07",
-  "sourceGeneratedAt": "2026-04-03T08:23:45.779Z",
-  "sourceGeneratedAtBeijing": "2026年4月3日 16:23:45",
-  "sourceMetricsGeneratedAt": "2026-04-03T08:23:47.184Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月3日 16:23:47",
+  "generatedAt": "2026-04-04T08:18:19.188Z",
+  "generatedAtBeijing": "2026年4月4日 16:18:19",
+  "sourceGeneratedAt": "2026-04-04T08:17:59.831Z",
+  "sourceGeneratedAtBeijing": "2026年4月4日 16:17:59",
+  "sourceMetricsGeneratedAt": "2026-04-04T08:18:01.280Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月4日 16:18:01",
   "summary": {
     "openrouterProviderCount": 75,
-    "metricsProviderCount": 33,
-    "resolvedMetricsProviderCount": 33,
+    "metricsProviderCount": 35,
+    "resolvedMetricsProviderCount": 35,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 5,
-    "heuristicProviderCount": 5,
-    "providersWithPlans": 10,
-    "pendingCount": 23,
-    "blockedPendingCount": 2,
+    "heuristicProviderCount": 6,
+    "providersWithPlans": 11,
+    "pendingCount": 24,
+    "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -70,6 +70,58 @@
       "termsOfServiceUrl": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0",
       "statusPageUrl": "https://status.alibabacloud.com/",
       "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "cerebras",
+      "openrouterName": "Cerebras",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 50,
+          "currentPriceText": "$50/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.cerebras.ai/pricing",
+          "serviceDetails": [
+            "The world’s fastest inference – 20x faster than OpenAI and Anthropic",
+            "Community support via Discord",
+            "Self-serve payment starting at just $10",
+            "10x higher rate limits than free tier",
+            "Pricing Inference API access Free",
+            "Access to all Cerebras powered models The world’s fastest inference – 20x faster than OpenAI and Anthropic Community support via Discord get api key Developer"
+          ]
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 200,
+          "currentPriceText": "$200/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "The world’s fastest inference – 20x faster than OpenAI and Anthropic",
+            "Community support via Discord",
+            "Self-serve payment starting at just $10",
+            "10x higher rate limits than free tier",
+            "Pricing Inference API access Free",
+            "Access to all Cerebras powered models The world’s fastest inference – 20x faster than OpenAI and Anthropic Community support via Discord get api key Developer"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.cerebras.ai",
+        "https://www.cerebras.ai/pricing"
+      ],
+      "pricingPageUrl": "https://www.cerebras.ai/pricing",
+      "officialWebsiteUrl": "https://www.cerebras.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.cerebras.ai/privacy-policy",
+      "termsOfServiceUrl": "https://www.cerebras.ai/terms-of-service",
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
     },
     {
       "slug": "chutes",
@@ -152,7 +204,8 @@
             "约支持1~2个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP",
-            "生成图像和语音"
+            "生成图像和语音",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         },
         {
@@ -170,7 +223,8 @@
             "约支持2~3个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP",
-            "生成图片、语音、音乐和视频"
+            "生成图片、语音、音乐和视频",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         },
         {
@@ -188,7 +242,8 @@
             "约支持4~5个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP",
-            "生成图片、语音、音乐和视频"
+            "生成图片、语音、音乐和视频",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         },
         {
@@ -204,7 +259,8 @@
             "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
             "约支持1个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         },
         {
@@ -222,7 +278,8 @@
             "约支持1~2个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP",
-            "生成图像和语音"
+            "生成图像和语音",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         },
         {
@@ -240,7 +297,8 @@
             "约支持2~3个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP",
-            "生成图像、语音、音乐和视频"
+            "生成图像、语音、音乐和视频",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         }
       ],
@@ -418,7 +476,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-R2pwPFND.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BzQdEKxS.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -704,8 +762,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://akashml.com",
       "pricingPageUrl": "https://akashml.com",
-      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
-      "blocked": true
+      "reason": "官网价格页探测失败：https://akashml.com/pricing: HTTP 404",
+      "blocked": false
     },
     {
       "slug": "ambient",
@@ -722,7 +780,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.125 / $0.088 / $0.05）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.1 / $0.05 / $0.125）",
       "blocked": false
     },
     {
@@ -766,9 +824,9 @@
       "openrouterName": "Friendli",
       "providerId": null,
       "officialWebsiteUrl": "https://friendli.ai",
-      "pricingPageUrl": "https://friendli.ai",
-      "reason": "官网价格页探测失败：https://friendli.ai/pricing: Request timeout after 9000ms",
-      "blocked": true
+      "pricingPageUrl": "https://friendli.ai/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.1 / $0.6 / $0.15）",
+      "blocked": false
     },
     {
       "slug": "gmicloud",
@@ -813,6 +871,15 @@
       "officialWebsiteUrl": "https://ionstream.ai",
       "pricingPageUrl": "https://ionstream.ai",
       "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "mara",
+      "openrouterName": "Mara",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.mara.com",
+      "pricingPageUrl": "https://www.mara.com",
+      "reason": "官网价格页探测失败：https://www.mara.com/pricing: HTTP 404",
       "blocked": false
     },
     {
