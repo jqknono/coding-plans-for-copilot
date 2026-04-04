@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-03T08:23:45.779Z",
+  "generatedAt": "2026-04-04T03:02:51.783Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -61,7 +61,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-R2pwPFND.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CS_dqUz-.js"
       ],
       "plans": [
         {
@@ -282,7 +282,8 @@
             "约支持1~2个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP",
-            "生成图像和语音"
+            "生成图像和语音",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         },
         {
@@ -300,7 +301,8 @@
             "约支持2~3个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP",
-            "生成图片、语音、音乐和视频"
+            "生成图片、语音、音乐和视频",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         },
         {
@@ -318,7 +320,8 @@
             "约支持4~5个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP",
-            "生成图片、语音、音乐和视频"
+            "生成图片、语音、音乐和视频",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         },
         {
@@ -334,7 +337,8 @@
             "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
             "约支持1个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP"
+            "支持图像理解、联网搜索 MCP",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         },
         {
@@ -352,7 +356,8 @@
             "约支持1~2个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP",
-            "生成图像和语音"
+            "生成图像和语音",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         },
         {
@@ -370,7 +375,8 @@
             "约支持2~3个OpenClaw agent",
             "支持主流的编程工具，并持续扩展中",
             "支持图像理解、联网搜索 MCP",
-            "生成图像、语音、音乐和视频"
+            "生成图像、语音、音乐和视频",
+            "每周可使用额度为「每5 小时额度」的 10 倍"
           ]
         }
       ]
@@ -482,76 +488,6 @@
             "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
             "权益：享受 Lite 套餐的全部能力与权益",
             "月用量： Lite 版的 5 倍用量"
-          ]
-        }
-      ]
-    },
-    {
-      "provider": "kwaikat-ai",
-      "sourceUrls": [
-        "https://www.streamlake.com/marketing/coding-plan",
-        "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
-        "https://console.streamlake.com/api/common/describe-product-detail"
-      ],
-      "plans": [
-        {
-          "name": "KAT Coding Mini",
-          "currentPrice": 29,
-          "currentPriceText": "¥29/月",
-          "originalPrice": 29,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V2；覆盖日常编码场景；¥40 Prompts/5小时",
-          "serviceDetails": [
-            "适合初次体验者的轻量化选择",
-            "最低成本体验 KAT-Coder-Pro V2",
-            "覆盖日常编码场景",
-            "40 Prompts / 5小时"
-          ]
-        },
-        {
-          "name": "KAT Coding Starter",
-          "currentPrice": 70,
-          "currentPriceText": "¥70/月",
-          "originalPrice": 70,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V2 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
-          "serviceDetails": [
-            "适配日常核心开发场景的高效搭档",
-            "由最新旗舰模型 KAT-Coder-Pro V2 驱动",
-            "适配Claude Code等主流编程工具",
-            "100 Prompts / 5小时"
-          ]
-        },
-        {
-          "name": "KAT Coding Pro",
-          "currentPrice": 140,
-          "currentPriceText": "¥140/月",
-          "originalPrice": 140,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；¥300 Prompts/5小时",
-          "serviceDetails": [
-            "驱动复杂架构设计的进阶引擎",
-            "包含Starter套餐全部权益，性能全面提升",
-            "Starter套餐用量的3倍",
-            "300 Prompts / 5小时"
-          ]
-        },
-        {
-          "name": "KAT Coding Max",
-          "currentPrice": 350,
-          "currentPriceText": "¥350/月",
-          "originalPrice": 350,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；¥1000 Prompts/5小时",
-          "serviceDetails": [
-            "支持全天候高强度开发的旗舰配置",
-            "卓越的跨文件/仓库级代码深度理解",
-            "Pro套餐用量的3倍以上",
-            "1000 Prompts / 5小时"
           ]
         }
       ]
@@ -714,6 +650,78 @@
       ]
     },
     {
+      "provider": "kwaikat-ai",
+      "sourceUrls": [
+        "https://www.streamlake.com/marketing/coding-plan",
+        "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
+        "https://console.streamlake.com/api/common/describe-product-detail"
+      ],
+      "plans": [
+        {
+          "name": "KAT Coding Mini",
+          "currentPrice": 29,
+          "currentPriceText": "¥29/月",
+          "originalPrice": 29,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V2；覆盖日常编码场景；¥40 Prompts/5小时",
+          "serviceDetails": [
+            "适合初次体验者的轻量化选择",
+            "最低成本体验 KAT-Coder-Pro V2",
+            "覆盖日常编码场景",
+            "40 Prompts / 5小时"
+          ]
+        },
+        {
+          "name": "KAT Coding Starter",
+          "currentPrice": 70,
+          "currentPriceText": "¥70/月",
+          "originalPrice": 70,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V2 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
+          "serviceDetails": [
+            "适配日常核心开发场景的高效搭档",
+            "由最新旗舰模型 KAT-Coder-Pro V2 驱动",
+            "适配Claude Code等主流编程工具",
+            "100 Prompts / 5小时"
+          ]
+        },
+        {
+          "name": "KAT Coding Pro",
+          "currentPrice": 140,
+          "currentPriceText": "¥140/月",
+          "originalPrice": 140,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；¥300 Prompts/5小时",
+          "serviceDetails": [
+            "驱动复杂架构设计的进阶引擎",
+            "包含Starter套餐全部权益，性能全面提升",
+            "Starter套餐用量的3倍",
+            "300 Prompts / 5小时"
+          ]
+        },
+        {
+          "name": "KAT Coding Max",
+          "currentPrice": 350,
+          "currentPriceText": "¥350/月",
+          "originalPrice": 350,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；¥1000 Prompts/5小时",
+          "serviceDetails": [
+            "支持全天候高强度开发的旗舰配置",
+            "卓越的跨文件/仓库级代码深度理解",
+            "Pro套餐用量的3倍以上",
+            "1000 Prompts / 5小时"
+          ]
+        }
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "kwaikat-ai: fetch failed"
+    },
+    {
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
@@ -752,6 +760,7 @@
     }
   ],
   "failures": [
+    "kwaikat-ai: fetch failed",
     "infini-ai: Task timed out after 30000ms"
   ]
 }
