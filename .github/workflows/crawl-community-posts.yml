@@ -1,0 +1,60 @@
+name: Crawl Community Posts
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+
+on:
+  schedule:
+    - cron: "0 6 * * *" # 06:00 UTC = 14:00 Beijing time
+  workflow_dispatch:
+
+jobs:
+  crawl-community:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      discussions: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run community crawler
+        id: crawler
+        run: |
+          set +e
+          npm run crawler:run:publish 2>&1 | tee crawler-fetch.log
+          exit 0
+        env:
+          APIKEY: ${{ secrets.APIKEY }}
+          BASE_URL: ${{ secrets.BASE_URL }}
+          MODEL: ${{ secrets.MODEL }}
+          CODING_PLANS_FOR_COPILOT: ${{ secrets.CODING_PLANS_FOR_COPILOT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify crawler discussions
+        run: npm run crawler:verify-discussion-labels
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Commit crawler output
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "assets/discussions/*.json"
+          if git diff --cached --quiet; then
+            echo "No crawler changes detected."
+            exit 0
+          fi
+          git commit -m "chore: update community crawler posts"
+          BRANCH_NAME="${GITHUB_REF_NAME:-main}"
+          git push origin "HEAD:${BRANCH_NAME}"

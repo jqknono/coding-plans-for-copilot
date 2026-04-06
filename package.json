@@ -474,7 +474,17 @@
         "openrouter:plans:fetch": "node ./scripts/fetch-openrouter-provider-plans.js",
         "serve:page": "node ./scripts/serve-pricing-page.js",
         "test:pages": "playwright test --config=playwright.config.ts",
-        "test:pages:headed": "playwright test --config=playwright.config.ts --headed"
+        "test:pages:headed": "playwright test --config=playwright.config.ts --headed",
+        "crawler:run": "node ./scripts/crawler/index.js --days=1",
+        "crawler:run:publish": "node ./scripts/crawler/index.js --days=1 --discussion",
+        "crawler:v2ex": "node ./scripts/crawler/index.js --source=v2ex --days=1",
+        "crawler:v2ex:publish": "node ./scripts/crawler/index.js --source=v2ex --days=1 --discussion",
+        "crawler:linuxdo": "node ./scripts/crawler/index.js --source=linuxdo --days=1",
+        "crawler:linuxdo:publish": "node ./scripts/crawler/index.js --source=linuxdo --days=1 --discussion",
+        "crawler:migrate-discussion-labels": "node ./scripts/discussions/migrate-discussion-labels.js",
+        "crawler:verify-discussion-labels": "node ./scripts/discussions/verify-discussion-labels.js",
+        "crawler:cleanup-discussions": "node ./scripts/discussions/cleanup-discussions.js",
+        "crawler:setup-categories": "node ./scripts/discussions/setup-discussion-categories.js"
     },
     "devDependencies": {
         "@playwright/test": "^1.58.2",

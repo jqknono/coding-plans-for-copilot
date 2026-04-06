@@ -1,0 +1,301 @@
+{
+  "date": "2026-04-05",
+  "generatedAt": "2026-04-06T03:15:20.325Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 8,
+    "relevantPosts": 9,
+    "discussionsCreated": 5,
+    "discussionsSkipped": 4,
+    "supplierMentions": {
+      "opencode go": 1,
+      "OpenClaw": 1,
+      "阿里": 1,
+      "智谱": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "linuxdo-1901120",
+      "source": "linuxdo",
+      "sourceUrl": "https://linux.do/t/topic/1901120",
+      "title": "【抽奖】智谱 GLM Coding Plan 7 天体验卡 x 5 抽奖",
+      "content": "抽奖主题：智谱 GLM Coding Plan 7 天体验卡 * 5 奖品详情： 智谱 GLM Coding Plan 7 天体验卡 * 5，抽5个佬，每人一张。 活动时间： 开始时间：[ 2026-04-05T05:08:52Z ] 截止时间：[ Invalid date ] 参与方式： 在本贴下回复即可参与。 抽奖规则： 每位用户仅允许参与一次。 将使用 LINUX DO 抽奖工具 在所有回复中随机抽取中奖者。 注意事项： 本活动将在活动截止时间后关闭回帖，以确保公正性。 中奖者将在活动结束后在本帖公布，并通过论坛站内信由发起人通知领奖方式。 所有规则及抽奖结果由 @ZHOUSJ 及论坛 管理团队 最终解释。 发起人承诺： 作为本次抽奖的发起人 @ZHOUSJ ，我承诺本话题的抽奖活动严格遵守 LINUX DO 社区抽奖规则 。因违反上述规定引发的公平性争议或其他问题，均由我独立承担相应的道德与法律责任。 期待您的积极参与，祝您好运！如有任何疑问，欢迎随时联系 @ZHOUSJ 或论坛 管理团队 。",
+      "author": "ZHOUSJ",
+      "createdAt": "2026-04-05T05:12:32.051Z",
+      "analysis": {
+        "isRelevant": true,
+        "relevance": 0.92,
+        "supplier": "智谱",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "帖子宣布抽奖送出五张智谱 GLM Coding Plan 7 天体验卡，提供参与方式、抽奖规则及注意事项。",
+        "topics": [
+          "giveaway",
+          "trial",
+          "pricing",
+          "smartglm"
+        ],
+        "planMentioned": "7 天体验卡",
+        "language": "zh"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-05T08:51:22.010Z"
+    },
+    {
+      "id": "linuxdo-1901711",
+      "source": "linuxdo",
+      "sourceUrl": "https://linux.do/t/topic/1901711",
+      "title": "求助一下，Team开通成功了，但貌似还是free的套餐权限，不知道哪里出问题了",
+      "content": "从这篇帖子过来的 https://linux.do/t/topic/1718124/252?u=oudo Team是开成功了，但是不知为何，用不了gpt5.4，看额度显示感觉好像只是free的套餐。是还有什么地方需要设置吗，有知道的佬麻烦说一下谢谢~ image 503×159 7.79 KB image 316×331 12.6 KB image 1270×475 10 KB",
+      "author": "Oudo",
+      "createdAt": "2026-04-05T07:23:31.299Z",
+      "analysis": {
+        "isRelevant": true,
+        "relevance": 0.9,
+        "supplier": "OpenAI Team Plan",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "User activated OpenAI Team plan but cannot use GPT-5.4, suspecting it's still a free plan with limited quota and seeking troubleshooting steps.",
+        "topics": [
+          "activation",
+          "free plan",
+          "GPT-5.4",
+          "troubleshooting"
+        ],
+        "planMentioned": "Team plan",
+        "language": "zh"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-05T08:51:23.754Z"
+    },
+    {
+      "id": "linuxdo-1902530",
+      "source": "linuxdo",
+      "sourceUrl": "https://linux.do/t/topic/1902530",
+      "title": "【官方福利】RoxyBrowser 复活节寻宝：免费领1个月窗口套餐",
+      "content": "哈喽 ，各位 linux.do 的佬友们！ 复活节到了，这次RoxyBrowser 官方团队给大家准备了一波实打实的节日福利。这次我们不搞复杂的转发盖楼，而是直接在官网上藏了一批“复活节彩蛋”，找到就能兑换真实的套餐奖励。 image 2034×1060 163 KB 剧透一下彩蛋奖励 为了感谢大家一直以来的支持，这次的彩蛋奖励非常直接： 普通彩蛋：1个月免费可享10个窗口 稀有彩蛋：3个月免费可享50个窗口 金彩蛋：1年免费可享100个窗口 (注：彩蛋数量有限，先到先得，拼手气和眼力的时候到了） image 1920×992 200 KB 关于 RoxyBrowser ，老规矩，产品就不多作介绍了，大家懂的都懂。感谢各位佬友一直以来的支持 image 1920×753 137 KB 寻蛋指南（如何获取） 我们把彩蛋图标藏在了官网的各个功能页面、页脚或者细节交互区。就当是一个小型的网页寻宝游戏吧，步骤非常简单： 探索官网： 浏览 RoxyBrowser 官网，留意各个角落里不经意出现的彩蛋标识。 解锁兑换码： 发现彩蛋后请果断点击！按提示登录即可解锁你的专属优惠码。（请务必复制保存好这",
+      "author": "RoxyBrowser",
+      "createdAt": "2026-04-05T10:28:53.478Z",
+      "analysis": {
+        "isRelevant": true,
+        "relevance": 0.95,
+        "supplier": "RoxyBrowser",
+        "supplierCategory": "tool",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "RoxyBrowser 复活节寻宝活动，用户可以通过在官网寻找彩蛋来获得免费套餐奖励，包括1个月、3个月和1年不同时长的免费窗口套餐。",
+        "topics": [
+          "复活节活动",
+          "免费套餐",
+          "寻宝游戏",
+          "窗口套餐",
+          "兑换码",
+          "官方福利"
+        ],
+        "planMentioned": "窗口套餐",
+        "language": "zh"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/31",
+      "analyzedAt": "2026-04-05T10:58:10.094Z"
+    },
+    {
+      "id": "linuxdo-1902565",
+      "source": "linuxdo",
+      "sourceUrl": "https://linux.do/t/topic/1902565",
+      "title": "claude 免绑卡领送的等同套餐的额度",
+      "content": "const orgId = document.cookie.match(/(?:^|;\\s*)lastActiveOrg=([^;]+)/)?.[1]; if (orgId) { fetch(`https://claude.ai/api/organizations/${orgId}/overage_credit_grant`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' }).then(res =&gt; res.json()).then(console.log); } 亲测可用 image 1394×640 45.8 KB",
+      "author": "0x2026",
+      "createdAt": "2026-04-05T10:40:46.815Z",
+      "analysis": {
+        "isRelevant": true,
+        "relevance": 0.9,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "分享了获取 Claude 免费额度的 JavaScript 代码，通过组织 ID 获取超额信用额度。",
+        "topics": [
+          "Claude",
+          "免费额度",
+          "超额信用",
+          "JavaScript",
+          "代码分享"
+        ],
+        "planMentioned": null,
+        "language": "zh"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-05T10:58:10.094Z"
+    },
+    {
+      "id": "linuxdo-1900236",
+      "source": "linuxdo",
+      "sourceUrl": "https://linux.do/t/topic/1900236",
+      "title": "【抽奖】智谱 GLM Coding Plan 7 天体验卡*3 抽奖",
+      "content": "刚用大佬的脚本抢到的套餐，给大家抽了，感谢 Mayday 大佬的 GLM终极抢购助手全自动版，油猴桃脚本 抽奖主题：智谱 GLM Coding Plan 7 天体验卡 * 3 奖品详情： 智谱 GLM Coding Plan 7 天体验卡 * 3，抽3个佬，每人一张。 活动时间： 开始时间：发帖时间 截止时间： 4月6日 15:00 参与方式： 在本帖下回复任意内容即可参与。(佬们，送俺个赞。。) 抽奖规则： 每位用户仅允许参与一次。 将使用 官方抽奖工具 在所有回复中随机抽取中奖者。 注意事项： 本活动将在活动截止时间后关闭回帖，以确保公正性。 中奖者将在活动结束后12小时内在本帖公布，并通过私信通知领奖方式。 所有规则及抽奖结果由活动发起人和 论坛管理团队 最终解释。 期待您的积极参与，祝您好运！如有任何疑问，欢迎随时联系抽奖发起人。",
+      "author": "MAUHOSO",
+      "createdAt": "2026-04-05T02:23:32.368Z",
+      "analysis": {
+        "isRelevant": true,
+        "relevance": 0.95,
+        "supplier": "智谱",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "智谱 GLM Coding Plan 7 天体验卡*3 的抽奖活动，用户分享了抢到的套餐并发起抽奖，感谢脚本作者。",
+        "topics": [
+          "抽奖",
+          "体验卡",
+          "智谱",
+          "GLM"
+        ],
+        "planMentioned": "智谱 GLM Coding Plan 7 天体验卡",
+        "language": "zh"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-05T10:58:10.094Z"
+    },
+    {
+      "id": "linuxdo-1901276",
+      "source": "linuxdo",
+      "sourceUrl": "https://linux.do/t/topic/1901276",
+      "title": "【抽奖】智谱GLM Coding Plan 7天体验卡 x 3 抽奖",
+      "content": "新人刚加入不久，不知道如何回馈社区，正好看到隔壁佬在抽奖，突然想到自己套餐里的体验卡也还剩3张没用，就给大家抽了吧，原贴： 【已开奖】【抽奖】智谱 GLM Coding Plan 7 天体验卡 x 3 抽奖 福利羊毛 抽奖主题：智谱 GLM Coding Plan 7 天体验卡 * 3 奖品详情： 智谱 GLM Coding Plan 7 天体验卡 * 3，抽3个佬，每人一张。 活动时间： 开始时间：发帖时间 截止时间： 4月6日 17:00 参与方式： 在本帖下回复任意内容即可参与。(佬们，送俺个赞。。) … 抽奖主题：智谱 GLM Coding Plan 7 天体验卡 * 3 奖品详情： 智谱 GLM Coding Plan 7 天体验卡 * 3，抽3个佬，每人一张。 活动时间： 开始时间：发帖时间 截止时间： 2026-04-06T13:00:00Z 参与方式： 在本帖下回复任意内容即可参与。（顺便厚着脸皮求赞） 抽奖规则： 每位用户仅允许参与一次。 将使用 官方抽奖工具 在所有回复中随机抽取中奖者。 注意事项： 本活动将在活动截止时间后关闭回帖，以确保公正性。 中奖者将在活动结",
+      "author": "OneHerz",
+      "createdAt": "2026-04-05T05:51:02.348Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 1,
+        "supplier": "智谱GLM",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.9,
+        "summary": "用户在论坛发起抽奖活动，赠送3张智谱GLM Coding Plan 7天体验卡。",
+        "topics": [
+          "抽奖",
+          "体验卡",
+          "智谱GLM",
+          "套餐",
+          "回馈社区"
+        ],
+        "planMentioned": "智谱GLM Coding Plan 7天体验卡",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/36",
+      "analyzedAt": "2026-04-05T15:51:10.422Z"
+    },
+    {
+      "id": "v2ex-1203749",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1203749",
+      "title": "我的 Vibe Coding 项目",
+      "content": "最近三个月，我用 Claude Code Vibe Coding 了几个项目，非常有意思，写篇文章记录一下。 WorkAny workany.ai 在上一篇文章 Vibe Coding 一周，我做了个桌面 Agent 写到，我第一次尝试全自动 Vibe Coding ，发布了我的第一个 Agent 项目 WorkAny 。 断断续续在迭代 WorkAny ，修复了一些用户反馈的问题，Github 仓库 star 涨到了 1.4k 。 WorkAny 最初的版本基于 Claude Agent SDK 实现 Agent Runtime ，依赖本地的 Claude Code ，任务处理比较慢，还经常遇到一些模型不兼容的问题。 最近一段时间尝试了接入 DeepAgents 、Pi 作为 Claude Agent SDK 的替代方案，效果始终不太理想，需要定制的工具很多，不能做到像 Claude Agent SDK 一样开箱即用。 这周把 WorkAny 的 Agent Runtime 换成了自己写的 Open Agent SDK ，运行流畅了，好多问题也解决了。 WorkAny Bot wor",
+      "author": "idoubi",
+      "createdAt": "2026-04-05T23:21:08.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "OpenClaw",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享了基于 OpenClaw 的 WorkAny Bot 项目，提供云端托管服务，并开源了 ClawHost 和 ChatClaw 工具，旨在降低用户使用 OpenClaw 的门槛。",
+        "topics": [
+          "OpenClaw",
+          "云端托管",
+          "SDK",
+          "付费服务",
+          "开源工具"
+        ],
+        "planMentioned": "OpenClaw 云端托管服务",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/34",
+      "analyzedAt": "2026-04-06T03:20:00.602Z"
+    },
+    {
+      "id": "v2ex-1203722",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1203722",
+      "title": "阿里的 coding plan 丐版也完全不可用了",
+      "content": "放假这两天, 发现阿里 condig plan 根本没法用, 一个简单的任务, 对话, 基本一跑就是 1 小时到 2 小时, 切换了 glm5, kimi-k2.5, qwen3.5max 都一样. 看样子都是超卖",
+      "author": "drealism",
+      "createdAt": "2026-04-05T14:37:21.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.98,
+        "summary": "用户投诉阿里的 coding plan 丐版完全不可用，即使切换其他 AI 模型（如 GLM5、Kimi-K2.5、Qwen3.5Max）也无法完成简单任务，认为该服务被严重超卖。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "超卖",
+          "体验",
+          "故障"
+        ],
+        "planMentioned": "阿里 coding plan 丐版",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/35",
+      "analyzedAt": "2026-04-06T03:20:08.635Z"
+    },
+    {
+      "id": "linuxdo-1904867",
+      "source": "linuxdo",
+      "sourceUrl": "https://linux.do/t/topic/1904867",
+      "title": "国产coding plan的暴论",
+      "content": "国模coding plan 测评（速率） 大家购买coding plan之前可以看一下本贴和测速站 测速站是国内服务器，无需翻墙 https://coding.15o.cc 我在这个帖子，已经做coding plan测评做了现在基本全部的厂家了 主要是自动化流程还没做完，没办法给各位佬友做到更好的观感，目前只有最简单的测速功能。 但是经历，测试到了很多草台班子 例如优云的调用方式跟api中转一样，要加厂家名称，例如glm/glm-5 但是minimax又不用，可以直接调用 如果名称调用错了要收你的正常api调用费 好几家的文档都写的很奇怪，有的不支持非流式，有的域名甚至带端口号（联通） 总之就是，这些厂家给我一种感觉，是在赶鸭子上架的产品 他们甚至不知道自己的竞争力是什么 阿里的，自己的新模型不上coding plan，先挂出去免费用 小米的上来就是token plan，定价大概是claude的四分之一 我真的有的时候觉得这个世界很迷惑，钱真的这么好赚 但是从最近的趋势来看 大厂都会去做自己的coding plan的，限购，这个后续可能会都跟智谱一样，耍猴机制（腾讯云的耍了我半个月了，",
+      "author": "hlool",
+      "createdAt": "2026-04-05T17:44:19.543Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户对国内AI编码助手套餐的负面体验，批评各家厂商的定价不透明、限制多、文档混乱，预测未来套餐会向智谱模式靠拢，用户需谨慎续费。",
+        "topics": [
+          "定价",
+          "套餐限制",
+          "文档混乱",
+          "比较",
+          "体验卡",
+          "故障排查"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/37",
+      "analyzedAt": "2026-04-06T03:20:24.010Z"
+    }
+  ],
+  "failures": []
+}

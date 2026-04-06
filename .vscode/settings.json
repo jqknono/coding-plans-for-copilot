@@ -18,6 +18,14 @@
         "/^node \\.\\\\scripts\\\\fetch-openrouter-provider-plans\\.js$/": {
             "approve": true,
             "matchCommandLine": true
+        },
+        "/^node --test tests/scripts/crawler-discussion\\.test\\.js$/": {
+            "approve": true,
+            "matchCommandLine": true
+        },
+        "/^node --test tests/scripts/fetch-provider-pricing\\.test\\.js$/": {
+            "approve": true,
+            "matchCommandLine": true
         }
     }
 }

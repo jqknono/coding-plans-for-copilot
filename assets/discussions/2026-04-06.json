@@ -1,0 +1,186 @@
+{
+  "date": "2026-04-06",
+  "generatedAt": "2026-04-06T06:40:55.881Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 12,
+    "relevantPosts": 5,
+    "discussionsCreated": 5,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "阿里云": 1,
+      "opencode go": 1,
+      "OpenAI": 1,
+      "OpenCode": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1203770",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1203770",
+      "title": "避雷 opencode go 套餐，体验差，额度低，基本没用",
+      "content": "假期 OpenAI 周限额了，就试用了一个月 opencode go ，动机之一是想横向看看国内几个模型 实际体验一团糟 oc go 提供的 OpenAI 模型 比如 GLM 、Kimi 都只支持 chat completion 接口，不支持 response 所以不能用在 codeX 上 提供的兼容 anthropic 接口的模型只有 MiniMax 一个 只有在 opencode 或者龙虾这样已经集成好的地方，才能完整地使用各种模型，newapi 这样的中转平台应该也能用，额度太低已经懒得试了 额度体验下来，用 GLM 和 Kimi 不到 1 小时就把 5 小时的额度用满了，即便换成 MiniMax 半天也就把周限额给用完了，月限额是两个周限额 综合算下来 5 刀也就用不到两天国内模型，随便什么拼车、官方套餐、中转站 都比这个更好。",
+      "author": "kzzhr",
+      "createdAt": "2026-04-06T03:02:29.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "opencode go",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "当日 OpenAI 周限额了，定略一个们a来的 opencode go 帐号。会员说明为为了模型对比。实际中心一个筋筋，提供的模型不支持 response 接口。比如 GLM 和 Kimi 都只支持 chat completion 接口。提供的受享aic 接口的模型只有 MiniMax 一个。在 opencode 或者龙衡一样已经附尽的地方才能完整使用各种模型。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "体验差",
+          "额度低",
+          "故障排查"
+        ],
+        "planMentioned": "opencode go",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/39",
+      "analyzedAt": "2026-04-06T03:19:50.226Z"
+    },
+    {
+      "id": "v2ex-1203771",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1203771",
+      "title": "阿里的 codingplan pro,中转站的人很喜欢",
+      "content": "中转站的人愿意给月费加佣金来租号,所以,用中转站的的老哥们,你们冲的 claudeCode 的 token 为什么那么便宜,是因为都是百炼 codingplan,哈哈哈",
+      "author": "moyupai",
+      "createdAt": "2026-04-06T03:21:10.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里云",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "讨论阿里云 codingplan pro 在中转站被租号的情况，以及为什么中转站用户能用便宜的 claudeCode token。",
+        "topics": [
+          "租号",
+          "中转站",
+          "codingplan pro",
+          "token",
+          "定价"
+        ],
+        "planMentioned": "codingplan pro",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/38",
+      "analyzedAt": "2026-04-06T06:47:04.156Z"
+    },
+    {
+      "id": "linuxdo-1906562",
+      "source": "linuxdo",
+      "sourceUrl": "https://linux.do/t/topic/1906562",
+      "title": "订阅了 gpt pro 套餐佬友们，套餐里带的 5.3 codex spark 配额你们一般怎么用",
+      "content": "我平时做的开发和研究工作用不上，养龙虾用的 5.4 mini，这个独立的 5.3 codex spark 额度每次都浪费了，大家有没有什么好的使用思路",
+      "author": "KodiakAS",
+      "createdAt": "2026-04-06T06:05:58.264Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户询问如何有效利用GPT Pro套餐中的Codex Spark配额，由于个人工作需求不足，配额经常被浪费。",
+        "topics": [
+          "定价",
+          "套餐",
+          "使用思路"
+        ],
+        "planMentioned": "gpt pro 套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/40",
+      "analyzedAt": "2026-04-06T06:47:15.005Z"
+    },
+    {
+      "id": "linuxdo-1905707",
+      "source": "linuxdo",
+      "sourceUrl": "https://linux.do/t/topic/1905707",
+      "title": "【屎山开源】关于我VideCoding出来的一个神人“个人网站主页”和我这个智障经验教训的碎碎念",
+      "content": "本帖使用社区开源推广，符合推广要求。我申明并遵循社区要求的以下内容： 我的帖子已经打上 开源推广 标签： 是 我的开源项目完整开源，无未开源部分： 是 我的开源项目已链接认可 LINUX DO 社区： 是 我帖子内的项目介绍，AI生成、润色内容部分已截图发出： 是 以上选择我承诺是永久有效的，接受社区和佬友监督： 是 以下为项目介绍正文内容，AI生成、润色内容已使用截图方式发出 首先介绍一下我这个项目。个人主页这种东西，很多人做过了，而且我相信很多人比我做得好。我这次把它开放出来，主要是想分享一下这个只花了一天时间就开发出来的结果。但我得事先说明： 我一行代码没敲 ，所有内容都是通过自然语言与 OpenCode 交流得出的。 技术栈也极其简单：一个 JavaScript、一个 CSS、一个 HTML，就这点内容。这种静态网页意味着你可以部署到任何地方——GitHub Pages、Vercel 等等。我现在就部署在 Vercel 上。 所以接下来的分享 纯主观 ，没有所谓的客观。大家就当听一个中学生唠嗑，听个乐呵吧。 image 1035×646 141 KB 起因 本来我是想通过一个提",
+      "author": "wakusei",
+      "createdAt": "2026-04-06T03:09:58.531Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "OpenCode",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "The author discusses their experience using OpenCode's Go plan ($5/month) to generate a personal website, comparing different AI coding models like GLM5, Kimi K2.5, and MIMO V2 Pro, while expressing mixed feelings about the service's stability and performance.",
+        "topics": [
+          "定价",
+          "套餐",
+          "模型对比",
+          "体验",
+          "故障排查"
+        ],
+        "planMentioned": "OpenCode Go套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/41",
+      "analyzedAt": "2026-04-06T06:47:21.466Z"
+    },
+    {
+      "id": "linuxdo-1906138",
+      "source": "linuxdo",
+      "sourceUrl": "https://linux.do/t/topic/1906138",
+      "title": "[暴论] coding plan 和各种补贴token的活动很快就会结束或被大幅削减，不论国内外。",
+      "content": "原因就是缺算力。不说国内，国外也缺。 国外 A\\ 就不必多说了，这家是一个研究导向的企业，它的算力是以 R＆D 为先，训练模型缺了 GPU 就会砍掉用户的 GPU 算力，所以最近才会搞出峰谷电价这种鬼东西 谷歌完全是因为自己作的，送了一堆 Pro，然后挨不住了又砍用量。哥们你自己 TPU 不能多订点吗？哦，半导体上游产能也不足啊，那没事了。 OpenAI 其实是御三家里面算力最慷慨的，因为它的扫货策略 —— 在市场上一有空余 GPU 就全部买走建数据中心，所以才能一直送一直白嫖，但这显然也是不可持续的，sora 被关停就是例子。在 OpenAI 融资等大规模活动结束后，肯定也要挨刀 xAI 背靠马斯克，其实钱说不上很缺，但问题在于数据中心没造好。 数据中心没造好这个问题也是所有 AI 提供商都面临的问题，从 GPU 交付到数据中心落成这中间至少是 18-36 个月的时间窗口。所以 OpenAI 扫货的策略才会让它占了优势，其他家来不及跟进。 国内 国内其实没什么好说的，因为国内是真的缺算力缺 GPU。国产计算卡一直没起来，之前传闻 deepseek 费大力气适配昇腾，结果看起来也不好。",
+      "author": "aayang",
+      "createdAt": "2026-04-06T04:44:01.890Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "本文讨论了 AI 编码套餐和算力短缺问题，认为无论是国内外提供商的补贴活动和免费 token 都会很快结束或大幅削减。",
+        "topics": [
+          "算力短缺",
+          "coding plan",
+          "补贴活动",
+          "token 成本",
+          "国内外对比"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/42",
+      "analyzedAt": "2026-04-06T06:47:29.708Z"
+    }
+  ],
+  "failures": []
+}
