@@ -245,8 +245,8 @@ async function main() {
   console.log("[migrate-labels] loading environment...");
   await loadEnvFileIfPresent();
 
-  if (!process.env.GITHUB_TOKEN) {
-    console.error("[migrate-labels] GITHUB_TOKEN not set, exiting");
+  if (!process.env.COMMUNITY_CRAWLER_TOKEN) {
+    console.error("[migrate-labels] COMMUNITY_CRAWLER_TOKEN not set, exiting");
     process.exit(1);
   }
 

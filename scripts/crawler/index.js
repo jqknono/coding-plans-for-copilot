@@ -31,7 +31,7 @@ Environment variables (required):
   APIKEY              LLM API key
   BASE_URL            LLM API base URL
   MODEL               LLM model name
-  GITHUB_TOKEN        GitHub token (required only with --discussion)
+  COMMUNITY_CRAWLER_TOKEN        GitHub token (required only with --discussion)
 
 Mode:
   By default the crawler runs in dry-run mode: it fetches posts, analyzes

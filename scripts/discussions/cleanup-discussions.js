@@ -141,8 +141,8 @@ async function main() {
   console.log("[cleanup] loading environment...");
   await loadEnvFileIfPresent();
 
-  if (!process.env.GITHUB_TOKEN) {
-    console.error("[cleanup] GITHUB_TOKEN not set, exiting");
+  if (!process.env.COMMUNITY_CRAWLER_TOKEN) {
+    console.error("[cleanup] COMMUNITY_CRAWLER_TOKEN not set, exiting");
     process.exit(1);
   }
 

@@ -39,12 +39,12 @@ jobs:
           BASE_URL: ${{ secrets.BASE_URL }}
           MODEL: ${{ secrets.MODEL }}
           CODING_PLANS_FOR_COPILOT: ${{ secrets.CODING_PLANS_FOR_COPILOT }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMUNITY_CRAWLER_TOKEN: ${{ secrets.COMMUNITY_CRAWLER_TOKEN }}
 
       - name: Verify crawler discussions
         run: npm run crawler:verify-discussion-labels
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMUNITY_CRAWLER_TOKEN: ${{ secrets.COMMUNITY_CRAWLER_TOKEN }}
 
       - name: Commit crawler output
         run: |

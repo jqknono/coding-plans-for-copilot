@@ -8,9 +8,9 @@ const REPO_OWNER = "jqknono";
 const REPO_NAME = "coding-plans-for-copilot";
 
 async function graphql(query, variables = {}) {
-  const token = process.env.GITHUB_TOKEN;
+  const token = process.env.COMMUNITY_CRAWLER_TOKEN;
   if (!token) {
-    throw new Error("GITHUB_TOKEN not configured");
+    throw new Error("COMMUNITY_CRAWLER_TOKEN not configured");
   }
 
   const response = await fetch(GRAPHQL_URL, {
@@ -256,9 +256,9 @@ ${repliesSection}
 // ─── Main entry ───
 
 async function createDiscussionForPost(post, analysis, generatedAt, categories) {
-  const token = process.env.GITHUB_TOKEN;
+  const token = process.env.COMMUNITY_CRAWLER_TOKEN;
   if (!token) {
-    console.log("[github] GITHUB_TOKEN not set, skipping discussion creation");
+    console.log("[github] COMMUNITY_CRAWLER_TOKEN not set, skipping discussion creation");
     return null;
   }
 
