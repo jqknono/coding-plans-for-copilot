@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-06T08:38:44.477Z",
+  "generatedAt": "2026-04-07T03:05:49.410Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -61,7 +61,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BzQdEKxS.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BrQNsqmd.js"
       ],
       "plans": [
         {
@@ -226,7 +226,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.209/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.210/index.js"
       ],
       "plans": [
         {
@@ -536,7 +536,7 @@
           "originalPrice": 40,
           "originalPriceText": "¥40/月",
           "unit": "月",
-          "notes": "产品首购；可购1个；已售罄，请预约",
+          "notes": "产品首购；可购1个；未开售，点击预约",
           "serviceDetails": [
             "每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求",
             "模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等",
@@ -550,7 +550,7 @@
           "originalPrice": 200,
           "originalPriceText": "¥200/月",
           "unit": "月",
-          "notes": "产品首购；可购1个；已售罄 点击预约",
+          "notes": "产品首购；可购1个；未开售 点击预约",
           "serviceDetails": [
             "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
             "权益：享受 Lite 套餐的全部能力与权益",
