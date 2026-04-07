@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-06T08:39:15.387Z",
-  "generatedAtBeijing": "2026年4月6日 16:39:15",
-  "sourceGeneratedAt": "2026-04-06T08:38:44.477Z",
-  "sourceGeneratedAtBeijing": "2026年4月6日 16:38:44",
-  "sourceMetricsGeneratedAt": "2026-04-06T08:38:55.632Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月6日 16:38:55",
+  "generatedAt": "2026-04-07T04:17:54.441Z",
+  "generatedAtBeijing": "2026年4月7日 12:17:54",
+  "sourceGeneratedAt": "2026-04-07T04:16:56.767Z",
+  "sourceGeneratedAtBeijing": "2026年4月7日 12:16:56",
+  "sourceMetricsGeneratedAt": "2026-04-07T04:17:06.174Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月7日 12:17:06",
   "summary": {
     "openrouterProviderCount": 75,
     "metricsProviderCount": 35,
@@ -476,7 +476,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BzQdEKxS.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BrQNsqmd.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -559,7 +559,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.209/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.210/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",

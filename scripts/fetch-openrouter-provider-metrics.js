@@ -10,6 +10,8 @@ const ENV_FILE = path.resolve(__dirname, "..", ".env");
 const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1";
 const REQUEST_TIMEOUT_MS = Number.parseInt(process.env.OPENROUTER_REQUEST_TIMEOUT_MS || "20000", 10);
 const ENDPOINT_CONCURRENCY = Math.max(1, Number.parseInt(process.env.OPENROUTER_ENDPOINT_CONCURRENCY || "4", 10));
+const ENDPOINT_REQUEST_RETRY_COUNT = 2;
+const ENDPOINT_REQUEST_RETRY_DELAY_MS = 750;
 const DEFAULT_ORGANIZATIONS = [
   "deepseek",
   "qwen",
@@ -131,26 +133,75 @@ function formatBeijingTime(isoText) {
   }).format(date);
 }
 
-async function fetchJson(url, options = {}) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
-  try {
-    const response = await fetch(url, {
-      ...options,
-      signal: controller.signal,
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}`);
-    }
-    return await response.json();
-  } catch (error) {
-    if (controller.signal.aborted) {
-      throw new Error(`Request timeout after ${REQUEST_TIMEOUT_MS}ms`);
-    }
-    throw error;
-  } finally {
-    clearTimeout(timeout);
+function sleep(delayMs) {
+  if (!Number.isFinite(delayMs) || delayMs <= 0) {
+    return Promise.resolve();
   }
+  return new Promise((resolve) => setTimeout(resolve, delayMs));
+}
+
+function readHttpStatusFromError(error) {
+  const message = String(error?.message || "");
+  const matched = message.match(/\bHTTP\s+(\d{3})\b/i);
+  if (!matched) {
+    return null;
+  }
+  const status = Number.parseInt(matched[1], 10);
+  return Number.isFinite(status) ? status : null;
+}
+
+function isRetryableFetchError(error) {
+  const status = readHttpStatusFromError(error);
+  if (status === 408 || status === 429 || (status !== null && status >= 500)) {
+    return true;
+  }
+
+  const message = String(error?.message || "").toLowerCase();
+  const code = String(error?.code || error?.cause?.code || "").toUpperCase();
+  return (
+    message.includes("request timeout")
+    || message.includes("timed out")
+    || code === "ETIMEDOUT"
+    || code === "ECONNRESET"
+    || code === "UND_ERR_CONNECT_TIMEOUT"
+  );
+}
+
+async function fetchJson(url, options = {}) {
+  const {
+    timeoutMs = REQUEST_TIMEOUT_MS,
+    retryCount = 0,
+    retryDelayMs = 0,
+    ...fetchOptions
+  } = options;
+
+  for (let attempt = 0; attempt <= retryCount; attempt += 1) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+      const response = await fetch(url, {
+        ...fetchOptions,
+        signal: controller.signal,
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      return await response.json();
+    } catch (error) {
+      const normalizedError = controller.signal.aborted
+        ? new Error(`Request timeout after ${timeoutMs}ms`)
+        : error;
+      const shouldRetry = attempt < retryCount && isRetryableFetchError(normalizedError);
+      if (!shouldRetry) {
+        throw normalizedError;
+      }
+      await sleep(retryDelayMs * (attempt + 1));
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+
+  throw new Error("Unreachable fetchJson retry state");
 }
 
 function sortByCreatedDesc(left, right) {
@@ -375,7 +426,11 @@ async function main() {
 
     const endpointUrl = `${OPENROUTER_BASE_URL}/models/${encodeURIComponent(parsed.author)}/${encodeURIComponent(parsed.slug)}/endpoints`;
     try {
-      const payload = await fetchJson(endpointUrl, { headers });
+      const payload = await fetchJson(endpointUrl, {
+        headers,
+        retryCount: ENDPOINT_REQUEST_RETRY_COUNT,
+        retryDelayMs: ENDPOINT_REQUEST_RETRY_DELAY_MS,
+      });
       const endpointList = Array.isArray(payload?.data?.endpoints) ? payload.data.endpoints : [];
       const normalized = keepBestEndpointPerProvider(endpointList
         .map((entry) => normalizeProviderEndpoint(entry))
@@ -437,7 +492,31 @@ async function main() {
   }
 }
 
-main().catch((error) => {
-  console.error("[metrics] fatal:", error && error.message ? error.message : error);
-  process.exit(1);
-});
+function printHelp() {
+  console.log("Usage: node scripts/fetch-openrouter-provider-metrics.js [-h|--help]");
+  console.log("");
+  console.log("Fetches OpenRouter provider endpoint metrics into assets/openrouter-provider-metrics.json.");
+  console.log("");
+  console.log("Environment variables:");
+  console.log("  CODING_PLANS_FOR_COPILOT         OpenRouter API key");
+  console.log(`  OPENROUTER_BASE_URL              API base URL (default: ${OPENROUTER_BASE_URL})`);
+  console.log(`  OPENROUTER_REQUEST_TIMEOUT_MS    Per-request timeout in ms (default: ${REQUEST_TIMEOUT_MS})`);
+  console.log(`  OPENROUTER_ENDPOINT_CONCURRENCY  Concurrent endpoint fetches (default: ${ENDPOINT_CONCURRENCY})`);
+}
+
+if (require.main === module) {
+  if (process.argv.includes("-h") || process.argv.includes("--help")) {
+    printHelp();
+    process.exit(0);
+  }
+
+  main().catch((error) => {
+    console.error("[metrics] fatal:", error && error.message ? error.message : error);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  fetchJson,
+  isRetryableFetchError,
+};
