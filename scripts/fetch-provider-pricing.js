@@ -28,6 +28,7 @@ const PROVIDER_IDS = {
   XIAOMI: "xiaomi-mimo",
   OPENCODE: "opencode",
   ROOCODE: "roocode",
+  GITHUB_COPILOT: "github-copilot",
 };
 
 const KIMI_MEMBERSHIP_LEVEL_LABELS = {
@@ -2926,6 +2927,95 @@ async function parseOpenCodePlans() {
   };
 }
 
+async function parseGithubCopilotPlans() {
+  const pageUrl = "https://github.com/features/copilot/plans";
+
+  // GitHub Copilot pricing from official page (2026-04-07)
+  const plans = [
+    asPlan({
+      name: "GitHub Copilot Free",
+      currentPriceText: "$0/月",
+      currentPrice: 0,
+      unit: "月",
+      notes: "个人免费计划",
+      serviceDetails: [
+        "50 agent mode 或 chat requests/月",
+        "2,000 completions/月",
+        "支持模型: Haiku 4.5、GPT-5 mini 等",
+        "Copilot CLI",
+        "无需信用卡",
+      ],
+    }),
+    asPlan({
+      name: "GitHub Copilot Pro",
+      currentPriceText: "$10/月",
+      currentPrice: 10,
+      unit: "月",
+      notes: "最受欢迎",
+      serviceDetails: [
+        "300 premium requests/月（可额外购买）",
+        "无限 agent mode 和 chat（GPT-5 mini）",
+        "无限 inline suggestions",
+        "Copilot cloud agent",
+        "Copilot code review",
+        "Claude 和 Codex on GitHub & VS Code",
+        "支持模型: Anthropic、Google、OpenAI 等，含 Opus 4.6",
+      ],
+    }),
+    asPlan({
+      name: "GitHub Copilot Pro+",
+      currentPriceText: "$39/月",
+      currentPrice: 39,
+      unit: "月",
+      notes: "个人最高级计划",
+      serviceDetails: [
+        "1,500 premium requests/月（可额外购买）",
+        "全部模型访问，含 Claude Opus 4.6 等",
+        "GitHub Spark 访问",
+        "包含 Pro 全部功能",
+      ],
+    }),
+    asPlan({
+      name: "GitHub Copilot Business",
+      currentPriceText: "$19/月/用户",
+      currentPrice: 19,
+      unit: "月/用户",
+      notes: "团队计划",
+      serviceDetails: [
+        "300 premium requests/用户/月（可额外购买）",
+        "无限 agent mode 和 chat（GPT-5 mini）",
+        "无限 inline suggestions",
+        "Copilot cloud agent",
+        "Copilot code review",
+        "Claude 和 Codex on GitHub & VS Code",
+        "用户管理与使用指标",
+        "IP 赔偿与数据隐私",
+        "Copilot CLI",
+      ],
+    }),
+    asPlan({
+      name: "GitHub Copilot Enterprise",
+      currentPriceText: "$39/月/用户",
+      currentPrice: 39,
+      unit: "月/用户",
+      notes: "企业计划",
+      serviceDetails: [
+        "1,000 premium requests/用户/月（可额外购买）",
+        "全部模型访问，含 Claude Opus 4.6 等",
+        "GitHub Spark 访问",
+        "包含 Business 全部功能",
+      ],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.GITHUB_COPILOT,
+    sourceUrls: unique([pageUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
 async function main() {
   const existingSnapshot = await loadExistingPricingSnapshot();
   const providers = [];
@@ -2947,6 +3037,7 @@ async function main() {
     { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
     { provider: PROVIDER_IDS.XIAOMI, fn: parseXiaomiMimoTokenPlans },
     { provider: PROVIDER_IDS.OPENCODE, fn: parseOpenCodePlans },
+    { provider: PROVIDER_IDS.GITHUB_COPILOT, fn: parseGithubCopilotPlans },
   ];
 
   const results = await Promise.allSettled(tasks.map((task) => runTaskWithTimeout(task.fn)));
