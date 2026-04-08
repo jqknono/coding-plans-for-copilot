@@ -483,6 +483,43 @@ function unique(values) {
   return [...new Set(values.filter(Boolean))];
 }
 
+function parseJdCloudCodingPlansFromPageHtml(html) {
+  const decodedHtml = decodeUnicodeLiteral(String(html || ""));
+  const planMatches = decodedHtml.matchAll(
+    /model:\{activityId:"[^"]+",title:"Coding\s+Plan\s+(Lite|Pro)\s*",[\s\S]{0,200}?desc:"([^"]+)",[\s\S]{0,120}?productPrice:"([^"]+)",[\s\S]{0,120}?originalPrice:"([^"]+)",[\s\S]{0,220}?buyConditionsOne:"([^"]+)",buyConditionsOneDesc:"([^"]+)",buyConditionsTwo:"([^"]+)",buyConditionsTwoDesc:"([^"]+)"/g,
+  );
+  const plans = [];
+
+  for (const match of planMatches) {
+    const tier = normalizeText(match[1]);
+    const description = normalizeText(match[2]);
+    const currentAmount = Number(String(match[3] || "").replace(/,/g, ""));
+    const originalPrice = parsePriceText(normalizeText(match[4])).amount;
+    const detailOneLabel = normalizeText(match[5]);
+    const detailOneValue = normalizeText(match[6]);
+    const detailTwoLabel = normalizeText(match[7]);
+    const detailTwoValue = normalizeText(match[8]);
+
+    plans.push(
+      asPlan({
+        name: `Coding Plan ${tier}`,
+        currentPriceText: Number.isFinite(currentAmount) ? `¥${formatAmount(currentAmount)}/月` : null,
+        currentPrice: Number.isFinite(currentAmount) ? currentAmount : null,
+        originalPriceText: Number.isFinite(originalPrice) ? `¥${formatAmount(originalPrice)}/月` : null,
+        originalPrice: Number.isFinite(originalPrice) ? originalPrice : null,
+        unit: "月",
+        serviceDetails: [
+          description || null,
+          detailOneLabel && detailOneValue ? `${detailOneLabel}：${detailOneValue}` : null,
+          detailTwoLabel && detailTwoValue ? `${detailTwoLabel}：${detailTwoValue}` : null,
+        ],
+      }),
+    );
+  }
+
+  return dedupePlans(plans);
+}
+
 async function loadExistingPricingSnapshot(outputFile = OUTPUT_FILE) {
   try {
     const raw = await fs.readFile(outputFile, "utf8");
@@ -1682,93 +1719,18 @@ async function parseTencentCodingPlans() {
 
 async function parseJdCloudCodingPlans() {
   const pageUrl = "https://www.jdcloud.com/cn/pages/codingplan";
-  const chromium = await loadPlaywrightChromium("JD Cloud parser");
-  const browser = await chromium.launch({ headless: true });
-
-  try {
-    const page = await browser.newPage();
-    await blockNonEssentialPlaywrightRequests(page);
-    await page.goto(pageUrl, {
-      waitUntil: "commit",
-      timeout: 60_000,
-    });
-    await page.waitForFunction(
-      () => {
-        const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
-        const titles = Array.from(document.querySelectorAll(".flashsale-custom-wrap .titleview-title, .titleview-title"))
-          .map((node) => normalize(node.textContent));
-        const bodyText = normalize(document.body?.innerText || "");
-        return titles.some((text) => /Coding\s*Plan\s*Lite/i.test(text))
-          && titles.some((text) => /Coding\s*Plan\s*Pro/i.test(text))
-          || (/Coding\s*Plan\s*Lite/i.test(bodyText) && /Coding\s*Plan\s*Pro/i.test(bodyText));
-      },
-      { timeout: 45_000 },
-    );
-
-    const rawPlans = await page.evaluate(() => {
-      const normalize = (value) => String(value || "").replace(/\s+/g, " ").trim();
-      return Array.from(document.querySelectorAll(".flashsale-custom-wrap"))
-        .map((card) => {
-          const title = normalize(card.querySelector(".titleview-title")?.textContent || "");
-          if (!/Coding\s*Plan/i.test(title)) {
-            return null;
-          }
-
-          const detailLines = Array.from(card.querySelectorAll(".bottom-left-wrap > div"))
-            .map((row) => normalize(row.textContent))
-            .filter(Boolean);
-          const fallbackDetailLines = detailLines.length > 0
-            ? detailLines
-            : Array.from(card.querySelectorAll(".bottom-left-wrap *"))
-                .map((row) => normalize(row.textContent))
-                .filter(Boolean);
-
-          return {
-            name: title.replace(/\s{2,}/g, " "),
-            description: normalize(card.querySelector(".specview-content")?.textContent || ""),
-            priceLine: normalize(card.querySelector(".custom-price-wrap")?.textContent || ""),
-            originalPriceLine: normalize(card.querySelector(".original-price-wrap")?.textContent || ""),
-            tagTexts: Array.from(card.querySelectorAll(".titleview-tag-wrap span"))
-              .map((node) => normalize(node.textContent))
-              .filter(Boolean),
-            buttonText: normalize(card.querySelector(".bottom-button-border-wrap")?.textContent || ""),
-            detailLines: fallbackDetailLines,
-          };
-        })
-        .filter(Boolean);
-    });
-
-    const plans = rawPlans
-      .map((item) => {
-        const currentAmount = Number(item.priceLine.match(/([0-9]+(?:\.[0-9]+)?)/)?.[1]);
-        const originalAmount = Number(item.originalPriceLine.match(/([0-9]+(?:\.[0-9]+)?)/)?.[1]);
-        return asPlan({
-          name: item.name,
-          currentPriceText: Number.isFinite(currentAmount) ? `¥${formatAmount(currentAmount)}/月` : item.priceLine,
-          currentPrice: Number.isFinite(currentAmount) ? currentAmount : null,
-          originalPriceText:
-            Number.isFinite(originalAmount) && originalAmount > currentAmount ? `¥${formatAmount(originalAmount)}/月` : null,
-          originalPrice: Number.isFinite(originalAmount) ? originalAmount : null,
-          unit: "月",
-          notes: [...item.tagTexts, item.buttonText].filter(Boolean).join("；"),
-          serviceDetails: [item.description, ...item.detailLines],
-        });
-      })
-      .filter((plan) => plan.name && plan.currentPriceText);
-
-    if (plans.length === 0) {
-      throw new Error("Unable to parse JD Cloud coding plan cards");
-    }
-
-    return {
-      provider: PROVIDER_IDS.JDCLOUD,
-      sourceUrls: [pageUrl],
-      fetchedAt: new Date().toISOString(),
-      plans: dedupePlans(plans),
-    };
-  } finally {
-    await browser.close();
+  const html = await fetchText(pageUrl);
+  const plans = parseJdCloudCodingPlansFromPageHtml(html);
+  if (plans.length === 0) {
+    throw new Error("Unable to parse JD Cloud coding plan cards from page HTML");
   }
+
+  return {
+    provider: PROVIDER_IDS.JDCLOUD,
+    sourceUrls: [pageUrl],
+    fetchedAt: new Date().toISOString(),
+    plans,
+  };
 }
 
 async function parseKwaikatCodingPlans() {
@@ -2134,6 +2096,27 @@ function parseInfiniPlanFromBundle(bundleText, tier) {
   });
 }
 
+function extractInfiniRouteChunkUrls(mainScriptText, mainScriptUrl) {
+  const resolveChunkUrl = (chunkPath) => {
+    if (/^assets\//i.test(chunkPath)) {
+      return new URL(`../../${chunkPath}`, mainScriptUrl).toString();
+    }
+    return absoluteUrl(chunkPath, mainScriptUrl);
+  };
+  const routeMatch = String(mainScriptText || "").match(
+    /path:"platform\/ai",name:"platformAi",component:\(\)=>mt\(\(\(\)=>import\("\.\/([^"]+)"\)\),\[([^\]]+)\]\)/,
+  );
+  if (!routeMatch) {
+    return [];
+  }
+
+  const primaryChunkUrl = resolveChunkUrl(routeMatch[1]);
+  const preloadChunkUrls = [...routeMatch[2].matchAll(/"([^"]+\.js)"/g)]
+    .map((match) => resolveChunkUrl(match[1]));
+
+  return unique([primaryChunkUrl, ...preloadChunkUrls]);
+}
+
 function parseInfiniServiceDetailsByTier(bundleText) {
   const detailsByTier = new Map();
   const liteMarker = bundleText.indexOf("Infini Coding Lite");
@@ -2153,7 +2136,7 @@ function parseInfiniServiceDetailsByTier(bundleText) {
     const blockEnd = titleMatches[index + 1]?.index ?? section.length;
     const blockText = section.slice(blockStart, blockEnd);
     const title = normalizeText(match[1]);
-    const items = [...blockText.matchAll(/class:"feature-item[^"]*"}[\s\S]{0,260}?U\("span",null,"([^"]+)"\)/g)]
+    const items = [...blockText.matchAll(/class:"feature-item[^"]*"}[\s\S]{0,260}?[A-Z]\("span",null,"([^"]+)"\)/g)]
       .map((item) => normalizeText(item[1]))
       .filter(Boolean);
     const details = normalizeServiceDetails([title, ...items]);
@@ -2164,11 +2147,11 @@ function parseInfiniServiceDetailsByTier(bundleText) {
 
   for (const details of blocks) {
     const text = details.join(" ");
-    if (/5,000次\/5小时|30,000次\/7天|60,000次\/1个月|5倍Lite套餐用量/.test(text)) {
+    if (/5,?000次(?:请求)?(?:\/|每)5小时|30,?000次\/7天|60,?000次\/1个月|5倍Lite套餐用量/.test(text)) {
       detailsByTier.set("Pro", details);
       continue;
     }
-    if (/1,000次\/5小时|6,000次\/7天|12,000次\/1个月/.test(text)) {
+    if (/1,?000次(?:请求)?(?:\/|每)5小时|6,?000次\/7天|12,?000次\/1个月/.test(text)) {
       detailsByTier.set("Lite", details);
     }
   }
@@ -2191,19 +2174,14 @@ async function parseInfiniCodingPlans() {
     throw new Error("Unable to locate Infini main script");
   }
   const mainScriptText = await fetchText(mainScriptUrl);
-  const candidateChunkPaths = unique([
-    ...[...mainScriptText.matchAll(/(?:\.\/)?Index\.[0-9a-f]+\.js/gi)].map((match) => match[0].replace(/^\.\//, "")),
-    ...[...mainScriptText.matchAll(/(?:\.\/)?index\.[0-9a-f]+\.js/gi)].map((match) => match[0].replace(/^\.\//, "")),
-    ...[...mainScriptText.matchAll(/\/assets\/js\/(?:Index|index)\.[0-9a-f]+\.js/gi)].map((match) => match[0]),
-  ]);
-  if (candidateChunkPaths.length === 0) {
-    throw new Error("Unable to locate Infini candidate pricing chunks");
+  const candidateChunkUrls = extractInfiniRouteChunkUrls(mainScriptText, mainScriptUrl);
+  if (candidateChunkUrls.length === 0) {
+    throw new Error("Unable to locate Infini platform/ai route chunks");
   }
 
   let selectedChunkUrl = null;
   let selectedPlans = [];
-  for (const chunkPath of candidateChunkPaths.slice(0, 180)) {
-    const chunkUrl = absoluteUrl(chunkPath, mainScriptUrl);
+  for (const chunkUrl of candidateChunkUrls) {
     let chunkText;
     try {
       chunkText = await fetchText(chunkUrl);
@@ -3115,5 +3093,9 @@ module.exports = {
   STALE_PROVIDER_NOTICE,
   buildStaleProviderFallback,
   extractProviderIdFromFailure,
+  extractInfiniRouteChunkUrls,
+  parseInfiniPlanFromBundle,
+  parseInfiniServiceDetailsByTier,
+  parseJdCloudCodingPlansFromPageHtml,
   restoreFailedProvidersFromSnapshot,
 };

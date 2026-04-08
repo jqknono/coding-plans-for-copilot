@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-08T03:05:53.326Z",
+  "generatedAt": "2026-04-08T04:15:12.194Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -524,6 +524,42 @@
       ]
     },
     {
+      "provider": "jdcloud-ai",
+      "sourceUrls": [
+        "https://www.jdcloud.com/cn/pages/codingplan"
+      ],
+      "plans": [
+        {
+          "name": "Coding Plan Lite",
+          "currentPrice": 7.9,
+          "currentPriceText": "¥7.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月",
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求",
+            "模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等",
+            "工具：Claude Code、OpenCode、OpenClaw、Roo Code、Cursor"
+          ]
+        },
+        {
+          "name": "Coding Plan Pro",
+          "currentPrice": 39.9,
+          "currentPriceText": "¥39.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
+            "权益：享受 Lite 套餐的全部能力与权益",
+            "月用量：Lite 版的 5 倍用量"
+          ]
+        }
+      ]
+    },
+    {
       "provider": "kwaikat-ai",
       "sourceUrls": [
         "https://www.streamlake.com/marketing/coding-plan",
@@ -746,6 +782,48 @@
             "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
             "支持的模型: 推荐模型： qwen3.5-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
             "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "infini-ai",
+      "sourceUrls": [
+        "https://cloud.infini-ai.com/platform/ai",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.294f0a65.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.64f0ba2f.js",
+        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
+      ],
+      "plans": [
+        {
+          "name": "Infini Coding Lite",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "暂不可购买",
+          "serviceDetails": [
+            "1000次请求每5小时",
+            "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新...",
+            "当前状态: 暂不可购买"
+          ]
+        },
+        {
+          "name": "Infini Coding Pro",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "暂不可购买",
+          "serviceDetails": [
+            "5000次请求每5小时",
+            "5倍Lite套餐用量",
+            "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新...",
+            "当前状态: 暂不可购买"
           ]
         }
       ]
