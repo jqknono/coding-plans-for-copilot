@@ -304,6 +304,14 @@ test("workflow uses publish crawler command", () => {
   assert.match(workflow, /npm run crawler:run:publish/);
 });
 
+test("workflow migrates discussion labels before verification", () => {
+  const workflow = loadWorkflowText();
+  assert.match(
+    workflow,
+    /verify_discussions:[\s\S]*permissions:[\s\S]*discussions:\s*write[\s\S]*run:\s*npm run crawler:migrate-discussion-labels[\s\S]*run:\s*npm run crawler:verify-discussion-labels/,
+  );
+});
+
 test("cleanup npm script stays in dry-run mode by default", () => {
   const pkg = loadPackageJson();
   assert.equal(
