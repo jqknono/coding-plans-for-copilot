@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-04-07T08:37:39.112Z",
-  "generatedAtBeijing": "2026年4月7日 16:37:39",
-  "sourceGeneratedAt": "2026-04-07T08:37:22.658Z",
-  "sourceGeneratedAtBeijing": "2026年4月7日 16:37:22",
-  "sourceMetricsGeneratedAt": "2026-04-07T08:37:24.012Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月7日 16:37:24",
+  "generatedAt": "2026-04-08T08:32:42.235Z",
+  "generatedAtBeijing": "2026年4月8日 16:32:42",
+  "sourceGeneratedAt": "2026-04-08T08:32:22.447Z",
+  "sourceGeneratedAtBeijing": "2026年4月8日 16:32:22",
+  "sourceMetricsGeneratedAt": "2026-04-08T08:32:23.038Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月8日 16:32:23",
   "summary": {
     "openrouterProviderCount": 75,
-    "metricsProviderCount": 35,
-    "resolvedMetricsProviderCount": 35,
+    "metricsProviderCount": 34,
+    "resolvedMetricsProviderCount": 34,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 5,
-    "heuristicProviderCount": 6,
-    "providersWithPlans": 11,
+    "heuristicProviderCount": 5,
+    "providersWithPlans": 10,
     "pendingCount": 24,
-    "blockedPendingCount": 0,
+    "blockedPendingCount": 1,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -58,7 +58,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/d9fe872fe987e0084e8f9d6c128b25fa.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1344ed388c780739331288d6fca24c29.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -70,58 +70,6 @@
       "termsOfServiceUrl": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0",
       "statusPageUrl": "https://status.alibabacloud.com/",
       "parseMode": "provider-pricing-structured"
-    },
-    {
-      "slug": "cerebras",
-      "openrouterName": "Cerebras",
-      "providerId": null,
-      "plans": [
-        {
-          "name": "官网价格参考",
-          "currentPrice": 50,
-          "currentPriceText": "$50/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "来源: https://www.cerebras.ai/pricing",
-          "serviceDetails": [
-            "The world’s fastest inference – 20x faster than OpenAI and Anthropic",
-            "Community support via Discord",
-            "Self-serve payment starting at just $10",
-            "10x higher rate limits than free tier",
-            "Pricing Inference API access Free",
-            "Access to all Cerebras powered models The world’s fastest inference – 20x faster than OpenAI and Anthropic Community support via Discord get api key Developer"
-          ]
-        },
-        {
-          "name": "官网价格参考 2",
-          "currentPrice": 200,
-          "currentPriceText": "$200/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "The world’s fastest inference – 20x faster than OpenAI and Anthropic",
-            "Community support via Discord",
-            "Self-serve payment starting at just $10",
-            "10x higher rate limits than free tier",
-            "Pricing Inference API access Free",
-            "Access to all Cerebras powered models The world’s fastest inference – 20x faster than OpenAI and Anthropic Community support via Discord get api key Developer"
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://www.cerebras.ai",
-        "https://www.cerebras.ai/pricing"
-      ],
-      "pricingPageUrl": "https://www.cerebras.ai/pricing",
-      "officialWebsiteUrl": "https://www.cerebras.ai",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://www.cerebras.ai/privacy-policy",
-      "termsOfServiceUrl": "https://www.cerebras.ai/terms-of-service",
-      "statusPageUrl": null,
-      "parseMode": "official-website-heuristic"
     },
     {
       "slug": "chutes",
@@ -162,18 +110,18 @@
       "sourceUrls": [
         "https://chutes.ai",
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/start.B7jB9WoN.js",
-        "https://chutes.ai/_app/immutable/entry/app.c0D61zIi.js",
-        "https://chutes.ai/_app/immutable/chunks/UJ2zu0rs.js",
-        "https://chutes.ai/_app/immutable/nodes/0.wm7shroE.js",
+        "https://chutes.ai/_app/immutable/entry/start.CPfUfpdC.js",
+        "https://chutes.ai/_app/immutable/entry/app.BbF4G72o.js",
+        "https://chutes.ai/_app/immutable/chunks/BFXgmNZE.js",
+        "https://chutes.ai/_app/immutable/nodes/0.C9Ffrt4s.js",
         "https://chutes.ai/_app/immutable/chunks/DsnmJJEf.js",
         "https://chutes.ai/_app/immutable/chunks/DEStpq0a.js",
         "https://chutes.ai/_app/immutable/chunks/CWIHRLZS.js",
         "https://chutes.ai/_app/immutable/chunks/BICcWcUb.js",
         "https://chutes.ai/_app/immutable/chunks/DWRPVVOi.js",
-        "https://chutes.ai/_app/immutable/chunks/gTu-NpUq.js",
+        "https://chutes.ai/_app/immutable/chunks/KcMYBZ7e.js",
         "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
-        "https://chutes.ai/_app/immutable/chunks/q-Q3Tas7.js",
+        "https://chutes.ai/_app/immutable/chunks/B_rvoer0.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js"
       ],
       "pricingPageUrl": "https://chutes.ai/pricing",
@@ -559,7 +507,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.210/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.211/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -763,7 +711,7 @@
       "officialWebsiteUrl": "https://akashml.com",
       "pricingPageUrl": "https://akashml.com",
       "reason": "官网价格页探测失败：https://akashml.com/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "ambient",
@@ -869,8 +817,8 @@
       "openrouterName": "Ionstream",
       "providerId": null,
       "officialWebsiteUrl": "https://ionstream.ai",
-      "pricingPageUrl": "https://ionstream.ai",
-      "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
+      "pricingPageUrl": "https://ionstream.ai/pricing",
+      "reason": "官网未发现可解析的套餐价格页",
       "blocked": false
     },
     {
