@@ -9,10 +9,10 @@ on:
   workflow_dispatch:
 
 jobs:
-  crawl-community:
+  crawl:
     runs-on: ubuntu-latest
     permissions:
-      contents: write
+      contents: read
       discussions: write
 
     steps:
@@ -28,6 +28,53 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Preflight COMMUNITY_CRAWLER_TOKEN
+        env:
+          COMMUNITY_CRAWLER_TOKEN: ${{ secrets.COMMUNITY_CRAWLER_TOKEN }}
+        run: |
+          node <<'NODE'
+          const token = process.env.COMMUNITY_CRAWLER_TOKEN || "";
+
+          if (!token) {
+            console.error("[preflight] COMMUNITY_CRAWLER_TOKEN is not configured");
+            process.exit(1);
+          }
+
+          if (/^\s|\s$/.test(token)) {
+            console.error("[preflight] COMMUNITY_CRAWLER_TOKEN has leading or trailing whitespace");
+            process.exit(1);
+          }
+
+          if (
+            (token.startsWith('"') && token.endsWith('"')) ||
+            (token.startsWith("'") && token.endsWith("'"))
+          ) {
+            console.error("[preflight] COMMUNITY_CRAWLER_TOKEN appears to be wrapped in quotes");
+            process.exit(1);
+          }
+
+          const response = await fetch("https://api.github.com/graphql", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ query: "query { viewer { login } }" }),
+          });
+
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok || payload.errors) {
+            const message =
+              payload.errors?.map((error) => error.message).join("; ") ||
+              payload.message ||
+              `HTTP ${response.status}`;
+            console.error(`[preflight] COMMUNITY_CRAWLER_TOKEN validation failed: ${message}`);
+            process.exit(1);
+          }
+
+          console.log(`[preflight] COMMUNITY_CRAWLER_TOKEN authenticated as ${payload.data.viewer.login}`);
+          NODE
+
       - name: Run community crawler
         id: crawler
         run: |
@@ -41,10 +88,108 @@ jobs:
           CODING_PLANS_FOR_COPILOT: ${{ secrets.CODING_PLANS_FOR_COPILOT }}
           COMMUNITY_CRAWLER_TOKEN: ${{ secrets.COMMUNITY_CRAWLER_TOKEN }}
 
+      - name: Upload crawler output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: crawler-output
+          if-no-files-found: warn
+          path: |
+            assets/discussions
+            crawler-fetch.log
+
+  verify_discussions:
+    needs: crawl
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download crawler output
+        uses: actions/download-artifact@v4
+        with:
+          name: crawler-output
+          path: .
+
+      - name: Preflight COMMUNITY_CRAWLER_TOKEN
+        env:
+          COMMUNITY_CRAWLER_TOKEN: ${{ secrets.COMMUNITY_CRAWLER_TOKEN }}
+        run: |
+          node <<'NODE'
+          const token = process.env.COMMUNITY_CRAWLER_TOKEN || "";
+
+          if (!token) {
+            console.error("[preflight] COMMUNITY_CRAWLER_TOKEN is not configured");
+            process.exit(1);
+          }
+
+          if (/^\s|\s$/.test(token)) {
+            console.error("[preflight] COMMUNITY_CRAWLER_TOKEN has leading or trailing whitespace");
+            process.exit(1);
+          }
+
+          if (
+            (token.startsWith('"') && token.endsWith('"')) ||
+            (token.startsWith("'") && token.endsWith("'"))
+          ) {
+            console.error("[preflight] COMMUNITY_CRAWLER_TOKEN appears to be wrapped in quotes");
+            process.exit(1);
+          }
+
+          const response = await fetch("https://api.github.com/graphql", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ query: "query { viewer { login } }" }),
+          });
+
+          const payload = await response.json().catch(() => ({}));
+          if (!response.ok || payload.errors) {
+            const message =
+              payload.errors?.map((error) => error.message).join("; ") ||
+              payload.message ||
+              `HTTP ${response.status}`;
+            console.error(`[preflight] COMMUNITY_CRAWLER_TOKEN validation failed: ${message}`);
+            process.exit(1);
+          }
+
+          console.log(`[preflight] COMMUNITY_CRAWLER_TOKEN authenticated as ${payload.data.viewer.login}`);
+          NODE
+
       - name: Verify crawler discussions
         run: npm run crawler:verify-discussion-labels
         env:
           COMMUNITY_CRAWLER_TOKEN: ${{ secrets.COMMUNITY_CRAWLER_TOKEN }}
+
+  commit_output:
+    needs: verify_discussions
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Download crawler output
+        uses: actions/download-artifact@v4
+        with:
+          name: crawler-output
+          path: .
 
       - name: Commit crawler output
         run: |
