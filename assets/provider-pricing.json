@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-07T08:37:22.658Z",
+  "generatedAt": "2026-04-08T03:05:53.326Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -524,42 +524,6 @@
       ]
     },
     {
-      "provider": "jdcloud-ai",
-      "sourceUrls": [
-        "https://www.jdcloud.com/cn/pages/codingplan"
-      ],
-      "plans": [
-        {
-          "name": "Coding Plan Lite",
-          "currentPrice": 7.9,
-          "currentPriceText": "¥7.9/月",
-          "originalPrice": 40,
-          "originalPriceText": "¥40/月",
-          "unit": "月",
-          "notes": "产品首购；可购1个；未开售，点击预约",
-          "serviceDetails": [
-            "每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求",
-            "模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等",
-            "工具：Claude Code、OpenCode、OpenClaw、Roo Code、Cursor"
-          ]
-        },
-        {
-          "name": "Coding Plan Pro",
-          "currentPrice": 39.9,
-          "currentPriceText": "¥39.9/月",
-          "originalPrice": 200,
-          "originalPriceText": "¥200/月",
-          "unit": "月",
-          "notes": "产品首购；可购1个；未开售 点击预约",
-          "serviceDetails": [
-            "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
-            "权益：享受 Lite 套餐的全部能力与权益",
-            "月用量： Lite 版的 5 倍用量"
-          ]
-        }
-      ]
-    },
-    {
       "provider": "kwaikat-ai",
       "sourceUrls": [
         "https://www.streamlake.com/marketing/coding-plan",
@@ -748,7 +712,7 @@
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/d9fe872fe987e0084e8f9d6c128b25fa.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1344ed388c780739331288d6fca24c29.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -977,6 +941,44 @@
       ]
     },
     {
+      "provider": "jdcloud-ai",
+      "sourceUrls": [
+        "https://www.jdcloud.com/cn/pages/codingplan"
+      ],
+      "plans": [
+        {
+          "name": "Coding Plan Lite",
+          "currentPrice": 7.9,
+          "currentPriceText": "¥7.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月",
+          "unit": "月",
+          "notes": "产品首购；可购1个；未开售，点击预约",
+          "serviceDetails": [
+            "每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求",
+            "模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等",
+            "工具：Claude Code、OpenCode、OpenClaw、Roo Code、Cursor"
+          ]
+        },
+        {
+          "name": "Coding Plan Pro",
+          "currentPrice": 39.9,
+          "currentPriceText": "¥39.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
+          "unit": "月",
+          "notes": "产品首购；可购1个；未开售 点击预约",
+          "serviceDetails": [
+            "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
+            "权益：享受 Lite 套餐的全部能力与权益",
+            "月用量： Lite 版的 5 倍用量"
+          ]
+        }
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: Task timed out after 30000ms"
+    },
+    {
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
@@ -1017,6 +1019,7 @@
     }
   ],
   "failures": [
+    "jdcloud-ai: Task timed out after 30000ms",
     "infini-ai: Task timed out after 30000ms"
   ]
 }
