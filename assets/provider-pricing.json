@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-08T08:32:22.447Z",
+  "generatedAt": "2026-04-09T03:05:32.437Z",
   "providers": [
     {
       "provider": "zhipu-ai",
@@ -61,7 +61,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BrQNsqmd.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DVPaitGc.js"
       ],
       "plans": [
         {
@@ -74,11 +74,7 @@
           "notes": "试用计划",
           "serviceDetails": [
             "会员等级: 免费试用",
-            "体验 Agent 功能",
-            "跨设备同步使用",
-            "搜索实时资讯",
-            "理解图片与文档",
-            "生成代码与数据分析"
+            "Kimi Code 试用套餐权益"
           ]
         },
         {
@@ -91,12 +87,7 @@
           "notes": null,
           "serviceDetails": [
             "会员等级: 基础会员",
-            "更多 Agent 额度",
-            "Agent 多任务并行",
-            "Agent 4 倍速优先用",
-            "K2.5 提速并提升额度",
-            "PPT 创意视觉 x Nano Banana",
-            "Kimi Code 可调用"
+            "Kimi Code 月度订阅权益"
           ]
         },
         {
@@ -109,15 +100,7 @@
           "notes": null,
           "serviceDetails": [
             "会员等级: 进阶会员",
-            "Moderato 权益基础上",
-            "2 倍 Agent 额度",
-            "2 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 5 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
+            "Kimi Code 月度订阅权益"
           ]
         },
         {
@@ -130,17 +113,7 @@
           "notes": null,
           "serviceDetails": [
             "会员等级: 高级会员",
-            "Moderato 权益基础上",
-            "5 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
-            "5 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 15 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
+            "Kimi Code 月度订阅权益"
           ]
         },
         {
@@ -153,17 +126,7 @@
           "notes": null,
           "serviceDetails": [
             "会员等级: 旗舰会员",
-            "Moderato 权益基础上",
-            "10 倍 Agent 额度",
-            "2 倍 Agent 任务并行",
-            "高峰时段获得优先回复",
-            "10 倍 K2.5 模型使用额度",
-            "无限 PPT 创意视觉 x Nano Banana",
-            "Kimi Code 30 倍额度",
-            "专属助理 一键部署 Kimi Claw",
-            "实验性功能 Agent 集群：",
-            "多 Agent 并行，数倍生产力",
-            "适用海量搜索、长文写作、批量处理"
+            "Kimi Code 月度订阅权益"
           ]
         }
       ]
@@ -182,7 +145,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥3.9/月；次月迭代版价格与支持模型不变，流控将改为 5 小时/周/月请求次数",
+          "notes": "首购优惠：¥3.9/月",
           "serviceDetails": [
             "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash",
             "日 Tokens 上限: 2,000 万 tokens/日",
@@ -197,7 +160,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥7.9/月；次月迭代版价格与支持模型不变，流控将改为 5 小时/周/月请求次数",
+          "notes": "首购优惠：¥7.9/月",
           "serviceDetails": [
             "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash、GLM-5、MiniMax-M2.5、Kimi-K2.5",
             "日 Tokens 上限: 1,000 万 tokens/日",
@@ -212,7 +175,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥39.9/月；次月迭代版价格与支持模型不变，流控将改为 5 小时/周/月请求次数",
+          "notes": "首购优惠：¥39.9/月",
           "serviceDetails": [
             "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash、GLM-5、MiniMax-M2.5、Kimi-K2.5",
             "日 Tokens 上限: 5,000 万 tokens/日",
@@ -764,8 +727,7 @@
           "serviceDetails": [
             "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
             "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
-            "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
-            "状态: Lite 基础套餐将停止接受新购订单。已购买用户的使用、续费及套餐升级权益保持不变"
+            "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。"
           ]
         },
         {
@@ -780,7 +742,7 @@
             "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
             "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
             "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
-            "支持的模型: 推荐模型： qwen3.5-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
+            "支持的模型: 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
             "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
           ]
         }
