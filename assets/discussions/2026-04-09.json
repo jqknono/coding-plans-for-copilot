@@ -1,0 +1,221 @@
+{
+  "date": "2026-04-09",
+  "generatedAt": "2026-04-09T06:43:15.014Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 58,
+    "postsAfterKeywordFilter": 10,
+    "relevantPosts": 6,
+    "discussionsCreated": 6,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "百度千帆": 1,
+      "minimax": 1,
+      "京东": 1,
+      "GitHub Copilot": 1,
+      "qwen3.6 plus": 1,
+      "阿里云": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1204625",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204625",
+      "title": "百度千帆 coding plan 上新模型了",
+      "content": "模型名叫： ERNIE-4.5-Turbo-20260402 不知道为啥不上 5.0",
+      "author": "lynn1su",
+      "createdAt": "2026-04-09T06:38:21.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "百度千帆",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户报告百度千帆 coding plan 新增 ERNIE-4.5-Turbo-20260402 模型，并质疑为何未上线 5.0 版本。",
+        "topics": [
+          "新模型",
+          "套餐对比",
+          "版本问题"
+        ],
+        "planMentioned": "百度千帆 coding plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/49",
+      "analyzedAt": "2026-04-09T06:49:34.645Z"
+    },
+    {
+      "id": "v2ex-1204621",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204621",
+      "title": "大家现在都用啥 vibecoding 工具？",
+      "content": "我之前一直在用免费的 anti-gravity 但是最近老是 high traffic ，写到一半给我断开。 codex 也有在用，但是只有 mac 上面好用，win 上面很难挂上梯子。 最近研究了一下中转站+claudecode ，发现中转站真的全都很恶心啊，要么死慢要么死贵，我实验了两个中转站，一个 2 分钟给我吐了 70 个 token ，慢死了，还有一个速度还可以，但是改了一个 bug 对话了 2 次 就花了我 3 块钱，太贵了。 今天中午试了一下 minimax + claudecode 搭配使用 ，效果还行，关键是价格和给的用量还是挺实惠的。27 一个月正常用够了。而且还能国内直连，不用开 TUN ，他在编码的时候我还能刷刷抖音。 有没有大佬推荐一下 便宜好用的 vibecoding 软件/服务搭配？ 我觉得一个月价格 20 多还行，当然免费就更好啦",
+      "author": "kasusa",
+      "createdAt": "2026-04-09T06:27:04.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "minimax",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "User shares experience with minimax + claudecode combo, praising its affordability (27/month) and domestic connectivity, seeking cheaper alternatives under 20/month.",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "体验卡",
+          "订阅",
+          "免费额度"
+        ],
+        "planMentioned": "minimax + claudecode",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/50",
+      "analyzedAt": "2026-04-09T06:49:38.474Z"
+    },
+    {
+      "id": "v2ex-1204606",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204606",
+      "title": "京东的 coding plan 限速太严重了，想买的慎重",
+      "content": "上个月月底看到京东也推出了 coding plan ，而且支持 GLM 5 ，首月 7.9 ，用量也很大，每五小时 1200 次请求，一个月总 18000 次请求，看起来不要太香。 于是我赶紧抢了一个，刚开通第一天，就频繁 429 rpm limit ，基本上每个请求都在 429 ，根本无法正常使用。 提了个工单，技术人员回复说是因为刚推出，用的人太多了，负载太高，他们已经紧急扩容了，让我再试试。 提完工单后几天确实没有 429 了，但是也就撑了几天，现在确实不报 429 了，开始频繁报 400 Decode server is overloaded ，也是基本正常几个请求就会出现一次。 429 都还好，Claude Code 会自动延时后重试，400 Claude Code 就直接终止会话了…… 另外，即使不出现 429 或者 400 ，这个套餐用量也是不可能用完的，因为响应速度非常慢，慢到令人发指……",
+      "author": "admin948",
+      "createdAt": "2026-04-09T05:43:36.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "京东",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享了京东推出的支持GLM 5的coding plan体验，初期因限速（429/400错误）和响应缓慢导致使用困难，尽管技术人员扩容后问题部分缓解，但服务质量仍存在严重问题。",
+        "topics": [
+          "定价",
+          "429",
+          "400错误",
+          "服务质量",
+          "GLM 5"
+        ],
+        "planMentioned": "京东 coding plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/51",
+      "analyzedAt": "2026-04-09T06:49:43.921Z"
+    },
+    {
+      "id": "v2ex-1204577",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204577",
+      "title": "copilot 用不了求助",
+      "content": "我 copilot 用不了，我之前是 free ，后面转 copilot pro 。 我 github 的 Licensing 个人信息里面 Current Copilot plan 都能看到 copilot pro ，支付历史也能看到账单信息。 但是 copilot setting 页面就是啥都没有，不知道啥原因。 我后面换小号去开 copilot pro 支付，结果还被封了。咋解决啊",
+      "author": "xuecat",
+      "createdAt": "2026-04-09T04:30:01.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "GitHub Copilot",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户报告 GitHub Copilot Pro 订阅无法使用，尽管 GitHub 个人信息和支付记录显示已购买 Pro 计划，但设置页面空白且新账户尝试被封号。",
+        "topics": [
+          "Copilot",
+          "套餐",
+          "支付",
+          "封号",
+          "问题解决"
+        ],
+        "planMentioned": "Copilot Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/52",
+      "analyzedAt": "2026-04-09T06:49:48.704Z"
+    },
+    {
+      "id": "v2ex-1204568",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204568",
+      "title": "昨晚 glm plan 跑到上限了按量付费用了下 qwen3.6 plus，感觉还行",
+      "content": "写的是一个模仿 jetpack compose 的写法的 ui api ，但是底层使用另一套绘制引擎，我让 qwen 写的就是类 compose api 到这个特殊绘制引擎中间的布局计算和对绘制引擎的调用代码，效果不错，高于 glm4.7 低于 glm5.1 。 不知道是不是 qwen 定价比较便宜的原因，一个小时只跑了 10 块钱的 token ，工具用的 claude code 。",
+      "author": "defaw",
+      "createdAt": "2026-04-09T04:04:39.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "qwen3.6 plus",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户提到超过GLM套餐上限后切换到Qwen 3.6 Plus的按量付费模式，使用token成本和性能对比，表达中性态度。",
+        "topics": [
+          "定价",
+          "套餐",
+          "体验卡",
+          "故障排查"
+        ],
+        "planMentioned": "qwen3.6 plus",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/53",
+      "analyzedAt": "2026-04-09T06:49:51.501Z"
+    },
+    {
+      "id": "v2ex-1204541",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204541",
+      "title": "阿里云 Coding Plan 新增了 qwen3.6-plus 模型",
+      "content": "刚发现 Coding Plan 的可用模型列表更新了 qwen3.6-plus 。 顺手写了几个 prompt 测了下，效果确实不错。有在用这个套餐的 V 友可以切过去试试水。",
+      "author": "jonsmith",
+      "createdAt": "2026-04-09T03:07:42.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里云",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享阿里云 Coding Plan 新增 qwen3.6-plus 模型，并测试了其性能，推荐其他用户尝试。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "qwen3.6-plus",
+          "阿里云",
+          "模型更新"
+        ],
+        "planMentioned": "qwen3.6-plus",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/54",
+      "analyzedAt": "2026-04-09T06:49:56.302Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → failed",
+    "linuxdo: https://linux.do/latest.json → failed"
+  ]
+}
