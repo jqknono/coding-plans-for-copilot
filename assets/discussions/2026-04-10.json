@@ -1,0 +1,199 @@
+{
+  "date": "2026-04-10",
+  "generatedAt": "2026-04-10T06:47:53.967Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 61,
+    "postsAfterKeywordFilter": 10,
+    "relevantPosts": 5,
+    "discussionsCreated": 4,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Claude": 1,
+      "阿里、腾讯": 1,
+      "Codex": 1,
+      "智谱": 1,
+      "阿里云": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1204890",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204890",
+      "title": "CLAUDE API FREE $10",
+      "content": "充 2 美元，大概能用出官方 10 美元的量——这是我做的 Claude API 中转 aicoding.sh 目前的实际情况，跟大家把账算明白。 原理是号池模式，余额按官方价的 0.19 折扣消耗。简单说就是你花 1 块钱能干 5 块钱的活。极端情况下号池资源紧张，比例会降到充 2 刀约等于 6 刀额度，但说实话这个价格放在哪都不亏。 我自己做这个的初衷就是嫌每次用 Claude Code 还得挂代理太烦了。现在国内直连，终端里一行 export 就能跑： export ANTHROPIC_BASE_URL=\" https://aicoding.sh \" 按量计费，没有包月，用多少扣多少，适合用量不固定的人。不想花冤枉钱的可以先试试 ，新人加社群送 10 美元体验额度，够正经写几个项目了。 详细看这里： https://aicoding.sh",
+      "author": "aicodingsh",
+      "createdAt": "2026-04-10T06:28:55.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "帖子介绍通过aicoding.sh中转获得Claude API免费$10额度的方案，强调成本效益高且无需代理，适合用量不固定的用户。",
+        "topics": [
+          "定价",
+          "Claude",
+          "套餐对比",
+          "体验卡",
+          "折扣"
+        ],
+        "planMentioned": "Claude API",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/55",
+      "analyzedAt": "2026-04-10T06:56:48.459Z"
+    },
+    {
+      "id": "v2ex-1204882",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204882",
+      "title": "￥ 10 出售自动化获取阿里、腾讯 coding plan 用量的方法和脚本",
+      "content": "提供自动化获取阿里、腾讯 coding plan 用量的方法和脚本，官方无 api ，需要通过浏览器发请求，我只是将这个过程自动化了，之后浏览器可以开着用量页面放在后台 多人拼车的时候可以方便的看到用量 https://4.shenhongfei.com:4258/files/share/plan-usage.png?view=1 https://4.shenhongfei.com:4258/files/share/plan-usage.tx.png?view=1 https://4.shenhongfei.com:4258/files/share/plan-usage.ali.png?view=1 api demo: https://4.shenhongfei.com:4258/api/tx-plan 购买链接: https://www.goofish.com/item?id=1041318558317 或者 +v (base64 解码): MTM3NTcxNDQwMTg=",
+      "author": "SHF",
+      "createdAt": "2026-04-10T06:18:01.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "阿里、腾讯",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户分享了自动化获取阿里云和腾讯云 coding plan 用量的脚本方法，通过浏览器自动化请求来监控用量，提供API演示和购买链接。",
+        "topics": [
+          "用量",
+          "自动化",
+          "API",
+          "阿里云",
+          "腾讯云",
+          "脚本"
+        ],
+        "planMentioned": "阿里云 coding plan, 腾讯云 coding plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-10T06:56:53.462Z"
+    },
+    {
+      "id": "v2ex-1204877",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204877",
+      "title": "Codex 套餐充值，想办个全币种信用卡",
+      "content": "Codex 额度用完了，购买 plus 需要信用卡。想着那就办个全币种信用卡，估计以后也用得着。 大概调调研了下： 1 、Visa 和 MasterCard 好像前者美洲用得更多，后者欧洲更普及。两者区别不大吧？ 2 、对于银行，搜了下有推荐四大行，也有推荐招行，有啥区别吗？ 3 、或者大佬们有其他充值途径吗？",
+      "author": "rickyzz",
+      "createdAt": "2026-04-10T06:10:25.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户讨论Codex计划额度用尽后的充值方式，考虑办理全币种信用卡以应对未来需求，并询问信用卡类型和银行选择的建议。",
+        "topics": [
+          "定价",
+          "套餐充值",
+          "信用卡",
+          "银行",
+          "充值途径"
+        ],
+        "planMentioned": "Codex Plus",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/57",
+      "analyzedAt": "2026-04-10T06:57:00.682Z"
+    },
+    {
+      "id": "v2ex-1204860",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204860",
+      "title": "智谱又能退款了",
+      "content": "https://zhipu-ai.feishu.cn/share/base/form/shrcn8hoW11cnI0PRd7H5VEd9Kc 上了三次当, 这次说什么都不再定了, 完全不能用. 根据我的有限阅历, 国产 lite 套餐没几个靠谱, Pro 可能存在少量能用. 编码套餐汇总: https://coding-plans.jqknono.com 编码套餐讨论汇总: https://github.com/jqknono/coding-plans-for-copilot/discussions",
+      "author": "jqknono",
+      "createdAt": "2026-04-10T05:13:01.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "智谱",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户在抱怨智谱AI的编码套餐服务，表示已经退款三次，完全不能用，并表示不会再订阅。用户还提到根据其经验，国产lite套餐大多不靠谱，Pro可能少量能用。",
+        "topics": [
+          "退款",
+          "智谱",
+          "套餐",
+          "编码套餐",
+          "国产",
+          "体验差",
+          "故障"
+        ],
+        "planMentioned": "lite/Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/58",
+      "analyzedAt": "2026-04-10T06:57:06.605Z"
+    },
+    {
+      "id": "v2ex-1204801",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204801",
+      "title": "老哥们，阿里云的 coding plan 现在哪个模型写代码体验比较好呢？",
+      "content": "pro 套餐",
+      "author": "abc0123xyz",
+      "createdAt": "2026-04-10T02:22:44.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里云",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.6,
+        "summary": "用户询问阿里云 Pro 套餐中哪个模型在写代码体验更好。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "模型",
+          "体验"
+        ],
+        "planMentioned": "Pro 套餐",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/59",
+      "analyzedAt": "2026-04-10T06:57:09.507Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → failed",
+    "linuxdo: https://linux.do/latest.json → failed",
+    "analysis failed for v2ex-1204897: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1204876: LLM returned no choices (response keys: error)",
+    "analysis failed for v2ex-1204856: LLM returned no choices (response keys: error)",
+    "analysis failed for v2ex-1204764: Unexpected end of JSON input",
+    "analysis failed for v2ex-1204716: The operation was aborted due to timeout"
+  ]
+}
