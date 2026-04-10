@@ -1,0 +1,131 @@
+{
+  "date": "2026-04-08",
+  "generatedAt": "2026-04-08T07:23:48.750Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 57,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Cursor": 1,
+      "GLM": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1204288",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204288",
+      "title": "[求助] Cursor Pro 续费咨询：月均 8 亿+ Token 消耗，老用户如何平滑过渡？",
+      "content": "各位大佬好，我的 Cursor Pro 个人年费套餐（ 2025 年 5 月购入，含 Auto 无限流量）下个月就要到期了。 目前作为重度开发者，我的月均 Token 消耗量非常惊人。查了一下后台数据，上个月的总量接近 8.4 亿。数据如下： 项目 (Item) Token 用量 (Tokens) 费用 (Cost) 套餐状态 Auto 模式 8.3 亿 $0.00 Included kimi-k2-5 70.9 万 $0.00 Included MiniMax-M2.7 36.2 万 $0.00 Included 总计 (Total) 8.4 亿 Free Pro 覆盖 想请教大家： 现在的新版 Pro 套餐（$20/mo ）对 Auto 模式是否有隐含的速率限制（ Rate Limit ）或阶梯限速？ 像我这种 8 亿+ Token 的量，如果续费新版，是否需要上 Pro+ 或者 Business 套餐才能跑得动？ 2026 年现在的政策，是否还有这种“纯无限”的模式，还是都改成额度扣费了？ 感谢各位大佬指路！",
+      "author": "fanfan123321",
+      "createdAt": "2026-04-08T05:28:07.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Cursor",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "User seeks advice on transitioning from old Cursor Pro plan to new one due to high token consumption, asking about rate limits, required plan tiers, and policy changes.",
+        "topics": [
+          "续费咨询",
+          "Token 消耗",
+          "套餐状态",
+          "隐含的速率限制",
+          "Pro+ 套餐",
+          "免费额度"
+        ],
+        "planMentioned": "Cursor Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/46",
+      "analyzedAt": "2026-04-08T07:27:20.349Z"
+    },
+    {
+      "id": "v2ex-1204287",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204287",
+      "title": "国际站的 GLM Coding Plan 不限购",
+      "content": "GLM Coding Plan 国内实在是抢不到了，闲鱼的牛牛都找了，也没抢到。 实在没办法，最后去国际站买了，贵是贵点儿，但是不用抢。 除了价格，其他看起来和国内站都是一样的，连 debuff 时间都是一样的。 算了下，Max 季包和所有年包还是可以买的，其他月包季包还是略贵，无视价格的佬可以闭眼入。 年包 7 折，用推荐码再打 9 折，推荐人得实付的 10%，用我推荐码的话，可以人肉返 5%。 算下来 0.7*0.9*0.95=59.85%，基本就是 6 折，价格能看了。 欢迎使用，互惠互助，邀请链接为 https://z.ai/subscribe?ic=NIVVF6VJAQ 。 下单完加绿泡泡（ base64: TWF5TGlu ）凭订单截图返还实付金额 5%。 类型 国内站价格 国际站价格（汇率 6.85 ） Lite 月包 49 * 0.95 = 46.55 10 * 6.85 * 0.9 * 0.95 = 58.568 Pro 月包 149 * 0.95 = 141.55 30 * 6.85 * 0.9 * 0.95 = 175.703 Max 月包 469 * 0.95 ",
+      "author": "zivn",
+      "createdAt": "2026-04-08T05:23:48.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "GLM",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.92,
+        "summary": "用户分享了使用国际站GLM编程计划的购买体验，指出价格与国内站基本相同，推荐使用优惠码以获得更优惠，整体态度积极。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "推荐码",
+          "使用体验",
+          "价格优惠"
+        ],
+        "planMentioned": "GLM Coding Plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/47",
+      "analyzedAt": "2026-04-08T07:27:27.825Z"
+    },
+    {
+      "id": "v2ex-1204266",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1204266",
+      "title": "claude 降智， gpt 不说人话，上下文注意力问题。优化工作流",
+      "content": "1.最近这段时间 claude 降智，opus 肉眼可见的没发布时的好。 看他的 thinking ，会在一些逻辑上来回打转消耗 token ，实现经常偷工减料，很少有一次成型的。于是转战 codex 。 2.连续用了 1 周的 codex ，写代码确实有 opus 当初刚发布的水平。但是这个说话真的太冲了。聊不了一点，因为这种八股文我会被带沟里去。 3.我一直有个问题没有得到妥善的解决，尝试过不少工具来做。就是写计划，执行。这个最简单的工作流，在自然的探索式，一对一的 coding 是没问题的。但是我想多 agent 开发，而且经常开发到一半发现有个通用功能需要实现，就要跳出来先去完成通用功能，再来完成具体功能。然后这个问题我就脑子过载了。在多个工作流里面，我就会忘了哪个 agent 在做什么。 我尝试过使用 vibe-kanban ，github ，等工具。这类工具确实能解决多 agent 的问题。但是反复调整 plan 这一件事就非常讨厌，现在的工具都是通过 mcp 去 api 修复，会占用大量的 token 。我其实对这个事非常膈应。那有什么办法以 md 为中心，还能多 age",
+      "author": "sampeng",
+      "createdAt": "2026-04-08T03:50:54.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": "tool",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户讨论使用 Opus 和 Codex 等 AI 编码助手优化多 agent 工作流，尝试通过 Obsidian 构建计划管理系统，解决代码生成与计划调整的效率问题。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "工作流",
+          "多 agent",
+          "Obsidian",
+          "代码生成",
+          "评审"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/48",
+      "analyzedAt": "2026-04-08T07:27:34.830Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → failed",
+    "linuxdo: https://linux.do/latest.json → failed",
+    "analysis failed for v2ex-1204262: The operation was aborted due to timeout"
+  ]
+}
