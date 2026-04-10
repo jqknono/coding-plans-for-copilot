@@ -1,57 +1,299 @@
 {
-  "generatedAt": "2026-04-10T08:37:47.008Z",
+  "generatedAt": "2026-04-10T16:23:10.320Z",
   "providers": [
     {
-      "provider": "zhipu-ai",
+      "provider": "aliyun-ai",
       "sourceUrls": [
-        "https://bigmodel.cn/glm-coding",
-        "https://docs.bigmodel.cn/cn/coding-plan/overview"
+        "https://www.aliyun.com/benefit/scene/codingplan",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1344ed388c780739331288d6fca24c29.js",
+        "https://t.aliyun.com/abs/promotion/queryPrice",
+        "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
       "plans": [
         {
-          "name": "GLM Coding Lite",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": null,
+          "name": "Coding Plan Lite",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
+          "originalPrice": 40,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "下个月度续费金额：¥49",
+          "notes": null,
           "serviceDetails": [
-            "3x Claude Pro 用量额度",
-            "适合小型 Repo 轻量级迭代",
-            "逐步开放最新旗舰模型及功能",
-            "支持 Claude Code 等 20+ 编程工具"
+            "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
+            "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
+            "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。"
           ]
         },
         {
-          "name": "GLM Coding Pro",
-          "currentPrice": 149,
-          "currentPriceText": "¥149/月",
+          "name": "Coding Plan Pro",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
+          "originalPrice": 200,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
+            "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
+            "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
+            "支持的模型: 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
+            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "baidu-qianfan-ai",
+      "sourceUrls": [
+        "https://cloud.baidu.com/product/codingplan.html"
+      ],
+      "plans": [
+        {
+          "name": "Coding Plan Lite",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "下个月度续费金额：¥149",
+          "notes": null,
           "serviceDetails": [
-            "5x Lite 用量额度 + Lite 全量权益",
-            "适合中型 Repo 日常开发",
-            "优先体验最新旗舰模型及功能",
-            "覆盖多款精选 MCP 工具",
-            "更快生成速度"
+            "用量限制: 最多18000次请求",
+            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
+            "适配工具: Claude Code等AI开发工具"
           ]
         },
         {
-          "name": "GLM Coding Max",
-          "currentPrice": 469,
-          "currentPriceText": "¥469/月",
+          "name": "Coding Plan Pro",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "下个月度续费金额：¥469",
+          "notes": null,
           "serviceDetails": [
-            "20x Lite 用量额度 + Pro 全量权益",
-            "适合高阶用户中大型 Repo 深度开发",
-            "首发接入最新旗舰模型及功能",
-            "高峰期专属资源优先保障"
+            "用量限制: 最多90000次请求",
+            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
+            "适配工具: Claude Code等AI开发工具"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "compshare-ai",
+      "sourceUrls": [
+        "https://www.compshare.cn/docs/modelverse/package_plan/package"
+      ],
+      "plans": [
+        {
+          "name": "包月畅享包 Lite",
+          "currentPrice": 49.9,
+          "currentPriceText": "¥49.9/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计费模式/有效期: 包月计费 (30天)",
+            "积分额度: 7,000,000 积分/日",
+            "核心权益: 每日刷新，适合日常低频使用"
+          ]
+        },
+        {
+          "name": "包月畅享包 Plus",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计费模式/有效期: 包月计费 (30天)",
+            "积分额度: 28,000,000 积分/日",
+            "核心权益: 每日刷新，适合高频开发者"
+          ]
+        },
+        {
+          "name": "包月畅享包 Pro",
+          "currentPrice": 499,
+          "currentPriceText": "¥499/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计费模式/有效期: 包月计费 (30天)",
+            "积分额度: 70,000,000 积分/日",
+            "核心权益: 每日刷新，适合高频开发者"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "github-copilot",
+      "sourceUrls": [
+        "https://github.com/features/copilot/plans"
+      ],
+      "plans": [
+        {
+          "name": "GitHub Copilot Free",
+          "currentPrice": 0,
+          "currentPriceText": "$0/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "个人免费计划",
+          "serviceDetails": [
+            "50 agent mode 或 chat requests/月",
+            "2,000 completions/月",
+            "支持模型: Haiku 4.5、GPT-5 mini 等",
+            "Copilot CLI",
+            "无需信用卡"
+          ]
+        },
+        {
+          "name": "GitHub Copilot Pro",
+          "currentPrice": 10,
+          "currentPriceText": "$10/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "最受欢迎",
+          "serviceDetails": [
+            "300 premium requests/月（可额外购买）",
+            "无限 agent mode 和 chat（GPT-5 mini）",
+            "无限 inline suggestions",
+            "Copilot cloud agent",
+            "Copilot code review",
+            "Claude 和 Codex on GitHub & VS Code",
+            "支持模型: Anthropic、Google、OpenAI 等，含 Opus 4.6"
+          ]
+        },
+        {
+          "name": "GitHub Copilot Pro+",
+          "currentPrice": 39,
+          "currentPriceText": "$39/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "个人最高级计划",
+          "serviceDetails": [
+            "1,500 premium requests/月（可额外购买）",
+            "全部模型访问，含 Claude Opus 4.6 等",
+            "GitHub Spark 访问",
+            "包含 Pro 全部功能"
+          ]
+        },
+        {
+          "name": "GitHub Copilot Business",
+          "currentPrice": 19,
+          "currentPriceText": "$19/月/用户",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月/用户",
+          "notes": "团队计划",
+          "serviceDetails": [
+            "300 premium requests/用户/月（可额外购买）",
+            "无限 agent mode 和 chat（GPT-5 mini）",
+            "无限 inline suggestions",
+            "Copilot cloud agent",
+            "Copilot code review",
+            "Claude 和 Codex on GitHub & VS Code",
+            "用户管理与使用指标",
+            "IP 赔偿与数据隐私",
+            "Copilot CLI"
+          ]
+        },
+        {
+          "name": "GitHub Copilot Enterprise",
+          "currentPrice": 39,
+          "currentPriceText": "$39/月/用户",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月/用户",
+          "notes": "企业计划",
+          "serviceDetails": [
+            "1,000 premium requests/用户/月（可额外购买）",
+            "全部模型访问，含 Claude Opus 4.6 等",
+            "GitHub Spark 访问",
+            "包含 Business 全部功能"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "infini-ai",
+      "sourceUrls": [
+        "https://cloud.infini-ai.com/platform/ai",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.42098b42.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.f1d82619.js",
+        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
+      ],
+      "plans": [
+        {
+          "name": "Infini Coding Lite",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "暂不可购买",
+          "serviceDetails": [
+            "1000次请求每5小时",
+            "支持Minimax、GLM、DeepSeek、Kimi等热门模型，持续上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新...",
+            "当前状态: 暂不可购买"
+          ]
+        },
+        {
+          "name": "Infini Coding Pro",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "暂不可购买",
+          "serviceDetails": [
+            "5000次请求每5小时",
+            "5倍Lite套餐用量",
+            "支持Minimax、GLM、DeepSeek、Kimi等热门模型，持续上新",
+            "适配Claude Code、Cline等主流编程工具，持续更新...",
+            "当前状态: 暂不可购买"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "jdcloud-ai",
+      "sourceUrls": [
+        "https://www.jdcloud.com/cn/pages/codingplan"
+      ],
+      "plans": [
+        {
+          "name": "Coding Plan Lite",
+          "currentPrice": 19.9,
+          "currentPriceText": "¥19.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月",
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求",
+            "模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等",
+            "工具：Claude Code、OpenCode、OpenClaw、Roo Code、Cursor"
+          ]
+        },
+        {
+          "name": "Coding Plan Pro",
+          "currentPrice": 99.9,
+          "currentPriceText": "¥99.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
+            "权益：享受 Lite 套餐的全部能力与权益",
+            "月用量：Lite 版的 5 倍用量"
           ]
         }
       ]
@@ -61,7 +303,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-yrxKnmI-.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-zOOroBsC.js"
       ],
       "plans": [
         {
@@ -132,92 +374,71 @@
       ]
     },
     {
-      "provider": "xfyun-ai",
+      "provider": "kwaikat-ai",
       "sourceUrls": [
-        "https://maas.xfyun.cn/modelSquare",
-        "https://www.xfyun.cn/doc/spark/CodingPlan.html"
+        "https://www.streamlake.com/marketing/coding-plan",
+        "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
+        "https://console.streamlake.com/api/common/describe-product-detail"
       ],
       "plans": [
         {
-          "name": "Astron Coding Plan 入门版",
-          "currentPrice": 19,
-          "currentPriceText": "¥19/月",
-          "originalPrice": null,
+          "name": "KAT Coding Mini",
+          "currentPrice": 29,
+          "currentPriceText": "¥29/月",
+          "originalPrice": 29,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥3.9/月",
+          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V2；覆盖日常编码场景；¥40 Prompts/5小时",
           "serviceDetails": [
-            "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash",
-            "日 Tokens 上限: 2,000 万 tokens/日",
-            "QPS: 20",
-            "支持升级与同档位叠加购买"
+            "适合初次体验者的轻量化选择",
+            "最低成本体验 KAT-Coder-Pro V2",
+            "覆盖日常编码场景",
+            "40 Prompts / 5小时"
           ]
         },
         {
-          "name": "Astron Coding Plan 专业版",
-          "currentPrice": 39,
-          "currentPriceText": "¥39/月",
-          "originalPrice": null,
+          "name": "KAT Coding Starter",
+          "currentPrice": 70,
+          "currentPriceText": "¥70/月",
+          "originalPrice": 70,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥7.9/月",
+          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V2 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
           "serviceDetails": [
-            "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash、GLM-5、MiniMax-M2.5、Kimi-K2.5",
-            "日 Tokens 上限: 1,000 万 tokens/日",
-            "QPS: 5",
-            "支持升级与同档位叠加购买"
+            "适配日常核心开发场景的高效搭档",
+            "由最新旗舰模型 KAT-Coder-Pro V2 驱动",
+            "适配Claude Code等主流编程工具",
+            "100 Prompts / 5小时"
           ]
         },
         {
-          "name": "Astron Coding Plan 高效版",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
-          "originalPrice": null,
+          "name": "KAT Coding Pro",
+          "currentPrice": 140,
+          "currentPriceText": "¥140/月",
+          "originalPrice": 140,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥39.9/月",
+          "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；¥300 Prompts/5小时",
           "serviceDetails": [
-            "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash、GLM-5、MiniMax-M2.5、Kimi-K2.5",
-            "日 Tokens 上限: 5,000 万 tokens/日",
-            "QPS: 20",
-            "支持升级与同档位叠加购买"
-          ]
-        }
-      ]
-    },
-    {
-      "provider": "volcengine-ai",
-      "sourceUrls": [
-        "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.211/index.js"
-      ],
-      "plans": [
-        {
-          "name": "Coding Plan Lite 月套餐",
-          "currentPrice": 9.9,
-          "currentPriceText": "¥9.9/月",
-          "originalPrice": 40,
-          "originalPriceText": "¥40/月（续费价格）",
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "能力: Doubao-Seed-Code 与 DeepSeek-V3.2 驱动",
-            "适配: 适配Claude Code等主流编程工具",
-            "用量: 用量达 Claude Pro 的 3 倍"
+            "驱动复杂架构设计的进阶引擎",
+            "包含Starter套餐全部权益，性能全面提升",
+            "Starter套餐用量的3倍",
+            "300 Prompts / 5小时"
           ]
         },
         {
-          "name": "Coding Plan Pro 月套餐",
-          "currentPrice": 49.9,
-          "currentPriceText": "¥49.9/月",
-          "originalPrice": 200,
-          "originalPriceText": "¥200/月（续费价格）",
+          "name": "KAT Coding Max",
+          "currentPrice": 350,
+          "currentPriceText": "¥350/月",
+          "originalPrice": 350,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；¥1000 Prompts/5小时",
           "serviceDetails": [
-            "能力: 包含lite套餐全部权益",
-            "适配: 满足高阶用户的大规模编程需求",
-            "用量: 用量达 Claude Max（5x）的 3 倍，lite 套餐用量的5倍"
+            "支持全天候高强度开发的旗舰配置",
+            "卓越的跨文件/仓库级代码深度理解",
+            "Pro套餐用量的3倍以上",
+            "1000 Prompts / 5小时"
           ]
         }
       ]
@@ -345,37 +566,26 @@
       ]
     },
     {
-      "provider": "baidu-qianfan-ai",
+      "provider": "opencode",
       "sourceUrls": [
-        "https://cloud.baidu.com/product/codingplan.html"
+        "https://opencode.ai/go",
+        "https://opencode.ai"
       ],
       "plans": [
         {
-          "name": "Coding Plan Lite",
-          "currentPrice": 40,
-          "currentPriceText": "¥40/月",
+          "name": "OpenCode Go",
+          "currentPrice": 10,
+          "currentPriceText": "$10/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "首月 $5",
           "serviceDetails": [
-            "用量限制: 最多18000次请求",
-            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
-            "适配工具: Claude Code等AI开发工具"
-          ]
-        },
-        {
-          "name": "Coding Plan Pro",
-          "currentPrice": 200,
-          "currentPriceText": "¥200/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "用量限制: 最多90000次请求",
-            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
-            "适配工具: Claude Code等AI开发工具"
+            "首月 $5，之后 $10/月",
+            "支持模型: GLM-5、Kimi K2.5、MiMo-V2-Pro、MiMo-V2-Omni、MiniMax M2.5、MiniMax M2.7",
+            "每 5 小时请求数: 1,150~20,000（按模型不同）",
+            "可充值 Credit，随时取消",
+            "适配任何 AI 编程工具"
           ]
         }
       ]
@@ -487,71 +697,38 @@
       ]
     },
     {
-      "provider": "kwaikat-ai",
+      "provider": "volcengine-ai",
       "sourceUrls": [
-        "https://www.streamlake.com/marketing/coding-plan",
-        "https://www.streamlake.com/api/get-kconf-content?key=website_kat_coder_coding_plan&name=platform_web&folder=streamlake",
-        "https://console.streamlake.com/api/common/describe-product-detail"
+        "https://www.volcengine.com/activity/codingplan",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.211/index.js"
       ],
       "plans": [
         {
-          "name": "KAT Coding Mini",
-          "currentPrice": 29,
-          "currentPriceText": "¥29/月",
-          "originalPrice": 29,
-          "originalPriceText": null,
+          "name": "Coding Plan Lite 月套餐",
+          "currentPrice": 9.9,
+          "currentPriceText": "¥9.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月（续费价格）",
           "unit": "月",
-          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V2；覆盖日常编码场景；¥40 Prompts/5小时",
+          "notes": null,
           "serviceDetails": [
-            "适合初次体验者的轻量化选择",
-            "最低成本体验 KAT-Coder-Pro V2",
-            "覆盖日常编码场景",
-            "40 Prompts / 5小时"
+            "能力: Doubao-Seed-Code 与 DeepSeek-V3.2 驱动",
+            "适配: 适配Claude Code等主流编程工具",
+            "用量: 用量达 Claude Pro 的 3 倍"
           ]
         },
         {
-          "name": "KAT Coding Starter",
-          "currentPrice": 70,
-          "currentPriceText": "¥70/月",
-          "originalPrice": 70,
-          "originalPriceText": null,
+          "name": "Coding Plan Pro 月套餐",
+          "currentPrice": 49.9,
+          "currentPriceText": "¥49.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月（续费价格）",
           "unit": "月",
-          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V2 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
+          "notes": null,
           "serviceDetails": [
-            "适配日常核心开发场景的高效搭档",
-            "由最新旗舰模型 KAT-Coder-Pro V2 驱动",
-            "适配Claude Code等主流编程工具",
-            "100 Prompts / 5小时"
-          ]
-        },
-        {
-          "name": "KAT Coding Pro",
-          "currentPrice": 140,
-          "currentPriceText": "¥140/月",
-          "originalPrice": 140,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "驱动复杂架构设计的进阶引擎；包含Starter套餐全部权益，性能全面提升；Starter套餐用量的3倍；¥300 Prompts/5小时",
-          "serviceDetails": [
-            "驱动复杂架构设计的进阶引擎",
-            "包含Starter套餐全部权益，性能全面提升",
-            "Starter套餐用量的3倍",
-            "300 Prompts / 5小时"
-          ]
-        },
-        {
-          "name": "KAT Coding Max",
-          "currentPrice": 350,
-          "currentPriceText": "¥350/月",
-          "originalPrice": 350,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "支持全天候高强度开发的旗舰配置；卓越的跨文件/仓库级代码深度理解；Pro套餐用量的3倍以上；¥1000 Prompts/5小时",
-          "serviceDetails": [
-            "支持全天候高强度开发的旗舰配置",
-            "卓越的跨文件/仓库级代码深度理解",
-            "Pro套餐用量的3倍以上",
-            "1000 Prompts / 5小时"
+            "能力: 包含lite套餐全部权益",
+            "适配: 满足高阶用户的大规模编程需求",
+            "用量: 用量达 Claude Max（5x）的 3 倍，lite 套餐用量的5倍"
           ]
         }
       ]
@@ -622,134 +799,55 @@
       ]
     },
     {
-      "provider": "compshare-ai",
+      "provider": "xfyun-ai",
       "sourceUrls": [
-        "https://www.compshare.cn/docs/modelverse/package_plan/package"
+        "https://maas.xfyun.cn/modelSquare",
+        "https://www.xfyun.cn/doc/spark/CodingPlan.html"
       ],
       "plans": [
         {
-          "name": "包月畅享包 Lite",
-          "currentPrice": 49.9,
-          "currentPriceText": "¥49.9/月",
+          "name": "Astron Coding Plan 入门版",
+          "currentPrice": 19,
+          "currentPriceText": "¥19/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "首购优惠：¥3.9/月",
           "serviceDetails": [
-            "计费模式/有效期: 包月计费 (30天)",
-            "积分额度: 7,000,000 积分/日",
-            "核心权益: 每日刷新，适合日常低频使用"
+            "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash",
+            "日 Tokens 上限: 2,000 万 tokens/日",
+            "QPS: 20",
+            "支持升级与同档位叠加购买"
           ]
         },
         {
-          "name": "包月畅享包 Plus",
+          "name": "Astron Coding Plan 专业版",
+          "currentPrice": 39,
+          "currentPriceText": "¥39/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "首购优惠：¥7.9/月",
+          "serviceDetails": [
+            "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash、GLM-5、MiniMax-M2.5、Kimi-K2.5",
+            "日 Tokens 上限: 1,000 万 tokens/日",
+            "QPS: 5",
+            "支持升级与同档位叠加购买"
+          ]
+        },
+        {
+          "name": "Astron Coding Plan 高效版",
           "currentPrice": 199,
           "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "首购优惠：¥39.9/月",
           "serviceDetails": [
-            "计费模式/有效期: 包月计费 (30天)",
-            "积分额度: 28,000,000 积分/日",
-            "核心权益: 每日刷新，适合高频开发者"
-          ]
-        },
-        {
-          "name": "包月畅享包 Pro",
-          "currentPrice": 499,
-          "currentPriceText": "¥499/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计费模式/有效期: 包月计费 (30天)",
-            "积分额度: 70,000,000 积分/日",
-            "核心权益: 每日刷新，适合高频开发者"
-          ]
-        }
-      ]
-    },
-    {
-      "provider": "aliyun-ai",
-      "sourceUrls": [
-        "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1344ed388c780739331288d6fca24c29.js",
-        "https://t.aliyun.com/abs/promotion/queryPrice",
-        "https://help.aliyun.com/zh/model-studio/coding-plan"
-      ],
-      "plans": [
-        {
-          "name": "Coding Plan Lite",
-          "currentPrice": 40,
-          "currentPriceText": "¥40/月",
-          "originalPrice": 40,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
-            "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
-            "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。"
-          ]
-        },
-        {
-          "name": "Coding Plan Pro",
-          "currentPrice": 200,
-          "currentPriceText": "¥200/月",
-          "originalPrice": 200,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
-            "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
-            "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
-            "支持的模型: 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
-            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
-          ]
-        }
-      ]
-    },
-    {
-      "provider": "infini-ai",
-      "sourceUrls": [
-        "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.42098b42.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.f1d82619.js",
-        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
-      ],
-      "plans": [
-        {
-          "name": "Infini Coding Lite",
-          "currentPrice": 40,
-          "currentPriceText": "¥40/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "暂不可购买",
-          "serviceDetails": [
-            "1000次请求每5小时",
-            "支持Minimax、GLM、DeepSeek、Kimi等热门模型，持续上新",
-            "适配Claude Code、Cline等主流编程工具，持续更新...",
-            "当前状态: 暂不可购买"
-          ]
-        },
-        {
-          "name": "Infini Coding Pro",
-          "currentPrice": 200,
-          "currentPriceText": "¥200/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "暂不可购买",
-          "serviceDetails": [
-            "5000次请求每5小时",
-            "5倍Lite套餐用量",
-            "支持Minimax、GLM、DeepSeek、Kimi等热门模型，持续上新",
-            "适配Claude Code、Cline等主流编程工具，持续更新...",
-            "当前状态: 暂不可购买"
+            "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash、GLM-5、MiniMax-M2.5、Kimi-K2.5",
+            "日 Tokens 上限: 5,000 万 tokens/日",
+            "QPS: 20",
+            "支持升级与同档位叠加购买"
           ]
         }
       ]
@@ -828,118 +926,56 @@
       ]
     },
     {
-      "provider": "opencode",
+      "provider": "zhipu-ai",
       "sourceUrls": [
-        "https://opencode.ai/go",
-        "https://opencode.ai"
+        "https://bigmodel.cn/glm-coding",
+        "https://docs.bigmodel.cn/cn/coding-plan/overview"
       ],
       "plans": [
         {
-          "name": "OpenCode Go",
-          "currentPrice": 10,
-          "currentPriceText": "$10/月",
+          "name": "GLM Coding Lite",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首月 $5",
+          "notes": "下个月度续费金额：¥49",
           "serviceDetails": [
-            "首月 $5，之后 $10/月",
-            "支持模型: GLM-5、Kimi K2.5、MiMo-V2-Pro、MiMo-V2-Omni、MiniMax M2.5、MiniMax M2.7",
-            "每 5 小时请求数: 1,150~20,000（按模型不同）",
-            "可充值 Credit，随时取消",
-            "适配任何 AI 编程工具"
+            "3x Claude Pro 用量额度",
+            "适合小型 Repo 轻量级迭代",
+            "逐步开放最新旗舰模型及功能",
+            "支持 Claude Code 等 20+ 编程工具"
           ]
-        }
-      ]
-    },
-    {
-      "provider": "github-copilot",
-      "sourceUrls": [
-        "https://github.com/features/copilot/plans"
-      ],
-      "plans": [
+        },
         {
-          "name": "GitHub Copilot Free",
-          "currentPrice": 0,
-          "currentPriceText": "$0/月",
+          "name": "GLM Coding Pro",
+          "currentPrice": 149,
+          "currentPriceText": "¥149/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "个人免费计划",
+          "notes": "下个月度续费金额：¥149",
           "serviceDetails": [
-            "50 agent mode 或 chat requests/月",
-            "2,000 completions/月",
-            "支持模型: Haiku 4.5、GPT-5 mini 等",
-            "Copilot CLI",
-            "无需信用卡"
+            "5x Lite 用量额度 + Lite 全量权益",
+            "适合中型 Repo 日常开发",
+            "优先体验最新旗舰模型及功能",
+            "覆盖多款精选 MCP 工具",
+            "更快生成速度"
           ]
         },
         {
-          "name": "GitHub Copilot Pro",
-          "currentPrice": 10,
-          "currentPriceText": "$10/月",
+          "name": "GLM Coding Max",
+          "currentPrice": 469,
+          "currentPriceText": "¥469/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "最受欢迎",
+          "notes": "下个月度续费金额：¥469",
           "serviceDetails": [
-            "300 premium requests/月（可额外购买）",
-            "无限 agent mode 和 chat（GPT-5 mini）",
-            "无限 inline suggestions",
-            "Copilot cloud agent",
-            "Copilot code review",
-            "Claude 和 Codex on GitHub & VS Code",
-            "支持模型: Anthropic、Google、OpenAI 等，含 Opus 4.6"
-          ]
-        },
-        {
-          "name": "GitHub Copilot Pro+",
-          "currentPrice": 39,
-          "currentPriceText": "$39/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "个人最高级计划",
-          "serviceDetails": [
-            "1,500 premium requests/月（可额外购买）",
-            "全部模型访问，含 Claude Opus 4.6 等",
-            "GitHub Spark 访问",
-            "包含 Pro 全部功能"
-          ]
-        },
-        {
-          "name": "GitHub Copilot Business",
-          "currentPrice": 19,
-          "currentPriceText": "$19/月/用户",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月/用户",
-          "notes": "团队计划",
-          "serviceDetails": [
-            "300 premium requests/用户/月（可额外购买）",
-            "无限 agent mode 和 chat（GPT-5 mini）",
-            "无限 inline suggestions",
-            "Copilot cloud agent",
-            "Copilot code review",
-            "Claude 和 Codex on GitHub & VS Code",
-            "用户管理与使用指标",
-            "IP 赔偿与数据隐私",
-            "Copilot CLI"
-          ]
-        },
-        {
-          "name": "GitHub Copilot Enterprise",
-          "currentPrice": 39,
-          "currentPriceText": "$39/月/用户",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月/用户",
-          "notes": "企业计划",
-          "serviceDetails": [
-            "1,000 premium requests/用户/月（可额外购买）",
-            "全部模型访问，含 Claude Opus 4.6 等",
-            "GitHub Spark 访问",
-            "包含 Business 全部功能"
+            "20x Lite 用量额度 + Pro 全量权益",
+            "适合高阶用户中大型 Repo 深度开发",
+            "首发接入最新旗舰模型及功能",
+            "高峰期专属资源优先保障"
           ]
         }
       ]

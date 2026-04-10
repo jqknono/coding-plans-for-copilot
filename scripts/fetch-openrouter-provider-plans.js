@@ -1212,6 +1212,98 @@ function extractSveltePlanObjects(jsText) {
   return results;
 }
 
+function extractChutesTierInfoFromText(plainText) {
+  const text = compactText(plainText);
+  if (!text) {
+    return new Map();
+  }
+
+  const tierNames = ["Base", "Plus", "Pro"];
+  const frontierRequirement =
+    text.match(/Frontier models[^.]{0,260}require a Plus plan or higher\.?/i)?.[0] || null;
+  const tierMap = new Map();
+
+  for (let i = 0; i < tierNames.length; i += 1) {
+    const tier = tierNames[i];
+    const nextTier = tierNames[i + 1] || "Enterprise";
+    const blockRegex = new RegExp(
+      `\\b${tier}\\b([\\s\\S]{0,900}?)(?=\\b${nextTier}\\b|$)`,
+      "i",
+    );
+    const blockMatch = text.match(blockRegex);
+    if (!blockMatch) {
+      continue;
+    }
+
+    const block = blockMatch[1];
+    const nearTierPriceMatch = text.match(
+      new RegExp(`\\b${tier}\\b[\\s\\S]{0,80}?\\$\\s*([0-9]+(?:\\.[0-9]+)?)`, "i"),
+    );
+    const fallbackPriceMatch = block.match(/\$\s*([0-9]+(?:\.[0-9]+)?)/i);
+    const price = Number.parseFloat((nearTierPriceMatch?.[1] || fallbackPriceMatch?.[1] || ""));
+    const details = [];
+
+    const valueMatch = block.match(/([0-9]+X\s+the value of pay-as-you-go)/i);
+    if (valueMatch) {
+      details.push(valueMatch[1]);
+    }
+    const discountMatch = block.match(/([0-9]+%\s+off\s+PAYG\s+pricing)/i);
+    if (discountMatch) {
+      details.push(discountMatch[1]);
+    }
+    if (/PAYG requests beyond limit/i.test(block)) {
+      details.push("PAYG requests beyond limit");
+    }
+    if (/Frontier models not included/i.test(block)) {
+      details.push("Frontier models not included");
+    }
+    if (/Access to frontier models/i.test(block)) {
+      details.push("Access to frontier models");
+    }
+    if (frontierRequirement && /(plus|pro)/i.test(tier)) {
+      details.push(frontierRequirement);
+    }
+
+    tierMap.set(tier.toLowerCase(), {
+      price: Number.isFinite(price) ? price : null,
+      details: unique(details.map((item) => compactText(item)).filter(Boolean)),
+    });
+  }
+
+  return tierMap;
+}
+
+function parseChutesPlansFromPricingText(plainText, sourceUrl) {
+  const tierInfo = extractChutesTierInfoFromText(plainText);
+  const plans = [];
+  for (const tier of ["Base", "Plus", "Pro"]) {
+    const info = tierInfo.get(tier.toLowerCase());
+    if (!info || !Number.isFinite(info.price)) {
+      continue;
+    }
+
+    plans.push({
+      name: tier,
+      currentPrice: info.price,
+      currentPriceText: `$${Number.isInteger(info.price) ? String(info.price) : String(info.price)}/month`,
+      originalPrice: null,
+      originalPriceText: null,
+      unit: "月",
+      notes: plans.length === 0 ? `来源: ${sourceUrl}` : null,
+      serviceDetails: info.details.length > 0 ? info.details : null,
+    });
+  }
+
+  if (plans.length >= 3) {
+    return {
+      plans,
+      sourceUrls: [sourceUrl],
+      pricingPageUrl: sourceUrl,
+    };
+  }
+  return null;
+}
+
 async function parseChutesCustomPricing() {
   const pricingUrl = "https://chutes.ai/pricing";
   const { text: html, url: resolvedUrl } = await fetchText(pricingUrl, {
@@ -1220,6 +1312,10 @@ async function parseChutesCustomPricing() {
   });
   const sourceUrl = resolvedUrl || pricingUrl;
   const allSourceUrls = [sourceUrl];
+  const directParsed = parseChutesPlansFromPricingText(html, sourceUrl);
+  if (directParsed && directParsed.plans.length > 0) {
+    return directParsed;
+  }
 
   const nodeIdsMatch = html.match(/node_ids:\s*\[([0-9,\s]+)\]/);
   const pageNodeIds = nodeIdsMatch
@@ -1231,14 +1327,44 @@ async function parseChutesCustomPricing() {
   const appEntryUrl = entryUrls.find((u) => /\/app\.[^/]+\.js/i.test(u));
 
   const tryExtract = (jsText) => {
+    const tierInfo = extractChutesTierInfoFromText(jsText);
     const sveltePlans = extractSveltePlanObjects(jsText);
-    const enriched = sveltePlans.length > 0 ? sveltePlans : extractEnrichedTierPlans(jsText);
-    return enriched.filter(
+    const enriched = (sveltePlans.length > 0 ? sveltePlans : extractEnrichedTierPlans(jsText)).map((plan) => {
+      const info = tierInfo.get(String(plan?.name || "").toLowerCase());
+      const existingFeatures = Array.isArray(plan?.features) ? plan.features : [];
+      return {
+        ...plan,
+        price: Number.isFinite(plan?.price) ? plan.price : info?.price ?? null,
+        features: existingFeatures.length > 0 ? existingFeatures : (info?.details || []),
+      };
+    });
+
+    const normalized = enriched.filter(
       (p) =>
         Number.isFinite(p.price) &&
         p.price >= HEURISTIC_MIN_SUBSCRIPTION_PRICE &&
         p.price <= HEURISTIC_MAX_SUBSCRIPTION_PRICE,
     );
+
+    if (normalized.length > 0) {
+      return normalized;
+    }
+
+    return ["base", "plus", "pro"]
+      .map((tierKey) => {
+        const info = tierInfo.get(tierKey);
+        if (!info || !Number.isFinite(info.price)) {
+          return null;
+        }
+        return {
+          id: tierKey,
+          name: tierKey.charAt(0).toUpperCase() + tierKey.slice(1),
+          price: info.price,
+          features: info.details,
+          description: null,
+        };
+      })
+      .filter(Boolean);
   };
 
   const buildResult = (validPlans) => {

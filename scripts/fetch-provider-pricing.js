@@ -3063,9 +3063,14 @@ async function main() {
     existingSnapshot.providers,
   );
 
+  const normalizedProviders = normalizeProviderCurrencySymbols(providersWithFallback);
+  normalizedProviders.sort((left, right) =>
+    String(left?.provider || "").localeCompare(String(right?.provider || "")),
+  );
+
   const output = {
     generatedAt: new Date().toISOString(),
-    providers: normalizeProviderCurrencySymbols(providersWithFallback),
+    providers: normalizedProviders,
     failures,
   };
 

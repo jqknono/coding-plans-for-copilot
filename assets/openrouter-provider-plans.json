@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-04-10T08:38:09.557Z",
-  "generatedAtBeijing": "2026年4月10日 16:38:09",
-  "sourceGeneratedAt": "2026-04-10T08:37:47.008Z",
-  "sourceGeneratedAtBeijing": "2026年4月10日 16:37:47",
-  "sourceMetricsGeneratedAt": "2026-04-10T08:37:47.494Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月10日 16:37:47",
+  "generatedAt": "2026-04-10T15:44:22.015Z",
+  "generatedAtBeijing": "2026年4月10日 23:44:22",
+  "sourceGeneratedAt": "2026-04-10T15:38:31.647Z",
+  "sourceGeneratedAtBeijing": "2026年4月10日 23:38:31",
+  "sourceMetricsGeneratedAt": "2026-04-10T15:38:46.277Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月10日 23:38:46",
   "summary": {
     "openrouterProviderCount": 75,
-    "metricsProviderCount": 34,
-    "resolvedMetricsProviderCount": 34,
+    "metricsProviderCount": 33,
+    "resolvedMetricsProviderCount": 33,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 5,
     "heuristicProviderCount": 5,
     "providersWithPlans": 10,
-    "pendingCount": 24,
-    "blockedPendingCount": 0,
+    "pendingCount": 23,
+    "blockedPendingCount": 1,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -83,7 +83,11 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://chutes.ai/pricing",
-          "serviceDetails": null
+          "serviceDetails": [
+            "5X the value of pay-as-you-go",
+            "3% off PAYG pricing",
+            "PAYG requests beyond limit"
+          ]
         },
         {
           "name": "Plus",
@@ -93,7 +97,12 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
-          "serviceDetails": null
+          "serviceDetails": [
+            "5X the value of pay-as-you-go",
+            "3% off PAYG pricing",
+            "PAYG requests beyond limit",
+            "Access to frontier models"
+          ]
         },
         {
           "name": "Pro",
@@ -103,25 +112,60 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
-          "serviceDetails": null
+          "serviceDetails": [
+            "5X the value of pay-as-you-go",
+            "10% off PAYG pricing",
+            "PAYG requests beyond limit",
+            "Access to frontier models"
+          ]
         }
       ],
       "sourceUrls": [
-        "https://chutes.ai",
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/start.BC_OPC-W.js",
         "https://chutes.ai/_app/immutable/entry/app.DhEr62tB.js",
-        "https://chutes.ai/_app/immutable/chunks/nWViBXWX.js",
         "https://chutes.ai/_app/immutable/nodes/0.Dz6xHcrt.js",
-        "https://chutes.ai/_app/immutable/chunks/DsnmJJEf.js",
         "https://chutes.ai/_app/immutable/chunks/DEStpq0a.js",
         "https://chutes.ai/_app/immutable/chunks/CWIHRLZS.js",
         "https://chutes.ai/_app/immutable/chunks/BICcWcUb.js",
         "https://chutes.ai/_app/immutable/chunks/DWRPVVOi.js",
         "https://chutes.ai/_app/immutable/chunks/M9qh9UzK.js",
-        "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
         "https://chutes.ai/_app/immutable/chunks/mESoZsZG.js",
-        "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js"
+        "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
+        "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js",
+        "https://chutes.ai/_app/immutable/chunks/07SJ1Ez2.js",
+        "https://chutes.ai/_app/immutable/chunks/D6AKOyEr.js",
+        "https://chutes.ai/_app/immutable/chunks/Dnvo-U9X.js",
+        "https://chutes.ai/_app/immutable/chunks/rgKOAoxH.js",
+        "https://chutes.ai/_app/immutable/chunks/lfKHO-kG.js",
+        "https://chutes.ai/_app/immutable/chunks/iIO2HfQy.js",
+        "https://chutes.ai/_app/immutable/chunks/Bg1pMQUL.js",
+        "https://chutes.ai/_app/immutable/chunks/MIglteRx.js",
+        "https://chutes.ai/_app/immutable/chunks/ChFdde2u.js",
+        "https://chutes.ai/_app/immutable/chunks/DVADNH4D.js",
+        "https://chutes.ai/_app/immutable/nodes/2.Cdbca6_C.js",
+        "https://chutes.ai/_app/immutable/chunks/3tSkQGuL.js",
+        "https://chutes.ai/_app/immutable/chunks/DnbzhUo3.js",
+        "https://chutes.ai/_app/immutable/chunks/CQqEbEt1.js",
+        "https://chutes.ai/_app/immutable/chunks/DlsRaSC_.js",
+        "https://chutes.ai/_app/immutable/chunks/CcB0EdC6.js",
+        "https://chutes.ai/_app/immutable/chunks/D04iQObJ.js",
+        "https://chutes.ai/_app/immutable/chunks/D2QCNa2Z.js",
+        "https://chutes.ai/_app/immutable/chunks/BGFdVicR.js",
+        "https://chutes.ai/_app/immutable/chunks/D8P9LChN.js",
+        "https://chutes.ai/_app/immutable/chunks/0B7Bd9li.js",
+        "https://chutes.ai/_app/immutable/chunks/DX6rZLP_.js",
+        "https://chutes.ai/_app/immutable/chunks/dSMvK_Ra.js",
+        "https://chutes.ai/_app/immutable/chunks/BD2tJ2zl.js",
+        "https://chutes.ai/_app/immutable/chunks/CLIhes5I.js",
+        "https://chutes.ai/_app/immutable/chunks/DJORDF47.js",
+        "https://chutes.ai/_app/immutable/chunks/BoGRIRoC.js",
+        "https://chutes.ai/_app/immutable/chunks/CZ-5_kPX.js",
+        "https://chutes.ai/_app/immutable/chunks/BLJK5JE2.js",
+        "https://chutes.ai/_app/immutable/chunks/CLabWHzQ.js",
+        "https://chutes.ai/_app/immutable/chunks/DZAWHeg1.js",
+        "https://chutes.ai/_app/immutable/nodes/20.D1-HqFLx.js",
+        "https://chutes.ai/_app/immutable/chunks/DLRQoDyw.js",
+        "https://chutes.ai"
       ],
       "pricingPageUrl": "https://chutes.ai/pricing",
       "officialWebsiteUrl": "https://chutes.ai",
@@ -386,7 +430,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-yrxKnmI-.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-zOOroBsC.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -786,15 +830,6 @@
       "blocked": false
     },
     {
-      "slug": "ionstream",
-      "openrouterName": "Ionstream",
-      "providerId": null,
-      "officialWebsiteUrl": "https://ionstream.ai",
-      "pricingPageUrl": "https://ionstream.ai",
-      "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
       "slug": "mara",
       "openrouterName": "Mara",
       "providerId": null,
@@ -828,7 +863,7 @@
       "officialWebsiteUrl": "https://www.nextbit256.com",
       "pricingPageUrl": "https://www.nextbit256.com",
       "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "novita",
