@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-10T16:23:10.320Z",
+  "generatedAt": "2026-04-11T03:04:28.145Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -979,47 +979,7 @@
           ]
         }
       ]
-    },
-    {
-      "provider": "jdcloud-ai",
-      "sourceUrls": [
-        "https://www.jdcloud.com/cn/pages/codingplan"
-      ],
-      "plans": [
-        {
-          "name": "Coding Plan Lite",
-          "currentPrice": 19.9,
-          "currentPriceText": "¥19.9/月",
-          "originalPrice": 40,
-          "originalPriceText": "¥40/月",
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求",
-            "模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等",
-            "工具：Claude Code、OpenCode、OpenClaw、Roo Code、Cursor"
-          ]
-        },
-        {
-          "name": "Coding Plan Pro",
-          "currentPrice": 99.9,
-          "currentPriceText": "¥99.9/月",
-          "originalPrice": 200,
-          "originalPriceText": "¥200/月",
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
-            "权益：享受 Lite 套餐的全部能力与权益",
-            "月用量：Lite 版的 5 倍用量"
-          ]
-        }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "jdcloud-ai: fetch failed"
     }
   ],
-  "failures": [
-    "jdcloud-ai: fetch failed"
-  ]
+  "failures": []
 }
