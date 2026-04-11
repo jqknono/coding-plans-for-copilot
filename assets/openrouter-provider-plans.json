@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-10T15:44:22.015Z",
-  "generatedAtBeijing": "2026年4月10日 23:44:22",
-  "sourceGeneratedAt": "2026-04-10T15:38:31.647Z",
-  "sourceGeneratedAtBeijing": "2026年4月10日 23:38:31",
-  "sourceMetricsGeneratedAt": "2026-04-10T15:38:46.277Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月10日 23:38:46",
+  "generatedAt": "2026-04-11T08:18:28.558Z",
+  "generatedAtBeijing": "2026年4月11日 16:18:28",
+  "sourceGeneratedAt": "2026-04-11T08:18:13.025Z",
+  "sourceGeneratedAtBeijing": "2026年4月11日 16:18:13",
+  "sourceMetricsGeneratedAt": "2026-04-11T08:18:13.609Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月11日 16:18:13",
   "summary": {
     "openrouterProviderCount": 75,
     "metricsProviderCount": 33,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 5,
     "providersWithPlans": 10,
     "pendingCount": 23,
-    "blockedPendingCount": 1,
+    "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -659,12 +659,12 @@
       "plans": [
         {
           "name": "GLM Coding Lite",
-          "currentPrice": 10,
-          "currentPriceText": "$10/month",
+          "currentPrice": 18,
+          "currentPriceText": "$18/month",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "$10 / month from 2nd month",
+          "notes": "$18 / month from 2nd month",
           "serviceDetails": [
             "3× usage of the Claude Pro plan",
             "Managing lightweight workloads",
@@ -674,12 +674,12 @@
         },
         {
           "name": "GLM Coding Pro",
-          "currentPrice": 30,
-          "currentPriceText": "$30/month",
+          "currentPrice": 72,
+          "currentPriceText": "$72/month",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "$30 / month from 2nd month",
+          "notes": "$72 / month from 2nd month",
           "serviceDetails": [
             "5× Lite plan usage",
             "Managing complex workloads",
@@ -691,12 +691,12 @@
         },
         {
           "name": "GLM Coding Max",
-          "currentPrice": 80,
-          "currentPriceText": "$80/month",
+          "currentPrice": 160,
+          "currentPriceText": "$160/month",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "$80 / month from 2nd month",
+          "notes": "$160 / month from 2nd month",
           "serviceDetails": [
             "All Pro plan benefits",
             "4× Pro plan usage",
@@ -745,7 +745,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.1 / $0.081 / $0.05）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.1 / $0.05 / $0.125）",
       "blocked": false
     },
     {
@@ -863,7 +863,7 @@
       "officialWebsiteUrl": "https://www.nextbit256.com",
       "pricingPageUrl": "https://www.nextbit256.com",
       "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
-      "blocked": true
+      "blocked": false
     },
     {
       "slug": "novita",
