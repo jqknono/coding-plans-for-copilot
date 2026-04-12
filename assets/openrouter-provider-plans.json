@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-11T08:18:28.558Z",
-  "generatedAtBeijing": "2026年4月11日 16:18:28",
-  "sourceGeneratedAt": "2026-04-11T08:18:13.025Z",
-  "sourceGeneratedAtBeijing": "2026年4月11日 16:18:13",
-  "sourceMetricsGeneratedAt": "2026-04-11T08:18:13.609Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月11日 16:18:13",
+  "generatedAt": "2026-04-12T08:23:38.428Z",
+  "generatedAtBeijing": "2026年4月12日 16:23:38",
+  "sourceGeneratedAt": "2026-04-12T08:22:34.576Z",
+  "sourceGeneratedAtBeijing": "2026年4月12日 16:22:34",
+  "sourceMetricsGeneratedAt": "2026-04-12T08:22:35.119Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月12日 16:22:35",
   "summary": {
     "openrouterProviderCount": 75,
     "metricsProviderCount": 33,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 5,
     "providersWithPlans": 10,
     "pendingCount": 23,
-    "blockedPendingCount": 0,
+    "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -430,7 +430,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-zOOroBsC.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-Sa0aGddg.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -727,8 +727,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://akashml.com",
       "pricingPageUrl": "https://akashml.com",
-      "reason": "官网价格页探测失败：https://akashml.com/pricing: HTTP 404",
-      "blocked": false
+      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
+      "blocked": true
     },
     {
       "slug": "ambient",
@@ -745,7 +745,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.1 / $0.05 / $0.125）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.1 / $0.081 / $0.05）",
       "blocked": false
     },
     {
@@ -854,7 +854,7 @@
       "officialWebsiteUrl": "https://docs.nebius.com",
       "pricingPageUrl": "https://docs.nebius.com",
       "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "nextbit",
@@ -907,8 +907,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
-      "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": false
+      "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: Request timeout after 9000ms",
+      "blocked": true
     },
     {
       "slug": "stepfun",

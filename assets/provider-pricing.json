@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-12T03:06:10.759Z",
+  "generatedAt": "2026-04-12T08:22:34.576Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -40,7 +40,9 @@
             "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "aliyun-ai: fetch failed"
     },
     {
       "provider": "baidu-qianfan-ai",
@@ -296,7 +298,9 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: fetch failed"
     },
     {
       "provider": "kimi-ai",
@@ -981,5 +985,8 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "jdcloud-ai: fetch failed",
+    "aliyun-ai: fetch failed"
+  ]
 }
