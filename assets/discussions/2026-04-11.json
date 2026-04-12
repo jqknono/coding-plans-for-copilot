@@ -1,0 +1,98 @@
+{
+  "date": "2026-04-11",
+  "generatedAt": "2026-04-12T06:42:17.186Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "智谱AI (Zhipu AI)": 1,
+      "智谱 AI (Zhipu AI)": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1205191",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1205191",
+      "title": "GLM lite 国际版都$18 了，还不支持退款",
+      "content": "GLM lite 国内版才 49 ，这价格差距也太多了。没仔细看条款，还以为跟阿里的 code plan 差不多",
+      "author": "imgse",
+      "createdAt": "2026-04-11T15:02:13.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 1,
+        "supplier": "智谱AI (Zhipu AI)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户抱怨智谱AI的GLM lite国际版定价过高（$18），认为国内版（49元）价格差距过大，且不支持退款。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "退款政策",
+          "国际版与国内版"
+        ],
+        "planMentioned": "GLM lite",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/62",
+      "analyzedAt": "2026-04-12T06:48:00.252Z"
+    },
+    {
+      "id": "v2ex-1205174",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1205174",
+      "title": "智普 coding plan 的模型是缩水的吗，还是单独微调过的？",
+      "content": "起因是我发现有个问题明明上下文已经够非常充足了，但 glm5 一直答错，我一开始以为是 prompt 的写法问题，突发奇想去官网测了一下，发现官网的 glm 测试一定是对的，那我就认为是参数问题，temperature 什么的和官网不一致导致的。于是就写了个脚本测各种参数下的情况，结果发现都不对 （正确答案是 21day ） 然后我把脚本的 baseurl 改成官方 api 接口，脚本居然全对了 这是何意味呢？？ 脚本在这，可以自行测测 https://pastebin.com/g68ma5ER",
+      "author": "asuka321",
+      "createdAt": "2026-04-11T13:48:34.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 1,
+        "supplier": "智谱 AI (Zhipu AI)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "用户发现智谱 AI 的 coding plan API 模型与官网测试结果不一致，怀疑是模型缩水或参数问题导致答案错误。",
+        "topics": [
+          "模型质量",
+          "API 对比",
+          "参数问题",
+          "测试脚本",
+          "答案错误"
+        ],
+        "planMentioned": "智谱 coding plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/63",
+      "analyzedAt": "2026-04-12T06:48:05.754Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → failed",
+    "linuxdo: https://linux.do/latest.json → failed",
+    "analysis failed for v2ex-1205198: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1205193: LLM returned empty content (finish_reason=null)",
+    "analysis failed for v2ex-1205156: The operation was aborted due to timeout"
+  ]
+}

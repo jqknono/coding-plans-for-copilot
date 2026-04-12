@@ -1,0 +1,96 @@
+{
+  "date": "2026-04-12",
+  "generatedAt": "2026-04-12T06:42:17.186Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "智谱AI (Zhipu AI)": 1,
+      "智谱 AI (Zhipu AI)": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1205256",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1205256",
+      "title": "国内有没有面向团队的 token/coding plan？",
+      "content": "10~20 人，需要给每个人分配子账号。",
+      "author": "enihcam",
+      "createdAt": "2026-04-12T05:20:01.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": null,
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户询问国内是否有适合10-20人团队的token/coding plan，需要为每个成员分配子账号。",
+        "topics": [
+          "团队计划",
+          "子账号",
+          "定价"
+        ],
+        "planMentioned": "token/coding plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/60",
+      "analyzedAt": "2026-04-12T06:47:53.959Z"
+    },
+    {
+      "id": "v2ex-1205240",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1205240",
+      "title": "国内现在还有哪家量大管饱的大模型 plan 能买到",
+      "content": "看了一圈都是售罄，国外的只能紧着用，完全不敢接到应用里。免费的 api 也都是定量，而且质量有点低",
+      "author": "superkite",
+      "createdAt": "2026-04-12T03:45:53.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": null,
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "用户询问国内仍有大模型计划可购买，但发现多数售罄，国外方案不稳定，免费API质量低且受限。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "售罄",
+          "API 限制"
+        ],
+        "planMentioned": "大模型 plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/61",
+      "analyzedAt": "2026-04-12T06:47:56.686Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → failed",
+    "linuxdo: https://linux.do/latest.json → failed",
+    "analysis failed for v2ex-1205198: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1205193: LLM returned empty content (finish_reason=null)",
+    "analysis failed for v2ex-1205156: The operation was aborted due to timeout"
+  ]
+}
