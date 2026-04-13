@@ -1,0 +1,66 @@
+{
+  "date": "2026-04-13",
+  "generatedAt": "2026-04-13T06:57:22.698Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 58,
+    "postsAfterKeywordFilter": 5,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "智谱 (Zhipu)": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1205418",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1205418",
+      "title": "智谱登录崩溃了吗",
+      "content": "网址： https://bigmodel.cn/glm-coding 登录验证码接收不到： 系统未知错误,请反馈给在线客服! 获取验证码失败,请重试",
+      "author": "leiuu",
+      "createdAt": "2026-04-13T02:26:30.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "智谱 (Zhipu)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户报告智谱 GLM 编码服务登录验证码接收失败，系统报错，需反馈客服。",
+        "topics": [
+          "登录问题",
+          "验证码",
+          "系统错误",
+          "客服反馈"
+        ],
+        "planMentioned": "GLM 编码服务",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/64",
+      "analyzedAt": "2026-04-13T06:59:43.117Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → failed",
+    "linuxdo: https://linux.do/latest.json → failed",
+    "analysis failed for v2ex-1205475: LLM returned empty content (finish_reason=null)",
+    "analysis failed for v2ex-1205470: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1205340: LLM returned empty content (finish_reason=null)"
+  ]
+}
