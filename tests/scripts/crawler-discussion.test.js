@@ -20,6 +20,10 @@ const {
   setAvailableCategories,
 } = require("../../scripts/crawler/analyzer");
 
+const {
+  summarizeAnalysisOutcomes,
+} = require("../../scripts/crawler/index");
+
 function withEnv(name, value, fn) {
   const previous = process.env[name];
   if (value === undefined) {
@@ -304,11 +308,17 @@ test("workflow uses publish crawler command", () => {
   assert.match(workflow, /npm run crawler:run:publish/);
 });
 
-test("workflow migrates discussion labels before verification", () => {
+test("workflow verifies discussion labels without migration step", () => {
+  const workflow = loadWorkflowText();
+  assert.doesNotMatch(workflow, /npm run crawler:migrate-discussion-labels/);
+  assert.match(workflow, /verify_discussions:[\s\S]*run:\s*npm run crawler:verify-discussion-labels/);
+});
+
+test("workflow installs Playwright chromium before crawling linuxdo", () => {
   const workflow = loadWorkflowText();
   assert.match(
     workflow,
-    /verify_discussions:[\s\S]*permissions:[\s\S]*discussions:\s*write[\s\S]*run:\s*npm run crawler:migrate-discussion-labels[\s\S]*run:\s*npm run crawler:verify-discussion-labels/,
+    /jobs:\s*crawl:[\s\S]*Install Playwright Chromium[\s\S]*npx playwright install --with-deps chromium[\s\S]*Run community crawler/,
   );
 });
 
@@ -410,4 +420,41 @@ test("fetchLinuxDoPosts retries the same page after switching to Playwright", as
     global.fetch = originalFetch;
     delete require.cache[require.resolve("../../scripts/crawler/sources/linuxdo")];
   }
+});
+
+test("summarizeAnalysisOutcomes groups selected and skipped posts", () => {
+  const summary = summarizeAnalysisOutcomes(
+    [
+      {
+        post: { id: "a" },
+        analysis: { isCodingPlan: true, isRelevant: true, relevance: 0.9 },
+      },
+      {
+        post: { id: "b" },
+        analysis: { isCodingPlan: false, isRelevant: false, relevance: 0.2 },
+      },
+      {
+        post: { id: "c" },
+        analysis: { isCodingPlan: true, isRelevant: false, relevance: 0.8 },
+      },
+      {
+        post: { id: "d" },
+        analysis: { isCodingPlan: true, isRelevant: true, relevance: 0.4 },
+      },
+      {
+        post: { id: "e" },
+        analysis: { analysisError: true, error: "timeout" },
+      },
+    ],
+    0.7,
+  );
+
+  assert.deepEqual(summary, {
+    totalAnalyzed: 5,
+    selected: 1,
+    analysisErrors: 1,
+    notCodingPlan: 1,
+    notRelevant: 1,
+    belowThreshold: 1,
+  });
 });

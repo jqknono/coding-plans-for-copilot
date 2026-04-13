@@ -68,6 +68,43 @@ function stripTags(value) {
   return String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 }
 
+function summarizeAnalysisOutcomes(analysisResults, relevanceThreshold) {
+  const summary = {
+    totalAnalyzed: analysisResults.length,
+    selected: 0,
+    analysisErrors: 0,
+    notCodingPlan: 0,
+    notRelevant: 0,
+    belowThreshold: 0,
+  };
+
+  for (const { analysis } of analysisResults) {
+    if (analysis.analysisError) {
+      summary.analysisErrors += 1;
+      continue;
+    }
+
+    if (!analysis.isCodingPlan) {
+      summary.notCodingPlan += 1;
+      continue;
+    }
+
+    if (!analysis.isRelevant) {
+      summary.notRelevant += 1;
+      continue;
+    }
+
+    if (analysis.relevance < relevanceThreshold) {
+      summary.belowThreshold += 1;
+      continue;
+    }
+
+    summary.selected += 1;
+  }
+
+  return summary;
+}
+
 async function main() {
   const { source: sourceFilter, days, discussion: publishDiscussions } = parseArgs();
 
@@ -157,6 +194,17 @@ async function main() {
 
   console.log("[crawler] analyzing posts with LLM...");
   const analysisResults = await analyzePosts(dateFiltered);
+  const analysisSummary = summarizeAnalysisOutcomes(
+    analysisResults,
+    RELEVANCE_THRESHOLD,
+  );
+  console.log(
+    `[crawler] analysis summary: selected=${analysisSummary.selected}, ` +
+      `analysisErrors=${analysisSummary.analysisErrors}, ` +
+      `notCodingPlan=${analysisSummary.notCodingPlan}, ` +
+      `notRelevant=${analysisSummary.notRelevant}, ` +
+      `belowThreshold=${analysisSummary.belowThreshold}`,
+  );
 
   // Phase 4: Filter relevant posts and create Discussions
   const relevantPosts = [];
@@ -201,6 +249,16 @@ async function main() {
 
   console.log(`[crawler] relevant posts: ${relevantPosts.length}`);
   console.log(`[crawler] supplier mentions: ${JSON.stringify(supplierMentions)}`);
+  if (relevantPosts.length === 0 && analysisResults.length > 0) {
+    console.warn(
+      "[crawler] no posts selected for discussion creation; " +
+        `selected=${analysisSummary.selected}, ` +
+        `analysisErrors=${analysisSummary.analysisErrors}, ` +
+        `notCodingPlan=${analysisSummary.notCodingPlan}, ` +
+        `notRelevant=${analysisSummary.notRelevant}, ` +
+        `belowThreshold=${analysisSummary.belowThreshold}`,
+    );
+  }
 
   // Phase 5: Write output to date-partitioned files
   await writeOutput(generatedAt, sourceFilter, relevantPosts, failures, supplierMentions, allPosts.length, dateFiltered.length);
@@ -327,4 +385,4 @@ if (require.main === module) {
   });
 }
 
-module.exports = { main };
+module.exports = { main, summarizeAnalysisOutcomes };

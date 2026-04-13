@@ -28,6 +28,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
       - name: Preflight COMMUNITY_CRAWLER_TOKEN
         env:
           COMMUNITY_CRAWLER_TOKEN: ${{ secrets.COMMUNITY_CRAWLER_TOKEN }}
@@ -170,11 +173,6 @@ jobs:
 
           console.log(`[preflight] COMMUNITY_CRAWLER_TOKEN authenticated as ${payload.data.viewer.login}`);
           NODE
-
-      - name: Migrate crawler discussion labels
-        run: npm run crawler:migrate-discussion-labels
-        env:
-          COMMUNITY_CRAWLER_TOKEN: ${{ secrets.COMMUNITY_CRAWLER_TOKEN }}
 
       - name: Verify crawler discussions
         run: npm run crawler:verify-discussion-labels
