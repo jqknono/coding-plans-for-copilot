@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-13T03:07:06.852Z",
+  "generatedAt": "2026-04-13T08:49:08.986Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -224,8 +224,8 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.42098b42.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.f1d82619.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.40005dca.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.ab78d700.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -296,7 +296,9 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: fetch failed"
     },
     {
       "provider": "kimi-ai",
@@ -981,5 +983,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "jdcloud-ai: fetch failed"
+  ]
 }

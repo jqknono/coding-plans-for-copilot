@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-12T08:23:38.428Z",
-  "generatedAtBeijing": "2026年4月12日 16:23:38",
-  "sourceGeneratedAt": "2026-04-12T08:22:34.576Z",
-  "sourceGeneratedAtBeijing": "2026年4月12日 16:22:34",
-  "sourceMetricsGeneratedAt": "2026-04-12T08:22:35.119Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月12日 16:22:35",
+  "generatedAt": "2026-04-13T08:49:25.477Z",
+  "generatedAtBeijing": "2026年4月13日 16:49:25",
+  "sourceGeneratedAt": "2026-04-13T08:49:08.986Z",
+  "sourceGeneratedAtBeijing": "2026年4月13日 16:49:08",
+  "sourceMetricsGeneratedAt": "2026-04-13T08:49:09.537Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月13日 16:49:09",
   "summary": {
     "openrouterProviderCount": 75,
     "metricsProviderCount": 33,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 5,
     "providersWithPlans": 10,
     "pendingCount": 23,
-    "blockedPendingCount": 3,
+    "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -727,8 +727,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://akashml.com",
       "pricingPageUrl": "https://akashml.com",
-      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
-      "blocked": true
+      "reason": "官网价格页探测失败：https://akashml.com/pricing: HTTP 404",
+      "blocked": false
     },
     {
       "slug": "ambient",
@@ -854,7 +854,7 @@
       "officialWebsiteUrl": "https://docs.nebius.com",
       "pricingPageUrl": "https://docs.nebius.com",
       "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
-      "blocked": true
+      "blocked": false
     },
     {
       "slug": "nextbit",
@@ -907,8 +907,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
-      "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: Request timeout after 9000ms",
-      "blocked": true
+      "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
+      "blocked": false
     },
     {
       "slug": "stepfun",
