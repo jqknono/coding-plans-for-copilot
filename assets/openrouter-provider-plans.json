@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-04-13T08:49:25.477Z",
-  "generatedAtBeijing": "2026年4月13日 16:49:25",
-  "sourceGeneratedAt": "2026-04-13T08:49:08.986Z",
-  "sourceGeneratedAtBeijing": "2026年4月13日 16:49:08",
-  "sourceMetricsGeneratedAt": "2026-04-13T08:49:09.537Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月13日 16:49:09",
+  "generatedAt": "2026-04-14T08:40:40.313Z",
+  "generatedAtBeijing": "2026年4月14日 16:40:40",
+  "sourceGeneratedAt": "2026-04-14T08:40:23.809Z",
+  "sourceGeneratedAtBeijing": "2026年4月14日 16:40:23",
+  "sourceMetricsGeneratedAt": "2026-04-14T08:40:24.455Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月14日 16:40:24",
   "summary": {
-    "openrouterProviderCount": 75,
-    "metricsProviderCount": 33,
-    "resolvedMetricsProviderCount": 33,
+    "openrouterProviderCount": 76,
+    "metricsProviderCount": 32,
+    "resolvedMetricsProviderCount": 32,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 5,
     "heuristicProviderCount": 5,
     "providersWithPlans": 10,
-    "pendingCount": 23,
+    "pendingCount": 22,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -430,7 +430,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-Sa0aGddg.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DajuMpQD.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -745,7 +745,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.1 / $0.081 / $0.05）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.127 / $0.101 / $0.1）",
       "blocked": false
     },
     {
@@ -839,15 +839,6 @@
       "blocked": false
     },
     {
-      "slug": "modelrun",
-      "openrouterName": "ModelRun",
-      "providerId": null,
-      "officialWebsiteUrl": "https://modelrun.org",
-      "pricingPageUrl": "https://modelrun.org",
-      "reason": "官网价格页探测失败：https://modelrun.org/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
       "slug": "nebius",
       "openrouterName": "Nebius",
       "providerId": null,
@@ -925,7 +916,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.together.ai",
       "pricingPageUrl": "https://www.together.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.30 / $0.06 / $1.20）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.50 / $2.80 / $0.03）",
       "blocked": false
     }
   ]
