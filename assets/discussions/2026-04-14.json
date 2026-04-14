@@ -1,0 +1,125 @@
+{
+  "date": "2026-04-14",
+  "generatedAt": "2026-04-14T06:48:19.546Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 53,
+    "postsAfterKeywordFilter": 8,
+    "relevantPosts": 3,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 3,
+    "supplierMentions": {
+      "智谱 (Zhipu)": 1,
+      "阿里云": 1,
+      "Kiro": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1205781",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1205781",
+      "title": "被智谱 max 套餐坑爹 429 乱判多人使用封号的选手这里集合",
+      "content": "看看有多少人，集体出来微软一下，我已经在黑猫投诉了，全都 1%的用量了，还搞 429 不让人用，傲慢得一逼，主要诉求还是恢复账号正常使用的就在这里集合吧，退款的话 16 号之前的连接在 https://zhipu-ai.feishu.cn/share/base/form/shrcn8hoW11cnI0PRd7H5VEd9Kc ，不过我看抖音上说这个退款十分扯皮，正常维权的大家看看怎么联合起来给他施压，这公司傲慢得一逼，看需求下菜碟，根本不按购买时候承诺的，纯捞钱，非退款的工单和投诉是根本不屌你的，客服也是没有的，还估值 4000 多亿",
+      "author": "MengLUO",
+      "createdAt": "2026-04-14T06:45:07.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "智谱 (Zhipu)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.98,
+        "summary": "用户抱怨智谱 Max 套餐存在 429 错误和多人使用导致的账号封号问题，要求恢复正常使用权限，并批评公司退款流程复杂且客服态度傲慢。",
+        "topics": [
+          "429错误",
+          "封号",
+          "退款",
+          "客服",
+          "套餐问题"
+        ],
+        "planMentioned": "智谱 Max 套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-14T06:52:08.064Z"
+    },
+    {
+      "id": "v2ex-1205767",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1205767",
+      "title": "阿里云 Coding Plan Lite 怎么连升级都不能了",
+      "content": "嫌 Lite 版本亏本取消续费也行，但是怎么连升级都取消了呢，pro 版本根本都抢不到",
+      "author": "c00WKmdje2wZLrSI",
+      "createdAt": "2026-04-14T06:04:37.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里云",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户抱怨阿里云 Coding Plan Lite 版本已取消升级通道，且 Pro 版本售罄，表达对订阅服务变更的不满。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "订阅",
+          "故障排查"
+        ],
+        "planMentioned": "阿里云 Coding Plan Lite",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-14T06:52:10.239Z"
+    },
+    {
+      "id": "v2ex-1205662",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1205662",
+      "title": "发现 kiro 的 Token 很耐用",
+      "content": "低强度使用了一个月 kiro 免费赠送套餐, 500 个积分,还有两天过期,发现还有 200 多积分没有用完 感觉 kiro 的积分很耐用啊 https://imgur.com/a/R2QfPx9",
+      "author": "florentino",
+      "createdAt": "2026-04-14T01:08:46.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Kiro",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "用户分享了使用Kiro免费赠送的积分套餐体验，指出500积分一个月内低强度使用后仍有200+积分未过期，认为积分耐用性高。",
+        "topics": [
+          "套餐",
+          "积分",
+          "耐用性"
+        ],
+        "planMentioned": "Kiro免费赠送套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-14T06:52:12.333Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → failed",
+    "linuxdo: https://linux.do/latest.json → failed"
+  ]
+}
