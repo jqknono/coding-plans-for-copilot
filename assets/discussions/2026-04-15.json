@@ -1,0 +1,97 @@
+{
+  "date": "2026-04-15",
+  "generatedAt": "2026-04-15T06:48:35.891Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 57,
+    "postsAfterKeywordFilter": 8,
+    "relevantPosts": 2,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "火山引擎": 1,
+      "联通云": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1206049",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1206049",
+      "title": "火山云的 Coding Plan 值得买吗？ Doubao-Seed-2.0-Code、Doubao-Seed-2.0-pro 这 2 个模型怎么样？",
+      "content": "Doubao-Seed-2.0-Code 、Doubao-Seed-2.0-pro 这 2 个模型怎么样？ 其他的 GLM-4.7 、Kimi-K2.5 、MiniMax-M2.5 、DeepSeek-V3.2 这些感觉太弱，明显不行。",
+      "author": "paranoiagu",
+      "createdAt": "2026-04-15T05:32:21.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "火山引擎",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "用户询问火山云的 Coding Plan 是否值得购买，并对比了 Doubao-Seed-2.0-Code、Doubao-Seed-2.0-pro 与其他模型（GLM-4.7、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2），认为后者表现较弱。",
+        "topics": [
+          "定价",
+          "模型对比",
+          "火山云",
+          "Coding Plan",
+          "值得买"
+        ],
+        "planMentioned": "火山云 Coding Plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-15T06:54:41.162Z"
+    },
+    {
+      "id": "v2ex-1205982",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1205982",
+      "title": "联通云的 coding plan 不建议",
+      "content": "纯恶心，动不动就 429 ，还会莫名出现\"type\":\"internal_error\",\"message\":\"/data/ is not a multimodal model\"。同样的 skill 我用官方的 glm5.1 就跑得通，用联通云的 glm5.1 就不行。",
+      "author": "Yasuke",
+      "createdAt": "2026-04-15T02:15:54.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "联通云",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.95,
+        "summary": "用户抱怨联通云的 coding plan 存在频繁 429 错误和内部错误，导致使用体验极差，建议避免使用。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "故障排查",
+          "glm5.1"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/71",
+      "analyzedAt": "2026-04-15T06:54:44.385Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → failed",
+    "linuxdo: https://linux.do/latest.json → failed",
+    "analysis failed for v2ex-1205888: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1206015: The operation was aborted due to timeout"
+  ]
+}
