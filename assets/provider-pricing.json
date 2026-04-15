@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-04-14T08:40:23.809Z",
+  "generatedAt": "2026-04-15T03:06:02.626Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1344ed388c780739331288d6fca24c29.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ae80b85b647093f09c06053fb538d21d.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -224,8 +224,8 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.40005dca.js",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.ab78d700.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.669239e5.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.cb3cac8c.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -296,16 +296,14 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "jdcloud-ai: fetch failed"
+      ]
     },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DajuMpQD.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CDqgzOk6.js"
       ],
       "plans": [
         {
@@ -983,7 +981,5 @@
       ]
     }
   ],
-  "failures": [
-    "jdcloud-ai: fetch failed"
-  ]
+  "failures": []
 }
