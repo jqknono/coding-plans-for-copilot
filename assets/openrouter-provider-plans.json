@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-04-14T08:40:40.313Z",
-  "generatedAtBeijing": "2026年4月14日 16:40:40",
-  "sourceGeneratedAt": "2026-04-14T08:40:23.809Z",
-  "sourceGeneratedAtBeijing": "2026年4月14日 16:40:23",
-  "sourceMetricsGeneratedAt": "2026-04-14T08:40:24.455Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月14日 16:40:24",
+  "generatedAt": "2026-04-15T08:41:19.459Z",
+  "generatedAtBeijing": "2026年4月15日 16:41:19",
+  "sourceGeneratedAt": "2026-04-15T08:41:03.153Z",
+  "sourceGeneratedAtBeijing": "2026年4月15日 16:41:03",
+  "sourceMetricsGeneratedAt": "2026-04-15T08:41:03.838Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月15日 16:41:03",
   "summary": {
-    "openrouterProviderCount": 76,
-    "metricsProviderCount": 32,
-    "resolvedMetricsProviderCount": 32,
+    "openrouterProviderCount": 77,
+    "metricsProviderCount": 33,
+    "resolvedMetricsProviderCount": 33,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 5,
     "heuristicProviderCount": 5,
     "providersWithPlans": 10,
-    "pendingCount": 22,
+    "pendingCount": 23,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -57,7 +57,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1344ed388c780739331288d6fca24c29.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ae80b85b647093f09c06053fb538d21d.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -430,7 +430,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DajuMpQD.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CDqgzOk6.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -513,7 +513,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.211/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.214/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -836,6 +836,15 @@
       "officialWebsiteUrl": "https://www.mara.com",
       "pricingPageUrl": "https://www.mara.com",
       "reason": "官网价格页探测失败：https://www.mara.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "modelrun",
+      "openrouterName": "ModelRun",
+      "providerId": null,
+      "officialWebsiteUrl": "https://modelrun.org",
+      "pricingPageUrl": "https://modelrun.org",
+      "reason": "官网价格页探测失败：https://modelrun.org/pricing: HTTP 404",
       "blocked": false
     },
     {
