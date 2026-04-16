@@ -289,9 +289,16 @@ function getCommitFormatPrompt(): string {
   return trimmed.length > 0 ? trimmed : DEFAULT_COMMIT_FORMAT_PROMPT;
 }
 
-function getGenerationStructureBlock(settings: CommitMessageSettings, breakingChangeExpected: boolean): string {
+function getGenerationStructureBlock(
+  settings: CommitMessageSettings,
+  breakingChangeExpected: boolean,
+  hasStyleReference = false
+): string {
   const lines = [
     'OUTPUT STRUCTURE (strict):',
+    ...(hasStyleReference
+      ? ['If STYLE conflicts with body length, bullet, or subject format details below, follow STYLE.']
+      : []),
     '1) First line MUST be the commit subject.',
     settings.requireConventionalType
       ? '2) Subject MUST follow Conventional Commits.'
@@ -317,10 +324,24 @@ function getGenerationStructureBlock(settings: CommitMessageSettings, breakingCh
   return lines.join('\n');
 }
 
+function getFallbackFormatPrompt(formatPrompt: string, hasStyleReference: boolean): string {
+  if (!hasStyleReference) {
+    return formatPrompt;
+  }
+
+  return [
+    'FALLBACK FORMAT REQUIREMENT (lower priority than STYLE):',
+    'Use the fallback format rules only for details that the recent samples do not decide.',
+    formatPrompt
+  ].join('\n');
+}
+
 function getEvidenceBoundaryBlock(): string {
   return [
     'EVIDENCE BOUNDARY (strict):',
     'Only describe facts that are directly supported by the diff or structured summary.',
+    'Recent commit messages are style references only; they are not evidence for the current change.',
+    'Never mention a topic, file, dependency, provider, metric, workflow, or feature that appears only in recent commit samples.',
     'If the evidence is weak, keep the message minimal and generic.',
     'Do not infer motivations, architecture changes, business impact, or completed workflows unless they are explicitly shown in the changes.'
   ].join('\n');
@@ -333,21 +354,16 @@ function buildDiffGenerationPrompt(
   breakingChangeExpected: boolean,
   styleReferenceBlock?: string
 ): string {
+  const hasStyleReference = Boolean(styleReferenceBlock);
   const languageEnforcementBlock = getCommitLanguageEnforcementBlock(language);
-  const formatPrompt = getCommitFormatPrompt();
-  const structureBlock = getGenerationStructureBlock(settings, breakingChangeExpected);
+  const formatPrompt = getFallbackFormatPrompt(getCommitFormatPrompt(), hasStyleReference);
+  const structureBlock = getGenerationStructureBlock(settings, breakingChangeExpected, hasStyleReference);
   const evidenceBoundaryBlock = getEvidenceBoundaryBlock();
 
   const promptSections = [
     COMMIT_MESSAGE_TASK_BLOCK,
     '',
-    languageEnforcementBlock,
-    '',
-    formatPrompt,
-    '',
-    structureBlock,
-    '',
-    evidenceBoundaryBlock
+    languageEnforcementBlock
   ];
 
   if (styleReferenceBlock) {
@@ -356,6 +372,18 @@ function buildDiffGenerationPrompt(
 
   promptSections.push(
     '',
+    formatPrompt,
+    '',
+    structureBlock,
+    '',
+    evidenceBoundaryBlock
+  );
+
+  promptSections.push(
+    '',
+    'CURRENT DIFF (ONLY CHANGE EVIDENCE):',
+    'Generate the commit message from this diff only. Use recent commit messages only for writing style.',
+    'Any topic, file, or action absent from this diff must be excluded from the output.',
     '--- BEGIN DIFF ---',
     diff,
     '--- END DIFF ---'
@@ -374,33 +402,38 @@ function buildSummaryGenerationPrompt(
     truncated: boolean;
   }
 ): string {
+  const hasStyleReference = Boolean(styleReferenceBlock);
   const languageEnforcementBlock = getCommitLanguageEnforcementBlock(language);
-  const formatPrompt = getCommitFormatPrompt();
-  const structureBlock = getGenerationStructureBlock(settings, summary.breakingChange);
+  const formatPrompt = getFallbackFormatPrompt(getCommitFormatPrompt(), hasStyleReference);
+  const structureBlock = getGenerationStructureBlock(settings, summary.breakingChange, hasStyleReference);
   const evidenceBoundaryBlock = getEvidenceBoundaryBlock();
 
   const promptSections = [
     COMMIT_MESSAGE_TASK_BLOCK,
     '',
-    languageEnforcementBlock,
-    '',
-    formatPrompt,
-    '',
-    structureBlock,
-    '',
-    evidenceBoundaryBlock
+    languageEnforcementBlock
   ];
 
   if (styleReferenceBlock) {
     promptSections.push('', styleReferenceBlock);
   }
 
+  promptSections.push(
+    '',
+    formatPrompt,
+    '',
+    structureBlock,
+    '',
+    evidenceBoundaryBlock
+  );
+
   if (diffForReference) {
     promptSections.push(
       '',
       'DIFF CONTEXT (reference):',
       `The full diff had ${diffForReference.originalLines} lines; truncated=${diffForReference.truncated}.`,
-      'Use this diff as additional context. If any instruction conflicts, follow LANGUAGE and STYLE requirements.',
+      'Use this diff as additional context for current-change evidence. Recent commit samples are style only.',
+      'If any instruction conflicts, follow LANGUAGE and STYLE requirements without inventing unsupported change content.',
       '--- BEGIN DIFF (TRUNCATED REFERENCE) ---',
       diffForReference.diff,
       '--- END DIFF (TRUNCATED REFERENCE) ---'
@@ -410,6 +443,7 @@ function buildSummaryGenerationPrompt(
   promptSections.push(
     '',
     'Use the following structured summary as the primary source of truth for change intent.',
+    'Recent commit messages are style references only; do not reuse their topics unless this summary supports them.',
     '--- BEGIN CHANGE SUMMARY JSON ---',
     JSON.stringify(summary, null, 2),
     '--- END CHANGE SUMMARY JSON ---'
@@ -534,11 +568,16 @@ function buildStyleReferenceBlock(recentMessages: string[]): string | undefined 
     .join('\n\n');
 
   return [
-    'STYLE REQUIREMENT (VERY HIGH PRIORITY):',
-    'You MUST infer the dominant commit-message format from the samples below and follow it.',
-    'Treat these samples as the canonical repository style (prefix/type/scope, language, punctuation, casing, line breaks, bullet style).',
-    'If any other formatting instruction conflicts with this style requirement, follow the style requirement.',
-    'Do not copy exact change details, identifiers, tickets, or scopes verbatim unless they are clearly required by the current diff.',
+    'STYLE REQUIREMENT (HIGHEST PRIORITY AFTER LANGUAGE):',
+    'Infer the dominant commit-message format from the samples below and follow it.',
+    'The first line should look like it belongs next to these samples.',
+    'Apply the same style dimensions: prefix/type/scope pattern, description language, punctuation, casing, line breaks, body length, bullet prefix, and detail level.',
+    'If the samples use Conventional Commits, keep the same type/scope style.',
+    'If the samples omit a body for narrow changes, prefer a subject-only message for similarly narrow current changes.',
+    'If the samples use a blank line plus "- " bullets for multi-part changes, use that body style only when the current diff has comparable complexity.',
+    'If any lower-priority formatting instruction conflicts with this style requirement, follow the style requirement.',
+    'Use these samples for style only, not as evidence of what changed now.',
+    'Do not copy exact change details, identifiers, tickets, scopes, topics, files, dependencies, providers, metrics, or workflows unless they are clearly required by the current diff.',
     '--- BEGIN RECENT COMMIT MESSAGES ---',
     examples,
     '--- END RECENT COMMIT MESSAGES ---'
@@ -1857,6 +1896,7 @@ function getCommitMessagePreview(message: string): string {
 
 export const commitMessageTestUtils = {
   buildDiffGenerationPrompt,
+  buildStyleReferenceBlock,
   sanitizeGeneratedCommitMessage,
   validateCommitMessage
 };

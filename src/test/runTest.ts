@@ -2349,6 +2349,53 @@ function runCommitMessageGeneratorTests(commitMessageGeneratorModule: CommitMess
   assert.match(prompt, /Never invent motivations, architecture changes, or side effects that are not directly supported by the diff\./);
   console.log('PASS commit message prompt 会明确要求聚合式高信号摘要');
 
+  const recentStyleBlock = commitMessageTestUtils.buildStyleReferenceBlock([
+    [
+      'build(vsix): 优化 .vscodeignore 策略为白名单模式',
+      '',
+      '- 将 .vscodeignore 改为默认忽略所有文件并仅包含特定白名单文件。',
+      '- 更新打包测试逻辑，通过显式列表验证 VSIX 内容并增加金丝雀测试。'
+    ].join('\n'),
+    [
+      'chore: update provider pricing'
+    ].join('\n')
+  ]);
+  assert.ok(recentStyleBlock);
+  assert.match(recentStyleBlock, /The first line should look like it belongs next to these samples\./);
+  assert.match(recentStyleBlock, /If the samples use Conventional Commits, keep the same type\/scope style\./);
+  assert.match(recentStyleBlock, /Use these samples for style only, not as evidence of what changed now\./);
+  assert.match(recentStyleBlock, /Do not copy exact change details, identifiers, tickets, scopes, topics, files, dependencies, providers, metrics, or workflows/);
+
+  const stylePrompt = commitMessageTestUtils.buildDiffGenerationPrompt(
+    'diff --git a/src/bridge.ts b/src/bridge.ts',
+    'zh-cn',
+    {
+      pipelineMode: 'single',
+      maxDiffLines: 3000,
+      summaryTriggerLines: 1200,
+      summaryChunkLines: 800,
+      summaryMaxChunks: 12,
+      maxBodyBulletCount: 7,
+      subjectMaxLength: 72,
+      requireConventionalType: true,
+      warnOnValidationFailure: true,
+      llmMaxPromptLength: 20000
+    },
+    false,
+    recentStyleBlock
+  );
+  const styleIndex = stylePrompt.indexOf('STYLE REQUIREMENT');
+  const fallbackFormatIndex = stylePrompt.indexOf('FALLBACK FORMAT REQUIREMENT');
+  assert.ok(styleIndex >= 0);
+  assert.ok(fallbackFormatIndex > styleIndex);
+  assert.match(stylePrompt, /Use the fallback format rules only for details that the recent samples do not decide\./);
+  assert.match(stylePrompt, /If STYLE conflicts with body length, bullet, or subject format details below, follow STYLE\./);
+  assert.match(stylePrompt, /CURRENT DIFF \(ONLY CHANGE EVIDENCE\):/);
+  assert.match(stylePrompt, /Generate the commit message from this diff only\. Use recent commit messages only for writing style\./);
+  assert.match(stylePrompt, /Any topic, file, or action absent from this diff must be excluded from the output\./);
+  assert.match(stylePrompt, /Recent commit messages are style references only; they are not evidence for the current change\./);
+  console.log('PASS commit message recent style 提示词会优先约束格式与正文风格');
+
   const noBodyIssues = commitMessageTestUtils.validateCommitMessage(
     'chore: 删除已完成说明文件',
     'zh-cn',
