@@ -102,6 +102,11 @@ function createState(vendors: unknown[]): MockState {
   };
 }
 
+function resolveImplicitReservedOutputForTest(totalContextWindow: number): number {
+  const normalizedTotalContextWindow = Math.max(2, Math.floor(totalContextWindow));
+  return Math.min(30000, Math.max(4096, Math.floor(normalizedTotalContextWindow * 0.2)));
+}
+
 let activeState = createState([]);
 
 function createVscodeMock() {
@@ -984,39 +989,43 @@ function runGenericProviderContextSizeTests(
     cappedConfigStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'zero-unset-runtime',
-      contextSize: 131072,
-      maxInputTokens: 0,
-      maxOutputTokens: 0
-    }]
-  }]);
+  const implicitReserveScenarios = [32000, 64000, 128000, 200000];
+  for (const contextSize of implicitReserveScenarios) {
+    activeState = createState([{
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [{
+        name: `zero-unset-runtime-${contextSize}`,
+        contextSize,
+        maxInputTokens: 0,
+        maxOutputTokens: 0
+      }]
+    }]);
 
-  const zeroUnsetConfigStore = new configStoreCtor(createExtensionContext() as never);
-  const zeroUnsetProvider = new GenericAIProvider(createExtensionContext() as never, zeroUnsetConfigStore) as unknown as {
-    buildConfiguredModelsForVendor(vendor: VendorRecord): Array<{
-      maxTokens: number;
-      maxInputTokens: number;
-      maxOutputTokens: number;
-    }>;
-    dispose(): void;
-  };
+    const zeroUnsetConfigStore = new configStoreCtor(createExtensionContext() as never);
+    const zeroUnsetProvider = new GenericAIProvider(createExtensionContext() as never, zeroUnsetConfigStore) as unknown as {
+      buildConfiguredModelsForVendor(vendor: VendorRecord): Array<{
+        maxTokens: number;
+        maxInputTokens: number;
+        maxOutputTokens: number;
+      }>;
+      dispose(): void;
+    };
 
-  try {
-    const vendor = zeroUnsetConfigStore.getVendors()[0] as VendorRecord;
-    const models = zeroUnsetProvider.buildConfiguredModelsForVendor(vendor);
-    assert.equal(models[0]?.maxTokens, 131072);
-    assert.equal(models[0]?.maxInputTokens, 101072);
-    assert.equal(models[0]?.maxOutputTokens, 30000);
-    console.log('PASS 运行时会把 0 视为未设置并应用默认输出预算');
-  } finally {
-    zeroUnsetProvider.dispose();
-    zeroUnsetConfigStore.dispose();
+    try {
+      const vendor = zeroUnsetConfigStore.getVendors()[0] as VendorRecord;
+      const models = zeroUnsetProvider.buildConfiguredModelsForVendor(vendor);
+      const expectedReservedOutput = resolveImplicitReservedOutputForTest(contextSize);
+      assert.equal(models[0]?.maxTokens, contextSize);
+      assert.equal(models[0]?.maxInputTokens, contextSize - expectedReservedOutput);
+      assert.equal(models[0]?.maxOutputTokens, expectedReservedOutput);
+      console.log(`PASS 运行时会把 0 视为未设置并按上下文动态应用默认输出预算 (${contextSize})`);
+    } finally {
+      zeroUnsetProvider.dispose();
+      zeroUnsetConfigStore.dispose();
+    }
   }
 }
 
@@ -1299,6 +1308,29 @@ async function runGenericProviderOutputLimitToggleTests(
   assert.equal(requiredMaxTokensRetryResult.payloads[1]?.stream, false);
   assert.equal(readAttachedTokenUsage(requiredMaxTokensRetryResult.response)?.outputBuffer, 30000);
   console.log('PASS 上游要求 max_tokens 时会自动重试并补发 max_tokens');
+
+  const implicitReserveRetryResult = await capturePayloadWithRequiredMaxTokensRetry([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'dynamic-coder',
+      contextSize: 64000,
+      maxInputTokens: 0,
+      maxOutputTokens: 0,
+      capabilities: { tools: true, vision: false }
+    }]
+  }], 'Vendor/dynamic-coder');
+  assert.equal(implicitReserveRetryResult.payloads.length, 2);
+  assert.equal('max_tokens' in implicitReserveRetryResult.payloads[0], false);
+  assert.equal(implicitReserveRetryResult.payloads[1]?.max_tokens, resolveImplicitReservedOutputForTest(64000));
+  assert.equal(implicitReserveRetryResult.payloads[1]?.stream, false);
+  assert.equal(
+    readAttachedTokenUsage(implicitReserveRetryResult.response)?.outputBuffer,
+    resolveImplicitReservedOutputForTest(64000)
+  );
+  console.log('PASS 动态默认输出预留会影响补发的 max_tokens 与 outputBuffer');
 
   const positiveOutputResult = await capturePayload([{
     name: 'Vendor',
@@ -2312,7 +2344,7 @@ function runCommitMessageGeneratorTests(commitMessageGeneratorModule: CommitMess
   assert.match(prompt, /Prefer no body or 1 bullet for narrow changes such as deleting, renaming, or moving a single file\./);
   assert.match(prompt, /Prefer 2 or 3 bullet points only when the diff clearly contains multiple meaningful change groups\./);
   assert.match(prompt, /Each bullet should group related edits by intent or outcome, not narrate the diff file-by-file\./);
-  assert.match(prompt, /Avoid mechanical verb-led bullets such as "add", "remove", "update", "完善了", "删除了", or "新增了" unless required for clarity\./);
+  assert.match(prompt, /Avoid repetitive file-by-file bullets\. Verb-led bullets are acceptable when they stay concise and strictly reflect the diff\./);
   assert.match(prompt, /For narrow changes such as deleting or renaming a single file, the body may be omitted entirely\./);
   assert.match(prompt, /Never invent motivations, architecture changes, or side effects that are not directly supported by the diff\./);
   console.log('PASS commit message prompt 会明确要求聚合式高信号摘要');

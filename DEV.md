@@ -161,7 +161,8 @@ npm run test:pages
   - `anthropic`：请求 `baseUrl + /messages`
 - `coding-plans.vendors[].usageUrl` 为可选套餐 usage 接口；当前默认按 `Authorization: Bearer <API Key>` 轮询，并将识别到的小时额度、周额度或次数额度以百分比显示在状态栏。
 - `coding-plans.vendors[].models[].contextSize` 现在是描述模型上下文的首选字段。
-- `coding-plans.advanced.defaultReservedOutput` 的默认值为 `60000`，用于全局输出预算；发送请求时会自动按模型上限收敛。
+- 未显式设置 `maxOutputTokens` 时，运行时会按总上下文动态推导隐式输出预留：`min(30000, max(4096, floor(totalContextWindow * 0.2)))`；极小上下文窗口会再按总窗口安全收敛。
+- `coding-plans.advanced.defaultReservedOutput` 的默认值为 `60000`，用于请求侧输出预算覆盖；发送请求时会自动按模型上限收敛，不改变模型隐式默认输出预留的推导公式。
 - `coding-plans.vendors[].models[].maxInputTokens` / `maxOutputTokens` 已标记为 deprecated，保留兼容旧配置与特殊覆盖用途。两者仍允许配置为 `0`。其中 `maxInputTokens: 0` 的语义为”未设置”；`maxOutputTokens` 默认值就是 `0`，表示”未设置”；在 `openai-chat` / `openai-responses` 下不主动下发 `max_tokens` / `max_output_tokens`，但当上游协议端点强制要求 `max_tokens` 时需自动补发兼容值。`maxInputTokens` 仍仅用于本地元数据和预算，不直接传给 API。自动刷新/写回 `vendors` 配置时不再默认补入这两个字段；只有用户显式配置的现有模型项会被原样保留。
 - 新增采样参数：
   - `coding-plans.vendors[].defaultTemperature` / `defaultTopP`：供应商默认采样值

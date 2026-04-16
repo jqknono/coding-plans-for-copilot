@@ -5,8 +5,8 @@ import {
   DEFAULT_MODEL_CAPABILITIES_TOOLS,
   DEFAULT_MODEL_CAPABILITIES_VISION,
   DEFAULT_CONTEXT_WINDOW_SIZE,
-  DEFAULT_RESERVED_OUTPUT_TOKENS,
-  VENDOR_API_KEY_PREFIX
+  VENDOR_API_KEY_PREFIX,
+  resolveImplicitReservedOutputTokens
 } from '../constants';
 
 export type VendorApiStyle = 'openai-chat' | 'openai-responses' | 'anthropic';
@@ -520,7 +520,7 @@ export class ConfigStore implements vscode.Disposable {
   ): { maxInputTokens: number; maxOutputTokens: number } {
     const hasExplicitTotalContextWindow = legacyContextWindow !== undefined;
     const fallbackTotal = Math.max(2, Math.floor(legacyContextWindow ?? DEFAULT_CONTEXT_WINDOW_SIZE));
-    const defaultReservedOutputTokens = Math.max(1, Math.min(DEFAULT_RESERVED_OUTPUT_TOKENS, fallbackTotal - 1));
+    const defaultReservedOutputTokens = resolveImplicitReservedOutputTokens(fallbackTotal);
     const normalizeTokenValue = (value: number | undefined): number | undefined => {
       if (value === undefined) {
         return undefined;

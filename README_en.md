@@ -159,10 +159,10 @@ To switch to OpenAI-compatible endpoints, modify the vendor's `baseUrl` and `def
 | `coding-plans.vendors[].models[].temperature` | `number` | Inherit from vendor | Model-level temperature override. |
 | `coding-plans.vendors[].models[].topP` | `number` | Inherit from vendor | Model-level topP override. |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | Model capability declaration. |
-| `coding-plans.vendors[].models[].contextSize` | `number` | Empty | Model total context window. |
+| `coding-plans.vendors[].models[].contextSize` | `number` | Empty | Model total context window. When `maxOutputTokens` is unset, runtime derives the implicit reserved output budget from this total window. |
 | `coding-plans.vendors[].models[].maxInputTokens` | `number` | Empty | Deprecated,建议使用 `contextSize`. |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | Deprecated,建议使用 `contextSize`. |
-| `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Global default output token budget. |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | Deprecated,建议使用 `contextSize`. `0` means unset; runtime then derives an implicit reserved output budget as 20% of total context, clamped to 4096-30000. |
+| `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Request-side default output token budget. It only overrides request budgeting and is still capped by the model output limit. |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show "Generate Commit Message" command. |
 | `coding-plans.commitMessage.language` | `string` | `en` | Commit message language: `en` / `zh-cn`. |
 | `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | Whether to reference the style of the last 20 commits. |

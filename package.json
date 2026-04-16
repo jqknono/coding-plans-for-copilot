@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.6.28",
+    "version": "0.7.0",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",
@@ -315,7 +315,7 @@
                                         },
                                         "contextSize": {
                                             "type": "number",
-                                            "description": "Preferred total context window size for the model. Language model context display uses this value directly when provided."
+                                            "description": "Preferred total context window size for the model. Language model context display uses this value directly when provided. When maxOutputTokens is left unset, runtime derives an implicit reserved output budget from this total window."
                                         },
                                         "maxInputTokens": {
                                             "type": "number",
@@ -325,7 +325,7 @@
                                         "maxOutputTokens": {
                                             "type": "number",
                                             "default": 0,
-                                            "description": "Deprecated: legacy maximum output tokens override. Prefer contextSize for model context. When contextSize is provided and this value exceeds it, it will be capped to contextSize. Defaults to 0, which treats it as unset. For openai-chat/openai-responses it suppresses proactively sending output-token limits, while protocol endpoints that require max_tokens will trigger an automatic compatible retry.",
+                                            "description": "Deprecated: legacy maximum output tokens override. Prefer contextSize for model context. When contextSize is provided and this value exceeds it, it will be capped to contextSize. Defaults to 0, which treats it as unset; runtime then derives an implicit reserved output budget from total context (20%, clamped to 4096-30000). For openai-chat/openai-responses it suppresses proactively sending output-token limits, while protocol endpoints that require max_tokens will trigger an automatic compatible retry.",
                                             "deprecationMessage": "Deprecated: prefer contextSize to describe model context. Keep maxOutputTokens only when you need a legacy output-cap override."
                                         },
                                         "apiStyle": {

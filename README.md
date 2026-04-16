@@ -159,10 +159,10 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].temperature` | `number` | 继承供应商 | 模型级 temperature 覆盖。 |
 | `coding-plans.vendors[].models[].topP` | `number` | 继承供应商 | 模型级 topP 覆盖。 |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | 模型能力声明。 |
-| `coding-plans.vendors[].models[].contextSize` | `number` | 空 | 模型总上下文窗口。 |
+| `coding-plans.vendors[].models[].contextSize` | `number` | 空 | 模型总上下文窗口；未显式设置 `maxOutputTokens` 时，运行时会基于它动态推导隐式输出预留。 |
 | `coding-plans.vendors[].models[].maxInputTokens` | `number` | 空 | 已废弃，建议使用 `contextSize`。 |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | 已废弃，建议使用 `contextSize`。 |
-| `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | 全局默认输出 token 预算。 |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | 已废弃，建议使用 `contextSize`。`0` 表示未设置，此时运行时默认按总上下文的 `20%` 推导隐式输出预留，并收敛到 `4096-30000`。 |
+| `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | 请求侧默认输出 token 预算；仅作为发送请求时的预算覆盖值，最终仍会按模型输出上限收敛。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示"生成 Commit 消息"命令。 |
 | `coding-plans.commitMessage.language` | `string` | `en` | 提交消息语言：`en` / `zh-cn`。 |
 | `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | 是否参考最近 20 条 commit 风格。 |

@@ -4,7 +4,8 @@ import {
   DEFAULT_CONTEXT_WINDOW_SIZE,
   DEFAULT_RESERVED_OUTPUT_TOKENS,
   DEFAULT_TOKEN_SIDE_LIMIT,
-  MODEL_VERSION_LABEL
+  MODEL_VERSION_LABEL,
+  resolveImplicitReservedOutputTokens
 } from '../constants';
 import { logger } from '../logging/outputChannelLogger';
 
@@ -463,7 +464,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
   ): Pick<ResolvedModelRuntimeSettings, 'maxTokens' | 'maxInputTokens' | 'maxOutputTokens'> {
     const hasExplicitTotalContextWindow = totalContextWindow !== undefined;
     const fallbackTotal = Math.max(2, Math.floor(totalContextWindow ?? DEFAULT_CONTEXT_WINDOW_SIZE));
-    const defaultReservedOutputTokens = Math.max(1, Math.min(DEFAULT_RESERVED_OUTPUT_TOKENS, fallbackTotal - 1));
+    const defaultReservedOutputTokens = resolveImplicitReservedOutputTokens(fallbackTotal);
     const normalizeTokenValue = (value: number | undefined): number | undefined => {
       if (value === undefined) {
         return undefined;

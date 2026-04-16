@@ -79,8 +79,23 @@ export const DEFAULT_TOKEN_SIDE_LIMIT = 200000;
 export const DEFAULT_CONTEXT_WINDOW_SIZE = DEFAULT_TOKEN_SIDE_LIMIT;
 export const DEFAULT_REQUEST_MAX_TOKENS = DEFAULT_TOKEN_SIDE_LIMIT;
 export const DEFAULT_RESERVED_OUTPUT_TOKENS = 30000;
+export const MIN_DYNAMIC_RESERVED_OUTPUT_TOKENS = 4096;
+export const DEFAULT_RESERVED_OUTPUT_RATIO = 0.2;
 export const DEFAULT_MODEL_CAPABILITIES_TOOLS = true;
 export const DEFAULT_MODEL_CAPABILITIES_VISION = false;
+
+export function resolveImplicitReservedOutputTokens(totalContextWindow: number): number {
+  const normalizedTotalContextWindow = Math.max(2, Math.floor(totalContextWindow));
+  const desiredReservedOutputTokens = Math.min(
+    DEFAULT_RESERVED_OUTPUT_TOKENS,
+    Math.max(
+      MIN_DYNAMIC_RESERVED_OUTPUT_TOKENS,
+      Math.floor(normalizedTotalContextWindow * DEFAULT_RESERVED_OUTPUT_RATIO)
+    )
+  );
+
+  return Math.max(1, Math.min(desiredReservedOutputTokens, normalizedTotalContextWindow - 1));
+}
 
 export const LOG_LEVEL_PRIORITY = {
   DEBUG: 10,
