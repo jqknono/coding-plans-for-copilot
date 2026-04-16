@@ -2,10 +2,22 @@
 
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const { spawnSync } = require("node:child_process");
 const path = require("node:path");
 
 const repoRoot = path.resolve(__dirname, "..", "..");
+const expectedVsixFiles = [
+  "README.md",
+  "package.nls.zh-cn.json",
+  "package.nls.json",
+  "package.json",
+  "LICENSE",
+  "CHANGELOG.md",
+  "out/extension.js",
+  "assets/icon.png",
+];
+const expectedVsixFileSet = [...expectedVsixFiles].sort();
 
 function listVsixFiles() {
   const command = process.platform === "win32" ? "cmd.exe" : "npx";
@@ -27,25 +39,21 @@ function listVsixFiles() {
     .map((line) => line.replace(/\\/g, "/"));
 }
 
-test("VSIX package excludes local workspace artifacts", () => {
+test("VSIX package only includes explicitly allowed files", () => {
   const files = listVsixFiles();
 
-  const forbiddenPatterns = [
-    /^temp\.log$/,
-    /^temp\//,
-    /^\.claude\//,
-    /^\.playwright-mcp\//,
-    /^assets\/discussions\//,
-    /^assets\/openrouter-provider-metrics\.json$/,
-    /^assets\/openrouter-provider-plans\.json$/,
-    /^assets\/provider-pricing\.json$/,
-  ];
+  assert.deepEqual([...files].sort(), expectedVsixFileSet);
+});
 
-  for (const file of files) {
-    assert.equal(
-      forbiddenPatterns.some((pattern) => pattern.test(file)),
-      false,
-      `unexpected file in VSIX package: ${file}`,
-    );
+test("VSIX package ignores new files unless they are allowlisted", () => {
+  const canaryPath = path.join(repoRoot, "vsix-unlisted-canary.txt");
+  fs.writeFileSync(canaryPath, "This file must never be packaged.\n");
+
+  try {
+    const files = listVsixFiles();
+    assert.equal(files.includes("vsix-unlisted-canary.txt"), false);
+    assert.deepEqual([...files].sort(), expectedVsixFileSet);
+  } finally {
+    fs.rmSync(canaryPath, { force: true });
   }
 });

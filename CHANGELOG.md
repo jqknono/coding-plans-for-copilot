@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.1] - 2026-04-16
+- chore: 升级版本至 0.7.1
+
 ## [0.7.0] - 2026-04-16
 - feat(model): 实现基于上下文窗口的动态隐式输出预留逻辑
 - feat(crawler): 增加分析结果统计并更新工作流配置
@@ -49,7 +52,4 @@ All notable changes to this project will be documented in this file.
 - build(workflow): 更新 OpenRouter 指标与套餐抓取流程
 - feat(ci): 调整 OpenRouter 模型数据最大缓存天数
 - fix(provider-pricing): 更新模型定价数据和爬虫逻辑
-- fix(docs): 更新废弃字段 maxInputTokens 和 maxOutputTokens 的描述信息
-
-## [0.6.1] - 2026-03-19
 - fix(docs): 更新废弃字段 maxInputTokens 和 maxOutputTokens 的描述信息
