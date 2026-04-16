@@ -1,11 +1,15 @@
 .vscode/**
 .vscode-test/**
+.claude/**
+.playwright-mcp/**
 .translation-cache/**
 .git/**
 node_modules/**
 src/**
 plans/**
 scripts/**
+temp/**
+todo/**
 .gitignore
 .yarnrc
 vsc-extension-quickstart.md
@@ -14,6 +18,7 @@ tsconfig.json
 **/*.map
 **/*.ts
 **/*.tsbuildinfo
+*.log
 **/*.md
 !README.md
 !CHANGELOG.md
@@ -23,8 +28,6 @@ docs/**
 pages/**
 minimax-sitemap.xml
 moonshot-sitemap.xml
-assets/icon.svg
-assets/provider-pricing.json
 .env
 .cursor/**
 .playwright-cli/**
@@ -37,5 +40,5 @@ AGENTS.md
 DEV.md
 *.vsix
 .tmp-market.vsix
-assets/openrouter-provider-metrics.json
-assets/openrouter-provider-plans.json
+assets/**
+!assets/icon.png
