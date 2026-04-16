@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-15T08:41:03.153Z",
+  "generatedAt": "2026-04-16T03:06:28.677Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -296,14 +296,16 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: fetch failed"
     },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CDqgzOk6.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-RrM__ad6.js"
       ],
       "plans": [
         {
@@ -981,5 +983,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "jdcloud-ai: fetch failed"
+  ]
 }
