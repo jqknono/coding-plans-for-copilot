@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-04-15T08:41:19.459Z",
-  "generatedAtBeijing": "2026年4月15日 16:41:19",
-  "sourceGeneratedAt": "2026-04-15T08:41:03.153Z",
-  "sourceGeneratedAtBeijing": "2026年4月15日 16:41:03",
-  "sourceMetricsGeneratedAt": "2026-04-15T08:41:03.838Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月15日 16:41:03",
+  "generatedAt": "2026-04-16T08:41:34.316Z",
+  "generatedAtBeijing": "2026年4月16日 16:41:34",
+  "sourceGeneratedAt": "2026-04-16T08:41:19.493Z",
+  "sourceGeneratedAtBeijing": "2026年4月16日 16:41:19",
+  "sourceMetricsGeneratedAt": "2026-04-16T08:41:20.052Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月16日 16:41:20",
   "summary": {
-    "openrouterProviderCount": 77,
+    "openrouterProviderCount": 78,
     "metricsProviderCount": 33,
     "resolvedMetricsProviderCount": 33,
     "unresolvedMetricsProviderCount": 0,
@@ -430,7 +430,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-CDqgzOk6.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-RrM__ad6.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -925,7 +925,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.together.ai",
       "pricingPageUrl": "https://www.together.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.50 / $2.80 / $0.03）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.30 / $0.06 / $1.20）",
       "blocked": false
     }
   ]
