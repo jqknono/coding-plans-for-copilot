@@ -1,0 +1,125 @@
+{
+  "date": "2026-04-17",
+  "generatedAt": "2026-04-17T06:49:49.918Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "阿里云": 2
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1206638",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1206638",
+      "title": "阿里云百炼 Coding Plan Pro 套餐 新增当日 token 限制",
+      "content": "但是你找遍文档 看不到一句 token 限制 是多少 套餐也是写着 只计算调用次数 和 token 消耗无关",
+      "author": "shuangmu",
+      "createdAt": "2026-04-17T06:42:22.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里云",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户指出阿里云百炼 Coding Plan Pro 套餐的文档未明确说明 token 限制，仅计算调用次数而非 token 消耗，可能影响使用成本预估。",
+        "topics": [
+          "定价",
+          "token 限制",
+          "套餐对比"
+        ],
+        "planMentioned": "百炼 Coding Plan Pro 套餐",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/73",
+      "analyzedAt": "2026-04-17T06:52:24.576Z"
+    },
+    {
+      "id": "v2ex-1206606",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1206606",
+      "title": "通过 AI 编程 Token 用量，也能“大概”能看出你靠 AI 的盈利能力",
+      "content": "基本上是用的越少，盈利能力越弱。 Lite 套餐都用不完的，靠 AI 的盈利能力可以说大约是 0",
+      "author": "andforce",
+      "createdAt": "2026-04-17T05:21:47.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "该帖子通过AI编程的Token使用量来推断用户依赖AI的盈利能力，指出如果连Lite套餐都用不完，则盈利能力几乎为零。",
+        "topics": [
+          "Token用量",
+          "Lite套餐",
+          "盈利能力",
+          "AI编程"
+        ],
+        "planMentioned": "Lite 套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/74",
+      "analyzedAt": "2026-04-17T06:52:29.769Z"
+    },
+    {
+      "id": "v2ex-1206514",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1206514",
+      "title": "阿里 Coding Plan 一天三变， Lite 版本到期不能续费了",
+      "content": "阿里的 coding plan 一直在变，现在已经开始舍弃这些 lite 版本用户了，到期后不能再续费了。 阿里这块的政策，一直这样，一直在变，国内现在还有什么好买好用的 模型了嘛？",
+      "author": "Mmiracle110",
+      "createdAt": "2026-04-17T01:43:50.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里云",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "阿里云的 Coding Plan 政策频繁变动，Lite 版本到期后无法续费，用户感到不满。",
+        "topics": [
+          "定价",
+          "套餐变动",
+          "续费",
+          "Lite版本",
+          "用户体验",
+          "政策不稳定"
+        ],
+        "planMentioned": "Lite 版本",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/75",
+      "analyzedAt": "2026-04-17T06:52:35.264Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1206566: LLM returned empty content (finish_reason=null)"
+  ]
+}
