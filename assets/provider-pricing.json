@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-04-17T03:06:14.899Z",
+  "generatedAt": "2026-04-17T08:40:41.459Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ae80b85b647093f09c06053fb538d21d.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3d86cb2f468002b08182635eb422fb67.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -296,16 +296,14 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "jdcloud-ai: fetch failed"
+      ]
     },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-D3cO5Z0-.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-D8OGXbXh.js"
       ],
       "plans": [
         {
@@ -983,7 +981,5 @@
       ]
     }
   ],
-  "failures": [
-    "jdcloud-ai: fetch failed"
-  ]
+  "failures": []
 }

@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-16T08:41:34.316Z",
-  "generatedAtBeijing": "2026年4月16日 16:41:34",
-  "sourceGeneratedAt": "2026-04-16T08:41:19.493Z",
-  "sourceGeneratedAtBeijing": "2026年4月16日 16:41:19",
-  "sourceMetricsGeneratedAt": "2026-04-16T08:41:20.052Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月16日 16:41:20",
+  "generatedAt": "2026-04-17T08:40:55.439Z",
+  "generatedAtBeijing": "2026年4月17日 16:40:55",
+  "sourceGeneratedAt": "2026-04-17T08:40:41.459Z",
+  "sourceGeneratedAtBeijing": "2026年4月17日 16:40:41",
+  "sourceMetricsGeneratedAt": "2026-04-17T08:40:41.983Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月17日 16:40:41",
   "summary": {
     "openrouterProviderCount": 78,
     "metricsProviderCount": 33,
@@ -57,7 +57,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ae80b85b647093f09c06053fb538d21d.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3d86cb2f468002b08182635eb422fb67.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -430,7 +430,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-RrM__ad6.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-D8OGXbXh.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -513,7 +513,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.214/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.216/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -754,7 +754,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.30 / $0.75）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.30 / $0.06）",
       "blocked": false
     },
     {
