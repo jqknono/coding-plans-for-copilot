@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-04-17T08:40:55.439Z",
-  "generatedAtBeijing": "2026年4月17日 16:40:55",
-  "sourceGeneratedAt": "2026-04-17T08:40:41.459Z",
-  "sourceGeneratedAtBeijing": "2026年4月17日 16:40:41",
-  "sourceMetricsGeneratedAt": "2026-04-17T08:40:41.983Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月17日 16:40:41",
+  "generatedAt": "2026-04-18T08:19:58.761Z",
+  "generatedAtBeijing": "2026年4月18日 16:19:58",
+  "sourceGeneratedAt": "2026-04-18T08:19:41.829Z",
+  "sourceGeneratedAtBeijing": "2026年4月18日 16:19:41",
+  "sourceMetricsGeneratedAt": "2026-04-18T08:19:42.414Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月18日 16:19:42",
   "summary": {
     "openrouterProviderCount": 78,
-    "metricsProviderCount": 33,
-    "resolvedMetricsProviderCount": 33,
+    "metricsProviderCount": 36,
+    "resolvedMetricsProviderCount": 36,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 5,
-    "heuristicProviderCount": 5,
-    "providersWithPlans": 10,
-    "pendingCount": 23,
+    "heuristicProviderCount": 7,
+    "providersWithPlans": 12,
+    "pendingCount": 24,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -122,14 +122,14 @@
       ],
       "sourceUrls": [
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.DhEr62tB.js",
-        "https://chutes.ai/_app/immutable/nodes/0.Dz6xHcrt.js",
+        "https://chutes.ai/_app/immutable/entry/app.LuuRJEdf.js",
+        "https://chutes.ai/_app/immutable/nodes/0.qDEwceQW.js",
         "https://chutes.ai/_app/immutable/chunks/DEStpq0a.js",
         "https://chutes.ai/_app/immutable/chunks/CWIHRLZS.js",
         "https://chutes.ai/_app/immutable/chunks/BICcWcUb.js",
         "https://chutes.ai/_app/immutable/chunks/DWRPVVOi.js",
-        "https://chutes.ai/_app/immutable/chunks/M9qh9UzK.js",
-        "https://chutes.ai/_app/immutable/chunks/mESoZsZG.js",
+        "https://chutes.ai/_app/immutable/chunks/CUC4pIaC.js",
+        "https://chutes.ai/_app/immutable/chunks/B62tp43A.js",
         "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js",
         "https://chutes.ai/_app/immutable/chunks/07SJ1Ez2.js",
@@ -141,8 +141,8 @@
         "https://chutes.ai/_app/immutable/chunks/Bg1pMQUL.js",
         "https://chutes.ai/_app/immutable/chunks/MIglteRx.js",
         "https://chutes.ai/_app/immutable/chunks/ChFdde2u.js",
-        "https://chutes.ai/_app/immutable/chunks/DVADNH4D.js",
-        "https://chutes.ai/_app/immutable/nodes/2.Cdbca6_C.js",
+        "https://chutes.ai/_app/immutable/chunks/DxsnzeZh.js",
+        "https://chutes.ai/_app/immutable/nodes/2.BHP8oz7o.js",
         "https://chutes.ai/_app/immutable/chunks/3tSkQGuL.js",
         "https://chutes.ai/_app/immutable/chunks/DnbzhUo3.js",
         "https://chutes.ai/_app/immutable/chunks/CQqEbEt1.js",
@@ -151,7 +151,7 @@
         "https://chutes.ai/_app/immutable/chunks/D04iQObJ.js",
         "https://chutes.ai/_app/immutable/chunks/D2QCNa2Z.js",
         "https://chutes.ai/_app/immutable/chunks/BGFdVicR.js",
-        "https://chutes.ai/_app/immutable/chunks/D8P9LChN.js",
+        "https://chutes.ai/_app/immutable/chunks/BPXDobbf.js",
         "https://chutes.ai/_app/immutable/chunks/0B7Bd9li.js",
         "https://chutes.ai/_app/immutable/chunks/DX6rZLP_.js",
         "https://chutes.ai/_app/immutable/chunks/dSMvK_Ra.js",
@@ -159,12 +159,12 @@
         "https://chutes.ai/_app/immutable/chunks/CLIhes5I.js",
         "https://chutes.ai/_app/immutable/chunks/DJORDF47.js",
         "https://chutes.ai/_app/immutable/chunks/BoGRIRoC.js",
-        "https://chutes.ai/_app/immutable/chunks/CZ-5_kPX.js",
         "https://chutes.ai/_app/immutable/chunks/BLJK5JE2.js",
+        "https://chutes.ai/_app/immutable/chunks/B9LaaiNO.js",
         "https://chutes.ai/_app/immutable/chunks/CLabWHzQ.js",
-        "https://chutes.ai/_app/immutable/chunks/DZAWHeg1.js",
-        "https://chutes.ai/_app/immutable/nodes/20.D1-HqFLx.js",
-        "https://chutes.ai/_app/immutable/chunks/DLRQoDyw.js",
+        "https://chutes.ai/_app/immutable/chunks/DtJ7Svjj.js",
+        "https://chutes.ai/_app/immutable/nodes/20.Dak4WWhn.js",
+        "https://chutes.ai/_app/immutable/chunks/D_t6x0pW.js",
         "https://chutes.ai"
       ],
       "pricingPageUrl": "https://chutes.ai/pricing",
@@ -173,6 +173,54 @@
       "privacyPolicyUrl": "https://chutes.ai/privacy",
       "termsOfServiceUrl": "https://chutes.ai/tos",
       "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "cloudflare",
+      "openrouterName": "Cloudflare",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 5,
+          "currentPriceText": "$5 per mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.cloudflare.com/plans/",
+          "serviceDetails": null
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 10,
+          "currentPriceText": "$10 per mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": null
+        },
+        {
+          "name": "官网价格参考 3",
+          "currentPrice": 5,
+          "currentPriceText": "$5/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://www.cloudflare.com",
+        "https://www.cloudflare.com/plans/"
+      ],
+      "pricingPageUrl": "https://www.cloudflare.com/plans/",
+      "officialWebsiteUrl": "https://www.cloudflare.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://developers.cloudflare.com/workers-ai/privacy",
+      "termsOfServiceUrl": "https://www.cloudflare.com/service-specific-terms-developer-platform/#developer-platform-terms",
+      "statusPageUrl": "https://www.cloudflarestatus.com/",
       "parseMode": "official-website-heuristic"
     },
     {
@@ -430,7 +478,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-D8OGXbXh.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DdX1aBF0.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -440,6 +488,75 @@
       "termsOfServiceUrl": "https://platform.moonshot.ai/docs/agreement/modeluse",
       "statusPageUrl": null,
       "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "morph",
+      "openrouterName": "Morph",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 20,
+          "currentPriceText": "$ 20/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.morphllm.com/pricing",
+          "serviceDetails": [
+            "Merge AI-generated code edits instantly.",
+            "AI search subagent with sub-6s searches.",
+            "Verbatim context compaction for long-running agents.",
+            "Connect Claude, Cursor, and VS Code to Morph.",
+            "View all your org&#x27;s PRs in a unified feed.",
+            "Our SDK powering all products: OpenAI-compatible API, Anthropic & Vercel AI SDK support, and more."
+          ]
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 60,
+          "currentPriceText": "$ 60/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "Merge AI-generated code edits instantly.",
+            "AI search subagent with sub-6s searches.",
+            "Verbatim context compaction for long-running agents.",
+            "Connect Claude, Cursor, and VS Code to Morph.",
+            "View all your org&#x27;s PRs in a unified feed.",
+            "Our SDK powering all products: OpenAI-compatible API, Anthropic & Vercel AI SDK support, and more."
+          ]
+        },
+        {
+          "name": "官网价格参考 3",
+          "currentPrice": 400,
+          "currentPriceText": "$ 400/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "Merge AI-generated code edits instantly.",
+            "AI search subagent with sub-6s searches.",
+            "Verbatim context compaction for long-running agents.",
+            "Connect Claude, Cursor, and VS Code to Morph.",
+            "View all your org&#x27;s PRs in a unified feed.",
+            "Our SDK powering all products: OpenAI-compatible API, Anthropic & Vercel AI SDK support, and more."
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.morphllm.com",
+        "https://www.morphllm.com/pricing"
+      ],
+      "pricingPageUrl": "https://www.morphllm.com/pricing",
+      "officialWebsiteUrl": "https://www.morphllm.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://morphllm.com/privacy",
+      "termsOfServiceUrl": "https://www.morphllm.com/privacy/tos",
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
     },
     {
       "slug": "phala",
@@ -513,7 +630,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.216/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.217/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -728,6 +845,15 @@
       "officialWebsiteUrl": "https://akashml.com",
       "pricingPageUrl": "https://akashml.com",
       "reason": "官网价格页探测失败：https://akashml.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "amazon-bedrock",
+      "openrouterName": "Amazon Bedrock",
+      "providerId": null,
+      "officialWebsiteUrl": "https://aws.amazon.com",
+      "pricingPageUrl": "https://aws.amazon.com/pricing/",
+      "reason": "官网价格页探测失败：https://aws.amazon.com/prices: HTTP 404",
       "blocked": false
     },
     {
