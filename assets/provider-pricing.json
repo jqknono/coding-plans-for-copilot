@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-17T08:40:41.459Z",
+  "generatedAt": "2026-04-18T03:05:05.578Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -40,7 +40,9 @@
             "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "aliyun-ai: Unable to locate Aliyun entry script"
     },
     {
       "provider": "baidu-qianfan-ai",
@@ -260,7 +262,9 @@
             "当前状态: 暂不可购买"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "infini-ai: Unable to locate Infini platform/ai route chunks"
     },
     {
       "provider": "jdcloud-ai",
@@ -303,7 +307,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-D8OGXbXh.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DdX1aBF0.js"
       ],
       "plans": [
         {
@@ -700,7 +704,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.216/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.217/index.js"
       ],
       "plans": [
         {
@@ -981,5 +985,8 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "aliyun-ai: Unable to locate Aliyun entry script",
+    "infini-ai: Unable to locate Infini platform/ai route chunks"
+  ]
 }
