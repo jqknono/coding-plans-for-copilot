@@ -1,0 +1,63 @@
+{
+  "date": "2026-04-19",
+  "generatedAt": "2026-04-19T06:45:17.021Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Cursor": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1206957",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1206957",
+      "title": "咨询下大家 cursor 付费渠道",
+      "content": "之前都是 u 卡支付，最近想升级 ultra 套餐发现 u 卡已全部不可用了 大家如果走官方，是支付宝直付？",
+      "author": "burden7",
+      "createdAt": "2026-04-19T04:20:19.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Cursor",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户询问Cursor ultra套餐的付费渠道，因为之前使用u卡支付方式已不可用，询问是否需要通过支付宝直付。",
+        "topics": [
+          "套餐对比",
+          "支付方式",
+          "u卡",
+          "Alipay"
+        ],
+        "planMentioned": "ultra套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/76",
+      "analyzedAt": "2026-04-19T06:47:39.085Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
