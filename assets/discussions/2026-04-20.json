@@ -1,0 +1,63 @@
+{
+  "date": "2026-04-20",
+  "generatedAt": "2026-04-20T06:59:20.556Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 56,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {}
+  },
+  "posts": [
+    {
+      "id": "v2ex-1207179",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1207179",
+      "title": "你们在 AI 上每个月花费多少？",
+      "content": "我从一开始的$20 套餐开始，现在得用$200 块钱的套餐了，而且还是省着用，不敢全都用最强的 AI 。你们觉得 AI 消费占多少天个人收入合理",
+      "author": "Maxbee",
+      "createdAt": "2026-04-20T06:41:55.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户询问大家在 AI 上的月度花费，并分享自己从 $20 套餐升级到 $200 套餐的经历，表示使用时比较节制。",
+        "topics": [
+          "消费",
+          "套餐价格",
+          "月度花费",
+          "个人收入比例"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/77",
+      "analyzedAt": "2026-04-20T07:02:52.028Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1207163: LLM returned empty content (finish_reason=null)",
+    "analysis failed for v2ex-1207156: LLM returned empty content (finish_reason=null)"
+  ]
+}
