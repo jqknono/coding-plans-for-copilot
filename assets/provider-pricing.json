@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-19T08:25:56.956Z",
+  "generatedAt": "2026-04-20T03:06:43.597Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -300,7 +300,9 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: fetch failed"
     },
     {
       "provider": "kimi-ai",
@@ -986,6 +988,7 @@
     }
   ],
   "failures": [
+    "jdcloud-ai: fetch failed",
     "aliyun-ai: Unable to locate Aliyun entry script",
     "infini-ai: Unable to locate Infini platform/ai route chunks"
   ]
