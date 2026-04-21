@@ -1,0 +1,162 @@
+{
+  "date": "2026-04-21",
+  "generatedAt": "2026-04-21T06:50:33.815Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 4,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 4,
+    "supplierMentions": {
+      "Anytokens.cc": 1,
+      "GitHub Copilot": 1,
+      "阿里云": 2
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1207367",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1207367",
+      "title": "💥 [最高领 $10 测试金] 纯血 Codex Pro 池 + 高智商 Claude！一个越用越稳的 API 中转站",
+      "content": "👋 大家好，直接进入正题。 直达链接： http://anytokens.cc/ 做这个站的初衷很简单：想拥有一个极致稳定、绝不掺水的代码 API 池。我们站的底层核心逻辑是：对接了极其丰富的高质量上游渠道。大家用得越多、并发越高，我们的连接池保活和负载均衡机制就跑得越顺，整体线路反而越稳！ 为了兼顾各种开发场景，我们精细化调优了三个核心分组，主打一个各司其职： 👨‍💻 1. codex-pro (倍率 0.6x) —— 纯正 Pro 号池，补全神器 这不是拿普通低智 API 凑数的渠道，而是实打实的 Pro 号池直连！响应飞快，在 Cursor 这种重度依赖代码补全的 IDE 里体验极佳。0.6 的倍率，让你沉浸式 Vibe Coding 一整天也不心疼，彻底告别无尽的 Loading 。 🛸 2. claude-反重力 (倍率 0.9x) —— 高智商逻辑怪，日常主力 目前写代码公认的“高智商”天花板就是 Claude Opus 4.6 。这个分组专门针对需要极强逻辑推导、复杂业务拆解的场景。不到 1 的倍率就能享受到顶级 Opus 的高智商输出，极少出现幻觉。 👑 3.",
+      "author": "312ybj",
+      "createdAt": "2026-04-21T02:00:09.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Anytokens.cc",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.98,
+        "summary": "The post promotes an API service aggregator offering stable, high-quality access to AI coding assistants like Codex Pro and Claude with tiered pricing and promotions.",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "抽奖",
+          "体验卡",
+          "订阅"
+        ],
+        "planMentioned": "Codex Pro, Claude",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-21T06:54:27.286Z"
+    },
+    {
+      "id": "v2ex-1207361",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1207361",
+      "title": "Copilot pro 移除了 claude opus 模型的使用权限",
+      "content": "如果想用 oups ，只能使用一个月 39 美金的 pro+。 另：Copilot 已经取消了年付优惠。目前只有月付。 再另：Copilot 已经停止了新用户的付费。目前仅支持升级订阅。 https://github.blog/changelog/2026-04-20-changes-to-github-copilot-plans-for-individuals/",
+      "author": "sentinelK",
+      "createdAt": "2026-04-21T01:43:27.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "GitHub Copilot",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "GitHub Copilot Pro has removed access to the Claude Opus model, cancelled yearly discounts, stopped new paid subscriptions, and now only offers month-to-month billing, with a Pro+ tier at $39/month for Opus access.",
+        "topics": [
+          "定价",
+          "模型移除",
+          "订阅变更",
+          "Copilot",
+          "套餐"
+        ],
+        "planMentioned": "Copilot Pro",
+        "language": "en",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-21T06:54:28.958Z"
+    },
+    {
+      "id": "v2ex-1207379",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1207379",
+      "title": "阿里云百炼这波开始割韭菜了，下架 coding plan，改头换面 token plan",
+      "content": "继上次被阿里云无理由封禁 coding plan ，投诉无果，感觉阿里云就是玩不起了，故意找各种套路搞用户。 先是 40/月的 coding plan 权益降级，不能用 qwen3.6 模型，然后又不能续费，强迫 4 月 13 号前升级到 200/月，到后面又无故封禁用户的账户。果然都是一步一步套路的。 然后今天看直接下架了 coding plan ，用 token plan 替代，果然是事出反常必有妖。",
+      "author": "pengzhizhuo",
+      "createdAt": "2026-04-21T02:18:23.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里云",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.98,
+        "summary": "用户投诉阿里云多次降低 coding plan 权益（如移除 qwen3.6 模型支持、强制升级费用），最终直接下架 coding plan 并替换为 token plan，认为这是故意欺骗用户的行为。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "阿里云",
+          "token plan",
+          "封禁",
+          "降级"
+        ],
+        "planMentioned": "coding plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-21T06:54:30.460Z"
+    },
+    {
+      "id": "v2ex-1207351",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1207351",
+      "title": "阿里云 CodingPlan 彻底没了，新上了 TokenPlan",
+      "content": "现在写的是 TokenPlan 团队版，最低 198/月 25000 积分，然后我卡住的时候看到一个基础规格是每月 100 积分，估计是试用或者免费。 不知道会不会有个人版，现在好像也没开始推广。",
+      "author": "ebushicao",
+      "createdAt": "2026-04-21T01:35:42.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里云",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户报告阿里云 CodingPlan 服务已停止，替换为 TokenPlan 团队版，价格为每月198元/25000积分，基础规格为每月100积分（可能为试用/免费），个人版尚未推广。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "阿里云",
+          "TokenPlan",
+          "订阅"
+        ],
+        "planMentioned": "TokenPlan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-21T06:54:32.263Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1207383: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3-next-80b-a3b-instruct:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Venice\",\"is_",
+    "analysis failed for v2ex-1207365: The operation was aborted due to timeout"
+  ]
+}
