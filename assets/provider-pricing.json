@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-21T03:05:57.365Z",
+  "generatedAt": "2026-04-21T08:44:13.970Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -300,16 +300,14 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "jdcloud-ai: fetch failed"
+      ]
     },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DUH4S9KP.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-RGW37-GN.js"
       ],
       "plans": [
         {
@@ -631,9 +629,7 @@
             "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "tencent-cloud-ai: fetch failed; Playwright fallback failed: page.goto: Timeout 8000ms exceeded. Call log: - navigating to \"https://cloud.tencent.com/document/product/1772/128947\", waiting until \"domcontentloaded\""
+      ]
     },
     {
       "provider": "tencent-cloud-token-plan",
@@ -745,7 +741,7 @@
       "provider": "x-aio",
       "sourceUrls": [
         "https://code.x-aio.com/",
-        "https://code.x-aio.com/assets/index-tPmTj1T6.js"
+        "https://code.x-aio.com/assets/index-QmZ7AHtx.js"
       ],
       "plans": [
         {
@@ -990,8 +986,6 @@
     }
   ],
   "failures": [
-    "tencent-cloud-ai: fetch failed; Playwright fallback failed: page.goto: Timeout 8000ms exceeded.\nCall log:\n  - navigating to \"https://cloud.tencent.com/document/product/1772/128947\", waiting until \"domcontentloaded\"\n",
-    "jdcloud-ai: fetch failed",
     "aliyun-ai: Unable to locate Aliyun entry script",
     "infini-ai: Unable to locate Infini platform/ai route chunks"
   ]

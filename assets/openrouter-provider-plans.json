@@ -1,17 +1,17 @@
 {
-  "generatedAt": "2026-04-20T08:52:58.150Z",
-  "generatedAtBeijing": "2026年4月20日 16:52:58",
-  "sourceGeneratedAt": "2026-04-20T08:52:40.259Z",
-  "sourceGeneratedAtBeijing": "2026年4月20日 16:52:40",
-  "sourceMetricsGeneratedAt": "2026-04-20T08:52:40.766Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月20日 16:52:40",
+  "generatedAt": "2026-04-21T08:44:32.297Z",
+  "generatedAtBeijing": "2026年4月21日 16:44:32",
+  "sourceGeneratedAt": "2026-04-21T08:44:13.970Z",
+  "sourceGeneratedAtBeijing": "2026年4月21日 16:44:13",
+  "sourceMetricsGeneratedAt": "2026-04-21T08:44:14.629Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月21日 16:44:14",
   "summary": {
     "openrouterProviderCount": 78,
     "metricsProviderCount": 36,
     "resolvedMetricsProviderCount": 36,
     "unresolvedMetricsProviderCount": 0,
-    "structuredProviderCount": 5,
-    "heuristicProviderCount": 7,
+    "structuredProviderCount": 6,
+    "heuristicProviderCount": 6,
     "providersWithPlans": 12,
     "pendingCount": 24,
     "blockedPendingCount": 0,
@@ -71,6 +71,52 @@
       "parseMode": "provider-pricing-structured"
     },
     {
+      "slug": "baidu",
+      "openrouterName": "Baidu",
+      "providerId": "baidu-qianfan-ai",
+      "plans": [
+        {
+          "name": "Coding Plan Lite",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "用量限制: 最多18000次请求",
+            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
+            "适配工具: Claude Code等AI开发工具"
+          ]
+        },
+        {
+          "name": "Coding Plan Pro",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "用量限制: 最多90000次请求",
+            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
+            "适配工具: Claude Code等AI开发工具"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://cloud.baidu.com/product/codingplan.html",
+        "https://intl.cloud.baidu.com"
+      ],
+      "pricingPageUrl": "https://cloud.baidu.com/product/codingplan.html",
+      "officialWebsiteUrl": "https://intl.cloud.baidu.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/Plr0fi68q-intl-en",
+      "termsOfServiceUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/bmesahnjh-intl-en",
+      "statusPageUrl": null,
+      "parseMode": "provider-pricing-structured"
+    },
+    {
       "slug": "chutes",
       "openrouterName": "Chutes",
       "providerId": null,
@@ -122,14 +168,14 @@
       ],
       "sourceUrls": [
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.LuuRJEdf.js",
-        "https://chutes.ai/_app/immutable/nodes/0.qDEwceQW.js",
+        "https://chutes.ai/_app/immutable/entry/app.D_oBoFmW.js",
+        "https://chutes.ai/_app/immutable/nodes/0.D012y11x.js",
         "https://chutes.ai/_app/immutable/chunks/DEStpq0a.js",
         "https://chutes.ai/_app/immutable/chunks/CWIHRLZS.js",
         "https://chutes.ai/_app/immutable/chunks/BICcWcUb.js",
         "https://chutes.ai/_app/immutable/chunks/DWRPVVOi.js",
-        "https://chutes.ai/_app/immutable/chunks/CUC4pIaC.js",
-        "https://chutes.ai/_app/immutable/chunks/B62tp43A.js",
+        "https://chutes.ai/_app/immutable/chunks/BCWxWaDh.js",
+        "https://chutes.ai/_app/immutable/chunks/B5HwDL8j.js",
         "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js",
         "https://chutes.ai/_app/immutable/chunks/07SJ1Ez2.js",
@@ -141,8 +187,8 @@
         "https://chutes.ai/_app/immutable/chunks/Bg1pMQUL.js",
         "https://chutes.ai/_app/immutable/chunks/MIglteRx.js",
         "https://chutes.ai/_app/immutable/chunks/ChFdde2u.js",
-        "https://chutes.ai/_app/immutable/chunks/DxsnzeZh.js",
-        "https://chutes.ai/_app/immutable/nodes/2.BHP8oz7o.js",
+        "https://chutes.ai/_app/immutable/chunks/B8xJnrBg.js",
+        "https://chutes.ai/_app/immutable/nodes/2.CDoKeK-Y.js",
         "https://chutes.ai/_app/immutable/chunks/3tSkQGuL.js",
         "https://chutes.ai/_app/immutable/chunks/DnbzhUo3.js",
         "https://chutes.ai/_app/immutable/chunks/CQqEbEt1.js",
@@ -163,7 +209,7 @@
         "https://chutes.ai/_app/immutable/chunks/B9LaaiNO.js",
         "https://chutes.ai/_app/immutable/chunks/CLabWHzQ.js",
         "https://chutes.ai/_app/immutable/chunks/DtJ7Svjj.js",
-        "https://chutes.ai/_app/immutable/nodes/20.Dak4WWhn.js",
+        "https://chutes.ai/_app/immutable/nodes/20.DhSIy8D8.js",
         "https://chutes.ai/_app/immutable/chunks/D_t6x0pW.js",
         "https://chutes.ai"
       ],
@@ -478,7 +524,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DdX1aBF0.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-RGW37-GN.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -488,75 +534,6 @@
       "termsOfServiceUrl": "https://platform.moonshot.ai/docs/agreement/modeluse",
       "statusPageUrl": null,
       "parseMode": "provider-pricing-structured"
-    },
-    {
-      "slug": "morph",
-      "openrouterName": "Morph",
-      "providerId": null,
-      "plans": [
-        {
-          "name": "官网价格参考",
-          "currentPrice": 20,
-          "currentPriceText": "$ 20/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "来源: https://www.morphllm.com/pricing",
-          "serviceDetails": [
-            "Merge AI-generated code edits instantly.",
-            "AI search subagent with sub-6s searches.",
-            "Verbatim context compaction for long-running agents.",
-            "Connect Claude, Cursor, and VS Code to Morph.",
-            "View all your org&#x27;s PRs in a unified feed.",
-            "Our SDK powering all products: OpenAI-compatible API, Anthropic & Vercel AI SDK support, and more."
-          ]
-        },
-        {
-          "name": "官网价格参考 2",
-          "currentPrice": 60,
-          "currentPriceText": "$ 60/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "Merge AI-generated code edits instantly.",
-            "AI search subagent with sub-6s searches.",
-            "Verbatim context compaction for long-running agents.",
-            "Connect Claude, Cursor, and VS Code to Morph.",
-            "View all your org&#x27;s PRs in a unified feed.",
-            "Our SDK powering all products: OpenAI-compatible API, Anthropic & Vercel AI SDK support, and more."
-          ]
-        },
-        {
-          "name": "官网价格参考 3",
-          "currentPrice": 400,
-          "currentPriceText": "$ 400/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "Merge AI-generated code edits instantly.",
-            "AI search subagent with sub-6s searches.",
-            "Verbatim context compaction for long-running agents.",
-            "Connect Claude, Cursor, and VS Code to Morph.",
-            "View all your org&#x27;s PRs in a unified feed.",
-            "Our SDK powering all products: OpenAI-compatible API, Anthropic & Vercel AI SDK support, and more."
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://www.morphllm.com",
-        "https://www.morphllm.com/pricing"
-      ],
-      "pricingPageUrl": "https://www.morphllm.com/pricing",
-      "officialWebsiteUrl": "https://www.morphllm.com",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://morphllm.com/privacy",
-      "termsOfServiceUrl": "https://www.morphllm.com/privacy/tos",
-      "statusPageUrl": null,
-      "parseMode": "official-website-heuristic"
     },
     {
       "slug": "phala",
