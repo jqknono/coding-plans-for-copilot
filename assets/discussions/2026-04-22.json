@@ -1,0 +1,100 @@
+{
+  "date": "2026-04-22",
+  "generatedAt": "2026-04-22T06:50:06.872Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 53,
+    "postsAfterKeywordFilter": 8,
+    "relevantPosts": 2,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "阿里云": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1207741",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1207741",
+      "title": "中国的算力缺口这么大嘛？看到 2025 华为昇腾出货 81 万块，又看到各家 coding plan 不是停售就是限流",
+      "content": "华为和国内各家显卡厂商感觉扩产意愿也不是很积极啊",
+      "author": "lynn1su",
+      "createdAt": "2026-04-22T06:37:59.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.7,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户指出中国算力缺口大，并提到 2025 年华为昇腾出货 81 万块，同时各家 coding plan 停售或限流，表达了对国内厂商扩产意愿不强的看法。",
+        "topics": [
+          "算力",
+          "华为昇腾",
+          "coding plan",
+          "停售",
+          "限流",
+          "扩产"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/83",
+      "analyzedAt": "2026-04-22T06:52:07.576Z"
+    },
+    {
+      "id": "v2ex-1207731",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1207731",
+      "title": "阿里云 Coding Plan 增加动态限流，频繁暂停无法使用",
+      "content": "阿里云 Coding Plan Pro 频繁遇到 429 usage allocated quota exceeded 报错。 套餐里已有“5 小时”和“周用量”的限制，现在又增加动态限流（具体规则模糊不清），一旦触发 直接暂停服务 1 小时 。这两天多次被限流暂停，代码根本没法写。 与客服沟通无果，敷衍答复。阿里随意调整规则，拿老用户当韭菜割，真恶心！ V 站有老哥遇到同样的情况吗？",
+      "author": "jonsmith",
+      "createdAt": "2026-04-22T06:10:31.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 1,
+        "supplier": "阿里云",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "阿里云 Coding Plan Pro 用户反映频繁遇到 429 限流错误，服务被暂停 1 小时，影响正常编码使用，且客服沟通无果。",
+        "topics": [
+          "限流",
+          "套餐",
+          "故障",
+          "客服",
+          "价格调整",
+          "用户体验"
+        ],
+        "planMentioned": "Coding Plan Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-22T06:52:09.579Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1207709: HTTP 429: {\"error\":{\"message\":\"Rate limit exceeded: free-models-per-min. \",\"code\":429,\"metadata\":{\"headers\":{\"X-RateLimit-Limit\":\"16\",\"X-RateLimit-Remaining\":\"0\",\"X-RateLimit-Reset\":\"1776840720000\"},\"provider_name\":null}},\"user_id\":\"user_2un07YcPoZYmqhiNgQHcNyflmfa\"}",
+    "analysis failed for v2ex-1207695: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"google/gemma-3-4b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Google AI Studio\",\"is_by",
+    "analysis failed for v2ex-1207487: LLM returned empty content (finish_reason=null)"
+  ]
+}
