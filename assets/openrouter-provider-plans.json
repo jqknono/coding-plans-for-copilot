@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-21T08:44:32.297Z",
-  "generatedAtBeijing": "2026年4月21日 16:44:32",
-  "sourceGeneratedAt": "2026-04-21T08:44:13.970Z",
-  "sourceGeneratedAtBeijing": "2026年4月21日 16:44:13",
-  "sourceMetricsGeneratedAt": "2026-04-21T08:44:14.629Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月21日 16:44:14",
+  "generatedAt": "2026-04-22T08:42:45.596Z",
+  "generatedAtBeijing": "2026年4月22日 16:42:45",
+  "sourceGeneratedAt": "2026-04-22T08:42:28.626Z",
+  "sourceGeneratedAtBeijing": "2026年4月22日 16:42:28",
+  "sourceMetricsGeneratedAt": "2026-04-22T08:42:29.225Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月22日 16:42:29",
   "summary": {
     "openrouterProviderCount": 78,
     "metricsProviderCount": 36,
@@ -57,7 +57,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3d86cb2f468002b08182635eb422fb67.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ac3c874d7c36d9b16c84f74f59c30be5.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -132,7 +132,9 @@
           "serviceDetails": [
             "5X the value of pay-as-you-go",
             "3% off PAYG pricing",
-            "PAYG requests beyond limit"
+            "PAYG requests beyond limit",
+            "Frontier models not included",
+            "Access to frontier models"
           ]
         },
         {
@@ -147,6 +149,7 @@
             "5X the value of pay-as-you-go",
             "3% off PAYG pricing",
             "PAYG requests beyond limit",
+            "Frontier models not included",
             "Access to frontier models"
           ]
         },
@@ -168,14 +171,14 @@
       ],
       "sourceUrls": [
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.D_oBoFmW.js",
-        "https://chutes.ai/_app/immutable/nodes/0.D012y11x.js",
+        "https://chutes.ai/_app/immutable/entry/app.BQsh6kC9.js",
+        "https://chutes.ai/_app/immutable/nodes/0.BRIyMYKY.js",
         "https://chutes.ai/_app/immutable/chunks/DEStpq0a.js",
         "https://chutes.ai/_app/immutable/chunks/CWIHRLZS.js",
         "https://chutes.ai/_app/immutable/chunks/BICcWcUb.js",
         "https://chutes.ai/_app/immutable/chunks/DWRPVVOi.js",
-        "https://chutes.ai/_app/immutable/chunks/BCWxWaDh.js",
-        "https://chutes.ai/_app/immutable/chunks/B5HwDL8j.js",
+        "https://chutes.ai/_app/immutable/chunks/Dfr90pUg.js",
+        "https://chutes.ai/_app/immutable/chunks/D7uvzxpH.js",
         "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js",
         "https://chutes.ai/_app/immutable/chunks/07SJ1Ez2.js",
@@ -187,8 +190,8 @@
         "https://chutes.ai/_app/immutable/chunks/Bg1pMQUL.js",
         "https://chutes.ai/_app/immutable/chunks/MIglteRx.js",
         "https://chutes.ai/_app/immutable/chunks/ChFdde2u.js",
-        "https://chutes.ai/_app/immutable/chunks/B8xJnrBg.js",
-        "https://chutes.ai/_app/immutable/nodes/2.CDoKeK-Y.js",
+        "https://chutes.ai/_app/immutable/chunks/DKlMByLd.js",
+        "https://chutes.ai/_app/immutable/nodes/2.B1AJoIvo.js",
         "https://chutes.ai/_app/immutable/chunks/3tSkQGuL.js",
         "https://chutes.ai/_app/immutable/chunks/DnbzhUo3.js",
         "https://chutes.ai/_app/immutable/chunks/CQqEbEt1.js",
@@ -209,8 +212,8 @@
         "https://chutes.ai/_app/immutable/chunks/B9LaaiNO.js",
         "https://chutes.ai/_app/immutable/chunks/CLabWHzQ.js",
         "https://chutes.ai/_app/immutable/chunks/DtJ7Svjj.js",
-        "https://chutes.ai/_app/immutable/nodes/20.DhSIy8D8.js",
-        "https://chutes.ai/_app/immutable/chunks/D_t6x0pW.js",
+        "https://chutes.ai/_app/immutable/nodes/20.B8m32zf4.js",
+        "https://chutes.ai/_app/immutable/chunks/CmJfUILd.js",
         "https://chutes.ai"
       ],
       "pricingPageUrl": "https://chutes.ai/pricing",
@@ -524,7 +527,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-RGW37-GN.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-Cl_QApdk.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -607,7 +610,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.217/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.220/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -857,7 +860,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.30 / $0.06）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.60 / $0.12）",
       "blocked": false
     },
     {
