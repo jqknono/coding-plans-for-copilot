@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-23T03:06:00.890Z",
+  "generatedAt": "2026-04-23T08:42:59.373Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -298,16 +298,14 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "jdcloud-ai: fetch failed"
+      ]
     },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BdO1klPA.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C7wPEocp.js"
       ],
       "plans": [
         {
@@ -704,7 +702,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.220/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.222/index.js"
       ],
       "plans": [
         {
@@ -741,7 +739,7 @@
       "provider": "x-aio",
       "sourceUrls": [
         "https://code.x-aio.com/",
-        "https://code.x-aio.com/assets/index-QmZ7AHtx.js"
+        "https://code.x-aio.com/assets/index-BE7toBhd.js"
       ],
       "plans": [
         {
@@ -986,7 +984,6 @@
     }
   ],
   "failures": [
-    "jdcloud-ai: fetch failed",
     "infini-ai: Unable to locate Infini platform/ai route chunks"
   ]
 }

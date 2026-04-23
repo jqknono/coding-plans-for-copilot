@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-22T08:42:45.596Z",
-  "generatedAtBeijing": "2026年4月22日 16:42:45",
-  "sourceGeneratedAt": "2026-04-22T08:42:28.626Z",
-  "sourceGeneratedAtBeijing": "2026年4月22日 16:42:28",
-  "sourceMetricsGeneratedAt": "2026-04-22T08:42:29.225Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月22日 16:42:29",
+  "generatedAt": "2026-04-23T08:43:22.489Z",
+  "generatedAtBeijing": "2026年4月23日 16:43:22",
+  "sourceGeneratedAt": "2026-04-23T08:42:59.373Z",
+  "sourceGeneratedAtBeijing": "2026年4月23日 16:42:59",
+  "sourceMetricsGeneratedAt": "2026-04-23T08:43:00.073Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月23日 16:43:00",
   "summary": {
     "openrouterProviderCount": 78,
     "metricsProviderCount": 36,
@@ -171,14 +171,14 @@
       ],
       "sourceUrls": [
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.BQsh6kC9.js",
-        "https://chutes.ai/_app/immutable/nodes/0.BRIyMYKY.js",
+        "https://chutes.ai/_app/immutable/entry/app.B6g7lquz.js",
+        "https://chutes.ai/_app/immutable/nodes/0.BsP-KZuO.js",
         "https://chutes.ai/_app/immutable/chunks/DEStpq0a.js",
         "https://chutes.ai/_app/immutable/chunks/CWIHRLZS.js",
         "https://chutes.ai/_app/immutable/chunks/BICcWcUb.js",
         "https://chutes.ai/_app/immutable/chunks/DWRPVVOi.js",
-        "https://chutes.ai/_app/immutable/chunks/Dfr90pUg.js",
-        "https://chutes.ai/_app/immutable/chunks/D7uvzxpH.js",
+        "https://chutes.ai/_app/immutable/chunks/B3bD-OjT.js",
+        "https://chutes.ai/_app/immutable/chunks/BeTa21Ra.js",
         "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js",
         "https://chutes.ai/_app/immutable/chunks/07SJ1Ez2.js",
@@ -190,8 +190,8 @@
         "https://chutes.ai/_app/immutable/chunks/Bg1pMQUL.js",
         "https://chutes.ai/_app/immutable/chunks/MIglteRx.js",
         "https://chutes.ai/_app/immutable/chunks/ChFdde2u.js",
-        "https://chutes.ai/_app/immutable/chunks/DKlMByLd.js",
-        "https://chutes.ai/_app/immutable/nodes/2.B1AJoIvo.js",
+        "https://chutes.ai/_app/immutable/chunks/CV7t2xnQ.js",
+        "https://chutes.ai/_app/immutable/nodes/2.CxNUdFyn.js",
         "https://chutes.ai/_app/immutable/chunks/3tSkQGuL.js",
         "https://chutes.ai/_app/immutable/chunks/DnbzhUo3.js",
         "https://chutes.ai/_app/immutable/chunks/CQqEbEt1.js",
@@ -212,7 +212,7 @@
         "https://chutes.ai/_app/immutable/chunks/B9LaaiNO.js",
         "https://chutes.ai/_app/immutable/chunks/CLabWHzQ.js",
         "https://chutes.ai/_app/immutable/chunks/DtJ7Svjj.js",
-        "https://chutes.ai/_app/immutable/nodes/20.B8m32zf4.js",
+        "https://chutes.ai/_app/immutable/nodes/20.zCBv2s2k.js",
         "https://chutes.ai/_app/immutable/chunks/CmJfUILd.js",
         "https://chutes.ai"
       ],
@@ -527,7 +527,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-Cl_QApdk.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C7wPEocp.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -610,7 +610,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.220/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.222/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
