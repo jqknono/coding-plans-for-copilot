@@ -119,6 +119,7 @@ function createVscodeMock() {
     Left: 1,
     Right: 2
   };
+  const createdStatusBarItems: Array<Record<string, unknown>> = [];
 
   class FakeLanguageModelTextPart {
     constructor(public readonly value: string) {}
@@ -189,6 +190,7 @@ function createVscodeMock() {
     Disposable: FakeDisposable,
     ConfigurationTarget: configurationTarget,
     StatusBarAlignment: statusBarAlignment,
+    MarkdownString: FakeMarkdownString,
     LanguageModelTextPart: FakeLanguageModelTextPart,
     LanguageModelToolCallPart: FakeLanguageModelToolCallPart,
     LanguageModelToolResultPart: FakeLanguageModelToolResultPart,
@@ -223,10 +225,11 @@ function createVscodeMock() {
         };
       },
       createStatusBarItem() {
-        return {
+        const item = {
           text: '',
           tooltip: '',
           name: '',
+          command: undefined,
           show(): void {
             return undefined;
           },
@@ -237,7 +240,12 @@ function createVscodeMock() {
             return undefined;
           }
         };
+        createdStatusBarItems.push(item);
+        return item;
       }
+    },
+    testState: {
+      createdStatusBarItems
     },
     lm: {
       async invokeTool(_name: string, _options: unknown): Promise<{ content: unknown[] }> {
@@ -278,6 +286,16 @@ function createVscodeMock() {
       }
     }
   };
+}
+
+function readMarkdownStringValue(value: unknown): string {
+  if (typeof value === 'string') {
+    return value;
+  }
+  if (value && typeof value === 'object' && 'value' in value && typeof (value as { value?: unknown }).value === 'string') {
+    return (value as { value: string }).value;
+  }
+  return String(value ?? '');
 }
 
 function installVscodeMock(): () => void {
@@ -797,6 +815,7 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
 
 function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): void {
   const { BaseAIProvider } = baseProviderModule;
+  const vscode = require('vscode') as typeof import('vscode');
 
   class TestProvider extends BaseAIProvider {
     getVendor(): string {
@@ -850,6 +869,12 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
         parameters?: object;
       };
     }> | undefined;
+    toProviderMessages(messages: import('vscode').LanguageModelChatMessage[]): Array<{
+      role: string;
+      content: string;
+      tool_calls?: unknown[];
+      tool_call_id?: string;
+    }>;
     dispose(): void;
   };
 
@@ -901,6 +926,18 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
       }
     }]);
     console.log('PASS 工具定义中的未替换占位符会在转发前被清洗');
+
+    const providerMessages = provider.toProviderMessages([
+      vscode.LanguageModelChatMessage.User([
+        new vscode.LanguageModelTextPart('你好'),
+        new vscode.LanguageModelDataPart(new TextEncoder().encode('{"ttl":300}'), 'cache_control')
+      ])
+    ] as unknown as import('vscode').LanguageModelChatMessage[]);
+    assert.deepEqual(providerMessages, [{
+      role: 'user',
+      content: '你好'
+    }]);
+    console.log('PASS 非文本 data part 不会被串成占位文本转发给上游模型');
   } finally {
     provider.dispose();
   }
@@ -1642,6 +1679,7 @@ async function runGenericProviderAnthropicStreamErrorEventTests(
 
 function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   const {
+    readOpenAIChatMessageText,
     createOpenAIChatStreamState,
     applyOpenAIChatStreamChunk,
     finalizeOpenAIChatStreamState,
@@ -1752,6 +1790,29 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   assert.equal(mixedProxyChatDelta.textDelta, 'reply');
   assert.equal(finalizedMixedProxyChat.content, 'reply');
   console.log('PASS openai-chat 可兼容代理常见的非标准 chunk 字段');
+
+  const cacheControlChatState = createOpenAIChatStreamState();
+  const cacheControlChatDelta = applyOpenAIChatStreamChunk(cacheControlChatState, {
+    choices: [{
+      index: 0,
+      delta: {
+        content: [
+          { type: 'text', text: 'hello ' },
+          { type: 'cache_control', value: '[cache_control 9 bytes]' }
+        ]
+      }
+    }]
+  }, () => 'generated_call');
+  const finalizedCacheControlChat = finalizeOpenAIChatStreamState(cacheControlChatState, () => 'generated_call');
+  assert.equal(cacheControlChatDelta.textDelta, 'hello ');
+  assert.equal(finalizedCacheControlChat.content, 'hello ');
+  assert.equal(readOpenAIChatMessageText({
+    content: [
+      { type: 'text', text: 'hello ' },
+      { type: 'cache_control', value: '[cache_control 9 bytes]' }
+    ]
+  }), 'hello ');
+  console.log('PASS openai-chat 响应中的 cache_control 非文本块不会泄漏到最终文本');
 
   const responsesState = createOpenAIResponsesStreamState();
   const responsesDelta = applyOpenAIResponsesStreamEvent(responsesState, 'response.output_text.delta', {
@@ -2132,7 +2193,7 @@ function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateMod
   } = contextUsageStateModule;
 
   const state = new ContextUsageState();
-  assert.equal(buildContextStatusText(undefined), 'CodingPlans Context --');
+  assert.equal(buildContextStatusText(undefined), 'CodingPlans\u00A0Context\u00A0--');
   assert.match(buildContextStatusTooltip(undefined), /CodingPlans Context/);
 
   state.update({
@@ -2150,7 +2211,7 @@ function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateMod
 
   const snapshot = state.getSnapshot();
   assert.ok(snapshot);
-  assert.equal(buildContextStatusText(snapshot), 'CodingPlans Context 17%');
+  assert.equal(buildContextStatusText(snapshot), 'CodingPlans\u00A0Context\u00A017%');
   const tooltip = buildContextStatusTooltip(snapshot);
   assert.match(tooltip, /16\.6% of 131\.1K/);
   assert.match(tooltip, /- Prompt: 21\.8K/);
@@ -2166,7 +2227,7 @@ function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateMod
     totalTokens: 856,
     outputBuffer: 60000
   };
-  assert.equal(buildContextStatusText(reservedSnapshot), 'CodingPlans Context 48%');
+  assert.equal(buildContextStatusText(reservedSnapshot), 'CodingPlans\u00A0Context\u00A048%');
   const reservedTooltip = buildContextStatusTooltip(reservedSnapshot);
   assert.match(reservedTooltip, /47\.5% of 128K/);
   assert.match(reservedTooltip, /- Occupied Context: 60\.9K/);
@@ -2176,8 +2237,13 @@ function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateMod
   console.log('PASS ContextUsageState 与状态栏文案正常生成');
 }
 
-function runPlanUsageStatusTests(planUsageStatusModule: PlanUsageStatusModule): void {
+function runPlanUsageStatusTests(
+  planUsageStatusModule: PlanUsageStatusModule,
+  contextUsageStateModule: ContextUsageStateModule
+): void {
   const {
+    CodingPlanStatusBarController,
+    PlanUsageState,
     buildCodingPlanDetailsHtml,
     buildCodingPlanStatusText,
     buildCodingPlanStatusTooltip,
@@ -2185,6 +2251,8 @@ function runPlanUsageStatusTests(planUsageStatusModule: PlanUsageStatusModule): 
     buildPlanUsageStatusTooltip,
     parseVendorPlanUsageSnapshot
   } = planUsageStatusModule;
+  const { ContextUsageState } = contextUsageStateModule;
+  const vscodeMock = require('vscode') as { testState: { createdStatusBarItems: Array<Record<string, unknown>> } };
 
   assert.equal(buildPlanUsageStatusText(undefined), 'CodingPlans Usage --');
   assert.match(buildPlanUsageStatusTooltip(undefined), /CodingPlans Usage/);
@@ -2288,19 +2356,35 @@ function runPlanUsageStatusTests(planUsageStatusModule: PlanUsageStatusModule): 
   assert.match(mergedTooltip, /- Context: 16\.6% of 131\.1K/);
   assert.match(mergedTooltip, /- Prompt: 21\.8K/);
   assert.match(mergedTooltip, /- Model: glm-4\.7/);
-  assert.match(mergedTooltip, /Click the status bar item to keep these details open/);
+  assert.doesNotMatch(mergedTooltip, /Click the status bar item to keep these details open/);
   assert.doesNotMatch(mergedTooltip, /Source:/);
   assert.doesNotMatch(mergedTooltip, /open\.bigmodel\.cn\/api\/monitor\/usage\/quota\/limit/);
 
   const detailsHtml = buildCodingPlanDetailsHtml(contextSnapshot, snapshot);
-  assert.match(detailsHtml, /Pinned details for the status bar item/);
+  assert.match(detailsHtml, /Usage details snapshot/);
   assert.match(detailsHtml, /<h2>Plan Usage<\/h2>/);
   assert.match(detailsHtml, /<h2>Context<\/h2>/);
   assert.match(detailsHtml, /GLM Coding Max/);
   assert.match(detailsHtml, /glm-4\.7/);
+  assert.match(detailsHtml, /background-color: var\(--vscode-editorHoverWidget-background, var\(--vscode-editor-background\)\);/);
+  assert.doesNotMatch(detailsHtml, /color-mix\(/);
   assert.doesNotMatch(detailsHtml, /Source:/);
   assert.doesNotMatch(detailsHtml, /open\.bigmodel\.cn\/api\/monitor\/usage\/quota\/limit/);
   console.log('PASS 智谱 usage 响应与状态栏文案可正确解析');
+
+  const controllerContextUsageState = new ContextUsageState();
+  const controllerPlanUsageState = new PlanUsageState();
+  vscodeMock.testState.createdStatusBarItems.length = 0;
+  const controller = new CodingPlanStatusBarController(controllerContextUsageState, controllerPlanUsageState);
+  const statusBarItem = vscodeMock.testState.createdStatusBarItems.at(-1);
+  assert.ok(statusBarItem, '应创建 CodingPlans 状态栏项');
+  assert.equal(statusBarItem?.name, 'CodingPlans');
+  assert.equal(statusBarItem?.command, undefined);
+  assert.doesNotMatch(readMarkdownStringValue(statusBarItem?.tooltip), /Click the status bar item/);
+  controller.dispose();
+  controllerPlanUsageState.dispose();
+  controllerContextUsageState.dispose();
+  console.log('PASS CodingPlans 状态栏仅保留 hover，不再绑定点击命令');
 }
 
 function runCommitMessageGeneratorTests(commitMessageGeneratorModule: CommitMessageGeneratorModule): void {
@@ -2442,8 +2526,13 @@ async function runLMChatProviderAdapterProvideTokenCountTests(
     id: 'vendor/model',
     name: 'model'
   } as never;
+  const otherModel = {
+    id: 'vendor/other',
+    name: 'other'
+  } as never;
 
   assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
+  assert.equal(await adapter.provideTokenCount(otherModel, 'hello', {} as never), 0);
 
   usageState.update({
     provider: 'coding-plans',
@@ -2458,8 +2547,9 @@ async function runLMChatProviderAdapterProvideTokenCountTests(
     outputBuffer: 10
   });
 
-  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
-  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 1030);
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 1030);
+  assert.equal(await adapter.provideTokenCount(otherModel, 'hello', {} as never), 0);
 
   usageState.update({
     provider: 'coding-plans',
@@ -2474,11 +2564,12 @@ async function runLMChatProviderAdapterProvideTokenCountTests(
     outputBuffer: 12
   });
 
-  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
-  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 1242);
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 1242);
+  assert.equal(await adapter.provideTokenCount(otherModel, 'hello', {} as never), 0);
   adapter.dispose();
   usageState.dispose();
-  console.log('PASS LMChatProviderAdapter 的 provideTokenCount 固定返回 0');
+  console.log('PASS LMChatProviderAdapter 的 provideTokenCount 会回填最近一次同模型上下文占用');
 }
 
 async function main(): Promise<void> {
@@ -2506,7 +2597,7 @@ async function main(): Promise<void> {
     runProtocolStreamTests(protocolsModule);
     runTokenUsageNormalizationTests(tokenUsageModule);
     runContextUsageStateTests(contextUsageStateModule);
-    runPlanUsageStatusTests(planUsageStatusModule);
+    runPlanUsageStatusTests(planUsageStatusModule, contextUsageStateModule);
     runCommitMessageGeneratorTests(commitMessageGeneratorModule);
     await runLMChatProviderAdapterProvideTokenCountTests(contextUsageStateModule, lmChatProviderAdapterModule);
   } finally {

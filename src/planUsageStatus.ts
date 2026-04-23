@@ -56,12 +56,10 @@ export class CodingPlanStatusBarController implements vscode.Disposable {
 
   constructor(
     private readonly contextUsageState: ContextUsageState,
-    private readonly usageState: PlanUsageState,
-    detailsCommand?: string
+    private readonly usageState: PlanUsageState
   ) {
     this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
     this.statusBarItem.name = 'CodingPlans';
-    this.statusBarItem.command = detailsCommand;
     this.statusBarItem.show();
     this.disposables.push(this.statusBarItem);
     this.disposables.push(this.contextUsageState.onDidChange(() => {
@@ -359,7 +357,6 @@ export function buildCodingPlanStatusTooltip(
     sections.push('', 'No coding plan usage or context data is available yet.');
   }
 
-  sections.push('', '_Click the status bar item to keep these details open._');
   return sections.join('\n');
 }
 
@@ -453,7 +450,7 @@ export function buildCodingPlanDetailsHtml(
     '    h1 { margin: 0 0 8px; font-size: 24px; }',
     '    h2 { margin: 24px 0 12px; font-size: 16px; }',
     '    p { margin: 0 0 12px; line-height: 1.6; }',
-    '    section { border: 1px solid var(--vscode-panel-border); border-radius: 10px; padding: 16px; background: color-mix(in srgb, var(--vscode-editor-background) 92%, var(--vscode-editorHoverWidget-background) 8%); }',
+    '    section { border: 1px solid var(--vscode-panel-border); border-radius: 10px; padding: 16px; background-color: var(--vscode-editorHoverWidget-background, var(--vscode-editor-background)); }',
     '    ul { margin: 0; padding-left: 20px; }',
     '    li { margin: 0 0 10px; line-height: 1.6; }',
     '    .label { font-weight: 600; }',
@@ -465,7 +462,7 @@ export function buildCodingPlanDetailsHtml(
     '<body>',
     '  <main>',
     '    <h1>CodingPlans</h1>',
-    '    <p class="hint">Pinned details for the status bar item. This view stays open while you inspect it.</p>',
+    '    <p class="hint">Usage details snapshot.</p>',
     body,
     '  </main>',
     '</body>',

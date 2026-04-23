@@ -10,6 +10,9 @@ export interface LastContextUsageSnapshot extends NormalizedTokenUsage {
   recordedAt: number;
 }
 
+const STATUS_BAR_NO_BREAK_SPACE = '\u00A0';
+const CONTEXT_STATUS_LABEL = `CodingPlans${STATUS_BAR_NO_BREAK_SPACE}Context`;
+
 export class ContextUsageState implements vscode.Disposable {
   private snapshot: LastContextUsageSnapshot | undefined;
   private readonly onDidChangeEmitter = new vscode.EventEmitter<LastContextUsageSnapshot | undefined>();
@@ -64,11 +67,11 @@ export class ContextStatusBarController implements vscode.Disposable {
 
 export function buildContextStatusText(snapshot: LastContextUsageSnapshot | undefined): string {
   if (!snapshot || snapshot.totalContextWindow <= 0) {
-    return 'CodingPlans Context --';
+    return `${CONTEXT_STATUS_LABEL}${STATUS_BAR_NO_BREAK_SPACE}--`;
   }
 
   const percentage = Math.min(100, Math.max(0, Math.round((readOccupiedContextTokens(snapshot) / snapshot.totalContextWindow) * 100)));
-  return `CodingPlans Context ${percentage}%`;
+  return `${CONTEXT_STATUS_LABEL}${STATUS_BAR_NO_BREAK_SPACE}${percentage}%`;
 }
 
 export function buildContextStatusTooltip(snapshot: LastContextUsageSnapshot | undefined): string {

@@ -77,6 +77,23 @@ function isPlaceholderModel(vendor: string, modelId: string): boolean {
     || modelId === getVendorNotConfiguredPlaceholderModelId(vendor);
 }
 
+function readOccupiedContextTokens(snapshot: LastContextUsageSnapshot): number {
+  return Math.min(
+    snapshot.totalContextWindow,
+    snapshot.totalTokens + Math.max(snapshot.outputBuffer ?? 0, 0)
+  );
+}
+
+function matchesSnapshotModel(
+  snapshot: LastContextUsageSnapshot | undefined,
+  vendor: string,
+  model: vscode.LanguageModelChatInformation
+): snapshot is LastContextUsageSnapshot {
+  return !!snapshot
+    && snapshot.provider === vendor
+    && snapshot.modelId === model.id;
+}
+
 function getPlaceholderModel(vendor: string): vscode.LanguageModelChatInformation {
   const providerName = getProviderDisplayName(vendor);
   const info: vscode.LanguageModelChatInformation = {
@@ -346,9 +363,16 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     _text: string | vscode.LanguageModelChatRequestMessage,
     _token: vscode.CancellationToken
   ): Thenable<number> {
-    if (isPlaceholderModel(this.provider.getVendor(), model.id)) {
+    const vendor = this.provider.getVendor();
+    if (isPlaceholderModel(vendor, model.id)) {
       return Promise.resolve(0);
     }
+
+    const snapshot = this.contextUsageState?.getSnapshot();
+    if (matchesSnapshotModel(snapshot, vendor, model)) {
+      return Promise.resolve(readOccupiedContextTokens(snapshot));
+    }
+
     return Promise.resolve(0);
   }
 

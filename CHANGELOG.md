@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.2] - 2026-04-16
+- feat(commitMessageGenerator): 增强风格参考约束与回退格式优先级
+
 ## [0.7.1] - 2026-04-16
 - chore: 升级版本至 0.7.1
 
@@ -45,11 +48,3 @@ All notable changes to this project will be documented in this file.
 ## [0.6.4] - 2026-03-22
 - fix(docs): 更新上下文窗口文档与状态栏显示逻辑
 - feat: 支持 contextSize 配置并优化上下文窗口处理
-
-## [0.6.2] - 2026-03-19
-- fix(provider-pricing): 更新供应商定价数据及资源链接
-- fix(#8): 更新 OpenRouter 指标采集流程
-- build(workflow): 更新 OpenRouter 指标与套餐抓取流程
-- feat(ci): 调整 OpenRouter 模型数据最大缓存天数
-- fix(provider-pricing): 更新模型定价数据和爬虫逻辑
-- fix(docs): 更新废弃字段 maxInputTokens 和 maxOutputTokens 的描述信息

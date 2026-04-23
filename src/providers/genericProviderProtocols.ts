@@ -314,7 +314,7 @@ export function createOpenAIChatStreamState(): OpenAIChatStreamState {
 
 function readOpenAICompatibleText(value: unknown): string {
   if (typeof value === 'string') {
-    return value;
+    return stripOpenAICompatibleNonTextPlaceholders(value);
   }
 
   if (Array.isArray(value)) {
@@ -326,20 +326,28 @@ function readOpenAICompatibleText(value: unknown): string {
   }
 
   const record = value as Record<string, unknown>;
+  const partType = typeof record.type === 'string' ? record.type.trim().toLowerCase() : '';
+  if (partType.length > 0 && partType !== 'text' && partType !== 'output_text' && partType !== 'reasoning') {
+    return '';
+  }
   if (typeof record.text === 'string') {
-    return record.text;
+    return stripOpenAICompatibleNonTextPlaceholders(record.text);
   }
   if (typeof record.value === 'string') {
-    return record.value;
+    return stripOpenAICompatibleNonTextPlaceholders(record.value);
   }
   if (typeof record.content === 'string') {
-    return record.content;
+    return stripOpenAICompatibleNonTextPlaceholders(record.content);
   }
   if (Array.isArray(record.content)) {
     return record.content.map(part => readOpenAICompatibleText(part)).join('');
   }
 
   return '';
+}
+
+function stripOpenAICompatibleNonTextPlaceholders(text: string): string {
+  return text.replace(/\[[a-z0-9_./+-]+\s+\d+\s+bytes\]/gi, '');
 }
 
 export function readOpenAIChatMessageText(

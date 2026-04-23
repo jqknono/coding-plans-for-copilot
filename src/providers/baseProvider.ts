@@ -943,7 +943,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       if (part.mimeType.startsWith('text/') || part.mimeType.includes('json')) {
         return decoder.decode(part.data);
       }
-      return `[${part.mimeType} ${part.data.byteLength} bytes]`;
+      return '';
     } catch {
       return '';
     }
