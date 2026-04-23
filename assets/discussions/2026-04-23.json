@@ -1,0 +1,97 @@
+{
+  "date": "2026-04-23",
+  "generatedAt": "2026-04-23T06:50:27.088Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 57,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "OpenAI": 1,
+      "谷歌": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1208004",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208004",
+      "title": "自建了 GPT Coding Plan，遇到了定价问题，请教大家",
+      "content": "自建的 Coding Plan ，gpt-5.3-codex 和 gpt 5.4 模型 coding 时候的正常首 token 返回，响应基本不超过 1 秒（ 5W input token 左右的情况） 这个 plan 是面向 coding 用户的，现在计划在下面两种定价方式里选一种，想听听各位程序员朋友的意见： 每个账号每天限制 50 刀额度（ token 的单位价格和 GPT 官方一样），卖月 150R ； 每个人对应一个独立 plus 账号，额度限制完全和官方对齐，一个号一个月卖 60R ； 请教一下大家，更倾向于哪种计费方案。如果大家有其他更好的定价方式也可以留言 ps.v2ex 的帖子非引流贴，纯调研，不要加我，不在这卖。 发这个帖子完全为了调研定价",
+      "author": "suguss",
+      "createdAt": "2026-04-23T06:17:59.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.98,
+        "summary": "用户自建了基于GPT模型的Coding Plan，正在考虑两种定价方案（每日50刀额度/月150R 或独立Plus账号/月60R），寻求程序员社区对定价方案的建议。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "GPT",
+          "调研"
+        ],
+        "planMentioned": "GPT Coding Plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/85",
+      "analyzedAt": "2026-04-23T06:51:58.310Z"
+    },
+    {
+      "id": "v2ex-1207990",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1207990",
+      "title": "大家有没有发现下午 2~3 点开始， coding vibe 就开始变慢",
+      "content": "目前发现： 1 、谷歌 antigravity ，免费办开始不好用，各种报错，让 retry ，但基本都还是失败。 2 、codex ，变慢，改个很简单的问题话了好长时间 3 、glm ，也有报错出现，而且 14:00 开始，算高峰。 4 、…………其他还没用。 难道那个时候，改休息了？以后公司要调作息了？",
+      "author": "paranoiagu",
+      "createdAt": "2026-04-23T05:43:35.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "谷歌",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户反馈下午2~3点开始，多个AI编码助手（如谷歌 antigravity、Codex、GLM）出现响应变慢、报错增多的问题，怀疑与高峰期或作息调整有关。",
+        "topics": [
+          "高峰期",
+          "报错",
+          "体验下降",
+          "谷歌",
+          "Codex",
+          "GLM"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/86",
+      "analyzedAt": "2026-04-23T06:52:05.863Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1207937: HTTP 429: {\"error\":{\"message\":\"Rate limit exceeded: free-models-per-min. \",\"code\":429,\"metadata\":{\"headers\":{\"X-RateLimit-Limit\":\"16\",\"X-RateLimit-Remaining\":\"0\",\"X-RateLimit-Reset\":\"1776927120000\"},\"provider_name\":null}},\"user_id\":\"user_2un07YcPoZYmqhiNgQHcNyflmfa\"}"
+  ]
+}
