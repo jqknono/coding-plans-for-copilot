@@ -1,0 +1,131 @@
+{
+  "date": "2026-04-24",
+  "generatedAt": "2026-04-24T06:51:16.687Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 3,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "DeepSeek": 2
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1208280",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208280",
+      "title": "一个例子又拉回了我对 DeepSeek V4 Pro 的印象，后续还是得多多测试看看",
+      "content": "用了一个 kimi 官网的 Agent 的示例 Prompt： 「 Meridian Architecture 」高端建筑设计事务所官网，展示项目作品、设计理念、团队、获奖、联系表单、留言簿。中英双语、极简主义建筑美学、深色系（黑/深灰）+ 金铜色点缀。区块：Hero （全屏摩天大楼航拍视频 + \"Shaping the Horizon\" 标题 + EST.2008 标签）、Projects （ 4 个项目卡片，16:10 比例 + 编号 + 位置 + 描述）、Philosophy （ 3 列数字统计 148 项目/32 国家/26 奖项 + 工匠打磨视频）、Team （ 8 位建筑师网格）、Awards （ 10 条奖项时间线 + 6 本出版物）、Contact （表单 + 留言簿）、Footer 。技术：React + Express + tRPC + MySQL + Drizzle + OAuth + AI 聊天助手（浮动右下金色按钮）。 总体效果超出预期。 DeepSeek V4 Pro 在 Claude Code 中开启了一些常见的 skill 或插件（有一个 front-d",
+      "author": "dingawm",
+      "createdAt": "2026-04-24T06:03:48.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.75,
+        "summary": "用户通过 DeepSeek V4 Pro 在 Claude Code 中测试了一个高端建筑设计事务所官网的生成，整体效果超出预期，但指出没有 Coding Plan 的情况下单纯按 API 计费较贵（花费约16元），性价比不高，希望 DeepSeek 能尽快推出 Coding Plan。",
+        "topics": [
+          "DeepSeek",
+          "V4 Pro",
+          "Claude Code",
+          "API计费",
+          "Coding Plan",
+          "定价",
+          "部署",
+          "体验卡"
+        ],
+        "planMentioned": "DeepSeek V4 Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-24T06:53:30.497Z"
+    },
+    {
+      "id": "v2ex-1208277",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208277",
+      "title": "我有个疑问:为什么现在豆包 / qwen 之类的面向大众的 AI 工具,免费且快速,而这些国内的这些 coding plan,收费、限购,不稳定,高峰期还不可用?",
+      "content": "",
+      "author": "MaxwellX",
+      "createdAt": "2026-04-24T05:50:34.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": null,
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "作者对比了豆包、qwen 等大众 AI 工具的免费快速体验与国内 coding plan 的收费、限购、不稳定及高峰期不可用，表达了对国内 coding plan 定价与服务质量的不满。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "稳定性",
+          "高峰期可用性",
+          "免费额度",
+          "限购"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/88",
+      "analyzedAt": "2026-04-24T06:53:36.283Z"
+    },
+    {
+      "id": "v2ex-1208247",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208247",
+      "title": "DeepSeek V4 上线了！之前难产真是适配昇腾?",
+      "content": "我都还没体验完 gpt 5.5, deepseek 又来了 官方推文： DeepSeek-V4 预览版：迈入百万上下文普惠时代 Agent 能力大幅提高：相比前代模型，DeepSeek-V4-Pro 的 Agent 能力显著增强。在 Agentic Coding 评测中，V4-Pro 已达到当前开源模型最佳水平，并在其他 Agent 相关评测中同样表现优异。目前 DeepSeek-V4 已成为公司内部员工使用的 Agentic Coding 模型，据评测反馈使用体验优于 Sonnet 4.5 ，交付质量接近 Opus 4.6 非思考模式，但仍与 Opus 4.6 思考模式存在一定差距。 另外从下头说明看，这次难产这么久可能真跟适配华为有关 *受限于高端算力，目前 Pro 的服务吞吐十分有限，预计下半年昇腾 950 超节点批量上市后，Pro 的价格会大幅下调",
+      "author": "mpb",
+      "createdAt": "2026-04-24T03:37:07.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "讨论DeepSeek V4的发布，强调其Agentic Coding能力提升，并提到因硬件适配问题导致的价格限制，预计未来价格会下调",
+        "topics": [
+          "定价",
+          "DeepSeek",
+          "Agentic Coding",
+          "昇腾",
+          "价格下调"
+        ],
+        "planMentioned": "DeepSeek-V4",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-24T06:53:38.637Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1208279: The operation was aborted due to timeout"
+  ]
+}
