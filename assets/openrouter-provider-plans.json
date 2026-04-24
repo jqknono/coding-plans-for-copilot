@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-04-23T08:43:22.489Z",
-  "generatedAtBeijing": "2026年4月23日 16:43:22",
-  "sourceGeneratedAt": "2026-04-23T08:42:59.373Z",
-  "sourceGeneratedAtBeijing": "2026年4月23日 16:42:59",
-  "sourceMetricsGeneratedAt": "2026-04-23T08:43:00.073Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月23日 16:43:00",
+  "generatedAt": "2026-04-24T08:48:04.356Z",
+  "generatedAtBeijing": "2026年4月24日 16:48:04",
+  "sourceGeneratedAt": "2026-04-24T08:47:34.980Z",
+  "sourceGeneratedAtBeijing": "2026年4月24日 16:47:34",
+  "sourceMetricsGeneratedAt": "2026-04-24T08:47:35.433Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月24日 16:47:35",
   "summary": {
-    "openrouterProviderCount": 78,
+    "openrouterProviderCount": 79,
     "metricsProviderCount": 36,
     "resolvedMetricsProviderCount": 36,
     "unresolvedMetricsProviderCount": 0,
@@ -50,6 +50,10 @@
             "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
             "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
             "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
+            "n n: n Pro 高级套餐 n",
+            "n 支持的模型 n: n 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 n 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7 n",
+            "n 价格 n: n ¥ 200 /月 n",
+            "n 用量限制 n: n n n 每 5 小时 6,000 次请求 n n n 每周 45,000 次请求 n n n 每月 90,000 次请求 n n n",
             "支持的模型: 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
             "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
           ]
@@ -171,32 +175,32 @@
       ],
       "sourceUrls": [
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.B6g7lquz.js",
-        "https://chutes.ai/_app/immutable/nodes/0.BsP-KZuO.js",
+        "https://chutes.ai/_app/immutable/entry/app.Dj56RItE.js",
+        "https://chutes.ai/_app/immutable/nodes/0.C2YV8eVi.js",
         "https://chutes.ai/_app/immutable/chunks/DEStpq0a.js",
         "https://chutes.ai/_app/immutable/chunks/CWIHRLZS.js",
         "https://chutes.ai/_app/immutable/chunks/BICcWcUb.js",
         "https://chutes.ai/_app/immutable/chunks/DWRPVVOi.js",
-        "https://chutes.ai/_app/immutable/chunks/B3bD-OjT.js",
-        "https://chutes.ai/_app/immutable/chunks/BeTa21Ra.js",
+        "https://chutes.ai/_app/immutable/chunks/CVAZoLYS.js",
+        "https://chutes.ai/_app/immutable/chunks/BxjUUWSh.js",
         "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
         "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js",
         "https://chutes.ai/_app/immutable/chunks/07SJ1Ez2.js",
         "https://chutes.ai/_app/immutable/chunks/D6AKOyEr.js",
         "https://chutes.ai/_app/immutable/chunks/Dnvo-U9X.js",
-        "https://chutes.ai/_app/immutable/chunks/rgKOAoxH.js",
+        "https://chutes.ai/_app/immutable/chunks/CG2oHIyF.js",
         "https://chutes.ai/_app/immutable/chunks/lfKHO-kG.js",
         "https://chutes.ai/_app/immutable/chunks/iIO2HfQy.js",
         "https://chutes.ai/_app/immutable/chunks/Bg1pMQUL.js",
         "https://chutes.ai/_app/immutable/chunks/MIglteRx.js",
         "https://chutes.ai/_app/immutable/chunks/ChFdde2u.js",
-        "https://chutes.ai/_app/immutable/chunks/CV7t2xnQ.js",
-        "https://chutes.ai/_app/immutable/nodes/2.CxNUdFyn.js",
+        "https://chutes.ai/_app/immutable/chunks/C1NzLqsd.js",
+        "https://chutes.ai/_app/immutable/nodes/2.4D8FgF05.js",
         "https://chutes.ai/_app/immutable/chunks/3tSkQGuL.js",
         "https://chutes.ai/_app/immutable/chunks/DnbzhUo3.js",
         "https://chutes.ai/_app/immutable/chunks/CQqEbEt1.js",
-        "https://chutes.ai/_app/immutable/chunks/DlsRaSC_.js",
-        "https://chutes.ai/_app/immutable/chunks/CcB0EdC6.js",
+        "https://chutes.ai/_app/immutable/chunks/Blc0HEnW.js",
+        "https://chutes.ai/_app/immutable/chunks/BtnJzQK-.js",
         "https://chutes.ai/_app/immutable/chunks/D04iQObJ.js",
         "https://chutes.ai/_app/immutable/chunks/D2QCNa2Z.js",
         "https://chutes.ai/_app/immutable/chunks/BGFdVicR.js",
@@ -212,8 +216,8 @@
         "https://chutes.ai/_app/immutable/chunks/B9LaaiNO.js",
         "https://chutes.ai/_app/immutable/chunks/CLabWHzQ.js",
         "https://chutes.ai/_app/immutable/chunks/DtJ7Svjj.js",
-        "https://chutes.ai/_app/immutable/nodes/20.zCBv2s2k.js",
-        "https://chutes.ai/_app/immutable/chunks/CmJfUILd.js",
+        "https://chutes.ai/_app/immutable/nodes/20.DGTAgyjq.js",
+        "https://chutes.ai/_app/immutable/chunks/D8N7J7dm.js",
         "https://chutes.ai"
       ],
       "pricingPageUrl": "https://chutes.ai/pricing",
@@ -527,7 +531,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C7wPEocp.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BUP7qTAf.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -610,7 +614,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.222/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.225/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -763,10 +767,10 @@
           "unit": "月",
           "notes": "$18 / month from 2nd month",
           "serviceDetails": [
-            "3× usage of the Claude Pro plan",
-            "Managing lightweight workloads",
-            "Regular updates with new models and features",
-            "Compatible with over 20 coding tools, including Claude Code、Cursor、Cline、Kilo Code、OpenClaw..."
+            "3x higher Claude Pro usage limits",
+            "Built for lightweight iteration on small repo",
+            "Rolling access to the latest flagship models and features",
+            "Supports 20+ coding tools, including Claude Code"
           ]
         },
         {
@@ -778,12 +782,11 @@
           "unit": "月",
           "notes": "$72 / month from 2nd month",
           "serviceDetails": [
-            "5× Lite plan usage",
-            "Managing complex workloads",
-            "All Lite plan benefits",
-            "Priority access to new models and features",
-            "40%–60% faster compared to Lite",
-            "Access Vision Analyze, Web Search, Web Reader and Zread MCP"
+            "Everything in Lite, plus 5x Lite usage",
+            "Built for day-to-day development on mid-sized repo",
+            "Priority access to the latest flagship models and features",
+            "Includes a curated selection of MCP tools",
+            "Faster generation speeds"
           ]
         },
         {
@@ -795,11 +798,10 @@
           "unit": "月",
           "notes": "$160 / month from 2nd month",
           "serviceDetails": [
-            "All Pro plan benefits",
-            "4× Pro plan usage",
-            "Managing high-volume workloads for advanced developers",
-            "First access to new models and features",
-            "Guaranteed peak-hour performance"
+            "Everything in Pro, plus 20x Lite usage",
+            "Built for advanced users working on mid-to-large repo",
+            "First access to the latest flagship models and features",
+            "Dedicated resources during peak times"
           ]
         }
       ],
@@ -851,7 +853,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.127 / $0.101 / $0.1）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.127 / $0.272 / $0.101）",
       "blocked": false
     },
     {
@@ -896,7 +898,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://friendli.ai",
       "pricingPageUrl": "https://friendli.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 2.9 / $ 3.9 / $ 4.5）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $50 / $ 2.9 / $ 3.9）",
       "blocked": false
     },
     {
