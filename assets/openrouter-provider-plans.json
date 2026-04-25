@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-04-24T08:48:04.356Z",
-  "generatedAtBeijing": "2026年4月24日 16:48:04",
-  "sourceGeneratedAt": "2026-04-24T08:47:34.980Z",
-  "sourceGeneratedAtBeijing": "2026年4月24日 16:47:34",
-  "sourceMetricsGeneratedAt": "2026-04-24T08:47:35.433Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月24日 16:47:35",
+  "generatedAt": "2026-04-25T08:26:06.353Z",
+  "generatedAtBeijing": "2026年4月25日 16:26:06",
+  "sourceGeneratedAt": "2026-04-25T08:25:44.244Z",
+  "sourceGeneratedAtBeijing": "2026年4月25日 16:25:44",
+  "sourceMetricsGeneratedAt": "2026-04-25T08:25:45.057Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月25日 16:25:45",
   "summary": {
     "openrouterProviderCount": 79,
-    "metricsProviderCount": 36,
-    "resolvedMetricsProviderCount": 36,
+    "metricsProviderCount": 38,
+    "resolvedMetricsProviderCount": 38,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 6,
-    "heuristicProviderCount": 6,
-    "providersWithPlans": 12,
-    "pendingCount": 24,
-    "blockedPendingCount": 0,
+    "heuristicProviderCount": 7,
+    "providersWithPlans": 13,
+    "pendingCount": 25,
+    "blockedPendingCount": 1,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -531,7 +531,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BUP7qTAf.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DYum1QZx.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -614,7 +614,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.225/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.234/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -754,6 +754,44 @@
       "parseMode": "official-website-heuristic"
     },
     {
+      "slug": "wandb",
+      "openrouterName": "WandB",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 60,
+          "currentPriceText": "$60/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://site.wandb.ai/pricing/",
+          "serviceDetails": null
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 5,
+          "currentPriceText": "$5/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://site.wandb.ai",
+        "https://site.wandb.ai/pricing/"
+      ],
+      "pricingPageUrl": "https://site.wandb.ai/pricing/",
+      "officialWebsiteUrl": "https://site.wandb.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://wandb.ai/site/privacy/",
+      "termsOfServiceUrl": "https://site.wandb.ai/terms/",
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
+    },
+    {
       "slug": "z-ai",
       "openrouterName": "Z.AI",
       "providerId": null,
@@ -853,7 +891,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.127 / $0.272 / $0.101）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.127 / $0.101 / $0.1）",
       "blocked": false
     },
     {
@@ -938,6 +976,15 @@
       "blocked": false
     },
     {
+      "slug": "ionstream",
+      "openrouterName": "Ionstream",
+      "providerId": null,
+      "officialWebsiteUrl": "https://ionstream.ai",
+      "pricingPageUrl": "https://ionstream.ai",
+      "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "mara",
       "openrouterName": "Mara",
       "providerId": null,
@@ -1007,7 +1054,7 @@
       "officialWebsiteUrl": "https://sambanova.ai",
       "pricingPageUrl": "https://sambanova.ai",
       "reason": "官网价格页探测失败：https://sambanova.ai/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "siliconflow",
@@ -1033,7 +1080,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.together.ai",
       "pricingPageUrl": "https://www.together.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.30 / $0.06 / $1.20）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.40 / $4.40 / $0.30）",
       "blocked": false
     }
   ]
