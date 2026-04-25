@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-24T08:47:34.980Z",
+  "generatedAt": "2026-04-25T03:04:55.657Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -281,7 +281,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BUP7qTAf.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DYum1QZx.js"
       ],
       "plans": [
         {
@@ -678,7 +678,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.225/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.234/index.js"
       ],
       "plans": [
         {
@@ -715,7 +715,7 @@
       "provider": "x-aio",
       "sourceUrls": [
         "https://code.x-aio.com/",
-        "https://code.x-aio.com/assets/index-BE7toBhd.js"
+        "https://code.x-aio.com/assets/index-BDsI_6a1.js"
       ],
       "plans": [
         {
