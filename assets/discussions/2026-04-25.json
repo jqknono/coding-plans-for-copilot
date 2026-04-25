@@ -1,0 +1,69 @@
+{
+  "date": "2026-04-25",
+  "generatedAt": "2026-04-25T06:40:34.406Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "百炼 (Baolian)": 1,
+      "阿里": 1,
+      "DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1208457",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208457",
+      "title": "百炼 Lite Plan 加入了 qwen3.6",
+      "content": "百炼 Lite Plan 加入了 qwen3.6 ，虽然已经不卖了，但算是还给留存百炼几个月的小伙伴一点福利 千问 qwen3.6-plus 文本生成、深度思考、视觉理解 qwen3.5-plus 文本生成、深度思考、视觉理解 qwen3-max-2026-01-23 文本生成、深度思考 qwen3-coder-next 文本生成 qwen3-coder-plus 文本生成",
+      "author": "onedge",
+      "createdAt": "2026-04-25T04:50:40.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "百炼 (Baolian)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "百炼 Lite Plan 新增支持 qwen3.6 模型，作为对留存用户的福利，包含文本生成、深度思考和视觉理解功能。",
+        "topics": [
+          "定价",
+          "套餐",
+          "百炼",
+          "千问",
+          "qwen3.6",
+          "文本生成",
+          "深度思考"
+        ],
+        "planMentioned": "百炼 Lite Plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/90",
+      "analyzedAt": "2026-04-25T06:43:26.466Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1208365: The operation was aborted due to timeout"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "date": "2026-04-24",
-  "generatedAt": "2026-04-24T06:51:16.687Z",
+  "generatedAt": "2026-04-25T06:40:34.406Z",
   "config": {
     "sources": [
       "v2ex",
@@ -15,13 +15,15 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 54,
+    "totalPostsFetched": 59,
     "postsAfterKeywordFilter": 7,
-    "relevantPosts": 3,
+    "relevantPosts": 5,
     "discussionsCreated": 1,
-    "discussionsSkipped": 2,
+    "discussionsSkipped": 4,
     "supplierMentions": {
-      "DeepSeek": 2
+      "百炼 (Baolian)": 1,
+      "阿里": 1,
+      "DeepSeek": 1
     }
   },
   "posts": [
@@ -121,11 +123,71 @@
       },
       "discussionUrl": null,
       "analyzedAt": "2026-04-24T06:53:38.637Z"
+    },
+    {
+      "id": "v2ex-1208303",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208303",
+      "title": "v 友们每个月要为 ai 上供多少呢？",
+      "content": "我先来： 项目 费用 备注 阿里 Coding Plan Pro 套餐 200 元/月 智谱 GML Lite 480 元/年 相当于 40 元/月 自建 Sub2API 反代 GPT 0 元 都是抽奖获得的号，快到期了",
+      "author": "abc0123xyz",
+      "createdAt": "2026-04-24T07:14:05.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "阿里",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "楼主列举了自己每月在AI编码助手订阅上的花费，包括阿里Coding Plan Pro、智谱GML Lite以及自建反代GPT账号，多数为抽奖获得即将到期，主要讨论各AI编码套餐的月度成本。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "抽奖",
+          "体验卡",
+          "订阅"
+        ],
+        "planMentioned": "阿里 Coding Plan Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-25T06:43:27.685Z"
+    },
+    {
+      "id": "v2ex-1208338",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208338",
+      "title": "帮大家试过了 V4 变强了，但是也太贵了，早点出 coding plan 吧",
+      "content": "早期，我用 deepseek-reasoner 连最基本的问题在生产项目都搞不定。但是 V4 确实能力比之前强很多了。token 也很贵，一个简单的问题 V4 Pro 花了我 5 块钱多钱",
+      "author": "devloperchen",
+      "createdAt": "2026-04-24T08:48:58.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享了使用DeepSeek V4 Pro的体验，认为其能力提升但价格过高，建议早点推出更经济的coding plan。",
+        "topics": [
+          "定价",
+          "V4",
+          "套餐"
+        ],
+        "planMentioned": "V4 Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-25T06:43:29.002Z"
     }
   ],
   "failures": [
     "linuxdo: https://linux.do/latest.json → 429",
     "linuxdo: https://linux.do/latest.json → 429",
-    "analysis failed for v2ex-1208279: The operation was aborted due to timeout"
+    "analysis failed for v2ex-1208365: The operation was aborted due to timeout"
   ]
 }
