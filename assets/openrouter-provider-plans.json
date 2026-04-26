@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-25T08:26:06.353Z",
-  "generatedAtBeijing": "2026年4月25日 16:26:06",
-  "sourceGeneratedAt": "2026-04-25T08:25:44.244Z",
-  "sourceGeneratedAtBeijing": "2026年4月25日 16:25:44",
-  "sourceMetricsGeneratedAt": "2026-04-25T08:25:45.057Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月25日 16:25:45",
+  "generatedAt": "2026-04-26T08:32:55.815Z",
+  "generatedAtBeijing": "2026年4月26日 16:32:55",
+  "sourceGeneratedAt": "2026-04-26T08:32:36.057Z",
+  "sourceGeneratedAtBeijing": "2026年4月26日 16:32:36",
+  "sourceMetricsGeneratedAt": "2026-04-26T08:32:36.693Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月26日 16:32:36",
   "summary": {
     "openrouterProviderCount": 79,
     "metricsProviderCount": 38,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 7,
     "providersWithPlans": 13,
     "pendingCount": 25,
-    "blockedPendingCount": 1,
+    "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -1054,7 +1054,7 @@
       "officialWebsiteUrl": "https://sambanova.ai",
       "pricingPageUrl": "https://sambanova.ai",
       "reason": "官网价格页探测失败：https://sambanova.ai/pricing: HTTP 404",
-      "blocked": true
+      "blocked": false
     },
     {
       "slug": "siliconflow",
