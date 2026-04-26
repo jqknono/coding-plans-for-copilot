@@ -1,0 +1,67 @@
+{
+  "date": "2026-04-26",
+  "generatedAt": "2026-04-26T06:48:47.177Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Copilot": 1,
+      "百度": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1208599",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208599",
+      "title": "每天 800 美金 token 搓了几个小产品",
+      "content": "20x 套餐这样蹬会不会用太猛了…… 搓了几个小产品： 1 、加密/美股，组合+跟单+API ，不敢上线，自己玩 2 、A 股，量化实验室（ ai 写的介绍：Copilot\"四合一研究终端：用 AkShare 延迟数据 + 私有 JupyterLab 沙盒写策略，跑参数优化时自动叠 CVaR/WF 三模式共识/MC 爆仓概率四道硬闸，还原 IOC vs 市价滑点 + funding regime + A 股印花税等真实摩擦，AI Copilot 中文答疑但严守\"不荐股 / 不带单 / 不发实时行情\"三死线——拒绝聚宽式\"理想化回测幻觉\"，给你 1 年实盘踩坑沉淀的\"实战可信度评分\"。） 3 、链上安全审计（ ai 写的介绍：Web3 智能合约审计自动化平台 — 给地址或仓库就能跑全套工具扫描，11 个 AI 模型（ Claude/Gemini/Grok/DeepSeek ）任选给每个 finding 出修复 patch ，再用 AI 综合成 PR-ready 审计报告。代理跟随、跨链批量、升级监控、定时扫描、TG 告警全自动。）",
+      "author": "reitao",
+      "createdAt": "2026-04-26T05:25:44.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Copilot",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.7,
+        "summary": "用户分享使用AI Copilot（微软）和其他AI模型（如DeepSeek）的多个应用场景，包括金融策略开发、A股量化研究和区块链审计，强调工具在复杂场景中的实用性和风险控制机制。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "Copilot",
+          "AI",
+          "量化",
+          "审计",
+          "金融策略"
+        ],
+        "planMentioned": "Copilot",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-26T06:49:44.645Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
