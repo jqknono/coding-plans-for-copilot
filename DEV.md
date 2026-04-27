@@ -147,6 +147,7 @@ npm run test:pages
 - `Reserved Output`：指预留给模型输出的 token 预算，对应 `outputBuffer`，在 UI 中单独显示。
 - `Context Window X / Y tokens`：`Y` 是当前模型的总上下文窗口，优先取模型配置中的 `contextSize`，未提供时再回退到归一化后的 token window。当前公开 API 只要求扩展实现 `provideTokenCount`，没有提供把上游 usage 明细写回原生 Context Window 的公开接口，因此本仓库不再维护 `X`。
 - VS Code 官方文档说明：hover 到上下文窗口控件时，会显示”精确 token 数 / 总上下文”和按类别拆分；上下文满时会触发 compaction。
+- 当前实现中，`provideTokenCount()` 固定返回 `0`；不再复用上一轮真实 usage 作为当前请求 token 计数，避免工具续调时过早触发 conversation compaction。
 - 若后续 VS Code / Copilot Chat 调整上下文展示结构，应以其内置行为为准同步更新文档描述。
 - 当前实现已完全停止本地 prompt token 估算与本地 token 计数；若上游不返回 usage，只能显示”无 usage 数据”，不会再做近似补算。
 - 若需要看最近一次真实请求的 usage 比例与明细，以统一状态栏 `CodingPlans` 为准；正文显示简洁百分比，tooltip 合并展示套餐 usage 与 context 明细。

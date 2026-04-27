@@ -54,7 +54,8 @@ import {
   finalizeOpenAIResponsesStreamState,
   parseAnthropicResponse,
   parseOpenAIResponsesResponse,
-  readOpenAIChatMessageText,
+  readOpenAIChatMessageContentText,
+  readOpenAIChatMessageReasoningText,
   summarizeAnthropicResponseForLogging,
   summarizeOpenAIChatResponse,
   summarizeOpenAIResponsesResponse,
@@ -105,10 +106,13 @@ interface ParsedSseEvent {
 
 interface StreamingCompletionResult {
   content: string;
+  reasoningContent?: string;
   toolCalls: ChatToolCall[];
   usage?: Record<string, unknown>;
   responseId?: string;
 }
+
+const MAX_REASONING_CONTENT_CACHE_ENTRIES = 512;
 
 class AsyncIterableQueue<T> implements AsyncIterable<T> {
   private readonly items: T[] = [];
@@ -210,6 +214,7 @@ export class GenericAIProvider extends BaseAIProvider {
   private modelVendorMap = new Map<string, ModelVendorMapping>();
   private readonly vendorDiscoveryState = new Map<string, VendorDiscoveryState>();
   private readonly disabledStreamingModelIds = new Set<string>();
+  private readonly reasoningContentByToolCallId = new Map<string, string>();
   private refreshModelsInFlight: Promise<void> | undefined;
   private refreshModelsPending = false;
   private forceDiscoveryRetryRequested = false;
@@ -254,7 +259,7 @@ export class GenericAIProvider extends BaseAIProvider {
   }
 
   convertMessages(messages: vscode.LanguageModelChatMessage[]): ChatMessage[] {
-    return this.toProviderMessages(messages);
+    return this.hydrateOpenAIChatReasoningContent(this.toProviderMessages(messages));
   }
 
   async refreshModels(options: RefreshModelsOptions = {}): Promise<void> {
@@ -530,6 +535,74 @@ export class GenericAIProvider extends BaseAIProvider {
     return this.buildConfiguredModelsFromVendorModels(vendor, vendor.models);
   }
 
+  private hydrateOpenAIChatReasoningContent(messages: ChatMessage[]): ChatMessage[] {
+    return messages.map(message => {
+      if (message.role !== 'assistant' || (message.tool_calls?.length ?? 0) === 0 || message.reasoning_content?.trim()) {
+        return message;
+      }
+
+      const reasoningContent = this.resolveCachedReasoningContentForToolCalls(message.tool_calls ?? []);
+      if (!reasoningContent) {
+        return message;
+      }
+
+      return {
+        ...message,
+        reasoning_content: reasoningContent
+      };
+    });
+  }
+
+  private resolveCachedReasoningContentForToolCalls(toolCalls: ChatToolCall[]): string | undefined {
+    const distinctReasoningContents = new Set<string>();
+    for (const toolCall of toolCalls) {
+      const callId = typeof toolCall.id === 'string' ? toolCall.id.trim() : '';
+      if (!callId) {
+        continue;
+      }
+      const reasoningContent = this.reasoningContentByToolCallId.get(callId);
+      if (reasoningContent?.trim()) {
+        distinctReasoningContents.add(reasoningContent);
+      }
+    }
+
+    if (distinctReasoningContents.size === 0) {
+      return undefined;
+    }
+
+    if (distinctReasoningContents.size > 1) {
+      logger.warn('Conflicting cached reasoning_content detected for assistant tool continuation', {
+        toolCallIds: toolCalls.map(toolCall => toolCall.id).filter((id): id is string => typeof id === 'string' && id.trim().length > 0)
+      });
+    }
+
+    return distinctReasoningContents.values().next().value;
+  }
+
+  private cacheReasoningContentForToolCalls(toolCalls: ChatToolCall[] | undefined, reasoningContent: string | undefined): void {
+    const normalizedReasoningContent = reasoningContent?.trim();
+    if (!normalizedReasoningContent || !toolCalls?.length) {
+      return;
+    }
+
+    for (const toolCall of toolCalls) {
+      const callId = typeof toolCall.id === 'string' ? toolCall.id.trim() : '';
+      if (!callId) {
+        continue;
+      }
+      this.reasoningContentByToolCallId.delete(callId);
+      this.reasoningContentByToolCallId.set(callId, normalizedReasoningContent);
+    }
+
+    while (this.reasoningContentByToolCallId.size > MAX_REASONING_CONTENT_CACHE_ENTRIES) {
+      const oldestKey = this.reasoningContentByToolCallId.keys().next().value;
+      if (!oldestKey) {
+        break;
+      }
+      this.reasoningContentByToolCallId.delete(oldestKey);
+    }
+  }
+
   private buildConfiguredModelsFromVendorModels(vendor: VendorConfig, vendorModels: VendorModelConfig[]): AIModelConfig[] {
     const models: AIModelConfig[] = [];
     for (const model of vendorModels) {
@@ -704,6 +777,7 @@ export class GenericAIProvider extends BaseAIProvider {
               }
             }
             const finalized = finalizeOpenAIChatStreamState(state, () => this.generateToolCallId());
+            this.cacheReasoningContentForToolCalls(finalized.toolCalls, finalized.reasoningContent);
             this.logUpstreamResponseSummary('openai-chat', vendor, modelName, {
               mode: 'stream',
               responseId: state.responseId,
@@ -713,6 +787,7 @@ export class GenericAIProvider extends BaseAIProvider {
             });
             return {
               content: finalized.content,
+              reasoningContent: finalized.reasoningContent,
               toolCalls: finalized.toolCalls,
               usage: finalized.usage as Record<string, unknown> | undefined,
               responseId: state.responseId
@@ -818,8 +893,11 @@ export class GenericAIProvider extends BaseAIProvider {
     maxTokens: number | undefined
   ): vscode.LanguageModelChatResponse {
     const responseMessage = response.choices[0]?.message;
-    const content = readOpenAIChatMessageText(responseMessage);
+    const directContent = readOpenAIChatMessageContentText(responseMessage);
+    const reasoningContent = readOpenAIChatMessageReasoningText(responseMessage);
+    const content = directContent || ((responseMessage?.tool_calls?.length ?? 0) > 0 ? '' : reasoningContent);
     const usageData = response.usage;
+    this.cacheReasoningContentForToolCalls(responseMessage?.tool_calls, reasoningContent);
     this.ensureNonEmptyCompletion('openai-chat', trace, vendor, modelName, content, responseMessage?.tool_calls);
     this.logUpstreamResponseSummary('openai-chat', vendor, modelName, summarizeOpenAIChatResponse(response));
     logger.debug('Parsed OpenAI chat response', {
@@ -827,10 +905,11 @@ export class GenericAIProvider extends BaseAIProvider {
       responseId: response.id,
       content,
       contentLength: content.length,
+      reasoningContentLength: reasoningContent.length,
       toolCallCount: responseMessage?.tool_calls?.length ?? 0,
       usage: usageData
     });
-    const responseParts = this.buildResponseParts(content, responseMessage?.tool_calls);
+    const responseParts = this.buildResponseParts(content, responseMessage?.tool_calls, reasoningContent);
     const result = this.buildLoggedChatResponse(trace, content, responseParts);
     const normalizedUsage = normalizeTokenUsage(
       'openai-chat',
@@ -1779,6 +1858,7 @@ export class GenericAIProvider extends BaseAIProvider {
     return messages.map(message => ({
       role: message.role,
       contentLength: message.content.length,
+      reasoningContentLength: message.reasoning_content?.length ?? 0,
       toolCallCount: message.tool_calls?.length ?? 0,
       toolCalls: (message.tool_calls ?? []).map(toolCall => ({
         id: toolCall.id,
@@ -2053,7 +2133,7 @@ export class GenericAIProvider extends BaseAIProvider {
       try {
         const finalized = await execute(queue);
         provider.ensureNonEmptyCompletion(protocol, trace, vendor, modelName, finalized.content, finalized.toolCalls);
-        for (const part of provider.buildResponseParts('', finalized.toolCalls)) {
+        for (const part of provider.buildResponseParts('', finalized.toolCalls, finalized.reasoningContent)) {
           queue.push(part);
         }
 
@@ -2068,6 +2148,7 @@ export class GenericAIProvider extends BaseAIProvider {
           ...trace,
           responseId: finalized.responseId,
           contentLength: finalized.content.length,
+          reasoningContentLength: finalized.reasoningContent?.length ?? 0,
           toolCallCount: finalized.toolCalls.length,
           usage: normalizedUsage
         });

@@ -194,7 +194,10 @@ export interface ChatMessage {
   content: string;
   tool_calls?: ChatToolCall[];
   tool_call_id?: string;
+  reasoning_content?: string;
 }
+
+export const INTERNAL_REASONING_CONTENT_MIME_TYPE = 'application/vnd.coding-plans.reasoning-content+json';
 
 interface GenericModelListEntry {
   id?: unknown;
@@ -813,6 +816,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       const textParts: string[] = [];
       const toolCalls: vscode.LanguageModelToolCallPart[] = [];
       const toolResults: vscode.LanguageModelToolResultPart[] = [];
+      let reasoningContent: string | undefined;
 
       for (const part of message.content) {
         if (part instanceof vscode.LanguageModelTextPart) {
@@ -822,6 +826,11 @@ export abstract class BaseAIProvider implements vscode.Disposable {
         } else if (part instanceof vscode.LanguageModelToolResultPart) {
           toolResults.push(part);
         } else if (part instanceof vscode.LanguageModelDataPart) {
+          const encodedReasoningContent = this.readReasoningContentPart(part);
+          if (encodedReasoningContent) {
+            reasoningContent = encodedReasoningContent;
+            continue;
+          }
           textParts.push(this.readDataPartContent(part));
         } else if (part && typeof part === 'object' && 'value' in part) {
           const value = (part as { value?: unknown }).value;
@@ -854,6 +863,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
         normalized.push({
           role: 'assistant',
           content: textContent,
+          ...(reasoningContent ? { reasoning_content: reasoningContent } : {}),
           tool_calls: toolCalls.map(call => ({
             id: call.callId || this.makeToolCallId(),
             type: 'function',
@@ -866,9 +876,11 @@ export abstract class BaseAIProvider implements vscode.Disposable {
         continue;
       }
 
+      const role = this.toChatRole(message.role);
       normalized.push({
-        role: this.toChatRole(message.role),
-        content: textContent
+        role,
+        content: textContent,
+        ...(role === 'assistant' && reasoningContent ? { reasoning_content: reasoningContent } : {})
       });
     }
 
@@ -912,11 +924,20 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return 'auto';
   }
 
-  public buildResponseParts(content: string, toolCalls?: ChatToolCall[]): vscode.LanguageModelResponsePart[] {
+  public buildResponseParts(
+    content: string,
+    toolCalls?: ChatToolCall[],
+    reasoningContent?: string
+  ): vscode.LanguageModelResponsePart[] {
     const parts: vscode.LanguageModelResponsePart[] = [];
 
     if (content.trim().length > 0) {
       parts.push(new vscode.LanguageModelTextPart(content));
+    }
+
+    const trimmedReasoningContent = reasoningContent?.trim();
+    if (trimmedReasoningContent) {
+      parts.push(this.createReasoningDataPart(trimmedReasoningContent));
     }
 
     for (const toolCall of toolCalls ?? []) {
@@ -946,6 +967,29 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       return '';
     } catch {
       return '';
+    }
+  }
+
+  private createReasoningDataPart(reasoningContent: string): vscode.LanguageModelDataPart {
+    return new vscode.LanguageModelDataPart(
+      new TextEncoder().encode(JSON.stringify({ reasoning_content: reasoningContent })),
+      INTERNAL_REASONING_CONTENT_MIME_TYPE
+    );
+  }
+
+  private readReasoningContentPart(part: vscode.LanguageModelDataPart): string | undefined {
+    if (part.mimeType !== INTERNAL_REASONING_CONTENT_MIME_TYPE) {
+      return undefined;
+    }
+
+    try {
+      const decoded = new TextDecoder().decode(part.data);
+      const parsed = JSON.parse(decoded) as { reasoning_content?: unknown };
+      return typeof parsed.reasoning_content === 'string' && parsed.reasoning_content.trim().length > 0
+        ? parsed.reasoning_content
+        : undefined;
+    } catch {
+      return undefined;
     }
   }
 

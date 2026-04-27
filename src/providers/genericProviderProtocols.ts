@@ -363,8 +363,37 @@ export function readOpenAIChatMessageText(
     return '';
   }
 
-  return readOpenAICompatibleText(message.content)
-    || readOpenAICompatibleText(message.reasoning_content)
+  return readOpenAIChatMessageContentText(message)
+    || readOpenAIChatMessageReasoningText(message);
+}
+
+export function readOpenAIChatMessageContentText(
+  message:
+    | {
+      content?: unknown;
+    }
+    | undefined
+): string {
+  if (!message) {
+    return '';
+  }
+
+  return readOpenAICompatibleText(message.content);
+}
+
+export function readOpenAIChatMessageReasoningText(
+  message:
+    | {
+      reasoning_content?: unknown;
+      reasoning?: unknown;
+    }
+    | undefined
+): string {
+  if (!message) {
+    return '';
+  }
+
+  return readOpenAICompatibleText(message.reasoning_content)
     || readOpenAICompatibleText(message.reasoning);
 }
 
@@ -446,9 +475,12 @@ export function applyOpenAIChatStreamChunk(
 export function finalizeOpenAIChatStreamState(
   state: OpenAIChatStreamState,
   generateToolCallId: GenerateToolCallId
-): { content: string; toolCalls: ChatToolCall[]; usage?: OpenAIChatResponse['usage'] } {
+): { content: string; reasoningContent?: string; toolCalls: ChatToolCall[]; usage?: OpenAIChatResponse['usage'] } {
+  const reasoningContent = state.fallbackContent || undefined;
+  const hasToolCalls = state.toolCalls.size > 0;
   return {
-    content: state.content || state.fallbackContent,
+    content: state.content || (hasToolCalls ? '' : (reasoningContent ?? '')),
+    ...(reasoningContent ? { reasoningContent } : {}),
     toolCalls: [...state.toolCalls.entries()]
       .sort((left, right) => left[0] - right[0])
       .map(([, toolCall]) => ({
