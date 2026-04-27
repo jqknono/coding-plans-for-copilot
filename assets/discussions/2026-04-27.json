@@ -1,0 +1,132 @@
+{
+  "date": "2026-04-27",
+  "generatedAt": "2026-04-27T07:07:30.682Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 58,
+    "postsAfterKeywordFilter": 10,
+    "relevantPosts": 3,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 3,
+    "supplierMentions": {
+      "国家超算互联网平台（曙光信息）": 1,
+      "GitHub": 1,
+      "智谱": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1208813",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208813",
+      "title": "国家超算互联网平台提供 Coding Plan(20 元/100 元两档)",
+      "content": "刚刚发现的,属于国家超算中心,由曙光信息运营, 套餐用量与阿里腾讯京东齐平,但是目前 5 折优惠中 不足之处: 模型数量上不完整(MiniMax-M2.5 、Qwen3-235B-A22B, 其他接入中),可观望,也可先用着 套餐地址: https://www.scnet.cn/ui/console/index.html#/llm/coding-plan",
+      "author": "Foxkeh",
+      "createdAt": "2026-04-27T06:06:44.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "国家超算互联网平台（曙光信息）",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "帖子介绍国家超算互联网平台提供的 Coding Plan，有20元/100元两档且目前5折优惠，模型数量尚不完整但可观望或先用着，并附上套餐地址。",
+        "topics": [
+          "定价",
+          "折扣",
+          "Coding Plan",
+          "模型接入",
+          "体验"
+        ],
+        "planMentioned": "Coding Plan（20元/100元两档）",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-27T07:10:06.357Z"
+    },
+    {
+      "id": "v2ex-1208805",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208805",
+      "title": "GitHub Copilot Pro 还有没有必要续订",
+      "content": "之前主要是看中了 GPT-5-mini 无限使用(实际好像也有 5 小时使用限量),其他有什么套餐支持无限使用的吗 每月 10 美元折合 70 人民币.主要使用量比较大,我全部流程都给 ai 开发",
+      "author": "andlp",
+      "createdAt": "2026-04-27T05:53:22.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "GitHub",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户询问是否还有必要续订 GitHub Copilot Pro，主要关注 GPT-5-mini 的使用限制，并想了解是否有其他支持无限使用的套餐，每月预算约 70 元人民币。",
+        "topics": [
+          "定价",
+          "Copilot",
+          "套餐对比",
+          "订阅",
+          "使用限制",
+          "无限使用"
+        ],
+        "planMentioned": "GitHub Copilot Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-27T07:10:08.635Z"
+    },
+    {
+      "id": "v2ex-1208766",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1208766",
+      "title": "话说怎么重置 coding plan 的使用指针能够最大化在白天使用 token?",
+      "content": "比如 GLM 的 coding plan 是 5 小时重置一次，我假设让 cc 接 GLM api 在早上 6 点发出第一个请求，那么我能使用的区间是 06:00 → 11:00,然后 11:00 → 16:00 ，最后是 16:00 到 18:00 能够最大化使用，但是我 vibe 了很久，都没法让 claude 去请求一次 api ，好像是因为是交互式的，有没有佬出个主意",
+      "author": "ForrestWang",
+      "createdAt": "2026-04-27T03:18:31.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "智谱",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "讨论如何重置 GLM coding plan 的使用周期以最大化白天 token 使用，提到其 5 小时重置机制并寻求让 Claude 调用 GLM API 的可行方案。",
+        "topics": [
+          "GLM",
+          "coding plan",
+          "token 使用",
+          "API 调用",
+          "重置周期",
+          "使用策略"
+        ],
+        "planMentioned": "GLM coding plan",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-27T07:10:10.215Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1208796: LLM returned empty content (finish_reason=null)",
+    "analysis failed for v2ex-1208762: LLM returned invalid JSON: Unexpected token '`', \"```json\n{\n\"... is not valid JSON"
+  ]
+}
