@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-04-26T08:32:55.815Z",
-  "generatedAtBeijing": "2026年4月26日 16:32:55",
-  "sourceGeneratedAt": "2026-04-26T08:32:36.057Z",
-  "sourceGeneratedAtBeijing": "2026年4月26日 16:32:36",
-  "sourceMetricsGeneratedAt": "2026-04-26T08:32:36.693Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月26日 16:32:36",
+  "generatedAt": "2026-04-27T08:58:10.347Z",
+  "generatedAtBeijing": "2026年4月27日 16:58:10",
+  "sourceGeneratedAt": "2026-04-27T08:57:52.985Z",
+  "sourceGeneratedAtBeijing": "2026年4月27日 16:57:52",
+  "sourceMetricsGeneratedAt": "2026-04-27T08:57:53.430Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月27日 16:57:53",
   "summary": {
     "openrouterProviderCount": 79,
-    "metricsProviderCount": 38,
-    "resolvedMetricsProviderCount": 38,
+    "metricsProviderCount": 39,
+    "resolvedMetricsProviderCount": 39,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 6,
-    "heuristicProviderCount": 7,
-    "providersWithPlans": 13,
+    "heuristicProviderCount": 8,
+    "providersWithPlans": 14,
     "pendingCount": 25,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
@@ -531,7 +531,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DYum1QZx.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-ql3GZbRo.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/code/zh",
@@ -541,6 +541,84 @@
       "termsOfServiceUrl": "https://platform.moonshot.ai/docs/agreement/modeluse",
       "statusPageUrl": null,
       "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "morph",
+      "openrouterName": "Morph",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "Starter",
+          "currentPrice": 20,
+          "currentPriceText": "$20/month",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.morphllm.com/pricing",
+          "serviceDetails": [
+            "Merge AI-generated code edits instantly.",
+            "AI search subagent with sub-6s searches.",
+            "Verbatim context compaction for long-running agents.",
+            "Connect Claude, Cursor, and VS Code to Morph.",
+            "View all your org&#x27;s PRs in a unified feed.",
+            "Our SDK powering all products: OpenAI-compatible API, Anthropic & Vercel AI SDK support, and more."
+          ]
+        },
+        {
+          "name": "Pro",
+          "currentPrice": 60,
+          "currentPriceText": "$60/month",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "Merge AI-generated code edits instantly.",
+            "AI search subagent with sub-6s searches.",
+            "Verbatim context compaction for long-running agents.",
+            "Connect Claude, Cursor, and VS Code to Morph.",
+            "View all your org&#x27;s PRs in a unified feed.",
+            "Our SDK powering all products: OpenAI-compatible API, Anthropic & Vercel AI SDK support, and more."
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.morphllm.com",
+        "https://www.morphllm.com/pricing",
+        "https://www.morphllm.com/_next/static/chunks/b2885a7261335520.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/a26af1e1cb3e5053.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/2b61eefd0c91cbe6.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/eb5c283bcf5fe3ff.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/turbopack-31788cab291184eb.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/c9ac5102a5bcc4bf.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/d87fafa37646a02c.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/877a0efb899e70d0.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/b12c11b847a59661.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z",
+        "https://www.morphllm.com/_next/static/chunks/af8e527db4d2ff65.js?dpl=dpl_DLCJDsr6Z6MBwHbEm6ZBrNsygT5z"
+      ],
+      "pricingPageUrl": "https://www.morphllm.com/pricing",
+      "officialWebsiteUrl": "https://www.morphllm.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://morphllm.com/privacy",
+      "termsOfServiceUrl": "https://www.morphllm.com/privacy/tos",
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
     },
     {
       "slug": "phala",
@@ -891,7 +969,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.127 / $0.101 / $0.1）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.14 / $0.127 / $0.101）",
       "blocked": false
     },
     {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-27T03:07:50.506Z",
+  "generatedAt": "2026-04-27T08:57:52.985Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -279,7 +279,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DYum1QZx.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-ql3GZbRo.js"
       ],
       "plans": [
         {
