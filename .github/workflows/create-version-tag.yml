@@ -73,6 +73,7 @@ jobs:
             echo "exists=false" >> "${GITHUB_OUTPUT}"
           fi
 
+
       - name: Create and push tag
         if: steps.version.outputs.changed == 'true' && steps.tag_exists.outputs.exists == 'false'
         shell: bash
@@ -83,6 +84,44 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git tag -a "${TAG_NAME}" -m "Release ${TAG_NAME}"
           git push origin "${TAG_NAME}"
+
+      - name: Build VSIX
+        if: steps.version.outputs.changed == 'true' && steps.tag_exists.outputs.exists == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm ci
+          npm run package:vsix
+
+      - name: Extract changelog for release
+        id: changelog
+        if: steps.version.outputs.changed == 'true' && steps.tag_exists.outputs.exists == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.version.outputs.current }}"
+          # Escape dots for regex matching
+          ESCAPED_VERSION="${VERSION//\./\\.}"
+          # Extract lines between "## [VERSION]" and next "## ["
+          awk "/^## \[${ESCAPED_VERSION}\]/{flag=1; next} /^## \[/{flag=0} flag" CHANGELOG.md > /tmp/release_body.md
+          echo "file=/tmp/release_body.md" >> "${GITHUB_OUTPUT}"
+
+      - name: Create Release and upload VSIX
+        if: steps.version.outputs.changed == 'true' && steps.tag_exists.outputs.exists == 'false'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          VSIX_FILE="$(ls *.vsix | head -1)"
+          if [[ -z "${VSIX_FILE}" ]]; then
+            echo "No .vsix file found after build"
+            exit 1
+          fi
+          gh release create "${{ steps.version.outputs.tag }}" \
+            --title "Release ${{ steps.version.outputs.tag }}" \
+            --notes-file "${{ steps.changelog.outputs.file }}" \
+            "${VSIX_FILE}"
 
       - name: Summary
         shell: bash
