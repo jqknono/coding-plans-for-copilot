@@ -63,7 +63,7 @@
 
 | 位置 | 结论 |
 | --- | --- |
-| [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) | `provideTokenCount(...)` 不做本地 prompt token 估算；若存在“同模型最近一次已完成请求”的 usage 快照，则返回最近一次 occupied context，否则返回 `0` |
+| [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) | `provideTokenCount(...)` 固定返回 `0`；既不做本地 prompt token 估算，也不复用上一轮上游 usage 作为当前请求 token 计数 |
 | [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) | `reportUsageToProgress(...)` 会读取响应里的 usage |
 | [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) | `updateContextUsageState(...)` 会把 usage 缓存到本仓库自己的 `CodingPlans Context` 状态栏状态里 |
 | VS Code 源码 `src/vs/workbench/api/browser/mainThreadLanguageModels.ts` / `src/vs/workbench/api/common/extHostLanguageModels.ts` | `provideTokenCount(...)` 只被桥接到 `computeTokenLength(...)` / `countTokens(...)` 能力；本次未找到原生 `Context Window` UI 消费这条路径的源码 |
@@ -72,7 +72,7 @@
 
 1. VS Code 原生 `Context Window` 的 `X`，不是本仓库把上游 `usage.totalTokens` 原样回填出来的值。
 2. 本仓库公开参与原生控件的能力，只有模型元数据和 `provideTokenCount()` 这个估算接口。
-3. 现在这里的 `provideTokenCount()` 虽然会优先返回“同模型最近一次已完成请求”的 occupied context，但按当前源码和运行结果，这不会驱动原生 `Context Window` 弹层里的 `X`。
+3. 现在这里的 `provideTokenCount()` 已固定返回 `0`，避免把上一轮真实上下文占用误当成当前请求 token 计数，进而干扰 VS Code / Copilot 的 compaction 预算。
 4. 因此，原生 `Context Window` 里的 `X` 目前仍应视为 VS Code / Copilot 自己的内部上下文拼装统计结果；对第三方 provider，这个值可能保持 `0`。
 
 ## 最终结论

@@ -77,23 +77,6 @@ function isPlaceholderModel(vendor: string, modelId: string): boolean {
     || modelId === getVendorNotConfiguredPlaceholderModelId(vendor);
 }
 
-function readOccupiedContextTokens(snapshot: LastContextUsageSnapshot): number {
-  return Math.min(
-    snapshot.totalContextWindow,
-    snapshot.totalTokens + Math.max(snapshot.outputBuffer ?? 0, 0)
-  );
-}
-
-function matchesSnapshotModel(
-  snapshot: LastContextUsageSnapshot | undefined,
-  vendor: string,
-  model: vscode.LanguageModelChatInformation
-): snapshot is LastContextUsageSnapshot {
-  return !!snapshot
-    && snapshot.provider === vendor
-    && snapshot.modelId === model.id;
-}
-
 function getPlaceholderModel(vendor: string): vscode.LanguageModelChatInformation {
   const providerName = getProviderDisplayName(vendor);
   const info: vscode.LanguageModelChatInformation = {
@@ -368,11 +351,6 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       return Promise.resolve(0);
     }
 
-    const snapshot = this.contextUsageState?.getSnapshot();
-    if (matchesSnapshotModel(snapshot, vendor, model)) {
-      return Promise.resolve(readOccupiedContextTokens(snapshot));
-    }
-
     return Promise.resolve(0);
   }
 
@@ -623,6 +601,14 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         callId: part.callId,
         name: part.name,
         inputKeys: part.input && typeof part.input === 'object' ? Object.keys(part.input as object) : []
+      };
+    }
+
+    if (part instanceof vscode.LanguageModelDataPart) {
+      return {
+        type: 'data',
+        mimeType: part.mimeType,
+        bytes: part.data.byteLength
       };
     }
 

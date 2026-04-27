@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.7.9",
+    "version": "0.7.12",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",

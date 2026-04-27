@@ -1677,6 +1677,208 @@ async function runGenericProviderAnthropicStreamErrorEventTests(
   }
 }
 
+async function runGenericProviderOpenAIReasoningContinuationTests(
+  configStoreCtor: ConfigStoreCtor,
+  baseProviderModule: BaseProviderModule,
+  genericProviderModule: GenericProviderModule
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const reasoningContentMimeType = (baseProviderModule as Record<string, unknown>)['INTERNAL_REASONING_CONTENT_MIME_TYPE'];
+  if (typeof reasoningContentMimeType !== 'string') {
+    throw new Error('INTERNAL_REASONING_CONTENT_MIME_TYPE is unavailable in baseProviderModule');
+  }
+  const vscode = require('vscode') as typeof import('vscode');
+  const originalFetch = globalThis.fetch;
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/openai/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'deepseek-v4-flash',
+      contextSize: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000,
+      capabilities: { tools: true, vision: false }
+    }]
+  }]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+    refreshModels(): Promise<void>;
+    sendRequest(
+      request: {
+        modelId: string;
+        messages: Array<{ role: string; content: unknown[] }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options?: { tools?: unknown[] };
+      }
+    ): Promise<{ stream: AsyncIterable<unknown>; text: AsyncIterable<string> }>;
+    dispose(): void;
+  };
+  const payloads: Record<string, unknown>[] = [];
+
+  globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+    payloads.push(JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>);
+    if (payloads.length === 1) {
+      const sseBody = [
+        `data: ${JSON.stringify({
+          id: 'chat_reasoning_1',
+          choices: [{
+            index: 0,
+            delta: {
+              reasoning_content: [{ type: 'reasoning', text: 'Need the get_date tool first.' }],
+              tool_calls: [{
+                index: 0,
+                id: 'call_reasoning_1',
+                type: 'function',
+                function: {
+                  name: 'get_date',
+                  arguments: '{}'
+                }
+              }]
+            },
+            finish_reason: 'tool_calls'
+          }]
+        })}`,
+        '',
+        'data: [DONE]',
+        ''
+      ].join('\n');
+      return new Response(sseBody, {
+        status: 200,
+        headers: {
+          'content-type': 'text/event-stream'
+        }
+      });
+    }
+
+    return new Response(JSON.stringify({
+      id: 'chat_reasoning_2',
+      created: 1,
+      model: 'deepseek-v4-flash',
+      choices: [{
+        index: 0,
+        message: {
+          role: 'assistant',
+          content: 'done'
+        },
+        finish_reason: 'stop'
+      }],
+      usage: {
+        prompt_tokens: 20,
+        completion_tokens: 2,
+        total_tokens: 22
+      }
+    }), {
+      status: 200,
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+  }) as typeof globalThis.fetch;
+
+  try {
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
+      vendorName === 'Vendor' ? 'configured' : ''
+    );
+    await provider.refreshModels();
+
+    const firstResponse = await provider.sendRequest({
+      modelId: 'Vendor/deepseek-v4-flash',
+      messages: [{
+        role: 'user',
+        content: [{ value: 'Please call get_date first.' }]
+      }],
+      capabilities: { toolCalling: true, imageInput: false },
+      options: { tools: [] }
+    });
+
+    const firstResponseParts: unknown[] = [];
+    for await (const part of firstResponse.stream) {
+      firstResponseParts.push(part);
+    }
+    const firstResponseText: string[] = [];
+    for await (const chunk of firstResponse.text) {
+      firstResponseText.push(chunk);
+    }
+
+    assert.deepEqual(firstResponseText, []);
+    assert.equal(firstResponseParts.length, 2);
+
+    const reasoningPart = firstResponseParts.find(part => part instanceof vscode.LanguageModelDataPart);
+    assert.ok(reasoningPart instanceof vscode.LanguageModelDataPart);
+    const typedReasoningPart = reasoningPart as import('vscode').LanguageModelDataPart;
+    assert.equal(typedReasoningPart.mimeType, reasoningContentMimeType);
+    assert.deepEqual(JSON.parse(new TextDecoder().decode(typedReasoningPart.data)), {
+      reasoning_content: 'Need the get_date tool first.'
+    });
+
+    const toolCallPart = firstResponseParts.find(part => part instanceof vscode.LanguageModelToolCallPart);
+    assert.ok(toolCallPart instanceof vscode.LanguageModelToolCallPart);
+    const typedToolCallPart = toolCallPart as import('vscode').LanguageModelToolCallPart;
+    assert.equal(typedToolCallPart.callId, 'call_reasoning_1');
+    assert.equal(typedToolCallPart.name, 'get_date');
+    assert.deepEqual(typedToolCallPart.input, {});
+
+    const roundTrippedAssistantParts = firstResponseParts.filter(part => part instanceof vscode.LanguageModelToolCallPart);
+    assert.equal(roundTrippedAssistantParts.length, 1);
+
+    const secondResponse = await provider.sendRequest({
+      modelId: 'Vendor/deepseek-v4-flash',
+      messages: [{
+        role: 'user',
+        content: [{ value: 'Please call get_date first.' }]
+      }, {
+        role: 'assistant',
+        content: roundTrippedAssistantParts
+      }, {
+        role: 'user',
+        content: [new vscode.LanguageModelToolResultPart(
+          'call_reasoning_1',
+          [new vscode.LanguageModelTextPart('2026-04-27')]
+        )]
+      }],
+      capabilities: { toolCalling: true, imageInput: false },
+      options: { tools: [] }
+    });
+
+    const secondResponseText: string[] = [];
+    for await (const chunk of secondResponse.text) {
+      secondResponseText.push(chunk);
+    }
+
+    assert.deepEqual(secondResponseText, ['done']);
+    assert.equal(payloads.length, 2);
+    assert.deepEqual(payloads[1]?.messages, [{
+      role: 'user',
+      content: 'Please call get_date first.'
+    }, {
+      role: 'assistant',
+      content: '',
+      reasoning_content: 'Need the get_date tool first.',
+      tool_calls: [{
+        id: 'call_reasoning_1',
+        type: 'function',
+        function: {
+          name: 'get_date',
+          arguments: '{}'
+        }
+      }]
+    }, {
+      role: 'tool',
+      tool_call_id: 'call_reasoning_1',
+      content: '2026-04-27'
+    }]);
+    console.log('PASS openai-chat 会在 tool continuation 中保留并回传 reasoning_content');
+  } finally {
+    globalThis.fetch = originalFetch;
+    provider.dispose();
+    configStore.dispose();
+  }
+}
+
 function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   const {
     readOpenAIChatMessageText,
@@ -1768,6 +1970,37 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   const finalizedReasoningOnlyChat = finalizeOpenAIChatStreamState(reasoningOnlyChatState, () => 'generated_call');
   assert.equal(reasoningOnlyChatDelta.textDelta, '');
   assert.equal(finalizedReasoningOnlyChat.content, 'fallback text');
+  assert.equal(finalizedReasoningOnlyChat.reasoningContent, 'fallback text');
+
+  const reasoningToolCallState = createOpenAIChatStreamState();
+  applyOpenAIChatStreamChunk(reasoningToolCallState, {
+    choices: [{
+      index: 0,
+      delta: {
+        reasoning_content: [{ type: 'reasoning', text: 'Need the tool first.' }],
+        tool_calls: [{
+          index: 0,
+          id: 'call_reasoning_1',
+          function: {
+            name: 'lookup',
+            arguments: '{}'
+          }
+        }]
+      },
+      finish_reason: 'tool_calls'
+    }]
+  }, () => 'generated_call');
+  const finalizedReasoningToolCall = finalizeOpenAIChatStreamState(reasoningToolCallState, () => 'generated_call');
+  assert.equal(finalizedReasoningToolCall.content, '');
+  assert.equal(finalizedReasoningToolCall.reasoningContent, 'Need the tool first.');
+  assert.deepEqual(finalizedReasoningToolCall.toolCalls, [{
+    id: 'call_reasoning_1',
+    type: 'function',
+    function: {
+      name: 'lookup',
+      arguments: '{}'
+    }
+  }]);
 
   const mixedProxyChatState = createOpenAIChatStreamState();
   applyOpenAIChatStreamChunk(mixedProxyChatState, {
@@ -2547,8 +2780,8 @@ async function runLMChatProviderAdapterProvideTokenCountTests(
     outputBuffer: 10
   });
 
-  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 1030);
-  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 1030);
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
   assert.equal(await adapter.provideTokenCount(otherModel, 'hello', {} as never), 0);
 
   usageState.update({
@@ -2564,12 +2797,12 @@ async function runLMChatProviderAdapterProvideTokenCountTests(
     outputBuffer: 12
   });
 
-  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 1242);
-  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 1242);
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
+  assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
   assert.equal(await adapter.provideTokenCount(otherModel, 'hello', {} as never), 0);
   adapter.dispose();
   usageState.dispose();
-  console.log('PASS LMChatProviderAdapter 的 provideTokenCount 会回填最近一次同模型上下文占用');
+  console.log('PASS LMChatProviderAdapter 的 provideTokenCount 固定返回 0，不复用上一轮上下文占用');
 }
 
 async function main(): Promise<void> {
@@ -2594,6 +2827,7 @@ async function main(): Promise<void> {
     await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule, tokenUsageModule);
     await runGenericProviderAnthropicStreamFallbackTests(ConfigStore, genericProviderModule);
     await runGenericProviderAnthropicStreamErrorEventTests(ConfigStore, genericProviderModule);
+    await runGenericProviderOpenAIReasoningContinuationTests(ConfigStore, baseProviderModule, genericProviderModule);
     runProtocolStreamTests(protocolsModule);
     runTokenUsageNormalizationTests(tokenUsageModule);
     runContextUsageStateTests(contextUsageStateModule);
