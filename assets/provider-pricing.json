@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-27T08:57:52.985Z",
+  "generatedAt": "2026-04-28T03:07:24.979Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -272,14 +272,16 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: fetch failed"
     },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-ql3GZbRo.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BlT34N2Q.js"
       ],
       "plans": [
         {
@@ -958,6 +960,7 @@
     }
   ],
   "failures": [
+    "jdcloud-ai: fetch failed",
     "infini-ai: Unable to locate Infini platform/ai route chunks"
   ]
 }
