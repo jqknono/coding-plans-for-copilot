@@ -1,0 +1,63 @@
+{
+  "date": "2026-04-28",
+  "generatedAt": "2026-04-28T07:07:40.211Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {}
+  },
+  "posts": [
+    {
+      "id": "v2ex-1209093",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1209093",
+      "title": "看看各位的 Vibe Coding 配置",
+      "content": "长期使用 Claude Code,但最近越发决定 Opus 4.7 偷懒+糊弄了。 本身做嵌入式+边缘计算，一个问题 Opus 4.7 已经折腾两三天没弄好，今早尝试了下 Codex 5.5,一击毙命，直接跑通，还改了不少 Opus 4.7 留下的问题。 于是修改了订阅计划： ChatGPT: Plus($20) --&gt; Pro 5x($100) Claude: Max 20x($220) --&gt; Max 5x($110) 先这样用一段时间，看看 Anthropic 会不会做一些改进，已经看到非常多说 Codex 5.5 体感远强于 Opus 4.7 的讨论了，而且用 Claude Code 还胆战心惊，因为已经被封了两个号，申诉无果。 无奈 Claude Code CLI 还是太好用，用 OpenAI 写的 codex-plugin-cc 插件直接在 Claud Code 中调用 Codex 还不错。",
+      "author": "JarvisMa",
+      "createdAt": "2026-04-28T05:58:53.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.5,
+        "summary": "用户分享了在嵌入式和边缘计算开发中，从Claude Code切换到Codex 5.5的经历，并调整了ChatGPT和Anthropic订阅计划以适应新的工具偏好。",
+        "topics": [
+          "订阅",
+          "体验卡",
+          "套餐对比",
+          "编码",
+          "配置"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-28T07:08:26.587Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1209066: LLM output schema validation failed: category: expected one of available categories, got \"其他\""
+  ]
+}
