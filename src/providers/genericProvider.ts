@@ -731,7 +731,7 @@ export class GenericAIProvider extends BaseAIProvider {
       tool_choice: toolChoice,
       stream: true,
       temperature: sampling.temperature,
-      top_p: sampling.topP,
+      ...(sampling.topP > 0 ? { top_p: sampling.topP } : {}),
       ...(maxTokens === undefined ? {} : { max_tokens: maxTokens })
     };
 
@@ -946,7 +946,7 @@ export class GenericAIProvider extends BaseAIProvider {
       tools,
       tool_choice: toolChoice,
       temperature: sampling.temperature,
-      top_p: sampling.topP,
+      ...(sampling.topP > 0 ? { top_p: sampling.topP } : {}),
       stream: true,
       ...(maxOutputTokens === undefined ? {} : { max_output_tokens: maxOutputTokens })
     };
@@ -1131,7 +1131,6 @@ export class GenericAIProvider extends BaseAIProvider {
       tools,
       tool_choice: tools ? buildAnthropicToolChoice(request.options) : undefined,
       temperature: sampling.temperature,
-      top_p: sampling.topP,
       stream: streamAllowed,
       ...(maxTokens === undefined ? {} : { max_tokens: maxTokens })
     };

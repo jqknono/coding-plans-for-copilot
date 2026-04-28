@@ -85,6 +85,7 @@ function getCommitSubjects(previousVersion) {
     .filter((line) => !/^merge\b/i.test(line))
     .filter((line) => !/^chore:\s*release\b/i.test(line))
     .filter((line) => !/^chore:\s*update (?:openrouter provider metrics|provider pricing)\b/i.test(line))
+    .filter((line) => !/^chore:\s*update community crawler posts\b/i.test(line))
     .slice(0, 15);
 }
 

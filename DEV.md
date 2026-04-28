@@ -168,8 +168,10 @@ npm run test:pages
 - 新增采样参数：
   - `coding-plans.vendors[].defaultTemperature` / `defaultTopP`：供应商默认采样值
   - `coding-plans.vendors[].models[].temperature` / `topP`：模型级覆盖值
-  - 继承顺序固定为 `models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > 内置默认值 `0.2/1.0`
-  - 建议：代码生成/重构优先 `temperature 0.1-0.3`、`topP 1.0`；平衡创造性与稳定性可用 `temperature 0.3-0.5`、`topP 0.9-1.0`
+  - 继承顺序固定为 `models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > 内置默认值 `0.2/0`
+  - `topP = 0` 表示请求中省略 `top_p`
+  - 建议：编码场景默认保持 `topP 0`；仅当上游明确需要或你想显式控制 nucleus sampling 时再设置为正数
+  - `anthropic` 请求仅发送 `temperature`，不发送 `top_p`，以兼容会拒绝同时指定两者的上游
 - 需兼容旧字段 `apiStyle`；未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
 - 需继续兼容旧字段 `maxInputTokens` / `maxOutputTokens`；当模型同时提供 `contextSize` 与这两个旧字段时，总上下文窗口优先按 `contextSize` 处理，仅在输入或输出上限超过 `contextSize` 时才收敛。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
