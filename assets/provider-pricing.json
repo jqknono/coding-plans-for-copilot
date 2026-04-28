@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-28T03:07:24.979Z",
+  "generatedAt": "2026-04-28T08:56:30.219Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -281,7 +281,7 @@
       "sourceUrls": [
         "https://www.kimi.com/code/zh",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BlT34N2Q.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C7iAfX0k.js"
       ],
       "plans": [
         {
@@ -603,7 +603,9 @@
             "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "tencent-cloud-ai: fetch failed; Playwright fallback failed: page.goto: Timeout 8000ms exceeded. Call log: - navigating to \"https://cloud.tencent.com/document/product/1772/128947\", waiting until \"domcontentloaded\""
     },
     {
       "provider": "tencent-cloud-token-plan",
@@ -715,7 +717,7 @@
       "provider": "x-aio",
       "sourceUrls": [
         "https://code.x-aio.com/",
-        "https://code.x-aio.com/assets/index-BDsI_6a1.js"
+        "https://code.x-aio.com/assets/index-B3mrGkc9.js"
       ],
       "plans": [
         {
@@ -960,6 +962,7 @@
     }
   ],
   "failures": [
+    "tencent-cloud-ai: fetch failed; Playwright fallback failed: page.goto: Timeout 8000ms exceeded.\nCall log:\n  - navigating to \"https://cloud.tencent.com/document/product/1772/128947\", waiting until \"domcontentloaded\"\n",
     "jdcloud-ai: fetch failed",
     "infini-ai: Unable to locate Infini platform/ai route chunks"
   ]
