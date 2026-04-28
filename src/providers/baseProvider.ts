@@ -124,6 +124,19 @@ function sanitizeUnresolvedPlaceholderText(value: string): string {
   return value.replace(/\{\d+\}/g, 'value');
 }
 
+const UNSUPPORTED_FORWARDED_TOOL_SCHEMA_KEYS = new Set([
+  'defaultSnippets',
+  'deprecationMessage',
+  'doNotSuggest',
+  'enumDescriptions',
+  'errorMessage',
+  'markdownDeprecationMessage',
+  'markdownDescription',
+  'markdownEnumDescriptions',
+  'patternErrorMessage',
+  'suggestSortText'
+]);
+
 function sanitizeToolMetadataValue(value: unknown): unknown {
   if (typeof value === 'string') {
     return sanitizeUnresolvedPlaceholderText(value);
@@ -135,7 +148,9 @@ function sanitizeToolMetadataValue(value: unknown): unknown {
 
   if (value && typeof value === 'object') {
     return Object.fromEntries(
-      Object.entries(value as Record<string, unknown>).map(([key, nestedValue]) => [key, sanitizeToolMetadataValue(nestedValue)])
+      Object.entries(value as Record<string, unknown>)
+        .filter(([key]) => !UNSUPPORTED_FORWARDED_TOOL_SCHEMA_KEYS.has(key))
+        .map(([key, nestedValue]) => [key, sanitizeToolMetadataValue(nestedValue)])
     );
   }
 

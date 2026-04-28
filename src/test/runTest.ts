@@ -903,9 +903,12 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
           properties: {
             query: {
               type: 'string',
-              description: 'Use "{1}" as the semantic query.'
+              description: 'Use "{1}" as the semantic query.',
+              enumDescriptions: ['Search "{1}"']
             }
-          }
+          },
+          enumDescriptions: ['Root "{1}"'],
+          markdownDescription: 'Pick "{1}"'
         }
       }]
     });
@@ -925,7 +928,7 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
         }
       }
     }]);
-    console.log('PASS 工具定义中的未替换占位符会在转发前被清洗');
+    console.log('PASS 工具定义转发前会清洗未替换占位符并移除 VS Code 扩展 schema 字段');
 
     const providerMessages = provider.toProviderMessages([
       vscode.LanguageModelChatMessage.User([
