@@ -6,6 +6,12 @@ async function waitForDomesticCards(page: Page): Promise<void> {
   await expect.poll(async () => page.locator('#domesticGrid .provider-card').count()).toBeGreaterThan(0);
 }
 
+async function waitForOverseasCards(page: Page): Promise<void> {
+  await expect(page.getByRole('heading', { level: 1, name: '编码套餐看板' })).toBeVisible();
+  await expect(page.locator('#generatedAt')).not.toHaveText(/加载中|--/);
+  await expect.poll(async () => page.locator('#overseasGrid .provider-card').count()).toBeGreaterThan(0);
+}
+
 async function waitForMetricsRows(page: Page): Promise<void> {
   await expect(page.locator('#metricsGeneratedAt')).not.toHaveText('--');
   await expect.poll(async () => page.locator('#metricsTableContainer tbody tr').count()).toBeGreaterThan(0);
@@ -38,6 +44,73 @@ test('首页渲染与 Tab 切换正常', async ({ page }) => {
   await expect(page.locator('#metricsPanel')).not.toHaveClass(/hidden/);
   await expect(page.locator('#overseasPanel')).toHaveClass(/hidden/);
   await waitForMetricsRows(page);
+});
+
+test('大陆套餐展示阿里云 Token Plan', async ({ page }) => {
+  await page.goto('/#domestic');
+  await waitForDomesticCards(page);
+
+  const card = page.locator('#provider-card-aliyun-token-plan');
+  await expect(card).toBeVisible();
+  await expect(card.getByRole('heading', { name: '阿里云 Token Plan' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan 标准坐席' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan 高级坐席' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan 尊享坐席' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan 共享用量包' })).toBeVisible();
+  await expect(card.getByRole('link', { name: '前往了解' })).toHaveAttribute(
+    'href',
+    'https://common-buy.aliyun.com/token-plan/',
+  );
+});
+
+test('Moonshot Kimi 海内外套餐按人民币和美元分开展示', async ({ page }) => {
+  await page.goto('/#domestic');
+  await waitForDomesticCards(page);
+
+  const domesticCard = page.locator('#domesticPanel #provider-card-moonshotai');
+  await expect(domesticCard).toBeVisible();
+  await expect(domesticCard.getByRole('heading', { name: 'Moonshot Kimi' })).toBeVisible();
+  await expect(domesticCard.getByRole('heading', { name: 'Andante（大陆）' })).toBeVisible();
+  await expect(domesticCard.getByText('¥49/月')).toBeVisible();
+  await expect(domesticCard.getByText('计价币种: 人民币（CNY）').first()).toBeVisible();
+  await expect(domesticCard.getByRole('link', { name: '前往了解' })).toHaveAttribute(
+    'href',
+    'https://www.kimi.com/zh-cn/help/membership/membership-pricing',
+  );
+
+  await page.getByRole('tab', { name: '海外套餐' }).click();
+  await waitForOverseasCards(page);
+
+  const overseasCard = page.locator('#overseasPanel #provider-card-moonshotai');
+  await expect(overseasCard).toBeVisible();
+  await expect(overseasCard.getByRole('heading', { name: 'Moderato（海外）' })).toBeVisible();
+  await expect(overseasCard.getByText('$19/月')).toBeVisible();
+  await expect(overseasCard.getByText('计价币种: 美元（USD）').first()).toBeVisible();
+  await expect(overseasCard.getByRole('link', { name: '前往了解' })).toHaveAttribute(
+    'href',
+    'https://www.kimi.com/code',
+  );
+});
+
+test('海外套餐展示 Venice WandB 与 Cloudflare 的服务详情', async ({ page }) => {
+  await page.goto('/#overseas');
+  await waitForOverseasCards(page);
+  await expect(page.locator('#overseasPanel')).not.toHaveClass(/hidden/);
+
+  const veniceCard = page.locator('#provider-card-venice');
+  await expect(veniceCard).toBeVisible();
+  await expect(veniceCard.getByRole('heading', { name: 'Pro Plus' })).toBeVisible();
+  await expect(veniceCard.getByText('7,500 credits / month for video, music, frontier image generation, LLMs, and API')).toBeVisible();
+
+  const wandbCard = page.locator('#provider-card-wandb');
+  await expect(wandbCard).toBeVisible();
+  await expect(wandbCard.getByRole('heading', { name: 'Inference add-on' })).toBeVisible();
+  await expect(wandbCard.getByText('Run open source AI models. View per model pricing.')).toBeVisible();
+
+  const cloudflareCard = page.locator('#provider-card-cloudflare');
+  await expect(cloudflareCard).toBeVisible();
+  await expect(cloudflareCard.getByRole('heading', { name: 'Workers AI Paid usage' })).toBeVisible();
+  await expect(cloudflareCard.getByText('@cf/meta/llama-3.2-1b-instruct')).toBeVisible();
 });
 
 test('指标页支持厂商多选与全部恢复', async ({ page }) => {

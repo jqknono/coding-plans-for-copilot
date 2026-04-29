@@ -5,10 +5,13 @@ const assert = require("node:assert/strict");
 
 const {
   STALE_PROVIDER_NOTICE,
+  buildKimiCodePlansFromGoodsPayload,
   extractInfiniRouteChunkUrls,
   extractProviderIdFromFailure,
   parseInfiniPlanFromBundle,
   parseInfiniServiceDetailsByTier,
+  parseAliyunTokenPlansFromDocsHtml,
+  parseKimiDomesticMembershipPlansFromText,
   parseJdCloudCodingPlansFromPageHtml,
   restoreFailedProvidersFromSnapshot,
 } = require("../../scripts/fetch-provider-pricing.js");
@@ -93,6 +96,72 @@ test("parseJdCloudCodingPlansFromPageHtml reads SSR pricing models", () => {
   );
 });
 
+test("Kimi parsers keep mainland RMB plans and overseas USD plans separate", () => {
+  const domesticText = `
+    订阅方式与价格
+    套餐	定位	连续包月	连续包年
+    Adagio	免费体验	¥0/月	—
+    Andante	日常使用	¥49/月	年付更优惠
+    Moderato	效率升级	¥99/月	年付更优惠
+    Allegretto	专业优选	¥199/月	年付更优惠
+    Allegro	全能尊享	¥699/月	年付更优惠
+
+    各套餐权益详情
+    Adagio — 免费
+    Agent 用量约 6 个
+    Andante — ¥49/月
+    Agent 用量约 30 个
+    Kimi Code 1 倍额度
+    Moderato — ¥99/月
+    在 Andante 基础上：
+    Agent 用量约 60 个
+    Kimi Code 4 倍额度
+    Allegretto — ¥199/月
+    在 Moderato 基础上：
+    Agent 用量约 150 个
+    Kimi Code 20 倍额度
+    Allegro — ¥699/月
+    在 Allegretto 基础上：
+    Agent 用量约 360 个
+    Kimi Code 60 倍额度
+    以上 Agent 用量数值基于常见任务 token 消耗估算。
+  `;
+  const overseasPayload = {
+    goods: [
+      {
+        title: "Moderato",
+        useRegion: "REGION_OVERSEA",
+        membershipLevel: "LEVEL_BASIC",
+        amounts: [{ currency: "USD", priceInCents: "1900" }],
+        billingCycle: { timeUnit: "TIME_UNIT_MONTH" },
+      },
+      {
+        title: "Moderato",
+        useRegion: "REGION_OVERSEA",
+        membershipLevel: "LEVEL_BASIC",
+        amounts: [{ currency: "USD", priceInCents: "18000" }],
+        billingCycle: { timeUnit: "TIME_UNIT_YEAR" },
+      },
+    ],
+  };
+
+  const domesticPlans = parseKimiDomesticMembershipPlansFromText(domesticText);
+  const overseasPlans = buildKimiCodePlansFromGoodsPayload(overseasPayload);
+
+  assert.equal(domesticPlans.length, 5);
+  assert.deepEqual(
+    domesticPlans.map((plan) => plan.currentPriceText),
+    ["¥0/月", "¥49/月", "¥99/月", "¥199/月", "¥699/月"],
+  );
+  assert.match(domesticPlans[1].serviceDetails.join("\n"), /计价币种: 人民币（CNY）/);
+  assert.match(domesticPlans[1].serviceDetails.join("\n"), /Kimi Code 1 倍额度/);
+
+  assert.equal(overseasPlans.length, 1);
+  assert.equal(overseasPlans[0].name, "Moderato（海外）");
+  assert.equal(overseasPlans[0].currentPriceText, "$19/月");
+  assert.match(overseasPlans[0].serviceDetails.join("\n"), /计价币种: 美元（USD）/);
+});
+
 test("extractInfiniRouteChunkUrls narrows candidates to platform/ai route chunks", () => {
   const mainScriptText = String.raw`path:"platform/ai",name:"platformAi",component:()=>mt((()=>import("./Index.64f0ba2f.js")),["assets/js/Index.64f0ba2f.js","assets/js/Index.060fd627.js","assets/js/index.fef4e24a.js","assets/js/agent.08363d33.js"])`;
 
@@ -129,4 +198,66 @@ test("Infini bundle parsers handle current request-limit wording", () => {
     "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
     "适配Claude Code、Cline等主流编程工具，持续更新...",
   ]);
+});
+
+test("parseAliyunTokenPlansFromDocsHtml reads team seat and shared credit package pricing", () => {
+  const html = `
+    <table>
+      <tr><th>模态</th><th>模型</th></tr>
+      <tr><td>文本生成</td><td>qwen3.6-plus、glm-5、MiniMax-M2.5、deepseek-v3.2</td></tr>
+      <tr><td>图像生成</td><td>qwen-image-2.0、wan2.7-image-pro</td></tr>
+    </table>
+    <table>
+      <tr><th>坐席类型</th><th>价格</th><th>额度</th><th>适用场景</th></tr>
+      <tr><td>标准坐席</td><td>¥198/坐席/月</td><td>25,000 Credits/坐席/月</td><td>轻度使用 AI 辅助的团队成员</td></tr>
+      <tr><td>高级坐席</td><td>¥698/坐席/月</td><td>100,000 Credits/坐席/月</td><td>日常高频使用 AI 编码的团队成员</td></tr>
+      <tr><td>尊享坐席</td><td>¥1,398/坐席/月</td><td>250,000 Credits/坐席/月</td><td>重度依赖 AI 编码的核心开发者</td></tr>
+    </table>
+    <p>跨坐席共享的弹性用量包，当个别坐席用量超出套餐额度时，可从共享用量包中抵扣。每个共享用量包有效期为 1 个月，到期未使用的额度自动清零。持有多个共享用量包时，优先抵扣最近到期的用量包。</p>
+    <table>
+      <tr><th>档位</th><th>价格</th><th>额度</th></tr>
+      <tr><td>Token Plan 团队版 - 共享用量包</td><td>¥5,000/个</td><td>625,000 Credits/个</td></tr>
+    </table>
+  `;
+
+  const result = parseAliyunTokenPlansFromDocsHtml(html);
+
+  assert.equal(result.provider, "aliyun-token-plan");
+  assert.deepEqual(
+    result.plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      currentPrice: plan.currentPrice,
+      unit: plan.unit,
+    })),
+    [
+      {
+        name: "Token Plan 标准坐席",
+        currentPriceText: "¥198/坐席/月",
+        currentPrice: 198,
+        unit: "坐席/月",
+      },
+      {
+        name: "Token Plan 高级坐席",
+        currentPriceText: "¥698/坐席/月",
+        currentPrice: 698,
+        unit: "坐席/月",
+      },
+      {
+        name: "Token Plan 尊享坐席",
+        currentPriceText: "¥1,398/坐席/月",
+        currentPrice: 1398,
+        unit: "坐席/月",
+      },
+      {
+        name: "Token Plan 共享用量包",
+        currentPriceText: "¥5,000/个",
+        currentPrice: 5000,
+        unit: "月",
+      },
+    ],
+  );
+  assert.match(result.plans[0].serviceDetails.join("\n"), /25,000 Credits\/坐席\/月/);
+  assert.match(result.plans[0].serviceDetails.join("\n"), /qwen3\.6-plus/);
+  assert.match(result.plans[3].serviceDetails.join("\n"), /625,000 Credits\/个/);
 });

@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.16] - 2026-04-28
+- fix(provider): 清理转发至 Anthropic 的工具 Schema 扩展字段
+- feat(provider): 优化 topP 采样逻辑并增强 Anthropic 兼容性
+- ci: 在版本标签工作流中增加 GitHub Release 创建和 VSIX 上传
+- fix #98: 支持 DeepSeek 思考模型上下文往返并优化 Token 计数逻辑
+
 ## [0.7.14] - 2026-04-28
 - chore: 升级版本至 0.7.14
 
@@ -37,6 +43,3 @@ All notable changes to this project will be documented in this file.
 - feat(定价数据): 更新定价数据并增强错误处理机制
 - feat(config): 优化模型配置与输出预算管理
 - feat(provider): 新增京东云支持并更新 Kimi 价格数据
-
-## [0.6.6] - 2026-03-24
-- feat(provider): 为提交信息生成请求添加来源标识并优化用量统计

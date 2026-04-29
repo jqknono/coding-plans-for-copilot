@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-04-28T08:56:57.316Z",
-  "generatedAtBeijing": "2026年4月28日 16:56:57",
-  "sourceGeneratedAt": "2026-04-28T08:56:30.219Z",
-  "sourceGeneratedAtBeijing": "2026年4月28日 16:56:30",
-  "sourceMetricsGeneratedAt": "2026-04-28T08:56:30.856Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月28日 16:56:30",
+  "generatedAt": "2026-04-29T05:23:21.097Z",
+  "generatedAtBeijing": "2026年4月29日 13:23:21",
+  "sourceGeneratedAt": "2026-04-29T05:22:11.520Z",
+  "sourceGeneratedAtBeijing": "2026年4月29日 13:22:11",
+  "sourceMetricsGeneratedAt": "2026-04-29T05:22:41.368Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月29日 13:22:41",
   "summary": {
     "openrouterProviderCount": 79,
     "metricsProviderCount": 39,
@@ -234,41 +234,47 @@
       "providerId": null,
       "plans": [
         {
-          "name": "官网价格参考",
-          "currentPrice": 5,
-          "currentPriceText": "$5 per mo",
+          "name": "Workers AI Free allocation",
+          "currentPrice": 0,
+          "currentPriceText": "$0 (10,000 Neurons/day)",
           "originalPrice": null,
           "originalPriceText": null,
-          "unit": "月",
-          "notes": "来源: https://www.cloudflare.com/plans/",
-          "serviceDetails": null
+          "unit": "日",
+          "notes": "来源: https://developers.cloudflare.com/workers-ai/platform/pricing/index.md",
+          "serviceDetails": [
+            "Workers AI is included in Free and Paid Workers plans",
+            "10,000 Neurons per day at no charge",
+            "Limits reset daily at 00:00 UTC",
+            "Neurons measure GPU compute for AI model outputs"
+          ]
         },
         {
-          "name": "官网价格参考 2",
-          "currentPrice": 10,
-          "currentPriceText": "$10 per mo",
+          "name": "Workers AI Paid usage",
+          "currentPrice": 0.011,
+          "currentPriceText": "$0.011 / 1,000 Neurons",
           "originalPrice": null,
           "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": null
-        },
-        {
-          "name": "官网价格参考 3",
-          "currentPrice": 5,
-          "currentPriceText": "$5/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": null
+          "unit": "用量",
+          "notes": "超过每日免费额度后按 Neurons 计费",
+          "serviceDetails": [
+            "10,000 Neurons per day included before overage",
+            "Price in Tokens is equivalent to Price in Neurons for comparison",
+            "@cf/meta/llama-3.2-1b-instruct: $0.027 per M input tokens $0.201 per M output tokens",
+            "@cf/meta/llama-3.2-3b-instruct: $0.051 per M input tokens $0.335 per M output tokens",
+            "@cf/meta/llama-3.1-8b-instruct-fp8-fast: $0.045 per M input tokens $0.384 per M output tokens",
+            "@cf/meta/llama-3.2-11b-vision-instruct: $0.049 per M input tokens $0.676 per M output tokens",
+            "@cf/meta/llama-3.1-70b-instruct-fp8-fast: $0.293 per M input tokens $2.253 per M output tokens",
+            "@cf/meta/llama-3.3-70b-instruct-fp8-fast: $0.293 per M input tokens $2.253 per M output tokens"
+          ]
         }
       ],
       "sourceUrls": [
-        "https://www.cloudflare.com",
-        "https://www.cloudflare.com/plans/"
+        "https://developers.cloudflare.com/workers-ai/platform/pricing/",
+        "https://developers.cloudflare.com/workers-ai/platform/pricing/index.md",
+        "https://developers.cloudflare.com/workers/platform/pricing/#workers",
+        "https://www.cloudflare.com"
       ],
-      "pricingPageUrl": "https://www.cloudflare.com/plans/",
+      "pricingPageUrl": "https://developers.cloudflare.com/workers-ai/platform/pricing/",
       "officialWebsiteUrl": "https://www.cloudflare.com",
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://developers.cloudflare.com/workers-ai/privacy",
@@ -463,46 +469,43 @@
       "providerId": "kimi-ai",
       "plans": [
         {
-          "name": "Adagio (月)",
+          "name": "Adagio（大陆）",
           "currentPrice": 0,
           "currentPriceText": "¥0/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "试用计划",
+          "notes": "免费体验",
           "serviceDetails": [
-            "会员等级: 免费试用",
-            "Kimi Code 试用套餐权益"
+            "计价币种: 人民币（CNY）",
+            "适用区域: 大陆",
+            "套餐定位: 免费体验",
+            "Agent 用量约 6 个",
+            "Agent 任务并行 1 个",
+            "专业数据库 200 次调用"
           ]
         },
         {
-          "name": "Moderato (月)",
-          "currentPrice": 19,
-          "currentPriceText": "¥19/月",
+          "name": "Andante（大陆）",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "会员等级: 基础会员",
-            "Kimi Code 月度订阅权益"
+            "计价币种: 人民币（CNY）",
+            "适用区域: 大陆",
+            "套餐定位: 日常使用",
+            "Agent 用量约 30 个",
+            "Agent 优先生成队列（4 倍速）",
+            "Office 文件处理、深度研究、网站部署",
+            "Kimi Code 1 倍额度",
+            "专业数据库 1000 次调用"
           ]
         },
         {
-          "name": "Allegretto (月)",
-          "currentPrice": 39,
-          "currentPriceText": "¥39/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: 进阶会员",
-            "Kimi Code 月度订阅权益"
-          ]
-        },
-        {
-          "name": "Allegro (月)",
+          "name": "Moderato（大陆）",
           "currentPrice": 99,
           "currentPriceText": "¥99/月",
           "originalPrice": null,
@@ -510,12 +513,17 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "会员等级: 高级会员",
-            "Kimi Code 月度订阅权益"
+            "计价币种: 人民币（CNY）",
+            "适用区域: 大陆",
+            "套餐定位: 效率升级",
+            "Agent 用量约 60 个",
+            "Agent 任务并行 2 个",
+            "Kimi Code 4 倍额度",
+            "专业数据库 2000 次调用"
           ]
         },
         {
-          "name": "Vivace (月)",
+          "name": "Allegretto（大陆）",
           "currentPrice": 199,
           "currentPriceText": "¥199/月",
           "originalPrice": null,
@@ -523,18 +531,119 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
+            "计价币种: 人民币（CNY）",
+            "适用区域: 大陆",
+            "套餐定位: 专业优选",
+            "Agent 用量约 150 个",
+            "Kimi Code 20 倍额度",
+            "一键部署 Kimi Claw / Kimi Claw Android",
+            "Agent 集群可用 50 次（4 个子任务并行）",
+            "专业数据库 5000 次调用"
+          ]
+        },
+        {
+          "name": "Allegro（大陆）",
+          "currentPrice": 699,
+          "currentPriceText": "¥699/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 人民币（CNY）",
+            "适用区域: 大陆",
+            "套餐定位: 全能尊享",
+            "Agent 用量约 360 个",
+            "Agent 任务并行 4 个",
+            "Kimi Code 60 倍额度",
+            "Agent 集群可用 120 次（4 个子任务并行）",
+            "专业数据库 12000 次调用"
+          ]
+        },
+        {
+          "name": "Adagio（海外）",
+          "currentPrice": 0,
+          "currentPriceText": "$0/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "试用计划",
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
+            "会员等级: 免费试用",
+            "Kimi Code 试用套餐权益"
+          ]
+        },
+        {
+          "name": "Moderato（海外）",
+          "currentPrice": 19,
+          "currentPriceText": "$19/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
+            "会员等级: 基础会员",
+            "Kimi Code 月度订阅权益"
+          ]
+        },
+        {
+          "name": "Allegretto（海外）",
+          "currentPrice": 39,
+          "currentPriceText": "$39/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
+            "会员等级: 进阶会员",
+            "Kimi Code 月度订阅权益"
+          ]
+        },
+        {
+          "name": "Allegro（海外）",
+          "currentPrice": 99,
+          "currentPriceText": "$99/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
+            "会员等级: 高级会员",
+            "Kimi Code 月度订阅权益"
+          ]
+        },
+        {
+          "name": "Vivace（海外）",
+          "currentPrice": 199,
+          "currentPriceText": "$199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
             "会员等级: 旗舰会员",
             "Kimi Code 月度订阅权益"
           ]
         }
       ],
       "sourceUrls": [
-        "https://www.kimi.com/code/zh",
+        "https://www.kimi.com/zh-cn/help/membership/membership-pricing",
+        "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C7iAfX0k.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BP8gCMy0.js",
         "https://platform.moonshot.ai"
       ],
-      "pricingPageUrl": "https://www.kimi.com/code/zh",
+      "pricingPageUrl": "https://www.kimi.com/zh-cn/help/membership/membership-pricing",
       "officialWebsiteUrl": "https://platform.moonshot.ai",
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://platform.moonshot.ai/docs/agreement/userprivacy",
@@ -585,32 +694,32 @@
       "sourceUrls": [
         "https://www.morphllm.com",
         "https://www.morphllm.com/pricing",
-        "https://www.morphllm.com/_next/static/chunks/b2885a7261335520.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/09d1428d6fdd80b4.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/e068750a403288e3.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/eb5c283bcf5fe3ff.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/turbopack-3c9dd1c003ffb4c7.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/c9ac5102a5bcc4bf.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/d87fafa37646a02c.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/3f2a04db4445b90f.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/63ac3371ce55ed64.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi",
-        "https://www.morphllm.com/_next/static/chunks/69615a9361dea81c.js?dpl=dpl_9asQxAZU6KGDj5UNvcNXpsEs25Yi"
+        "https://www.morphllm.com/_next/static/chunks/b2885a7261335520.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/7c830f291c075319.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/cc2fa1f62a1759bc.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/eb5c283bcf5fe3ff.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/turbopack-4a9d570d0a056da3.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/c9ac5102a5bcc4bf.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/d87fafa37646a02c.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/53dc451946d3ed8b.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/6fd81fd0e0a10b50.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of",
+        "https://www.morphllm.com/_next/static/chunks/0173acf145f34a1c.js?dpl=dpl_HehK4V6LmZq85VjMd3woPH3854of"
       ],
       "pricingPageUrl": "https://www.morphllm.com/pricing",
       "officialWebsiteUrl": "https://www.morphllm.com",
@@ -692,7 +801,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.234/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.249/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -789,39 +898,58 @@
       "providerId": null,
       "plans": [
         {
-          "name": "官网价格参考",
+          "name": "Pro",
           "currentPrice": 18,
-          "currentPriceText": "$ 18/mo",
+          "currentPriceText": "$18/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://venice.ai/pricing",
-          "serviceDetails": null
+          "serviceDetails": [
+            "All Pro models access",
+            "Unlimited text prompts and 1,000 images per day",
+            "Generate video, music, and use frontier image and text models with credits",
+            "Image superpowers: upscale, remove backgrounds, create variants, and more",
+            "Create and share custom characters",
+            "Extended context windows for deep work and longer running conversations",
+            "Encrypted chat backup and restore",
+            "100 credits / month for video, music, premium models, and API"
+          ]
         },
         {
-          "name": "官网价格参考 2",
+          "name": "Pro Plus",
           "currentPrice": 68,
-          "currentPriceText": "$ 68/mo",
+          "currentPriceText": "$68/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
-          "serviceDetails": null
+          "serviceDetails": [
+            "Everything in Pro",
+            "Higher image generation limits on Venice Pro models",
+            "7,500 credits / month for video, music, frontier image generation, LLMs, and API",
+            "2-month credit banking - unused credits roll forward"
+          ]
         },
         {
-          "name": "官网价格参考 3",
+          "name": "Max",
           "currentPrice": 200,
-          "currentPriceText": "$ 200/mo",
+          "currentPriceText": "$200/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
-          "serviceDetails": null
+          "serviceDetails": [
+            "Everything in Plus",
+            "Highest image generation limits on Venice Pro models",
+            "22,500 credits / month for video, music, frontier image generation, frontier LLMs, and API",
+            "3-month credit banking"
+          ]
         }
       ],
       "sourceUrls": [
-        "https://venice.ai",
-        "https://venice.ai/pricing"
+        "https://venice.ai/pricing",
+        "https://venice.ai"
       ],
       "pricingPageUrl": "https://venice.ai/pricing",
       "officialWebsiteUrl": "https://venice.ai",
@@ -837,29 +965,47 @@
       "providerId": null,
       "plans": [
         {
-          "name": "官网价格参考",
+          "name": "Pro",
           "currentPrice": 60,
-          "currentPriceText": "$60/mo",
+          "currentPriceText": "$60/month",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://site.wandb.ai/pricing/",
-          "serviceDetails": null
+          "serviceDetails": [
+            "Professionals working to optimize AI applications and models",
+            "All features from Free +",
+            "Unlimited teams for collaboration",
+            "Team-based access controls",
+            "Service Accounts",
+            "Priority email & chat support",
+            "Model seats: up to 10",
+            "Storage: 100 GB/mo",
+            "Weave data ingestion: 1.5 GB/mo"
+          ]
         },
         {
-          "name": "官网价格参考 2",
+          "name": "Inference add-on",
           "currentPrice": 5,
           "currentPriceText": "$5/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
-          "serviceDetails": null
+          "notes": "W&B pricing comparison table",
+          "serviceDetails": [
+            "Run open source AI models. View per model pricing.",
+            "Free credit for a limited time",
+            "Additional inference billed monthly",
+            "Develop GenAI applications",
+            "Monitor and analyze the performance of your GenAI models during development and in production, capturing inputs, outputs, and metadata for each inference.",
+            "Compare different recipes including fine-tuning, RAG, LLMs, and datasets, side-by-side for accuracy, latency, and token usage.",
+            "Monitor the Performance, Cost, and Health of Your LLM Applications."
+          ]
         }
       ],
       "sourceUrls": [
-        "https://site.wandb.ai",
-        "https://site.wandb.ai/pricing/"
+        "https://site.wandb.ai/pricing/",
+        "https://site.wandb.ai"
       ],
       "pricingPageUrl": "https://site.wandb.ai/pricing/",
       "officialWebsiteUrl": "https://site.wandb.ai",

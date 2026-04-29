@@ -49,6 +49,7 @@ const OFFICIAL_WEBSITE_OVERRIDES = {
 
 // Provider-specific pricing pages that should be probed first.
 const PRICING_PAGE_OVERRIDES = {
+  cloudflare: "https://developers.cloudflare.com/workers-ai/platform/pricing/",
   mistral: "https://mistral.ai/pricing",
   venice: "https://venice.ai/pricing",
   chutes: "https://chutes.ai/pricing",
@@ -1006,6 +1007,23 @@ function hasAnyPlanServiceDetails(plans) {
   return (plans || []).some((plan) => Array.isArray(plan?.serviceDetails) && plan.serviceDetails.length > 0);
 }
 
+function extractTextSection(text, startPattern, endPattern) {
+  const source = String(text || "");
+  const startMatch = source.match(startPattern);
+  if (!startMatch || startMatch.index === undefined) {
+    return "";
+  }
+  const startIndex = startMatch.index + startMatch[0].length;
+  const rest = source.slice(startIndex);
+  const endMatch = rest.match(endPattern);
+  return endMatch && endMatch.index !== undefined ? rest.slice(0, endMatch.index).trim() : rest.trim();
+}
+
+function selectPresentDetails(text, candidates) {
+  const source = compactText(text);
+  return candidates.filter((item) => source.includes(item));
+}
+
 async function parseMistralCustomPricing() {
   const pricingUrl = "https://mistral.ai/pricing";
   const { text: html, url: resolvedUrl } = await fetchText(pricingUrl, {
@@ -1110,6 +1128,87 @@ async function parseMistralCustomPricing() {
   return plans.length > 0 ? { plans, sourceUrls: [sourceUrl], pricingPageUrl: sourceUrl } : null;
 }
 
+function extractCloudflareLlmExamples(markdownText, limit = 6) {
+  const section = extractTextSection(markdownText, /##\s+LLM model pricing/i, /##\s+(?:Embeddings|Image|Audio|Other) model pricing/i);
+  const rows = [];
+  for (const line of String(section || "").split(/\r?\n/g)) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("| @cf/")) {
+      continue;
+    }
+    const cells = trimmed
+      .split("|")
+      .map((cell) => compactText(cell))
+      .filter(Boolean);
+    if (cells.length < 3) {
+      continue;
+    }
+    rows.push(`${cells[0]}: ${cells[1]}`);
+    if (rows.length >= limit) {
+      break;
+    }
+  }
+  return rows;
+}
+
+async function parseCloudflareCustomPricing() {
+  const pricingUrl = "https://developers.cloudflare.com/workers-ai/platform/pricing/index.md";
+  const { text: markdown, url: resolvedUrl } = await fetchText(pricingUrl, {
+    timeoutMs: PRICING_PROBE_TIMEOUT_MS,
+    headers: {
+      ...HTML_HEADERS,
+      accept: "text/markdown,text/plain;q=0.9,*/*;q=0.8",
+    },
+  });
+  const sourceUrl = resolvedUrl || pricingUrl;
+  const text = compactText(markdown);
+  const neuronPriceText =
+    text.match(/\$0\.011\s*\/\s*1,000\s*Neurons/i)?.[0]
+    || text.match(/\$0\.011\s+per\s+1,000\s+Neurons/i)?.[0]
+    || "$0.011 / 1,000 Neurons";
+  const llmExamples = extractCloudflareLlmExamples(markdown);
+
+  return {
+    plans: [
+      {
+        name: "Workers AI Free allocation",
+        currentPrice: 0,
+        currentPriceText: "$0 (10,000 Neurons/day)",
+        originalPrice: null,
+        originalPriceText: null,
+        unit: "日",
+        notes: `来源: ${sourceUrl}`,
+        serviceDetails: [
+          "Workers AI is included in Free and Paid Workers plans",
+          "10,000 Neurons per day at no charge",
+          "Limits reset daily at 00:00 UTC",
+          "Neurons measure GPU compute for AI model outputs",
+        ],
+      },
+      {
+        name: "Workers AI Paid usage",
+        currentPrice: 0.011,
+        currentPriceText: neuronPriceText.replace(/\s+per\s+/i, " / "),
+        originalPrice: null,
+        originalPriceText: null,
+        unit: "用量",
+        notes: "超过每日免费额度后按 Neurons 计费",
+        serviceDetails: unique([
+          "10,000 Neurons per day included before overage",
+          "Price in Tokens is equivalent to Price in Neurons for comparison",
+          ...llmExamples,
+        ]).slice(0, 10),
+      },
+    ],
+    sourceUrls: [
+      "https://developers.cloudflare.com/workers-ai/platform/pricing/",
+      sourceUrl,
+      "https://developers.cloudflare.com/workers/platform/pricing/#workers",
+    ],
+    pricingPageUrl: "https://developers.cloudflare.com/workers-ai/platform/pricing/",
+  };
+}
+
 function extractNextRscPayload(html) {
   const chunks = [];
   for (const m of html.matchAll(/self\.__next_f\.push\(\[1,"([\s\S]*?)"\]\)/g)) {
@@ -1156,6 +1255,73 @@ async function parseVeniceCustomPricing() {
     headers: HTML_HEADERS,
   });
   const sourceUrl = resolvedUrl || pricingUrl;
+  const plainText = compactText(html);
+  const planSpecs = [
+    {
+      name: "Pro",
+      pricePattern: /\bPro\s+\$\s*([0-9]+(?:\.[0-9]+)?)\s*\/\s*mo/i,
+      sectionStart: /\bPro\s+\$\s*[0-9]+(?:\.[0-9]+)?\s*\/\s*mo/i,
+      sectionEnd: /MOST POPULAR\s+Pro Plus\s+\$\s*[0-9]+|Pro Plus\s+\$\s*[0-9]+/i,
+      details: [
+        "All Pro models access",
+        "Unlimited text prompts and 1,000 images per day",
+        "Generate video, music, and use frontier image and text models with credits",
+        "Image superpowers: upscale, remove backgrounds, create variants, and more",
+        "Create and share custom characters",
+        "Extended context windows for deep work and longer running conversations",
+        "Encrypted chat backup and restore",
+        "100 credits / month for video, music, premium models, and API",
+      ],
+    },
+    {
+      name: "Pro Plus",
+      pricePattern: /\bPro Plus\s+\$\s*([0-9]+(?:\.[0-9]+)?)\s*\/\s*mo/i,
+      sectionStart: /\bPro Plus\s+\$\s*[0-9]+(?:\.[0-9]+)?\s*\/\s*mo/i,
+      sectionEnd: /\bMax\s+\$\s*[0-9]+/i,
+      details: [
+        "Everything in Pro",
+        "Higher image generation limits on Venice Pro models",
+        "7,500 credits / month for video, music, frontier image generation, LLMs, and API",
+        "2-month credit banking - unused credits roll forward",
+      ],
+    },
+    {
+      name: "Max",
+      pricePattern: /\bMax\s+\$\s*([0-9]+(?:\.[0-9]+)?)\s*\/\s*mo/i,
+      sectionStart: /\bMax\s+\$\s*[0-9]+(?:\.[0-9]+)?\s*\/\s*mo/i,
+      sectionEnd: /API Pricing|What are Credits\?/i,
+      details: [
+        "Everything in Plus",
+        "Highest image generation limits on Venice Pro models",
+        "22,500 credits / month for video, music, frontier image generation, frontier LLMs, and API",
+        "3-month credit banking",
+      ],
+    },
+  ];
+
+  const directPlans = [];
+  for (const spec of planSpecs) {
+    const price = Number.parseFloat(plainText.match(spec.pricePattern)?.[1] || "");
+    if (!Number.isFinite(price)) {
+      continue;
+    }
+    const section = extractTextSection(plainText, spec.sectionStart, spec.sectionEnd);
+    const details = selectPresentDetails(section || plainText, spec.details);
+    directPlans.push({
+      name: spec.name,
+      currentPrice: price,
+      currentPriceText: `$${price}/mo`,
+      originalPrice: null,
+      originalPriceText: null,
+      unit: "月",
+      notes: directPlans.length === 0 ? `来源: ${sourceUrl}` : null,
+      serviceDetails: details.length > 0 ? details : null,
+    });
+  }
+
+  if (directPlans.length > 0 && hasAnyPlanServiceDetails(directPlans)) {
+    return { plans: directPlans, sourceUrls: [sourceUrl], pricingPageUrl: sourceUrl };
+  }
 
   const rscPayload = extractNextRscPayload(html);
 
@@ -1175,6 +1341,79 @@ async function parseVeniceCustomPricing() {
     serviceDetails: unique(proPlan.features).slice(0, 12),
   }];
   return { plans, sourceUrls: [sourceUrl], pricingPageUrl: sourceUrl };
+}
+
+async function parseWandbCustomPricing() {
+  const pricingUrl = "https://site.wandb.ai/pricing/";
+  const { text: html, url: resolvedUrl } = await fetchText(pricingUrl, {
+    timeoutMs: PRICING_PROBE_TIMEOUT_MS,
+    headers: HTML_HEADERS,
+  });
+  const sourceUrl = resolvedUrl || pricingUrl;
+  const text = compactText(html);
+
+  const proPrice = Number.parseFloat(
+    text.match(/\bPro\b[\s\S]{0,220}?Starts at\s+\$([0-9]+(?:\.[0-9]+)?)\s*\/\s*month/i)?.[1] || "",
+  );
+  const inferencePrice = Number.parseFloat(
+    text.match(/\bInference\b[\s\S]{0,260}?\$([0-9]+(?:\.[0-9]+)?)\s*\/\s*mo/i)?.[1] || "",
+  );
+
+  const plans = [];
+  if (Number.isFinite(proPrice)) {
+    const proDetails = selectPresentDetails(text, [
+      "Professionals working to optimize AI applications and models",
+      "All features from Free +",
+      "Unlimited teams for collaboration",
+      "Team-based access controls",
+      "Service Accounts",
+      "Priority email & chat support",
+    ]);
+    if (/Model seats[\s\S]{0,80}Up to 10/i.test(text)) {
+      proDetails.push("Model seats: up to 10");
+    }
+    if (/Storage[\s\S]{0,120}100 GB\/mo/i.test(text)) {
+      proDetails.push("Storage: 100 GB/mo");
+    }
+    if (/Weave data ingestion[\s\S]{0,140}1\.5 GB\/mo/i.test(text)) {
+      proDetails.push("Weave data ingestion: 1.5 GB/mo");
+    }
+
+    plans.push({
+      name: "Pro",
+      currentPrice: proPrice,
+      currentPriceText: `$${proPrice}/month`,
+      originalPrice: null,
+      originalPriceText: null,
+      unit: "月",
+      notes: `来源: ${sourceUrl}`,
+      serviceDetails: unique(proDetails),
+    });
+  }
+
+  if (Number.isFinite(inferencePrice)) {
+    plans.push({
+      name: "Inference add-on",
+      currentPrice: inferencePrice,
+      currentPriceText: `$${inferencePrice}/mo`,
+      originalPrice: null,
+      originalPriceText: null,
+      unit: "月",
+      notes: "W&B pricing comparison table",
+      serviceDetails: selectPresentDetails(text, [
+        "Run open source AI models. View per model pricing.",
+        "Free credit for a limited time",
+        "Additional inference billed monthly",
+        "Develop GenAI applications",
+        "Monitor and analyze the performance of your GenAI models during development and in production, capturing inputs, outputs, and metadata for each inference.",
+        "Compare different recipes including fine-tuning, RAG, LLMs, and datasets, side-by-side for accuracy, latency, and token usage.",
+        "Monitor the Performance, Cost, and Health of Your LLM Applications.",
+      ]),
+    });
+  }
+
+  const normalized = normalizePlanServiceDetails(plans);
+  return normalized.length > 0 ? { plans: normalized, sourceUrls: [sourceUrl], pricingPageUrl: sourceUrl } : null;
 }
 
 function extractSveltePlanObjects(jsText) {
@@ -1641,9 +1880,11 @@ async function parseZAiCustomPricing() {
 }
 
 const PROVIDER_CUSTOM_PARSERS = {
+  cloudflare: parseCloudflareCustomPricing,
   mistral: parseMistralCustomPricing,
   chutes: parseChutesCustomPricing,
   venice: parseVeniceCustomPricing,
+  wandb: parseWandbCustomPricing,
   phala: parseRedpillCustomPricing,
   "z-ai": parseZAiCustomPricing,
 };

@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "generatedAt": "2026-04-29T03:07:26.455Z",
+=======
+  "generatedAt": "2026-04-29T05:22:11.520Z",
+>>>>>>> 35105d3 (feat(provider): 更新模型服务商运行指标与定价数据)
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -42,6 +46,86 @@
             "n 用量限制 n: n n n 每 5 小时 6,000 次请求 n n n 每周 45,000 次请求 n n n 每月 90,000 次请求 n n n",
             "支持的模型: 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
             "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
+          ]
+        }
+      ]
+    },
+    {
+      "provider": "aliyun-token-plan",
+      "sourceUrls": [
+        "https://www.aliyun.com/benefit/scene/tokenplan",
+        "https://common-buy.aliyun.com/token-plan/",
+        "https://help.aliyun.com/zh/model-studio/token-plan-overview"
+      ],
+      "plans": [
+        {
+          "name": "Token Plan 标准坐席",
+          "currentPrice": 198,
+          "currentPriceText": "¥198/坐席/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "坐席/月",
+          "notes": "轻度使用 AI 辅助的团队成员",
+          "serviceDetails": [
+            "额度: 25,000 Credits/坐席/月",
+            "适用场景: 轻度使用 AI 辅助的团队成员",
+            "计费方式: 按 Token 消耗抵扣 Credits",
+            "使用频次: 无每 5 小时/每周限额",
+            "数据安全: 不使用对话数据训练模型",
+            "服务地域: 华北2（北京）",
+            "文本生成模型: qwen3.6-plus、glm-5、MiniMax-M2.5、deepseek-v3.2",
+            "图像生成模型: qwen-image-2.0、qwen-image-2.0-pro、wan2.7-image、wan2.7-image-pro"
+          ]
+        },
+        {
+          "name": "Token Plan 高级坐席",
+          "currentPrice": 698,
+          "currentPriceText": "¥698/坐席/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "坐席/月",
+          "notes": "日常高频使用 AI 编码的团队成员",
+          "serviceDetails": [
+            "额度: 100,000 Credits/坐席/月",
+            "适用场景: 日常高频使用 AI 编码的团队成员",
+            "计费方式: 按 Token 消耗抵扣 Credits",
+            "使用频次: 无每 5 小时/每周限额",
+            "数据安全: 不使用对话数据训练模型",
+            "服务地域: 华北2（北京）",
+            "文本生成模型: qwen3.6-plus、glm-5、MiniMax-M2.5、deepseek-v3.2",
+            "图像生成模型: qwen-image-2.0、qwen-image-2.0-pro、wan2.7-image、wan2.7-image-pro"
+          ]
+        },
+        {
+          "name": "Token Plan 尊享坐席",
+          "currentPrice": 1398,
+          "currentPriceText": "¥1,398/坐席/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "坐席/月",
+          "notes": "重度依赖 AI 编码的核心开发者",
+          "serviceDetails": [
+            "额度: 250,000 Credits/坐席/月",
+            "适用场景: 重度依赖 AI 编码的核心开发者",
+            "计费方式: 按 Token 消耗抵扣 Credits",
+            "使用频次: 无每 5 小时/每周限额",
+            "数据安全: 不使用对话数据训练模型",
+            "服务地域: 华北2（北京）",
+            "文本生成模型: qwen3.6-plus、glm-5、MiniMax-M2.5、deepseek-v3.2",
+            "图像生成模型: qwen-image-2.0、qwen-image-2.0-pro、wan2.7-image、wan2.7-image-pro"
+          ]
+        },
+        {
+          "name": "Token Plan 共享用量包",
+          "currentPrice": 5000,
+          "currentPriceText": "¥5,000/个",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "有效期 1 个月，到期未使用额度自动清零",
+          "serviceDetails": [
+            "额度: 625,000 Credits/个",
+            "跨坐席共享的弹性用量包，当个别坐席用量超出套餐额度时，可从共享用量包中抵扣。每个共享用量包有效期为 1 个月，到期未使用的额度自动清零。持有多个共享用量包时，优先抵扣最近到期的用量包。"
           ]
         }
       ]
@@ -272,59 +356,55 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "jdcloud-ai: fetch failed"
+      ]
     },
     {
       "provider": "kimi-ai",
       "sourceUrls": [
-        "https://www.kimi.com/code/zh",
+        "https://www.kimi.com/zh-cn/help/membership/membership-pricing",
+        "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-C7iAfX0k.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BP8gCMy0.js"
       ],
       "plans": [
         {
-          "name": "Adagio (月)",
+          "name": "Adagio（大陆）",
           "currentPrice": 0,
           "currentPriceText": "¥0/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "试用计划",
+          "notes": "免费体验",
           "serviceDetails": [
-            "会员等级: 免费试用",
-            "Kimi Code 试用套餐权益"
+            "计价币种: 人民币（CNY）",
+            "适用区域: 大陆",
+            "套餐定位: 免费体验",
+            "Agent 用量约 6 个",
+            "Agent 任务并行 1 个",
+            "专业数据库 200 次调用"
           ]
         },
         {
-          "name": "Moderato (月)",
-          "currentPrice": 19,
-          "currentPriceText": "¥19/月",
+          "name": "Andante（大陆）",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "会员等级: 基础会员",
-            "Kimi Code 月度订阅权益"
+            "计价币种: 人民币（CNY）",
+            "适用区域: 大陆",
+            "套餐定位: 日常使用",
+            "Agent 用量约 30 个",
+            "Agent 优先生成队列（4 倍速）",
+            "Office 文件处理、深度研究、网站部署",
+            "Kimi Code 1 倍额度",
+            "专业数据库 1000 次调用"
           ]
         },
         {
-          "name": "Allegretto (月)",
-          "currentPrice": 39,
-          "currentPriceText": "¥39/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "会员等级: 进阶会员",
-            "Kimi Code 月度订阅权益"
-          ]
-        },
-        {
-          "name": "Allegro (月)",
+          "name": "Moderato（大陆）",
           "currentPrice": 99,
           "currentPriceText": "¥99/月",
           "originalPrice": null,
@@ -332,12 +412,17 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "会员等级: 高级会员",
-            "Kimi Code 月度订阅权益"
+            "计价币种: 人民币（CNY）",
+            "适用区域: 大陆",
+            "套餐定位: 效率升级",
+            "Agent 用量约 60 个",
+            "Agent 任务并行 2 个",
+            "Kimi Code 4 倍额度",
+            "专业数据库 2000 次调用"
           ]
         },
         {
-          "name": "Vivace (月)",
+          "name": "Allegretto（大陆）",
           "currentPrice": 199,
           "currentPriceText": "¥199/月",
           "originalPrice": null,
@@ -345,6 +430,106 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
+            "计价币种: 人民币（CNY）",
+            "适用区域: 大陆",
+            "套餐定位: 专业优选",
+            "Agent 用量约 150 个",
+            "Kimi Code 20 倍额度",
+            "一键部署 Kimi Claw / Kimi Claw Android",
+            "Agent 集群可用 50 次（4 个子任务并行）",
+            "专业数据库 5000 次调用"
+          ]
+        },
+        {
+          "name": "Allegro（大陆）",
+          "currentPrice": 699,
+          "currentPriceText": "¥699/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 人民币（CNY）",
+            "适用区域: 大陆",
+            "套餐定位: 全能尊享",
+            "Agent 用量约 360 个",
+            "Agent 任务并行 4 个",
+            "Kimi Code 60 倍额度",
+            "Agent 集群可用 120 次（4 个子任务并行）",
+            "专业数据库 12000 次调用"
+          ]
+        },
+        {
+          "name": "Adagio（海外）",
+          "currentPrice": 0,
+          "currentPriceText": "$0/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "试用计划",
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
+            "会员等级: 免费试用",
+            "Kimi Code 试用套餐权益"
+          ]
+        },
+        {
+          "name": "Moderato（海外）",
+          "currentPrice": 19,
+          "currentPriceText": "$19/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
+            "会员等级: 基础会员",
+            "Kimi Code 月度订阅权益"
+          ]
+        },
+        {
+          "name": "Allegretto（海外）",
+          "currentPrice": 39,
+          "currentPriceText": "$39/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
+            "会员等级: 进阶会员",
+            "Kimi Code 月度订阅权益"
+          ]
+        },
+        {
+          "name": "Allegro（海外）",
+          "currentPrice": 99,
+          "currentPriceText": "$99/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
+            "会员等级: 高级会员",
+            "Kimi Code 月度订阅权益"
+          ]
+        },
+        {
+          "name": "Vivace（海外）",
+          "currentPrice": 199,
+          "currentPriceText": "$199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
             "会员等级: 旗舰会员",
             "Kimi Code 月度订阅权益"
           ]
@@ -960,7 +1145,10 @@
     }
   ],
   "failures": [
+<<<<<<< HEAD
     "jdcloud-ai: fetch failed",
+=======
+>>>>>>> 35105d3 (feat(provider): 更新模型服务商运行指标与定价数据)
     "infini-ai: Unable to locate Infini platform/ai route chunks"
   ]
 }

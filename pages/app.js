@@ -4,11 +4,12 @@ const OPENROUTER_PROVIDER_PLANS_DATA_PATH = "./openrouter-provider-plans.json";
 
 const PROVIDER_LABELS = {
   "zhipu-ai": "智谱 z.ai",
-  "kimi-ai": "Kimi",
+  "kimi-ai": "Moonshot Kimi",
   "xfyun-ai": "讯飞星辰 MaaS",
   "volcengine-ai": "火山引擎",
   "minimax-ai": "MiniMax",
   "aliyun-ai": "阿里云通义千问",
+  "aliyun-token-plan": "阿里云 Token Plan",
   "baidu-qianfan-ai": "百度智能云千帆",
   "tencent-cloud-ai": "腾讯云 Coding Plan",
   "tencent-cloud-token-plan": "腾讯云 Token Plan",
@@ -42,6 +43,7 @@ const PROVIDER_BUY_URLS = {
   "volcengine-ai": "https://www.volcengine.com/activity/codingplan",
   "minimax-ai": "https://platform.minimaxi.com/subscribe/token-plan",
   "aliyun-ai": "https://common-buy.aliyun.com/?commodityCode=sfm_codingplan_public_cn#/buy",
+  "aliyun-token-plan": "https://common-buy.aliyun.com/token-plan/",
   "baidu-qianfan-ai": "https://cloud.baidu.com/product/codingplan.html",
   "tencent-cloud-ai": "https://buy.cloud.tencent.com/hunyuan",
   "tencent-cloud-token-plan": "https://cloud.tencent.com/act/pro/tokenplan",
@@ -50,6 +52,13 @@ const PROVIDER_BUY_URLS = {
   "x-aio": "https://code.x-aio.com/",
   "compshare-ai": "https://www.compshare.cn/docs/modelverse/package_plan/package",
   "infini-ai": "https://cloud.infini-ai.com/platform/ai",
+};
+
+const PROVIDER_CURRENCY_BUY_URLS = {
+  "kimi-ai": {
+    "¥": "https://www.kimi.com/zh-cn/help/membership/membership-pricing",
+    "$": "https://www.kimi.com/code",
+  },
 };
 
 const reloadButtonEl = document.querySelector("#reloadButton");
@@ -499,8 +508,9 @@ function buildProviderPlanLookup(providers) {
       continue;
     }
     const hasCNY = p.plans.some((plan) => getPlanCurrencySymbol(plan) === "¥");
-    const tab = hasCNY ? "domestic" : "overseas";
-    const regionLabel = hasCNY ? "大陆套餐" : "海外套餐";
+    const hasUSD = p.plans.some((plan) => getPlanCurrencySymbol(plan) === "$");
+    const tab = hasUSD ? "overseas" : hasCNY ? "domestic" : "overseas";
+    const regionLabel = tab === "domestic" ? "大陆套餐" : "海外套餐";
     const cardId = `provider-card-${p.slug || p.id}`;
     const info = { tab, cardId, displayName: p.displayName, regionLabel };
     if (p.openrouterName) {
@@ -610,6 +620,20 @@ function buildPlanList(plans, options = {}) {
   return planList;
 }
 
+function getProviderBuyUrlForCurrency(provider, primaryPlans, primarySymbol) {
+  const regionalUrls = PROVIDER_CURRENCY_BUY_URLS[provider?.id] || PROVIDER_CURRENCY_BUY_URLS[provider?.provider];
+  if (regionalUrls && regionalUrls[primarySymbol]) {
+    return regionalUrls[primarySymbol];
+  }
+
+  const planWithBuyUrl = (primaryPlans || []).find((plan) => plan && plan.buyUrl);
+  if (planWithBuyUrl) {
+    return String(planWithBuyUrl.buyUrl);
+  }
+
+  return provider?.buyUrl || null;
+}
+
 // ─── Tab Rendering: Domestic / Overseas ──────────────────────
 
 function renderCurrencyFilteredTab(gridEl, providers, primarySymbol, foldedLabel) {
@@ -638,9 +662,10 @@ function renderCurrencyFilteredTab(gridEl, providers, primarySymbol, foldedLabel
     const head = createElement("header", "provider-head");
     head.append(createElement("h2", "provider-title", provider.displayName));
 
-    if (provider.buyUrl) {
+    const buyUrl = getProviderBuyUrlForCurrency(provider, primaryPlans, primarySymbol);
+    if (buyUrl) {
       const buyLink = createElement("a", "buy-link", "前往了解");
-      buyLink.href = provider.buyUrl;
+      buyLink.href = buyUrl;
       buyLink.target = "_blank";
       buyLink.rel = "noopener noreferrer";
       head.append(buyLink);

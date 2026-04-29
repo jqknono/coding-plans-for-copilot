@@ -17,6 +17,7 @@ const PROVIDER_IDS = {
   VOLCENGINE: "volcengine-ai",
   MINIMAX: "minimax-ai",
   ALIYUN: "aliyun-ai",
+  ALIYUN_TOKEN: "aliyun-token-plan",
   BAIDU: "baidu-qianfan-ai",
   TENCENT: "tencent-cloud-ai",
   TENCENT_TOKEN: "tencent-cloud-token-plan",
@@ -37,6 +38,20 @@ const KIMI_MEMBERSHIP_LEVEL_LABELS = {
   LEVEL_INTERMEDIATE: "进阶会员",
   LEVEL_ADVANCED: "高级会员",
   LEVEL_STANDARD: "旗舰会员",
+};
+
+const KIMI_DOMESTIC_MEMBERSHIP_URL = "https://www.kimi.com/zh-cn/help/membership/membership-pricing";
+const KIMI_OVERSEAS_CODE_URL = "https://www.kimi.com/code";
+const KIMI_GOODS_API_URL = "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods";
+const KIMI_DOMESTIC_PLAN_NAMES = ["Adagio", "Andante", "Moderato", "Allegretto", "Allegro"];
+const KIMI_REGION_LABELS = {
+  REGION_MAINLAND: "大陆",
+  REGION_OVERSEA: "海外",
+};
+const KIMI_CURRENCY_LABELS = {
+  CNY: "人民币（CNY）",
+  RMB: "人民币（CNY）",
+  USD: "美元（USD）",
 };
 
 const COMMON_HEADERS = {
@@ -312,6 +327,11 @@ function formatAmount(amount) {
     return null;
   }
   return Number.isInteger(amount) ? String(amount) : amount.toFixed(2).replace(/\.?0+$/, "");
+}
+
+function parseAmountFromPriceText(value) {
+  const match = normalizeText(value).match(/([0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?)/);
+  return match ? Number(match[1].replace(/,/g, "")) : null;
 }
 
 function normalizeServiceDetails(values) {
@@ -704,36 +724,95 @@ function pickKimiFeaturesByTitleAndPrice(candidates, title, currentPrice) {
   return matches[0].features;
 }
 
-async function parseKimiCodingPlans() {
-  const pageUrl = "https://www.kimi.com/code/zh";
-  const apiUrl = "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods";
-  const pageHtml = await fetchText(pageUrl);
-  const commonScriptRaw =
-    pageHtml.match(/\/\/statics\.moonshot\.cn\/kimi-web-seo\/assets\/common-[^"'\s]+\.js/i)?.[0] || null;
-  const commonScriptUrl = commonScriptRaw ? absoluteUrl(commonScriptRaw, pageUrl) : null;
-  let featureCandidates = [];
-  if (commonScriptUrl) {
-    try {
-      const commonScriptText = await fetchText(commonScriptUrl);
-      featureCandidates = parseKimiFeatureCandidates(commonScriptText);
-    } catch {
-      featureCandidates = [];
-    }
+function getKimiCurrencySymbol(currency) {
+  const normalized = normalizeText(currency).toUpperCase();
+  if (normalized === "CNY" || normalized === "RMB") {
+    return "¥";
   }
-  const payload = await fetchJson(apiUrl, {
-    method: "POST",
-    headers: {
-      ...COMMON_HEADERS,
-      accept: "application/json, text/plain, */*",
-      "content-type": "application/json",
-      origin: "https://www.kimi.com",
-      referer: pageUrl,
-    },
-    body: "{}",
-  });
+  return "$";
+}
+
+function getKimiCurrencyLabel(currency) {
+  const normalized = normalizeText(currency).toUpperCase();
+  return KIMI_CURRENCY_LABELS[normalized] || normalized || "未标注";
+}
+
+function getKimiRegionLabel(region) {
+  return KIMI_REGION_LABELS[normalizeText(region)] || normalizeText(region) || "未标注";
+}
+
+function formatKimiPlanName(title, regionLabel) {
+  const normalizedTitle = normalizeText(title);
+  return regionLabel ? `${normalizedTitle}（${regionLabel}）` : normalizedTitle;
+}
+
+function parseKimiDomesticMembershipPlansFromText(pageText) {
+  const text = String(pageText || "").replace(/\r\n?/g, "\n");
+  const lines = text.split("\n").map((line) => line.trim()).filter(Boolean);
+  const rowByName = new Map();
+  const rowPattern = new RegExp(
+    `^(${KIMI_DOMESTIC_PLAN_NAMES.join("|")})\\s+(.+?)\\s+(¥[0-9,]+(?:\\.[0-9]+)?\\s*\\/\\s*月|¥0\\s*\\/\\s*月)\\s+`,
+  );
+
+  for (const line of lines) {
+    const matched = line.match(rowPattern);
+    if (!matched) {
+      continue;
+    }
+    rowByName.set(matched[1], {
+      title: matched[1],
+      position: normalizeText(matched[2]),
+      priceText: normalizeText(matched[3]).replace(/\s*\/\s*/g, "/"),
+    });
+  }
 
   const plans = [];
-  for (const goods of payload.goods || []) {
+  for (let index = 0; index < KIMI_DOMESTIC_PLAN_NAMES.length; index += 1) {
+    const title = KIMI_DOMESTIC_PLAN_NAMES[index];
+    const row = rowByName.get(title);
+    if (!row) {
+      continue;
+    }
+
+    const nextTitles = KIMI_DOMESTIC_PLAN_NAMES.slice(index + 1).join("|");
+    const nextPlanBoundary = nextTitles ? `\\n(?:${nextTitles})\\s*[—-]|` : "";
+    const sectionPattern = new RegExp(
+      `${title}\\s*[—-]\\s*[^\\n]+\\n([\\s\\S]*?)(?=${nextPlanBoundary}\\n以上\\s*Agent|\\n额度说明|$)`,
+    );
+    const sectionMatch = text.match(sectionPattern);
+    const detailLines = sectionMatch
+      ? sectionMatch[1]
+          .split("\n")
+          .map((line) => normalizeText(line))
+          .filter((line) => line && !/^在\s+.+基础上[:：]?$/.test(line))
+      : [];
+    const currentPrice = parseAmountFromPriceText(row.priceText);
+
+    plans.push(
+      asPlan({
+        name: formatKimiPlanName(title, "大陆"),
+        currentPriceText: row.priceText,
+        currentPrice: Number.isFinite(currentPrice) ? currentPrice : null,
+        unit: "月",
+        notes: title === "Adagio" ? "免费体验" : null,
+        serviceDetails: [
+          "计价币种: 人民币（CNY）",
+          "适用区域: 大陆",
+          row.position ? `套餐定位: ${row.position}` : null,
+          ...detailLines,
+        ],
+      }),
+    );
+  }
+
+  return dedupePlans(plans);
+}
+
+function buildKimiCodePlansFromGoodsPayload(payload, options = {}) {
+  const { featureCandidates = [], defaultRegion = "REGION_OVERSEA" } = options;
+  const plans = [];
+
+  for (const goods of payload?.goods || []) {
     const title = normalizeText(goods?.title || "");
     if (!title) {
       continue;
@@ -742,26 +821,33 @@ async function parseKimiCodingPlans() {
     if (unitLabel !== "月") {
       continue;
     }
+
+    const region = normalizeText(goods?.useRegion || defaultRegion);
+    const regionLabel = getKimiRegionLabel(region);
+    const membershipLevel = normalizeText(goods?.membershipLevel || "");
+    const membershipLabel = KIMI_MEMBERSHIP_LEVEL_LABELS[membershipLevel] || membershipLevel;
     const amounts = Array.isArray(goods?.amounts) ? goods.amounts : [];
     for (const amount of amounts) {
       const cents = Number(amount?.priceInCents);
       if (!Number.isFinite(cents)) {
         continue;
       }
-      const yuan = cents / 100;
-      const suffix = unitLabel ? `/${unitLabel}` : "";
-      const isTrialPlan = /^adagio$/i.test(title) || yuan === 0;
-      const membershipLevel = normalizeText(goods?.membershipLevel || "");
-      const membershipLabel = KIMI_MEMBERSHIP_LEVEL_LABELS[membershipLevel] || membershipLevel;
-      const planFeatures = pickKimiFeaturesByTitleAndPrice(featureCandidates, title, yuan);
+      const currency = normalizeText(amount?.currency || (region === "REGION_MAINLAND" ? "CNY" : "USD")).toUpperCase();
+      const value = cents / 100;
+      const symbol = getKimiCurrencySymbol(currency);
+      const planFeatures = pickKimiFeaturesByTitleAndPrice(featureCandidates, title, value);
+      const isTrialPlan = /^adagio$/i.test(title) || value === 0;
+
       plans.push(
         asPlan({
-          name: unitLabel ? `${title} (${unitLabel})` : title,
-          currentPriceText: `¥${formatAmount(yuan)}${suffix}`,
-          currentPrice: yuan,
-          unit: unitLabel || null,
+          name: formatKimiPlanName(title, regionLabel),
+          currentPriceText: `${symbol}${formatAmount(value)}/${unitLabel}`,
+          currentPrice: value,
+          unit: unitLabel,
           notes: isTrialPlan ? "试用计划" : null,
           serviceDetails: [
+            `计价币种: ${getKimiCurrencyLabel(currency)}`,
+            `适用区域: ${regionLabel}`,
             membershipLabel ? `会员等级: ${membershipLabel}` : null,
             ...(planFeatures || []),
             !planFeatures && isTrialPlan ? "Kimi Code 试用套餐权益" : null,
@@ -772,11 +858,71 @@ async function parseKimiCodingPlans() {
     }
   }
 
+  return dedupePlans(plans);
+}
+
+async function fetchKimiDomesticMembershipTextWithPlaywright() {
+  const chromium = await loadPlaywrightChromium("Kimi domestic membership parser");
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    await blockNonEssentialPlaywrightRequests(page);
+    await page.goto(KIMI_DOMESTIC_MEMBERSHIP_URL, {
+      waitUntil: "domcontentloaded",
+      timeout: 20_000,
+    });
+    await page.waitForFunction(
+      () => {
+        const text = String(document.body?.innerText || "");
+        return /订阅方式与价格/.test(text) && /Kimi Code/.test(text) && /人民币|¥/.test(text);
+      },
+      { timeout: 20_000 },
+    );
+    return await page.evaluate(() => String(document.body?.innerText || ""));
+  } finally {
+    await browser.close();
+  }
+}
+
+async function parseKimiCodingPlans() {
+  const domesticHelpText = await fetchKimiDomesticMembershipTextWithPlaywright();
+  const domesticPlans = parseKimiDomesticMembershipPlansFromText(domesticHelpText);
+
+  const pageHtml = await fetchText(KIMI_OVERSEAS_CODE_URL);
+  const commonScriptRaw =
+    pageHtml.match(/\/\/statics\.moonshot\.cn\/kimi-web-seo\/assets\/common-[^"'\s]+\.js/i)?.[0] || null;
+  const commonScriptUrl = commonScriptRaw ? absoluteUrl(commonScriptRaw, KIMI_OVERSEAS_CODE_URL) : null;
+  let featureCandidates = [];
+  if (commonScriptUrl) {
+    try {
+      const commonScriptText = await fetchText(commonScriptUrl);
+      featureCandidates = parseKimiFeatureCandidates(commonScriptText);
+    } catch {
+      featureCandidates = [];
+    }
+  }
+  const payload = await fetchJson(KIMI_GOODS_API_URL, {
+    method: "POST",
+    headers: {
+      ...COMMON_HEADERS,
+      accept: "application/json, text/plain, */*",
+      "content-type": "application/json",
+      origin: "https://www.kimi.com",
+      referer: KIMI_OVERSEAS_CODE_URL,
+    },
+    body: "{}",
+  });
+  const overseasPlans = buildKimiCodePlansFromGoodsPayload(payload, { featureCandidates });
+  const plans = dedupePlans([...domesticPlans, ...overseasPlans]);
+  if (plans.length === 0) {
+    throw new Error("Unable to build Kimi domestic or overseas plans");
+  }
+
   return {
     provider: PROVIDER_IDS.KIMI,
-    sourceUrls: unique([pageUrl, apiUrl, commonScriptUrl]),
+    sourceUrls: unique([KIMI_DOMESTIC_MEMBERSHIP_URL, KIMI_OVERSEAS_CODE_URL, KIMI_GOODS_API_URL, commonScriptUrl]),
     fetchedAt: new Date().toISOString(),
-    plans: dedupePlans(plans),
+    plans,
   };
 }
 
@@ -2513,6 +2659,95 @@ async function parseAliyunCodingPlans() {
   };
 }
 
+function parseAliyunTokenPlansFromDocsHtml(html) {
+  const docsUrl = "https://help.aliyun.com/zh/model-studio/token-plan-overview";
+  const cleanupDocsCell = (value) => normalizeText(value).replace(/\\n/g, " ").replace(/\s+/g, " ").trim();
+  const compactDocsCell = (value) => cleanupDocsCell(value).replace(/\s+/g, "");
+  const rows = extractRows(html).map((row) => row.map((cell) => cleanupDocsCell(cell)));
+  const bodyText = normalizeText(stripTags(html));
+  const textModels = rows.find((row) => row[0] === "文本生成")?.[1] || null;
+  const imageModels = rows.find((row) => row[0] === "图像生成")?.[1] || null;
+  const supportedModels = normalizeServiceDetails([
+    textModels ? `文本生成模型: ${textModels}` : null,
+    imageModels ? `图像生成模型: ${imageModels}` : null,
+  ]);
+  const commonDetails = normalizeServiceDetails([
+    "计费方式: 按 Token 消耗抵扣 Credits",
+    "使用频次: 无每 5 小时/每周限额",
+    "数据安全: 不使用对话数据训练模型",
+    "服务地域: 华北2（北京）",
+    ...(supportedModels || []),
+  ]);
+
+  const tierRows = rows.filter((row) => /^(标准|高级|尊享)坐席$/.test(row[0] || ""));
+  const plans = tierRows.map((row) => {
+    const seatType = row[0];
+    const priceText = row[1];
+    const credits = row[2];
+    const scenario = row[3];
+    const priceMatch = priceText.match(/¥\s*([0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?)/);
+    const price = priceMatch ? Number(priceMatch[1].replace(/,/g, "")) : null;
+    return asPlan({
+      name: `Token Plan ${seatType}`,
+      currentPriceText: compactDocsCell(priceText),
+      currentPrice: Number.isFinite(price) ? price : null,
+      unit: "坐席/月",
+      notes: scenario || null,
+      serviceDetails: normalizeServiceDetails([
+        credits ? `额度: ${credits}` : null,
+        scenario ? `适用场景: ${scenario}` : null,
+        ...(commonDetails || []),
+      ]),
+    });
+  });
+
+  const sharedPackageRow = rows.find((row) => /Token\s*Plan\s*团队版\s*-\s*共享用量包/i.test(row[0] || ""));
+  if (sharedPackageRow) {
+    const priceText = sharedPackageRow[1];
+    const credits = sharedPackageRow[2];
+    const priceMatch = priceText.match(/¥\s*([0-9]+(?:,[0-9]{3})*(?:\.\d+)?)/);
+    const price = priceMatch ? Number(priceMatch[1].replace(/,/g, "")) : null;
+    const packageRuleMatch = bodyText.match(
+      /跨坐席共享的弹性用量包[\s\S]{0,120}?优先抵扣最近到期的用量包。/,
+    );
+    plans.push(
+      asPlan({
+        name: "Token Plan 共享用量包",
+        currentPriceText: compactDocsCell(priceText),
+        currentPrice: Number.isFinite(price) ? price : null,
+        unit: "月",
+        notes: "有效期 1 个月，到期未使用额度自动清零",
+        serviceDetails: normalizeServiceDetails([
+          credits ? `额度: ${credits}` : null,
+          packageRuleMatch ? normalizeText(packageRuleMatch[0]) : "跨坐席共享的弹性用量包",
+        ]),
+      }),
+    );
+  }
+
+  const normalizedPlans = dedupePlans(plans);
+  if (normalizedPlans.length === 0) {
+    throw new Error("Aliyun Token Plan docs do not expose plan prices");
+  }
+
+  return {
+    provider: PROVIDER_IDS.ALIYUN_TOKEN,
+    sourceUrls: unique([
+      "https://www.aliyun.com/benefit/scene/tokenplan",
+      "https://common-buy.aliyun.com/token-plan/",
+      docsUrl,
+    ]),
+    fetchedAt: new Date().toISOString(),
+    plans: normalizedPlans,
+  };
+}
+
+async function parseAliyunTokenPlans() {
+  const docsUrl = "https://help.aliyun.com/zh/model-studio/token-plan-overview";
+  const docsHtml = await fetchText(docsUrl);
+  return parseAliyunTokenPlansFromDocsHtml(docsHtml);
+}
+
 function normalizeVolcCurrentPriceText(rawText) {
   const value = normalizeText(rawText);
   if (!value) {
@@ -3012,6 +3247,7 @@ async function main() {
     { provider: PROVIDER_IDS.XAIO, fn: parseXAioCodingPlans },
     { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans },
     { provider: PROVIDER_IDS.ALIYUN, fn: parseAliyunCodingPlans },
+    { provider: PROVIDER_IDS.ALIYUN_TOKEN, fn: parseAliyunTokenPlans },
     { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
     { provider: PROVIDER_IDS.XIAOMI, fn: parseXiaomiMimoTokenPlans },
     { provider: PROVIDER_IDS.OPENCODE, fn: parseOpenCodePlans },
@@ -3099,8 +3335,11 @@ module.exports = {
   buildStaleProviderFallback,
   extractProviderIdFromFailure,
   extractInfiniRouteChunkUrls,
+  buildKimiCodePlansFromGoodsPayload,
   parseInfiniPlanFromBundle,
   parseInfiniServiceDetailsByTier,
+  parseAliyunTokenPlansFromDocsHtml,
+  parseKimiDomesticMembershipPlansFromText,
   parseJdCloudCodingPlansFromPageHtml,
   restoreFailedProvidersFromSnapshot,
 };
