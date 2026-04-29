@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-29T06:40:21.191Z",
+  "generatedAt": "2026-04-29T07:33:00.168Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -478,7 +478,9 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: fetch failed"
     },
     {
       "provider": "kilo-pass",
@@ -1552,5 +1554,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "jdcloud-ai: fetch failed"
+  ]
 }
