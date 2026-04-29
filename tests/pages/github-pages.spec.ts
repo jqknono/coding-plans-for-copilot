@@ -13,7 +13,7 @@ async function waitForOverseasCards(page: Page): Promise<void> {
 }
 
 async function waitForMetricsRows(page: Page): Promise<void> {
-  await expect(page.locator('#metricsGeneratedAt')).not.toHaveText('--');
+  await expect(page.getByRole('heading', { name: '指标解释' })).toBeVisible();
   await expect.poll(async () => page.locator('#metricsTableContainer tbody tr').count()).toBeGreaterThan(0);
 }
 
@@ -28,6 +28,46 @@ async function openOrgFilter(page: Page): Promise<Locator> {
 test('首页渲染与 Tab 切换正常', async ({ page }) => {
   await page.goto('/');
   await waitForDomesticCards(page);
+
+  const hero = page.locator('.hero');
+  const topLinks = hero.getByRole('navigation', { name: '页面快捷链接' }).getByRole('link');
+  await expect(topLinks).toHaveCount(2);
+  const projectLink = hero.getByRole('link', { name: '查看本工程 GitHub' });
+  const discussionLink = hero.getByRole('link', { name: '打开讨论' });
+  await expect(projectLink).toBeVisible();
+  await expect(projectLink).toHaveText('');
+  await expect(projectLink).toHaveAttribute(
+    'href',
+    'https://github.com/jqknono/chinese-llm-for-copilot',
+  );
+  await expect(discussionLink).toBeVisible();
+  await expect(discussionLink).toHaveText('');
+  await expect(discussionLink).toHaveAttribute(
+    'href',
+    'https://github.com/jqknono/coding-plans-for-copilot/discussions',
+  );
+  const [heroBox, linkBox, titleBox] = await Promise.all([
+    hero.boundingBox(),
+    discussionLink.boundingBox(),
+    page.getByRole('heading', { level: 1, name: '编码套餐看板' }).boundingBox(),
+  ]);
+  expect(heroBox).not.toBeNull();
+  expect(linkBox).not.toBeNull();
+  expect(titleBox).not.toBeNull();
+  expect(linkBox!.x + linkBox!.width).toBeLessThanOrEqual(heroBox!.x + heroBox!.width);
+  expect(linkBox!.y).toBeGreaterThanOrEqual(heroBox!.y);
+  expect(linkBox!.y + linkBox!.height).toBeLessThan(titleBox!.y + titleBox!.height);
+  await expect(hero.getByRole('link')).toHaveCount(2);
+  const pluginIntroFollowsDomesticPanel = await page.evaluate(() => {
+    const domesticPanel = document.querySelector('#domesticPanel');
+    const pluginIntro = document.querySelector('.plugin-intro');
+    return Boolean(
+      domesticPanel
+        && pluginIntro
+        && (domesticPanel.compareDocumentPosition(pluginIntro) & Node.DOCUMENT_POSITION_FOLLOWING),
+    );
+  });
+  expect(pluginIntroFollowsDomesticPanel).toBe(true);
 
   await expect(page.getByRole('tab', { name: '大陆套餐' })).toHaveAttribute('aria-selected', 'true');
   await expect(page.locator('#domesticPanel')).not.toHaveClass(/hidden/);
@@ -135,6 +175,175 @@ test('指标页支持厂商多选与全部恢复', async ({ page }) => {
   await filter.locator('.searchable-select-option.is-all-option').click();
   await expect(input).toHaveValue('全部厂商');
   await expect.poll(async () => page.locator('#metricsTableContainer tbody tr').count()).toBe(initialRowCount);
+});
+
+test('指标页展示 1M 输入缓存与输出价格', async ({ page }) => {
+  await page.goto('/#metrics');
+  await waitForMetricsRows(page);
+
+  await expect(page.getByRole('columnheader', { name: /1M价格/ })).toBeVisible();
+  await expect(page.getByText('北京时间采集时间')).toHaveCount(0);
+  await expect(page.getByText('目标采集窗口')).toHaveCount(0);
+  await expect(page.getByText('美元人民币汇率')).toHaveCount(0);
+  await expect(page.locator('#metricsTableContainer .metric-price').first()).toContainText('输入');
+  await expect(page.locator('#metricsTableContainer .metric-price').first()).toContainText('输出');
+  await expect.poll(async () => page.locator('#metricsTableContainer .metric-price').filter({ hasText: '¥' }).count()).toBeGreaterThan(0);
+  await expect(page.locator('#metricsTableContainer .metric-price').first()).not.toContainText('$');
+  await expect.poll(async () => page.locator('#metricsTableContainer .metric-cache-badge').count()).toBeGreaterThan(0);
+});
+
+test('指标页价格排序优先使用缓存命中价格', async ({ page }) => {
+  await page.route('**/openrouter-provider-metrics.json', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        generatedAt: '2026-04-29T08:00:00.000Z',
+        generatedAtBeijing: '2026年4月29日 16:00:00',
+        captureWindow: {
+          timezone: 'Asia/Shanghai',
+          targetLocalTime: '16:00',
+        },
+        config: {
+          modelMaxAgeDays: 180,
+        },
+        exchangeRates: {
+          USD_CNY: {
+            rate: 7,
+          },
+        },
+        models: [
+          {
+            organization: 'deepseek',
+            id: 'deepseek/test-sort-model',
+            name: 'DeepSeek Test Sort Model',
+            endpoints: [
+              {
+                providerName: 'No Cache A',
+                providerSlug: 'no-cache-a',
+                tag: 'no-cache-a',
+                uptime_last_30m: 100,
+                latency_last_30m: { p50: 1000, p90: 1200, p99: 1500 },
+                throughput_last_30m: { p50: 10, p90: 12, p99: 15 },
+                pricing: {
+                  prompt: 5e-7,
+                  input_cache_read: null,
+                  completion: 1e-6,
+                  has_input_cache_read_discount: false,
+                  input_cache_read_discount_rate: null,
+                  cny: {
+                    prompt: 0.0000035,
+                    input_cache_read: null,
+                    completion: 0.000007,
+                  },
+                },
+              },
+              {
+                providerName: 'Cache B',
+                providerSlug: 'cache-b',
+                tag: 'cache-b',
+                uptime_last_30m: 100,
+                latency_last_30m: { p50: 1000, p90: 1200, p99: 1500 },
+                throughput_last_30m: { p50: 10, p90: 12, p99: 15 },
+                pricing: {
+                  prompt: 9e-7,
+                  input_cache_read: 1e-7,
+                  completion: 1e-6,
+                  has_input_cache_read_discount: true,
+                  input_cache_read_discount_rate: 0.8888888888888888,
+                  cny: {
+                    prompt: 0.0000063,
+                    input_cache_read: 0.0000007,
+                    completion: 0.000007,
+                  },
+                },
+              },
+              {
+                providerName: 'Cache C',
+                providerSlug: 'cache-c',
+                tag: 'cache-c',
+                uptime_last_30m: 100,
+                latency_last_30m: { p50: 1000, p90: 1200, p99: 1500 },
+                throughput_last_30m: { p50: 10, p90: 12, p99: 15 },
+                pricing: {
+                  prompt: 2e-7,
+                  input_cache_read: 3e-8,
+                  completion: 1e-6,
+                  has_input_cache_read_discount: true,
+                  input_cache_read_discount_rate: 0.85,
+                  cny: {
+                    prompt: 0.0000014,
+                    input_cache_read: 0.00000021,
+                    completion: 0.000007,
+                  },
+                },
+              },
+            ],
+          },
+        ],
+        failures: [],
+      }),
+    });
+  });
+
+  await page.goto('/#metrics');
+  await waitForMetricsRows(page);
+  await page.getByRole('columnheader', { name: /1M价格/ }).click();
+
+  const providerNames = await page.locator('#metricsTableContainer tbody tr .metric-provider').allTextContents();
+  expect(providerNames.map((text) => text.trim()).slice(0, 3)).toEqual([
+    'Cache C',
+    'Cache B',
+    'No Cache A',
+  ]);
+});
+
+test('指标页支持缓存优惠筛选', async ({ page }) => {
+  await page.goto('/#metrics');
+  await waitForMetricsRows(page);
+
+  const filter = page.locator('[data-filter="cacheDiscount"]');
+  await filter.getByRole('textbox', { name: '缓存优惠筛选' }).click();
+  await expect(filter.locator('.searchable-select-dropdown')).toBeVisible();
+  await filter.getByText('支持缓存优惠', { exact: true }).click();
+
+  await expect(filter.getByRole('textbox', { name: '缓存优惠筛选' })).toHaveValue('支持缓存优惠');
+  await expect.poll(async () => page.locator('#metricsTableContainer tbody tr').count()).toBeGreaterThan(0);
+  const visibleRows = page.locator('#metricsTableContainer tbody tr');
+  const rowCount = await visibleRows.count();
+  for (let index = 0; index < Math.min(rowCount, 10); index += 1) {
+    await expect(visibleRows.nth(index).locator('.metric-cache-badge')).toContainText(/缓存折扣\s+\d/);
+  }
+});
+
+test('指标页支持 URL 携带筛选条件', async ({ page }) => {
+  await page.goto('/?metricsOrg=deepseek&metricsCacheDiscount=yes#metrics');
+  await waitForMetricsRows(page);
+
+  await expect(page.getByRole('textbox', { name: '厂商筛选' })).toHaveValue('DeepSeek');
+  await expect(page.getByRole('textbox', { name: '缓存优惠筛选' })).toHaveValue('支持缓存优惠');
+  await expect.poll(async () => page.locator('#metricsTableContainer tbody tr').count()).toBeGreaterThan(0);
+
+  const rows = page.locator('#metricsTableContainer tbody tr');
+  const rowCount = await rows.count();
+  for (let index = 0; index < Math.min(rowCount, 10); index += 1) {
+    await expect(rows.nth(index)).toContainText('DeepSeek');
+    await expect(rows.nth(index).locator('.metric-cache-badge')).toContainText(/缓存折扣\s+\d/);
+  }
+
+  const filter = page.locator('[data-filter="provider"]');
+  await filter.getByRole('textbox', { name: 'Provider 筛选' }).click();
+  await expect(filter.locator('.searchable-select-dropdown')).toBeVisible();
+  await filter.locator('.searchable-select-option:not(.is-all-option)').first().click();
+  await expect(page).toHaveURL(/metricsProvider=/);
+});
+
+test('指标筛选有内容时隐藏展开水印', async ({ page }) => {
+  await page.goto('/?metricsOrg=deepseek#metrics');
+  await waitForMetricsRows(page);
+
+  const filter = page.locator('[data-filter="org"]');
+  await expect(filter.getByRole('textbox', { name: '厂商筛选' })).toHaveValue('DeepSeek');
+  await expect(filter.locator('.searchable-select-watermark')).toHaveClass(/hidden/);
 });
 
 test('指标页套餐标记和查看套餐跳转正常', async ({ page }) => {

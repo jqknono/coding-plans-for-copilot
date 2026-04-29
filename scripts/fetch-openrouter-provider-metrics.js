@@ -8,6 +8,7 @@ const path = require("node:path");
 const OUTPUT_FILE = path.resolve(__dirname, "..", "assets", "openrouter-provider-metrics.json");
 const ENV_FILE = path.resolve(__dirname, "..", ".env");
 const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1";
+const EXCHANGE_RATE_API_URL = process.env.EXCHANGE_RATE_API_URL || "https://open.er-api.com/v6/latest/USD";
 const REQUEST_TIMEOUT_MS = Number.parseInt(process.env.OPENROUTER_REQUEST_TIMEOUT_MS || "20000", 10);
 const ENDPOINT_CONCURRENCY = Math.max(1, Number.parseInt(process.env.OPENROUTER_ENDPOINT_CONCURRENCY || "4", 10));
 const ENDPOINT_REQUEST_RETRY_COUNT = 2;
@@ -254,6 +255,102 @@ function toFiniteNumberOrNull(value) {
   return null;
 }
 
+function toPositiveFiniteNumberOrNull(value) {
+  const amount = toFiniteNumberOrNull(value);
+  return amount !== null && amount > 0 ? amount : null;
+}
+
+function normalizeEndpointPricing(pricing) {
+  if (!pricing || typeof pricing !== "object") {
+    return null;
+  }
+
+  const prompt = toFiniteNumberOrNull(pricing.prompt);
+  const completion = toFiniteNumberOrNull(pricing.completion);
+  const inputCacheRead = toPositiveFiniteNumberOrNull(pricing.input_cache_read);
+  const inputCacheWrite = toPositiveFiniteNumberOrNull(pricing.input_cache_write);
+
+  if (
+    prompt === null
+    && completion === null
+    && inputCacheRead === null
+    && inputCacheWrite === null
+  ) {
+    return null;
+  }
+
+  return {
+    prompt,
+    input_cache_read: inputCacheRead,
+    input_cache_write: inputCacheWrite,
+    completion,
+    has_input_cache_read_discount: prompt !== null
+      && prompt > 0
+      && inputCacheRead !== null
+      && inputCacheRead < prompt,
+    input_cache_read_discount_rate: prompt !== null
+      && prompt > 0
+      && inputCacheRead !== null
+      && inputCacheRead < prompt
+      ? 1 - inputCacheRead / prompt
+      : null,
+  };
+}
+
+function withCnyPricing(pricing, usdCnyRate) {
+  if (!pricing || typeof pricing !== "object") {
+    return pricing || null;
+  }
+  if (!Number.isFinite(usdCnyRate) || usdCnyRate <= 0) {
+    return pricing;
+  }
+  const convert = (value) => (value === null || value === undefined ? null : value * usdCnyRate);
+  return {
+    ...pricing,
+    currency: "USD",
+    cny: {
+      exchange_rate: usdCnyRate,
+      prompt: convert(pricing.prompt),
+      input_cache_read: convert(pricing.input_cache_read),
+      input_cache_write: convert(pricing.input_cache_write),
+      completion: convert(pricing.completion),
+    },
+  };
+}
+
+async function fetchUsdCnyExchangeRate() {
+  const override = toFiniteNumberOrNull(process.env.USD_CNY_EXCHANGE_RATE);
+  if (override !== null && override > 0) {
+    return {
+      base: "USD",
+      quote: "CNY",
+      rate: override,
+      source: "USD_CNY_EXCHANGE_RATE",
+      fetchedAt: new Date().toISOString(),
+      providerTimestamp: null,
+    };
+  }
+
+  const payload = await fetchJson(EXCHANGE_RATE_API_URL, {
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "coding-plans-for-copilot-metrics-fetcher/1.0",
+    },
+  });
+  const rate = toFiniteNumberOrNull(payload?.rates?.CNY);
+  if (rate === null || rate <= 0) {
+    throw new Error("USD/CNY exchange rate is unavailable");
+  }
+  return {
+    base: String(payload?.base_code || "USD"),
+    quote: "CNY",
+    rate,
+    source: EXCHANGE_RATE_API_URL,
+    fetchedAt: new Date().toISOString(),
+    providerTimestamp: payload?.time_last_update_utc || null,
+  };
+}
+
 function parseProviderSlugFromTag(tag) {
   const raw = String(tag || "").trim().toLowerCase();
   if (!raw) {
@@ -282,6 +379,10 @@ function normalizeProviderEndpoint(endpoint) {
     throughput_last_30m: endpoint?.throughput_last_30m || null,
     context_length: toFiniteNumberOrNull(endpoint?.context_length),
     max_completion_tokens: toFiniteNumberOrNull(endpoint?.max_completion_tokens),
+    pricing: normalizeEndpointPricing(endpoint?.pricing),
+    supports_implicit_caching: typeof endpoint?.supports_implicit_caching === "boolean"
+      ? endpoint.supports_implicit_caching
+      : null,
   };
 }
 
@@ -451,6 +552,7 @@ async function main() {
   const nowSeconds = Math.floor(Date.now() / 1000);
   const headers = buildHeaders(apiKey);
   const failures = [];
+  const exchangeRate = await fetchUsdCnyExchangeRate();
 
   const allModelsPayload = await fetchJson(`${OPENROUTER_BASE_URL}/models`, { headers });
   const allModelsRaw = Array.isArray(allModelsPayload?.data) ? allModelsPayload.data : [];
@@ -496,7 +598,11 @@ async function main() {
       const endpointList = Array.isArray(payload?.data?.endpoints) ? payload.data.endpoints : [];
       const normalized = keepBestEndpointPerProvider(endpointList
         .map((entry) => normalizeProviderEndpoint(entry))
-        .filter(Boolean));
+        .filter(Boolean))
+        .map((endpoint) => ({
+          ...endpoint,
+          pricing: withCnyPricing(endpoint.pricing, exchangeRate.rate),
+        }));
 
       return {
         ...model,
@@ -540,6 +646,9 @@ async function main() {
       modelCount: modelEntries.length,
       providerEndpointCount: endpointCount,
     },
+    exchangeRates: {
+      USD_CNY: exchangeRate,
+    },
     models: modelEntries,
     failures,
   };
@@ -553,6 +662,7 @@ async function main() {
 
   console.log(`[metrics] wrote ${OUTPUT_FILE}`);
   console.log(`[metrics] organizations=${organizations.length} models=${modelEntries.length} providers=${endpointCount}`);
+  console.log(`[metrics] USD/CNY=${exchangeRate.rate}`);
 }
 
 function printHelp() {
@@ -566,6 +676,8 @@ function printHelp() {
   console.log(`  OPENROUTER_BASE_URL              API base URL (default: ${OPENROUTER_BASE_URL})`);
   console.log(`  OPENROUTER_REQUEST_TIMEOUT_MS    Per-request timeout in ms (default: ${REQUEST_TIMEOUT_MS})`);
   console.log(`  OPENROUTER_ENDPOINT_CONCURRENCY  Concurrent endpoint fetches (default: ${ENDPOINT_CONCURRENCY})`);
+  console.log("  USD_CNY_EXCHANGE_RATE            Optional USD/CNY override");
+  console.log(`  EXCHANGE_RATE_API_URL            Exchange-rate API URL (default: ${EXCHANGE_RATE_API_URL})`);
 }
 
 if (require.main === module) {
@@ -585,4 +697,6 @@ module.exports = {
   getMetricsValidationErrors,
   hasPercentileStats,
   isRetryableFetchError,
+  normalizeEndpointPricing,
+  withCnyPricing,
 };

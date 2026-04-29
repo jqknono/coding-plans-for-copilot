@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-29T08:53:12.353Z",
+  "generatedAt": "2026-04-29T08:34:07.255Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -262,7 +262,7 @@
       ],
       "plans": [
         {
-          "name": "月费",
+          "name": "Lite 基础版",
           "currentPrice": 49,
           "currentPriceText": "¥49/月",
           "originalPrice": null,
@@ -270,7 +270,37 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "¥199/月"
+            "调用次数 / 5小时: 约 600 次",
+            "调用次数 / 每周: 约 4,500 次",
+            "调用次数 / 每月: 约 9,000 次",
+            "RPM 上限: 30 次/分钟",
+            "最大并发: 3",
+            "支持模型: 套餐内全部模型",
+            "专属 API Key: ✓",
+            "调用明细看板: ✓",
+            "OpenClaw Agent: ✗",
+            "适合人群: 轻度使用，每日编程 1–2 小时"
+          ]
+        },
+        {
+          "name": "Pro 高级版",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "调用次数 / 5小时: 约 3,000 次",
+            "调用次数 / 每周: 约 22,500 次",
+            "调用次数 / 每月: 约 45,000 次",
+            "RPM 上限: 50 次/分钟",
+            "最大并发: 5",
+            "支持模型: 套餐内全部模型",
+            "专属 API Key: ✓",
+            "调用明细看板: ✓",
+            "OpenClaw Agent: ✓",
+            "适合人群: 重度使用，全职 AI 辅助开发"
           ]
         }
       ]
@@ -407,7 +437,7 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.9836a1d0.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.6f896fc0.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -447,7 +477,8 @@
     {
       "provider": "jdcloud-ai",
       "sourceUrls": [
-        "https://www.jdcloud.com/cn/pages/codingplan"
+        "https://www.jdcloud.com/cn/pages/codingplan",
+        "https://docs.jdcloud.com/cn/jdaip/PackageOverview"
       ],
       "plans": [
         {
@@ -459,9 +490,10 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求",
-            "模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等",
-            "工具：Claude Code、OpenCode、OpenClaw、Roo Code、Cursor"
+            "适用人群：中等强度的开发者，适合大多数开发者。",
+            "用量限制：每5小时：最多约 1,200 次请求。 每周：最多约 9,000 次请求。 每订阅月：最多约 18,000 次请求。",
+            "支持模型：DeepSeek-V3.2、GLM-5、GLM-4.7、MiniMax-M2.5、Kimi-K2.5、Kimi-K2-Turbo、Qwen3-Coder",
+            "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享"
           ]
         },
         {
@@ -473,9 +505,10 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
-            "权益：享受 Lite 套餐的全部能力与权益",
-            "月用量：Lite 版的 5 倍用量"
+            "适用人群：复杂项目开发，适合高强度工作的开发者。",
+            "用量限制：Lite套餐的5倍用量。 每5小时：最多约 6,000 次请求。 每周：最多约 45,000 次请求。 每订阅月：最多约 90,000 次请求。",
+            "支持模型：DeepSeek-V3.2、GLM-5、GLM-4.7、MiniMax-M2.5、Kimi-K2.5、Kimi-K2-Turbo、Qwen3-Coder",
+            "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享"
           ]
         }
       ]

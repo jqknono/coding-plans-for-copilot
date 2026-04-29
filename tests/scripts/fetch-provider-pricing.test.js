@@ -11,7 +11,9 @@ const {
   parseInfiniPlanFromBundle,
   parseInfiniServiceDetailsByTier,
   parseAliyunTokenPlansFromDocsHtml,
+  parseCompshareCodingPlansFromHtml,
   parseKimiDomesticMembershipPlansFromText,
+  parseJdCloudCodingPlansFromDocsText,
   parseJdCloudCodingPlansFromPageHtml,
   restoreFailedProvidersFromSnapshot,
 } = require("../../scripts/fetch-provider-pricing.js");
@@ -90,6 +92,113 @@ test("parseJdCloudCodingPlansFromPageHtml reads SSR pricing models", () => {
           "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
           "权益：享受 Lite 套餐的全部能力与权益",
           "月用量：Lite 版的 5 倍用量",
+        ],
+      },
+    ],
+  );
+});
+
+test("parseJdCloudCodingPlansFromDocsText reads PackageOverview usage details", () => {
+  const pageText = `
+    Coding Plan 是一款为开发者量身定制的 AI 编程订阅服务。
+    模型自由切换：一次订阅即可在多种主流 Code 模型间按需切换，包括：DeepSeek-V3.2、GLM-5、GLM-4.7、MiniMax-M2.5、Kimi-K2.5、Kimi-K2-Turbo、Qwen3-Coder。
+    兼容主流工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享。
+    套餐详情
+    套餐用量说明：
+    套餐 适用人群 用量限制
+    Lite套餐 中等强度的开发者，适合大多数开发者。
+    每5小时：最多约 1,200 次请求。
+    每周：最多约 9,000 次请求。
+    每订阅月：最多约 18,000 次请求。
+    Pro套餐 复杂项目开发，适合高强度工作的开发者。 Lite套餐的5倍用量。
+    每5小时：最多约 6,000 次请求。
+    每周：最多约 45,000 次请求。
+    每订阅月：最多约 90,000 次请求。
+  `;
+
+  const plans = parseJdCloudCodingPlansFromDocsText(pageText);
+
+  assert.equal(plans.length, 2);
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      unit: plan.unit,
+      notes: plan.notes,
+      serviceDetails: plan.serviceDetails,
+    })),
+    [
+      {
+        name: "Coding Plan Lite",
+        currentPriceText: null,
+        unit: "月",
+        notes: "价格未在套餐概览页公开；计价币种: 人民币（CNY）",
+        serviceDetails: [
+          "适用人群：中等强度的开发者，适合大多数开发者。",
+          "用量限制：每5小时：最多约 1,200 次请求。 每周：最多约 9,000 次请求。 每订阅月：最多约 18,000 次请求。",
+          "支持模型：DeepSeek-V3.2、GLM-5、GLM-4.7、MiniMax-M2.5、Kimi-K2.5、Kimi-K2-Turbo、Qwen3-Coder",
+          "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享",
+        ],
+      },
+      {
+        name: "Coding Plan Pro",
+        currentPriceText: null,
+        unit: "月",
+        notes: "价格未在套餐概览页公开；计价币种: 人民币（CNY）",
+        serviceDetails: [
+          "适用人群：复杂项目开发，适合高强度工作的开发者。",
+          "用量限制：Lite套餐的5倍用量。 每5小时：最多约 6,000 次请求。 每周：最多约 45,000 次请求。 每订阅月：最多约 90,000 次请求。",
+          "支持模型：DeepSeek-V3.2、GLM-5、GLM-4.7、MiniMax-M2.5、Kimi-K2.5、Kimi-K2-Turbo、Qwen3-Coder",
+          "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享",
+        ],
+      },
+    ],
+  );
+});
+
+test("parseCompshareCodingPlansFromHtml reads comparison columns as plans", () => {
+  const html = `
+    <table>
+      <tr><th></th><th>Lite 基础版</th><th>Pro 高级版</th></tr>
+      <tr><td>月费</td><td>¥49/月</td><td>¥199/月</td></tr>
+      <tr><td>调用次数 / 5小时</td><td>约 600 次</td><td>约 3,000 次</td></tr>
+      <tr><td>调用次数 / 每月</td><td>约 9,000 次</td><td>约 45,000 次</td></tr>
+      <tr><td>OpenClaw Agent</td><td>✗</td><td>✓</td></tr>
+      <tr><td>适合人群</td><td>轻度使用，每日编程 1-2 小时</td><td>重度使用，全职 AI 辅助开发</td></tr>
+    </table>
+  `;
+
+  const plans = parseCompshareCodingPlansFromHtml(html);
+
+  assert.equal(plans.length, 2);
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      currentPrice: plan.currentPrice,
+      serviceDetails: plan.serviceDetails,
+    })),
+    [
+      {
+        name: "Lite 基础版",
+        currentPriceText: "¥49/月",
+        currentPrice: 49,
+        serviceDetails: [
+          "调用次数 / 5小时: 约 600 次",
+          "调用次数 / 每月: 约 9,000 次",
+          "OpenClaw Agent: ✗",
+          "适合人群: 轻度使用，每日编程 1-2 小时",
+        ],
+      },
+      {
+        name: "Pro 高级版",
+        currentPriceText: "¥199/月",
+        currentPrice: 199,
+        serviceDetails: [
+          "调用次数 / 5小时: 约 3,000 次",
+          "调用次数 / 每月: 约 45,000 次",
+          "OpenClaw Agent: ✓",
+          "适合人群: 重度使用，全职 AI 辅助开发",
         ],
       },
     ],

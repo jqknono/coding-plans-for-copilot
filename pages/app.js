@@ -101,17 +101,15 @@ const metricsTableContainerEl = document.querySelector("#metricsTableContainer")
 const metricsOrgFilterInputEl = document.querySelector("#metricsOrgFilterInput");
 const metricsModelFilterInputEl = document.querySelector("#metricsModelFilterInput");
 const metricsProviderFilterInputEl = document.querySelector("#metricsProviderFilterInput");
+const metricsCacheDiscountFilterInputEl = document.querySelector("#metricsCacheDiscountFilterInput");
 const metricsOrgFilterDatalistEl = null;
 const metricsModelFilterDatalistEl = null;
 const metricsProviderFilterDatalistEl = null;
+const metricsCacheDiscountFilterDatalistEl = null;
 const metricsErrorBannerEl = document.querySelector("#metricsErrorBanner");
 const metricsFailuresEl = document.querySelector("#metricsFailures");
 const metricsFailuresCountEl = document.querySelector("#metricsFailuresCount");
 const metricsFailuresListEl = document.querySelector("#metricsFailuresList");
-const metricsGeneratedAtEl = document.querySelector("#metricsGeneratedAt");
-const metricsCaptureWindowEl = document.querySelector("#metricsCaptureWindow");
-const metricsToolbarHintInlineEl = document.querySelector("#metricsToolbarHintInline");
-
 const providerCountEl = document.querySelector("#providerCount");
 const planCountEl = document.querySelector("#planCount");
 const primaryCountLabelEl = document.querySelector("#primaryCountLabel");
@@ -134,12 +132,26 @@ const metricsState = {
   org: ["all"],
   model: ["all"],
   provider: ["all"],
+  cacheDiscount: ["all"],
   sortKey: "organization",
   sortOrder: "asc",
 };
 
 const providerPlanLookup = new Map();
 const FILTER_ALL_VALUE = "all";
+const METRICS_URL_FILTER_PARAMS = {
+  org: "metricsOrg",
+  model: "metricsModel",
+  provider: "metricsProvider",
+  cacheDiscount: "metricsCacheDiscount",
+};
+const METRICS_FILTER_INPUTS = {
+  org: () => metricsOrgFilterInputEl,
+  model: () => metricsModelFilterInputEl,
+  provider: () => metricsProviderFilterInputEl,
+  cacheDiscount: () => metricsCacheDiscountFilterInputEl,
+};
+let suppressMetricsUrlSync = false;
 
 // ─── Utilities ───────────────────────────────────────────────
 
@@ -230,6 +242,54 @@ function writeSelectedFilterValues(inputEl, values) {
   const normalized = normalizeFilterValues(values);
   inputEl.dataset.values = JSON.stringify(normalized);
   inputEl.dataset.value = normalized[0] || FILTER_ALL_VALUE;
+}
+
+function encodeFilterValuesForUrl(values) {
+  const normalized = normalizeFilterValues(values);
+  if (normalized.includes(FILTER_ALL_VALUE)) {
+    return "";
+  }
+  return normalized.join(",");
+}
+
+function decodeFilterValuesFromUrl(value) {
+  const text = String(value || "").trim();
+  if (!text) {
+    return [FILTER_ALL_VALUE];
+  }
+  return normalizeFilterValues(text.split(","));
+}
+
+function readMetricsFiltersFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const result = {};
+  for (const [filterKey, paramName] of Object.entries(METRICS_URL_FILTER_PARAMS)) {
+    result[filterKey] = decodeFilterValuesFromUrl(params.get(paramName));
+  }
+  return result;
+}
+
+function syncMetricsFiltersToUrl(mode = "replace") {
+  if (suppressMetricsUrlSync || !window.history || typeof window.history.replaceState !== "function") {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  for (const [filterKey, paramName] of Object.entries(METRICS_URL_FILTER_PARAMS)) {
+    const inputEl = METRICS_FILTER_INPUTS[filterKey]?.();
+    const encoded = encodeFilterValuesForUrl(readSelectedFilterValues(inputEl));
+    if (encoded) {
+      url.searchParams.set(paramName, encoded);
+    } else {
+      url.searchParams.delete(paramName);
+    }
+  }
+
+  if (mode === "push" && typeof window.history.pushState === "function") {
+    window.history.pushState(null, "", url);
+    return;
+  }
+  window.history.replaceState(null, "", url);
 }
 
 function summarizeSelectedFilterText(options, selectedValues) {
@@ -860,6 +920,86 @@ function readLatencySeconds(metric, key) {
   return formatLatencySeconds(metric[key]);
 }
 
+function readFiniteNumberOrNull(value) {
+  const amount = Number(value);
+  return Number.isFinite(amount) ? amount : null;
+}
+
+function formatUsdPerMillionTokens(value) {
+  const perToken = readFiniteNumberOrNull(value);
+  if (perToken === null) {
+    return "--";
+  }
+  const perMillion = perToken * 1_000_000;
+  if (perMillion === 0) {
+    return "$0";
+  }
+  if (perMillion >= 1) {
+    return `$${formatMetricNumber(perMillion)}`;
+  }
+
+  const fractionDigits = perMillion < 0.0001 ? 8 : perMillion < 0.01 ? 4 : 3;
+  return `$${perMillion.toFixed(fractionDigits).replace(/\.?0+$/, "")}`;
+}
+
+function formatCnyPerMillionTokens(value) {
+  const perToken = readFiniteNumberOrNull(value);
+  if (perToken === null) {
+    return null;
+  }
+  const perMillion = perToken * 1_000_000;
+  if (perMillion === 0) {
+    return "¥0";
+  }
+  if (perMillion >= 1) {
+    return `¥${formatMetricNumber(perMillion)}`;
+  }
+
+  const fractionDigits = perMillion < 0.0001 ? 8 : perMillion < 0.01 ? 4 : 3;
+  return `¥${perMillion.toFixed(fractionDigits).replace(/\.?0+$/, "")}`;
+}
+
+function formatDisplayPricePerMillionTokens(usdValue, cnyValue) {
+  const cnyText = formatCnyPerMillionTokens(cnyValue);
+  if (cnyText) {
+    return cnyText;
+  }
+  return formatUsdPerMillionTokens(usdValue);
+}
+
+function formatPercent(value) {
+  const amount = readFiniteNumberOrNull(value);
+  if (amount === null) {
+    return null;
+  }
+  return `${formatMetricNumber(amount * 100)}%`;
+}
+
+function createMetricPriceCell(item) {
+  const cell = createElement("td", "metric-price");
+  const values = [
+    ["输入", item.priceInput, item.priceInputCny],
+    ...(item.hasCacheHitDiscount ? [["缓存命中", item.priceCacheRead, item.priceCacheReadCny]] : []),
+    ["输出", item.priceOutput, item.priceOutputCny],
+  ];
+
+  for (const [label, value, cnyValue] of values) {
+    const line = createElement("div", "metric-price-line");
+    line.append(createElement("span", "metric-price-label", label));
+    line.append(createElement("span", "metric-price-value", formatDisplayPricePerMillionTokens(value, cnyValue)));
+    cell.append(line);
+  }
+
+  if (item.hasCacheHitDiscount) {
+    const discountText = formatPercent(item.cacheHitDiscountRate);
+    const badgeText = discountText ? `缓存折扣 ${discountText}` : "缓存折扣";
+    const badge = createElement("span", "metric-cache-badge", badgeText);
+    cell.append(badge);
+  }
+
+  return cell;
+}
+
 function createMetricFilterOption(value, text) {
   const option = document.createElement("option");
   option.value = value;
@@ -877,7 +1017,8 @@ function createDatalistOption(text) {
 const currentFilterOptions = {
   org: [],
   model: [],
-  provider: []
+  provider: [],
+  cacheDiscount: []
 };
 
 const dropdownControllers = new WeakMap();
@@ -892,7 +1033,6 @@ function ensureFilterDropdown(inputEl, filterKey) {
 
   const host = inputEl.closest(".searchable-select") || inputEl.parentElement;
 
-  // Watermark: always visible to indicate "click to open" (not a placeholder).
   const watermarkEl = document.createElement("span");
   watermarkEl.className = "searchable-select-watermark";
   watermarkEl.textContent = "点击展开，可多选";
@@ -926,6 +1066,11 @@ function ensureFilterDropdown(inputEl, filterKey) {
 
   function getOptions() {
     return currentFilterOptions[filterKey] || [];
+  }
+
+  function syncWatermarkVisibility() {
+    const hasValue = String(inputEl.value || "").trim().length > 0;
+    watermarkEl.classList.toggle("hidden", isOpen || hasValue);
   }
 
   function filterOptions(query) {
@@ -975,6 +1120,7 @@ function ensureFilterDropdown(inputEl, filterKey) {
         const nextText = summarizeSelectedFilterText(getOptions(), nextSelectedValues);
         inputEl.value = nextText;
         lastCommittedText = nextText;
+        syncWatermarkVisibility();
         render(dropdownSearchEl.value);
         handleMetricsFilterChange();
         dropdownSearchEl.focus();
@@ -998,7 +1144,7 @@ function ensureFilterDropdown(inputEl, filterKey) {
     }
     isOpen = true;
     dropdownEl.classList.remove("hidden");
-    watermarkEl.classList.add("hidden");
+    syncWatermarkVisibility();
     dropdownSearchEl.value = "";
     render("");
     // Focus search box for filtering.
@@ -1013,11 +1159,11 @@ function ensureFilterDropdown(inputEl, filterKey) {
     isOpen = false;
     dropdownEl.classList.add("hidden");
     activeIndex = -1;
-    watermarkEl.classList.remove("hidden");
 
     if (lastCommittedText) {
       inputEl.value = lastCommittedText;
     }
+    syncWatermarkVisibility();
   }
 
   function moveActive(delta) {
@@ -1044,6 +1190,7 @@ function ensureFilterDropdown(inputEl, filterKey) {
     writeSelectedFilterValues(inputEl, nextSelectedValues);
     inputEl.value = summarizeSelectedFilterText(getOptions(), nextSelectedValues);
     lastCommittedText = inputEl.value;
+    syncWatermarkVisibility();
     render(dropdownSearchEl.value);
     handleMetricsFilterChange();
   }
@@ -1153,9 +1300,11 @@ function ensureFilterDropdown(inputEl, filterKey) {
     isOpen: () => isOpen,
     syncCommittedText: (text) => {
       lastCommittedText = String(text || "");
+      syncWatermarkVisibility();
     },
   };
 
+  syncWatermarkVisibility();
   dropdownControllers.set(inputEl, controller);
   return controller;
 }
@@ -1249,6 +1398,10 @@ function buildMetricsRows(data, filters) {
       if (!matchesFilterValue(providerDisplayName, filters.provider)) {
         continue;
       }
+      const hasCacheHitDiscount = endpoint?.pricing?.has_input_cache_read_discount === true;
+      if (!matchesFilterValue(hasCacheHitDiscount ? "yes" : "no", filters.cacheDiscount)) {
+        continue;
+      }
       rows.push({
         organization: org,
         organizationLabel: metricOrgLabel(org),
@@ -1263,6 +1416,14 @@ function buildMetricsRows(data, filters) {
         throughputP50: readMetricValue(endpoint?.throughput_last_30m, "p50"),
         throughputP90: readMetricValue(endpoint?.throughput_last_30m, "p90"),
         throughputP99: readMetricValue(endpoint?.throughput_last_30m, "p99"),
+        priceInput: readFiniteNumberOrNull(endpoint?.pricing?.prompt),
+        priceCacheRead: readFiniteNumberOrNull(endpoint?.pricing?.input_cache_read),
+        priceOutput: readFiniteNumberOrNull(endpoint?.pricing?.completion),
+        priceInputCny: readFiniteNumberOrNull(endpoint?.pricing?.cny?.prompt),
+        priceCacheReadCny: readFiniteNumberOrNull(endpoint?.pricing?.cny?.input_cache_read),
+        priceOutputCny: readFiniteNumberOrNull(endpoint?.pricing?.cny?.completion),
+        hasCacheHitDiscount,
+        cacheHitDiscountRate: readFiniteNumberOrNull(endpoint?.pricing?.input_cache_read_discount_rate),
       });
     }
   }
@@ -1278,6 +1439,7 @@ function buildMetricsRows(data, filters) {
     "throughputP90",
     "throughputP99",
     "uptime",
+    "priceInput",
   ]);
 
   const toSortableNumber = (value) => {
@@ -1292,6 +1454,12 @@ function buildMetricsRows(data, filters) {
     return Number.isFinite(parsed) ? parsed : null;
   };
 
+  const getPriceSortValue = (item) => (
+    item.hasCacheHitDiscount && item.priceCacheRead !== null
+      ? item.priceCacheRead
+      : item.priceInput
+  );
+
   return rows.sort((left, right) => {
     let a = left[sortKey];
     let b = right[sortKey];
@@ -1299,6 +1467,11 @@ function buildMetricsRows(data, filters) {
     if (sortKey === "organization") {
       a = left.organizationLabel;
       b = right.organizationLabel;
+    }
+
+    if (sortKey === "priceInput") {
+      a = getPriceSortValue(left);
+      b = getPriceSortValue(right);
     }
 
     if (NUMERIC_SORT_KEYS.has(sortKey)) {
@@ -1355,6 +1528,7 @@ function renderMetricsTableRows(rows) {
     { key: "throughputP50", text: "吞吐 p50(tok/s)" },
     { key: "throughputP90", text: "吞吐 p90(tok/s)" },
     { key: "throughputP99", text: "吞吐 p99(tok/s)" },
+    { key: "priceInput", text: "1M价格(入/缓存/出)" },
     { key: "uptime", text: "可用率(30m)" },
   ];
 
@@ -1407,6 +1581,7 @@ function renderMetricsTableRows(rows) {
     row.append(createElement("td", "metric-value", item.throughputP50));
     row.append(createElement("td", "metric-value", item.throughputP90));
     row.append(createElement("td", "metric-value", item.throughputP99));
+    row.append(createMetricPriceCell(item));
     row.append(
       createElement(
         "td",
@@ -1504,6 +1679,21 @@ function updateMetricFilterOptions(data) {
     metricsState.provider,
     "provider"
   );
+
+  const cacheDiscountOptions = [
+    { value: FILTER_ALL_VALUE, text: "全部" },
+    { value: "yes", text: "支持缓存优惠" },
+    { value: "no", text: "不支持缓存优惠" },
+  ];
+  metricsState.cacheDiscount = setSearchableFilterOptions(
+    {
+      inputEl: metricsCacheDiscountFilterInputEl,
+      datalistEl: metricsCacheDiscountFilterDatalistEl,
+    },
+    cacheDiscountOptions,
+    metricsState.cacheDiscount,
+    "cacheDiscount"
+  );
 }
 
 function renderMetricsFromState() {
@@ -1534,13 +1724,16 @@ function handleMetricsFilterChange() {
   metricsState.org = readSelectedFilterValues(metricsOrgFilterInputEl);
   metricsState.model = readSelectedFilterValues(metricsModelFilterInputEl);
   metricsState.provider = readSelectedFilterValues(metricsProviderFilterInputEl);
+  metricsState.cacheDiscount = readSelectedFilterValues(metricsCacheDiscountFilterInputEl);
   updateMetricFilterOptions(metricsState.rawData);
+  syncMetricsFiltersToUrl();
   renderMetricsFromState();
 }
 
 bindSearchableFilterInput(metricsOrgFilterInputEl, "org");
 bindSearchableFilterInput(metricsModelFilterInputEl, "model");
 bindSearchableFilterInput(metricsProviderFilterInputEl, "provider");
+bindSearchableFilterInput(metricsCacheDiscountFilterInputEl, "cacheDiscount");
 
 function renderMetricsFailures(data) {
   const failures = Array.isArray(data?.failures) ? data.failures : [];
@@ -1565,32 +1758,11 @@ function renderMetricsFailures(data) {
   metricsFailuresEl.removeAttribute("open");
 }
 
-function readCaptureWindowText(data) {
-  const timezone = String(data?.captureWindow?.timezone || "Asia/Shanghai");
-  const target = String(data?.captureWindow?.targetLocalTime || "16:00");
-  return `每日 ${target} (${timezone === "Asia/Shanghai" ? "UTC+8" : timezone})`;
-}
-
 // ─── Tab Management ──────────────────────────────────────────
 
 function setTabButtonState(button, selected) {
   button.classList.toggle("active", selected);
   button.setAttribute("aria-selected", selected ? "true" : "false");
-}
-
-function getMetricsToolbarHint() {
-  const days = Number(metricsState.rawData?.config?.modelMaxAgeDays);
-  if (Number.isFinite(days) && days > 0) {
-    return `仅展示最近 ${days} 天内发布的模型；可按厂商、模型与 provider 多选过滤。`;
-  }
-  return "模型发布时间不过滤；可按厂商、模型与 provider 多选过滤。";
-}
-
-function syncMetricsHintText() {
-  if (!metricsToolbarHintInlineEl) {
-    return;
-  }
-  metricsToolbarHintInlineEl.textContent = metricsState.rawData ? getMetricsToolbarHint() : "";
 }
 
 function normalizeTabName(tab) {
@@ -1678,7 +1850,6 @@ function switchTab(tab) {
   }
   if (tabIntroTitleEl) tabIntroTitleEl.textContent = "Provider 性能指标";
   if (tabIntroDescEl) tabIntroDescEl.textContent = "查看 OpenRouter 模型 provider 的最近 30 分钟可用率、延迟与吞吐，并支持筛选与跳转套餐。";
-  syncMetricsHintText();
   if (metricsState.rawData) {
     renderMetricsFromState();
   }
@@ -1765,10 +1936,15 @@ async function loadMetricsData() {
     }
     const data = await response.json();
     metricsState.rawData = data;
-    metricsGeneratedAtEl.textContent = data.generatedAtBeijing || formatDateInBeijing(data.generatedAt);
-    metricsCaptureWindowEl.textContent = readCaptureWindowText(data);
-    syncMetricsHintText();
+    const urlFilters = readMetricsFiltersFromUrl();
+    metricsState.org = urlFilters.org;
+    metricsState.model = urlFilters.model;
+    metricsState.provider = urlFilters.provider;
+    metricsState.cacheDiscount = urlFilters.cacheDiscount;
+    suppressMetricsUrlSync = true;
     updateMetricFilterOptions(data);
+    suppressMetricsUrlSync = false;
+    syncMetricsFiltersToUrl();
     renderMetricsFromState();
     renderMetricsFailures(data);
   } catch (error) {
@@ -1776,11 +1952,8 @@ async function loadMetricsData() {
     metricsTableContainerEl.replaceChildren();
     metricsTableContainerEl.append(createElement("article", "empty", "加载失败，请稍后重试。"));
     renderMetricsFailures({ failures: [] });
-    metricsGeneratedAtEl.textContent = "--";
-    metricsCaptureWindowEl.textContent = "每日 16:00 (UTC+8)";
     setStats("模型数", 0, "Provider 数", 0, "--");
     setError(metricsErrorBannerEl, `无法读取 ${METRICS_DATA_PATH}：${error.message}`);
-    syncMetricsHintText();
   } finally {
     reloadButtonEl.disabled = false;
     reloadButtonEl.textContent = "重新加载";

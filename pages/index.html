@@ -17,44 +17,47 @@
     <div class="backdrop"></div>
     <main class="page">
       <header class="hero">
-        <p class="eyebrow">GitHub Pages · 自动抓取</p>
-        <h1>编码套餐看板</h1>
-        <p class="subtitle">
-          每日自动抓取供应商的月费与权益，展示供应商最近 30 分钟的可用率、延迟、吞吐指标
-        </p>
-        <div class="hero-actions">
+        <nav class="hero-links" aria-label="页面快捷链接">
           <a
             class="hero-link"
             href="https://github.com/jqknono/chinese-llm-for-copilot"
             target="_blank"
             rel="noopener noreferrer"
+            aria-label="查看本工程 GitHub"
+            title="查看本工程 GitHub"
           >
-            查看本工程（GitHub）
+            <svg class="hero-link-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M12 2C6.48 2 2 6.58 2 12.22c0 4.51 2.87 8.34 6.84 9.69.5.09.68-.22.68-.49v-1.9c-2.78.62-3.37-1.21-3.37-1.21-.45-1.19-1.11-1.5-1.11-1.5-.91-.64.07-.63.07-.63 1 .07 1.53 1.05 1.53 1.05.9 1.57 2.35 1.12 2.92.86.09-.66.35-1.12.64-1.37-2.22-.26-4.56-1.14-4.56-5.06 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05A9.3 9.3 0 0 1 12 6.9c.85 0 1.7.12 2.5.34 1.9-1.33 2.74-1.05 2.74-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.93-2.34 4.79-4.57 5.05.36.32.68.94.68 1.89v2.82c0 .27.18.59.69.49A10.1 10.1 0 0 0 22 12.22C22 6.58 17.52 2 12 2Z"
+              />
+            </svg>
           </a>
-        </div>
+          <a
+            class="hero-link"
+            href="https://github.com/jqknono/coding-plans-for-copilot/discussions"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="打开讨论"
+            title="打开讨论"
+          >
+            <svg class="hero-link-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M21 15a4 4 0 0 1-4 4H8l-5 3V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+            </svg>
+          </a>
+        </nav>
+        <p class="eyebrow">GitHub Pages · 自动抓取</p>
+        <h1>编码套餐看板</h1>
+        <p class="subtitle">
+          每日自动抓取供应商的月费与权益，展示供应商最近 30 分钟的可用率、延迟、吞吐指标
+        </p>
         <div class="stats" id="stats">
           <span>生成时间：<strong id="generatedAt">加载中</strong></span>
           <span><span id="primaryCountLabel">提供商</span>：<strong id="providerCount">0</strong></span>
           <span><span id="secondaryCountLabel">套餐数</span>：<strong id="planCount">0</strong></span>
         </div>
       </header>
-
-      <section class="plugin-intro">
-        <h2>关于本扩展</h2>
-        <p>
-          Coding Plans for Copilot 是一个 VS Code 扩展，让你将不同厂商的编码套餐接入 Copilot Chat，在编辑器中统一切换供应商与模型，并支持自动生成commit消息
-        </p>
-        <div class="plugin-actions">
-          <a
-            class="plugin-link"
-            href="https://marketplace.visualstudio.com/items?itemName=techfetch-dev.coding-plans-for-copilot"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            打开 VS Code 商店插件页
-          </a>
-        </div>
-      </section>
 
       <section class="tab-intro" id="tabIntro" aria-label="当前看板说明">
         <div class="tab-intro-text">
@@ -121,17 +124,15 @@
         <section id="metricsErrorBanner" class="error hidden" role="status" aria-live="polite"></section>
         <section class="metrics-card" id="metricsCard" aria-label="性能指标信息与筛选">
           <header class="metrics-card-head">
-            <div class="metrics-card-meta">
-              <span>北京时间采集时间：<strong id="metricsGeneratedAt">--</strong></span>
-              <span>目标采集窗口：<strong id="metricsCaptureWindow">每日 16:00 (UTC+8)</strong></span>
-              <span class="metrics-card-hint" id="metricsToolbarHintInline"></span>
-            </div>
             <section class="metrics-card-help" id="metricsHelpSection" aria-label="指标解释">
               <h3 class="metrics-card-help-title">指标解释</h3>
               <p>
                 <strong>p50</strong> 为中位值（50% 请求不超过该值）；
                 <strong>p90</strong> 为 90 分位；
                 <strong>p99</strong> 为尾部延迟/吞吐表现（最慢或最极端 1% 请求）。
+              </p>
+              <p>
+                OpenRouter 价格按抓取时汇率折算为人民币；OpenRouter 会收取平台手续费，支付渠道也可能收取手续费，实际支付以结算页为准。
               </p>
             </section>
           </header>
@@ -172,6 +173,18 @@
                 />
               </div>
             </label>
+            <label class="metrics-filter-item" data-filter="cacheDiscount">
+              缓存优惠
+              <div class="searchable-select">
+                <input
+                  id="metricsCacheDiscountFilterInput"
+                  class="searchable-select-input"
+                  type="text"
+                  autocomplete="off"
+                  aria-label="缓存优惠筛选"
+                />
+              </div>
+            </label>
           </section>
         </section>
         <section id="metricsTableContainer" class="metrics-table-container"></section>
@@ -181,16 +194,23 @@
         </details>
       </section>
 
-      <footer class="page-footer" aria-label="页面底部链接">
-        <a
-          class="page-footer-link"
-          href="https://github.com/jqknono/coding-plans-for-copilot/discussions"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          讨论
-        </a>
-      </footer>
+      <section class="plugin-intro">
+        <h2>关于本扩展</h2>
+        <p>
+          Coding Plans for Copilot 是一个 VS Code 扩展，让你将不同厂商的编码套餐接入 Copilot Chat，在编辑器中统一切换供应商与模型，并支持自动生成commit消息
+        </p>
+        <div class="plugin-actions">
+          <a
+            class="plugin-link"
+            href="https://marketplace.visualstudio.com/items?itemName=techfetch-dev.coding-plans-for-copilot"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            打开 VS Code 商店插件页
+          </a>
+        </div>
+      </section>
+
     </main>
   </body>
 </html>

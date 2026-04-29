@@ -173,6 +173,9 @@ function normalizeMoneyTextByCurrency(rawValue, fallbackCurrency = "USD") {
   if (/(免费|free)/i.test(text)) {
     return text;
   }
+  if (!/[0-9]/.test(text)) {
+    return text;
+  }
 
   const currency = detectCurrencyFromText(text, fallbackCurrency);
   const normalizedText = text.replace(/\s*\/\s*/g, "/").replace(/\s+/g, " ").trim();
@@ -545,7 +548,11 @@ function parseJdCloudCodingPlansFromPageHtml(html) {
     );
   }
 
-  return dedupePlans(plans);
+  if (plans.length > 0) {
+    return dedupePlans(plans);
+  }
+
+  return parseJdCloudCodingPlansFromDocsText(decodedHtml);
 }
 
 async function loadExistingPricingSnapshot(outputFile = OUTPUT_FILE) {
@@ -659,6 +666,43 @@ async function fetchRenderedPageText(pageUrl, label, options = {}) {
 
     const text = await page.evaluate(() => String(document.body?.innerText || ""));
     return {
+      text: normalizeText(text),
+      url: page.url(),
+    };
+  } finally {
+    await browser.close();
+  }
+}
+
+async function fetchRenderedPageHtml(pageUrl, label, options = {}) {
+  const chromium = await loadPlaywrightChromium(label);
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    await blockNonEssentialPlaywrightRequests(page);
+    await page.goto(pageUrl, {
+      waitUntil: options.waitUntil || "domcontentloaded",
+      timeout: options.timeoutMs || 15_000,
+    });
+    if (options.waitForText) {
+      await page.waitForFunction(
+        (patternSource) => {
+          const text = String(document.body?.innerText || "");
+          return new RegExp(patternSource, "i").test(text);
+        },
+        options.waitForText.source || String(options.waitForText),
+        { timeout: options.waitForTimeoutMs || 12_000 },
+      );
+    } else if (options.settleMs) {
+      await page.waitForTimeout(options.settleMs);
+    }
+
+    const [html, text] = await Promise.all([
+      page.evaluate(() => String(document.documentElement?.outerHTML || "")),
+      page.evaluate(() => String(document.body?.innerText || "")),
+    ]);
+    return {
+      html,
       text: normalizeText(text),
       url: page.url(),
     };
@@ -847,6 +891,76 @@ function parseKimiDomesticMembershipPlansFromText(pageText) {
   }
 
   return dedupePlans(plans);
+}
+
+function parseJdCloudCodingPlansFromDocsText(pageText) {
+  const rawText = decodeUnicodeLiteral(String(pageText || ""));
+  const text = /<[^>]+>/.test(rawText) ? normalizeText(stripTags(rawText)) : normalizeText(rawText);
+  if (!/Coding\s*Plan/i.test(text) || !/套餐详情/.test(text)) {
+    return [];
+  }
+
+  const modelsMatch = text.match(/模型自由切换：[^。]*?包括：([^。]+)。/);
+  const toolsMatch = text.match(/兼容主流工具：([^。]+)。/);
+  const modelsText = normalizeText(modelsMatch?.[1] || "");
+  const toolsText = normalizeText(toolsMatch?.[1] || "");
+  const sharedQuotaText =
+    /多工具之间套餐额度共享/.test(text) && !/多工具之间套餐额度共享/.test(toolsText)
+      ? "多工具之间套餐额度共享"
+      : null;
+  const priceNote = "价格未在套餐概览页公开；计价币种: 人民币（CNY）";
+
+  const plans = [];
+  for (const tier of ["Lite", "Pro"]) {
+    const tierPattern = new RegExp(
+      `${tier}\\s*套餐\\s+(.+?)\\s+((?:Lite\\s*套餐的\\s*5\\s*倍用量。\\s*)?每\\s*5\\s*小时：最多约\\s*[0-9,，]+\\s*次请求。\\s*每周：最多约\\s*[0-9,，]+\\s*次请求。\\s*每订阅月：最多约\\s*[0-9,，]+\\s*次请求。)`,
+      "i",
+    );
+    const tierMatch = text.match(tierPattern);
+    if (!tierMatch) {
+      continue;
+    }
+
+    const audience = normalizeText(tierMatch[1]);
+    const usageLimit = normalizeText(tierMatch[2]).replace(/，/g, ",");
+    plans.push(
+      asPlan({
+        name: `Coding Plan ${tier}`,
+        unit: "月",
+        notes: priceNote,
+        serviceDetails: [
+          audience ? `适用人群：${audience}` : null,
+          usageLimit ? `用量限制：${usageLimit}` : null,
+          modelsText ? `支持模型：${modelsText}` : null,
+          toolsText ? `适配工具：${toolsText}` : null,
+          sharedQuotaText,
+        ],
+      }),
+    );
+  }
+
+  return dedupePlans(plans);
+}
+
+function mergeJdCloudPricingAndDocsPlans(pricingPlans, docsPlans) {
+  const docsByTier = new Map(
+    (docsPlans || []).map((plan) => [normalizeText(plan?.name || "").replace(/^Coding\s+Plan\s+/i, "").toLowerCase(), plan]),
+  );
+
+  return dedupePlans(
+    (pricingPlans || []).map((plan) => {
+      const tier = normalizeText(plan?.name || "").replace(/^Coding\s+Plan\s+/i, "").toLowerCase();
+      const docsPlan = docsByTier.get(tier);
+      if (!docsPlan) {
+        return plan;
+      }
+
+      return {
+        ...plan,
+        serviceDetails: normalizeServiceDetails(docsPlan.serviceDetails || plan.serviceDetails),
+      };
+    }),
+  );
 }
 
 function buildKimiCodePlansFromGoodsPayload(payload, options = {}) {
@@ -1905,16 +2019,65 @@ async function parseTencentCodingPlans() {
 }
 
 async function parseJdCloudCodingPlans() {
-  const pageUrl = "https://www.jdcloud.com/cn/pages/codingplan";
-  const html = await fetchText(pageUrl);
-  const plans = parseJdCloudCodingPlansFromPageHtml(html);
+  const priceUrl = "https://www.jdcloud.com/cn/pages/codingplan";
+  const docsUrl = "https://docs.jdcloud.com/cn/jdaip/PackageOverview";
+  const errors = [];
+  let pricingPlans = [];
+  let docsPlans = [];
+
+  try {
+    const rendered = await fetchRenderedPageHtml(priceUrl, "JD Cloud Coding Plan price parser", {
+      waitForText: /Coding\s*Plan\s*(Lite|Pro)|原价/,
+      waitForTimeoutMs: 12_000,
+      timeoutMs: 20_000,
+    });
+    pricingPlans = parseJdCloudCodingPlansFromPageHtml(rendered.html);
+  } catch (error) {
+    errors.push(`Playwright price parse failed: ${error.message || error}`);
+  }
+
+  if (pricingPlans.length === 0) {
+    try {
+      const html = await fetchText(priceUrl);
+      pricingPlans = parseJdCloudCodingPlansFromPageHtml(html);
+    } catch (error) {
+      errors.push(`price HTML fetch failed: ${error.message || error}`);
+    }
+  }
+
+  try {
+    const rendered = await fetchRenderedPageText(docsUrl, "JD Cloud Coding Plan docs parser", {
+      waitForText: /套餐详情|Lite套餐/,
+      waitForTimeoutMs: 12_000,
+      timeoutMs: 20_000,
+    });
+    docsPlans = parseJdCloudCodingPlansFromDocsText(rendered.text);
+  } catch (error) {
+    errors.push(`Playwright docs parse failed: ${error.message || error}`);
+  }
+
+  if (docsPlans.length === 0) {
+    try {
+      const html = await fetchText(docsUrl);
+      docsPlans = parseJdCloudCodingPlansFromDocsText(html);
+    } catch (error) {
+      errors.push(`docs HTML fetch failed: ${error.message || error}`);
+    }
+  }
+
+  const plans =
+    pricingPlans.length > 0
+      ? mergeJdCloudPricingAndDocsPlans(pricingPlans, docsPlans)
+      : docsPlans;
+
   if (plans.length === 0) {
-    throw new Error("Unable to parse JD Cloud coding plan cards from page HTML");
+    const reasonText = errors.length > 0 ? ` (${errors.join("; ")})` : "";
+    throw new Error(`Unable to parse JD Cloud coding plan details${reasonText}`);
   }
 
   return {
     provider: PROVIDER_IDS.JDCLOUD,
-    sourceUrls: [pageUrl],
+    sourceUrls: unique([priceUrl, docsPlans.length > 0 ? docsUrl : null]),
     fetchedAt: new Date().toISOString(),
     plans,
   };
@@ -2211,11 +2374,52 @@ async function parseXAioCodingPlans() {
   };
 }
 
-async function parseCompshareCodingPlans() {
-  const pageUrl = "https://www.compshare.cn/docs/modelverse/package_plan/package";
-  const html = await fetchText(pageUrl);
+function parseCompshareCodingPlansFromHtml(html) {
   const rows = extractRows(html);
-  const headerRow = rows.find((row) => normalizeText(row?.[0] || "") === "套餐名称" && row.length >= 5) || null;
+  const comparisonHeaderRow =
+    rows.find((row) => {
+      const cells = (row || []).map((cell) => normalizeText(cell));
+      return cells.length >= 3 && /Lite|基础版/i.test(cells.join(" ")) && /Pro|高级版/i.test(cells.join(" "));
+    }) || null;
+  const priceRow =
+    rows.find((row) => {
+      const label = normalizeText(row?.[0] || "");
+      return /^(月费|价格|套餐价格)$/.test(label) && (row || []).some((cell, index) => index > 0 && isMonthlyPriceText(cell));
+    }) || null;
+
+  if (comparisonHeaderRow && priceRow) {
+    const plans = [];
+    for (let column = 1; column < comparisonHeaderRow.length; column += 1) {
+      const name = normalizeText(comparisonHeaderRow[column]);
+      const rawPrice = normalizeText(priceRow[column]);
+      if (!name || !rawPrice || !isMonthlyPriceText(rawPrice)) {
+        continue;
+      }
+      const amount = parsePriceText(rawPrice).amount;
+      const serviceDetails = [];
+      for (const row of rows) {
+        const label = normalizeText(row?.[0] || "");
+        const value = normalizeText(row?.[column] || "");
+        if (!label || !value || row === comparisonHeaderRow || row === priceRow) {
+          continue;
+        }
+        serviceDetails.push(`${label}: ${value}`);
+      }
+      plans.push(
+        asPlan({
+          name,
+          currentPriceText: rawPrice,
+          currentPrice: Number.isFinite(amount) ? amount : null,
+          unit: "月",
+          serviceDetails,
+        }),
+      );
+    }
+
+    return dedupePlans(plans);
+  }
+
+  const rowPlanHeaderRow = rows.find((row) => normalizeText(row?.[0] || "") === "套餐名称" && row.length >= 5) || null;
   const plans = [];
   for (const row of rows) {
     const rawName = normalizeText(row?.[0] || "");
@@ -2230,7 +2434,7 @@ async function parseCompshareCodingPlans() {
       if (!value) {
         continue;
       }
-      const label = normalizeText(headerRow?.[column] || "");
+      const label = normalizeText(rowPlanHeaderRow?.[column] || "");
       serviceDetails.push(label ? `${label}: ${value}` : value);
     }
     plans.push(
@@ -2244,6 +2448,14 @@ async function parseCompshareCodingPlans() {
     );
   }
 
+  return dedupePlans(plans);
+}
+
+async function parseCompshareCodingPlans() {
+  const pageUrl = "https://www.compshare.cn/docs/modelverse/package_plan/package";
+  const html = await fetchText(pageUrl);
+  const plans = parseCompshareCodingPlansFromHtml(html);
+
   if (plans.length === 0) {
     throw new Error("Unable to parse Compshare standard monthly plans");
   }
@@ -2252,7 +2464,7 @@ async function parseCompshareCodingPlans() {
     provider: PROVIDER_IDS.COMPSHARE,
     sourceUrls: [pageUrl],
     fetchedAt: new Date().toISOString(),
-    plans: dedupePlans(plans),
+    plans,
   };
 }
 
@@ -3859,7 +4071,9 @@ module.exports = {
   parseInfiniPlanFromBundle,
   parseInfiniServiceDetailsByTier,
   parseAliyunTokenPlansFromDocsHtml,
+  parseCompshareCodingPlansFromHtml,
   parseKimiDomesticMembershipPlansFromText,
+  parseJdCloudCodingPlansFromDocsText,
   parseJdCloudCodingPlansFromPageHtml,
   restoreFailedProvidersFromSnapshot,
 };
