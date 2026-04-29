@@ -1,0 +1,64 @@
+{
+  "date": "2026-04-29",
+  "generatedAt": "2026-04-29T07:02:17.720Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 9,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Codex": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1209369",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1209369",
+      "title": "Codex 额度锁死 100%，这正常吗？",
+      "content": "1 、没充任何 plan 2 、没加入团队 3 、5.5 不是会员所以用不了，但 5.4 超高已经高强度用了 2 天了 剩余额度：100% 大家遇到了吗？只有我遇到 bug 了？",
+      "author": "Moory",
+      "createdAt": "2026-04-29T06:37:23.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户询问Codex额度为100%锁死是否正常，提到未购买任何plan且未加入团队，但已高强度使用5.4版本2天，导致额度耗尽。",
+        "topics": [
+          "额度锁死",
+          "Codex",
+          "使用问题",
+          "剩余额度"
+        ],
+        "planMentioned": "Codex",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-29T07:06:55.602Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1209234: The operation was aborted due to timeout"
+  ]
+}
