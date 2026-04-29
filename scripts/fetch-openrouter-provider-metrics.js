@@ -289,6 +289,68 @@ function readMetricP50(metric) {
   return toFiniteNumberOrNull(metric?.p50);
 }
 
+function hasPercentileStats(metric) {
+  if (!metric || typeof metric !== "object") {
+    return false;
+  }
+  return ["p50", "p75", "p90", "p99"].every((key) => toFiniteNumberOrNull(metric[key]) !== null);
+}
+
+function getMetricsValidationErrors(output) {
+  const errors = [];
+  const models = Array.isArray(output?.models) ? output.models : [];
+  const failures = Array.isArray(output?.failures) ? output.failures : [];
+  const endpoints = models.flatMap((model) => (Array.isArray(model?.endpoints) ? model.endpoints : []));
+  const latencyCount = endpoints.filter((endpoint) => hasPercentileStats(endpoint?.latency_last_30m)).length;
+  const throughputCount = endpoints.filter((endpoint) => hasPercentileStats(endpoint?.throughput_last_30m)).length;
+  const uptimeCount = endpoints.filter((endpoint) => (
+    toFiniteNumberOrNull(endpoint?.uptime_last_5m) !== null
+    || toFiniteNumberOrNull(endpoint?.uptime_last_30m) !== null
+    || toFiniteNumberOrNull(endpoint?.uptime_last_1d) !== null
+  )).length;
+
+  if (models.length === 0) {
+    errors.push("No OpenRouter models matched the configured organization and age filters.");
+  }
+  if (endpoints.length === 0) {
+    errors.push("No OpenRouter provider endpoints were fetched.");
+  }
+  if (failures.length > 0) {
+    const preview = failures.slice(0, 5).join("; ");
+    errors.push(`OpenRouter endpoint fetch failures: ${failures.length}${preview ? ` (${preview})` : ""}`);
+  }
+  if (endpoints.length > 0 && uptimeCount === 0) {
+    errors.push("OpenRouter provider availability metrics are empty for every endpoint.");
+  }
+  if (endpoints.length > 0 && latencyCount === 0) {
+    errors.push("OpenRouter provider latency metrics are empty for every endpoint. Check that CODING_PLANS_FOR_COPILOT is an API key allowed to view endpoint performance metrics.");
+  }
+  if (endpoints.length > 0 && throughputCount === 0) {
+    errors.push("OpenRouter provider throughput metrics are empty for every endpoint. Check that CODING_PLANS_FOR_COPILOT is an API key allowed to view endpoint performance metrics.");
+  }
+
+  return errors;
+}
+
+async function writeJsonFileAtomically(filePath, data) {
+  const directory = path.dirname(filePath);
+  const temporaryFile = path.join(directory, `.${path.basename(filePath)}.${process.pid}.${Date.now()}.tmp`);
+  await fs.mkdir(directory, { recursive: true });
+  try {
+    await fs.writeFile(temporaryFile, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+    await fs.rename(temporaryFile, filePath);
+  } catch (error) {
+    try {
+      await fs.unlink(temporaryFile);
+    } catch (unlinkError) {
+      if (!unlinkError || unlinkError.code !== "ENOENT") {
+        // Preserve the original write failure; cleanup failure is secondary.
+      }
+    }
+    throw error;
+  }
+}
+
 function compareEndpointQuality(left, right) {
   const leftStatusPenalty = left?.status === 0 ? 0 : 1;
   const rightStatusPenalty = right?.status === 0 ? 0 : 1;
@@ -482,20 +544,22 @@ async function main() {
     failures,
   };
 
-  await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
-  await fs.writeFile(OUTPUT_FILE, `${JSON.stringify(output, null, 2)}\n`, "utf8");
+  const validationErrors = getMetricsValidationErrors(output);
+  if (validationErrors.length > 0) {
+    throw new Error(`OpenRouter provider metrics validation failed: ${validationErrors.join(" | ")}`);
+  }
+
+  await writeJsonFileAtomically(OUTPUT_FILE, output);
 
   console.log(`[metrics] wrote ${OUTPUT_FILE}`);
   console.log(`[metrics] organizations=${organizations.length} models=${modelEntries.length} providers=${endpointCount}`);
-  if (failures.length > 0) {
-    console.log(`[metrics] failures=${failures.length}`);
-  }
 }
 
 function printHelp() {
   console.log("Usage: node scripts/fetch-openrouter-provider-metrics.js [-h|--help]");
   console.log("");
   console.log("Fetches OpenRouter provider endpoint metrics into assets/openrouter-provider-metrics.json.");
+  console.log("The output file is updated only after endpoint fetches and performance metrics pass validation.");
   console.log("");
   console.log("Environment variables:");
   console.log("  CODING_PLANS_FOR_COPILOT         OpenRouter API key");
@@ -518,5 +582,7 @@ if (require.main === module) {
 
 module.exports = {
   fetchJson,
+  getMetricsValidationErrors,
+  hasPercentileStats,
   isRetryableFetchError,
 };

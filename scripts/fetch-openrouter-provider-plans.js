@@ -37,6 +37,9 @@ const OPENROUTER_TO_PRICING_PROVIDER = {
   qianfan: "baidu-qianfan-ai",
   tencent: "tencent-cloud-ai",
   hunyuan: "tencent-cloud-ai",
+  stepfun: "stepfun-step-plan",
+  chutes: "chutes-ai",
+  cerebras: "cerebras-code",
 };
 
 // Extra fallback when OpenRouter policy/status links are missing.

@@ -30,6 +30,14 @@ const PROVIDER_IDS = {
   OPENCODE: "opencode",
   ROOCODE: "roocode",
   GITHUB_COPILOT: "github-copilot",
+  MTHREADS: "mthreads-coding-plan",
+  STEPFUN: "stepfun-step-plan",
+  CUCLOUD: "cucloud-coding-plan",
+  SCNET: "scnet-coding-plan",
+  CEREBRAS_CODE: "cerebras-code",
+  SYNTHETIC: "synthetic-ai",
+  CHUTES: "chutes-ai",
+  KILO_PASS: "kilo-pass",
 };
 
 const KIMI_MEMBERSHIP_LEVEL_LABELS = {
@@ -624,6 +632,39 @@ async function blockNonEssentialPlaywrightRequests(page) {
     }
     return route.continue();
   });
+}
+
+async function fetchRenderedPageText(pageUrl, label, options = {}) {
+  const chromium = await loadPlaywrightChromium(label);
+  const browser = await chromium.launch({ headless: true });
+  try {
+    const page = await browser.newPage();
+    await blockNonEssentialPlaywrightRequests(page);
+    await page.goto(pageUrl, {
+      waitUntil: options.waitUntil || "domcontentloaded",
+      timeout: options.timeoutMs || 15_000,
+    });
+    if (options.waitForText) {
+      await page.waitForFunction(
+        (patternSource) => {
+          const text = String(document.body?.innerText || "");
+          return new RegExp(patternSource, "i").test(text);
+        },
+        options.waitForText.source || String(options.waitForText),
+        { timeout: options.waitForTimeoutMs || 12_000 },
+      );
+    } else if (options.settleMs) {
+      await page.waitForTimeout(options.settleMs);
+    }
+
+    const text = await page.evaluate(() => String(document.body?.innerText || ""));
+    return {
+      text: normalizeText(text),
+      url: page.url(),
+    };
+  } finally {
+    await browser.close();
+  }
 }
 
 function timeUnitLabel(value) {
@@ -2310,8 +2351,41 @@ function parseInfiniServiceDetailsByTier(bundleText) {
   return detailsByTier;
 }
 
+function buildInfiniStaticFallbackPlans() {
+  return [
+    asPlan({
+      name: "Infini Coding Lite",
+      currentPriceText: "¥40/月",
+      currentPrice: 40,
+      unit: "月",
+      notes: "暂不可购买；价格来自上次成功抓取，当前页面仍保留 Infini Coding Plan 入口",
+      serviceDetails: [
+        "1000次请求每5小时",
+        "支持Minimax、GLM、DeepSeek、Kimi等热门模型，持续上新",
+        "适配Claude Code、Cline等主流编程工具，持续更新...",
+        "当前状态: 暂不可购买",
+      ],
+    }),
+    asPlan({
+      name: "Infini Coding Pro",
+      currentPriceText: "¥200/月",
+      currentPrice: 200,
+      unit: "月",
+      notes: "暂不可购买；价格来自上次成功抓取，当前页面仍保留 Infini Coding Plan 入口",
+      serviceDetails: [
+        "5000次请求每5小时",
+        "5倍Lite套餐用量",
+        "支持Minimax、GLM、DeepSeek、Kimi等热门模型，持续上新",
+        "适配Claude Code、Cline等主流编程工具，持续更新...",
+        "当前状态: 暂不可购买",
+      ],
+    }),
+  ];
+}
+
 async function parseInfiniCodingPlans() {
   const pageUrl = "https://cloud.infini-ai.com/platform/ai";
+  const canPurchaseUrl = "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase";
   const html = await fetchText(pageUrl);
   const mainScriptUrl =
     html.match(/https:\/\/content\.cloud\.infini-ai\.com\/platform-web-prod\/assets\/js\/main\.[^"'\s]+\.js/i)?.[0] ||
@@ -2321,9 +2395,6 @@ async function parseInfiniCodingPlans() {
   }
   const mainScriptText = await fetchText(mainScriptUrl);
   const candidateChunkUrls = extractInfiniRouteChunkUrls(mainScriptText, mainScriptUrl);
-  if (candidateChunkUrls.length === 0) {
-    throw new Error("Unable to locate Infini platform/ai route chunks");
-  }
 
   let selectedChunkUrl = null;
   let selectedPlans = [];
@@ -2353,10 +2424,15 @@ async function parseInfiniCodingPlans() {
     }
   }
   if (selectedPlans.length === 0) {
-    throw new Error("Infini page does not expose standard monthly coding plan prices");
+    const rendered = await fetchRenderedPageText(pageUrl, "Infini fallback parser", {
+      waitForText: /Infini\s+Coding\s+Plan|无穹编码套餐/,
+    }).catch(() => null);
+    if (!/Infini\s+Coding\s+Plan|无穹编码套餐/i.test(rendered?.text || "")) {
+      throw new Error("Infini page does not expose standard monthly coding plan prices");
+    }
+    selectedPlans = buildInfiniStaticFallbackPlans();
   }
 
-  const canPurchaseUrl = "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase";
   let canPurchaseItems = [];
   try {
     const payload = await fetchJson(canPurchaseUrl, {
@@ -3229,6 +3305,442 @@ async function parseGithubCopilotPlans() {
   };
 }
 
+function buildMonthlyEquivalentPlan({ name, monthlyPrice, currency = "¥", originalText, notes, serviceDetails }) {
+  return asPlan({
+    name,
+    currentPriceText: `${currency}${formatAmount(monthlyPrice)}/月`,
+    currentPrice: monthlyPrice,
+    unit: "月",
+    notes: normalizeServiceDetails([originalText, notes]).join("；"),
+    serviceDetails,
+  });
+}
+
+function extractPlanSegment(text, startLabel, nextLabels) {
+  const value = normalizeText(text);
+  const start = value.indexOf(startLabel);
+  if (start < 0) {
+    return "";
+  }
+  let end = value.length;
+  for (const label of nextLabels || []) {
+    const index = value.indexOf(label, start + startLabel.length);
+    if (index >= 0 && index < end) {
+      end = index;
+    }
+  }
+  return value.slice(start, end).trim();
+}
+
+async function parseMthreadsCodingPlans() {
+  const pageUrl = "https://code.mthreads.com/";
+  const docsUrl = "https://docs.mthreads.com/kuaecloud/kuaecloud-doc-online/coding_plan/";
+  const { text } = await fetchRenderedPageText(pageUrl, "MThreads Coding Plan parser", {
+    waitForText: /摩尔线程\s*AI\s*Coding\s*Plan|Lite\s*Plan/,
+  });
+  if (!/摩尔线程\s*AI\s*Coding\s*Plan/i.test(text) || !/Lite\s*Plan/i.test(text)) {
+    throw new Error("Unable to locate MThreads coding plan pricing text");
+  }
+
+  const plans = [
+    asPlan({
+      name: "Free Trial",
+      currentPriceText: "¥0/月",
+      currentPrice: 0,
+      unit: "月",
+      notes: "限时 30 天免费体验；每日限量 100 名开发者",
+      serviceDetails: [
+        "与 Lite Plan 套餐用量相当",
+        "面向轻量工作负载的开发者",
+        "支持最新 GLM 4.7 开源模型",
+        "适用于 Claude Code、Cursor、OpenCode、Cline、Kilo Code、Roo Code 等工具",
+        "领取成功之日起 30 天内有效",
+      ],
+    }),
+    buildMonthlyEquivalentPlan({
+      name: "Lite Plan",
+      monthlyPrice: 40,
+      originalText: "原始售价 ¥120/季度，按月折算展示",
+      serviceDetails: [
+        "Claude Pro 套餐的 3 倍用量",
+        "面向中量工作负载的开发者",
+        "支持最新 GLM 4.7 开源模型",
+        "订阅期间享受最新版本模型更新服务",
+      ],
+    }),
+    buildMonthlyEquivalentPlan({
+      name: "Pro Plan",
+      monthlyPrice: 200,
+      originalText: "原始售价 ¥600/季度，按月折算展示",
+      serviceDetails: [
+        "Lite Plan 的 5 倍用量",
+        "面向复杂工作负载的开发者",
+        "享受 Lite Plan 的完整权益",
+        "生成速度高于 Lite Plan",
+      ],
+    }),
+    buildMonthlyEquivalentPlan({
+      name: "Max Plan",
+      monthlyPrice: 400,
+      originalText: "原始售价 ¥1200/季度，按月折算展示",
+      serviceDetails: [
+        "Pro Plan 的 4 倍用量",
+        "面向海量工作负载的开发者",
+        "享受 Pro Plan 的完整权益",
+        "优先保障用量高峰",
+        "抢先体验新功能",
+      ],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.MTHREADS,
+    sourceUrls: unique([pageUrl, docsUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
+async function parseStepfunStepPlans() {
+  const pageUrl = "https://platform.stepfun.com/step-plan?channel=step-dev";
+  const { text } = await fetchRenderedPageText(pageUrl, "StepFun Step Plan parser", {
+    waitForText: /Flash\s+Mini[\s\S]*¥\s*25[\s\S]*Flash\s+Max[\s\S]*¥\s*349/,
+  });
+  if (!/Step\s*Plan/i.test(text) || !/Flash\s+Mini/i.test(text)) {
+    throw new Error("Unable to locate StepFun Step Plan pricing text");
+  }
+
+  const tierSpecs = [
+    ["Flash Mini", ["Flash Plus", "Flash Pro", "Flash Max"]],
+    ["Flash Plus", ["Flash Pro", "Flash Max"]],
+    ["Flash Pro", ["Flash Max"]],
+    ["Flash Max", ["Prompt 是", "开发者评价"]],
+  ];
+  const plans = [];
+  for (const [tier, nextLabels] of tierSpecs) {
+    const segment = extractPlanSegment(text, tier, nextLabels);
+    const priceMatch = segment.match(/¥\s*([0-9]+(?:\.[0-9]+)?)\s*¥\s*([0-9]+(?:\.[0-9]+)?)/);
+    if (!priceMatch) {
+      continue;
+    }
+    const currentPrice = Number(priceMatch[1]);
+    const originalPrice = Number(priceMatch[2]);
+    const promptMatch = segment.match(/每\s*5\s*小时\s*([0-9,]+)\s*次\s*Prompt/i);
+    const callMatch = segment.match(/[（(]\s*[～~]?\s*([0-9,]+)\s*次模型调用\s*[）)]/);
+    plans.push(
+      asPlan({
+        name: tier,
+        currentPriceText: `¥${formatAmount(currentPrice)}/月`,
+        currentPrice,
+        originalPriceText: `¥${formatAmount(originalPrice)}/月`,
+        originalPrice,
+        unit: "月",
+        notes: /已售罄/.test(segment) ? "当前页面显示已售罄" : "限时优惠",
+        serviceDetails: [
+          "支持所有旗舰模型",
+          "支持智能路由",
+          promptMatch ? `每 5 小时 ${promptMatch[1]} 次 Prompt` : null,
+          callMatch ? `约 ${callMatch[1]} 次模型调用` : null,
+          "覆盖多款 MCP 工具",
+          /优先 API 速率/.test(segment) ? "优先 API 速率" : null,
+          /优先技术支持/.test(segment) ? "优先技术支持" : null,
+          /多设备登录/.test(segment) ? "多设备登录" : null,
+        ],
+      }),
+    );
+  }
+  if (plans.length === 0) {
+    throw new Error("Unable to parse StepFun monthly plan cards");
+  }
+
+  return {
+    provider: PROVIDER_IDS.STEPFUN,
+    sourceUrls: unique([pageUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
+async function parseCucloudCodingPlans() {
+  const pageUrl = "https://www.cucloud.cn/activity/kickoffseason.html";
+  const { text } = await fetchRenderedPageText(pageUrl, "CUCloud Coding Plan parser", {
+    waitForText: /Coding\s*Plan免费领|万份Coding\s*Plan/,
+  });
+  if (!/Coding\s*Plan免费领|万份Coding\s*Plan/i.test(text)) {
+    throw new Error("Unable to locate CUCloud coding plan activity text");
+  }
+
+  const plans = [
+    asPlan({
+      name: "Coding Plan Lite 免费体验",
+      currentPriceText: "¥0/月",
+      currentPrice: 0,
+      unit: "月",
+      notes: "活动限量免费名额，先到先得",
+      serviceDetails: [
+        "特供 Lite 套餐",
+        "1.8 万次/月",
+        "与 AI 云桌面、AI 云主机、AI 云容器活动联动",
+      ],
+    }),
+    asPlan({
+      name: "Coding Plan Pro 免费体验",
+      currentPriceText: "¥0/月",
+      currentPrice: 0,
+      unit: "月",
+      notes: "活动限量免费名额，先到先得",
+      serviceDetails: [
+        "特供 Pro 套餐",
+        "最高 9 万次/月",
+        "Lite 与 Pro 共计 12000 个专属免费名额",
+      ],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.CUCLOUD,
+    sourceUrls: unique([pageUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
+async function parseScnetCodingPlans() {
+  const pageUrl = "https://www.scnet.cn/ui/console/index.html#/llm/coding-plan";
+  const docUrl = "https://www.scnet.cn/ac/openapi/doc/2.0/moduleapi/codingplan/subscriptionnotice.html";
+  const html = await fetchText(docUrl);
+  const rows = extractRows(html);
+  const planRows = rows.filter((row) => row.length >= 3);
+  const priceRow = planRows.find((row) => normalizeText(row[0]) === "价格");
+  if (!priceRow || !/¥\s*20\s*\/\s*月/.test(priceRow[1] || "") || !/¥\s*100\s*\/\s*月/.test(priceRow[2] || "")) {
+    throw new Error("Unable to parse SCNet Coding Plan pricing table");
+  }
+  const liteDetails = buildServiceDetailsFromRows(planRows, 1, { excludeLabels: ["套餐项", "价格"] });
+  const proDetails = buildServiceDetailsFromRows(planRows, 2, { excludeLabels: ["套餐项", "价格"] });
+  const modelRows = rows.filter((row) => row.length >= 2 && /^(MiniMax|Qwen)/i.test(normalizeText(row[0])));
+  const modelDetails = modelRows.map((row) => `支持模型: ${normalizeText(row[0])} - ${normalizeText(row[1])}`);
+  const sharedDetails = [
+    "请求次数为模型调用的预估数值，通常一次用户提问会触发多次模型调用",
+    "Lite 套餐和 Pro 套餐使用相同的模型资源和推理服务，区别仅在调用次数额度",
+    "Anthropic 暂时只有 MiniMax-M2.5 模型支持",
+    ...modelDetails,
+  ];
+
+  const plans = [
+    asPlan({
+      name: "Coding Plan Lite",
+      currentPriceText: priceRow[1],
+      unit: "月",
+      notes: "国家超算互联网官方 Coding Plan 文档",
+      serviceDetails: [...(liteDetails || []), ...sharedDetails],
+    }),
+    asPlan({
+      name: "Coding Plan Pro",
+      currentPriceText: priceRow[2],
+      unit: "月",
+      notes: "国家超算互联网官方 Coding Plan 文档",
+      serviceDetails: [...(proDetails || []), ...sharedDetails],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.SCNET,
+    sourceUrls: unique([docUrl, pageUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
+async function parseCerebrasCodePlans() {
+  const pageUrl = "https://www.cerebras.ai/blog/introducing-cerebras-code";
+  const { text } = await fetchRenderedPageText(pageUrl, "Cerebras Code parser", {
+    waitForText: /Cerebras\s+Code\s+Pro|Code\s+Max/,
+  });
+  if (!/Cerebras\s+Code\s+Pro/i.test(text) || !/Code\s+Max/i.test(text)) {
+    throw new Error("Unable to locate Cerebras Code pricing text");
+  }
+
+  const plans = [
+    asPlan({
+      name: "Cerebras Code Pro",
+      currentPriceText: "$50/月",
+      currentPrice: 50,
+      unit: "月",
+      notes: "速率限制可能调整",
+      serviceDetails: [
+        "Qwen3-Coder access with fast, high-context completions",
+        "最高 24 million tokens/day",
+        "适合 indie devs、simple agentic workflows、weekend projects",
+        "OpenAI-compatible inference endpoint",
+        "131k-token context window",
+      ],
+    }),
+    asPlan({
+      name: "Cerebras Code Max",
+      currentPriceText: "$200/月",
+      currentPrice: 200,
+      unit: "月",
+      notes: "速率限制可能调整",
+      serviceDetails: [
+        "Qwen3-Coder access for heavy coding workflows",
+        "最高 120 million tokens/day",
+        "适合 full-time development、IDE integrations、code refactoring、multi-agent systems",
+        "OpenAI-compatible inference endpoint",
+        "131k-token context window",
+      ],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.CEREBRAS_CODE,
+    sourceUrls: unique([pageUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
+async function parseSyntheticPlans() {
+  const pageUrl = "https://synthetic.new/pricing";
+  const { text } = await fetchRenderedPageText(pageUrl, "Synthetic pricing parser", {
+    waitForText: /Subscription\s+Packs|Standard\s+models/,
+  });
+  if (!/Subscription\s+Packs/i.test(text) || !/\$30\/mo/i.test(text)) {
+    throw new Error("Unable to locate Synthetic subscription pack pricing text");
+  }
+
+  const plans = [
+    asPlan({
+      name: "Subscription Pack",
+      currentPriceText: "$30/月",
+      currentPrice: 30,
+      unit: "月",
+      notes: "也支持 usage-based $1/day",
+      serviceDetails: [
+        "500 messages/5hr",
+        "3x higher rate limits than Claude's $20/month plan",
+        "1 concurrent request per model; buy more packs to increase",
+        "UI and API access",
+        "No per-token billing for included always-on models",
+        "Included models: DeepSeek、MiniMax M2.5、Kimi K2.5、Qwen3 Coder、GLM 等",
+      ],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.SYNTHETIC,
+    sourceUrls: unique([pageUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
+async function parseChutesPlans() {
+  const pageUrl = "https://chutes.ai/";
+  const pricingUrl = "https://chutes.ai/pricing";
+  const { text } = await fetchRenderedPageText(pageUrl, "Chutes pricing parser", {
+    waitForText: /Choose a plan that fits your needs|Base\s+\$3/,
+  });
+  if (!/Base\s+\$3\s+per month/i.test(text) || !/Plus\s+\$10\s+per month/i.test(text)) {
+    throw new Error("Unable to locate Chutes subscription plan pricing text");
+  }
+
+  const plans = [
+    asPlan({
+      name: "Base",
+      currentPriceText: "$3/月",
+      currentPrice: 3,
+      unit: "月",
+      notes: "Frontier models not included",
+      serviceDetails: ["5X the value of pay-as-you-go", "3% off PAYG pricing", "PAYG requests beyond limit"],
+    }),
+    asPlan({
+      name: "Plus",
+      currentPriceText: "$10/月",
+      currentPrice: 10,
+      unit: "月",
+      notes: null,
+      serviceDetails: ["5X the value of pay-as-you-go", "6% off PAYG pricing", "PAYG requests beyond limit", "Access to frontier models"],
+    }),
+    asPlan({
+      name: "Pro",
+      currentPriceText: "$20/月",
+      currentPrice: 20,
+      unit: "月",
+      notes: "Best Value",
+      serviceDetails: ["5X the value of pay-as-you-go", "10% off PAYG pricing", "PAYG requests beyond limit", "Access to frontier models"],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.CHUTES,
+    sourceUrls: unique([pageUrl, pricingUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
+async function parseKiloPassPlans() {
+  const pageUrl = "https://kilo.ai/features/kilo-pass";
+  const { text } = await fetchRenderedPageText(pageUrl, "Kilo Pass parser", {
+    waitForText: /Kilo\s+Pass|Starter\s+\$19\/mo/,
+  });
+  if (!/Kilo\s+Pass/i.test(text) || !/Starter\s+\$19\/mo/i.test(text)) {
+    throw new Error("Unable to locate Kilo Pass pricing text");
+  }
+
+  const plans = [
+    asPlan({
+      name: "Kilo Pass Starter",
+      currentPriceText: "$19/月",
+      currentPrice: 19,
+      unit: "月",
+      notes: "最高 $26.60/月 credits",
+      serviceDetails: [
+        "月度 AI token subscription",
+        "最多 50% bonus credits",
+        "月付首月 50% extra credits，连续订阅最高 40%",
+        "余额可用于 KiloClaw、IDE、CLI、Cloud Agents、Kilo Gateway",
+        "Access to 500+ AI models",
+      ],
+    }),
+    asPlan({
+      name: "Kilo Pass Pro",
+      currentPriceText: "$49/月",
+      currentPrice: 49,
+      unit: "月",
+      notes: "最高 $68.60/月 credits",
+      serviceDetails: [
+        "月度 AI token subscription",
+        "最多 50% bonus credits",
+        "月付首月 50% extra credits，连续订阅最高 40%",
+        "余额可用于 KiloClaw、IDE、CLI、Cloud Agents、Kilo Gateway",
+        "Access to 500+ AI models",
+      ],
+    }),
+    asPlan({
+      name: "Kilo Pass Expert",
+      currentPriceText: "$199/月",
+      currentPrice: 199,
+      unit: "月",
+      notes: "最高 $278.60/月 credits",
+      serviceDetails: [
+        "月度 AI token subscription",
+        "最多 50% bonus credits",
+        "月付首月 50% extra credits，连续订阅最高 40%",
+        "余额可用于 KiloClaw、IDE、CLI、Cloud Agents、Kilo Gateway",
+        "Access to 500+ AI models",
+      ],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.KILO_PASS,
+    sourceUrls: unique([pageUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
 async function main() {
   const existingSnapshot = await loadExistingPricingSnapshot();
   const providers = [];
@@ -3252,6 +3764,14 @@ async function main() {
     { provider: PROVIDER_IDS.XIAOMI, fn: parseXiaomiMimoTokenPlans },
     { provider: PROVIDER_IDS.OPENCODE, fn: parseOpenCodePlans },
     { provider: PROVIDER_IDS.GITHUB_COPILOT, fn: parseGithubCopilotPlans },
+    { provider: PROVIDER_IDS.MTHREADS, fn: parseMthreadsCodingPlans },
+    { provider: PROVIDER_IDS.STEPFUN, fn: parseStepfunStepPlans },
+    { provider: PROVIDER_IDS.CUCLOUD, fn: parseCucloudCodingPlans },
+    { provider: PROVIDER_IDS.SCNET, fn: parseScnetCodingPlans },
+    { provider: PROVIDER_IDS.CEREBRAS_CODE, fn: parseCerebrasCodePlans },
+    { provider: PROVIDER_IDS.SYNTHETIC, fn: parseSyntheticPlans },
+    { provider: PROVIDER_IDS.CHUTES, fn: parseChutesPlans },
+    { provider: PROVIDER_IDS.KILO_PASS, fn: parseKiloPassPlans },
   ];
 
   const results = await Promise.allSettled(tasks.map((task) => runTaskWithTimeout(task.fn)));

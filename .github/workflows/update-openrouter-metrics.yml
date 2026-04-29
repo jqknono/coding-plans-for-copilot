@@ -123,10 +123,10 @@ jobs:
             });
             core.info(`Created issue #${created.data.number}`);
 
-      - name: Stop workflow on OpenRouter command failure
-        if: always() && (steps.fetch_metrics.outputs.exit_code != '0' || (steps.fetch_plans.outputs.exit_code != '' && steps.fetch_plans.outputs.exit_code != '0'))
+      - name: Stop workflow on OpenRouter failure
+        if: always() && (steps.openrouter_failures.outputs.has_failure == 'true' || steps.fetch_metrics.outputs.exit_code != '0' || (steps.fetch_plans.outputs.exit_code != '' && steps.fetch_plans.outputs.exit_code != '0'))
         run: |
-          echo "OpenRouter fetch command failed."
+          echo "OpenRouter fetch failed."
           exit 1
 
       - name: Commit metrics changes

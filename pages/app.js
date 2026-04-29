@@ -20,6 +20,14 @@ const PROVIDER_LABELS = {
   "infini-ai": "无问芯穹",
   "xiaomi-mimo": "小米 MiMo",
   "opencode": "OpenCode",
+  "mthreads-coding-plan": "摩尔线程 Coding Plan",
+  "stepfun-step-plan": "阶跃星辰 Step Plan",
+  "cucloud-coding-plan": "联通云 Coding Plan",
+  "scnet-coding-plan": "国家超算互联网",
+  "cerebras-code": "Cerebras Code",
+  "synthetic-ai": "Synthetic",
+  "chutes-ai": "Chutes",
+  "kilo-pass": "Kilo Pass",
 };
 
 const MODEL_ORG_LABELS = {
@@ -52,6 +60,14 @@ const PROVIDER_BUY_URLS = {
   "x-aio": "https://code.x-aio.com/",
   "compshare-ai": "https://www.compshare.cn/docs/modelverse/package_plan/package",
   "infini-ai": "https://cloud.infini-ai.com/platform/ai",
+  "mthreads-coding-plan": "https://code.mthreads.com/",
+  "stepfun-step-plan": "https://platform.stepfun.com/step-plan?channel=step-dev",
+  "cucloud-coding-plan": "https://www.cucloud.cn/activity/kickoffseason.html",
+  "scnet-coding-plan": "https://www.scnet.cn/ui/console/index.html#/llm/coding-plan",
+  "cerebras-code": "https://www.cerebras.ai/blog/introducing-cerebras-code",
+  "synthetic-ai": "https://synthetic.new/pricing",
+  "chutes-ai": "https://chutes.ai/",
+  "kilo-pass": "https://kilo.ai/features/kilo-pass",
 };
 
 const PROVIDER_CURRENCY_BUY_URLS = {

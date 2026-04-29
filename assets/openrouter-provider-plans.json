@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-04-29T05:23:21.097Z",
-  "generatedAtBeijing": "2026年4月29日 13:23:21",
-  "sourceGeneratedAt": "2026-04-29T05:22:11.520Z",
-  "sourceGeneratedAtBeijing": "2026年4月29日 13:22:11",
-  "sourceMetricsGeneratedAt": "2026-04-29T05:22:41.368Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年4月29日 13:22:41",
+  "generatedAt": "2026-04-29T06:41:05.767Z",
+  "generatedAtBeijing": "2026年4月29日 14:41:05",
+  "sourceGeneratedAt": "2026-04-29T06:40:21.191Z",
+  "sourceGeneratedAtBeijing": "2026年4月29日 14:40:21",
+  "sourceMetricsGeneratedAt": "2026-04-29T05:49:19.697Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年4月29日 13:49:19",
   "summary": {
     "openrouterProviderCount": 79,
     "metricsProviderCount": 39,
     "resolvedMetricsProviderCount": 39,
     "unresolvedMetricsProviderCount": 0,
-    "structuredProviderCount": 6,
-    "heuristicProviderCount": 8,
-    "providersWithPlans": 14,
-    "pendingCount": 25,
+    "structuredProviderCount": 8,
+    "heuristicProviderCount": 7,
+    "providersWithPlans": 15,
+    "pendingCount": 24,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -123,48 +123,45 @@
     {
       "slug": "chutes",
       "openrouterName": "Chutes",
-      "providerId": null,
+      "providerId": "chutes-ai",
       "plans": [
         {
           "name": "Base",
           "currentPrice": 3,
-          "currentPriceText": "$3/month",
+          "currentPriceText": "$3/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "来源: https://chutes.ai/pricing",
+          "notes": "Frontier models not included",
           "serviceDetails": [
             "5X the value of pay-as-you-go",
             "3% off PAYG pricing",
-            "PAYG requests beyond limit",
-            "Frontier models not included",
-            "Access to frontier models"
+            "PAYG requests beyond limit"
           ]
         },
         {
           "name": "Plus",
           "currentPrice": 10,
-          "currentPriceText": "$10/month",
+          "currentPriceText": "$10/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
             "5X the value of pay-as-you-go",
-            "3% off PAYG pricing",
+            "6% off PAYG pricing",
             "PAYG requests beyond limit",
-            "Frontier models not included",
             "Access to frontier models"
           ]
         },
         {
           "name": "Pro",
           "currentPrice": 20,
-          "currentPriceText": "$20/month",
+          "currentPriceText": "$20/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "Best Value",
           "serviceDetails": [
             "5X the value of pay-as-you-go",
             "10% off PAYG pricing",
@@ -174,59 +171,17 @@
         }
       ],
       "sourceUrls": [
+        "https://chutes.ai/",
         "https://chutes.ai/pricing",
-        "https://chutes.ai/_app/immutable/entry/app.Dj56RItE.js",
-        "https://chutes.ai/_app/immutable/nodes/0.C2YV8eVi.js",
-        "https://chutes.ai/_app/immutable/chunks/DEStpq0a.js",
-        "https://chutes.ai/_app/immutable/chunks/CWIHRLZS.js",
-        "https://chutes.ai/_app/immutable/chunks/BICcWcUb.js",
-        "https://chutes.ai/_app/immutable/chunks/DWRPVVOi.js",
-        "https://chutes.ai/_app/immutable/chunks/CVAZoLYS.js",
-        "https://chutes.ai/_app/immutable/chunks/BxjUUWSh.js",
-        "https://chutes.ai/_app/immutable/chunks/CPh-KM0s.js",
-        "https://chutes.ai/_app/immutable/chunks/CROhiIDH.js",
-        "https://chutes.ai/_app/immutable/chunks/07SJ1Ez2.js",
-        "https://chutes.ai/_app/immutable/chunks/D6AKOyEr.js",
-        "https://chutes.ai/_app/immutable/chunks/Dnvo-U9X.js",
-        "https://chutes.ai/_app/immutable/chunks/CG2oHIyF.js",
-        "https://chutes.ai/_app/immutable/chunks/lfKHO-kG.js",
-        "https://chutes.ai/_app/immutable/chunks/iIO2HfQy.js",
-        "https://chutes.ai/_app/immutable/chunks/Bg1pMQUL.js",
-        "https://chutes.ai/_app/immutable/chunks/MIglteRx.js",
-        "https://chutes.ai/_app/immutable/chunks/ChFdde2u.js",
-        "https://chutes.ai/_app/immutable/chunks/C1NzLqsd.js",
-        "https://chutes.ai/_app/immutable/nodes/2.4D8FgF05.js",
-        "https://chutes.ai/_app/immutable/chunks/3tSkQGuL.js",
-        "https://chutes.ai/_app/immutable/chunks/DnbzhUo3.js",
-        "https://chutes.ai/_app/immutable/chunks/CQqEbEt1.js",
-        "https://chutes.ai/_app/immutable/chunks/Blc0HEnW.js",
-        "https://chutes.ai/_app/immutable/chunks/BtnJzQK-.js",
-        "https://chutes.ai/_app/immutable/chunks/D04iQObJ.js",
-        "https://chutes.ai/_app/immutable/chunks/D2QCNa2Z.js",
-        "https://chutes.ai/_app/immutable/chunks/BGFdVicR.js",
-        "https://chutes.ai/_app/immutable/chunks/BPXDobbf.js",
-        "https://chutes.ai/_app/immutable/chunks/0B7Bd9li.js",
-        "https://chutes.ai/_app/immutable/chunks/DX6rZLP_.js",
-        "https://chutes.ai/_app/immutable/chunks/dSMvK_Ra.js",
-        "https://chutes.ai/_app/immutable/chunks/BD2tJ2zl.js",
-        "https://chutes.ai/_app/immutable/chunks/CLIhes5I.js",
-        "https://chutes.ai/_app/immutable/chunks/DJORDF47.js",
-        "https://chutes.ai/_app/immutable/chunks/BoGRIRoC.js",
-        "https://chutes.ai/_app/immutable/chunks/BLJK5JE2.js",
-        "https://chutes.ai/_app/immutable/chunks/B9LaaiNO.js",
-        "https://chutes.ai/_app/immutable/chunks/CLabWHzQ.js",
-        "https://chutes.ai/_app/immutable/chunks/DtJ7Svjj.js",
-        "https://chutes.ai/_app/immutable/nodes/20.DGTAgyjq.js",
-        "https://chutes.ai/_app/immutable/chunks/D8N7J7dm.js",
         "https://chutes.ai"
       ],
-      "pricingPageUrl": "https://chutes.ai/pricing",
+      "pricingPageUrl": "https://chutes.ai/",
       "officialWebsiteUrl": "https://chutes.ai",
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://chutes.ai/privacy",
       "termsOfServiceUrl": "https://chutes.ai/tos",
       "statusPageUrl": null,
-      "parseMode": "official-website-heuristic"
+      "parseMode": "provider-pricing-structured"
     },
     {
       "slug": "cloudflare",
@@ -813,6 +768,97 @@
       "parseMode": "provider-pricing-structured"
     },
     {
+      "slug": "stepfun",
+      "openrouterName": "StepFun",
+      "providerId": "stepfun-step-plan",
+      "plans": [
+        {
+          "name": "Flash Mini",
+          "currentPrice": 25,
+          "currentPriceText": "¥25/月",
+          "originalPrice": 49,
+          "originalPriceText": "¥49/月",
+          "unit": "月",
+          "notes": "限时优惠",
+          "serviceDetails": [
+            "支持所有旗舰模型",
+            "支持智能路由",
+            "每 5 小时 100 次 Prompt",
+            "约 1,500 次模型调用",
+            "覆盖多款 MCP 工具",
+            "多设备登录"
+          ]
+        },
+        {
+          "name": "Flash Plus",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": 99,
+          "originalPriceText": "¥99/月",
+          "unit": "月",
+          "notes": "限时优惠",
+          "serviceDetails": [
+            "支持所有旗舰模型",
+            "支持智能路由",
+            "每 5 小时 400 次 Prompt",
+            "约 6,000 次模型调用",
+            "覆盖多款 MCP 工具",
+            "优先 API 速率",
+            "优先技术支持",
+            "多设备登录"
+          ]
+        },
+        {
+          "name": "Flash Pro",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
+          "originalPrice": 199,
+          "originalPriceText": "¥199/月",
+          "unit": "月",
+          "notes": "当前页面显示已售罄",
+          "serviceDetails": [
+            "支持所有旗舰模型",
+            "支持智能路由",
+            "每 5 小时 1,500 次 Prompt",
+            "约 22,500 次模型调用",
+            "覆盖多款 MCP 工具",
+            "优先 API 速率",
+            "优先技术支持",
+            "多设备登录"
+          ]
+        },
+        {
+          "name": "Flash Max",
+          "currentPrice": 349,
+          "currentPriceText": "¥349/月",
+          "originalPrice": 699,
+          "originalPriceText": "¥699/月",
+          "unit": "月",
+          "notes": "限时优惠",
+          "serviceDetails": [
+            "支持所有旗舰模型",
+            "支持智能路由",
+            "每 5 小时 5,000 次 Prompt",
+            "约 75,000 次模型调用",
+            "覆盖多款 MCP 工具",
+            "优先 API 速率",
+            "优先技术支持",
+            "多设备登录"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://platform.stepfun.com/step-plan?channel=step-dev"
+      ],
+      "pricingPageUrl": "https://platform.stepfun.com/step-plan?channel=step-dev",
+      "officialWebsiteUrl": null,
+      "websiteSource": "unavailable",
+      "privacyPolicyUrl": null,
+      "termsOfServiceUrl": null,
+      "statusPageUrl": null,
+      "parseMode": "provider-pricing-structured"
+    },
+    {
       "slug": "streamlake",
       "openrouterName": "StreamLake",
       "providerId": "kwaikat-ai",
@@ -1287,15 +1333,6 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "stepfun",
-      "openrouterName": "StepFun",
-      "providerId": null,
-      "officialWebsiteUrl": null,
-      "pricingPageUrl": null,
-      "reason": "OpenRouter 元数据中缺少可用官网地址",
       "blocked": false
     },
     {

@@ -114,6 +114,8 @@ npm run metrics:fetch
 - `OPENROUTER_ENDPOINT_CONCURRENCY`：抓取 endpoints 并发（默认 `4`）。
 - `OPENROUTER_REQUEST_TIMEOUT_MS`：请求超时毫秒数（默认 `20000`）。
 
+`metrics:fetch` 采用失败即停止策略：若 endpoint 请求失败、没有抓到 provider endpoint、或所有 endpoint 的 `latency_last_30m` / `throughput_last_30m` 性能分位数均为空，脚本会以非 0 状态退出，且不会覆盖已有的 `assets/openrouter-provider-metrics.json`。OpenRouter latency/throughput 字段需要可查看 endpoint performance metrics 的 API Key；无鉴权或权限不足时通常只会返回 uptime/status。
+
 抓取 OpenRouter 供应商套餐页（用于海外供应商 Tab）:
 
 ```bash
