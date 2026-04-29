@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-29T07:33:00.168Z",
+  "generatedAt": "2026-04-29T08:53:12.353Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -407,7 +407,7 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.329df666.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.9836a1d0.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -478,9 +478,7 @@
             "月用量：Lite 版的 5 倍用量"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "jdcloud-ai: fetch failed"
+      ]
     },
     {
       "provider": "kilo-pass",
@@ -1554,7 +1552,5 @@
       ]
     }
   ],
-  "failures": [
-    "jdcloud-ai: fetch failed"
-  ]
+  "failures": []
 }
