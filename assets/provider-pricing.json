@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-04-28T08:56:30.219Z",
+  "generatedAt": "2026-04-29T03:07:26.455Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -572,7 +572,7 @@
       "provider": "tencent-cloud-ai",
       "sourceUrls": [
         "https://cloud.tencent.com/document/product/1772/128947",
-        "https://cloud.tencent.com/act/pro/codingplan"
+        "https://buy.cloud.tencent.com/hunyuan"
       ],
       "plans": [
         {
@@ -582,7 +582,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首月特惠 ¥7.9；次月续费 ¥20",
+          "notes": null,
           "serviceDetails": [
             "用量限制: 每 5 小时：最多约 1,200 次请求 每周：最多约 9,000 次请求 每订阅月：最多约 18,000 次请求",
             "支持模型: 选用 Tencent HY 2.0 Instruct、GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个模型",
@@ -596,16 +596,14 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首月特惠 ¥39.9；次月续费 ¥100",
+          "notes": null,
           "serviceDetails": [
             "用量限制: 每 5 小时：最多约 6,000 次请求 每周：最多约 45,000 次请求 每订阅月：最多约 90,000 次请求",
             "支持模型: 选用 Tencent HY 2.0 Instruct、GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个模型",
             "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "tencent-cloud-ai: fetch failed; Playwright fallback failed: page.goto: Timeout 8000ms exceeded. Call log: - navigating to \"https://cloud.tencent.com/document/product/1772/128947\", waiting until \"domcontentloaded\""
+      ]
     },
     {
       "provider": "tencent-cloud-token-plan",
@@ -680,7 +678,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.234/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.249/index.js"
       ],
       "plans": [
         {
@@ -962,7 +960,6 @@
     }
   ],
   "failures": [
-    "tencent-cloud-ai: fetch failed; Playwright fallback failed: page.goto: Timeout 8000ms exceeded.\nCall log:\n  - navigating to \"https://cloud.tencent.com/document/product/1772/128947\", waiting until \"domcontentloaded\"\n",
     "jdcloud-ai: fetch failed",
     "infini-ai: Unable to locate Infini platform/ai route chunks"
   ]
