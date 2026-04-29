@@ -8,6 +8,10 @@ on:
     - cron: "0 8 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: provider-data-update-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   update-openrouter-metrics:
     runs-on: ubuntu-latest
@@ -42,7 +46,7 @@ jobs:
           echo "exit_code=${status}" >> "$GITHUB_OUTPUT"
           exit 0
         env:
-          CODING_PLANS_FOR_COPILOT: ${{ secrets.CODING_PLANS_FOR_COPILOT }}
+          APIKEY: ${{ secrets.APIKEY }}
           OPENROUTER_MODEL_ORGS: ${{ vars.OPENROUTER_MODEL_ORGS || 'deepseek,qwen,moonshotai,z-ai,minimax,bytedance,bytedance-seed,kwaipilot,meituan,mistralai,stepfun' }}
           OPENROUTER_MODEL_LIMIT: ${{ vars.OPENROUTER_MODEL_LIMIT || '5' }}
           OPENROUTER_MODEL_MAX_AGE_DAYS: ${{ vars.OPENROUTER_MODEL_MAX_AGE_DAYS || '180' }}
@@ -57,7 +61,7 @@ jobs:
           echo "exit_code=${status}" >> "$GITHUB_OUTPUT"
           exit 0
         env:
-          CODING_PLANS_FOR_COPILOT: ${{ secrets.CODING_PLANS_FOR_COPILOT }}
+          APIKEY: ${{ secrets.APIKEY }}
 
       - name: Detect OpenRouter failures
         id: openrouter_failures
@@ -140,4 +144,13 @@ jobs:
           fi
           git commit -m "chore: update provider pricing and openrouter metrics"
           BRANCH_NAME="${GITHUB_REF_NAME:-main}"
-          git push origin "HEAD:${BRANCH_NAME}"
+          for attempt in 1 2 3; do
+            git fetch origin "${BRANCH_NAME}"
+            git rebase "origin/${BRANCH_NAME}"
+            if git push origin "HEAD:${BRANCH_NAME}"; then
+              exit 0
+            fi
+            echo "Push failed, retrying after refreshing ${BRANCH_NAME} (${attempt}/3)."
+          done
+          echo "Failed to push metrics changes after 3 attempts."
+          exit 1

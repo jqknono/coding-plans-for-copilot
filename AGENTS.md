@@ -47,7 +47,7 @@
 
 ## 环境变量与安全
 
-- `metrics:fetch` 与 `openrouter:plans:fetch` 需要 `CODING_PLANS_FOR_COPILOT`（OpenRouter API Key）。
+- `metrics:fetch` 与 `openrouter:plans:fetch` 需要 `APIKEY`（OpenRouter API Key）。
 - 可通过项目根目录 `.env` 加载环境变量。
 - 进行扩展联调或手工接口测试时，可优先复用 `.env` 中的 `BASE_URL`、`APIKEY`、`MODEL`；默认视为本地测试参数，不写入仓库配置。
 - 严禁在文档、日志、提交信息中暴露任何密钥。

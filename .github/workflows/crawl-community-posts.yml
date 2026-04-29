@@ -88,7 +88,6 @@ jobs:
           APIKEY: ${{ secrets.APIKEY }}
           BASE_URL: ${{ secrets.BASE_URL }}
           MODEL: ${{ secrets.MODEL }}
-          CODING_PLANS_FOR_COPILOT: ${{ secrets.CODING_PLANS_FOR_COPILOT }}
           COMMUNITY_CRAWLER_TOKEN: ${{ secrets.COMMUNITY_CRAWLER_TOKEN }}
 
       - name: Upload crawler output

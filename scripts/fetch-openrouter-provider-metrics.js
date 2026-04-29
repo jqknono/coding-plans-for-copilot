@@ -323,10 +323,10 @@ function getMetricsValidationErrors(output) {
     errors.push("OpenRouter provider availability metrics are empty for every endpoint.");
   }
   if (endpoints.length > 0 && latencyCount === 0) {
-    errors.push("OpenRouter provider latency metrics are empty for every endpoint. Check that CODING_PLANS_FOR_COPILOT is an API key allowed to view endpoint performance metrics.");
+    errors.push("OpenRouter provider latency metrics are empty for every endpoint. Check that APIKEY is an OpenRouter API key allowed to view endpoint performance metrics.");
   }
   if (endpoints.length > 0 && throughputCount === 0) {
-    errors.push("OpenRouter provider throughput metrics are empty for every endpoint. Check that CODING_PLANS_FOR_COPILOT is an API key allowed to view endpoint performance metrics.");
+    errors.push("OpenRouter provider throughput metrics are empty for every endpoint. Check that APIKEY is an OpenRouter API key allowed to view endpoint performance metrics.");
   }
 
   return errors;
@@ -440,9 +440,9 @@ async function mapWithConcurrency(values, concurrency, mapper) {
 async function main() {
   await loadEnvFileIfPresent();
 
-  const apiKey = String(process.env.CODING_PLANS_FOR_COPILOT || "").trim();
+  const apiKey = String(process.env.APIKEY || "").trim();
   if (!apiKey) {
-    throw new Error("Missing environment variable CODING_PLANS_FOR_COPILOT");
+    throw new Error("Missing environment variable APIKEY");
   }
 
   const organizations = readOrganizations();
@@ -562,7 +562,7 @@ function printHelp() {
   console.log("The output file is updated only after endpoint fetches and performance metrics pass validation.");
   console.log("");
   console.log("Environment variables:");
-  console.log("  CODING_PLANS_FOR_COPILOT         OpenRouter API key");
+  console.log("  APIKEY                           OpenRouter API key");
   console.log(`  OPENROUTER_BASE_URL              API base URL (default: ${OPENROUTER_BASE_URL})`);
   console.log(`  OPENROUTER_REQUEST_TIMEOUT_MS    Per-request timeout in ms (default: ${REQUEST_TIMEOUT_MS})`);
   console.log(`  OPENROUTER_ENDPOINT_CONCURRENCY  Concurrent endpoint fetches (default: ${ENDPOINT_CONCURRENCY})`);

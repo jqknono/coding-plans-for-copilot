@@ -2068,9 +2068,9 @@ async function mapWithConcurrency(values, concurrency, mapper) {
 async function main() {
   await loadEnvFileIfPresent();
 
-  const apiKey = String(process.env.CODING_PLANS_FOR_COPILOT || "").trim();
+  const apiKey = String(process.env.APIKEY || "").trim();
   if (!apiKey) {
-    throw new Error("Missing environment variable CODING_PLANS_FOR_COPILOT");
+    throw new Error("Missing environment variable APIKEY");
   }
 
   const headers = {

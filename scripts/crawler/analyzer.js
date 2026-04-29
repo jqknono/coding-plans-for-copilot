@@ -89,11 +89,11 @@ function truncateContent(text, maxChars) {
 
 async function callLLM(messages, { noJsonFormat, rawContent } = {}) {
   const baseUrl = process.env.BASE_URL || "https://openrouter.ai/api/v1";
-  const apiKey = process.env.APIKEY || process.env.CODING_PLANS_FOR_COPILOT;
+  const apiKey = process.env.APIKEY;
   const model = process.env.MODEL || "openrouter/free";
 
   if (!apiKey) {
-    throw new Error("No API key configured. Set APIKEY or CODING_PLANS_FOR_COPILOT in .env");
+    throw new Error("No API key configured. Set APIKEY in .env");
   }
 
   const body = {

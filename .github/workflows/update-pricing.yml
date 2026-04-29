@@ -8,6 +8,10 @@ on:
     - cron: "0 2 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: provider-data-update-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   update-pricing:
     runs-on: ubuntu-latest
@@ -107,4 +111,13 @@ jobs:
           fi
           git commit -m "chore: update provider pricing"
           BRANCH_NAME="${GITHUB_REF_NAME:-main}"
-          git push origin "HEAD:${BRANCH_NAME}"
+          for attempt in 1 2 3; do
+            git fetch origin "${BRANCH_NAME}"
+            git rebase "origin/${BRANCH_NAME}"
+            if git push origin "HEAD:${BRANCH_NAME}"; then
+              exit 0
+            fi
+            echo "Push failed, retrying after refreshing ${BRANCH_NAME} (${attempt}/3)."
+          done
+          echo "Failed to push pricing changes after 3 attempts."
+          exit 1

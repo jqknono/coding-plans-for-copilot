@@ -100,7 +100,7 @@ GitHub Pages 部署时会将 `assets/provider-pricing.json` 同步到 `pages/pro
 
 ## OpenRouter 数据抓取
 
-抓取性能数据时，使用环境变量 `CODING_PLANS_FOR_COPILOT` 作为 OpenRouter API Key：
+抓取性能数据时，使用环境变量 `APIKEY` 作为 OpenRouter API Key：
 
 ```bash
 npm run metrics:fetch
