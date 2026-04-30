@@ -1,6 +1,6 @@
 {
   "date": "2026-04-29",
-  "generatedAt": "2026-04-29T07:02:17.720Z",
+  "generatedAt": "2026-04-30T07:06:27.429Z",
   "config": {
     "sources": [
       "v2ex",
@@ -15,14 +15,12 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 59,
-    "postsAfterKeywordFilter": 9,
-    "relevantPosts": 1,
+    "totalPostsFetched": 60,
+    "postsAfterKeywordFilter": 2,
+    "relevantPosts": 2,
     "discussionsCreated": 0,
-    "discussionsSkipped": 1,
-    "supplierMentions": {
-      "Codex": 1
-    }
+    "discussionsSkipped": 2,
+    "supplierMentions": {}
   },
   "posts": [
     {
@@ -54,11 +52,43 @@
       },
       "discussionUrl": null,
       "analyzedAt": "2026-04-29T07:06:55.602Z"
+    },
+    {
+      "id": "v2ex-1209512",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1209512",
+      "title": "给远程 VibeCoding 工具做了两个新功能：多配置并行启动 Claude Code / Codex + IM 远程预览",
+      "content": "给远程 VibeCoding 工具做了两个新功能：多配置并行启动 Claude Code / Codex + IM 远程预览 大家好，之前在 V2EX 发过自己在制作的工具 VibeAround ，收到了一些宝贵的反馈意见。加上自己日常使用 coding agent 的过程中，也发现除了模型能力、开发工具能力之外，还有很多 workflow 上的小摩擦。 比如我自己购买了 Claude Code 和 Codex 订阅，但还是想试试看 DeepSeek V4 或者小米 MiMo 的 API ，尤其是同时多开不同设置的 Claude Code 或 Codex 来对比模型能力； 再比如远程用飞书或者微信指挥 Claude Code / Codex 干活时，想预览一下当前进展，或者把做好的内容分享给朋友、同事等等。 于是最近就在 VibeAround 里补上了两个能力： Launch 和 Preview 。 Launch：配置一键切换、命令行多开 有类似能力的工具不少，比如大名鼎鼎的 cc-switch ，不过很少看到可以同时用不同配置开启多个命令行窗口的，也很少有在切换配置时不改动原始 Cl",
+      "author": "jazzenchen",
+      "createdAt": "2026-04-29T16:52:34.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": "tool",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "The post introduces new features in VibeCoding tool for managing multiple AI coding assistant subscriptions (Claude Code/Codex) and previewing results via IM. It highlights workflow improvements for comparing different models and sharing progress.",
+        "topics": [
+          "Claude Code",
+          "Codex",
+          "多配置",
+          "IM 远程预览",
+          "订阅",
+          "模型对比",
+          "工作流优化"
+        ],
+        "planMentioned": "Claude Code, Codex",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-04-30T07:07:01.492Z"
     }
   ],
   "failures": [
     "linuxdo: https://linux.do/latest.json → 429",
-    "linuxdo: https://linux.do/latest.json → 429",
-    "analysis failed for v2ex-1209234: The operation was aborted due to timeout"
+    "linuxdo: https://linux.do/latest.json → 429"
   ]
 }
