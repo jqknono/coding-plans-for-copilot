@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-01T03:07:59.864Z",
+  "generatedAt": "2026-05-01T08:46:10.742Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1341,17 +1341,17 @@
       "provider": "x-aio",
       "sourceUrls": [
         "https://code.x-aio.com/",
-        "https://code.x-aio.com/assets/index-B3mrGkc9.js"
+        "https://code.x-aio.com/assets/index-DxkIorcN.js"
       ],
       "plans": [
         {
           "name": "Lite（入门版）",
-          "currentPrice": 36,
-          "currentPriceText": "¥36/月",
+          "currentPrice": 72,
+          "currentPriceText": "¥72/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥18/月",
+          "notes": "首购优惠：¥36/月",
           "serviceDetails": [
             "适用场景: 适合个人开发者的轻量级使用",
             "每 4 小时 100 Prompts 配额",
@@ -1364,12 +1364,12 @@
         },
         {
           "name": "Pro（专业版）",
-          "currentPrice": 180,
-          "currentPriceText": "¥180/月",
+          "currentPrice": 360,
+          "currentPriceText": "¥360/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥90/月",
+          "notes": "首购优惠：¥180/月",
           "serviceDetails": [
             "适用场景: 适合专业团队的高频使用",
             "激活开箱即用的OpenClaw！可领取一台属于自己的\"贾维斯\"！",
@@ -1383,12 +1383,12 @@
         },
         {
           "name": "Max（旗舰版）",
-          "currentPrice": 360,
-          "currentPriceText": "¥360/月",
+          "currentPrice": 720,
+          "currentPriceText": "¥720/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥180/月",
+          "notes": "首购优惠：¥360/月",
           "serviceDetails": [
             "适用场景: 适合资深开发者的海量工作负载",
             "激活开箱即用的OpenClaw！可领取一台属于自己的\"贾维斯\"！",
