@@ -1,0 +1,64 @@
+{
+  "date": "2026-05-01",
+  "generatedAt": "2026-05-01T07:06:33.643Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 44,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "MiniMax": 1,
+      "国家超算平台": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1209828",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1209828",
+      "title": "求一个 minimax token plan 的优惠邀请链接～",
+      "content": "大佬们，蹭一个 9 折羊毛。",
+      "author": "Carmine",
+      "createdAt": "2026-05-01T04:59:36.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "MiniMax",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户在寻求 MiniMax token 套餐的优惠邀请链接以获取 9 折优惠。",
+        "topics": [
+          "定价",
+          "优惠",
+          "邀请链接",
+          "订阅"
+        ],
+        "planMentioned": "token plan",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-01T07:08:07.454Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}

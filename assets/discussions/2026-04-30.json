@@ -1,0 +1,63 @@
+{
+  "date": "2026-04-30",
+  "generatedAt": "2026-05-01T07:06:33.643Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 44,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "MiniMax": 1,
+      "国家超算平台": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1209689",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1209689",
+      "title": "国家超算平台也出 coding plan 了",
+      "content": "",
+      "author": "lynn1su",
+      "createdAt": "2026-04-30T08:30:45.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "国家超算平台",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.75,
+        "summary": "帖子提到国家超算平台推出了 coding plan，暗示其进入 AI 编码助手订阅服务领域，但未提供具体定价或套餐细节。",
+        "topics": [
+          "coding plan",
+          "国家超算平台",
+          "套餐发布"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/104",
+      "analyzedAt": "2026-05-01T07:08:11.253Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
