@@ -42,6 +42,7 @@ const MODEL_ORG_LABELS = {
   meituan: "Meituan",
   mistralai: "Mistral AI",
   stepfun: "StepFun",
+  xiaomi: "Xiaomi",
 };
 
 const PROVIDER_BUY_URLS = {

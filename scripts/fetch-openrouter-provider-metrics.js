@@ -25,6 +25,7 @@ const DEFAULT_ORGANIZATIONS = [
   "meituan",
   "mistralai",
   "stepfun",
+  "xiaomi",
 ];
 const DEFAULT_MODELS_PER_ORG = 5;
 const DEFAULT_MODEL_MAX_AGE_DAYS = 180;
