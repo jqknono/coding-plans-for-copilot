@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-01T15:25:31.604Z",
+  "generatedAt": "2026-05-02T03:06:32.810Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -44,7 +44,9 @@
             "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "aliyun-ai: Unable to locate Aliyun entry script"
     },
     {
       "provider": "aliyun-token-plan",
@@ -1585,5 +1587,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "aliyun-ai: Unable to locate Aliyun entry script"
+  ]
 }
