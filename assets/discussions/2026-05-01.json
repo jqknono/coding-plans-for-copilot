@@ -1,6 +1,6 @@
 {
   "date": "2026-05-01",
-  "generatedAt": "2026-05-01T07:06:33.643Z",
+  "generatedAt": "2026-05-02T06:50:11.354Z",
   "config": {
     "sources": [
       "v2ex",
@@ -15,14 +15,14 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 44,
-    "postsAfterKeywordFilter": 6,
-    "relevantPosts": 1,
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 3,
+    "relevantPosts": 2,
     "discussionsCreated": 0,
-    "discussionsSkipped": 1,
+    "discussionsSkipped": 2,
     "supplierMentions": {
-      "MiniMax": 1,
-      "国家超算平台": 1
+      "MiMo (可能来自中国提供商)": 1,
+      "DeepSeek": 1
     }
   },
   "posts": [
@@ -55,10 +55,41 @@
       },
       "discussionUrl": null,
       "analyzedAt": "2026-05-01T07:08:07.454Z"
+    },
+    {
+      "id": "v2ex-1209908",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1209908",
+      "title": "联通云 coding plan 的 deepseek v4 系列被强行关闭思考模式了，用户无法强行开启",
+      "content": "用了一堆的参数覆盖，没有任何的思考输出： { \"reasoning_effort\": \"max\", \"reasoning\": \"true\", \"enable_thinking\": true, \"thinking_budget\": 16384, \"thinking\": { \"type\": \"enabled\" } } 然后我让 gpt5.5 设计了一个难题，结果回答错误，而且回答速度过于快了 大家可以自己问问 问题： 请只给最终答案，不要解释过程。 有 8 个盒子，标签分别是 1 到 8 。初始时，标签 i 的盒子里有 i 颗糖。 现在依次执行三步： 第一步：标签为奇数的盒子，里面糖数翻倍。 第二步：对每个盒子判断，如果“盒子标签数字”大于“该盒子当前糖数的个位数”，就从这个盒子里拿走 3 颗糖。 第三步：交换标签 2 和标签 7 ，但不移动盒子里的糖。 问：最后标签 7 的盒子里有几颗糖？ 请只输出 JSON ，不要输出解释。 题目： 有 8 个盒子，标签分别是 1 到 8 。初始时，标签 i 的盒子里有 i 颗糖。 第一步：标签为奇数的盒子，里面糖数翻倍。 第二步：对每个盒子判断，如果",
+      "author": "lynn1su",
+      "createdAt": "2026-05-01T14:38:36.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "DeepSeek",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户报告DeepSeek V4 coding plan的思考模式被强行关闭，无法通过参数调整开启，导致功能失效",
+        "topics": [
+          "DeepSeek",
+          "思考模式",
+          "参数设置",
+          "coding plan"
+        ],
+        "planMentioned": "DeepSeek V4",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-02T06:52:06.138Z"
     }
   ],
   "failures": [
     "linuxdo: https://linux.do/latest.json → 429",
-    "linuxdo: https://linux.do/latest.json → 429"
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1209933: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"google/gemma-3n-e2b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Google AI Studio\",\"is_"
   ]
 }

@@ -1,0 +1,66 @@
+{
+  "date": "2026-05-02",
+  "generatedAt": "2026-05-02T06:50:11.354Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 3,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "MiMo (可能来自中国提供商)": 1,
+      "DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1209931",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1209931",
+      "title": "小米领取的： 7 亿 TOKEN 可以做什么？",
+      "content": "Pro 月度套餐 有效期至 2026-05-30 23:59(UTC) 当前套餐用量 0/700,000,000 已使用 0.0% 套餐权益 了解更多 模型 MiMo-V2.5-Pro 、MiMo-V2.5 、MiMo-V2.5-TTS-VoiceClone 、MiMo-V2.5-TTS-VoiceDesign 、MiMo-V2.5-TTS 、MiMo-V2-Pro 、MiMo-V2-Omni 、MiMo-V2-TTS 额度 700,000,000 Credits 编程工具 支持 OpenClaw 、Claude Code 、OpenCode 、KiloCode 等国内外主流编程工具 其他权益 非高峰期（ 16:00-24:00 UTC ） 0.8x 系数消耗； TTS 系列模型限时免费使用",
+      "author": "cryptoboy",
+      "createdAt": "2026-05-02T01:16:56.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "MiMo (可能来自中国提供商)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户分享了小米提供的Pro月度套餐，包含700亿积分额度，支持多种AI模型和编程工具（如Claude Code、OpenCode），并说明非高峰期积分消耗减少。",
+        "topics": [
+          "套餐",
+          "编程工具",
+          "模型列表",
+          "积分额度",
+          "非高峰期优惠"
+        ],
+        "planMentioned": "Pro月度套餐",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/106",
+      "analyzedAt": "2026-05-02T06:52:04.933Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1209933: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"google/gemma-3n-e2b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Google AI Studio\",\"is_"
+  ]
+}
