@@ -103,6 +103,62 @@ test('大陆套餐展示阿里云 Token Plan', async ({ page }) => {
   );
 });
 
+test('抓取失败的 provider 不渲染套餐卡片', async ({ page }) => {
+  await page.route('**/provider-pricing.json', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        generatedAt: '2026-05-02T03:06:32.976Z',
+        providers: [
+          {
+            provider: 'aliyun-ai',
+            sourceUrls: ['https://common-buy.aliyun.com/?commodityCode=sfm_codingplan_public_cn#/buy'],
+            staleReason: '最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。',
+            staleFailure: 'aliyun-ai: Unable to locate Aliyun entry script',
+            plans: [
+              {
+                name: '通义灵码专业版',
+                currentPriceText: '¥39/月',
+              },
+            ],
+          },
+          {
+            provider: 'kimi-ai',
+            sourceUrls: ['https://www.kimi.com/zh-cn/help/membership/membership-pricing'],
+            plans: [
+              {
+                name: 'Kimi 测试套餐',
+                currentPriceText: '¥49/月',
+              },
+            ],
+          },
+        ],
+        failures: ['aliyun-ai: Unable to locate Aliyun entry script'],
+      }),
+    });
+  });
+  await page.route('**/openrouter-provider-plans.json', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        generatedAt: '2026-05-02T03:06:32.976Z',
+        generatedAtBeijing: '2026年5月2日 11:06:32',
+        providers: [],
+        pending: [],
+      }),
+    });
+  });
+
+  await page.goto('/#domestic');
+  await waitForDomesticCards(page);
+
+  await expect(page.locator('#provider-card-kimi-ai')).toBeVisible();
+  await expect(page.locator('#provider-card-aliyun-ai')).toHaveCount(0);
+  await expect(page.locator('#pricingFailures')).not.toHaveClass(/hidden/);
+  await expect(page.locator('#pricingFailuresCount')).toHaveText('1');
+  await expect(page.locator('#pricingFailuresList')).toContainText('aliyun-ai: Unable to locate Aliyun entry script');
+});
+
 test('Moonshot Kimi 海内外套餐按人民币和美元分开展示', async ({ page }) => {
   await page.goto('/#domestic');
   await waitForDomesticCards(page);

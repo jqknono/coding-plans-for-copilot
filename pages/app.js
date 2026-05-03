@@ -498,22 +498,50 @@ function getOpenrouterBuyUrl(provider) {
   return null;
 }
 
-function getPricingFailureBuyUrl(failureItem) {
+function getPricingFailureProviderId(failureItem) {
   const text = String(failureItem || "").trim();
   if (!text) {
-    return null;
+    return "";
   }
   const colonIndex = text.indexOf(":");
-  const providerId = (colonIndex >= 0 ? text.slice(0, colonIndex) : text).trim();
+  return (colonIndex >= 0 ? text.slice(0, colonIndex) : text).trim();
+}
+
+function getPricingFailureProviderIds(failures) {
+  return new Set(
+    (Array.isArray(failures) ? failures : [])
+      .map(getPricingFailureProviderId)
+      .filter(Boolean),
+  );
+}
+
+function isFailedPricingProvider(provider, failedProviderIds) {
+  const providerId = String(
+    provider?.provider || provider?.providerId || provider?.id || provider?.slug || "",
+  ).trim();
+  return Boolean(
+    (providerId && failedProviderIds.has(providerId))
+      || provider?.staleReason
+      || provider?.staleFailure,
+  );
+}
+
+function getPricingFailureBuyUrl(failureItem) {
+  const providerId = getPricingFailureProviderId(failureItem);
   return PROVIDER_BUY_URLS[providerId] || null;
 }
 
 function mergeAllProviderData(pricingData, openrouterData) {
   const providerMap = new Map();
   const refMap = new Map();
+  const failedProviderIds = getPricingFailureProviderIds(pricingData?.failures);
 
   const orProviders = Array.isArray(openrouterData?.providers) ? openrouterData.providers : [];
   for (const p of orProviders) {
+    if (isFailedPricingProvider(p, failedProviderIds)) {
+      continue;
+    }
+
     const key = p.providerId || p.slug;
     const entry = {
       id: p.providerId || p.slug,
@@ -534,6 +562,10 @@ function mergeAllProviderData(pricingData, openrouterData) {
 
   const ppProviders = Array.isArray(pricingData?.providers) ? pricingData.providers : [];
   for (const p of ppProviders) {
+    if (isFailedPricingProvider(p, failedProviderIds)) {
+      continue;
+    }
+
     if (refMap.has(p.provider)) {
       const existing = refMap.get(p.provider);
       const existingNames = new Set(existing.plans.map((pl) => pl.name));
