@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-03",
+  "generatedAt": "2026-05-04T07:16:30.137Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 56,
+    "postsAfterKeywordFilter": 3,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Codex": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1210113",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1210113",
+      "title": "都说 Anthropic 不做人，现在国产模型厂也不做人",
+      "content": "潜水老玩意冒出来…首帖没想到竟是吐槽 事情是这样的… 某 G 开头的模型厂的 coding plan, 4/22 号改了用户协议，4/30 号老 plan 下架。 我今天 （ 5/3 ）登陆控制台才看到弹窗。 老 plan 每 5 小时 600 次调用，没有 weekly cap ，新 plan 每五小时 400 次，weekly cap 2000. 说是送两个月“同等级”套餐，首先上面的五小时调用就不是“同等级”了。另外我前面猛猛写的时候一天写 12 小时…老套餐理论 cap 是每周 19800 次，就算我按 10 小时的 cap 算，就算一周写 6 天，那是 600 * 2 * 6 = 7200 。严重怀疑 G 开头的某司是按每天干五小时活，一周干五天的量设计产品的。算了算 400 * 5 = 2000 ，正好。 3 月的时候信誓旦旦说恢复老用户续订老套餐权力，这一个多月就改了。A\\ 不做人，你也不做人？",
+      "author": "ggplot2",
+      "createdAt": "2026-05-03T09:46:07.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户吐槽某以“G”开头的国产模型厂商的 coding plan 在4月底修改用户协议并下架老套餐，新套餐调用次数和每周上限均被削减，且承诺的“同等级”套餐并不等同，引发对厂商诚意与产品设计的不满。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "用户协议",
+          "调用次数",
+          "老用户权益",
+          "控制台弹窗"
+        ],
+        "planMentioned": "coding plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/109",
+      "analyzedAt": "2026-05-04T07:17:42.162Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}

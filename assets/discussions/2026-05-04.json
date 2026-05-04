@@ -1,0 +1,64 @@
+{
+  "date": "2026-05-04",
+  "generatedAt": "2026-05-04T07:16:30.137Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 56,
+    "postsAfterKeywordFilter": 3,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Codex": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1210165",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1210165",
+      "title": "推荐一个 codex 低价中转站",
+      "content": "https://airouter.mxyhi.com/ 36 一个月每周 150 刀额度的套餐",
+      "author": "mxyhi",
+      "createdAt": "2026-05-04T03:03:48.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "推荐一个提供36个月每周150美元额度的Codex低价中转站服务。",
+        "topics": [
+          "定价",
+          "套餐",
+          "Codex",
+          "中转站",
+          "订阅"
+        ],
+        "planMentioned": "Codex",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-04T07:17:36.701Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
