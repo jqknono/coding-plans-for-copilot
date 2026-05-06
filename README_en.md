@@ -13,7 +13,7 @@ Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcano Cloud, Minima
 - **Zero Learning Curve**: Fully integrated into VS Code Copilot Chat without changing any operational habits.
 - **Flexible Model Management**: Supports dynamic fetching from `/models` endpoint, or custom model lists.
 - **Intelligent Commit Generation**: Automatically generates Conventional Commits-compliant commit messages based on Git changes.
-- **Coding Plans Dashboard**: Visit [GitHub Pages Dashboard](https://jqknono.github.io/coding-plans-for-copilot/) to view monthly fees and benefits from multiple coding plans, as well as OpenRouter vendor performance metrics.
+- **Coding Plans Dashboard**: Visit [GitHub Pages Dashboard](https://jqknono.github.io/coding-plans-for-copilot/) to view monthly fees and benefits from multiple coding plans, as well as OpenRouter vendor performance metrics. The dashboard updates daily with automated scraping, multi-dimensional filtering, and URL state sync.
 - **Key Security**: API Keys are stored locally using VS Code Secret Storage, not uploaded to the cloud or shared.
 
 ---
@@ -201,12 +201,179 @@ Limited by VS Code's public API, this extension additionally implements context 
 
 Vendor configurations can be saved per workspace/folder; API Keys are stored in VS Code Secret Storage (local) by vendor name.
 
-## Dashboard
+## 📊 GitHub Pages Dashboard
 
-Visit [GitHub Pages Plans Dashboard](https://jqknono.github.io/coding-plans-for-copilot/):
-- `大陆套餐供应商` Tab: Shows publicly available monthly plan pricing in RMB.
-- `海外供应商` Tab: Shows USD-priced plans; restricted items are placed in Pending collapsible section.
-- `Provider 性能指标` Tab: Shows OpenRouter model performance metrics (availability, latency, throughput p50/p90/p99) for different vendors over the last 30 minutes, with filtering by model vendor/model/vendor.
+<div align="center">
+
+### [🚀 Visit Live Dashboard →](https://jqknono.github.io/coding-plans-for-copilot/)
+
+[![Dashboard Preview](https://jqknono.github.io/coding-plans-for-copilot/preview.png)](https://jqknono.github.io/coding-plans-for-copilot/)
+
+**Daily Auto-Update** · Multi-Dimensional Filtering · URL State Sync · Responsive Design
+
+</div>
+
+The Coding Plans Dashboard is a real-time data panel deployed on GitHub Pages, aggregating monthly fees and benefits from mainstream domestic AI coding plans, as well as OpenRouter vendor performance metrics. Data is automatically scraped daily via scheduled tasks — no manual maintenance required.
+
+### Dashboard Overview
+
+| Tab | Content | Data Source | Update Frequency |
+| --- | --- | --- | --- |
+| 📦 **Domestic Plans** | RMB monthly plans (Zhipu, Kimi, Volcengine, etc. 20+ vendors) | Vendor website scraping | Daily 10:00 |
+| 🌍 **Overseas Plans** | USD plans (Cerebras, Synthetic, etc.) | OpenRouter API + websites | Daily 16:00 |
+| 📊 **Provider Metrics** | Availability, latency (p50/p90/p99), throughput (RPS) | OpenRouter API | Daily 16:00 |
+
+### Features
+
+| Feature | Description |
+| --- | --- |
+| **Three-Tab Views** | Domestic Plans, Overseas Plans, and OpenRouter Performance Metrics switch independently |
+| **Automated Scraping** | Daily scheduled scraping of vendor pricing and performance metrics for reliable, up-to-date data |
+| **Multi-Dimensional Filtering** | Cross-filter by model vendor, model name, provider, cache discount, and more |
+| **Real-Time Metrics** | Displays vendor availability, latency percentiles (p50/p90/p99), and requests per second (RPS) over the last 30 minutes |
+| **Failure Tracking** | Failed scraping items displayed in a collapsible section for easy troubleshooting |
+| **URL State Sync** | Filter conditions automatically sync to URL `hash`, supporting link sharing and browser back/forward |
+| **Responsive Design** | Perfectly adapts to both desktop and mobile browsing |
+| **Zero Backend** | Pure static pages + JSON data files — simple deployment, fast loading |
+
+### Data Pipeline
+
+```mermaid
+graph TB
+    subgraph Scheduled["⏰ Scheduled Tasks (GitHub Actions)"]
+        direction LR
+        T1["pricing:fetch"]
+        T2["metrics:fetch"]
+        T3["openrouter:plans:fetch"]
+    end
+
+    subgraph DataFiles["📁 assets/"]
+        D1["provider-pricing.json"]
+        D2["openrouter-provider-metrics.json"]
+        D3["openrouter-provider-plans.json"]
+    end
+
+    subgraph Dashboard["🌐 GitHub Pages Dashboard"]
+        P1["📦 Domestic Plans"]
+        P2["🌍 Overseas Plans"]
+        P3["📊 Provider Metrics"]
+    end
+
+    T1 --> D1
+    T2 --> D2
+    T3 --> D3
+    D1 --> P1
+    D2 --> P3
+    D3 --> P2
+```
+
+### Tab Details
+
+#### 📦 Domestic Plans
+
+- **Coverage**: Zhipu, Kimi, iFLYTEK, Volcengine, MiniMax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Infini, Qiniu, Xiaomi MiMo, Moore Threads, StepFun, China Unicom Cloud, National Supercomputing Internet, and 20+ more vendors
+- **Currency**: Chinese Yuan (CNY)
+- **Filtering Rules**: Standard monthly plans only (excluding annual, quarterly, and first-month promotional prices)
+- **Display**: Plan name, price, included quota, validity period, purchase links
+- **Error Handling**: Failed scraping items displayed in a collapsible section at the bottom
+
+#### 🌍 Overseas Plans
+
+- **Coverage**: Cerebras Code, Synthetic, Chutes, Kilo Pass, and other OpenRouter vendors
+- **Currency**: US Dollar (USD)
+- **Data Sources**: OpenRouter API + vendor website Playwright scraping
+- **Display**: Plan name, price, included quota, OpenRouter link, official pricing page
+- **Error Handling**: Access-restricted or parsing-failed items placed in `Pending` collapsible section
+
+#### 📊 Provider Performance Metrics
+
+- **Availability**: Vendor success request ratio over the last 30 minutes
+- **Latency Metrics**:
+  - **p50**: Median latency (50% of requests complete within this value)
+  - **p90**: 90th percentile latency
+  - **p99**: Tail latency (slowest 1% of requests)
+- **Throughput Metrics**: Requests processed per second (RPS)
+- **Filtering Dimensions**:
+  - By model vendor (DeepSeek, Qwen, MoonshotAI, ByteDance, etc.)
+  - By model name (deepseek-chat, qwen-max, etc.)
+  - By provider (Cerebras, Chutes, Kilo, etc.)
+  - By cache discount (with/without prompt cache discount)
+
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Fetch latest data (execute in order)
+npm run pricing:fetch          # Fetch domestic vendor pricing
+npm run metrics:fetch          # Fetch OpenRouter performance metrics
+npm run openrouter:plans:fetch # Fetch overseas vendor plans
+
+# Start local preview server
+npm run serve:page
+# Visit http://127.0.0.1:4173
+```
+
+### Data File Structure
+
+The dashboard uses the following core data files (located in the `assets/` directory):
+
+```json
+// provider-pricing.json — Domestic vendor monthly plans
+{
+  "generatedAt": "2026-05-06T12:00:00+08:00",
+  "providers": [
+    {
+      "provider": "zhipu-ai",
+      "sourceUrls": ["https://bigmodel.cn/glm-coding"],
+      "plans": [
+        { "name": "GLM Coding Plan", "price": 199, "currency": "¥", ... }
+      ]
+    }
+  ],
+  "failures": []
+}
+```
+
+```json
+// openrouter-provider-metrics.json — Vendor performance metrics
+{
+  "generatedAt(Beijing)": "2026-05-06 12:00:00",
+  "captureWindow": "30 minutes",
+  "models": [
+    {
+      "id": "deepseek/deepseek-chat",
+      "organization": "deepseek",
+      "providers": [
+        { "provider_name": "Cerebras", "uptime": 99.9, "latency_p50": 120, ... }
+      ]
+    }
+  ]
+}
+```
+
+```json
+// openrouter-provider-plans.json — Overseas vendor plans
+{
+  "providers": [ ... ],
+  "pending": [ ... ],
+  "summary": { "total": 12, "withPricing": 10 },
+  "generatedAt(Beijing)": "2026-05-06 16:00:00"
+}
+```
+  "captureWindow": "30 minutes",
+  "models": [
+    {
+      "id": "deepseek/deepseek-chat",
+      "organization": "deepseek",
+      "providers": [
+        { "provider_name": "Cerebras", "uptime": 99.9, "latency_p50": 120, ... }
+      ]
+    }
+  ]
+}
+```
 
 ---
 

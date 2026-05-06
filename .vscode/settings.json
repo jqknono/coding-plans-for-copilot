@@ -27,5 +27,6 @@
             "approve": true,
             "matchCommandLine": true
         }
-    }
+    },
+    "coding-plans.logLevel": "debug"
 }

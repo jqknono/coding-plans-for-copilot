@@ -3108,6 +3108,87 @@ async function runLMChatProviderAdapterProvideTokenCountTests(
   console.log('PASS LMChatProviderAdapter 的 provideTokenCount 固定返回 0，不复用上一轮上下文占用');
 }
 
+async function runLMChatProviderAdapterEmptyResponseRetryTests(
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule
+): Promise<void> {
+  const vscode = require('vscode') as {
+    Disposable: new (callback?: () => void) => { dispose(): void };
+    LanguageModelError: new (message: string) => Error & { code?: string };
+    LanguageModelTextPart: new (value: string) => { value: string };
+  };
+  const { LMChatProviderAdapter } = lmChatProviderAdapterModule;
+
+  let sendCount = 0;
+  const targetModel = {
+    id: 'vendor/model',
+    name: 'model',
+    maxTokens: 32000,
+    sendRequest: async () => {
+      sendCount += 1;
+      if (sendCount === 1) {
+        return {
+          stream: (async function* () {
+            const error = new vscode.LanguageModelError('Request failed: Upstream model returned an empty response.');
+            error.code = 'coding-plans.empty-model-response';
+            throw error;
+          })(),
+          text: (async function* () {})()
+        };
+      }
+
+      return {
+        stream: (async function* () {
+          yield new vscode.LanguageModelTextPart('retry succeeded');
+        })(),
+        text: (async function* () {
+          yield 'retry succeeded';
+        })()
+      };
+    }
+  };
+
+  const fakeProvider = {
+    getVendor(): string {
+      return 'coding-plans';
+    },
+    getModel(modelId: string): typeof targetModel | undefined {
+      return modelId === targetModel.id ? targetModel : undefined;
+    },
+    onDidChangeModels(): { dispose(): void } {
+      return new vscode.Disposable();
+    }
+  };
+
+  const adapter = new LMChatProviderAdapter(fakeProvider as never);
+  const reportedParts: Array<{ value?: string }> = [];
+  const progress = {
+    report(part: { value?: string }): void {
+      reportedParts.push(part);
+    }
+  };
+  const model = {
+    id: targetModel.id,
+    name: targetModel.name
+  } as never;
+  const messages = [{
+    role: 1,
+    content: [new vscode.LanguageModelTextPart('hello')]
+  }] as never;
+  const token = {
+    isCancellationRequested: false,
+    onCancellationRequested(): { dispose(): void } {
+      return new vscode.Disposable();
+    }
+  } as never;
+
+  await adapter.provideLanguageModelChatResponse(model, messages, {} as never, progress as never, token);
+
+  assert.equal(sendCount, 2);
+  assert.deepEqual(reportedParts.map(part => part.value), ['retry succeeded']);
+  adapter.dispose();
+  console.log('PASS LMChatProviderAdapter 会在空响应且尚未输出内容时自动重试');
+}
+
 async function main(): Promise<void> {
   const restore = installVscodeMock();
   try {
@@ -3138,6 +3219,7 @@ async function main(): Promise<void> {
     runPlanUsageStatusTests(planUsageStatusModule, contextUsageStateModule);
     runCommitMessageGeneratorTests(commitMessageGeneratorModule);
     await runLMChatProviderAdapterProvideTokenCountTests(contextUsageStateModule, lmChatProviderAdapterModule);
+    await runLMChatProviderAdapterEmptyResponseRetryTests(lmChatProviderAdapterModule);
   } finally {
     restore();
   }

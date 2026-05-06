@@ -13,7 +13,7 @@
 - **零学习成本**：完全集成到 VS Code Copilot Chat，不改变任何操作习惯。
 - **灵活模型管理**：支持动态拉取 `/models` 端点，也可自定义模型列表。
 - **智能 Commit 生成**：基于 Git 变更自动生成符合 Conventional Commits 规范的提交消息。
-- **编码套餐看板**：访问 [GitHub Pages 看板](https://jqknono.github.io/coding-plans-for-copilot/) 查看多家编码套餐月费与权益，以及 OpenRouter 供应商性能指标。
+- **编码套餐看板**：访问 [GitHub Pages 看板](https://jqknono.github.io/coding-plans-for-copilot/) 查看多家编码套餐月费与权益，以及 OpenRouter 供应商性能指标。看板每日自动更新，支持多维度筛选与 URL 状态同步。
 - **密钥安全**：API Key 使用 VS Code Secret Storage 本地保存，不上云不共享。
 
 ---
@@ -201,12 +201,167 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 供应商配置可按工作区/文件夹保存；API Key 按供应商名保存在 VS Code Secret Storage（本地）。
 
-## 看板
+## 📊 GitHub Pages 看板
 
-访问 [GitHub Pages 套餐看板](https://jqknono.github.io/coding-plans-for-copilot/)：
-- `大陆套餐供应商` Tab：展示人民币计价的公开月费套餐。
-- `海外供应商` Tab：展示美元计价套餐；访问受限项放入 Pending 折叠区。
-- `Provider 性能指标` Tab：展示 OpenRouter 模型在不同供应商下的最近 30 分钟性能指标（可用率、延迟、吞吐 p50/p90/p99），支持按模型厂商/模型/供应商筛选。
+<div align="center">
+
+### [🚀 在线访问看板 →](https://jqknono.github.io/coding-plans-for-copilot/)
+
+[![看板预览](https://jqknono.github.io/coding-plans-for-copilot/preview.png)](https://jqknono.github.io/coding-plans-for-copilot/)
+
+**每日自动更新** · 多维度筛选 · URL 状态同步 · 响应式设计
+
+</div>
+
+编码套餐看板是一个部署在 GitHub Pages 上的实时数据面板，聚合了国内主流 AI 编码套餐的月费与权益信息，以及 OpenRouter 供应商的性能指标。数据通过定时任务每日自动抓取，无需手动维护。
+
+### 看板总览
+
+| 标签页 | 内容 | 数据源 | 更新频率 |
+| --- | --- | --- | --- |
+| 📦 **大陆套餐** | 人民币月费套餐（智谱、Kimi、火山引擎等 20+ 供应商） | 供应商官网抓取 | 每日 10:00 |
+| 🌍 **海外套餐** | 美元计价套餐（Cerebras、Synthetic 等） | OpenRouter API + 官网 | 每日 16:00 |
+| 📊 **Provider 指标** | 可用率、延迟（p50/p90/p99）、吞吐（RPS） | OpenRouter API | 每日 16:00 |
+
+### 功能特性
+
+| 特性 | 说明 |
+| --- | --- |
+| **三标签视图** | 大陆套餐、海外套餐、OpenRouter 性能指标独立切换，互不干扰 |
+| **自动抓取** | 每日定时抓取供应商定价与性能指标，数据实时可靠 |
+| **多维筛选** | 支持按模型厂商、模型名称、供应商、缓存优惠等维度交叉筛选 |
+| **实时指标** | 展示最近 30 分钟供应商可用率、延迟分位（p50/p90/p99）、每秒请求数（RPS） |
+| **失败追踪** | 抓取失败项单独展示在折叠区，便于排查问题 |
+| **URL 状态同步** | 筛选条件自动同步到 URL `hash`，支持分享链接和浏览器回退 |
+| **响应式设计** | 完美适配桌面端和移动端浏览 |
+| **零后端** | 纯静态页面 + JSON 数据文件，部署简单，访问快速 |
+
+### 数据流水线
+
+```mermaid
+graph TB
+    subgraph 定时任务["⏰ 定时任务 (GitHub Actions)"]
+        direction LR
+        T1["pricing:fetch"]
+        T2["metrics:fetch"]
+        T3["openrouter:plans:fetch"]
+    end
+
+    subgraph 数据文件["📁 assets/"]
+        D1["provider-pricing.json"]
+        D2["openrouter-provider-metrics.json"]
+        D3["openrouter-provider-plans.json"]
+    end
+
+    subgraph 看板["🌐 GitHub Pages 看板"]
+        P1["📦 大陆套餐"]
+        P2["🌍 海外套餐"]
+        P3["📊 Provider 指标"]
+    end
+
+    T1 --> D1
+    T2 --> D2
+    T3 --> D3
+    D1 --> P1
+    D2 --> P3
+    D3 --> P2
+```
+
+### 标签页详情
+
+#### 📦 大陆套餐
+
+- **覆盖范围**：智谱、Kimi、讯飞、火山引擎、MiniMax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、Infini、七牛、小米 MiMo、摩尔线程、阶跃星辰、联通云、国家超算互联网等 20+ 供应商
+- **计价方式**：人民币（CNY）
+- **筛选规则**：仅展示标准月费套餐（不含年费、季费与首月特惠价）
+- **展示内容**：套餐名称、价格、包含额度、有效期、购买链接
+- **异常处理**：抓取失败项在底部折叠区展示
+
+#### 🌍 海外套餐
+
+- **覆盖范围**：Cerebras Code、Synthetic、Chutes、Kilo Pass 等 OpenRouter 供应商
+- **计价方式**：美元（USD）
+- **数据来源**：OpenRouter API + 供应商官网 Playwright 抓取
+- **展示内容**：套餐名称、价格、包含额度、OpenRouter 链接、官方定价页
+- **异常处理**：访问受限或解析失败项放入 `Pending` 折叠区
+
+#### 📊 Provider 性能指标
+
+- **可用率**：供应商最近 30 分钟的成功请求比例
+- **延迟指标**：
+  - **p50**：中位延迟（50% 请求不超过该值）
+  - **p90**：90 分位延迟
+  - **p99**：尾部延迟（最慢 1% 请求）
+- **吞吐指标**：每秒处理的请求数（RPS）
+- **筛选维度**：
+  - 按模型厂商（DeepSeek、Qwen、MoonshotAI、ByteDance 等）
+  - 按模型名称（deepseek-chat、qwen-max 等）
+  - 按供应商（Cerebras、Chutes、Kilo 等）
+  - 按缓存优惠（有/无 prompt cache 折扣）
+
+### 本地运行
+
+```bash
+# 安装依赖
+npm install
+
+# 抓取最新数据（按顺序执行）
+npm run pricing:fetch          # 抓取大陆供应商定价
+npm run metrics:fetch          # 抓取 OpenRouter 性能指标
+npm run openrouter:plans:fetch # 抓取海外供应商套餐
+
+# 启动本地预览服务
+npm run serve:page
+# 访问 http://127.0.0.1:4173
+```
+
+### 数据文件结构
+
+看板使用以下核心数据文件（位于 `assets/` 目录）：
+
+```json
+// provider-pricing.json — 大陆供应商月费套餐
+{
+  "generatedAt": "2026-05-06T12:00:00+08:00",
+  "providers": [
+    {
+      "provider": "zhipu-ai",
+      "sourceUrls": ["https://bigmodel.cn/glm-coding"],
+      "plans": [
+        { "name": "GLM Coding 套餐", "price": 199, "currency": "¥", ... }
+      ]
+    }
+  ],
+  "failures": []
+}
+```
+
+```json
+// openrouter-provider-metrics.json — 供应商性能指标
+{
+  "generatedAt(Beijing)": "2026-05-06 12:00:00",
+  "captureWindow": "30 minutes",
+  "models": [
+    {
+      "id": "deepseek/deepseek-chat",
+      "organization": "deepseek",
+      "providers": [
+        { "provider_name": "Cerebras", "uptime": 99.9, "latency_p50": 120, ... }
+      ]
+    }
+  ]
+}
+```
+
+```json
+// openrouter-provider-plans.json — 海外供应商套餐
+{
+  "providers": [ ... ],
+  "pending": [ ... ],
+  "summary": { "total": 12, "withPricing": 10 },
+  "generatedAt(Beijing)": "2026-05-06 16:00:00"
+}
+```
 
 ---
 

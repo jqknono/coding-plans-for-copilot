@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { ContextUsageState, LastContextUsageSnapshot } from '../contextUsageState';
 import { BaseAIProvider, BaseLanguageModel, getCompactErrorMessage } from './baseProvider';
 import { ConfigStore } from '../config/configStore';
+import { isEmptyModelResponseError } from './genericProvider';
 import {
   MODEL_VERSION_LABEL,
   REQUEST_SOURCE_COMMIT_MESSAGE,
@@ -14,6 +15,7 @@ import { NormalizedTokenUsage, readAttachedTokenUsage } from './tokenUsage';
 
 let hasShownVendorNotConfiguredWarning = false;
 const PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS = 30000;
+const MAX_EMPTY_MODEL_RESPONSE_RETRIES = 2;
 
 interface ProviderPickerConfiguration {
   name?: unknown;
@@ -291,45 +293,72 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       messages: requestMessageSummaries
     });
 
-    try {
-      const forwardedOptions = this.toForwardedRequestOptions(options);
-      const response = await targetModel.sendRequest(
-        messages.map(message => this.toChatMessage(message)),
-        forwardedOptions,
-        token
-      );
-      const responseTraceId = (response as unknown as Record<string, unknown>)[RESPONSE_TRACE_ID_FIELD];
-      if (typeof responseTraceId === 'string' && responseTraceId.trim().length > 0) {
-        traceId = responseTraceId;
-      }
-      logger.info('Adapter received language model response object', {
-        traceId,
-        provider: vendor,
-        modelId: model.id,
-        hasStream: !!response.stream,
-        hasText: !!response.text
-      });
-      this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
+    const forwardedOptions = this.toForwardedRequestOptions(options);
 
-      let reportedPartCount = 0;
-      for await (const part of response.stream as AsyncIterable<vscode.LanguageModelResponsePart>) {
-        logger.debug('Adapter reporting response part to VS Code', {
+    try {
+      for (let attempt = 0; ; attempt += 1) {
+        const response = await targetModel.sendRequest(
+          messages.map(message => this.toChatMessage(message)),
+          forwardedOptions,
+          token
+        );
+        const responseTraceId = (response as unknown as Record<string, unknown>)[RESPONSE_TRACE_ID_FIELD];
+        if (typeof responseTraceId === 'string' && responseTraceId.trim().length > 0) {
+          traceId = responseTraceId;
+        }
+        logger.info('Adapter received language model response object', {
           traceId,
           provider: vendor,
           modelId: model.id,
-          index: reportedPartCount,
-          part: this.summarizeResponsePart(part)
+          hasStream: !!response.stream,
+          hasText: !!response.text,
+          attempt: attempt + 1
         });
-        progress.report(part as vscode.LanguageModelResponsePart);
-        reportedPartCount += 1;
+        this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
+
+        let reportedPartCount = 0;
+        try {
+          for await (const part of response.stream as AsyncIterable<vscode.LanguageModelResponsePart>) {
+            logger.debug('Adapter reporting response part to VS Code', {
+              traceId,
+              provider: vendor,
+              modelId: model.id,
+              index: reportedPartCount,
+              part: this.summarizeResponsePart(part)
+            });
+            progress.report(part as vscode.LanguageModelResponsePart);
+            reportedPartCount += 1;
+          }
+        } catch (error) {
+          const shouldRetry = reportedPartCount === 0
+            && isEmptyModelResponseError(error)
+            && attempt < MAX_EMPTY_MODEL_RESPONSE_RETRIES
+            && !token.isCancellationRequested;
+          logger.warn('Adapter response stream failed', {
+            traceId,
+            provider: vendor,
+            modelId: model.id,
+            attempt: attempt + 1,
+            reportedPartCount,
+            shouldRetry,
+            error: this.summarizeError(error)
+          });
+          if (shouldRetry) {
+            continue;
+          }
+          throw error;
+        }
+
+        logger.info('Adapter completed language model response stream', {
+          traceId,
+          provider: vendor,
+          modelId: model.id,
+          reportedPartCount,
+          attempt: attempt + 1
+        });
+        this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
+        return;
       }
-      logger.info('Adapter completed language model response stream', {
-        traceId,
-        provider: vendor,
-        modelId: model.id,
-        reportedPartCount
-      });
-      this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
     } catch (error) {
       logger.error('Adapter failed to provide language model chat response', {
         traceId,

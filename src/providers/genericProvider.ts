@@ -113,6 +113,28 @@ interface StreamingCompletionResult {
 }
 
 const MAX_REASONING_CONTENT_CACHE_ENTRIES = 512;
+const EMPTY_MODEL_RESPONSE_ERROR_CODE = 'coding-plans.empty-model-response';
+
+function markEmptyModelResponseError(error: vscode.LanguageModelError): vscode.LanguageModelError {
+  try {
+    Object.defineProperty(error, 'code', {
+      value: EMPTY_MODEL_RESPONSE_ERROR_CODE,
+      configurable: true,
+      writable: true
+    });
+  } catch {
+    // ignore when runtime prevents overriding the code field
+  }
+  return error;
+}
+
+export function isEmptyModelResponseError(error: unknown): boolean {
+  if (!error || typeof error !== 'object') {
+    return false;
+  }
+
+  return (error as { code?: unknown }).code === EMPTY_MODEL_RESPONSE_ERROR_CODE;
+}
 
 class AsyncIterableQueue<T> implements AsyncIterable<T> {
   private readonly items: T[] = [];
@@ -2115,7 +2137,9 @@ export class GenericAIProvider extends BaseAIProvider {
     if (protocol === 'openai-chat') {
       this.promptToSwitchModelToResponsesApi(vendor, modelName, trace);
     }
-    throw new vscode.LanguageModelError(getMessage('requestFailed', getMessage('emptyModelResponse')));
+    throw markEmptyModelResponseError(
+      new vscode.LanguageModelError(getMessage('requestFailed', getMessage('emptyModelResponse')))
+    );
   }
 
   private promptToSwitchModelToResponsesApi(
