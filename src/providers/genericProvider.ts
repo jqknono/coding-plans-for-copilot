@@ -214,6 +214,7 @@ export class GenericAIProvider extends BaseAIProvider {
   private modelVendorMap = new Map<string, ModelVendorMapping>();
   private readonly vendorDiscoveryState = new Map<string, VendorDiscoveryState>();
   private readonly disabledStreamingModelIds = new Set<string>();
+  private readonly emptyOpenAIChatPromptedModelKeys = new Set<string>();
   private readonly reasoningContentByToolCallId = new Map<string, string>();
   private refreshModelsInFlight: Promise<void> | undefined;
   private refreshModelsPending = false;
@@ -2111,7 +2112,65 @@ export class GenericAIProvider extends BaseAIProvider {
       vendor: vendor.name,
       modelName
     });
+    if (protocol === 'openai-chat') {
+      this.promptToSwitchModelToResponsesApi(vendor, modelName, trace);
+    }
     throw new vscode.LanguageModelError(getMessage('requestFailed', getMessage('emptyModelResponse')));
+  }
+
+  private promptToSwitchModelToResponsesApi(
+    vendor: VendorConfig,
+    modelName: string,
+    trace: RequestTraceContext
+  ): void {
+    const promptKey = `${vendor.name}\u0000${modelName}`;
+    if (this.emptyOpenAIChatPromptedModelKeys.has(promptKey)) {
+      return;
+    }
+
+    const model = this.findConfiguredModel(vendor, modelName);
+    if (model?.apiStyle === 'openai-responses') {
+      return;
+    }
+
+    this.emptyOpenAIChatPromptedModelKeys.add(promptKey);
+    const action = getMessage('switchToResponsesApiAction');
+    void Promise.resolve(vscode.window.showWarningMessage(
+      getMessage('switchToResponsesApiPrompt', vendor.name, modelName),
+      action
+    )).then(async picked => {
+      if (picked !== action) {
+        return;
+      }
+
+      const changed = await this.configStore.updateVendorModelApiStyle(
+        vendor.name,
+        modelName,
+        'openai-responses'
+      );
+      if (!changed) {
+        logger.warn('Failed to switch model to Responses API because the model config was not found', {
+          ...trace,
+          vendor: vendor.name,
+          modelName
+        });
+        return;
+      }
+
+      logger.info('Switched model to Responses API after empty OpenAI chat completion', {
+        ...trace,
+        vendor: vendor.name,
+        modelName
+      });
+      await this.refreshModels();
+    }).catch((error: unknown) => {
+      logger.warn('Failed to prompt for Responses API switch after empty OpenAI chat completion', {
+        ...trace,
+        vendor: vendor.name,
+        modelName,
+        error: this.summarizeError(error)
+      });
+    });
   }
 
   private buildStreamingChatResponse(

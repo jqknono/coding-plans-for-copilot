@@ -32,6 +32,8 @@
   "unknownError": "Unknown error",
   "requestFailed": "Request failed: {0}",
   "emptyModelResponse": "Upstream model returned an empty response.",
+  "switchToResponsesApiPrompt": "{0}/{1} returned an empty response through Chat Completions. This model may need the Responses API. Switch it to Responses API? Retry the current request after switching.",
+  "switchToResponsesApiAction": "Switch to Responses API",
   "retryWithV1Prompt": "{0} returned 404. The current baseUrl may be missing /v1. Update it to {1} and retry now?",
   "retryWithV1Action": "Add /v1 and retry",
   "setupModelName": "Configure API Key",

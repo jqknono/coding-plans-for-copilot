@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.17] - 2026-05-06
+- feat(pages): 抓取失败的 provider 不再显示套餐卡片
+- chore(metrics): 更新 OpenRouter 提供商指标数据
+- chore(assets): 更新 OpenRouter 提供商指标与定价数据
+- chore: 统一 API 密钥变量名并优化工作流推送逻辑
+- feat(provider): 更新服务商指标与定价并增强抓取校验
+- feat(provider): 更新模型服务商运行指标与定价数据
+
 ## [0.7.16] - 2026-04-28
 - fix(provider): 清理转发至 Anthropic 的工具 Schema 扩展字段
 - feat(provider): 优化 topP 采样逻辑并增强 Anthropic 兼容性
@@ -38,8 +46,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.6.25] - 2026-03-30
 - feat(套餐使用): 新增套餐使用状态栏与轮询功能
-
-## [0.6.17] - 2026-03-28
-- feat(定价数据): 更新定价数据并增强错误处理机制
-- feat(config): 优化模型配置与输出预算管理
-- feat(provider): 新增京东云支持并更新 Kimi 价格数据

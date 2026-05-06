@@ -233,6 +233,79 @@ export class ConfigStore implements vscode.Disposable {
     this.onDidChangeEmitter.fire();
   }
 
+  async updateVendorModelApiStyle(
+    vendorName: string,
+    modelName: string,
+    apiStyle: VendorApiStyle
+  ): Promise<boolean> {
+    const config = vscode.workspace.getConfiguration('coding-plans');
+    const rawVendors = config.get<unknown[]>('vendors', []);
+    if (!Array.isArray(rawVendors)) {
+      return false;
+    }
+
+    const normalizedVendorName = vendorName.trim();
+    const normalizedModelName = modelName.trim().toLowerCase();
+    const normalizedApiStyle = this.normalizeApiStyle(apiStyle);
+    if (normalizedVendorName.length === 0 || normalizedModelName.length === 0) {
+      return false;
+    }
+
+    let changed = false;
+    const updatedVendors = rawVendors.map(rawVendor => {
+      if (!rawVendor || typeof rawVendor !== 'object') {
+        return rawVendor;
+      }
+
+      const vendorObj = rawVendor as Record<string, unknown>;
+      const name = typeof vendorObj.name === 'string' ? vendorObj.name.trim() : '';
+      if (name !== normalizedVendorName || !Array.isArray(vendorObj.models)) {
+        return rawVendor;
+      }
+
+      let vendorChanged = false;
+      const nextModels = vendorObj.models.map(rawModel => {
+        if (!rawModel || typeof rawModel !== 'object') {
+          return rawModel;
+        }
+
+        const modelObj = rawModel as Record<string, unknown>;
+        const currentModelName = typeof modelObj.name === 'string' ? modelObj.name.trim().toLowerCase() : '';
+        if (currentModelName !== normalizedModelName) {
+          return rawModel;
+        }
+
+        if (modelObj.apiStyle === normalizedApiStyle) {
+          return rawModel;
+        }
+
+        vendorChanged = true;
+        return {
+          ...modelObj,
+          apiStyle: normalizedApiStyle
+        };
+      });
+
+      if (!vendorChanged) {
+        return rawVendor;
+      }
+
+      changed = true;
+      return {
+        ...vendorObj,
+        models: nextModels
+      };
+    });
+
+    if (!changed) {
+      return false;
+    }
+
+    await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
+    this.onDidChangeEmitter.fire();
+    return true;
+  }
+
   private readModelName(raw: unknown): string | undefined {
     if (!raw || typeof raw !== 'object') {
       return undefined;

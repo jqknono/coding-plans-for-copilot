@@ -32,6 +32,8 @@
   "unknownError": "未知错误",
   "requestFailed": "请求失败: {0}",
   "emptyModelResponse": "上游模型返回了空响应。",
+  "switchToResponsesApiPrompt": "{0}/{1} 通过 Chat Completions 返回了空响应。该模型可能需要使用 Responses API；是否切换为 Responses API？切换后请重试当前请求。",
+  "switchToResponsesApiAction": "切换到 Responses API",
   "retryWithV1Prompt": "{0} 返回了 404。当前 baseUrl 似乎缺少 /v1，是否改为 {1} 并立即重试？",
   "retryWithV1Action": "添加 /v1 并重试",
   "setupModelName": "配置 API Key",

@@ -120,6 +120,8 @@ function createVscodeMock() {
     Right: 2
   };
   const createdStatusBarItems: Array<Record<string, unknown>> = [];
+  const shownWarningMessages: Array<{ message: string; items: unknown[] }> = [];
+  let nextWarningMessageSelection: unknown;
 
   class FakeLanguageModelTextPart {
     constructor(public readonly value: string) {}
@@ -242,10 +244,20 @@ function createVscodeMock() {
         };
         createdStatusBarItems.push(item);
         return item;
+      },
+      async showWarningMessage(message: string, ...items: unknown[]): Promise<unknown> {
+        shownWarningMessages.push({ message, items });
+        const selection = nextWarningMessageSelection;
+        nextWarningMessageSelection = undefined;
+        return selection;
       }
     },
     testState: {
-      createdStatusBarItems
+      createdStatusBarItems,
+      shownWarningMessages,
+      setNextWarningMessageSelection(selection: unknown): void {
+        nextWarningMessageSelection = selection;
+      }
     },
     lm: {
       async invokeTool(_name: string, _options: unknown): Promise<{ content: unknown[] }> {
@@ -594,6 +606,46 @@ const testCases: TestCase[] = [
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(updatedVendor.models, [], '传入空数组时应正确清空已有模型');
+    }
+  },
+  {
+    name: '可按模型写回 apiStyle 且保留已有模型配置',
+    initialVendors: [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        models: [
+          {
+            name: 'gpt-5.5',
+            description: 'Keep me',
+            apiStyle: 'openai-chat',
+            temperature: 0.2,
+            capabilities: { tools: true, vision: false }
+          },
+          {
+            name: 'gpt-4o',
+            apiStyle: 'openai-chat'
+          }
+        ]
+      }
+    ],
+    async run(configStore) {
+      const changed = await configStore.updateVendorModelApiStyle('Vendor', 'gpt-5.5', 'openai-responses');
+      assert.equal(changed, true);
+    },
+    verify(context) {
+      assert.equal(context.state.updates.length, 1, '模型协议切换应写回一次 vendors 配置');
+      assert.equal(context.changeCount(), 2, '模型协议切换应触发配置变更与手动通知');
+
+      const updatedVendor = getUpdatedVendor(context.state);
+      const switchedModel = updatedVendor.models.find(model => model.name === 'gpt-5.5');
+      const untouchedModel = updatedVendor.models.find(model => model.name === 'gpt-4o');
+      assert.equal(switchedModel?.apiStyle, 'openai-responses');
+      assert.equal(switchedModel?.description, 'Keep me');
+      assert.equal(switchedModel?.temperature, 0.2);
+      assert.deepEqual(switchedModel?.capabilities, { tools: true, vision: false });
+      assert.equal(untouchedModel?.apiStyle, 'openai-chat');
     }
   }
 ];
@@ -1069,11 +1121,16 @@ function runGenericProviderContextSizeTests(
   }
 }
 
-function runGenericProviderEmptyResponseTests(
+async function runGenericProviderEmptyResponseTests(
   configStoreCtor: ConfigStoreCtor,
   genericProviderModule: GenericProviderModule
-): void {
+): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
+  const vscodeMock = require('vscode') as {
+    testState: {
+      shownWarningMessages: Array<{ message: string; items: unknown[] }>;
+    };
+  };
   activeState = createState([{
     name: 'Vendor',
     baseUrl: 'https://example.test/v1',
@@ -1091,7 +1148,13 @@ function runGenericProviderEmptyResponseTests(
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
     ensureNonEmptyCompletion(
       protocol: 'openai-chat' | 'openai-responses' | 'anthropic',
-      trace: { traceId: string },
+      trace: {
+        traceId: string;
+        vendorName?: string;
+        modelId?: string;
+        modelName?: string;
+        protocol?: 'openai-chat' | 'openai-responses' | 'anthropic';
+      },
       vendor: VendorRecord,
       modelName: string,
       content: string,
@@ -1103,10 +1166,17 @@ function runGenericProviderEmptyResponseTests(
   const vendor = configStore.getVendors()[0] as VendorRecord;
 
   try {
+    vscodeMock.testState.shownWarningMessages.length = 0;
     assert.throws(
       () => provider.ensureNonEmptyCompletion(
         'openai-chat',
-        { traceId: 'trace_empty' },
+        {
+          traceId: 'trace_empty',
+          vendorName: 'Vendor',
+          modelId: 'Vendor/empty-response-guard',
+          modelName: 'empty-response-guard',
+          protocol: 'openai-chat'
+        },
         vendor,
         'empty-response-guard',
         '   ',
@@ -1114,6 +1184,9 @@ function runGenericProviderEmptyResponseTests(
       ),
       /requestFailed|empty response|空响应/i
     );
+    await Promise.resolve();
+    assert.equal(vscodeMock.testState.shownWarningMessages.length, 1);
+    assert.match(vscodeMock.testState.shownWarningMessages[0]?.message ?? '', /switchToResponsesApiPrompt|Responses API/i);
     console.log('PASS GenericAIProvider 会把空 completion 视为上游错误');
 
     assert.doesNotThrow(() => provider.ensureNonEmptyCompletion(
@@ -3053,7 +3126,7 @@ async function main(): Promise<void> {
     await runConfigNormalizationTests(ConfigStore);
     runTokenWindowResolutionTests(baseProviderModule);
     runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
-    runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
+    await runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
     await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule, tokenUsageModule);
     await runGenericProviderAnthropicSamplingCompatibilityTests(ConfigStore, genericProviderModule);
     await runGenericProviderAnthropicStreamFallbackTests(ConfigStore, genericProviderModule);
