@@ -207,7 +207,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 ### [🚀 在线访问看板 →](https://jqknono.github.io/coding-plans-for-copilot/)
 
-[![看板预览](https://jqknono.github.io/coding-plans-for-copilot/preview.png)](https://jqknono.github.io/coding-plans-for-copilot/)
+[![看板预览](https://raw.githubusercontent.com/jqknono/coding-plans-for-copilot/main/preview.png)](https://jqknono.github.io/coding-plans-for-copilot/)
 
 **每日自动更新** · 多维度筛选 · URL 状态同步 · 响应式设计
 

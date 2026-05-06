@@ -207,7 +207,7 @@ Vendor configurations can be saved per workspace/folder; API Keys are stored in 
 
 ### [🚀 Visit Live Dashboard →](https://jqknono.github.io/coding-plans-for-copilot/)
 
-[![Dashboard Preview](https://jqknono.github.io/coding-plans-for-copilot/preview.png)](https://jqknono.github.io/coding-plans-for-copilot/)
+[![Dashboard Preview](https://raw.githubusercontent.com/jqknono/coding-plans-for-copilot/main/preview.png)](https://jqknono.github.io/coding-plans-for-copilot/)
 
 **Daily Auto-Update** · Multi-Dimensional Filtering · URL State Sync · Responsive Design
 
