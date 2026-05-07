@@ -2,14 +2,14 @@
 
 **一键切换多厂商 AI 模型，打破 Copilot 套餐限制。**
 
-支持智谱、Kimi、讯飞、火山云、Minimax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、Infini、七牛等国产大厂，以及**任何**兼容 OpenAI Chat、OpenAI Responses 或 Anthropic 接口风格的供应商。无需改变使用习惯，直接在 VS Code Copilot Chat 中无缝调用。
+支持智谱、Kimi、讯飞、火山引擎、MiniMax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、七牛、DeepSeek 等国产大厂，以及**任何**兼容 OpenAI Chat、OpenAI Responses 或 Anthropic 接口风格的供应商。无需改变使用习惯，直接在 VS Code Copilot Chat 中无缝调用。
 
 ---
 
 ## 核心特性
 
 - **多协议统一接入**：支持 OpenAI Chat（`/chat/completions`）、OpenAI Responses（`/responses`）、Anthropic（`/messages`）三种协议风格，适配任意兼容供应商。
-- **Claude Code 优先端点**：内置供应商默认使用 Anthropic 兼容端点，同时兼容 Claude Code 与 Copilot Chat。
+- **Anthropic 兼容优先**：内置供应商默认使用 Anthropic 兼容端点（`/messages`），无缝接入各类模型。
 - **零学习成本**：完全集成到 VS Code Copilot Chat，不改变任何操作习惯。
 - **灵活模型管理**：支持动态拉取 `/models` 端点，也可自定义模型列表。
 - **智能 Commit 生成**：基于 Git 变更自动生成符合 Conventional Commits 规范的提交消息。
@@ -48,10 +48,10 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 ### 配置
 
-1. 按 `Ctrl+Shift+P`，输入 `编码套餐: 管理编码套餐配置`
-2. 选择「选择供应商」，选择你已注册的平台（如智谱、Kimi、火山引擎等）
-3. 选择「设置 API Key」，粘贴你的 API Key
-4. 打开 Copilot Chat（`Ctrl+L`），切换到「编码套餐」提供商
+1. 按 `Ctrl+Shift+P`，输入 `Coding Plans: Manage Vendor Configuration`
+2. 选择「Select Vendor」，选择你已注册的平台（如智谱、Kimi、火山引擎等）
+3. 选择「Set API Key」，粘贴你的 API Key
+4. 打开 Copilot Chat（`Ctrl+L`），切换到「Coding Plans」提供商
 
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
 
@@ -71,8 +71,8 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | Kimi Overseas | `https://api.moonshot.ai/anthropic` | `https://api.moonshot.ai/v1` |
 | 阿里云（Aliyun） | `https://coding.dashscope.aliyuncs.com/apps/anthropic` | `https://coding.dashscope.aliyuncs.com/v1` |
 | 腾讯云 | `https://api.lkeap.cloud.tencent.com/coding/anthropic` | — |
-| Infini（无问芯穹） | `https://cloud.infini-ai.com` | — |
 | 七牛（Qiniu） | `https://api.qnaigc.com` | — |
+| DeepSeek | `https://api.deepseek.com/anthropic` | `https://api.deepseek.com/v1` |
 | OpenRouter | `https://openrouter.ai/api` | `https://openrouter.ai/api/v1` |
 
 如需切换到 OpenAI 兼容端点，修改供应商的 `baseUrl` 和 `defaultApiStyle` 即可。
@@ -193,7 +193,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 ### 智能 Commit 消息生成
 
-1. 按 `Ctrl+Shift+P`，输入 `编码套餐: 生成 Commit 消息`
+1. 按 `Ctrl+Shift+P`，输入 `Coding Plans: Generate Commit Message`
 2. 插件会分析当前 Git 变更，自动生成符合规范的提交消息
 3. 可选择使用的模型（默认使用当前配置的供应商）
 

@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.7.18] - 2026-05-06
+- docs: add dashboard preview screenshot
+- feat(provider): 支持在模型返回空响应时自动切换至 Responses API
+- feat(pages): 抓取失败的 provider 不再显示套餐卡片
+- chore(metrics): 更新 OpenRouter 提供商指标数据
+- chore(assets): 更新 OpenRouter 提供商指标与定价数据
+- chore: 统一 API 密钥变量名并优化工作流推送逻辑
+- feat(provider): 更新服务商指标与定价并增强抓取校验
+- feat(provider): 更新模型服务商运行指标与定价数据
+
 ## [0.7.17] - 2026-05-06
 - feat(pages): 抓取失败的 provider 不再显示套餐卡片
 - chore(metrics): 更新 OpenRouter 提供商指标数据
@@ -43,6 +53,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.6.26] - 2026-03-31
 - feat(config): 更新供应商配置并优化模型管理
-
-## [0.6.25] - 2026-03-30
-- feat(套餐使用): 新增套餐使用状态栏与轮询功能

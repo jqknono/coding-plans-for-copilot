@@ -426,7 +426,7 @@ const testCases: TestCase[] = [
     }
   },
   {
-    name: '新增模型写回时保留必要发现字段但不落 token 上限',
+    name: '新增模型写回时使用供应商 defaultVision 且不落 token 上限',
     initialVendors: [createVendorWithSpacedModelName()],
     discoveredModels: [
       { name: 'gpt-4o' },
@@ -448,7 +448,7 @@ const testCases: TestCase[] = [
       assert.equal(newModel?.description, 'Fresh from /models');
       assert.equal(newModel?.temperature, undefined);
       assert.equal(newModel?.topP, undefined);
-      assert.deepEqual(newModel?.capabilities, { tools: true, vision: true });
+      assert.deepEqual(newModel?.capabilities, { tools: true, vision: false });
       assert.equal(newModel?.maxInputTokens, undefined);
       assert.equal(newModel?.maxOutputTokens, undefined);
     }
@@ -1118,6 +1118,72 @@ function runGenericProviderContextSizeTests(
       zeroUnsetProvider.dispose();
       zeroUnsetConfigStore.dispose();
     }
+  }
+}
+
+async function runGenericProviderDiscoveryDefaultVisionTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const originalFetch = globalThis.fetch;
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    useModelsEndpoint: true,
+    models: []
+  }]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+    models: Array<{
+      id: string;
+      capabilities?: {
+        imageInput?: boolean;
+        toolCalling?: boolean | number;
+      };
+    }>;
+    refreshModels(): Promise<void>;
+    dispose(): void;
+  };
+
+  globalThis.fetch = (async (_url: string | URL | Request): Promise<Response> => {
+    return new Response(JSON.stringify({
+      data: [{
+        id: 'fresh-vision-model',
+        context_length: 64000,
+        capabilities: {
+          tool_calling: true,
+          image_input: true
+        }
+      }]
+    }), {
+      status: 200,
+      headers: {
+        'content-type': 'application/json'
+      }
+    });
+  }) as typeof globalThis.fetch;
+
+  try {
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
+      vendorName === 'Vendor' ? 'configured' : ''
+    );
+
+    await provider.refreshModels();
+
+    const updatedVendor = getUpdatedVendor(activeState);
+    const refreshedModel = updatedVendor.models.find(model => model.name === 'fresh-vision-model');
+    assert.deepEqual(refreshedModel?.capabilities, { tools: true, vision: false });
+    assert.equal(provider.models[0]?.capabilities?.imageInput, false);
+    console.log('PASS /models 刷新新增模型时 defaultVision=false 会覆盖发现到的 vision=true');
+  } finally {
+    globalThis.fetch = originalFetch;
+    provider.dispose();
+    configStore.dispose();
   }
 }
 
@@ -3207,6 +3273,7 @@ async function main(): Promise<void> {
     await runConfigNormalizationTests(ConfigStore);
     runTokenWindowResolutionTests(baseProviderModule);
     runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
+    await runGenericProviderDiscoveryDefaultVisionTests(ConfigStore, genericProviderModule);
     await runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
     await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule, tokenUsageModule);
     await runGenericProviderAnthropicSamplingCompatibilityTests(ConfigStore, genericProviderModule);

@@ -2,14 +2,14 @@
 
 **Switch between multiple AI model vendors with one click, breaking Copilot plan limitations.**
 
-Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcano Cloud, Minimax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Infini, Qiniu, as well as **any** vendor compatible with OpenAI Chat, OpenAI Responses, or Anthropic API styles. No need to change usage habits; seamlessly call directly in VS Code Copilot Chat.
+Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcengine, MiniMax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Qiniu, DeepSeek, as well as **any** vendor compatible with OpenAI Chat, OpenAI Responses, or Anthropic API styles. No need to change usage habits; seamlessly call directly in VS Code Copilot Chat.
 
 ---
 
 ## Core Features
 
 - **Multi-Protocol Unified Access**: Supports OpenAI Chat (`/chat/completions`), OpenAI Responses (`/responses`), and Anthropic (`/messages`) three protocol styles, adapting to any compatible vendor.
-- **Claude Code Priority Endpoint**: Built-in vendors default to Anthropic-compatible endpoints, compatible with both Claude Code and Copilot Chat.
+- **Anthropic-Compatible Priority**: Built-in vendors default to Anthropic-compatible endpoints (`/messages`), seamlessly connecting to various models.
 - **Zero Learning Curve**: Fully integrated into VS Code Copilot Chat without changing any operational habits.
 - **Flexible Model Management**: Supports dynamic fetching from `/models` endpoint, or custom model lists.
 - **Intelligent Commit Generation**: Automatically generates Conventional Commits-compliant commit messages based on Git changes.
@@ -28,9 +28,9 @@ Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcano Cloud, Minima
 
 1. Open VS Code
 2. Press `Ctrl+Shift+X` to open the Extensions panel
-3. Type `Coding Plans for Copilot` or `编码套餐` in the search box
+3. Type `Coding Plans for Copilot` in the search box
 4. Click **Install** to install
-5. After installation, press `Ctrl+Shift+P` and type `编码套餐` to see related commands
+5. After installation, press `Ctrl+Shift+P` and type `Coding Plans` to see related commands
 
 #### Method 2: Command Line Installation
 
@@ -48,8 +48,8 @@ Click the **Install** button on the marketplace page, which will automatically o
 
 ### Configuration
 
-1. Press `Ctrl+Shift+P`, type `编码套餐: 管理编码套餐配置`
-2. Select "Select Vendor", choose the platform you've registered with (e.g., Zhipu, Kimi, Volcano Engine, etc.)
+1. Press `Ctrl+Shift+P`, type `Coding Plans: Manage Vendor Configuration`
+2. Select "Select Vendor", choose the platform you've registered with (e.g., Zhipu, Kimi, Volcengine, etc.)
 3. Select "Set API Key", paste your API Key
 4. Open Copilot Chat (`Ctrl+L`), switch to "Coding Plans" provider
 
@@ -71,8 +71,8 @@ The following vendors come with built-in default configurations and are ready to
 | Kimi Overseas | `https://api.moonshot.ai/anthropic` | `https://api.moonshot.ai/v1` |
 | Alibaba Cloud (Aliyun) | `https://coding.dashscope.aliyuncs.com/apps/anthropic` | `https://coding.dashscope.aliyuncs.com/v1` |
 | Tencent Cloud | `https://api.lkeap.cloud.tencent.com/coding/anthropic` | — |
-| Infini (无问芯穹) | `https://cloud.infini-ai.com` | — |
 | Qiniu (七牛) | `https://api.qnaigc.com` | — |
+| DeepSeek | `https://api.deepseek.com/anthropic` | `https://api.deepseek.com/v1` |
 | OpenRouter | `https://openrouter.ai/api` | `https://openrouter.ai/api/v1` |
 
 To switch to OpenAI-compatible endpoints, modify the vendor's `baseUrl` and `defaultApiStyle`.
@@ -193,7 +193,7 @@ Limited by VS Code's public API, this extension additionally implements context 
 
 ### Intelligent Commit Message Generation
 
-1. Press `Ctrl+Shift+P`, type `编码套餐: 生成 Commit 消息`
+1. Press `Ctrl+Shift+P`, type `Coding Plans: Generate Commit Message`
 2. The extension analyzes current Git changes and automatically generates a Conventional Commits-compliant commit message
 3. You can select the model to use (defaults to the currently configured vendor)
 

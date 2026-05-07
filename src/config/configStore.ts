@@ -433,7 +433,11 @@ export class ConfigStore implements vscode.Disposable {
         normalized.push(this.buildStoredModelEntry({
           ...inputModel,
           temperature: undefined,
-          topP: undefined
+          topP: undefined,
+          capabilities: {
+            ...inputModel.capabilities,
+            vision: defaultVision
+          }
         }, canonical, defaultVision, defaultApiStyle));
         continue;
       }

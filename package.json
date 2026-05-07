@@ -434,15 +434,15 @@
                             "defaultApiStyle": "anthropic"
                         },
                         {
-                            "name": "Infini",
-                            "baseUrl": "https://cloud.infini-ai.com",
+                            "name": "Qiniu",
+                            "baseUrl": "https://api.qnaigc.com",
                             "models": [],
                             "useModelsEndpoint": true,
                             "defaultApiStyle": "anthropic"
                         },
                         {
-                            "name": "Qiniu",
-                            "baseUrl": "https://api.qnaigc.com",
+                            "name": "DeepSeek",
+                            "baseUrl": "https://api.deepseek.com/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
                             "defaultApiStyle": "anthropic"

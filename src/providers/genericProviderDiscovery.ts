@@ -67,10 +67,6 @@ export function mergeConfiguredModelOverrides(
   return discoveredModels.map(discovered => {
     const configured = configuredByName.get(discovered.name.trim().toLowerCase());
     if (!configured) {
-      const discoveredVision = discovered.capabilities?.vision;
-      if (typeof discoveredVision === 'boolean') {
-        return discovered;
-      }
       return {
         ...discovered,
         capabilities: {
