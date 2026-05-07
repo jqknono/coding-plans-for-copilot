@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-07T03:08:22.175Z",
+  "generatedAt": "2026-05-07T09:00:49.245Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -483,12 +483,12 @@
       "plans": [
         {
           "name": "Coding Plan Lite",
-          "currentPrice": null,
-          "currentPriceText": null,
-          "originalPrice": null,
-          "originalPriceText": null,
+          "currentPrice": 19.9,
+          "currentPriceText": "¥19.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月",
           "unit": "月",
-          "notes": "价格未在套餐概览页公开；计价币种: 人民币（CNY）",
+          "notes": null,
           "serviceDetails": [
             "适用人群：中等强度的开发者，适合大多数开发者。",
             "用量限制：每5小时：最多约 1,200 次请求。 每周：最多约 9,000 次请求。 每订阅月：最多约 18,000 次请求。",
@@ -498,12 +498,12 @@
         },
         {
           "name": "Coding Plan Pro",
-          "currentPrice": null,
-          "currentPriceText": null,
-          "originalPrice": null,
-          "originalPriceText": null,
+          "currentPrice": 99.9,
+          "currentPriceText": "¥99.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
           "unit": "月",
-          "notes": "价格未在套餐概览页公开；计价币种: 人民币（CNY）",
+          "notes": null,
           "serviceDetails": [
             "适用人群：复杂项目开发，适合高强度工作的开发者。",
             "用量限制：Lite套餐的5倍用量。 每5小时：最多约 6,000 次请求。 每周：最多约 45,000 次请求。 每订阅月：最多约 90,000 次请求。",
@@ -575,7 +575,7 @@
         "https://www.kimi.com/zh-cn/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-jP8kWinv.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-y-qWx3zK.js"
       ],
       "plans": [
         {
