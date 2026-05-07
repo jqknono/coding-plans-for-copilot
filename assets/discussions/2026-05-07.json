@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-07",
+  "generatedAt": "2026-05-07T07:13:40.540Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 3,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {}
+  },
+  "posts": [
+    {
+      "id": "v2ex-1210826",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1210826",
+      "title": "中转站自己带你揭晓中转站的计费坑，再说几个可能省钱的方式",
+      "content": "今天跟客户介绍我家的纯正价 Pro 号池，0.35 倍率，结果客户回了一句：别人家给我 0.08 啊 我人都傻了，pro 池子的成本都不止这样，他哪来的 0.08 ？客户说对方宣传的就是 0.08 人民币/1 美元额度，仔细一算，好家伙，如果充值按 1:1 走，那这个 0.08 ，实际倍率是 0.5 左右 已经不能称为割韭菜了，好像在考验数学水平，按这么算我纯 pro 的池子才 0.05 啊 于是我把市面上常见的几种计费套路理了一遍，发现几个文字游戏，分享在下面看看 方式一： 充值 1:1 ，模型官方价，纯按倍率计算 这个算最合理心智负担最小的，我家就是这个方式，但好像宣传上有点吃亏... 方式二: 充值 n:1 ，模型官方价，倍率固定 1 这里就有花活了，就像那个 0.08 实际对应 0.5 倍率，实际需要把 n 乘以汇率才是真实的倍率，但也还算明码标价 方式三: 充值 1:1, 模型自定义价，倍率固定 1 其实也还行... 但是你得知道具体的模型官方计费，才能知道倍率是多少，但和上面一样也还算明码标价 方式四: 按 Token 计费，这个其实是最坑的，不计缓 因为 Token 用起",
+      "author": "blueskeay",
+      "createdAt": "2026-05-07T05:08:50.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": "other",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "讨论了AI模型计费套餐的隐性成本问题，指出不同计费方式（如倍率、Token计费）存在价格差异和潜在坑，并建议用户通过缓存管理和避免低价套餐节省费用。",
+        "topics": [
+          "计费",
+          "套餐对比",
+          "省钱",
+          "倍率",
+          "缓存",
+          "OpenAi",
+          "Pro 号池"
+        ],
+        "planMentioned": "Pro 号池",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/111",
+      "analyzedAt": "2026-05-07T07:14:45.820Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1210838: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"google/gemma-4-31b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Google AI Studio\",\"is_b"
+  ]
+}
