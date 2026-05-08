@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-08T03:06:27.269Z",
+  "generatedAt": "2026-05-08T08:40:38.541Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1304,7 +1304,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.249/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.251/index.js"
       ],
       "plans": [
         {
