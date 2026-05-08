@@ -2,7 +2,7 @@
 
 **Switch between multiple AI model vendors with one click, breaking Copilot plan limitations.**
 
-Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcengine, MiniMax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Qiniu, DeepSeek, as well as **any** vendor compatible with OpenAI Chat, OpenAI Responses, or Anthropic API styles. No need to change usage habits; seamlessly call directly in VS Code Copilot Chat.
+Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcengine, MiniMax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Xiaomi MiMo, DeepSeek, as well as **any** vendor compatible with OpenAI Chat, OpenAI Responses, or Anthropic API styles. No need to change usage habits; seamlessly call directly in VS Code Copilot Chat.
 
 ---
 
@@ -59,40 +59,38 @@ You can also directly edit `settings.json`; the extension will open settings and
 
 The following vendors come with built-in default configurations and are ready to use after installation:
 
-| Vendor | Default Endpoint (Anthropic) | OpenAI Compatible Endpoint |
+| Vendor | Default Built-in Endpoint | Other Compatible Endpoints |
 | --- | --- | --- |
-| Zhipu (zhipu) | `https://open.bigmodel.cn/api/anthropic/v1` | `https://open.bigmodel.cn/api/coding/paas/v4` |
+| Zhipu (zhipu) | `https://open.bigmodel.cn/api/coding/paas/v4` | `https://open.bigmodel.cn/api/anthropic` (Claude Code) / `https://open.bigmodel.cn/api/paas/v4` (general) |
 | z.ai | `https://api.z.ai/api/anthropic` | `https://api.z.ai/api/coding/paas/v4` |
 | Volcano Engine | `https://ark.cn-beijing.volces.com/api/coding` | `https://ark.cn-beijing.volces.com/api/coding/v3` |
 | Volcengine Overseas | `https://ark.ap-southeast.bytepluses.com/api/coding` | `https://ark.ap-southeast.bytepluses.com/api/coding/v3` |
-| MiniMax Mainland | `https://api.minimaxi.com/anthropic` | `https://api.minimaxi.com/v1` |
-| MiniMax Overseas | `https://api.minimax.io/anthropic` | `https://api.minimax.io/v1` |
-| Kimi Mainland | `https://api.moonshot.cn/anthropic` | `https://api.moonshot.cn/v1` |
-| Kimi Overseas | `https://api.moonshot.ai/anthropic` | `https://api.moonshot.ai/v1` |
-| Alibaba Cloud (Aliyun) | `https://coding.dashscope.aliyuncs.com/apps/anthropic` | `https://coding.dashscope.aliyuncs.com/v1` |
-| Tencent Cloud | `https://api.lkeap.cloud.tencent.com/coding/anthropic` | — |
-| Qiniu (七牛) | `https://api.qnaigc.com` | — |
+| Kimi | `https://api.kimi.com/coding/v1` | `https://api.kimi.com/coding/v1` |
+| Alibaba Cloud (Aliyun) | `https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic` | `https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1` |
+| Tencent Cloud | `https://api.lkeap.cloud.tencent.com/plan/anthropic` | `https://api.lkeap.cloud.tencent.com/plan/v3` |
+| Xiaomi MiMo | `https://token-plan-cn.xiaomimimo.com/anthropic` | `https://token-plan-cn.xiaomimimo.com/v1` |
 | DeepSeek | `https://api.deepseek.com/anthropic` | `https://api.deepseek.com/v1` |
 | OpenRouter | `https://openrouter.ai/api` | `https://openrouter.ai/api/v1` |
 
 To switch to OpenAI-compatible endpoints, modify the vendor's `baseUrl` and `defaultApiStyle`.
+The built-in Zhipu default uses the dedicated GLM Coding Plan endpoint `https://open.bigmodel.cn/api/coding/paas/v4`. If you want the Claude Code-compatible entrypoint instead, switch `baseUrl` to `https://open.bigmodel.cn/api/anthropic` and set `defaultApiStyle` to `anthropic`.
+The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-as-you-go API access instead, switch `baseUrl` to `https://api.xiaomimimo.com/anthropic` (`https://api.xiaomimimo.com/v1` for OpenAI compatibility) and use the matching API key.
 
 ### Configuration Examples
 
-**Anthropic Style (Default)**
+**Anthropic Style Example**
 
 ```json
 {
   "coding-plans.vendors": [
     {
-      "name": "zhipu",
-      "baseUrl": "https://open.bigmodel.cn/api/anthropic/v1",
-      "usageUrl": "https://open.bigmodel.cn/api/monitor/usage/quota/limit",
+      "name": "my-anthropic-vendor",
+      "baseUrl": "https://api.example.com/anthropic",
       "defaultApiStyle": "anthropic",
       "useModelsEndpoint": false,
       "models": [
         {
-          "name": "glm-4.7",
+          "name": "my-model",
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 128000
         }
@@ -271,7 +269,7 @@ graph TB
 
 #### 📦 Domestic Plans
 
-- **Coverage**: Zhipu, Kimi, iFLYTEK, Volcengine, MiniMax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Infini, Qiniu, Xiaomi MiMo, Moore Threads, StepFun, China Unicom Cloud, National Supercomputing Internet, and 20+ more vendors
+- **Coverage**: Zhipu, Kimi, iFLYTEK, Volcengine, MiniMax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Infini, Xiaomi MiMo, Moore Threads, StepFun, China Unicom Cloud, National Supercomputing Internet, and 20+ more vendors
 - **Currency**: Chinese Yuan (CNY)
 - **Filtering Rules**: Standard monthly plans only (excluding annual, quarterly, and first-month promotional prices)
 - **Display**: Plan name, price, included quota, validity period, purchase links

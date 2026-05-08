@@ -2,7 +2,7 @@
 
 **一键切换多厂商 AI 模型，打破 Copilot 套餐限制。**
 
-支持智谱、Kimi、讯飞、火山引擎、MiniMax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、七牛、DeepSeek 等国产大厂，以及**任何**兼容 OpenAI Chat、OpenAI Responses 或 Anthropic 接口风格的供应商。无需改变使用习惯，直接在 VS Code Copilot Chat 中无缝调用。
+支持智谱、Kimi、讯飞、火山引擎、MiniMax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、小米 MiMo、DeepSeek 等国产大厂，以及**任何**兼容 OpenAI Chat、OpenAI Responses 或 Anthropic 接口风格的供应商。无需改变使用习惯，直接在 VS Code Copilot Chat 中无缝调用。
 
 ---
 
@@ -59,40 +59,35 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 以下供应商已内置默认配置，安装后即可使用：
 
-| 供应商 | 默认端点（Anthropic） | OpenAI 兼容端点 |
+| 供应商 | 默认端点（内置） | 其他兼容端点 |
 | --- | --- | --- |
-| 智谱（zhipu） | `https://open.bigmodel.cn/api/anthropic/v1` | `https://open.bigmodel.cn/api/coding/paas/v4` |
+| 智谱（zhipu） | `https://open.bigmodel.cn/api/coding/paas/v4` | `https://open.bigmodel.cn/api/anthropic`（Claude Code） / `https://open.bigmodel.cn/api/paas/v4`（通用） |
 | z.ai | `https://api.z.ai/api/anthropic` | `https://api.z.ai/api/coding/paas/v4` |
 | 火山引擎 | `https://ark.cn-beijing.volces.com/api/coding` | `https://ark.cn-beijing.volces.com/api/coding/v3` |
 | Volcengine Overseas | `https://ark.ap-southeast.bytepluses.com/api/coding` | `https://ark.ap-southeast.bytepluses.com/api/coding/v3` |
-| MiniMax Mainland | `https://api.minimaxi.com/anthropic` | `https://api.minimaxi.com/v1` |
-| MiniMax Overseas | `https://api.minimax.io/anthropic` | `https://api.minimax.io/v1` |
-| Kimi Mainland | `https://api.moonshot.cn/anthropic` | `https://api.moonshot.cn/v1` |
-| Kimi Overseas | `https://api.moonshot.ai/anthropic` | `https://api.moonshot.ai/v1` |
-| 阿里云（Aliyun） | `https://coding.dashscope.aliyuncs.com/apps/anthropic` | `https://coding.dashscope.aliyuncs.com/v1` |
-| 腾讯云 | `https://api.lkeap.cloud.tencent.com/coding/anthropic` | — |
-| 七牛（Qiniu） | `https://api.qnaigc.com` | — |
+| Kimi | `https://api.kimi.com/coding/v1` | `https://api.kimi.com/coding/v1` |
+| 阿里云（Aliyun） | `https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic` | `https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1` |
+| 腾讯云 | `https://api.lkeap.cloud.tencent.com/plan/anthropic` | `https://api.lkeap.cloud.tencent.com/plan/v3` |
+| 小米 MiMo | `https://token-plan-cn.xiaomimimo.com/anthropic` | `https://token-plan-cn.xiaomimimo.com/v1` |
 | DeepSeek | `https://api.deepseek.com/anthropic` | `https://api.deepseek.com/v1` |
 | OpenRouter | `https://openrouter.ai/api` | `https://openrouter.ai/api/v1` |
 
-如需切换到 OpenAI 兼容端点，修改供应商的 `baseUrl` 和 `defaultApiStyle` 即可。
 
 ### 配置示例
 
-**Anthropic 风格（默认）**
+**Anthropic 风格示例**
 
 ```json
 {
   "coding-plans.vendors": [
     {
-      "name": "zhipu",
-      "baseUrl": "https://open.bigmodel.cn/api/anthropic/v1",
-      "usageUrl": "https://open.bigmodel.cn/api/monitor/usage/quota/limit",
+      "name": "my-anthropic-vendor",
+      "baseUrl": "https://api.example.com/anthropic",
       "defaultApiStyle": "anthropic",
       "useModelsEndpoint": false,
       "models": [
         {
-          "name": "glm-4.7",
+          "name": "my-model",
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 128000
         }
@@ -271,7 +266,7 @@ graph TB
 
 #### 📦 大陆套餐
 
-- **覆盖范围**：智谱、Kimi、讯飞、火山引擎、MiniMax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、Infini、七牛、小米 MiMo、摩尔线程、阶跃星辰、联通云、国家超算互联网等 20+ 供应商
+- **覆盖范围**：智谱、Kimi、讯飞、火山引擎、MiniMax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、Infini、小米 MiMo、摩尔线程、阶跃星辰、联通云、国家超算互联网等 20+ 供应商
 - **计价方式**：人民币（CNY）
 - **筛选规则**：仅展示标准月费套餐（不含年费、季费与首月特惠价）
 - **展示内容**：套餐名称、价格、包含额度、有效期、购买链接

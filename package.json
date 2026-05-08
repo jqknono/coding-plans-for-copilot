@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.7.18",
+    "version": "0.7.19",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",
@@ -355,20 +355,13 @@
                     },
                     "default": [
                         {
-                            "name": "zhipu",
-                            "baseUrl": "https://open.bigmodel.cn/api/anthropic/v1",
+                            "name": "Zhipu",
+                            "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
                             "usageUrl": "https://open.bigmodel.cn/api/monitor/usage/quota/limit",
-                            "defaultApiStyle": "anthropic",
+                            "defaultApiStyle": "openai-chat",
                             "defaultVision": false,
                             "useModelsEndpoint": true,
                             "models": []
-                        },
-                        {
-                            "name": "z.ai",
-                            "baseUrl": "https://api.z.ai/api/anthropic",
-                            "models": [],
-                            "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
                         },
                         {
                             "name": "火山引擎",
@@ -378,43 +371,15 @@
                             "defaultApiStyle": "anthropic"
                         },
                         {
-                            "name": "Volcengine Overseas",
-                            "baseUrl": "https://ark.ap-southeast.bytepluses.com/api/coding",
-                            "models": [],
-                            "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
-                        },
-                        {
-                            "name": "MiniMax Mainland",
-                            "baseUrl": "https://api.minimaxi.com/anthropic",
-                            "models": [],
-                            "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
-                        },
-                        {
-                            "name": "MiniMax Overseas",
-                            "baseUrl": "https://api.minimax.io/anthropic",
-                            "models": [],
-                            "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
-                        },
-                        {
-                            "name": "Kimi Mainland",
-                            "baseUrl": "https://api.moonshot.cn/anthropic",
-                            "models": [],
-                            "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
-                        },
-                        {
-                            "name": "Kimi Overseas",
-                            "baseUrl": "https://api.moonshot.ai/anthropic",
+                            "name": "Kimi",
+                            "baseUrl": "https://api.kimi.com/coding/v1",
                             "models": [],
                             "useModelsEndpoint": true,
                             "defaultApiStyle": "anthropic"
                         },
                         {
                             "name": "Aliyun",
-                            "baseUrl": "https://coding.dashscope.aliyuncs.com/apps/anthropic",
+                            "baseUrl": "https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
                             "defaultApiStyle": "anthropic"
@@ -427,15 +392,15 @@
                             "defaultApiStyle": "anthropic"
                         },
                         {
-                            "name": "腾讯云",
-                            "baseUrl": "https://api.lkeap.cloud.tencent.com/coding/anthropic",
+                            "name": "Tencent",
+                            "baseUrl": "https://api.lkeap.cloud.tencent.com/plan/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
                             "defaultApiStyle": "anthropic"
                         },
                         {
-                            "name": "Qiniu",
-                            "baseUrl": "https://api.qnaigc.com",
+                            "name": "Xiaomi MiMo",
+                            "baseUrl": "https://token-plan-cn.xiaomimimo.com/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
                             "defaultApiStyle": "anthropic"
