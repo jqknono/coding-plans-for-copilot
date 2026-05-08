@@ -1,6 +1,6 @@
 {
   "date": "2026-05-07",
-  "generatedAt": "2026-05-07T07:13:40.540Z",
+  "generatedAt": "2026-05-08T06:49:56.608Z",
   "config": {
     "sources": [
       "v2ex",
@@ -15,11 +15,11 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 52,
-    "postsAfterKeywordFilter": 3,
-    "relevantPosts": 1,
+    "totalPostsFetched": 61,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 2,
     "discussionsCreated": 1,
-    "discussionsSkipped": 0,
+    "discussionsSkipped": 1,
     "supplierMentions": {}
   },
   "posts": [
@@ -55,11 +55,42 @@
       },
       "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/111",
       "analyzedAt": "2026-05-07T07:14:45.820Z"
+    },
+    {
+      "id": "v2ex-1210961",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1210961",
+      "title": "大家偏向买一个 coding agent 的高级会员还是多个的基础会员？",
+      "content": "我之前是 cursor ，codex ，kiro ，gemini ，copilot 啥的都开了基础会员，轮流着用了试试。但现在觉得都开还是太麻烦了。不知道大家倾向于开一个的高级会员还是多个的基础会员？ 还有比如不同 agent 的相同模型表现是不是差不多？例如 cursor ，kiro 和 antigravity 等都有 claude 模型。",
+      "author": "xyzzyssd",
+      "createdAt": "2026-05-07T12:08:47.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": null,
+        "supplierCategory": "aggregator",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户讨论了选择单个AI coding agent高级会员还是多个基础会员的优劣，提及Cursor、Copilot等工具的模型共享情况。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "Cursor",
+          "Copilot",
+          "Claude模型"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-08T06:51:50.894Z"
     }
   ],
   "failures": [
     "linuxdo: https://linux.do/latest.json → 429",
     "linuxdo: https://linux.do/latest.json → 429",
-    "analysis failed for v2ex-1210838: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"google/gemma-4-31b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Google AI Studio\",\"is_b"
+    "analysis failed for v2ex-1210866: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3-next-80b-a3b-instruct:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Venice\",\"is_"
   ]
 }
