@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-07T09:00:49.245Z",
+  "generatedAt": "2026-05-08T03:06:27.269Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -437,7 +437,7 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.478b5121.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.6a78a7be.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -575,7 +575,7 @@
         "https://www.kimi.com/zh-cn/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-y-qWx3zK.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-otDPNTbs.js"
       ],
       "plans": [
         {
