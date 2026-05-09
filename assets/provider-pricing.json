@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-05-09T03:07:25.732Z",
+  "generatedAt": "2026-05-09T08:38:58.309Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/965c04b62655fe886e0175ca51489c52.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/223d3383944d94706a15ea798ce96a0a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -437,7 +437,7 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.6a78a7be.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.812bb039.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
