@@ -1,0 +1,64 @@
+{
+  "date": "2026-05-09",
+  "generatedAt": "2026-05-10T07:05:58.007Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 12,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "aisubprice.com": 1,
+      "HyperAPI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1211550",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1211550",
+      "title": "HyperAPI 中转站继续送福利，留邮箱发 10$兑换码",
+      "content": "纯 gpt5.5, 注册即有 5$额度，套餐低至 0.1 倍率， 欢迎体验： https://hyperapi.cc",
+      "author": "WinterLord",
+      "createdAt": "2026-05-09T14:21:44.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "HyperAPI",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "HyperAPI offers a GPT5.5 API plan with $5 credit upon registration and pricing as low as 0.1倍率 (0.1x cost ratio).",
+        "topics": [
+          "定价",
+          "套餐",
+          "体验",
+          "GPT5.5"
+        ],
+        "planMentioned": "GPT5.5 API plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/114",
+      "analyzedAt": "2026-05-10T07:11:58.654Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}

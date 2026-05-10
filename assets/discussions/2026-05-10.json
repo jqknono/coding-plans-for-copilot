@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-10",
+  "generatedAt": "2026-05-10T07:05:58.007Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 12,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "aisubprice.com": 1,
+      "HyperAPI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1211579",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1211579",
+      "title": "做了个聚合 AI 订阅价格的小站 aisubprice.com",
+      "content": "你知道 Claude Pro 官方订阅最便宜只要 75 块人民币一个月吗？ 不是合租、不是车位、不是三方代充，是 Anthropic 官方价。秘密就是区域定价——同一个 Pro 套餐，美区 20 美元，换个支持的国家结算，折下来就七十多块。ChatGPT Plus 、Cursor 、Perplexity 这些主流 AI 订阅，基本都存在类似的区域价差，少则差 20%，多的能差一半还多。 这其实就是大大的信息差。大部分人默认按美区价付，一年下来多花的钱够再订一个工具。 我做了个小站把这些信息聚合起来： https://aisubprice.com/ 能干嘛： 一站查主流 AI 订阅的官方价格、套餐 多币种切换，一眼看出哪个区最便宜 按用途分类（聊天 / 编程 / 搜索 / 绘画），快速定位 纯查询站，不卖号不代充，只做信息整理。数据持续在补，发现价格不对或者漏了哪个产品，欢迎留言我马上改。",
+      "author": "biubiuff",
+      "createdAt": "2026-05-10T00:54:38.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "aisubprice.com",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "The post introduces a website (aisubprice.com) that aggregates official pricing for AI subscriptions like Claude Pro, ChatGPT Plus, and Cursor, highlighting regional price differences and categorizing tools by use cases (including programming).",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "Cursor",
+          "区域定价",
+          "信息差"
+        ],
+        "planMentioned": "Cursor",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-10T07:11:55.619Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
