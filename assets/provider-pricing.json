@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-09T08:38:58.309Z",
+  "generatedAt": "2026-05-10T03:07:46.820Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -69,7 +69,7 @@
             "使用频次: 无每 5 小时/每周限额",
             "数据安全: 不使用对话数据训练模型",
             "服务地域: 华北2（北京）",
-            "文本生成模型: qwen3.6-plus、glm-5、MiniMax-M2.5、deepseek-v3.2",
+            "文本生成模型: qwen3.6-plus、qwen3.6-flash、glm-5.1、glm-5、MiniMax-M2.5、deepseek-v3.2、kimi-k2.5、kimi-k2.6",
             "图像生成模型: qwen-image-2.0、qwen-image-2.0-pro、wan2.7-image、wan2.7-image-pro"
           ]
         },
@@ -88,7 +88,7 @@
             "使用频次: 无每 5 小时/每周限额",
             "数据安全: 不使用对话数据训练模型",
             "服务地域: 华北2（北京）",
-            "文本生成模型: qwen3.6-plus、glm-5、MiniMax-M2.5、deepseek-v3.2",
+            "文本生成模型: qwen3.6-plus、qwen3.6-flash、glm-5.1、glm-5、MiniMax-M2.5、deepseek-v3.2、kimi-k2.5、kimi-k2.6",
             "图像生成模型: qwen-image-2.0、qwen-image-2.0-pro、wan2.7-image、wan2.7-image-pro"
           ]
         },
@@ -107,7 +107,7 @@
             "使用频次: 无每 5 小时/每周限额",
             "数据安全: 不使用对话数据训练模型",
             "服务地域: 华北2（北京）",
-            "文本生成模型: qwen3.6-plus、glm-5、MiniMax-M2.5、deepseek-v3.2",
+            "文本生成模型: qwen3.6-plus、qwen3.6-flash、glm-5.1、glm-5、MiniMax-M2.5、deepseek-v3.2、kimi-k2.5、kimi-k2.6",
             "图像生成模型: qwen-image-2.0、qwen-image-2.0-pro、wan2.7-image、wan2.7-image-pro"
           ]
         },
