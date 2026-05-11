@@ -1,0 +1,69 @@
+{
+  "date": "2026-05-11",
+  "generatedAt": "2026-05-11T07:29:01.923Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Claude": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1211799",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1211799",
+      "title": "Token 自由！ Opus 4.7 Max 推理强度自由！ 498 兑换 2000 美金额度（评论就送＄ 20 额度）！ 0.25 人民币换一美金！",
+      "content": "还在每天苦苦抢各种国产 Coding Plan ？ 还在为了几百万 token 精打细算？ 别抢了。 现在用官方约 3.5% 的价格，就能直接用上 Claude 家最强模型： Claude 4.7 Max 推理强度拉满 0.25 元换 1 美金额度 比 GLM / MiniMax 更低 甚至比 DeepSeek 4 Pro 还便宜 但你用到的是： Claude 顶级模型。 不是平替， 不是阉割， 不是二手体验。 写代码、跑 Agent 、长上下文分析、复杂推理： 直接 Max 拉满。 不用每天抠抠搜搜算额度。 本轮只供应一周 一周后恢复： 1 元 / 刀 数量有限，先到先得。 评论区直接送 $20 体验额度。 👇 https://hongmacc.com 真正的 Token 自由， 从不用再抢 Plan 开始。",
+      "author": "bleedfly",
+      "createdAt": "2026-05-11T02:36:07.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.98,
+        "summary": "用户推广Claude 4.7 Max高端模型的优惠计划，通过代币兑换获得1美金额度（0.25元=1美元），强调相比其他国产方案（如GLM、MiniMax、DeepSeek）更低价格且无限制使用顶级模型。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "抽奖",
+          "体验卡",
+          "Claude"
+        ],
+        "planMentioned": "Claude 4.7 Max",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-11T07:32:38.101Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1211875: LLM returned empty content (finish_reason=null)",
+    "analysis failed for v2ex-1211873: LLM returned empty content (finish_reason=null)",
+    "analysis failed for v2ex-1211861: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1211858: LLM returned empty content (finish_reason=null)",
+    "analysis failed for v2ex-1211754: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"google/gemma-4-31b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Google AI Studio\",\"is_b"
+  ]
+}
