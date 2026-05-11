@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-11T03:09:36.350Z",
+  "generatedAt": "2026-05-11T09:18:11.719Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -262,7 +262,7 @@
       ],
       "plans": [
         {
-          "name": "Lite 基础版",
+          "name": "Mini 迷你版",
           "currentPrice": 49,
           "currentPriceText": "¥49/月",
           "originalPrice": null,
@@ -270,20 +270,37 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "调用次数 / 5小时: 约 600 次",
-            "调用次数 / 每周: 约 4,500 次",
-            "调用次数 / 每月: 约 9,000 次",
-            "RPM 上限: 30 次/分钟",
+            "调用次数 / 5小时: 约 200 次",
+            "调用次数 / 每周: 约 650 次",
+            "调用次数 / 每月: 约 1,900 次",
             "最大并发: 3",
             "支持模型: 套餐内全部模型",
             "专属 API Key: ✓",
             "调用明细看板: ✓",
-            "OpenClaw Agent: ✗",
-            "适合人群: 轻度使用，每日编程 1–2 小时"
+            "适合人群: 初步接触AI"
           ]
         },
         {
-          "name": "Pro 高级版",
+          "name": "Lite 入门版",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "调用次数 / 5小时: 约 400 次",
+            "调用次数 / 每周: 约 1,300 次",
+            "调用次数 / 每月: 约 3,800 次",
+            "最大并发: 5",
+            "支持模型: 套餐内全部模型",
+            "专属 API Key: ✓",
+            "调用明细看板: ✓",
+            "适合人群: 入门轻度使用"
+          ]
+        },
+        {
+          "name": "Basic 基础版",
           "currentPrice": 199,
           "currentPriceText": "¥199/月",
           "originalPrice": null,
@@ -291,16 +308,71 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "调用次数 / 5小时: 约 3,000 次",
-            "调用次数 / 每周: 约 22,500 次",
-            "调用次数 / 每月: 约 45,000 次",
-            "RPM 上限: 50 次/分钟",
-            "最大并发: 5",
+            "调用次数 / 5小时: 约 800 次",
+            "调用次数 / 每周: 约 2,600 次",
+            "调用次数 / 每月: 约 7,600 次",
+            "最大并发: 10",
             "支持模型: 套餐内全部模型",
             "专属 API Key: ✓",
             "调用明细看板: ✓",
-            "OpenClaw Agent: ✓",
-            "适合人群: 重度使用，全职 AI 辅助开发"
+            "适合人群: 日常基础使用"
+          ]
+        },
+        {
+          "name": "Pro 增强版",
+          "currentPrice": 499,
+          "currentPriceText": "¥499/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "调用次数 / 5小时: 约 2,000 次",
+            "调用次数 / 每周: 约 6,500 次",
+            "调用次数 / 每月: 约 19,000 次",
+            "最大并发: 10",
+            "支持模型: 套餐内全部模型",
+            "专属 API Key: ✓",
+            "调用明细看板: ✓",
+            "适合人群: 适合高阶用户使用"
+          ]
+        },
+        {
+          "name": "Max 高级版",
+          "currentPrice": 799,
+          "currentPriceText": "¥799/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "调用次数 / 5小时: 约 3,000 次",
+            "调用次数 / 每周: 约 10,500 次",
+            "调用次数 / 每月: 约 31,000 次",
+            "最大并发: 10",
+            "支持模型: 套餐内全部模型",
+            "专属 API Key: ✓",
+            "调用明细看板: ✓",
+            "适合人群: 适合高阶用户使用"
+          ]
+        },
+        {
+          "name": "Ultra 畅享版",
+          "currentPrice": 999,
+          "currentPriceText": "¥999/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "调用次数 / 5小时: 约 4,000 次",
+            "调用次数 / 每周: 约 13,500 次",
+            "调用次数 / 每月: 约 39,000 次",
+            "最大并发: 10",
+            "支持模型: 套餐内全部模型",
+            "专属 API Key: ✓",
+            "调用明细看板: ✓",
+            "适合人群: 适合高阶用户使用"
           ]
         }
       ]
@@ -575,7 +647,7 @@
         "https://www.kimi.com/zh-cn/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-Cuv-2gmY.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BIwnxBiZ.js"
       ],
       "plans": [
         {
