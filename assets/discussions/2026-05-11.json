@@ -1,6 +1,6 @@
 {
   "date": "2026-05-11",
-  "generatedAt": "2026-05-11T07:29:01.923Z",
+  "generatedAt": "2026-05-12T07:12:52.924Z",
   "config": {
     "sources": [
       "v2ex",
@@ -15,13 +15,13 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 59,
+    "totalPostsFetched": 51,
     "postsAfterKeywordFilter": 7,
-    "relevantPosts": 1,
+    "relevantPosts": 2,
     "discussionsCreated": 0,
-    "discussionsSkipped": 1,
+    "discussionsSkipped": 2,
     "supplierMentions": {
-      "Claude": 1
+      "中转站运营者 (未明确名称)": 1
     }
   },
   "posts": [
@@ -55,15 +55,44 @@
       },
       "discussionUrl": null,
       "analyzedAt": "2026-05-11T07:32:38.101Z"
+    },
+    {
+      "id": "v2ex-1211962",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1211962",
+      "title": "继续推广我的 gpt 中转站，注册就送 30$余额",
+      "content": "小站稳定运营，满血 gpt plus 号池，全站充值 1¥ = 5$ 余额；开通两种套餐订阅： 小喵：¥60 / 30 天，每日 20 美元等值 OpenAI 用量，无周限 中喵：¥150 / 30 天，每日 60 美元等值 OpenAI 用量，无周限 V 站用户专属福利：新用户注册即赠送$10 ，在本帖回复注册邮箱，即可免费再送$20 余额！（送了的我会在评论区回复） 欢迎加入 qq 群：1104838931 ，内有小机器人可调教",
+      "author": "feifeimiao",
+      "createdAt": "2026-05-11T09:55:31.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "中转站运营者 (未明确名称)",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "推广一个提供OpenAI API余额的中转站服务，包含两种订阅套餐（小喵和中喵）和新用户注册赠送$30余额的福利。",
+        "topics": [
+          "定价",
+          "OpenAI",
+          "套餐对比",
+          "赠送",
+          "订阅"
+        ],
+        "planMentioned": "小喵/中喵",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-12T07:15:38.565Z"
     }
   ],
   "failures": [
     "linuxdo: https://linux.do/latest.json → 429",
     "linuxdo: https://linux.do/latest.json → 429",
-    "analysis failed for v2ex-1211875: LLM returned empty content (finish_reason=null)",
-    "analysis failed for v2ex-1211873: LLM returned empty content (finish_reason=null)",
-    "analysis failed for v2ex-1211861: The operation was aborted due to timeout",
-    "analysis failed for v2ex-1211858: LLM returned empty content (finish_reason=null)",
-    "analysis failed for v2ex-1211754: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"google/gemma-4-31b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Google AI Studio\",\"is_b"
+    "analysis failed for v2ex-1212152: LLM output schema validation failed: isRelevant: expected boolean, got undefined; isCodingPlan: expected boolean, got undefined; relevance: expected number 0-1, got undefined; category: expected non-empty string, got undefined",
+    "analysis failed for v2ex-1212135: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"google/gemma-4-26b-a4b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Google AI Studio\",\"",
+    "analysis failed for v2ex-1212104: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"cognitivecomputations/dolphin-mistral-24b-venice-edition:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"prov"
   ]
 }
