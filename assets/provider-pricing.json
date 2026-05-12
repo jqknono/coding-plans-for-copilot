@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-11T09:18:11.719Z",
+  "generatedAt": "2026-05-12T03:08:01.669Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -647,7 +647,7 @@
         "https://www.kimi.com/zh-cn/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-BIwnxBiZ.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/common-DBCl9Kgu.js"
       ],
       "plans": [
         {
@@ -1376,7 +1376,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.251/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.264/index.js"
       ],
       "plans": [
         {
