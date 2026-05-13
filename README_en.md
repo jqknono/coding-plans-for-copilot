@@ -49,9 +49,9 @@ Click the **Install** button on the marketplace page, which will automatically o
 ### Configuration
 
 1. Press `Ctrl+Shift+P`, type `Coding Plans: Manage Vendor Configuration`
-2. Select "Select Vendor", choose the platform you've registered with (e.g., Zhipu, Kimi, Volcengine, etc.)
-3. Select "Set API Key", paste your API Key
-4. Open Copilot Chat (`Ctrl+L`), switch to "Coding Plans" provider
+2. Pick the platform you've registered with from the vendor picker (e.g., Zhipu, Kimi, Volcengine, etc.)
+3. Select "Set API Key" and paste your API Key; the extension stores it and refreshes models
+4. Open Copilot Chat (`Ctrl+L`), choose "Coding Plans" in Add Models, and only enter a Group Name
 
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 

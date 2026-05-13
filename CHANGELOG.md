@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.1] - 2026-05-13
+- feat(config): 新增供应商配置管理向导并优化模型加载逻辑
+
+## [0.7.19] - 2026-05-08
+- feat(config): 更新内置供应商配置并优化模型视觉能力管理
+- docs: update README - remove Claude Code ref, add DeepSeek, remove Infini, use English commands
+- docs: use raw.githubusercontent.com for preview image
+
 ## [0.7.18] - 2026-05-06
 - docs: add dashboard preview screenshot
 - feat(provider): 支持在模型返回空响应时自动切换至 Responses API
@@ -47,9 +55,3 @@ All notable changes to this project will be documented in this file.
 - chore(scripts): 优化京东云与无界 AI 价格抓取逻辑并更新数据
 - fix: retry transient openrouter metrics fetches
 - feat(pricing): 新增 GitHub Copilot 价格数据并更新抓取脚本
-
-## [0.6.28] - 2026-04-03
-- fix(config): 模型写回时不再默认落 apiStyle/maxInputTokens/maxOutputTokens，仅保留用户显式配置的字段
-
-## [0.6.26] - 2026-03-31
-- feat(config): 更新供应商配置并优化模型管理

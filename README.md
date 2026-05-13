@@ -49,9 +49,9 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 ### 配置
 
 1. 按 `Ctrl+Shift+P`，输入 `Coding Plans: Manage Vendor Configuration`
-2. 选择「Select Vendor」，选择你已注册的平台（如智谱、Kimi、火山引擎等）
-3. 选择「Set API Key」，粘贴你的 API Key
-4. 打开 Copilot Chat（`Ctrl+L`），切换到「Coding Plans」提供商
+2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
+3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
+4. 打开 Copilot Chat（`Ctrl+L`），在 Add Models 中选择「Coding Plans」，只需填写 Group Name
 
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
 

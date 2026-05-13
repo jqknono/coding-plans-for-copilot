@@ -13,6 +13,7 @@
   "manageActionConfigureAll": "Configure all (wizard)",
   "manageActionApiKey": "Set API Key",
   "manageActionBaseUrl": "Set Relay Base URL",
+  "manageActionRefreshModels": "Refresh Models",
   "manageActionOpenConfig": "Open Config File",
   "manageActionOpenSettings": "Open Vendor Settings",
   "providerConfigSaved": "{0} configuration saved",

@@ -13,6 +13,7 @@
   "manageActionConfigureAll": "配置全部（向导）",
   "manageActionApiKey": "设置 API Key",
   "manageActionBaseUrl": "设置中转站地址",
+  "manageActionRefreshModels": "刷新模型列表",
   "manageActionOpenConfig": "打开配置文件",
   "manageActionOpenSettings": "打开供应商设置",
   "providerConfigSaved": "{0} 配置已保存",
