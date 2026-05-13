@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-12T09:08:23.829Z",
+  "generatedAt": "2026-05-13T03:08:30.584Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -44,7 +44,9 @@
             "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "aliyun-ai: Request timed out after 15000ms: https://www.aliyun.com/benefit/scene/codingplan"
     },
     {
       "provider": "aliyun-token-plan",
@@ -68,9 +70,7 @@
             "计费方式: 按 Token 消耗抵扣 Credits",
             "使用频次: 无每 5 小时/每周限额",
             "数据安全: 不使用对话数据训练模型",
-            "服务地域: 华北2（北京）",
-            "文本生成模型: qwen3.6-plus、qwen3.6-flash、glm-5.1、glm-5、MiniMax-M2.5、deepseek-v3.2、kimi-k2.5、kimi-k2.6",
-            "图像生成模型: qwen-image-2.0、qwen-image-2.0-pro、wan2.7-image、wan2.7-image-pro"
+            "服务地域: 华北2（北京）"
           ]
         },
         {
@@ -80,16 +80,14 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "坐席/月",
-          "notes": "日常高频使用 AI 编码的团队成员",
+          "notes": "日常高频使用 AI 编程或办公的团队成员",
           "serviceDetails": [
             "额度: 100,000 Credits/坐席/月",
-            "适用场景: 日常高频使用 AI 编码的团队成员",
+            "适用场景: 日常高频使用 AI 编程或办公的团队成员",
             "计费方式: 按 Token 消耗抵扣 Credits",
             "使用频次: 无每 5 小时/每周限额",
             "数据安全: 不使用对话数据训练模型",
-            "服务地域: 华北2（北京）",
-            "文本生成模型: qwen3.6-plus、qwen3.6-flash、glm-5.1、glm-5、MiniMax-M2.5、deepseek-v3.2、kimi-k2.5、kimi-k2.6",
-            "图像生成模型: qwen-image-2.0、qwen-image-2.0-pro、wan2.7-image、wan2.7-image-pro"
+            "服务地域: 华北2（北京）"
           ]
         },
         {
@@ -99,16 +97,14 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "坐席/月",
-          "notes": "重度依赖 AI 编码的核心开发者",
+          "notes": "重度依赖 AI 的核心开发者或高强度使用者",
           "serviceDetails": [
             "额度: 250,000 Credits/坐席/月",
-            "适用场景: 重度依赖 AI 编码的核心开发者",
+            "适用场景: 重度依赖 AI 的核心开发者或高强度使用者",
             "计费方式: 按 Token 消耗抵扣 Credits",
             "使用频次: 无每 5 小时/每周限额",
             "数据安全: 不使用对话数据训练模型",
-            "服务地域: 华北2（北京）",
-            "文本生成模型: qwen3.6-plus、qwen3.6-flash、glm-5.1、glm-5、MiniMax-M2.5、deepseek-v3.2、kimi-k2.5、kimi-k2.6",
-            "图像生成模型: qwen-image-2.0、qwen-image-2.0-pro、wan2.7-image、wan2.7-image-pro"
+            "服务地域: 华北2（北京）"
           ]
         },
         {
@@ -509,7 +505,7 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.812bb039.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.f15efb9a.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -1657,5 +1653,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "aliyun-ai: Request timed out after 15000ms: https://www.aliyun.com/benefit/scene/codingplan"
+  ]
 }
