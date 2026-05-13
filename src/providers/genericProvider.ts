@@ -241,6 +241,7 @@ export class GenericAIProvider extends BaseAIProvider {
   private refreshModelsInFlight: Promise<void> | undefined;
   private refreshModelsPending = false;
   private forceDiscoveryRetryRequested = false;
+  private modelsSnapshot = '';
 
   constructor(
     context: vscode.ExtensionContext,
@@ -430,9 +431,16 @@ export class GenericAIProvider extends BaseAIProvider {
       this.appendResolvedModels(vendor, resolvedModels, allModelConfigs);
     }
 
+    const nextModelsSnapshot = this.buildModelsSnapshot(allModelConfigs);
+    const modelsChanged = nextModelsSnapshot !== this.modelsSnapshot;
+    this.modelsSnapshot = nextModelsSnapshot;
     this.models = allModelConfigs.map(m => this.createModel(m));
     logger.info('Coding Plans models refreshed', { modelIds: this.models.map(m => m.id) });
-    this.modelChangedEmitter.fire();
+    if (modelsChanged) {
+      this.modelChangedEmitter.fire();
+    } else {
+      logger.debug('Coding Plans model change event skipped because model information is unchanged');
+    }
   }
 
   async sendRequest(
@@ -651,6 +659,22 @@ export class GenericAIProvider extends BaseAIProvider {
       this.modelVendorMap.set(model.id, { vendor, modelName: actualName, apiStyle });
     }
     target.push(...models);
+  }
+
+  private buildModelsSnapshot(models: AIModelConfig[]): string {
+    return JSON.stringify(models.map(model => ({
+      id: model.id,
+      vendor: model.vendor,
+      family: model.family,
+      name: model.name,
+      apiStyle: model.apiStyle,
+      version: model.version,
+      maxTokens: model.maxTokens,
+      maxInputTokens: model.maxInputTokens,
+      maxOutputTokens: model.maxOutputTokens,
+      capabilities: model.capabilities,
+      description: model.description
+    })));
   }
 
   private async discoverModelsFromApi(vendor: VendorConfig, apiKey: string): Promise<ModelDiscoveryResult> {

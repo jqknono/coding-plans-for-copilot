@@ -228,8 +228,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
           return [getPlaceholderModel(this.provider.getVendor())];
         }
       } else {
-        const apiKey = this.provider.getApiKey().trim();
-        if (apiKey.length === 0) {
+        if (!(await this.hasAnyConfiguredApiKey())) {
           return [getPlaceholderModel(this.provider.getVendor())];
         }
       }
@@ -242,6 +241,25 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     }
 
     return filteredModels.map(model => toLanguageModelInfo(model));
+  }
+
+  private async hasAnyConfiguredApiKey(): Promise<boolean> {
+    if (!this.configStore) {
+      return this.provider.getApiKey().trim().length > 0;
+    }
+
+    const vendors = this.configStore.getVendors();
+    if (vendors.length === 0) {
+      return this.provider.getApiKey().trim().length > 0;
+    }
+
+    for (const vendor of vendors) {
+      const apiKey = (await this.configStore.getApiKey(vendor.name)).trim();
+      if (apiKey.length > 0) {
+        return true;
+      }
+    }
+    return false;
   }
 
   async provideLanguageModelChatResponse(

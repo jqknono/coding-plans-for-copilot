@@ -185,7 +185,6 @@ export class ConfigStore implements vscode.Disposable {
     }
 
     await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
-    this.onDidChangeEmitter.fire();
   }
 
   async updateVendorBaseUrl(vendorName: string, baseUrl: string): Promise<void> {
@@ -230,7 +229,6 @@ export class ConfigStore implements vscode.Disposable {
     }
 
     await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
-    this.onDidChangeEmitter.fire();
   }
 
   async updateVendorModelApiStyle(
@@ -302,7 +300,6 @@ export class ConfigStore implements vscode.Disposable {
     }
 
     await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
-    this.onDidChangeEmitter.fire();
     return true;
   }
 

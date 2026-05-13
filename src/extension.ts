@@ -25,6 +25,8 @@ let refreshModelsCommandInProgress = false;
 let languageModelProviderRegistration: vscode.Disposable | undefined;
 let reRegisterLanguageModelProviderInProgress = false;
 
+type ManageVendorAction = 'apiKey' | 'refreshModels' | 'openSettings';
+
 function shouldShowGenerateCommitMessageCommand(): boolean {
   return vscode.workspace
     .getConfiguration('coding-plans')
@@ -168,6 +170,122 @@ async function reRegisterLanguageModelProvider(adapter: LMChatProviderAdapter): 
   }
 }
 
+async function refreshCodingPlansModels(
+  configStore: ConfigStore,
+  genericProvider: GenericAIProvider,
+  adapter: LMChatProviderAdapter
+): Promise<void> {
+  const vendorSummary = configStore.getVendors().map(vendor => ({
+    name: vendor.name,
+    useModelsEndpoint: vendor.useModelsEndpoint,
+    modelCount: vendor.models.length
+  }));
+  logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} effective vendors`, vendorSummary);
+
+  const beforeModels = genericProvider.getAvailableModels().map(model => model.id);
+  logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} command start`, {
+    beforeCount: beforeModels.length,
+    beforePreview: beforeModels.slice(0, 20)
+  });
+
+  await genericProvider.refreshModels({ forceDiscoveryRetry: true });
+  const afterModels = genericProvider.getAvailableModels().map(model => model.id);
+  logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} provider refreshed`, {
+    afterCount: afterModels.length,
+    afterPreview: afterModels.slice(0, 20)
+  });
+
+  adapter.notifyLanguageModelInformationChanged();
+  logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} provider change event emitted`);
+
+  const executedCommand = await refreshLanguageModelsWorkbenchView();
+  if (!executedCommand) {
+    await reRegisterLanguageModelProvider(adapter);
+  }
+  logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} command completed`, { executedCommand });
+}
+
+export async function manageVendorConfiguration(
+  configStore: ConfigStore,
+  genericProvider: GenericAIProvider,
+  adapter: LMChatProviderAdapter
+): Promise<void> {
+  const vendors = configStore.getVendors();
+  if (vendors.length === 0) {
+    const action = getMessage('manageActionOpenSettings');
+    const picked = await vscode.window.showWarningMessage(getMessage('vendorNotConfigured'), action);
+    if (picked === action) {
+      await vscode.commands.executeCommand('workbench.action.openSettings', 'coding-plans.vendors');
+    }
+    return;
+  }
+
+  const pickedVendor = await vscode.window.showQuickPick(
+    vendors.map(vendor => ({
+      label: vendor.name,
+      description: vendor.defaultApiStyle,
+      detail: vendor.baseUrl,
+      vendor
+    })),
+    {
+      placeHolder: getMessage('manageActionSelectVendor'),
+      ignoreFocusOut: true
+    }
+  );
+  if (!pickedVendor) {
+    return;
+  }
+
+  const pickedAction = await vscode.window.showQuickPick(
+    [
+      {
+        label: getMessage('manageActionApiKey'),
+        action: 'apiKey' as ManageVendorAction
+      },
+      {
+        label: getMessage('manageActionRefreshModels'),
+        action: 'refreshModels' as ManageVendorAction
+      },
+      {
+        label: getMessage('manageActionOpenSettings'),
+        action: 'openSettings' as ManageVendorAction
+      }
+    ],
+    {
+      placeHolder: getMessage('manageActionPlaceholder', pickedVendor.vendor.name),
+      ignoreFocusOut: true
+    }
+  );
+  if (!pickedAction) {
+    return;
+  }
+
+  if (pickedAction.action === 'openSettings') {
+    await vscode.commands.executeCommand('workbench.action.openSettings', 'coding-plans.vendors');
+    return;
+  }
+
+  if (pickedAction.action === 'refreshModels') {
+    await refreshCodingPlansModels(configStore, genericProvider, adapter);
+    vscode.window.showInformationMessage(getMessage('modelsRefreshed', 'Coding Plan'));
+    return;
+  }
+
+  const apiKey = await vscode.window.showInputBox({
+    prompt: getMessage('inputApiKey', pickedVendor.vendor.name),
+    placeHolder: getMessage('inputPlaceholder'),
+    password: true,
+    ignoreFocusOut: true
+  });
+  if (apiKey === undefined) {
+    return;
+  }
+
+  await configStore.setApiKey(pickedVendor.vendor.name, apiKey);
+  vscode.window.showInformationMessage(getMessage('apiKeySaved', pickedVendor.vendor.name));
+  await refreshCodingPlansModels(configStore, genericProvider, adapter);
+}
+
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   await initI18n();
   context.subscriptions.push(logger);
@@ -228,7 +346,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   context.subscriptions.push(
     vscode.commands.registerCommand('coding-plans.manage', async () => {
-      await vscode.commands.executeCommand('workbench.action.openSettings', 'coding-plans.vendors');
+      await manageVendorConfiguration(configStore, genericProvider, adapter);
     })
   );
 
@@ -241,34 +359,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
       refreshModelsCommandInProgress = true;
       try {
-        const vendorSummary = configStore.getVendors().map(vendor => ({
-          name: vendor.name,
-          useModelsEndpoint: vendor.useModelsEndpoint,
-          modelCount: vendor.models.length
-        }));
-        logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} effective vendors`, vendorSummary);
-
-        const beforeModels = genericProvider.getAvailableModels().map(model => model.id);
-        logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} command start`, {
-          beforeCount: beforeModels.length,
-          beforePreview: beforeModels.slice(0, 20)
-        });
-
-        await genericProvider.refreshModels({ forceDiscoveryRetry: true });
-        const afterModels = genericProvider.getAvailableModels().map(model => model.id);
-        logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} provider refreshed`, {
-          afterCount: afterModels.length,
-          afterPreview: afterModels.slice(0, 20)
-        });
-
-        adapter.notifyLanguageModelInformationChanged();
-        logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} provider change event emitted`);
-
-        const executedCommand = await refreshLanguageModelsWorkbenchView();
-        if (!executedCommand) {
-          await reRegisterLanguageModelProvider(adapter);
-        }
-        logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} command completed`, { executedCommand });
+        await refreshCodingPlansModels(configStore, genericProvider, adapter);
         vscode.window.showInformationMessage(getMessage('modelsRefreshed', 'Coding Plan'));
       } catch (error) {
         vscode.window.showErrorMessage(

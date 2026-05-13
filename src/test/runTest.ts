@@ -51,6 +51,7 @@ type ContextUsageStateModule = typeof import('../contextUsageState');
 type LMChatProviderAdapterModule = typeof import('../providers/lmChatProviderAdapter');
 type PlanUsageStatusModule = typeof import('../planUsageStatus');
 type CommitMessageGeneratorModule = typeof import('../commitMessageGenerator');
+type ExtensionModule = typeof import('../extension');
 
 type TestContext = {
   state: MockState;
@@ -121,6 +122,14 @@ function createVscodeMock() {
   };
   const createdStatusBarItems: Array<Record<string, unknown>> = [];
   const shownWarningMessages: Array<{ message: string; items: unknown[] }> = [];
+  const shownInformationMessages: Array<{ message: string; items: unknown[] }> = [];
+  const shownErrorMessages: Array<{ message: string; items: unknown[] }> = [];
+  const shownQuickPicks: Array<{ items: unknown[]; options: unknown }> = [];
+  const shownInputBoxes: unknown[] = [];
+  const executedCommands: Array<{ command: string; args: unknown[] }> = [];
+  const registeredCommands = new Map<string, (...args: unknown[]) => unknown>();
+  const nextQuickPickSelections: unknown[] = [];
+  const nextInputBoxValues: Array<string | undefined> = [];
   let nextWarningMessageSelection: unknown;
 
   class FakeLanguageModelTextPart {
@@ -250,19 +259,79 @@ function createVscodeMock() {
         const selection = nextWarningMessageSelection;
         nextWarningMessageSelection = undefined;
         return selection;
+      },
+      async showInformationMessage(message: string, ...items: unknown[]): Promise<unknown> {
+        shownInformationMessages.push({ message, items });
+        return undefined;
+      },
+      async showErrorMessage(message: string, ...items: unknown[]): Promise<unknown> {
+        shownErrorMessages.push({ message, items });
+        return undefined;
+      },
+      async showQuickPick(items: unknown[] | Promise<unknown[]>, options?: unknown): Promise<unknown> {
+        const resolvedItems = await Promise.resolve(items);
+        shownQuickPicks.push({ items: resolvedItems, options });
+        const selection = nextQuickPickSelections.shift();
+        if (typeof selection === 'string') {
+          return resolvedItems.find(item => (
+            item
+            && typeof item === 'object'
+            && 'label' in item
+            && (item as { label?: unknown }).label === selection
+          ));
+        }
+        return selection;
+      },
+      async showInputBox(options?: unknown): Promise<string | undefined> {
+        shownInputBoxes.push(options);
+        return nextInputBoxValues.shift();
       }
     },
     testState: {
       createdStatusBarItems,
       shownWarningMessages,
+      shownInformationMessages,
+      shownErrorMessages,
+      shownQuickPicks,
+      shownInputBoxes,
+      executedCommands,
+      registeredCommands,
       setNextWarningMessageSelection(selection: unknown): void {
         nextWarningMessageSelection = selection;
+      },
+      enqueueQuickPickSelection(selection: unknown): void {
+        nextQuickPickSelections.push(selection);
+      },
+      enqueueInputBoxValue(value: string | undefined): void {
+        nextInputBoxValues.push(value);
+      }
+    },
+    commands: {
+      registerCommand(command: string, callback: (...args: unknown[]) => unknown): FakeDisposable {
+        registeredCommands.set(command, callback);
+        return new FakeDisposable(() => {
+          registeredCommands.delete(command);
+        });
+      },
+      async executeCommand(command: string, ...args: unknown[]): Promise<unknown> {
+        executedCommands.push({ command, args });
+        const registered = registeredCommands.get(command);
+        return registered ? registered(...args) : undefined;
+      },
+      async getCommands(): Promise<string[]> {
+        return Array.from(registeredCommands.keys());
       }
     },
     lm: {
+      registerLanguageModelChatProvider(): FakeDisposable {
+        return new FakeDisposable();
+      },
       async invokeTool(_name: string, _options: unknown): Promise<{ content: unknown[] }> {
         return { content: [new FakeLanguageModelTextPart('tool-result')] };
       }
+    },
+    env: {
+      language: 'zh-cn'
     },
     workspace: {
       onDidChangeConfiguration(listener: ConfigChangeListener): FakeDisposable {
@@ -343,6 +412,29 @@ function createExtensionContext(): { secrets: { get(): Promise<undefined>; store
   };
 }
 
+function createExtensionContextWithSecrets(): {
+  context: { secrets: { get(key: string): Promise<string | undefined>; store(key: string, value: string): Promise<void>; delete(key: string): Promise<void>; }; };
+  secrets: Map<string, string>;
+} {
+  const secrets = new Map<string, string>();
+  return {
+    context: {
+      secrets: {
+        async get(key: string): Promise<string | undefined> {
+          return secrets.get(key);
+        },
+        async store(key: string, value: string): Promise<void> {
+          secrets.set(key, value);
+        },
+        async delete(key: string): Promise<void> {
+          secrets.delete(key);
+        }
+      }
+    },
+    secrets
+  };
+}
+
 function createVendorWithSpacedModelName(): VendorRecord {
   return {
     name: 'Vendor',
@@ -407,7 +499,7 @@ const testCases: TestCase[] = [
     discoveredModels: [{ name: 'gpt-4o' }, { name: 'gpt-4.1' }],
     verify(context) {
       assert.equal(context.state.updates.length, 1, '成员变化时应写回一次 vendors 配置');
-      assert.equal(context.changeCount(), 2, '成员变化时应触发两次 ConfigStore 变更事件（配置变更 + 手动通知）');
+      assert.equal(context.changeCount(), 1, '成员变化时应触发一次 ConfigStore 配置变更事件');
 
       const updatedVendor = getUpdatedVendor(context.state);
       const existingModel = updatedVendor.models.find(model => model.name === 'gpt-4o');
@@ -462,7 +554,7 @@ const testCases: TestCase[] = [
     },
     verify(context) {
       assert.equal(context.state.updates.length, 1, '同一发现结果连续刷新两次时只应写回一次');
-      assert.equal(context.changeCount(), 2, '第二次刷新不应再触发新的 ConfigStore 变更事件');
+      assert.equal(context.changeCount(), 1, '第二次刷新不应再触发新的 ConfigStore 变更事件');
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.ok(updatedVendor.models.some(model => model.name === 'gpt-4o'), '第一次刷新后的规范化名称应被保留');
@@ -479,7 +571,7 @@ const testCases: TestCase[] = [
     },
     verify(context) {
       assert.equal(context.state.updates.length, 1, '相同集合仅顺序变化时第二次刷新不应再次写回');
-      assert.equal(context.changeCount(), 2, '相同集合仅顺序变化时第二次刷新不应新增事件');
+      assert.equal(context.changeCount(), 1, '相同集合仅顺序变化时第二次刷新不应新增事件');
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(
@@ -508,7 +600,7 @@ const testCases: TestCase[] = [
     },
     verify(context) {
       assert.equal(context.state.updates.length, 1, '发现列表有重复模型名时只应写回一次');
-      assert.equal(context.changeCount(), 2, '第二次相同重复发现结果不应新增事件');
+      assert.equal(context.changeCount(), 1, '第二次相同重复发现结果不应新增事件');
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(
@@ -537,7 +629,7 @@ const testCases: TestCase[] = [
     },
     verify(context) {
       assert.equal(context.state.updates.length, 1, '空名称和空白名称不应导致额外写回');
-      assert.equal(context.changeCount(), 2, '第二次仅空名称顺序变化时不应新增事件');
+      assert.equal(context.changeCount(), 1, '第二次仅空名称顺序变化时不应新增事件');
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(
@@ -602,7 +694,7 @@ const testCases: TestCase[] = [
     },
     verify(context) {
       assert.equal(context.state.updates.length, 1, '首次传入空数组时应只写回一次以清空模型');
-      assert.equal(context.changeCount(), 2, '二次传入空数组时不应新增事件');
+      assert.equal(context.changeCount(), 1, '二次传入空数组时不应新增事件');
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(updatedVendor.models, [], '传入空数组时应正确清空已有模型');
@@ -636,7 +728,7 @@ const testCases: TestCase[] = [
     },
     verify(context) {
       assert.equal(context.state.updates.length, 1, '模型协议切换应写回一次 vendors 配置');
-      assert.equal(context.changeCount(), 2, '模型协议切换应触发配置变更与手动通知');
+      assert.equal(context.changeCount(), 1, '模型协议切换应触发一次配置变更事件');
 
       const updatedVendor = getUpdatedVendor(context.state);
       const switchedModel = updatedVendor.models.find(model => model.name === 'gpt-5.5');
@@ -1182,6 +1274,48 @@ async function runGenericProviderDiscoveryDefaultVisionTests(
     console.log('PASS /models 刷新新增模型时 defaultVision=false 会覆盖发现到的 vision=true');
   } finally {
     globalThis.fetch = originalFetch;
+    provider.dispose();
+    configStore.dispose();
+  }
+}
+
+async function runGenericProviderModelChangeEventStabilityTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{ name: 'stable-model' }]
+  }]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
+  let eventCount = 0;
+  const subscription = provider.onDidChangeModels(() => {
+    eventCount += 1;
+  });
+
+  try {
+    await provider.refreshModels();
+    await provider.refreshModels();
+    assert.equal(eventCount, 1, '相同模型信息重复刷新不应重复通知 VS Code');
+
+    activeState.vendors = [{
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [{ name: 'stable-model' }, { name: 'new-model' }]
+    }];
+    await provider.refreshModels();
+    assert.equal(eventCount, 2, '模型信息变化时仍应通知 VS Code');
+    console.log('PASS GenericAIProvider 仅在模型信息实际变化时发送模型变更事件');
+  } finally {
+    subscription.dispose();
     provider.dispose();
     configStore.dispose();
   }
@@ -3255,6 +3389,158 @@ async function runLMChatProviderAdapterEmptyResponseRetryTests(
   console.log('PASS LMChatProviderAdapter 会在空响应且尚未输出内容时自动重试');
 }
 
+async function runManageVendorConfigurationTests(
+  configStoreCtor: ConfigStoreCtor,
+  extensionModule: ExtensionModule
+): Promise<void> {
+  const vscodeMock = require('vscode') as {
+    testState: {
+      shownInformationMessages: Array<{ message: string; items: unknown[] }>;
+      shownQuickPicks: Array<{ items: unknown[]; options: unknown }>;
+      executedCommands: Array<{ command: string; args: unknown[] }>;
+      enqueueQuickPickSelection(selection: unknown): void;
+      enqueueInputBoxValue(value: string | undefined): void;
+    };
+  };
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    models: []
+  }]);
+  const secretContext = createExtensionContextWithSecrets();
+  const configStore = new configStoreCtor(secretContext.context as never);
+  let refreshCount = 0;
+  let notifyCount = 0;
+  const fakeProvider = {
+    async refreshModels(options?: { forceDiscoveryRetry?: boolean }): Promise<void> {
+      assert.equal(options?.forceDiscoveryRetry, true);
+      refreshCount += 1;
+    },
+    getAvailableModels(): unknown[] {
+      return [];
+    }
+  };
+  const fakeAdapter = {
+    notifyLanguageModelInformationChanged(): void {
+      notifyCount += 1;
+    }
+  };
+
+  vscodeMock.testState.shownInformationMessages.length = 0;
+  vscodeMock.testState.shownQuickPicks.length = 0;
+  vscodeMock.testState.executedCommands.length = 0;
+  vscodeMock.testState.enqueueQuickPickSelection('Vendor');
+  vscodeMock.testState.enqueueQuickPickSelection('manageActionApiKey');
+  vscodeMock.testState.enqueueInputBoxValue('secret-key');
+
+  try {
+    await extensionModule.manageVendorConfiguration(configStore, fakeProvider as never, fakeAdapter as never);
+    assert.equal(secretContext.secrets.get('coding-plans.vendor.apiKey.Vendor'), 'secret-key');
+    assert.equal(refreshCount, 1);
+    assert.equal(notifyCount, 1);
+    assert.equal(vscodeMock.testState.shownQuickPicks.length, 2);
+    assert.equal(vscodeMock.testState.shownInformationMessages[0]?.message, 'apiKeySaved');
+    console.log('PASS 管理向导会从 vendors 动态选择供应商并保存对应 API Key 后刷新模型');
+  } finally {
+    configStore.dispose();
+  }
+}
+
+async function runLMChatProviderAdapterModelFilteringTests(
+  configStoreCtor: ConfigStoreCtor,
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule
+): Promise<void> {
+  const vscode = require('vscode') as {
+    Disposable: new (callback?: () => void) => { dispose(): void };
+  };
+  const { LMChatProviderAdapter } = lmChatProviderAdapterModule;
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      models: []
+    },
+    {
+      name: 'Other',
+      baseUrl: 'https://other.example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      models: []
+    }
+  ]);
+  const secretContext = createExtensionContextWithSecrets();
+  secretContext.secrets.set('coding-plans.vendor.apiKey.Vendor', 'configured');
+  const configStore = new configStoreCtor(secretContext.context as never);
+  const models = [
+    {
+      id: 'Vendor/coder',
+      name: 'coder',
+      family: 'Vendor',
+      description: 'Vendor coder',
+      version: 'Vendor',
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000,
+      capabilities: { toolCalling: true, imageInput: false }
+    },
+    {
+      id: 'Other/coder',
+      name: 'coder',
+      family: 'Other',
+      description: 'Other coder',
+      version: 'Other',
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000,
+      capabilities: { toolCalling: true, imageInput: false }
+    }
+  ];
+  let availableModels = models;
+  let refreshCount = 0;
+  const fakeProvider = {
+    getVendor(): string {
+      return 'coding-plans';
+    },
+    getApiKey(): string {
+      return '';
+    },
+    getAvailableModels(): typeof models {
+      return availableModels;
+    },
+    async refreshModels(): Promise<void> {
+      refreshCount += 1;
+    },
+    isModelDiscoveryUnsupported(): boolean {
+      return false;
+    },
+    onDidChangeModels(): { dispose(): void } {
+      return new vscode.Disposable();
+    }
+  };
+
+  const adapter = new LMChatProviderAdapter(fakeProvider as never, configStore);
+  try {
+    const allModels = await adapter.provideLanguageModelChatInformation({ group: 'Group' } as never, {} as never);
+    assert.deepEqual(allModels.map(model => model.id), ['Vendor/coder', 'Other/coder']);
+
+    const vendorModels = await adapter.provideLanguageModelChatInformation({
+      group: 'Group',
+      configuration: { vendorName: 'Vendor' }
+    } as never, {} as never);
+    assert.deepEqual(vendorModels.map(model => model.id), ['Vendor/coder']);
+
+    availableModels = [];
+    secretContext.secrets.clear();
+    const placeholderModels = await adapter.provideLanguageModelChatInformation({ group: 'Empty' } as never, {} as never);
+    assert.equal(refreshCount, 1);
+    assert.deepEqual(placeholderModels.map(model => model.id), ['coding-plans__setup_api_key__']);
+    console.log('PASS LMChatProviderAdapter 无 vendorName 时返回全部模型，旧 vendorName 配置仍可过滤');
+  } finally {
+    adapter.dispose();
+    configStore.dispose();
+  }
+}
+
 async function main(): Promise<void> {
   const restore = installVscodeMock();
   try {
@@ -3267,6 +3553,7 @@ async function main(): Promise<void> {
     const lmChatProviderAdapterModule = require('../providers/lmChatProviderAdapter') as LMChatProviderAdapterModule;
     const planUsageStatusModule = require('../planUsageStatus') as PlanUsageStatusModule;
     const commitMessageGeneratorModule = require('../commitMessageGenerator') as CommitMessageGeneratorModule;
+    const extensionModule = require('../extension') as ExtensionModule;
     for (const testCase of testCases) {
       await runTestCase(ConfigStore, testCase);
     }
@@ -3274,6 +3561,7 @@ async function main(): Promise<void> {
     runTokenWindowResolutionTests(baseProviderModule);
     runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
     await runGenericProviderDiscoveryDefaultVisionTests(ConfigStore, genericProviderModule);
+    await runGenericProviderModelChangeEventStabilityTests(ConfigStore, genericProviderModule);
     await runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
     await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule, tokenUsageModule);
     await runGenericProviderAnthropicSamplingCompatibilityTests(ConfigStore, genericProviderModule);
@@ -3285,6 +3573,8 @@ async function main(): Promise<void> {
     runContextUsageStateTests(contextUsageStateModule);
     runPlanUsageStatusTests(planUsageStatusModule, contextUsageStateModule);
     runCommitMessageGeneratorTests(commitMessageGeneratorModule);
+    await runManageVendorConfigurationTests(ConfigStore, extensionModule);
+    await runLMChatProviderAdapterModelFilteringTests(ConfigStore, lmChatProviderAdapterModule);
     await runLMChatProviderAdapterProvideTokenCountTests(contextUsageStateModule, lmChatProviderAdapterModule);
     await runLMChatProviderAdapterEmptyResponseRetryTests(lmChatProviderAdapterModule);
   } finally {
