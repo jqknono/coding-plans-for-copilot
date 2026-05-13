@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-13",
+  "generatedAt": "2026-05-13T07:17:39.370Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "v 站": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1212358",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1212358",
+      "title": "初来 v 站福利多多，注册就送 30$余额，需要中转的可以薅薅",
+      "content": "小站稳定运营，满血 gpt plus 号池，开通五种套餐订阅： 套餐名 价格 余额 日限额 汇率 日卡 3 元 50 刀 日限额 50 3/50=0.06 周卡 19 元 400 刀 日限额 100 20/400=0.05 月卡 49 元 1200 刀 日限额 200 49/1200=0.04 月卡（大杯） 89 元 3000 刀 日限额 400 89/3000=0.03 月卡（超大杯） 199 元 8888 刀 日限额 888 199/8888=0.0223 V 站用户专属福利：新用户注册即赠送$6.6 ，在本帖回复注册邮箱，即可免费再送$23.4 余额！（送了的我会在评论区回复） 欢迎加入 q 群：1092067247 群中已经 150+人啦，初来 v 社，放点福利 主站： https://api.xiaoxin.best/home",
+      "author": "zhlsk",
+      "createdAt": "2026-05-13T03:08:49.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "v 站",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "v站提供五种GPT Plus订阅套餐（日卡、周卡、月卡等），新用户注册赠送$6.6余额，回复邮箱可再获$23.4免费余额。",
+        "topics": [
+          "套餐对比",
+          "定价",
+          "注册福利",
+          "GPT Plus"
+        ],
+        "planMentioned": "GPT Plus 号池",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/117",
+      "analyzedAt": "2026-05-13T07:21:24.996Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1212435: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1212342: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3-next-80b-a3b-instruct:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Venice\",\"is_"
+  ]
+}
