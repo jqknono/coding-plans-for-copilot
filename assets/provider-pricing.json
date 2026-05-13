@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-13T03:08:30.584Z",
+  "generatedAt": "2026-05-13T09:09:21.664Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -44,9 +44,7 @@
             "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "aliyun-ai: Request timed out after 15000ms: https://www.aliyun.com/benefit/scene/codingplan"
+      ]
     },
     {
       "provider": "aliyun-token-plan",
@@ -505,7 +503,7 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.f15efb9a.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.b6979bdf.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -642,8 +640,7 @@
       "sourceUrls": [
         "https://www.kimi.com/zh-cn/help/membership/membership-pricing",
         "https://www.kimi.com/code",
-        "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/common-qo4MgrYB.js"
+        "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods"
       ],
       "plans": [
         {
@@ -1653,7 +1650,5 @@
       ]
     }
   ],
-  "failures": [
-    "aliyun-ai: Request timed out after 15000ms: https://www.aliyun.com/benefit/scene/codingplan"
-  ]
+  "failures": []
 }
