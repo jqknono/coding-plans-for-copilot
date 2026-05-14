@@ -26,6 +26,7 @@ type VendorModelRecord = {
 type VendorRecord = {
   name: string;
   baseUrl: string;
+  apiKey?: string;
   usageUrl?: string;
   defaultApiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
   defaultTemperature?: number;
@@ -819,6 +820,24 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
   activeState = createState([{
     name: 'Vendor',
     baseUrl: 'https://example.test/v1',
+    apiKey: '  configured-in-settings  ',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: []
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    assert.equal(vendor?.apiKey, 'configured-in-settings');
+    console.log('PASS vendors[].apiKey 可被正确归一化');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
     defaultApiStyle: 'openai-responses',
     defaultVision: true,
     models: []
@@ -952,6 +971,44 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     const vendor = configStore.getVendors()[0];
     assert.equal(vendor?.usageUrl, 'https://example.test/usage');
     console.log('PASS usageUrl 可被归一化并保留');
+  } finally {
+    configStore.dispose();
+  }
+}
+
+async function runConfigStoreVendorApiKeyPriorityTests(configStoreCtor: ConfigStoreCtor): Promise<void> {
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    apiKey: 'settings-key',
+    defaultApiStyle: 'openai-chat',
+    models: []
+  }]);
+
+  let secretContext = createExtensionContextWithSecrets();
+  secretContext.secrets.set('coding-plans.vendor.apiKey.Vendor', 'secret-key');
+  let configStore = new configStoreCtor(secretContext.context as never);
+  try {
+    assert.equal(await configStore.getApiKey('Vendor'), 'settings-key');
+    console.log('PASS vendors[].apiKey 优先于 Secret Storage');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    apiKey: '   ',
+    defaultApiStyle: 'openai-chat',
+    models: []
+  }]);
+
+  secretContext = createExtensionContextWithSecrets();
+  secretContext.secrets.set('coding-plans.vendor.apiKey.Vendor', 'secret-key');
+  configStore = new configStoreCtor(secretContext.context as never);
+  try {
+    assert.equal(await configStore.getApiKey('Vendor'), 'secret-key');
+    console.log('PASS vendors[].apiKey 为空时回退到 Secret Storage');
   } finally {
     configStore.dispose();
   }
@@ -3558,6 +3615,7 @@ async function main(): Promise<void> {
       await runTestCase(ConfigStore, testCase);
     }
     await runConfigNormalizationTests(ConfigStore);
+    await runConfigStoreVendorApiKeyPriorityTests(ConfigStore);
     runTokenWindowResolutionTests(baseProviderModule);
     runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
     await runGenericProviderDiscoveryDefaultVisionTests(ConfigStore, genericProviderModule);

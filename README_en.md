@@ -108,6 +108,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
     {
       "name": "my-openai-vendor",
       "baseUrl": "https://api.example.com/v1",
+      "apiKey": "sk-example",
       "defaultApiStyle": "openai-chat",
       "useModelsEndpoint": true,
       "models": []
@@ -146,6 +147,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors` | `array` | Built-in vendor templates | Vendor configuration list. |
 | `coding-plans.vendors[].name` | `string` | Required | Vendor unique name. |
 | `coding-plans.vendors[].baseUrl` | `string` | Required | API base address. |
+| `coding-plans.vendors[].apiKey` | `string` | Empty | Deprecated. Kept for compatibility only; prefer VS Code Secret Storage for safer API key handling. When set, it overrides the same vendor key in Secret Storage. |
 | `coding-plans.vendors[].usageUrl` | `string` | Empty | Plan usage API address; when configured, status bar displays quota percentage. |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Protocol style: `openai-chat` / `openai-responses` / `anthropic`. |
 | `coding-plans.vendors[].defaultTemperature` | `number` | `0.2` | Vendor default temperature. |
@@ -174,7 +176,8 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.commitMessage.options.requireConventionalType` | `boolean` | `true` | Whether to enforce Conventional Commits type. |
 | `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | Whether to show warning on validation failure. |
 
-`API Key` is not stored in plaintext in `settings.json`. Please write it to VS Code Secret Storage via "Set API Key".
+`coding-plans.vendors[].apiKey` is deprecated and kept only for compatibility.
+Prefer "Set API Key" so the key stays in VS Code Secret Storage instead of `settings.json`; if `coding-plans.vendors[].apiKey` is still set, it overrides the same vendor key in Secret Storage.
 
 ### Context Window Display
 

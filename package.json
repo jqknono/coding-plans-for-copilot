@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.8.1",
+    "version": "0.8.4",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",
@@ -236,6 +236,12 @@
                             },
                             "baseUrl": {
                                 "type": "string"
+                            },
+                            "apiKey": {
+                                "type": "string",
+                                "secret": true,
+                                "description": "%configuration.coding-plans.vendors.apiKey.description%",
+                                "deprecationMessage": "%configuration.coding-plans.vendors.apiKey.deprecationMessage%"
                             },
                             "usageUrl": {
                                 "type": "string",

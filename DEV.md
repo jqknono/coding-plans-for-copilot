@@ -158,6 +158,7 @@ npm run test:pages
 ## 多协议供应商接入说明
 
 - 配置入口优先使用 `Coding Plans: Manage Vendor Configuration`。该命令从 `coding-plans.vendors` 动态生成供应商 QuickPick，选择供应商后可设置 API Key、刷新模型或打开供应商设置。
+- `coding-plans.vendors[].apiKey` 已标记为 deprecated，仅保留兼容用途；为保证 API Key 安全，建议优先使用 VS Code Secret Storage，而不是写入 `settings.json`。若此处仍配置了值，它会覆盖 Secret Storage 中同名供应商的 key。
 - Copilot Chat 的原生 Add Models 表单只用于添加 `Coding Plans` provider group 和填写 Group Name；`vendorName/apiKey` 字段保留为旧 group 配置兼容项，不再作为必填交互。
 - 调试请求链路时，可通过 `coding-plans.logLevel` 控制输出面板日志级别；需要完整追踪时切到 `debug`，日常建议保持 `info`。
 - `coding-plans.vendors[].defaultApiStyle` 用于声明供应商默认协议风格，模型也可以通过 `coding-plans.vendors[].models[].apiStyle` 单独覆盖：
