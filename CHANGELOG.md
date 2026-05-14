@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.5] - 2026-05-14
+- chore(release): 升级版本至 0.8.5 并优化命令显示逻辑
+
+## [0.8.4] - 2026-05-14
+- feat(config): 废弃 settings.json 中的 API Key 配置
+- feat(config): 新增供应商配置管理向导并优化模型加载逻辑
+
 ## [0.8.1] - 2026-05-13
 - feat(config): 新增供应商配置管理向导并优化模型加载逻辑
 
@@ -42,16 +49,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.7.2] - 2026-04-16
 - feat(commitMessageGenerator): 增强风格参考约束与回退格式优先级
-
-## [0.7.1] - 2026-04-16
-- chore: 升级版本至 0.7.1
-
-## [0.7.0] - 2026-04-16
-- feat(model): 实现基于上下文窗口的动态隐式输出预留逻辑
-- feat(crawler): 增加分析结果统计并更新工作流配置
-- chore(assets): 更新供应商价格、套餐及运行指标数据
-- fix discussion labels workflow
-- ci(workflow): 重构社区帖子爬取工作流并增加 Token 校验
-- chore(scripts): 优化京东云与无界 AI 价格抓取逻辑并更新数据
-- fix: retry transient openrouter metrics fetches
-- feat(pricing): 新增 GitHub Copilot 价格数据并更新抓取脚本

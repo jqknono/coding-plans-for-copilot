@@ -12,8 +12,6 @@ import {
   selectCommitMessageModel
 } from './commitMessageGenerator';
 import {
-  COMMIT_MESSAGE_SHOW_GENERATE_CONTEXT_KEY,
-  COMMIT_MESSAGE_SHOW_GENERATE_SETTING_KEY,
   LANGUAGE_MODELS_REFRESH_LOG_PREFIX,
   PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS,
   REFRESH_MODELS_COMMAND
@@ -26,20 +24,6 @@ let languageModelProviderRegistration: vscode.Disposable | undefined;
 let reRegisterLanguageModelProviderInProgress = false;
 
 type ManageVendorAction = 'apiKey' | 'refreshModels' | 'openSettings';
-
-function shouldShowGenerateCommitMessageCommand(): boolean {
-  return vscode.workspace
-    .getConfiguration('coding-plans')
-    .get<boolean>(COMMIT_MESSAGE_SHOW_GENERATE_SETTING_KEY, true);
-}
-
-async function syncGenerateCommitMessageCommandVisibility(): Promise<void> {
-  await vscode.commands.executeCommand(
-    'setContext',
-    COMMIT_MESSAGE_SHOW_GENERATE_CONTEXT_KEY,
-    shouldShowGenerateCommitMessageCommand()
-  );
-}
 
 function isLikelyLanguageModelsRefreshCommand(command: string): boolean {
   const lower = command.toLowerCase();
@@ -290,15 +274,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   await initI18n();
   context.subscriptions.push(logger);
   logger.info(getMessage('extensionActivated'));
-
-  await syncGenerateCommitMessageCommandVisibility();
-  context.subscriptions.push(
-    vscode.workspace.onDidChangeConfiguration(event => {
-      if (event.affectsConfiguration(`coding-plans.${COMMIT_MESSAGE_SHOW_GENERATE_SETTING_KEY}`)) {
-        void syncGenerateCommitMessageCommandVisibility();
-      }
-    })
-  );
 
   // Register commit-message commands first so they remain available
   // even if provider initialization fails.

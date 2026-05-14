@@ -1,5 +1,4 @@
 export const COMMIT_MESSAGE_SHOW_GENERATE_SETTING_KEY = 'commitMessage.showGenerateCommand';
-export const COMMIT_MESSAGE_SHOW_GENERATE_CONTEXT_KEY = 'codingPlans.showGenerateCommitMessage';
 export const LANGUAGE_MODELS_REFRESH_LOG_PREFIX = '[coding-plans][language-models-refresh]';
 export const REFRESH_MODELS_COMMAND = 'coding-plans.refreshModels';
 export const PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS = [
