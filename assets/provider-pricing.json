@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-13T09:09:21.664Z",
+  "generatedAt": "2026-05-14T03:08:04.152Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -503,7 +503,7 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.b6979bdf.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.b0dda214.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -1200,7 +1200,7 @@
           "originalPrice": 199,
           "originalPriceText": "¥199/月",
           "unit": "月",
-          "notes": "当前页面显示已售罄",
+          "notes": "限时优惠",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
