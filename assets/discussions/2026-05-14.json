@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-14",
+  "generatedAt": "2026-05-14T07:13:49.802Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "阿里": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1212661",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1212661",
+      "title": "别买阿里 Token Plan [降智严重]",
+      "content": "背景： 公司领导买了团队版的 Token Plan ，要团队大量使用。 使用过程： 分别试用了一下测试了在 OpenCode 、CodeX 两个工具下的开发体验。 结论： 降智十分严重，跟之前 OpenRouter 开放的试用模型来看，简直一个天上一个地下。工作用的话，纯给自己找不自在。 主要体现在： 固执己见: 明说了使用 A ，执行时还是用他认为的 B 自我打脸: 分析时说 codex 的 exploer 子 agent 是只读默认，做方案时又说让 exploer 改文档 不基于当前仓库工作: 工作空间命名时我的 skill git 仓库了，让它修改某个技能，结果还去~/.agent/skills/ 路径读取和修改。必须要非常明确给他说清楚。 不遵守事实: 随意猜测，甚至偷懒什么都要用户提供，我都提供了，还要你干嘛？ git 仓库里让它撤销当前修改，结果它用 “cp xxx.backup ...”这种备份文件的方式，然后告诉你，抱歉我之前忘记创建 backup 备份文件了 有图有真相，见我的 Awesome Qwen PPT: https://docs.google.com/pre",
+      "author": "CloudSen",
+      "createdAt": "2026-05-14T05:16:11.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.98,
+        "summary": "用户分享了对阿里 Token Plan 的负面体验，指出其 AI 功能存在严重的 '降智' 问题，影响团队开发效率，并与 OpenRouter 的试用模型进行了不利比较。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "降智",
+          "开发体验",
+          "阿里 Token Plan"
+        ],
+        "planMentioned": "Token Plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/118",
+      "analyzedAt": "2026-05-14T07:16:27.150Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1212665: LLM returned no choices (response keys: error)"
+  ]
+}
