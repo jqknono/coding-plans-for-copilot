@@ -145,7 +145,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors` | `array` | 内置供应商模板 | 供应商配置列表。 |
 | `coding-plans.vendors[].name` | `string` | 必填 | 供应商唯一名称。 |
 | `coding-plans.vendors[].baseUrl` | `string` | 必填 | API 基础地址。 |
-| `coding-plans.vendors[].apiKey` | `string` | 空 | 已废弃。仅兼容使用；为保证安全，建议优先通过 VS Code Secret Storage 保存 API Key。若此处配置了值，会覆盖 Secret Storage 中同名供应商的 key。 |
+| `coding-plans.vendors[].apiKey` | `string` | 空 | 可选配置；为保证安全，建议优先通过 VS Code Secret Storage 保存 API Key。若此处配置了值，会覆盖 Secret Storage 中同名供应商的 key。 |
 | `coding-plans.vendors[].usageUrl` | `string` | 空 | 套餐 usage 接口地址，配置后状态栏显示额度百分比。 |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | 协议风格：`openai-chat` / `openai-responses` / `anthropic`。 |
 | `coding-plans.vendors[].defaultTemperature` | `number` | `0.2` | 供应商默认 temperature。 |
@@ -174,7 +174,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.commitMessage.options.requireConventionalType` | `boolean` | `true` | 是否强制 Conventional Commits 类型。 |
 | `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | 校验失败时是否提示告警。 |
 
-`coding-plans.vendors[].apiKey` 已标记为 deprecated，仅保留兼容用途。
+`coding-plans.vendors[].apiKey` 仍然可用。
 建议优先通过「设置 API Key」写入 VS Code Secret Storage，避免将密钥保存在 `settings.json` 中；若仍配置 `coding-plans.vendors[].apiKey`，它会覆盖 Secret Storage 中同名供应商的 key。
 
 ### 上下文窗口展示
