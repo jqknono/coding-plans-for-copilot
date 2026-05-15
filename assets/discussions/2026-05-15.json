@@ -1,0 +1,100 @@
+{
+  "date": "2026-05-15",
+  "generatedAt": "2026-05-15T07:22:21.905Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 2,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "aicoding.sh": 1,
+      "Kimi": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1212980",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1212980",
+      "title": "$10 FREE | Claude API 国内直连方案，企业级稳定性保障",
+      "content": "[正文] 运营至今， aicoding.sh 已服务数万开发者和 100+ 企业客户。作为 Claude API 中转服务，我们解决的核心问题很明确：国内网络环境下稳定、低延迟地接入 Claude 全系列模型。 技术层面，服务架构经过多轮压测和优化，保障高并发场景下的请求稳定性。Claude Code 完整支持，提供标准化接入流程，配置环境变量即可使用，无需额外适配。 价格体系完全透明：按官方价 0.19 、0.29 、0.49 三档消耗余额，按量计费，用 多少扣多少，后台可实时查看用量明细。支持国内支付和企业对公转账，开票无障碍。 了解详情： https://aicoding.sh 加入用户社群可领取 10 美元体验额度，实际跑一跑再做判断。",
+      "author": "aicodingsh",
+      "createdAt": "2026-05-15T06:58:32.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "aicoding.sh",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.98,
+        "summary": "该论文介绍了一个提供免费 Claude API 国内直连方案的服务，旨在帮助企业客户在国内网络环境下稳定高效地接入 Claude 全系列模型。服务提供者为 aicoding.sh 提供了标准化接入流程和配置支持，价格透明且按量计费，支持国内支付和企业对公转账。",
+        "topics": [
+          "定价",
+          "接入流程",
+          "企业支持",
+          "付费结构",
+          "支付方式"
+        ],
+        "planMentioned": "0.19 、0.29 、0.49",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-15T07:24:34.291Z"
+    },
+    {
+      "id": "v2ex-1212874",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1212874",
+      "title": "KIMI code 偷偷改 token 计量",
+      "content": "买个 Allegretto 套餐之前根本用不完，现在 3 天跑满了，还不是之前重型业务仓库全扫迁移这种。感知太明显。 合着不显示 token 用量和模型原来在这等着。 微信问客服，直接装死不回复，nb 。 和智谱真是云泥之分，智谱最开始的套餐是不限制 token ，根本不会动老用户权益。",
+      "author": "xiejay97",
+      "createdAt": "2026-05-15T01:57:02.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Kimi",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户抱怨 Kimi Code 的 Allegretto 套餐 token 计量被偷偷改动，导致使用额度快速耗尽，客服不回应，对比智谱之前的不限制 token 套餐，感觉不公平。",
+        "topics": [
+          "token 计量",
+          "Allegretto 套餐",
+          "客服",
+          "对比智谱",
+          "使用额度",
+          "不满"
+        ],
+        "planMentioned": "Allegretto 套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/120",
+      "analyzedAt": "2026-05-15T07:24:41.068Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1212966: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"cognitivecomputations/dolphin-mistral-24b-venice-edition:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"prov",
+    "analysis failed for v2ex-1212964: LLM returned empty content (finish_reason=null)",
+    "analysis failed for v2ex-1212922: LLM returned no choices (response keys: error)"
+  ]
+}
