@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.9] - 2026-05-15
+- chore(config): remove deprecation status for vendor apiKey
+- refactor(models): improve model deduplication and display naming
+
 ## [0.8.7] - 2026-05-15
 - docs(docs): 更新模型可见性配置说明并优化模型选择器适配
 - chore(release): 升级版本至 0.8.5 并优化命令显示逻辑
@@ -49,6 +53,3 @@ All notable changes to this project will be documented in this file.
 - feat(provider): 优化 topP 采样逻辑并增强 Anthropic 兼容性
 - ci: 在版本标签工作流中增加 GitHub Release 创建和 VSIX 上传
 - fix #98: 支持 DeepSeek 思考模型上下文往返并优化 Token 计数逻辑
-
-## [0.7.14] - 2026-04-28
-- chore: 升级版本至 0.7.14
