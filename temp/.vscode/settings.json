@@ -3,52 +3,57 @@
     "coding-plans.logLevel": "debug",
     "coding-plans.vendors": [
         {
-            "name": "cliproxyapi",
+            "name": "123",
             "baseUrl": "http://100.64.0.2:34046/v1",
+            "group": "1231",
             "useModelsEndpoint": false,
             "defaultVision": true,
             "models": [
                 {
-                    "name": "nvidia/nemotron-3-nano-30b-a3b:free",
-                    "description": "cliproxyapi model: nvidia/nemotron-3-nano-30b-a3b:free",
+                    "name": "A/Z",
                     "apiStyle": "openai-chat",
-                    "contextSize": 131072,
+                    "contextSize": 2,
                     "capabilities": {
                         "tools": true,
                         "vision": false
                     }
                 },
                 {
-                    "name": "nvidia/nemotron-3-super-120b-a12b:free",
-                    "description": "cliproxyapi model: nvidia/nemotron-3-super-120b-a12b:free",
-                    "apiStyle": "openai-chat",
-                    "contextSize": 131072,
-                    "capabilities": {
-                        "tools": true,
-                        "vision": false
-                    }
-                },
-                {
-                    "name": "qwen3-coder-flash",
-                    "description": "cliproxyapi model: qwen3-coder-flash",
-                    "apiStyle": "openai-chat",
-                    "contextSize": 131072,
-                    "chatTransport": "chat-participant",
-                    "capabilities": {
-                        "tools": true,
-                        "vision": false
-                    }
-                },
-                {
-                    "name": "z-ai/glm-4.5-air:free",
-                    "description": "cliproxyapi model: z-ai/glm-4.5-air:free",
+                    "name": "B/Y",
                     "apiStyle": "openai-responses",
-                    "contextSize": 131072,
+                    "contextSize": 3,
+                    "capabilities": {
+                        "tools": true,
+                        "vision": true
+                    }
+                },
+            ]
+        },
+        {
+            "name": "456",
+            "baseUrl": "http://100.64.0.2:34046/v1",
+            "group": "4561",
+            "useModelsEndpoint": false,
+            "defaultVision": true,
+            "models": [
+                {
+                    "name": "C/X",
+                    "apiStyle": "openai-chat",
+                    "contextSize": 4,
                     "capabilities": {
                         "tools": true,
                         "vision": false
                     }
-                }
+                },
+                {
+                    "name": "D",
+                    "apiStyle": "anthropic",
+                    "contextSize": 5,
+                    "capabilities": {
+                        "tools": true,
+                        "vision": true
+                    }
+                },
             ]
         }
     ],

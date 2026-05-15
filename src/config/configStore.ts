@@ -503,11 +503,27 @@ export class ConfigStore implements vscode.Disposable {
     const useModelsEndpoint = typeof obj.useModelsEndpoint === 'boolean' ? obj.useModelsEndpoint : false;
     const defaultVision = typeof obj.defaultVision === 'boolean' ? obj.defaultVision : false;
     const models = Array.isArray(obj.models)
-      ? obj.models
-          .map(m => this.normalizeModel(m, defaultVision, defaultApiStyle))
-          .filter((m): m is VendorModelConfig => m !== undefined)
+      ? this.dedupeModelsByName(
+          obj.models
+            .map(m => this.normalizeModel(m, defaultVision, defaultApiStyle))
+            .filter((m): m is VendorModelConfig => m !== undefined)
+        )
       : [];
     return { name, baseUrl, apiKey, usageUrl, defaultApiStyle, defaultTemperature, defaultTopP, useModelsEndpoint, defaultVision, models };
+  }
+
+  private dedupeModelsByName(models: VendorModelConfig[]): VendorModelConfig[] {
+    const seen = new Set<string>();
+    const deduped: VendorModelConfig[] = [];
+    for (const model of models) {
+      const key = model.name.trim().toLowerCase();
+      if (!key || seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
+      deduped.push(model);
+    }
+    return deduped;
   }
 
   private getConfiguredVendorApiKey(vendorName: string): string {

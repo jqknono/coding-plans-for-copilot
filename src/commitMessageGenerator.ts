@@ -1119,13 +1119,28 @@ function isDistinctDisplayValue(value: string | undefined, ...others: Array<stri
   return others.every(other => normalizeValue(other) !== target);
 }
 
+function hasCodingPlansVendorPrefixedName(model: vscode.LanguageModelChat): boolean {
+  const vendorName = getCodingPlansVendorName(model);
+  if (!vendorName) {
+    return false;
+  }
+  return normalizeValue(model.name).startsWith(`${normalizeValue(vendorName)}/`);
+}
+
 function toVendorScopedModelQuickPickItem(model: vscode.LanguageModelChat): {
   label: string;
   description?: string;
   detail?: string;
   model: vscode.LanguageModelChat;
 } {
-  const description = isDistinctDisplayValue(model.family, model.name) ? model.family : undefined;
+  const codingPlansVendorName = getCodingPlansVendorName(model);
+  const description = hasCodingPlansVendorPrefixedName(model)
+    ? undefined
+    : isDistinctDisplayValue(codingPlansVendorName, model.name)
+    ? codingPlansVendorName
+    : isDistinctDisplayValue(model.family, model.name)
+      ? model.family
+      : undefined;
   const detail = isDistinctDisplayValue(model.id, model.name, model.family) ? model.id : undefined;
   return {
     label: model.name,
@@ -1185,14 +1200,18 @@ function toGlobalModelQuickPickItem(model: vscode.LanguageModelChat): {
   detail?: string;
   model: vscode.LanguageModelChat;
 } {
-  const descriptionParts = [getModelVendorLabel(model)];
+  const descriptionParts = hasCodingPlansVendorPrefixedName(model) ? [] : [getModelVendorLabel(model)];
+  const codingPlansVendorName = getCodingPlansVendorName(model);
+  if (isDistinctDisplayValue(codingPlansVendorName, model.name) && codingPlansVendorName !== descriptionParts[0]) {
+    descriptionParts.push(codingPlansVendorName!);
+  }
   if (isDistinctDisplayValue(model.family, model.name) && model.family !== descriptionParts[0]) {
     descriptionParts.push(model.family);
   }
   const detail = isDistinctDisplayValue(model.id, model.name, model.family) ? model.id : undefined;
   return {
     label: model.name,
-    description: descriptionParts.join(' · '),
+    description: descriptionParts.length > 0 ? descriptionParts.join(' · ') : undefined,
     detail,
     model
   };

@@ -974,6 +974,31 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
   } finally {
     configStore.dispose();
   }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [
+      { name: 'claude-4-sonnet' },
+      { name: ' claude-4-sonnet ' },
+      { name: 'CLAUDE-4-SONNET' },
+      { name: 'claude-4-opus' }
+    ]
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    assert.deepEqual(
+      vendor?.models.map(model => model.name),
+      ['claude-4-sonnet', 'claude-4-opus']
+    );
+    console.log('PASS vendors[].models 在归一化阶段按名称去重，避免模型列表重复显示');
+  } finally {
+    configStore.dispose();
+  }
 }
 
 async function runConfigStoreVendorApiKeyPriorityTests(configStoreCtor: ConfigStoreCtor): Promise<void> {
@@ -3533,6 +3558,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
   const models = [
     {
       id: 'Vendor/coder',
+      vendor: 'coding-plans',
       name: 'coder',
       family: 'Vendor',
       description: 'Vendor coder',
@@ -3542,7 +3568,19 @@ async function runLMChatProviderAdapterModelFilteringTests(
       capabilities: { toolCalling: true, imageInput: false }
     },
     {
+      id: 'Vendor/coder',
+      vendor: 'coding-plans',
+      name: 'coder',
+      family: 'Vendor',
+      description: 'Vendor coder duplicate',
+      version: 'Vendor',
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000,
+      capabilities: { toolCalling: true, imageInput: false }
+    },
+    {
       id: 'Other/coder',
+      vendor: 'coding-plans',
       name: 'coder',
       family: 'Other',
       description: 'Other coder',
@@ -3579,10 +3617,11 @@ async function runLMChatProviderAdapterModelFilteringTests(
   try {
     const stableApiModels = await adapter.provideLanguageModelChatInformation({ silent: false } as never, {} as never);
     assert.deepEqual(stableApiModels.map(model => model.id), ['Vendor/coder', 'Other/coder']);
+    assert.deepEqual(stableApiModels.map(model => model.name), ['Vendor/coder', 'Other/coder']);
     assert.equal((stableApiModels[0] as { isUserSelectable?: boolean }).isUserSelectable, true);
 
-    const allModels = await adapter.provideLanguageModelChatInformation({ group: 'Group' } as never, {} as never);
-    assert.deepEqual(allModels.map(model => model.id), ['Vendor/coder', 'Other/coder']);
+    const groupedModels = await adapter.provideLanguageModelChatInformation({ group: 'Group' } as never, {} as never);
+    assert.deepEqual(groupedModels.map(model => model.id), []);
 
     const vendorModels = await adapter.provideLanguageModelChatInformation({
       group: 'Group',
@@ -3595,7 +3634,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
     const placeholderModels = await adapter.provideLanguageModelChatInformation({ silent: true } as never, {} as never);
     assert.equal(refreshCount, 1);
     assert.deepEqual(placeholderModels.map(model => model.id), ['coding-plans__setup_api_key__']);
-    console.log('PASS LMChatProviderAdapter 兼容 stable picker 调用、标记 user-selectable，并保留旧 vendorName 过滤');
+    console.log('PASS LMChatProviderAdapter 避免无范围 group 查询重复枚举模型，并保留 vendorName 过滤');
   } finally {
     adapter.dispose();
     configStore.dispose();

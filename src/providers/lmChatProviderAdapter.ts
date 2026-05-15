@@ -36,10 +36,37 @@ interface ExtendedLanguageModelChatInformation extends vscode.LanguageModelChatI
   isUserSelectable?: boolean;
 }
 
+function getCodingPlansVendorNameFromModelId(modelId: string): string | undefined {
+  const slashIndex = modelId.indexOf('/');
+  if (slashIndex <= 0) {
+    return undefined;
+  }
+  return modelId.substring(0, slashIndex);
+}
+
+function getDisplayModelName(model: BaseLanguageModel): string {
+  if (model.vendor !== 'coding-plans') {
+    return model.name;
+  }
+
+  const vendorName = getCodingPlansVendorNameFromModelId(model.id) || model.family;
+  const trimmedVendorName = vendorName.trim();
+  const trimmedModelName = model.name.trim();
+  if (!trimmedVendorName || !trimmedModelName) {
+    return model.name;
+  }
+
+  if (trimmedModelName.toLowerCase().startsWith(`${trimmedVendorName.toLowerCase()}/`)) {
+    return model.name;
+  }
+
+  return `${trimmedVendorName}/${model.name}`;
+}
+
 function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChatInformation {
   const info: ExtendedLanguageModelChatInformation = {
     id: model.id,
-    name: model.name,
+    name: getDisplayModelName(model),
     family: model.family,
     tooltip: model.description,
     detail: model.version,
@@ -189,9 +216,17 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   ): Promise<vscode.LanguageModelChatInformation[]> {
     const pickerOptions = options as PrepareLanguageModelChatModelOptionsWithConfiguration;
     const hasConfigurationPayload = this.hasConfigurationPayload(pickerOptions.configuration);
+    const hasGroupQuery = typeof pickerOptions.group === 'string' && pickerOptions.group.trim().length > 0;
 
     if (hasConfigurationPayload) {
       await this.applyPickerConfiguration(pickerOptions);
+    }
+
+    if (hasGroupQuery && !hasConfigurationPayload) {
+      logger.debug('Skipping unscoped grouped model enumeration to avoid duplicate model entries', {
+        group: pickerOptions.group
+      });
+      return [];
     }
 
     return this.buildModelInformation(pickerOptions.configuration);
@@ -208,7 +243,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     const vendorForFiltering = resolvedVendor || requestedVendor;
     let models = this.provider.getAvailableModels();
     let filteredModels = vendorForFiltering
-      ? models.filter(model => model.family.toLowerCase() === vendorForFiltering.toLowerCase())
+      ? models.filter(model => this.matchesVendorFilter(model, vendorForFiltering))
       : models;
 
     // Settings updates and model picker queries can race each other.
@@ -217,7 +252,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       await this.provider.refreshModels();
       models = this.provider.getAvailableModels();
       filteredModels = vendorForFiltering
-        ? models.filter(model => model.family.toLowerCase() === vendorForFiltering.toLowerCase())
+        ? models.filter(model => this.matchesVendorFilter(model, vendorForFiltering))
         : models;
     }
 
@@ -240,7 +275,39 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       return [getNoModelsPlaceholderModel(this.provider.getVendor())];
     }
 
-    return filteredModels.map(model => toLanguageModelInfo(model));
+    return this.dedupeModelsById(filteredModels).map(model => toLanguageModelInfo(model));
+  }
+
+  private matchesVendorFilter(model: BaseLanguageModel, vendorName: string): boolean {
+    const normalizedVendor = vendorName.trim().toLowerCase();
+    if (normalizedVendor.length === 0) {
+      return true;
+    }
+
+    if (model.vendor !== 'coding-plans') {
+      return model.family.toLowerCase() === normalizedVendor;
+    }
+
+    const vendorFromId = getCodingPlansVendorNameFromModelId(model.id);
+    if (vendorFromId && vendorFromId.toLowerCase() === normalizedVendor) {
+      return true;
+    }
+
+    return model.family.toLowerCase() === normalizedVendor;
+  }
+
+  private dedupeModelsById(models: BaseLanguageModel[]): BaseLanguageModel[] {
+    const seen = new Set<string>();
+    const deduped: BaseLanguageModel[] = [];
+    for (const model of models) {
+      const key = model.id.trim().toLowerCase();
+      if (!key || seen.has(key)) {
+        continue;
+      }
+      seen.add(key);
+      deduped.push(model);
+    }
+    return deduped;
   }
 
   private async hasAnyConfiguredApiKey(): Promise<boolean> {

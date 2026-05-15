@@ -13,7 +13,7 @@
             ]
         }
     ],
-    "coding-plans.commitMessage.language": "zh-cn",
+    "coding-plans.commitMessage.language": "en",
     "chat.tools.terminal.autoApprove": {
         "/^node \\.\\\\scripts\\\\fetch-openrouter-provider-plans\\.js$/": {
             "approve": true,
