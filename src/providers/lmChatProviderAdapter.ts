@@ -32,8 +32,12 @@ interface CodingPlansRequestModelOptions {
   [REQUEST_SOURCE_MODEL_OPTION_KEY]?: unknown;
 }
 
+interface ExtendedLanguageModelChatInformation extends vscode.LanguageModelChatInformation {
+  isUserSelectable?: boolean;
+}
+
 function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChatInformation {
-  const info: vscode.LanguageModelChatInformation = {
+  const info: ExtendedLanguageModelChatInformation = {
     id: model.id,
     name: model.name,
     family: model.family,
@@ -42,7 +46,10 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
     version: model.version,
     maxInputTokens: model.maxInputTokens,
     maxOutputTokens: model.maxOutputTokens,
-    capabilities: model.capabilities
+    capabilities: model.capabilities,
+    // VS Code's model picker currently filters out models that are not explicitly
+    // user-selectable, but stable @types/vscode has not exposed this field yet.
+    isUserSelectable: true
   };
   return info;
 }
@@ -181,16 +188,9 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     _token: vscode.CancellationToken
   ): Promise<vscode.LanguageModelChatInformation[]> {
     const pickerOptions = options as PrepareLanguageModelChatModelOptionsWithConfiguration;
-    const hasGroup = typeof pickerOptions.group === 'string' && pickerOptions.group.trim().length > 0;
     const hasConfigurationPayload = this.hasConfigurationPayload(pickerOptions.configuration);
 
-    // Only return model information for explicitly added provider groups.
-    // Base vendor calls are ignored to avoid all providers being listed by default.
-    if (!hasGroup && !hasConfigurationPayload) {
-      return [];
-    }
-
-    if (hasGroup || hasConfigurationPayload) {
+    if (hasConfigurationPayload) {
       await this.applyPickerConfiguration(pickerOptions);
     }
 

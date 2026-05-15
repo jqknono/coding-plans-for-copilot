@@ -3577,6 +3577,10 @@ async function runLMChatProviderAdapterModelFilteringTests(
 
   const adapter = new LMChatProviderAdapter(fakeProvider as never, configStore);
   try {
+    const stableApiModels = await adapter.provideLanguageModelChatInformation({ silent: false } as never, {} as never);
+    assert.deepEqual(stableApiModels.map(model => model.id), ['Vendor/coder', 'Other/coder']);
+    assert.equal((stableApiModels[0] as { isUserSelectable?: boolean }).isUserSelectable, true);
+
     const allModels = await adapter.provideLanguageModelChatInformation({ group: 'Group' } as never, {} as never);
     assert.deepEqual(allModels.map(model => model.id), ['Vendor/coder', 'Other/coder']);
 
@@ -3588,10 +3592,10 @@ async function runLMChatProviderAdapterModelFilteringTests(
 
     availableModels = [];
     secretContext.secrets.clear();
-    const placeholderModels = await adapter.provideLanguageModelChatInformation({ group: 'Empty' } as never, {} as never);
+    const placeholderModels = await adapter.provideLanguageModelChatInformation({ silent: true } as never, {} as never);
     assert.equal(refreshCount, 1);
     assert.deepEqual(placeholderModels.map(model => model.id), ['coding-plans__setup_api_key__']);
-    console.log('PASS LMChatProviderAdapter 无 vendorName 时返回全部模型，旧 vendorName 配置仍可过滤');
+    console.log('PASS LMChatProviderAdapter 兼容 stable picker 调用、标记 user-selectable，并保留旧 vendorName 过滤');
   } finally {
     adapter.dispose();
     configStore.dispose();

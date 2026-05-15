@@ -52,6 +52,7 @@ Click the **Install** button on the marketplace page, which will automatically o
 2. Pick the platform you've registered with from the vendor picker (e.g., Zhipu, Kimi, Volcengine, etc.)
 3. Select "Set API Key" and paste your API Key; the extension stores it and refreshes models
 4. Open Copilot Chat (`Ctrl+L`), choose "Coding Plans" in Add Models, and only enter a Group Name
+5. Open `Chat: Manage Language Models` and click the eye icon for the target model under `Coding Plan` so it is in the "Show in the chat model picker" visible state. Models that exist only in the Language Models editor but are not visible there will not appear in the chat model picker.
 
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 

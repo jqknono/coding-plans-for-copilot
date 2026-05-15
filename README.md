@@ -52,6 +52,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
 3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
 4. 打开 Copilot Chat（`Ctrl+L`），在 Add Models 中选择「Coding Plans」，只需填写 Group Name
+5. 打开 `Chat: Manage Language Models`，对 `Coding Plan` 下的目标模型点击眼睛图标，确保其处于“Show in the chat model picker”可见状态；仅出现在 Language Models 页面但未设为可见的模型，不会出现在聊天下拉框中
 
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
 
