@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.8.7] - 2026-05-15
+- docs(docs): 更新模型可见性配置说明并优化模型选择器适配
+- chore(release): 升级版本至 0.8.5 并优化命令显示逻辑
+- feat(config): 废弃 settings.json 中的 API Key 配置
+- feat(config): 新增供应商配置管理向导并优化模型加载逻辑
+
+## [0.8.6] - 2026-05-15
+- docs(docs): 更新模型可见性配置说明并优化模型选择器适配
+
 ## [0.8.5] - 2026-05-14
 - chore(release): 升级版本至 0.8.5 并优化命令显示逻辑
 
@@ -43,9 +52,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.7.14] - 2026-04-28
 - chore: 升级版本至 0.7.14
-
-## [0.7.12] - 2026-04-27
-- chore: 升级版本至 0.7.9 并更新变更日志
-
-## [0.7.2] - 2026-04-16
-- feat(commitMessageGenerator): 增强风格参考约束与回退格式优先级
