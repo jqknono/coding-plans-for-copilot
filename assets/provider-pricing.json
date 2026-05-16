@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-16T03:07:20.329Z",
+  "generatedAt": "2026-05-16T08:40:57.068Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1521,7 +1521,9 @@
             "支持升级与同档位叠加购买"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "xfyun-ai: fetch failed"
     },
     {
       "provider": "xiaomi-mimo",
@@ -1653,6 +1655,7 @@
     }
   ],
   "failures": [
+    "xfyun-ai: fetch failed",
     "chutes-ai: Unable to locate Chutes subscription plan pricing text"
   ]
 }
