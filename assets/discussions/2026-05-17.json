@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-17",
+  "generatedAt": "2026-05-17T07:09:04.476Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "aicoding.sh": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1213264",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1213264",
+      "title": "10 刀 FREE| Claude API 国内直连方案，按量计费低至官方 1.9 折",
+      "content": "用 Claude Code 做开发，网络不稳定和支付门槛是国内团队绑不开的两个结。 aicoding.sh 做的事情很简单：提供一条稳定的国内直连通道，让你用标准 API 接口直接调用 Claude 全系列模型，包括完整的 Claude Code 支持。 价格体系完全透明——按官方价 0.19 折、0.29 折、0.49 折三档消耗余额，按量计费，用多少扣多少，后台实时可查。支持支付宝、微信及企业对 公转账，不需要折腾海外信用卡。 目前服务用户数万，企业客户超过 100 家，持续稳定运营中。 加入社群可领 10 美元体验额度，实际跑一下就知道延迟和稳定性如何。 详情： https://aicoding.sh",
+      "author": "aicodingsh",
+      "createdAt": "2026-05-17T02:50:59.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "aicoding.sh",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "提供国内直连的 Claude API 服务，支持 Claude Code 模型调用，按量计费价格低至官方 1.9 折，支持多种支付方式，并提供 10 美元体验额度。",
+        "topics": [
+          "定价",
+          "Claude",
+          "套餐对比",
+          "体验卡",
+          "支付方式"
+        ],
+        "planMentioned": "Claude Code",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-17T07:12:28.535Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1213261: LLM output schema validation failed: isRelevant: expected boolean, got undefined; isCodingPlan: expected boolean, got undefined; relevance: expected number 0-1, got undefined; category: expected non-empty string, got undefined"
+  ]
+}
