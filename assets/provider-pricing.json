@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-18T03:09:43.271Z",
+  "generatedAt": "2026-05-18T09:20:05.894Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1166,7 +1166,7 @@
           "originalPrice": 49,
           "originalPriceText": "¥49/月",
           "unit": "月",
-          "notes": "限时优惠",
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
@@ -1371,7 +1371,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.265/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.267/index.js"
       ],
       "plans": [
         {
@@ -1467,7 +1467,9 @@
             "资源包折扣权益：6 折"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "x-aio: Request timed out after 6000ms: https://code.x-aio.com/assets/index-DxkIorcN.js; Playwright fallback failed: page.goto: Timeout 6000ms exceeded. Call log: - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\""
     },
     {
       "provider": "xfyun-ai",
@@ -1653,6 +1655,7 @@
     }
   ],
   "failures": [
+    "x-aio: Request timed out after 6000ms: https://code.x-aio.com/assets/index-DxkIorcN.js; Playwright fallback failed: page.goto: Timeout 6000ms exceeded.\nCall log:\n  - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\"\n",
     "chutes-ai: Unable to locate Chutes subscription plan pricing text"
   ]
 }
