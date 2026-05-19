@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.3] - 2026-05-19
+- feat(config): 废弃供应商与模型级 temperature 配置
+- feat(config): 移除模型级 thinkingEffort 配置并改为请求级设置
+- feat(provider): 限制未显式添加 group 的模型暴露
+- fix(extension): 延迟注册语言模型提供程序并修复模型可见性
+- feat(test): 添加扩展测试配置与文档
+
 ## [0.8.5] - 2026-05-14
 - chore(release): 升级版本至 0.8.5 并优化命令显示逻辑
 
@@ -46,6 +53,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.7.12] - 2026-04-27
 - chore: 升级版本至 0.7.9 并更新变更日志
-
-## [0.7.2] - 2026-04-16
-- feat(commitMessageGenerator): 增强风格参考约束与回退格式优先级

@@ -13,9 +13,13 @@ import {
   DEFAULT_CONTEXT_WINDOW_SIZE,
   DEFAULT_MODEL_TOOLS,
   DEFAULT_REQUEST_MAX_TOKENS,
+  DEFAULT_RESPONSES_PERSONALITY,
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
+  PERSONALITY_MODEL_OPTION_KEY,
+  PERSONALITY_VALUES,
   RESPONSE_TRACE_ID_FIELD,
+  ResponsesPersonality,
   TEMPERATURE_MODEL_OPTION_KEY,
   ThinkingEffort,
   THINKING_EFFORT_MODEL_OPTION_KEY,
@@ -64,7 +68,7 @@ import {
   summarizeOpenAIChatResponse,
   summarizeOpenAIResponsesResponse,
   toAnthropicMessages,
-  toOpenAIResponsesInput
+  toOpenAIResponsesPayloadParts
 } from './genericProviderProtocols';
 import {
   attachTokenUsage,
@@ -104,6 +108,7 @@ interface ResolvedSamplingOptions {
 interface RequestModelOptions {
   [TEMPERATURE_MODEL_OPTION_KEY]?: unknown;
   [THINKING_EFFORT_MODEL_OPTION_KEY]?: unknown;
+  [PERSONALITY_MODEL_OPTION_KEY]?: unknown;
 }
 
 interface ResolvedThinkingOptions {
@@ -130,6 +135,10 @@ interface StreamingCompletionResult {
 
 const MAX_REASONING_CONTENT_CACHE_ENTRIES = 512;
 const EMPTY_MODEL_RESPONSE_ERROR_CODE = 'coding-plans.empty-model-response';
+const RESPONSES_PERSONALITY_INSTRUCTIONS: Record<ResponsesPersonality, string> = {
+  pragmatic: 'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.',
+  friendly: 'Personality: friendly. Be warm, clear, collaborative, and focused on useful next steps.'
+};
 
 function markEmptyModelResponseError(error: vscode.LanguageModelError): vscode.LanguageModelError {
   try {
@@ -586,6 +595,10 @@ export class GenericAIProvider extends BaseAIProvider {
     return undefined;
   }
 
+  private resolveResponsesPersonality(request: GenericChatRequest): ResponsesPersonality {
+    return this.readPersonalityFromModelOptions(request.options?.modelOptions) ?? DEFAULT_RESPONSES_PERSONALITY;
+  }
+
   private buildThinkingOptions(request: GenericChatRequest, vendor: VendorConfig, modelName: string): ResolvedThinkingOptions | undefined {
     const thinkingEffort = this.resolveThinkingEffort(request, vendor, modelName);
     if (!thinkingEffort) {
@@ -633,6 +646,22 @@ export class GenericAIProvider extends BaseAIProvider {
       : undefined;
   }
 
+  private readPersonalityFromModelOptions(modelOptions: unknown): ResponsesPersonality | undefined {
+    if (!modelOptions || typeof modelOptions !== 'object' || Array.isArray(modelOptions)) {
+      return undefined;
+    }
+
+    const raw = (modelOptions as RequestModelOptions)[PERSONALITY_MODEL_OPTION_KEY];
+    if (typeof raw !== 'string') {
+      return undefined;
+    }
+
+    const normalized = raw.trim().toLowerCase();
+    return PERSONALITY_VALUES.includes(normalized as ResponsesPersonality)
+      ? normalized as ResponsesPersonality
+      : undefined;
+  }
+
   private readTemperatureFromModelOptions(modelOptions: unknown): number | undefined {
     if (!modelOptions || typeof modelOptions !== 'object' || Array.isArray(modelOptions)) {
       return undefined;
@@ -655,6 +684,18 @@ export class GenericAIProvider extends BaseAIProvider {
 
     const supportedTemperatures = [0.1, 0.4, 0.7, 1];
     return supportedTemperatures.find(candidate => Math.abs(candidate - value) < 1e-9);
+  }
+
+  private buildOpenAIResponsesInstructions(
+    baseInstructions: string | undefined,
+    personality: ResponsesPersonality
+  ): string {
+    return [
+      baseInstructions?.trim(),
+      RESPONSES_PERSONALITY_INSTRUCTIONS[personality]
+    ]
+      .filter((part): part is string => typeof part === 'string' && part.length > 0)
+      .join('\n\n');
   }
 
   private shouldSendOutputTokenLimit(
@@ -1203,20 +1244,24 @@ export class GenericAIProvider extends BaseAIProvider {
     const providerMessages = this.convertMessages(request.messages);
     const sampling = this.resolveSamplingOptions(request, vendor, modelName);
     const thinkingOptions = this.buildThinkingOptions(request, vendor, modelName);
+    const personality = this.resolveResponsesPersonality(request);
     const tools = request.capabilities.toolCalling
       ? buildOpenAIResponsesToolDefinitions(this.buildToolDefinitions(request.options))
       : undefined;
     const toolChoice = request.capabilities.toolCalling ? this.buildToolChoice(request.options) : undefined;
+    const responsesToolChoice = toolChoice === 'required' ? toolChoice : undefined;
     const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName, 'openai-responses')
       ? this.resolveRequestedOutputLimit(request)
       : undefined;
     const maxOutputTokens = requestedOutputLimit;
+    const responsesPayloadParts = toOpenAIResponsesPayloadParts(providerMessages, () => this.generateToolCallId());
+    const instructions = this.buildOpenAIResponsesInstructions(responsesPayloadParts.instructions, personality);
     const payload: OpenAIResponsesRequest = {
       model: modelName,
-      input: toOpenAIResponsesInput(providerMessages, () => this.generateToolCallId()),
+      ...responsesPayloadParts,
+      ...(instructions.length > 0 ? { instructions } : {}),
       tools,
-      tool_choice: toolChoice,
-      temperature: sampling.temperature,
+      tool_choice: responsesToolChoice,
       ...(sampling.topP > 0 ? { top_p: sampling.topP } : {}),
       ...(thinkingOptions ? { thinking: thinkingOptions.thinking } : {}),
       ...(thinkingOptions?.effort ? { reasoning_effort: thinkingOptions.effort } : {}),
@@ -1229,7 +1274,7 @@ export class GenericAIProvider extends BaseAIProvider {
         ...trace,
         baseUrl,
         payload: {
-          temperature: payload.temperature,
+          personality,
           topP: payload.top_p,
           thinking: payload.thinking,
           reasoningEffort: payload.reasoning_effort,
@@ -1237,6 +1282,7 @@ export class GenericAIProvider extends BaseAIProvider {
           toolChoice: payload.tool_choice,
           toolCount: payload.tools?.length ?? 0,
           providerMessages: this.summarizeProviderMessages(providerMessages),
+          instructionsLength: payload.instructions?.length ?? 0,
           input: this.summarizeOpenAIResponsesInput(payload.input)
         }
       });
@@ -2035,7 +2081,7 @@ export class GenericAIProvider extends BaseAIProvider {
       return undefined;
     }
 
-    const message = responseData?.error?.message || responseData?.message;
+    const message = responseData?.error?.message || responseData?.message || this.readApiDetailMessage(responseData?.detail);
     if (typeof message === 'string' && message.trim().length > 0) {
       return message.trim();
     }
@@ -2044,6 +2090,68 @@ export class GenericAIProvider extends BaseAIProvider {
       return responseData.trim();
     }
 
+    return undefined;
+  }
+
+  private readApiDetailMessage(detail: unknown): string | undefined {
+    if (typeof detail === 'string' && detail.trim().length > 0) {
+      return detail.trim();
+    }
+
+    if (Array.isArray(detail)) {
+      const messages = detail
+        .map(entry => this.formatApiDetailEntry(entry))
+        .filter((entry): entry is string => typeof entry === 'string' && entry.trim().length > 0);
+      return messages.length > 0 ? messages.join('; ') : undefined;
+    }
+
+    if (detail && typeof detail === 'object') {
+      return this.formatApiDetailEntry(detail);
+    }
+
+    return undefined;
+  }
+
+  private formatApiDetailEntry(entry: unknown): string | undefined {
+    if (typeof entry === 'string' && entry.trim().length > 0) {
+      return entry.trim();
+    }
+
+    if (!entry || typeof entry !== 'object') {
+      return undefined;
+    }
+
+    const source = entry as Record<string, unknown>;
+    const message = this.readFirstString(source, ['message', 'msg', 'error', 'detail', 'reason']);
+    const location = Array.isArray(source.loc)
+      ? source.loc
+        .filter(part => typeof part === 'string' || typeof part === 'number')
+        .join('.')
+      : undefined;
+    const type = typeof source.type === 'string' && source.type.trim().length > 0
+      ? source.type.trim()
+      : undefined;
+
+    const parts = [
+      location ? `${location}:` : undefined,
+      message,
+      type && type !== message ? `(${type})` : undefined
+    ].filter((part): part is string => typeof part === 'string' && part.trim().length > 0);
+
+    if (parts.length > 0) {
+      return parts.join(' ');
+    }
+
+    return undefined;
+  }
+
+  private readFirstString(source: Record<string, unknown>, keys: string[]): string | undefined {
+    for (const key of keys) {
+      const value = source[key];
+      if (typeof value === 'string' && value.trim().length > 0) {
+        return value.trim();
+      }
+    }
     return undefined;
   }
 

@@ -10,7 +10,8 @@ import {
   REQUEST_SOURCE_MODEL_OPTION_KEY,
   RESPONSE_TRACE_ID_FIELD,
   TEMPERATURE_MODEL_OPTION_KEY,
-  THINKING_EFFORT_MODEL_OPTION_KEY
+  THINKING_EFFORT_MODEL_OPTION_KEY,
+  PERSONALITY_MODEL_OPTION_KEY
 } from '../constants';
 import { getMessage } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
@@ -53,26 +54,39 @@ type LanguageModelChatInformationWithHiddenFields = vscode.LanguageModelChatInfo
   isUserSelectable?: boolean;
 };
 
-function createModelConfigurationSchema(): LanguageModelConfigurationSchema {
+function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModelConfigurationSchema {
+  const properties: Record<string, LanguageModelConfigurationSchemaProperty> = {
+    [THINKING_EFFORT_MODEL_OPTION_KEY]: {
+      type: 'string',
+      title: getMessage('thinkingEffortTitle'),
+      description: getMessage('thinkingEffortDescription'),
+      enum: ['none', 'high', 'max'],
+      default: 'max',
+      group: 'navigation'
+    }
+  };
+
+  if (model.apiStyle === 'openai-responses') {
+    properties[PERSONALITY_MODEL_OPTION_KEY] = {
+      type: 'string',
+      title: getMessage('personalityTitle'),
+      description: getMessage('personalityDescription'),
+      enum: ['pragmatic', 'friendly'],
+      default: 'pragmatic'
+    };
+  } else {
+    properties[TEMPERATURE_MODEL_OPTION_KEY] = {
+      type: 'number',
+      title: getMessage('temperatureTitle'),
+      description: getMessage('temperatureDescription'),
+      enum: [0, 0.1, 0.4, 0.7, 1],
+      default: 0.1
+    };
+  }
+
   return {
     type: 'object',
-    properties: {
-      [THINKING_EFFORT_MODEL_OPTION_KEY]: {
-        type: 'string',
-        title: getMessage('thinkingEffortTitle'),
-        description: getMessage('thinkingEffortDescription'),
-        enum: ['none', 'high', 'max'],
-        default: 'max',
-        group: 'navigation'
-      },
-      [TEMPERATURE_MODEL_OPTION_KEY]: {
-        type: 'number',
-        title: getMessage('temperatureTitle'),
-        description: getMessage('temperatureDescription'),
-        enum: [0, 0.1, 0.4, 0.7, 1],
-        default: 0.1
-      }
-    }
+    properties
   };
 }
 
@@ -87,7 +101,7 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
     maxInputTokens: model.maxInputTokens,
     maxOutputTokens: model.maxOutputTokens,
     capabilities: { ...model.capabilities },
-    configurationSchema: createModelConfigurationSchema(),
+    configurationSchema: createModelConfigurationSchema(model),
     // isUserSelectable is an internal VS Code field not yet in public typings.
     // Without it the chat model picker filters the model out (AIo() filter).
     ...({ isUserSelectable: true } as object)

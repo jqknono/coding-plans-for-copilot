@@ -1522,7 +1522,12 @@ async function runGenericProviderOutputLimitToggleTests(
 
   async function captureOpenAIResponsesPayload(
     vendors: VendorRecord[],
-    modelId: string
+    modelId: string,
+    messages: Array<{ role: string | number; content: Array<{ value: string }> }> = [{
+      role: 'user',
+      content: [{ value: 'reply with ok' }]
+    }],
+    options: { modelOptions?: Record<string, unknown> } = {}
   ): Promise<Record<string, unknown>> {
     activeState = createState(vendors);
     const configStore = new configStoreCtor(createExtensionContext() as never);
@@ -1531,9 +1536,9 @@ async function runGenericProviderOutputLimitToggleTests(
       sendRequest(
         request: {
           modelId: string;
-          messages: Array<{ role: string; content: Array<{ value: string }> }>;
+          messages: Array<{ role: string | number; content: Array<{ value: string }> }>;
           capabilities: { toolCalling: boolean; imageInput: boolean };
-          options?: { tools?: unknown[] };
+          options?: { tools?: unknown[]; modelOptions?: Record<string, unknown> };
         }
       ): Promise<unknown>;
       dispose(): void;
@@ -1572,12 +1577,9 @@ async function runGenericProviderOutputLimitToggleTests(
       await provider.refreshModels();
       await provider.sendRequest({
         modelId,
-        messages: [{
-          role: 'user',
-          content: [{ value: 'reply with ok' }]
-        }],
+        messages,
         capabilities: { toolCalling: false, imageInput: false },
-        options: { tools: [] }
+        options: { tools: [], ...options }
       });
       assert.ok(payload);
       return payload;
@@ -1794,8 +1796,10 @@ async function runGenericProviderOutputLimitToggleTests(
       capabilities: { tools: false, vision: false }
     }]
   }], 'Vendor/coder');
+  assert.equal('temperature' in responsesDefaultTopPResult, false);
+  assert.equal(responsesDefaultTopPResult.instructions, 'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.');
   assert.equal('top_p' in responsesDefaultTopPResult, false);
-  console.log('PASS openai-responses 在未配置 topP 时默认不发送 top_p');
+  console.log('PASS openai-responses 默认不发送 temperature，且在未配置 topP 时不发送 top_p');
 
   const responsesPositiveTopPResult = await captureOpenAIResponsesPayload([{
     name: 'Vendor',
@@ -1809,8 +1813,65 @@ async function runGenericProviderOutputLimitToggleTests(
       capabilities: { tools: false, vision: false }
     }]
   }], 'Vendor/coder');
+  assert.equal('temperature' in responsesPositiveTopPResult, false);
   assert.equal(responsesPositiveTopPResult.top_p, 0.85);
   console.log('PASS openai-responses 在 topP 为正数时会发送 top_p');
+
+  const responsesSystemPromptResult = await captureOpenAIResponsesPayload([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-responses',
+    defaultVision: false,
+    models: [{
+      name: 'coder',
+      contextSize: 64000,
+      capabilities: { tools: false, vision: false }
+    }]
+  }], 'Vendor/coder', [
+    {
+      role: 3,
+      content: [{ value: 'system policy' }]
+    },
+    {
+      role: 'user',
+      content: [{ value: 'reply with ok' }]
+    }
+  ]);
+  assert.equal(
+    responsesSystemPromptResult.instructions,
+    'system policy\n\nPersonality: pragmatic. Be concise, direct, practical, and focused on actionable results.'
+  );
+  assert.deepEqual(
+    (responsesSystemPromptResult.input as Array<{ role?: string }>).map(item => item.role),
+    ['user']
+  );
+  console.log('PASS openai-responses 会把 system 消息发送到 instructions 字段');
+
+  const responsesFriendlyPersonalityResult = await captureOpenAIResponsesPayload([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-responses',
+    defaultVision: false,
+    models: [{
+      name: 'coder',
+      contextSize: 64000,
+      capabilities: { tools: false, vision: false }
+    }]
+  }], 'Vendor/coder', [{
+    role: 'user',
+    content: [{ value: 'reply with ok' }]
+  }], {
+    modelOptions: {
+      temperature: 1,
+      personality: 'friendly'
+    }
+  });
+  assert.equal('temperature' in responsesFriendlyPersonalityResult, false);
+  assert.equal(
+    responsesFriendlyPersonalityResult.instructions,
+    'Personality: friendly. Be warm, clear, collaborative, and focused on useful next steps.'
+  );
+  console.log('PASS openai-responses 使用 Personality 写入 instructions，忽略 temperature 参数');
 }
 
 async function runGenericProviderThinkingEffortTests(
@@ -2045,6 +2106,8 @@ async function runGenericProviderThinkingEffortTests(
   });
   assert.deepEqual(openAIResponsesPayload.thinking, { type: 'enabled' });
   assert.equal(openAIResponsesPayload.reasoning_effort, 'high');
+  assert.equal('temperature' in openAIResponsesPayload, false);
+  assert.equal(openAIResponsesPayload.instructions, 'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.');
   console.log('PASS openai-responses 会按请求级 thinkingEffort 发送 thinking 与 reasoning_effort');
 
   const anthropicPayload = await capturePayload([{
@@ -3923,7 +3986,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       'navigation'
     );
     assert.equal(
-      (allModels[1] as unknown as {
+      (allModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             type?: string;
@@ -3934,7 +3997,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       'number'
     );
     assert.deepEqual(
-      (allModels[1] as unknown as {
+      (allModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             enum?: unknown[];
@@ -3944,7 +4007,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       [0, 0.1, 0.4, 0.7, 1]
     );
     assert.equal(
-      (allModels[1] as unknown as {
+      (allModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             default?: unknown;
@@ -3952,6 +4015,45 @@ async function runLMChatProviderAdapterModelFilteringTests(
         };
       }).configurationSchema?.properties?.temperature?.default,
       0.1
+    );
+    assert.equal(
+      (allModels[1] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, unknown>;
+        };
+      }).configurationSchema?.properties?.temperature,
+      undefined
+    );
+    assert.equal(
+      (allModels[1] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            type?: string;
+            default?: unknown;
+          }>;
+        };
+      }).configurationSchema?.properties?.personality?.type,
+      'string'
+    );
+    assert.deepEqual(
+      (allModels[1] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            enum?: unknown[];
+          }>;
+        };
+      }).configurationSchema?.properties?.personality?.enum,
+      ['pragmatic', 'friendly']
+    );
+    assert.equal(
+      (allModels[1] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            default?: unknown;
+          }>;
+        };
+      }).configurationSchema?.properties?.personality?.default,
+      'pragmatic'
     );
 
     const vendorModels = await adapter.provideLanguageModelChatInformation({
@@ -3970,7 +4072,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
     } as never, {} as never);
     assert.equal(refreshCount, 1);
     assert.deepEqual(silentEmptyModels, []);
-    console.log('PASS LMChatProviderAdapter 仅在显式 group 或 configuration 场景暴露模型，并为 More Actions 暴露 thinkingEffort 与 temperature schema');
+    console.log('PASS LMChatProviderAdapter 仅在显式 group 或 configuration 场景暴露模型，并按协议暴露 More Actions schema');
   } finally {
     adapter.dispose();
     configStore.dispose();

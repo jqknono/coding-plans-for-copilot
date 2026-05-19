@@ -52,6 +52,8 @@
   "vendorNotConfiguredMatch": "供应商“{0}”未配置，请先配置 coding-plans.vendors。",
   "temperatureTitle": "Temperature",
   "temperatureDescription": "显示在模型行 More Actions 菜单中的单次请求覆盖项，支持 `0`、`0.1`、`0.4`、`0.7`、`1`。默认值为 `0.1`；当值为 `0` 时表示继承上级 temperature。topP 默认保持留空，不主动发送。",
+  "personalityTitle": "Personality",
+  "personalityDescription": "Responses API 模型的单次请求风格，支持 `pragmatic`、`friendly`。该值会写入 instructions，不会作为上游参数发送。",
   "thinkingEffortTitle": "Thinking Effort",
   "thinkingEffortDescription": "显示在模型行 More Actions 菜单中的单次请求覆盖项，支持 `none`、`high`、`max`。该值不会写回 settings.json，只影响当前请求。",
   "unsupportedModelName": "暂未支持",

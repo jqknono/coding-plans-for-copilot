@@ -52,6 +52,8 @@
   "vendorNotConfiguredMatch": "Vendor \"{0}\" is not configured. Please configure coding-plans.vendors first.",
   "temperatureTitle": "Temperature",
   "temperatureDescription": "Shown in the model row More Actions menu. Supported values: `0`, `0.1`, `0.4`, `0.7`, `1`. The default is `0.1`; `0` means inherit the higher-level temperature. Top-p stays unset by default.",
+  "personalityTitle": "Personality",
+  "personalityDescription": "Request style for Responses API models. Supported values: `pragmatic`, `friendly`. The value is written into instructions and is not sent as an upstream parameter.",
   "thinkingEffortTitle": "Thinking Effort",
   "thinkingEffortDescription": "Shown in the model row More Actions menu. Supported values: `none`, `high`, `max`. This request-level override is not persisted to settings.json and only affects the current request.",
   "unsupportedModelName": "Not Supported",

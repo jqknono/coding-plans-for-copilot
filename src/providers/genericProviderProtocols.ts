@@ -81,10 +81,10 @@ export type OpenAIResponsesInputItem =
 
 export interface OpenAIResponsesRequest {
   model: string;
+  instructions?: string;
   input: OpenAIResponsesInputItem[];
   tools?: OpenAIResponsesToolDefinition[];
   tool_choice?: 'auto' | 'required';
-  temperature?: number;
   top_p?: number;
   thinking?: ThinkingToggle;
   reasoning_effort?: Exclude<ThinkingEffort, 'none'>;
@@ -807,9 +807,24 @@ export function toOpenAIResponsesInput(
   messages: ChatMessage[],
   generateToolCallId: GenerateToolCallId
 ): OpenAIResponsesInputItem[] {
+  return toOpenAIResponsesPayloadParts(messages, generateToolCallId).input;
+}
+
+export function toOpenAIResponsesPayloadParts(
+  messages: ChatMessage[],
+  generateToolCallId: GenerateToolCallId
+): { instructions?: string; input: OpenAIResponsesInputItem[] } {
+  const instructionParts: string[] = [];
   const input: OpenAIResponsesInputItem[] = [];
 
   for (const message of messages) {
+    if (message.role === 'system') {
+      if (message.content.trim().length > 0) {
+        instructionParts.push(message.content);
+      }
+      continue;
+    }
+
     if (message.role === 'tool') {
       input.push({
         type: 'function_call_output',
@@ -846,7 +861,11 @@ export function toOpenAIResponsesInput(
     });
   }
 
-  return input;
+  const instructions = instructionParts.join('\n\n');
+  return {
+    ...(instructions.length > 0 ? { instructions } : {}),
+    input
+  };
 }
 
 export function parseOpenAIResponsesResponse(

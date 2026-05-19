@@ -52,7 +52,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
 3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
 4. 打开 Copilot Chat（`Ctrl+L`），在模型选择器中选择 `Coding Plans` 提供的模型
-5. 如需设置 `temperature` 或 `topP`，在 `coding-plans.vendors[].models[]` 中配置模型级覆盖项；`Thinking Effort` 请在模型行 `More Actions` 中按请求设置
+5. 如需设置 `temperature` 或 `topP`，在 `coding-plans.vendors[].models[]` 中配置模型级覆盖项；`Thinking Effort` 请在模型行 `More Actions` 中按请求设置；Responses API 模型会在 `More Actions` 中显示 `Personality`，并通过 `instructions` 生效
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
 
 ### 内置供应商端点
@@ -145,13 +145,13 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].baseUrl` | `string` | 必填 | API 基础地址。 |
 | `coding-plans.vendors[].usageUrl` | `string` | 空 | 套餐 usage 接口地址，配置后状态栏显示额度百分比。 |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | 协议风格：`openai-chat` / `openai-responses` / `anthropic`。 |
-| `coding-plans.vendors[].defaultTemperature` | `number` | `0.1` | 已废弃。供应商默认 temperature；未配置时运行时使用全局默认值 `0.1`。优先使用模型行 `More Actions` 或调用方传入的请求级 `temperature`。 |
+| `coding-plans.vendors[].defaultTemperature` | `number` | `0.1` | 已废弃。供应商默认 temperature；未配置时运行时使用全局默认值 `0.1`。仅 `openai-chat` 与 `anthropic` 运行时使用该值。 |
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | 供应商默认 topP；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | 是否从 `/models` 拉取模型列表。 |
 | `coding-plans.vendors[].models[].name` | `string` | 必填 | 模型名称。 |
 | `coding-plans.vendors[].models[].description` | `string` | 空 | 模型描述。 |
 | `coding-plans.vendors[].models[].apiStyle` | `string` | 继承供应商 | 模型级协议风格覆盖。 |
-| `coding-plans.vendors[].models[].temperature` | `number` | 继承供应商 | 已废弃。模型级 temperature 覆盖；优先使用模型行 `More Actions` 或调用方传入的请求级 `temperature`。 |
+| `coding-plans.vendors[].models[].temperature` | `number` | 继承供应商 | 已废弃。模型级 temperature 覆盖；仅 `openai-chat` 与 `anthropic` 运行时使用该值。Responses API 模型行请使用 `Personality`。 |
 | `coding-plans.vendors[].models[].topP` | `number` | 继承供应商 | 模型级 topP 覆盖；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | 模型能力声明。 |
 | `coding-plans.vendors[].models[].contextSize` | `number` | 空 | 模型总上下文窗口；运行时会基于它推导输入/输出预算。 |

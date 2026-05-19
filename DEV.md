@@ -191,6 +191,7 @@ npm run test:pages
   - `coding-plans.vendors[].models[].temperature` / `topP`：模型级覆盖值；其中 `temperature` 已标记 deprecated
   - `request.modelOptions.temperature` 仍作为 API 调用方传入的请求级覆盖项；VS Code 1.120 公开模型信息接口不再提供 `configurationSchema` UI 声明
   - 继承顺序固定为 `request.modelOptions.temperature` > `models[].temperature` > `vendors[].defaultTemperature` > 内置默认值 `0.1`
+  - `openai-responses` 请求不发送 `temperature`；模型行 `More Actions` 改为显示 `Personality`，并将 `pragmatic` / `friendly` 写入 `instructions`
   - `topP = 0` 表示请求中省略 `top_p`；模型行 `More Actions` 不提供 `topP` 配置，默认保持留空
   - 建议：编码场景默认保持 `topP 0`；仅当上游明确需要或你想显式控制 nucleus sampling 时再设置为正数
   - `anthropic` 请求仅发送 `temperature`，不发送 `top_p`，以兼容会拒绝同时指定两者的上游
