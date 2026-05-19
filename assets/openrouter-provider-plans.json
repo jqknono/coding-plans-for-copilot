@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-05-18T09:20:22.945Z",
-  "generatedAtBeijing": "2026年5月18日 17:20:22",
-  "sourceGeneratedAt": "2026-05-18T09:20:05.894Z",
-  "sourceGeneratedAtBeijing": "2026年5月18日 17:20:05",
-  "sourceMetricsGeneratedAt": "2026-05-18T09:20:06.765Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年5月18日 17:20:06",
+  "generatedAt": "2026-05-19T09:18:40.316Z",
+  "generatedAtBeijing": "2026年5月19日 17:18:40",
+  "sourceGeneratedAt": "2026-05-19T09:18:22.040Z",
+  "sourceGeneratedAtBeijing": "2026年5月19日 17:18:22",
+  "sourceMetricsGeneratedAt": "2026-05-19T09:18:22.707Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年5月19日 17:18:22",
   "summary": {
     "openrouterProviderCount": 82,
-    "metricsProviderCount": 37,
-    "resolvedMetricsProviderCount": 37,
+    "metricsProviderCount": 38,
+    "resolvedMetricsProviderCount": 38,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 7,
     "providersWithPlans": 15,
-    "pendingCount": 22,
+    "pendingCount": 23,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -1263,6 +1263,15 @@
       "blocked": false
     },
     {
+      "slug": "nebius",
+      "openrouterName": "Nebius",
+      "providerId": null,
+      "officialWebsiteUrl": "https://docs.nebius.com",
+      "pricingPageUrl": "https://docs.nebius.com",
+      "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "nextbit",
       "openrouterName": "NextBit",
       "providerId": null,
@@ -1277,7 +1286,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://novita.ai",
       "pricingPageUrl": "https://novita.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.69 / $0.13 / $3.38）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.67 / $0.13 / $3.38）",
       "blocked": false
     },
     {
