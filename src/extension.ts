@@ -498,7 +498,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   const adapter = new LMChatProviderAdapter(genericProvider, configStore, contextUsageState);
   context.subscriptions.push(adapter);
-  registerLanguageModelProvider(adapter);
   context.subscriptions.push(
     genericProvider.onDidChangeModels(() => {
       if (suppressProviderModelChangeUiSyncDepth > 0) {
@@ -519,11 +518,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       });
     })
   );
-  void logLanguageModelInventorySnapshot('after-register-language-model-provider', genericProvider, configStore).catch(error => {
-    logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} failed to log inventory after provider registration`, {
-      error: getCompactErrorMessage(error)
-    });
-  });
   context.subscriptions.push(new vscode.Disposable(() => {
     languageModelProviderRegistration?.dispose();
     languageModelProviderRegistration = undefined;
@@ -534,6 +528,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} generic provider initialization completed`, {
       internalModelCount: genericProvider.getAvailableModels().length,
       internalModelIds: genericProvider.getAvailableModels().map(model => model.id)
+    });
+    registerLanguageModelProvider(adapter);
+    void logLanguageModelInventorySnapshot('after-register-language-model-provider', genericProvider, configStore).catch(error => {
+      logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} failed to log inventory after provider registration`, {
+        error: getCompactErrorMessage(error)
+      });
     });
     if (genericProvider.getAvailableModels().length > 0) {
       await synchronizeLanguageModelsUi(
@@ -547,6 +547,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
   }).catch(error => {
     logger.error('Failed to initialize generic provider models.', error);
+    registerLanguageModelProvider(adapter);
   });
 
   context.subscriptions.push(

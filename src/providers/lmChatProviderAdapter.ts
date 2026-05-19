@@ -41,8 +41,11 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
     version: model.version,
     maxInputTokens: model.maxInputTokens,
     maxOutputTokens: model.maxOutputTokens,
-    capabilities: { ...model.capabilities }
-  };
+    capabilities: { ...model.capabilities },
+    // isUserSelectable is an internal VS Code field not yet in public typings.
+    // Without it the chat model picker filters the model out (AIo() filter).
+    ...({ isUserSelectable: true } as object)
+  } as vscode.LanguageModelChatInformation;
 }
 
 export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, vscode.Disposable {
