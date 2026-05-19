@@ -1,10 +1,11 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as vscode from 'vscode';
 import { ContextUsageState, LastContextUsageSnapshot } from '../contextUsageState';
 import { BaseAIProvider, BaseLanguageModel, getCompactErrorMessage } from './baseProvider';
 import { ConfigStore } from '../config/configStore';
 import { isEmptyModelResponseError } from './genericProvider';
 import {
-  MODEL_VERSION_LABEL,
   REQUEST_SOURCE_COMMIT_MESSAGE,
   REQUEST_SOURCE_MODEL_OPTION_KEY,
   RESPONSE_TRACE_ID_FIELD
@@ -13,27 +14,25 @@ import { getMessage } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
 import { NormalizedTokenUsage, readAttachedTokenUsage } from './tokenUsage';
 
-let hasShownVendorNotConfiguredWarning = false;
-const PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS = 30000;
 const MAX_EMPTY_MODEL_RESPONSE_RETRIES = 2;
-
-interface ProviderPickerConfiguration {
-  name?: unknown;
-  vendorName?: unknown;
-  apiKey?: unknown;
-}
-
-interface PrepareLanguageModelChatModelOptionsWithConfiguration extends vscode.PrepareLanguageModelChatModelOptions {
-  group?: unknown;
-  configuration?: ProviderPickerConfiguration;
-}
+const LM_INFO_LOG_PATH = path.join(process.cwd(), 'temp', 'lm-info-log.jsonl');
+const LANGUAGE_MODELS_PICKER_LOG_PREFIX = '[coding-plans][language-models-picker]';
 
 interface CodingPlansRequestModelOptions {
   [REQUEST_SOURCE_MODEL_OPTION_KEY]?: unknown;
 }
 
+interface ProviderPickerConfiguration {
+  vendorName?: unknown;
+  apiKey?: unknown;
+}
+
+interface PrepareLanguageModelChatModelOptionsWithConfiguration extends vscode.PrepareLanguageModelChatModelOptions {
+  configuration?: ProviderPickerConfiguration;
+}
+
 function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChatInformation {
-  const info: vscode.LanguageModelChatInformation = {
+  return {
     id: model.id,
     name: model.name,
     family: model.family,
@@ -42,116 +41,8 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
     version: model.version,
     maxInputTokens: model.maxInputTokens,
     maxOutputTokens: model.maxOutputTokens,
-    capabilities: model.capabilities
+    capabilities: { ...model.capabilities }
   };
-  return info;
-}
-
-function getProviderDisplayName(vendor: string): string {
-  switch (vendor) {
-    case 'coding-plans':
-      return 'Coding Plan';
-    default:
-      return vendor;
-  }
-}
-
-function getPlaceholderModelId(vendor: string): string {
-  return `${vendor}__setup_api_key__`;
-}
-
-function getNoModelsPlaceholderModelId(vendor: string): string {
-  return `${vendor}__no_models__`;
-}
-
-function getUnsupportedPlaceholderModelId(vendor: string): string {
-  return `${vendor}__unsupported__`;
-}
-
-function getVendorNotConfiguredPlaceholderModelId(vendor: string): string {
-  return `${vendor}__vendor_not_configured__`;
-}
-
-function isPlaceholderModel(vendor: string, modelId: string): boolean {
-  return modelId === getPlaceholderModelId(vendor)
-    || modelId === getNoModelsPlaceholderModelId(vendor)
-    || modelId === getUnsupportedPlaceholderModelId(vendor)
-    || modelId === getVendorNotConfiguredPlaceholderModelId(vendor);
-}
-
-function getPlaceholderModel(vendor: string): vscode.LanguageModelChatInformation {
-  const providerName = getProviderDisplayName(vendor);
-  const info: vscode.LanguageModelChatInformation = {
-    id: getPlaceholderModelId(vendor),
-    name: getMessage('setupModelName'),
-    family: 'setup',
-    tooltip: getMessage('setupModelTooltip', providerName),
-    detail: getMessage('setupModelDetail'),
-    version: MODEL_VERSION_LABEL,
-    maxInputTokens: 1,
-    maxOutputTokens: PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS,
-    capabilities: {
-      toolCalling: false,
-      imageInput: false
-    }
-  };
-  return info;
-}
-
-function getNoModelsPlaceholderModel(vendor: string): vscode.LanguageModelChatInformation {
-  const providerName = getProviderDisplayName(vendor);
-  const info: vscode.LanguageModelChatInformation = {
-    id: getNoModelsPlaceholderModelId(vendor),
-    name: getMessage('noModelName'),
-    family: 'no-models',
-    tooltip: getMessage('noModelTooltip', providerName),
-    detail: getMessage('noModelDetail'),
-    version: MODEL_VERSION_LABEL,
-    maxInputTokens: 1,
-    maxOutputTokens: PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS,
-    capabilities: {
-      toolCalling: false,
-      imageInput: false
-    }
-  };
-  return info;
-}
-
-function getUnsupportedPlaceholderModel(vendor: string): vscode.LanguageModelChatInformation {
-  const providerName = getProviderDisplayName(vendor);
-  const info: vscode.LanguageModelChatInformation = {
-    id: getUnsupportedPlaceholderModelId(vendor),
-    name: getMessage('unsupportedModelName'),
-    family: 'unsupported',
-    tooltip: getMessage('unsupportedModelTooltip', providerName),
-    detail: getMessage('unsupportedModelDetail'),
-    version: MODEL_VERSION_LABEL,
-    maxInputTokens: 1,
-    maxOutputTokens: PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS,
-    capabilities: {
-      toolCalling: false,
-      imageInput: false
-    }
-  };
-  return info;
-}
-
-function getVendorNotConfiguredPlaceholderModel(vendor: string): vscode.LanguageModelChatInformation {
-  const info: vscode.LanguageModelChatInformation = {
-    id: getVendorNotConfiguredPlaceholderModelId(vendor),
-    name: getMessage('vendorNotConfiguredName'),
-    family: 'vendor-not-configured',
-    tooltip: getMessage('vendorNotConfiguredTooltip'),
-    detail: getMessage('vendorNotConfiguredDetail'),
-    version: MODEL_VERSION_LABEL,
-    maxInputTokens: 1,
-    maxOutputTokens: PLACEHOLDER_MODEL_MAX_OUTPUT_TOKENS,
-    capabilities: {
-      toolCalling: false,
-      imageInput: false
-    }
-  };
-  return info;
 }
 
 export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, vscode.Disposable {
@@ -167,12 +58,20 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   ) {
     this.disposables.push(
       this.provider.onDidChangeModels(() => {
+        this.logLanguageModelInformationDiagnostic('provider-models-changed', {
+          providerVendor: this.provider.getVendor(),
+          availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels())
+        });
         this.onDidChangeLanguageModelChatInformationEmitter.fire();
       })
     );
   }
 
   public notifyLanguageModelInformationChanged(): void {
+    this.logLanguageModelInformationDiagnostic('notifyLanguageModelInformationChanged', {
+      providerVendor: this.provider.getVendor(),
+      availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels())
+    });
     this.onDidChangeLanguageModelChatInformationEmitter.fire();
   }
 
@@ -181,85 +80,89 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     _token: vscode.CancellationToken
   ): Promise<vscode.LanguageModelChatInformation[]> {
     const pickerOptions = options as PrepareLanguageModelChatModelOptionsWithConfiguration;
-    const hasGroup = typeof pickerOptions.group === 'string' && pickerOptions.group.trim().length > 0;
-    const hasConfigurationPayload = this.hasConfigurationPayload(pickerOptions.configuration);
+    const normalizedConfiguration = this.normalizePickerConfiguration(pickerOptions.configuration);
+    this.logLanguageModelInformationRequest('start', options, undefined, {
+      configuration: this.summarizePickerConfiguration(normalizedConfiguration),
+      configuredVendors: this.summarizeConfiguredVendors(),
+      availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels())
+    });
 
-    // Only return model information for explicitly added provider groups.
-    // Base vendor calls are ignored to avoid all providers being listed by default.
-    if (!hasGroup && !hasConfigurationPayload) {
+    await this.applyPickerConfiguration(normalizedConfiguration);
+    const result = await this.buildModelInformation(normalizedConfiguration?.vendorName);
+    this.logLanguageModelInformationRequest('resolved', options, result, {
+      resultCount: result.length,
+      resultPreview: this.summarizeLanguageModelInfos(result)
+    });
+    return result;
+  }
+
+  private async buildModelInformation(vendorName?: string): Promise<vscode.LanguageModelChatInformation[]> {
+    this.logLanguageModelInformationDiagnostic('build-model-information-start', {
+      providerVendor: this.provider.getVendor(),
+      optionsShape: 'vscode-1.120',
+      vendorName,
+      configuredVendors: this.summarizeConfiguredVendors()
+    });
+    let models = this.provider.getAvailableModels();
+    let scopedModels = this.scopeModels(models, vendorName);
+    this.logLanguageModelInformationDiagnostic('build-model-information-before-refresh', {
+      providerVendor: this.provider.getVendor(),
+      vendorName,
+      availableModels: this.summarizeBaseLanguageModels(models),
+      scopedModels: this.summarizeBaseLanguageModels(scopedModels)
+    });
+
+    // Settings updates and model picker queries can race each other.
+    // If we currently see nothing, refresh once and re-check before returning.
+    if (scopedModels.length === 0) {
+      logger.info(`${LANGUAGE_MODELS_PICKER_LOG_PREFIX} filtered model set is empty before refresh; refreshing provider models once`, {
+        providerVendor: this.provider.getVendor(),
+        vendorName
+      });
+      this.logLanguageModelInformationDiagnostic('build-model-information-trigger-refresh', {
+        providerVendor: this.provider.getVendor(),
+        vendorName
+      });
+      await this.provider.refreshModels();
+      models = this.provider.getAvailableModels();
+      scopedModels = this.scopeModels(models, vendorName);
+      this.logLanguageModelInformationDiagnostic('build-model-information-after-refresh', {
+        providerVendor: this.provider.getVendor(),
+        vendorName,
+        availableModels: this.summarizeBaseLanguageModels(models),
+        scopedModels: this.summarizeBaseLanguageModels(scopedModels)
+      });
+    }
+
+    if (scopedModels.length === 0) {
+      logger.info(`${LANGUAGE_MODELS_PICKER_LOG_PREFIX} returning empty real-model list`, {
+        providerVendor: this.provider.getVendor(),
+        vendorName
+      });
+      this.logLanguageModelInformationDiagnostic('build-model-information-empty', {
+        providerVendor: this.provider.getVendor(),
+        vendorName
+      });
       return [];
     }
 
-    if (hasGroup || hasConfigurationPayload) {
-      await this.applyPickerConfiguration(pickerOptions);
-    }
-
-    return this.buildModelInformation(pickerOptions.configuration);
+    const infos = scopedModels.map(model => toLanguageModelInfo(model));
+    this.logLanguageModelInformationDiagnostic('build-model-information-success', {
+      providerVendor: this.provider.getVendor(),
+      vendorName,
+      models: this.summarizeBaseLanguageModels(scopedModels),
+      infos: this.summarizeLanguageModelInfos(infos)
+    });
+    return infos;
   }
 
-  private async buildModelInformation(
-    configuration?: ProviderPickerConfiguration
-  ): Promise<vscode.LanguageModelChatInformation[]> {
-    const requestedVendor = this.resolveRequestedVendorName(configuration);
-    const resolvedVendor = this.resolveConfiguredVendorName(requestedVendor);
-    if (requestedVendor && !resolvedVendor && this.configStore) {
-      return [getVendorNotConfiguredPlaceholderModel(this.provider.getVendor())];
-    }
-    const vendorForFiltering = resolvedVendor || requestedVendor;
-    let models = this.provider.getAvailableModels();
-    let filteredModels = vendorForFiltering
-      ? models.filter(model => model.family.toLowerCase() === vendorForFiltering.toLowerCase())
-      : models;
-
-    // Settings updates and model picker queries can race each other.
-    // If we currently see nothing, refresh once and re-check before returning placeholders.
-    if (filteredModels.length === 0) {
-      await this.provider.refreshModels();
-      models = this.provider.getAvailableModels();
-      filteredModels = vendorForFiltering
-        ? models.filter(model => model.family.toLowerCase() === vendorForFiltering.toLowerCase())
-        : models;
+  private scopeModels(models: readonly BaseLanguageModel[], vendorName?: string): BaseLanguageModel[] {
+    const normalizedVendorName = vendorName?.trim().toLowerCase();
+    if (!normalizedVendorName) {
+      return [...models];
     }
 
-    if (filteredModels.length === 0) {
-      if (vendorForFiltering && this.configStore) {
-        const apiKey = (await this.configStore.getApiKey(vendorForFiltering)).trim();
-        if (apiKey.length === 0) {
-          return [getPlaceholderModel(this.provider.getVendor())];
-        }
-      } else {
-        if (!(await this.hasAnyConfiguredApiKey())) {
-          return [getPlaceholderModel(this.provider.getVendor())];
-        }
-      }
-
-      if (this.provider.isModelDiscoveryUnsupported()) {
-        return [getUnsupportedPlaceholderModel(this.provider.getVendor())];
-      }
-
-      return [getNoModelsPlaceholderModel(this.provider.getVendor())];
-    }
-
-    return filteredModels.map(model => toLanguageModelInfo(model));
-  }
-
-  private async hasAnyConfiguredApiKey(): Promise<boolean> {
-    if (!this.configStore) {
-      return this.provider.getApiKey().trim().length > 0;
-    }
-
-    const vendors = this.configStore.getVendors();
-    if (vendors.length === 0) {
-      return this.provider.getApiKey().trim().length > 0;
-    }
-
-    for (const vendor of vendors) {
-      const apiKey = (await this.configStore.getApiKey(vendor.name)).trim();
-      if (apiKey.length > 0) {
-        return true;
-      }
-    }
-    return false;
+    return models.filter(model => model.family.toLowerCase() === normalizedVendorName);
   }
 
   async provideLanguageModelChatResponse(
@@ -270,24 +173,6 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     token: vscode.CancellationToken
   ): Promise<void> {
     const vendor = this.provider.getVendor();
-    if (isPlaceholderModel(vendor, model.id)) {
-      const providerName = getProviderDisplayName(vendor);
-      if (model.id === getUnsupportedPlaceholderModelId(vendor)) {
-        progress.report(new vscode.LanguageModelTextPart(getMessage('unsupportedModelResponse', providerName)));
-        return;
-      }
-      if (model.id === getNoModelsPlaceholderModelId(vendor)) {
-        progress.report(new vscode.LanguageModelTextPart(getMessage('noModelResponse', providerName)));
-        return;
-      }
-      if (model.id === getVendorNotConfiguredPlaceholderModelId(vendor)) {
-        progress.report(new vscode.LanguageModelTextPart(getMessage('vendorNotConfiguredResponse')));
-        return;
-      }
-      progress.report(new vscode.LanguageModelTextPart(getMessage('setupModelResponse', providerName)));
-      return;
-    }
-
     const targetModel = this.provider.getModel(model.id);
     if (!targetModel) {
       throw vscode.LanguageModelError.NotFound(`Model not found: ${model.id}`);
@@ -389,23 +274,11 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   }
 
   provideTokenCount(
-    model: vscode.LanguageModelChatInformation,
+    _model: vscode.LanguageModelChatInformation,
     _text: string | vscode.LanguageModelChatRequestMessage,
     _token: vscode.CancellationToken
   ): Thenable<number> {
-    const vendor = this.provider.getVendor();
-    if (isPlaceholderModel(vendor, model.id)) {
-      return Promise.resolve(0);
-    }
-
     return Promise.resolve(0);
-  }
-
-  private hasConfigurationPayload(configuration: ProviderPickerConfiguration | undefined): boolean {
-    if (!configuration || typeof configuration !== 'object') {
-      return false;
-    }
-    return Object.keys(configuration).length > 0;
   }
 
   private toChatMessage(message: vscode.LanguageModelChatRequestMessage): vscode.LanguageModelChatMessage {
@@ -416,102 +289,44 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     );
   }
 
-  private async applyPickerConfiguration(options: PrepareLanguageModelChatModelOptionsWithConfiguration): Promise<void> {
-    const rawConfig = options.configuration;
-    if (!rawConfig || typeof rawConfig !== 'object') {
-      return;
+  private normalizePickerConfiguration(
+    configuration?: ProviderPickerConfiguration
+  ): { vendorName?: string; apiKey?: string } | undefined {
+    if (!configuration || typeof configuration !== 'object') {
+      return undefined;
     }
 
-    const normalized = this.normalizePickerConfiguration(rawConfig);
-    if (!normalized) {
-      return;
+    const normalized: { vendorName?: string; apiKey?: string } = {};
+    if (typeof configuration.vendorName === 'string' && configuration.vendorName.trim().length > 0) {
+      normalized.vendorName = configuration.vendorName.trim();
     }
-
-    let changed = false;
-
-    const vendorName = normalized.vendorName;
-    if (vendorName && this.configStore) {
-      const resolvedVendor = this.resolveConfiguredVendorName(vendorName);
-      if (!resolvedVendor) {
-        await this.warnVendorNotConfigured(vendorName);
-        return;
-      }
-      if (normalized.apiKey !== undefined) {
-        const nextApiKey = normalized.apiKey.trim();
-        const currentApiKey = await this.configStore.getApiKey(resolvedVendor);
-        if (currentApiKey !== nextApiKey) {
-          await this.configStore.setApiKey(resolvedVendor, nextApiKey);
-          changed = true;
-        }
-      }
-    } else if (normalized.apiKey !== undefined) {
-      const nextApiKey = normalized.apiKey.trim();
-      if (this.provider.getApiKey() !== nextApiKey) {
-        await this.provider.setApiKey(nextApiKey);
-        changed = true;
-      }
-    }
-
-    if (changed) {
-      await this.provider.refreshModels();
-    }
-  }
-
-  private normalizePickerConfiguration(raw: ProviderPickerConfiguration): {
-    vendorName?: string;
-    apiKey?: string;
-  } | undefined {
-    const normalized: {
-      vendorName?: string;
-      apiKey?: string;
-    } = {};
-
-    if (typeof raw.vendorName === 'string') {
-      normalized.vendorName = raw.vendorName.trim();
-    }
-    if (typeof raw.apiKey === 'string') {
-      normalized.apiKey = raw.apiKey.trim();
+    if (typeof configuration.apiKey === 'string' && configuration.apiKey.trim().length > 0) {
+      normalized.apiKey = configuration.apiKey.trim();
     }
 
     return Object.keys(normalized).length > 0 ? normalized : undefined;
   }
 
-  private resolveRequestedVendorName(configuration?: ProviderPickerConfiguration): string {
-    if (configuration && typeof configuration.vendorName === 'string') {
-      const fromConfig = configuration.vendorName.trim();
-      if (fromConfig.length > 0) {
-        return fromConfig;
-      }
-    }
-
-    return '';
-  }
-
-  private resolveConfiguredVendorName(raw: string): string | undefined {
-    const trimmed = raw.trim();
-    if (trimmed.length === 0 || !this.configStore) {
-      return undefined;
-    }
-
-    const vendors = this.configStore.getVendors();
-    const match = vendors.find(v => v.name.toLowerCase() === trimmed.toLowerCase());
-    return match?.name;
-  }
-
-  private async warnVendorNotConfigured(vendorName: string): Promise<void> {
-    if (hasShownVendorNotConfiguredWarning) {
+  private async applyPickerConfiguration(
+    configuration?: { vendorName?: string; apiKey?: string }
+  ): Promise<void> {
+    if (!configuration?.vendorName || !configuration.apiKey || !this.configStore) {
       return;
     }
-    hasShownVendorNotConfiguredWarning = true;
 
-    const message = getMessage('vendorNotConfiguredMatch', vendorName.trim());
-    const action = getMessage('manageActionOpenSettings');
-    void vscode.window.showWarningMessage(message, action).then(picked => {
-      if (picked) {
-        void vscode.commands.executeCommand('workbench.action.openSettings', 'coding-plans.vendors');
-      }
-    });
+    const vendor = this.configStore.getVendor(configuration.vendorName);
+    if (!vendor) {
+      return;
+    }
+
+    const currentApiKey = await this.configStore.getApiKey(vendor.name);
+    if (currentApiKey === configuration.apiKey) {
+      return;
+    }
+
+    await this.configStore.setApiKey(vendor.name, configuration.apiKey);
   }
+
 
   private toCompactLanguageModelError(error: unknown): vscode.LanguageModelError {
     const compactMessage = getCompactErrorMessage(error) || getMessage('unknownError');
@@ -781,5 +596,101 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       ...options,
       modelOptions: Object.keys(forwardedModelOptions).length > 0 ? forwardedModelOptions : undefined
     } as unknown as vscode.LanguageModelChatRequestOptions;
+  }
+
+  private logLanguageModelInformationRequest(
+    stage: string,
+    options: vscode.PrepareLanguageModelChatModelOptions,
+    result: vscode.LanguageModelChatInformation[] | undefined,
+    extra: Record<string, unknown> = {}
+  ): void {
+    this.logLanguageModelInformationDiagnostic(stage, {
+      providerVendor: this.provider.getVendor(),
+      options: this.summarizePickerOptions(options),
+      result: this.summarizeLanguageModelInfos(result ?? []),
+      ...extra
+    });
+  }
+
+  private logLanguageModelInformationDiagnostic(stage: string, payload: Record<string, unknown>): void {
+    const entry = {
+      at: new Date().toISOString(),
+      stage,
+      ...payload
+    };
+    logger.debug(`${LANGUAGE_MODELS_PICKER_LOG_PREFIX} ${stage}`, entry);
+    try {
+      fs.mkdirSync(path.dirname(LM_INFO_LOG_PATH), { recursive: true });
+      fs.appendFileSync(LM_INFO_LOG_PATH, JSON.stringify(entry) + '\n', 'utf8');
+    } catch {
+      // ignore diagnostic logging failures
+    }
+  }
+
+  private summarizePickerOptions(
+    options: vscode.PrepareLanguageModelChatModelOptions
+  ): Record<string, unknown> {
+    const pickerOptions = options as PrepareLanguageModelChatModelOptionsWithConfiguration;
+    return {
+      silent: options.silent,
+      configuration: this.summarizePickerConfiguration(this.normalizePickerConfiguration(pickerOptions.configuration))
+    };
+  }
+
+  private summarizePickerConfiguration(
+    configuration?: { vendorName?: string; apiKey?: string }
+  ): Record<string, unknown> | undefined {
+    if (!configuration) {
+      return undefined;
+    }
+
+    return {
+      vendorName: configuration.vendorName,
+      hasApiKey: typeof configuration.apiKey === 'string' && configuration.apiKey.length > 0
+    };
+  }
+
+  private summarizeConfiguredVendors(): Array<Record<string, unknown>> {
+    if (!this.configStore) {
+      return [];
+    }
+    return this.configStore.getVendors().map(vendor => ({
+      name: vendor.name,
+      baseUrl: vendor.baseUrl,
+      defaultApiStyle: vendor.defaultApiStyle,
+      useModelsEndpoint: vendor.useModelsEndpoint,
+      defaultVision: vendor.defaultVision,
+      modelCount: vendor.models.length,
+      modelNamesPreview: vendor.models.slice(0, 20).map(model => model.name)
+    }));
+  }
+
+  private summarizeBaseLanguageModels(models: readonly BaseLanguageModel[]): Array<Record<string, unknown>> {
+    return models.slice(0, 20).map(model => ({
+      id: model.id,
+      vendor: model.vendor,
+      family: model.family,
+      name: model.name,
+      apiStyle: model.apiStyle,
+      version: model.version,
+      maxInputTokens: model.maxInputTokens,
+      maxOutputTokens: model.maxOutputTokens,
+      capabilities: model.capabilities
+    }));
+  }
+
+  private summarizeLanguageModelInfos(
+    models: readonly vscode.LanguageModelChatInformation[]
+  ): Array<Record<string, unknown>> {
+    return models.slice(0, 20).map(model => ({
+      id: model.id,
+      name: model.name,
+      family: model.family,
+      detail: model.detail,
+      version: model.version,
+      maxInputTokens: model.maxInputTokens,
+      maxOutputTokens: model.maxOutputTokens,
+      capabilities: model.capabilities
+    }));
   }
 }

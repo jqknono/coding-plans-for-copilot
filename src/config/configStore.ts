@@ -4,9 +4,9 @@ import {
   DEFAULT_ADVANCED_RESERVED_OUTPUT,
   DEFAULT_MODEL_CAPABILITIES_TOOLS,
   DEFAULT_MODEL_CAPABILITIES_VISION,
-  DEFAULT_CONTEXT_WINDOW_SIZE,
+  ThinkingEffort,
   VENDOR_API_KEY_PREFIX,
-  resolveImplicitReservedOutputTokens
+  THINKING_EFFORT_VALUES
 } from '../constants';
 
 export type VendorApiStyle = 'openai-chat' | 'openai-responses' | 'anthropic';
@@ -17,6 +17,7 @@ export interface VendorModelConfig {
   apiStyle?: VendorApiStyle;
   temperature?: number;
   topP?: number;
+  thinkingEffort?: ThinkingEffort;
   capabilities?: {
     tools?: boolean;
     vision?: boolean;
@@ -25,20 +26,11 @@ export interface VendorModelConfig {
    * Total context window size in tokens.
    */
   contextSize?: number;
-  /**
-   * @deprecated Prefer contextSize for total model context. Keep this only for legacy per-direction overrides.
-   */
-  maxInputTokens?: number;
-  /**
-   * @deprecated Prefer contextSize for total model context. Keep this only for legacy output-cap overrides.
-   */
-  maxOutputTokens?: number;
 }
 
 export interface VendorConfig {
   name: string;
   baseUrl: string;
-  apiKey?: string;
   usageUrl?: string;
   defaultApiStyle: VendorApiStyle;
   defaultTemperature?: number;
@@ -89,10 +81,6 @@ export class ConfigStore implements vscode.Disposable {
   }
 
   async getApiKey(vendorName: string): Promise<string> {
-    const configuredApiKey = this.getConfiguredVendorApiKey(vendorName);
-    if (configuredApiKey) {
-      return configuredApiKey;
-    }
     const key = await this.context.secrets.get(VENDOR_API_KEY_PREFIX + vendorName);
     return (key || '').trim();
   }
@@ -100,6 +88,10 @@ export class ConfigStore implements vscode.Disposable {
   async setApiKey(vendorName: string, apiKey: string): Promise<void> {
     const secretKey = VENDOR_API_KEY_PREFIX + vendorName;
     const normalized = apiKey.trim();
+    const current = ((await this.context.secrets.get(secretKey)) || '').trim();
+    if (current === normalized) {
+      return;
+    }
     if (normalized.length > 0) {
       await this.context.secrets.store(secretKey, normalized);
     } else {
@@ -121,7 +113,6 @@ export class ConfigStore implements vscode.Disposable {
     }
 
     // Model names discovered from `/models` are the source of truth for membership.
-    // For existing entries, preserve the original configured object verbatim and only add/remove by name.
     const inputNames = models
       .map(model => (typeof model?.name === 'string' ? model.name.trim() : ''))
       .filter(name => name.length > 0);
@@ -158,7 +149,7 @@ export class ConfigStore implements vscode.Disposable {
       }
 
       const defaultVision = typeof vendorObj.defaultVision === 'boolean' ? vendorObj.defaultVision : false;
-      const defaultApiStyle = this.normalizeApiStyle(vendorObj.defaultApiStyle ?? vendorObj.apiStyle);
+      const defaultApiStyle = this.normalizeApiStyle(vendorObj.defaultApiStyle);
       const nextModels = this.buildUpdatedModelEntries(
         inputNames,
         models,
@@ -360,6 +351,7 @@ export class ConfigStore implements vscode.Disposable {
       description: normalized.description,
       temperature: normalized.temperature,
       topP: normalized.topP,
+      thinkingEffort: normalized.thinkingEffort,
       contextSize: normalized.contextSize,
       capabilities: normalized.capabilities
     };
@@ -436,6 +428,7 @@ export class ConfigStore implements vscode.Disposable {
           ...inputModel,
           temperature: undefined,
           topP: undefined,
+          thinkingEffort: undefined,
           capabilities: {
             ...inputModel.capabilities,
             vision: defaultVision
@@ -491,13 +484,10 @@ export class ConfigStore implements vscode.Disposable {
       return undefined;
     }
     const baseUrl = typeof obj.baseUrl === 'string' ? obj.baseUrl.trim() : '';
-    const apiKey = typeof obj.apiKey === 'string' && obj.apiKey.trim().length > 0
-      ? obj.apiKey.trim()
-      : undefined;
     const usageUrl = typeof obj.usageUrl === 'string' && obj.usageUrl.trim().length > 0
       ? obj.usageUrl.trim()
       : undefined;
-    const defaultApiStyle = this.normalizeApiStyle(obj.defaultApiStyle ?? obj.apiStyle);
+    const defaultApiStyle = this.normalizeApiStyle(obj.defaultApiStyle);
     const defaultTemperature = this.readSamplingNumber(obj.defaultTemperature, 0, 2);
     const defaultTopP = this.readSamplingNumber(obj.defaultTopP, 0, 1);
     const useModelsEndpoint = typeof obj.useModelsEndpoint === 'boolean' ? obj.useModelsEndpoint : false;
@@ -507,17 +497,7 @@ export class ConfigStore implements vscode.Disposable {
           .map(m => this.normalizeModel(m, defaultVision, defaultApiStyle))
           .filter((m): m is VendorModelConfig => m !== undefined)
       : [];
-    return { name, baseUrl, apiKey, usageUrl, defaultApiStyle, defaultTemperature, defaultTopP, useModelsEndpoint, defaultVision, models };
-  }
-
-  private getConfiguredVendorApiKey(vendorName: string): string {
-    const normalizedVendorName = vendorName.trim().toLowerCase();
-    if (normalizedVendorName.length === 0) {
-      return '';
-    }
-
-    const vendor = this.getVendors().find(candidate => candidate.name.trim().toLowerCase() === normalizedVendorName);
-    return vendor?.apiKey?.trim() ?? '';
+    return { name, baseUrl, usageUrl, defaultApiStyle, defaultTemperature, defaultTopP, useModelsEndpoint, defaultVision, models };
   }
 
   private normalizeModel(
@@ -537,21 +517,11 @@ export class ConfigStore implements vscode.Disposable {
       typeof obj.description === 'string' && obj.description.trim().length > 0
         ? obj.description.trim()
         : undefined;
-    const legacyContextWindow = this.readPositiveNumber(obj.contextSize);
-    const rawMaxInputTokens = this.readNonNegativeInteger(obj.maxInputTokens);
-    const rawMaxOutputTokens = this.readNonNegativeInteger(obj.maxOutputTokens);
-    const explicitMaxInputTokens = rawMaxInputTokens !== undefined && rawMaxInputTokens > 0 ? rawMaxInputTokens : undefined;
-    const explicitMaxOutputTokens = rawMaxOutputTokens !== undefined && rawMaxOutputTokens > 0 ? rawMaxOutputTokens : undefined;
-    const resolvedTokenWindow = explicitMaxInputTokens !== undefined || explicitMaxOutputTokens !== undefined
-      ? this.resolveTokenWindow(
-          legacyContextWindow,
-          explicitMaxInputTokens,
-          explicitMaxOutputTokens
-        )
-      : { maxInputTokens: undefined, maxOutputTokens: undefined };
+    const contextSize = this.readPositiveNumber(obj.contextSize);
     const apiStyle = this.normalizeApiStyle(obj.apiStyle, defaultApiStyle);
     const temperature = this.readSamplingNumber(obj.temperature, 0, 2);
     const topP = this.readSamplingNumber(obj.topP, 0, 1);
+    const thinkingEffort = this.normalizeThinkingEffort(obj.thinkingEffort);
     let capabilities: VendorModelConfig['capabilities'];
     if (obj.capabilities && typeof obj.capabilities === 'object') {
       const cap = obj.capabilities as Record<string, unknown>;
@@ -567,10 +537,9 @@ export class ConfigStore implements vscode.Disposable {
       apiStyle,
       temperature,
       topP,
+      thinkingEffort,
       capabilities,
-      contextSize: legacyContextWindow === undefined ? undefined : Math.max(2, Math.floor(legacyContextWindow)),
-      maxInputTokens: rawMaxInputTokens === 0 ? 0 : resolvedTokenWindow.maxInputTokens,
-      maxOutputTokens: rawMaxOutputTokens === 0 ? 0 : resolvedTokenWindow.maxOutputTokens
+      contextSize: contextSize === undefined ? undefined : Math.max(2, Math.floor(contextSize))
     }, defaultVision, defaultApiStyle);
   }
 
@@ -585,9 +554,8 @@ export class ConfigStore implements vscode.Disposable {
       apiStyle: this.normalizeApiStyle(model.apiStyle, defaultApiStyle),
       temperature: model.temperature,
       topP: model.topP,
+      thinkingEffort: model.thinkingEffort,
       contextSize: model.contextSize,
-      maxInputTokens: model.maxInputTokens,
-      maxOutputTokens: model.maxOutputTokens ?? 0,
       capabilities: {
         tools: model.capabilities?.tools ?? DEFAULT_MODEL_CAPABILITIES_TOOLS,
         vision: model.capabilities?.vision ?? defaultVision
@@ -605,50 +573,15 @@ export class ConfigStore implements vscode.Disposable {
           : fallback;
   }
 
-  private resolveTokenWindow(
-    legacyContextWindow: number | undefined,
-    explicitMaxInputTokens: number | undefined,
-    explicitMaxOutputTokens: number | undefined
-  ): { maxInputTokens: number; maxOutputTokens: number } {
-    const hasExplicitTotalContextWindow = legacyContextWindow !== undefined;
-    const fallbackTotal = Math.max(2, Math.floor(legacyContextWindow ?? DEFAULT_CONTEXT_WINDOW_SIZE));
-    const defaultReservedOutputTokens = resolveImplicitReservedOutputTokens(fallbackTotal);
-    const normalizeTokenValue = (value: number | undefined): number | undefined => {
-      if (value === undefined) {
-        return undefined;
-      }
-      const normalized = Math.max(1, Math.floor(value));
-      return hasExplicitTotalContextWindow ? Math.min(normalized, fallbackTotal) : normalized;
-    };
-    const maxInputTokens = normalizeTokenValue(explicitMaxInputTokens);
-    const maxOutputTokens = normalizeTokenValue(explicitMaxOutputTokens);
-
-    if (maxInputTokens !== undefined && maxOutputTokens !== undefined) {
-      return { maxInputTokens, maxOutputTokens };
+  private normalizeThinkingEffort(value: unknown): ThinkingEffort | undefined {
+    if (typeof value !== 'string') {
+      return undefined;
     }
 
-    if (maxInputTokens !== undefined) {
-      return {
-        maxInputTokens,
-        maxOutputTokens: hasExplicitTotalContextWindow
-          ? Math.max(1, fallbackTotal - maxInputTokens)
-          : defaultReservedOutputTokens
-      };
-    }
-
-    if (maxOutputTokens !== undefined) {
-      return {
-        maxInputTokens: hasExplicitTotalContextWindow
-          ? Math.max(1, fallbackTotal - maxOutputTokens)
-          : Math.max(1, DEFAULT_CONTEXT_WINDOW_SIZE - maxOutputTokens),
-        maxOutputTokens
-      };
-    }
-
-    return {
-      maxInputTokens: Math.max(1, fallbackTotal - defaultReservedOutputTokens),
-      maxOutputTokens: defaultReservedOutputTokens
-    };
+    const normalized = value.trim().toLowerCase();
+    return THINKING_EFFORT_VALUES.includes(normalized as ThinkingEffort)
+      ? normalized as ThinkingEffort
+      : undefined;
   }
 
   private resolveVendorsConfigTarget(): vscode.ConfigurationTarget {
@@ -666,19 +599,6 @@ export class ConfigStore implements vscode.Disposable {
     return vscode.ConfigurationTarget.Global;
   }
 
-  private readNonNegativeInteger(value: unknown): number | undefined {
-    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
-      return Math.floor(value);
-    }
-    if (typeof value === 'string') {
-      const parsed = Number(value.trim());
-      if (Number.isFinite(parsed) && parsed >= 0) {
-        return Math.floor(parsed);
-      }
-    }
-    return undefined;
-  }
-
   private readPositiveNumber(value: unknown): number | undefined {
     if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
       return value;
@@ -689,6 +609,21 @@ export class ConfigStore implements vscode.Disposable {
         return parsed;
       }
     }
+    return undefined;
+  }
+
+  private readNonNegativeInteger(value: unknown): number | undefined {
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+      return Math.floor(value);
+    }
+
+    if (typeof value === 'string') {
+      const parsed = Number(value.trim());
+      if (Number.isFinite(parsed) && parsed >= 0) {
+        return Math.floor(parsed);
+      }
+    }
+
     return undefined;
   }
 

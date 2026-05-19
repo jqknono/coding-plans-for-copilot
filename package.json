@@ -9,7 +9,7 @@
         "url": "https://github.com/jqknono/coding-plans-for-copilot.git"
     },
     "engines": {
-        "vscode": "^1.109.0"
+        "vscode": "^1.120.0"
     },
     "categories": [
         "Machine Learning",
@@ -23,6 +23,7 @@
                 "vendor": "coding-plans",
                 "displayName": "%providers.codingPlans.displayName%",
                 "configuration": {
+                    "type": "object",
                     "properties": {
                         "vendorName": {
                             "type": "string",
@@ -237,12 +238,6 @@
                             "baseUrl": {
                                 "type": "string"
                             },
-                            "apiKey": {
-                                "type": "string",
-                                "secret": true,
-                                "description": "%configuration.coding-plans.vendors.apiKey.description%",
-                                "deprecationMessage": "%configuration.coding-plans.vendors.apiKey.deprecationMessage%"
-                            },
                             "usageUrl": {
                                 "type": "string",
                                 "description": "Optional vendor usage endpoint. When configured, the extension fetches coding-plan quota usage and shows percentage summaries in the status bar. Currently verified for Zhipu usage APIs."
@@ -296,6 +291,15 @@
                                             "maximum": 1,
                                             "description": "%configuration.coding-plans.vendors.models.topP.description%"
                                         },
+                                        "thinkingEffort": {
+                                            "type": "string",
+                                            "enum": [
+                                                "none",
+                                                "high",
+                                                "max"
+                                            ],
+                                            "description": "%configuration.coding-plans.vendors.models.thinkingEffort.description%"
+                                        },
                                         "capabilities": {
                                             "type": "object",
                                             "properties": {
@@ -307,7 +311,7 @@
                                                 "vision": {
                                                     "type": "boolean",
                                                     "default": false,
-                                                    "description": "Whether to enable vision input capability. Legacy configs without this field are backfilled from vendor defaultVision at runtime."
+                                                    "description": "Whether to enable vision input capability."
                                                 }
                                             },
                                             "required": [
@@ -317,18 +321,7 @@
                                         },
                                         "contextSize": {
                                             "type": "number",
-                                            "description": "Preferred total context window size for the model. Language model context display uses this value directly when provided. When maxOutputTokens is left unset, runtime derives an implicit reserved output budget from this total window."
-                                        },
-                                        "maxInputTokens": {
-                                            "type": "number",
-                                            "description": "Deprecated: legacy maximum input tokens override. Prefer contextSize for model context. When contextSize is provided and this value exceeds it, it will be capped to contextSize. Set to 0 to treat it as unset.",
-                                            "deprecationMessage": "Deprecated: prefer contextSize to describe model context. Keep maxInputTokens only for legacy per-direction overrides."
-                                        },
-                                        "maxOutputTokens": {
-                                            "type": "number",
-                                            "default": 0,
-                                            "description": "Deprecated: legacy maximum output tokens override. Prefer contextSize for model context. When contextSize is provided and this value exceeds it, it will be capped to contextSize. Defaults to 0, which treats it as unset; runtime then derives an implicit reserved output budget from total context (20%, clamped to 4096-30000). For openai-chat/openai-responses it suppresses proactively sending output-token limits, while protocol endpoints that require max_tokens will trigger an automatic compatible retry.",
-                                            "deprecationMessage": "Deprecated: prefer contextSize to describe model context. Keep maxOutputTokens only when you need a legacy output-cap override."
+                                            "description": "Preferred total context window size for the model. Language model context display uses this value directly when provided, and runtime derives the output budget from this total window."
                                         },
                                         "apiStyle": {
                                             "type": "string",
@@ -429,7 +422,9 @@
         "compile": "npm run typecheck && npm run bundle",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
-        "test": "node ./out/test/runTest.js",
+        "test": "npm run test:unit && npm run test:desktop",
+        "test:unit": "node ./out/test/runTest.js",
+        "test:desktop": "vscode-test --label desktop",
         "changelog:update": "node ./scripts/update-changelog.js",
         "package": "npm run bundle:prod",
         "package:vsix": "npm run package && npx @vscode/vsce package",
@@ -455,10 +450,13 @@
     },
     "devDependencies": {
         "@playwright/test": "^1.58.2",
+        "@types/mocha": "^10.0.10",
         "@types/node": "^20.14.9",
-        "@types/vscode": "^1.109.0",
+        "@types/vscode": "^1.120.0",
         "@typescript-eslint/eslint-plugin": "^7.13.1",
         "@typescript-eslint/parser": "^7.13.1",
+        "@vscode/test-cli": "^0.0.12",
+        "@vscode/test-electron": "^2.5.2",
         "esbuild": "^0.25.10",
         "eslint": "^8.57.0",
         "typescript": "^5.4.5"

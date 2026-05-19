@@ -2,14 +2,14 @@
 
 **Switch between multiple AI model vendors with one click, breaking Copilot plan limitations.**
 
-Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcengine, MiniMax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Xiaomi MiMo, DeepSeek, as well as **any** vendor compatible with OpenAI Chat, OpenAI Responses, or Anthropic API styles. No need to change usage habits; seamlessly call directly in VS Code Copilot Chat.
+Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcengine, MiniMax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Xiaomi MiMo, DeepSeek, as well as **any** vendor that follows OpenAI Chat, OpenAI Responses, or Anthropic protocol styles. No need to change usage habits; call them directly in VS Code Copilot Chat.
 
 ---
 
 ## Core Features
 
 - **Multi-Protocol Unified Access**: Supports OpenAI Chat (`/chat/completions`), OpenAI Responses (`/responses`), and Anthropic (`/messages`) three protocol styles, adapting to any compatible vendor.
-- **Anthropic-Compatible Priority**: Built-in vendors default to Anthropic-compatible endpoints (`/messages`), seamlessly connecting to various models.
+- **Anthropic Protocol First**: Built-in vendors default to Anthropic-style endpoints (`/messages`).
 - **Zero Learning Curve**: Fully integrated into VS Code Copilot Chat without changing any operational habits.
 - **Flexible Model Management**: Supports dynamic fetching from `/models` endpoint, or custom model lists.
 - **Intelligent Commit Generation**: Automatically generates Conventional Commits-compliant commit messages based on Git changes.
@@ -44,22 +44,22 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 Click the **Install** button on the marketplace page, which will automatically open the extension in VS Code and install it.
 
-> **Prerequisites**: Requires VS Code ≥ 1.109.0 and the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension installed.
+> **Prerequisites**: Requires VS Code ≥ 1.120.0 and the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension installed.
 
 ### Configuration
 
 1. Press `Ctrl+Shift+P`, type `Coding Plans: Manage Vendor Configuration`
 2. Pick the platform you've registered with from the vendor picker (e.g., Zhipu, Kimi, Volcengine, etc.)
 3. Select "Set API Key" and paste your API Key; the extension stores it and refreshes models
-4. Open Copilot Chat (`Ctrl+L`), choose "Coding Plans" in Add Models, and only enter a Group Name
-
+4. Open Copilot Chat (`Ctrl+L`) and choose a model provided by `Coding Plans` in the model picker
+5. To configure `Thinking Effort`, `temperature`, or `topP`, set model-level overrides in `coding-plans.vendors[].models[]`
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 
 ### Built-in Vendor Endpoints
 
 The following vendors come with built-in default configurations and are ready to use after installation:
 
-| Vendor | Default Built-in Endpoint | Other Compatible Endpoints |
+| Vendor | Default Built-in Endpoint | Other Endpoints |
 | --- | --- | --- |
 | Zhipu (zhipu) | `https://open.bigmodel.cn/api/coding/paas/v4` | `https://open.bigmodel.cn/api/anthropic` (Claude Code) / `https://open.bigmodel.cn/api/paas/v4` (general) |
 | z.ai | `https://api.z.ai/api/anthropic` | `https://api.z.ai/api/coding/paas/v4` |
@@ -91,6 +91,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
       "models": [
         {
           "name": "my-model",
+          "thinkingEffort": "max",
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 128000
         }
@@ -108,7 +109,6 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
     {
       "name": "my-openai-vendor",
       "baseUrl": "https://api.example.com/v1",
-      "apiKey": "sk-example",
       "defaultApiStyle": "openai-chat",
       "useModelsEndpoint": true,
       "models": []
@@ -130,6 +130,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
       "models": [
         {
           "name": "gpt-5",
+          "thinkingEffort": "high",
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 400000
         }
@@ -147,10 +148,9 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors` | `array` | Built-in vendor templates | Vendor configuration list. |
 | `coding-plans.vendors[].name` | `string` | Required | Vendor unique name. |
 | `coding-plans.vendors[].baseUrl` | `string` | Required | API base address. |
-| `coding-plans.vendors[].apiKey` | `string` | Empty | Deprecated. Kept for compatibility only; prefer VS Code Secret Storage for safer API key handling. When set, it overrides the same vendor key in Secret Storage. |
 | `coding-plans.vendors[].usageUrl` | `string` | Empty | Plan usage API address; when configured, status bar displays quota percentage. |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Protocol style: `openai-chat` / `openai-responses` / `anthropic`. |
-| `coding-plans.vendors[].defaultTemperature` | `number` | `0.2` | Vendor default temperature. |
+| `coding-plans.vendors[].defaultTemperature` | `number` | `0.1` | Vendor default temperature. When unset, runtime falls back to the global default `0.1`. |
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | Vendor default topP. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | Whether to fetch model list from `/models`. |
 | `coding-plans.vendors[].models[].name` | `string` | Required | Model name. |
@@ -158,10 +158,9 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].models[].apiStyle` | `string` | Inherit from vendor | Model-level protocol style override. |
 | `coding-plans.vendors[].models[].temperature` | `number` | Inherit from vendor | Model-level temperature override. |
 | `coding-plans.vendors[].models[].topP` | `number` | Inherit from vendor | Model-level topP override. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
+| `coding-plans.vendors[].models[].thinkingEffort` | `string` | Empty | Model-level thinking mode override. Supported values: `none` / `high` / `max`. In the model row `More Actions` menu this option defaults to `max`. Requests send a standalone `thinking` field; `high` and `max` additionally map to OpenAI-compatible `reasoning_effort` and Anthropic-compatible `output_config.effort`. |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | Model capability declaration. |
-| `coding-plans.vendors[].models[].contextSize` | `number` | Empty | Model total context window. When `maxOutputTokens` is unset, runtime derives the implicit reserved output budget from this total window. |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | Empty | Deprecated,建议使用 `contextSize`. |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | Deprecated,建议使用 `contextSize`. `0` means unset; runtime then derives an implicit reserved output budget as 20% of total context, clamped to 4096-30000. |
+| `coding-plans.vendors[].models[].contextSize` | `number` | Empty | Model total context window. Runtime derives the request budget from this total window. |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Request-side default output token budget. It only overrides request budgeting and is still capped by the model output limit. |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show "Generate Commit Message" command. |
 | `coding-plans.commitMessage.language` | `string` | `en` | Commit message language: `en` / `zh-cn`. |
@@ -176,8 +175,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.commitMessage.options.requireConventionalType` | `boolean` | `true` | Whether to enforce Conventional Commits type. |
 | `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | Whether to show warning on validation failure. |
 
-`coding-plans.vendors[].apiKey` is deprecated and kept only for compatibility.
-Prefer "Set API Key" so the key stays in VS Code Secret Storage instead of `settings.json`; if `coding-plans.vendors[].apiKey` is still set, it overrides the same vendor key in Secret Storage.
+API keys are stored through "Set API Key" in VS Code Secret Storage. `coding-plans.vendors` no longer supports API key fields.
 
 ### Context Window Display
 
@@ -314,6 +312,11 @@ npm run openrouter:plans:fetch # Fetch overseas vendor plans
 # Start local preview server
 npm run serve:page
 # Visit http://127.0.0.1:4173
+
+# Run extension tests
+npm test
+# Or only run the VS Code Desktop smoke suite (downloads a test VS Code on first run)
+npm run test:desktop
 ```
 
 ### Data File Structure
@@ -380,7 +383,7 @@ The dashboard uses the following core data files (located in the `assets/` direc
 
 ## Development
 
-Detailed development documentation can be found in [DEV.md](DEV.md).
+Detailed development documentation can be found in [DEV.md](DEV.md). Test layers and commands are documented in [docs/testing.md](docs/testing.md).
 
 ---
 

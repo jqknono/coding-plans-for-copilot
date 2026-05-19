@@ -1,7 +1,6 @@
 import { AIModelConfig, normalizeHttpBaseUrl } from './baseProvider';
 import { VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
 import {
-  DEFAULT_TOKEN_SIDE_LIMIT,
   DEFAULT_MODEL_TOOLS,
   NON_RETRYABLE_DISCOVERY_STATUS_CODES
 } from '../constants';
@@ -105,8 +104,6 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
     name,
     description: model.description?.trim() || undefined,
     contextSize: readPositiveTokenInteger(model.maxTokens),
-    maxInputTokens: readPositiveTokenInteger(model.maxInputTokens) ?? DEFAULT_TOKEN_SIDE_LIMIT,
-    maxOutputTokens: readPositiveTokenInteger(model.maxOutputTokens) ?? DEFAULT_TOKEN_SIDE_LIMIT,
     capabilities: {
       tools,
       vision

@@ -2,14 +2,14 @@
 
 **一键切换多厂商 AI 模型，打破 Copilot 套餐限制。**
 
-支持智谱、Kimi、讯飞、火山引擎、MiniMax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、小米 MiMo、DeepSeek 等国产大厂，以及**任何**兼容 OpenAI Chat、OpenAI Responses 或 Anthropic 接口风格的供应商。无需改变使用习惯，直接在 VS Code Copilot Chat 中无缝调用。
+支持智谱、Kimi、讯飞、火山引擎、MiniMax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、小米 MiMo、DeepSeek 等国产大厂，以及**任何**遵循 OpenAI Chat、OpenAI Responses 或 Anthropic 协议风格的供应商。无需改变使用习惯，直接在 VS Code Copilot Chat 中调用。
 
 ---
 
 ## 核心特性
 
 - **多协议统一接入**：支持 OpenAI Chat（`/chat/completions`）、OpenAI Responses（`/responses`）、Anthropic（`/messages`）三种协议风格，适配任意兼容供应商。
-- **Anthropic 兼容优先**：内置供应商默认使用 Anthropic 兼容端点（`/messages`），无缝接入各类模型。
+- **Anthropic 协议优先**：内置供应商默认使用 Anthropic 风格端点（`/messages`）。
 - **零学习成本**：完全集成到 VS Code Copilot Chat，不改变任何操作习惯。
 - **灵活模型管理**：支持动态拉取 `/models` 端点，也可自定义模型列表。
 - **智能 Commit 生成**：基于 Git 变更自动生成符合 Conventional Commits 规范的提交消息。
@@ -44,22 +44,22 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 点击市场页面上的 **Install** 按钮，会自动在 VS Code 中打开扩展并安装。
 
-> **前置条件**：需要 VS Code ≥ 1.109.0，且已安装 [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) 扩展。
+> **前置条件**：需要 VS Code ≥ 1.120.0，且已安装 [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) 扩展。
 
 ### 配置
 
 1. 按 `Ctrl+Shift+P`，输入 `Coding Plans: Manage Vendor Configuration`
 2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
 3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
-4. 打开 Copilot Chat（`Ctrl+L`），在 Add Models 中选择「Coding Plans」，只需填写 Group Name
-
+4. 打开 Copilot Chat（`Ctrl+L`），在模型选择器中选择 `Coding Plans` 提供的模型
+5. 如需设置 `Thinking Effort`、`temperature` 或 `topP`，在 `coding-plans.vendors[].models[]` 中配置模型级覆盖项
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
 
 ### 内置供应商端点
 
 以下供应商已内置默认配置，安装后即可使用：
 
-| 供应商 | 默认端点（内置） | 其他兼容端点 |
+| 供应商 | 默认端点（内置） | 其他端点 |
 | --- | --- | --- |
 | 智谱（zhipu） | `https://open.bigmodel.cn/api/coding/paas/v4` | `https://open.bigmodel.cn/api/anthropic`（Claude Code） / `https://open.bigmodel.cn/api/paas/v4`（通用） |
 | z.ai | `https://api.z.ai/api/anthropic` | `https://api.z.ai/api/coding/paas/v4` |
@@ -88,6 +88,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
       "models": [
         {
           "name": "my-model",
+          "thinkingEffort": "max",
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 128000
         }
@@ -105,7 +106,6 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
     {
       "name": "my-openai-vendor",
       "baseUrl": "https://api.example.com/v1",
-      "apiKey": "sk-example",
       "defaultApiStyle": "openai-chat",
       "useModelsEndpoint": true,
       "models": []
@@ -127,6 +127,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
       "models": [
         {
           "name": "gpt-5",
+          "thinkingEffort": "high",
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 400000
         }
@@ -144,10 +145,9 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors` | `array` | 内置供应商模板 | 供应商配置列表。 |
 | `coding-plans.vendors[].name` | `string` | 必填 | 供应商唯一名称。 |
 | `coding-plans.vendors[].baseUrl` | `string` | 必填 | API 基础地址。 |
-| `coding-plans.vendors[].apiKey` | `string` | 空 | 已废弃。仅兼容使用；为保证安全，建议优先通过 VS Code Secret Storage 保存 API Key。若此处配置了值，会覆盖 Secret Storage 中同名供应商的 key。 |
 | `coding-plans.vendors[].usageUrl` | `string` | 空 | 套餐 usage 接口地址，配置后状态栏显示额度百分比。 |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | 协议风格：`openai-chat` / `openai-responses` / `anthropic`。 |
-| `coding-plans.vendors[].defaultTemperature` | `number` | `0.2` | 供应商默认 temperature。 |
+| `coding-plans.vendors[].defaultTemperature` | `number` | `0.1` | 供应商默认 temperature。未配置时运行时使用全局默认值 `0.1`。 |
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | 供应商默认 topP；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | 是否从 `/models` 拉取模型列表。 |
 | `coding-plans.vendors[].models[].name` | `string` | 必填 | 模型名称。 |
@@ -155,10 +155,9 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].apiStyle` | `string` | 继承供应商 | 模型级协议风格覆盖。 |
 | `coding-plans.vendors[].models[].temperature` | `number` | 继承供应商 | 模型级 temperature 覆盖。 |
 | `coding-plans.vendors[].models[].topP` | `number` | 继承供应商 | 模型级 topP 覆盖；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
+| `coding-plans.vendors[].models[].thinkingEffort` | `string` | 空 | 模型级 thinking mode 覆盖；可选 `none` / `high` / `max`。模型行 `More Actions` 中该项默认值为 `max`。请求中会发送独立的 `thinking` 字段；当值为 `high` 或 `max` 时，还会分别映射到 OpenAI 兼容请求的 `reasoning_effort` 与 Anthropic 兼容请求的 `output_config.effort`。 |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | 模型能力声明。 |
-| `coding-plans.vendors[].models[].contextSize` | `number` | 空 | 模型总上下文窗口；未显式设置 `maxOutputTokens` 时，运行时会基于它动态推导隐式输出预留。 |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | 空 | 已废弃，建议使用 `contextSize`。 |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `0` | 已废弃，建议使用 `contextSize`。`0` 表示未设置，此时运行时默认按总上下文的 `20%` 推导隐式输出预留，并收敛到 `4096-30000`。 |
+| `coding-plans.vendors[].models[].contextSize` | `number` | 空 | 模型总上下文窗口；运行时会基于它推导输入/输出预算。 |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | 请求侧默认输出 token 预算；仅作为发送请求时的预算覆盖值，最终仍会按模型输出上限收敛。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示"生成 Commit 消息"命令。 |
 | `coding-plans.commitMessage.language` | `string` | `en` | 提交消息语言：`en` / `zh-cn`。 |
@@ -173,8 +172,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.commitMessage.options.requireConventionalType` | `boolean` | `true` | 是否强制 Conventional Commits 类型。 |
 | `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | 校验失败时是否提示告警。 |
 
-`coding-plans.vendors[].apiKey` 已标记为 deprecated，仅保留兼容用途。
-建议优先通过「设置 API Key」写入 VS Code Secret Storage，避免将密钥保存在 `settings.json` 中；若仍配置 `coding-plans.vendors[].apiKey`，它会覆盖 Secret Storage 中同名供应商的 key。
+API Key 统一通过「设置 API Key」写入 VS Code Secret Storage，不再支持在 `coding-plans.vendors` 中配置。
 
 ### 上下文窗口展示
 
@@ -311,6 +309,11 @@ npm run openrouter:plans:fetch # 抓取海外供应商套餐
 # 启动本地预览服务
 npm run serve:page
 # 访问 http://127.0.0.1:4173
+
+# 运行扩展测试
+npm test
+# 或只运行 VS Code Desktop 冒烟测试（首次会下载测试版 VS Code）
+npm run test:desktop
 ```
 
 ### 数据文件结构
@@ -365,7 +368,7 @@ npm run serve:page
 
 ## 开发
 
-详细的开发文档请查看 [DEV.md](DEV.md)。
+详细的开发文档请查看 [DEV.md](DEV.md)，测试分层与命令说明见 [docs/testing.md](docs/testing.md)。
 
 ---
 

@@ -15,7 +15,11 @@ import {
   DEFAULT_REQUEST_MAX_TOKENS,
   DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
-  RESPONSE_TRACE_ID_FIELD
+  RESPONSE_TRACE_ID_FIELD,
+  TEMPERATURE_MODEL_OPTION_KEY,
+  ThinkingEffort,
+  THINKING_EFFORT_MODEL_OPTION_KEY,
+  THINKING_EFFORT_VALUES
 } from '../constants';
 import { getMessage, isChinese } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
@@ -95,6 +99,18 @@ interface RequestTraceContext {
 interface ResolvedSamplingOptions {
   temperature: number;
   topP: number;
+}
+
+interface RequestModelOptions {
+  [TEMPERATURE_MODEL_OPTION_KEY]?: unknown;
+  [THINKING_EFFORT_MODEL_OPTION_KEY]?: unknown;
+}
+
+interface ResolvedThinkingOptions {
+  thinking: {
+    type: 'enabled' | 'disabled';
+  };
+  effort?: Exclude<ThinkingEffort, 'none'>;
 }
 
 type OutputLimitProtocol = 'openai-chat' | 'openai-responses' | 'anthropic';
@@ -202,6 +218,8 @@ class AsyncIterableQueue<T> implements AsyncIterable<T> {
     };
   }
 }
+
+const LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX = '[coding-plans][language-models-discovery]';
 
 export class GenericLanguageModel extends BaseLanguageModel {
   constructor(provider: BaseAIProvider, modelInfo: AIModelConfig) {
@@ -318,7 +336,17 @@ export class GenericAIProvider extends BaseAIProvider {
   private async refreshModelsInternal(options: RefreshModelsOptions = {}): Promise<void> {
     const forceDiscoveryRetry = options.forceDiscoveryRetry === true;
     const vendors = this.configStore.getVendors();
-    logger.info('Refreshing Coding Plans vendor models', { vendorCount: vendors.length });
+    logger.info('Refreshing Coding Plans vendor models', {
+      vendorCount: vendors.length,
+      forceDiscoveryRetry,
+      vendors: vendors.map(vendor => this.summarizeVendorForLog(vendor))
+    });
+    logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} existing discovery state before refresh`, {
+      states: Array.from(this.vendorDiscoveryState.entries()).map(([vendorKey, state]) => ({
+        vendorKey,
+        state: this.summarizeDiscoveryStateForLog(state)
+      }))
+    });
     this.modelVendorMap.clear();
     const allModelConfigs: AIModelConfig[] = [];
     const activeVendorKeys = new Set(vendors.map(vendor => toVendorStateKey(vendor.name)));
@@ -331,15 +359,32 @@ export class GenericAIProvider extends BaseAIProvider {
 
     for (const vendor of vendors) {
       if (!vendor.baseUrl) {
-        logger.warn('Skip vendor with empty baseUrl', { vendor: vendor.name });
+        logger.warn('Skip vendor with empty baseUrl', {
+          vendor: this.summarizeVendorForLog(vendor)
+        });
         continue;
       }
       const vendorKey = toVendorStateKey(vendor.name);
       const configuredModels = this.buildConfiguredModelsForVendor(vendor);
+      const apiKey = await this.configStore.getApiKey(vendor.name);
+      const diagnosticSignature = apiKey
+        ? buildVendorDiscoverySignature(vendor, apiKey)
+        : undefined;
+      const previousState = this.vendorDiscoveryState.get(vendorKey);
       logger.info('Evaluating vendor models', {
         vendor: vendor.name,
         useModelsEndpoint: vendor.useModelsEndpoint,
         configuredCount: configuredModels.length
+      });
+      logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} vendor evaluation details`, {
+        vendor: this.summarizeVendorForLog(vendor),
+        vendorKey,
+        configuredModels: this.summarizeResolvedModelsForLog(configuredModels),
+        apiKeyPresent: apiKey.trim().length > 0,
+        apiKeyLength: apiKey.length,
+        signature: diagnosticSignature,
+        previousState: this.summarizeDiscoveryStateForLog(previousState),
+        forceDiscoveryRetry
       });
 
       if (!vendor.useModelsEndpoint) {
@@ -352,7 +397,8 @@ export class GenericAIProvider extends BaseAIProvider {
         continue;
       }
 
-      const apiKey = await this.configStore.getApiKey(vendor.name);
+      const signature = buildVendorDiscoverySignature(vendor, apiKey);
+
       if (!apiKey) {
         this.vendorDiscoveryState.delete(vendorKey);
         logger.warn('Missing API key; falling back to settings models', {
@@ -362,9 +408,6 @@ export class GenericAIProvider extends BaseAIProvider {
         this.appendResolvedModels(vendor, configuredModels, allModelConfigs);
         continue;
       }
-
-      const signature = buildVendorDiscoverySignature(vendor, apiKey);
-      const previousState = this.vendorDiscoveryState.get(vendorKey);
 
       if (previousState && previousState.signature === signature && previousState.suppressRetry && !forceDiscoveryRetry) {
         const cached = previousState.cachedModels.length > 0 ? previousState.cachedModels : configuredModels;
@@ -416,6 +459,14 @@ export class GenericAIProvider extends BaseAIProvider {
         normalizedCount: discoveredVendorModels.length,
         mergedCount: mergedVendorModels.length
       });
+      logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} vendor discovery merge details`, {
+        vendor: vendor.name,
+        discoveredModels: this.summarizeResolvedModelsForLog(discovered.models),
+        discoveredVendorModels: this.summarizeVendorModelConfigsForLog(discoveredVendorModels),
+        mergedVendorModels: this.summarizeVendorModelConfigsForLog(mergedVendorModels),
+        resolvedModels: this.summarizeResolvedModelsForLog(resolvedModels),
+        discoveredSignature
+      });
 
       try {
         await this.configStore.updateVendorModels(vendor.name, mergedVendorModels);
@@ -435,7 +486,25 @@ export class GenericAIProvider extends BaseAIProvider {
     const modelsChanged = nextModelsSnapshot !== this.modelsSnapshot;
     this.modelsSnapshot = nextModelsSnapshot;
     this.models = allModelConfigs.map(m => this.createModel(m));
-    logger.info('Coding Plans models refreshed', { modelIds: this.models.map(m => m.id) });
+    logger.info('Coding Plans models refreshed', {
+      modelCount: this.models.length,
+      modelIds: this.models.map(m => m.id),
+      modelsChanged,
+      modelVendorMapCount: this.modelVendorMap.size
+    });
+    logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} final refresh snapshot`, {
+      models: this.summarizeResolvedModelsForLog(allModelConfigs),
+      modelVendorMappings: Array.from(this.modelVendorMap.entries()).slice(0, 50).map(([id, mapping]) => ({
+        id,
+        vendor: mapping.vendor.name,
+        modelName: mapping.modelName,
+        apiStyle: mapping.apiStyle
+      })),
+      discoveryStates: Array.from(this.vendorDiscoveryState.entries()).map(([vendorKey, state]) => ({
+        vendorKey,
+        state: this.summarizeDiscoveryStateForLog(state)
+      }))
+    });
     if (modelsChanged) {
       this.modelChangedEmitter.fire();
     } else {
@@ -500,25 +569,105 @@ export class GenericAIProvider extends BaseAIProvider {
     return vendor.models.find(model => model.name.trim().toLowerCase() === normalizedModelName);
   }
 
-  private resolveSamplingOptions(vendor: VendorConfig, modelName: string): ResolvedSamplingOptions {
+  private resolveSamplingOptions(request: GenericChatRequest, vendor: VendorConfig, modelName: string): ResolvedSamplingOptions {
     const model = this.findConfiguredModel(vendor, modelName);
+    const requestTemperature = this.readTemperatureFromModelOptions(request.options?.modelOptions);
     return {
-      temperature: model?.temperature ?? vendor.defaultTemperature ?? DEFAULT_TEMPERATURE,
+      temperature: requestTemperature ?? model?.temperature ?? vendor.defaultTemperature ?? DEFAULT_TEMPERATURE,
       topP: model?.topP ?? vendor.defaultTopP ?? DEFAULT_TOP_P
     };
   }
 
+  private resolveThinkingEffort(request: GenericChatRequest, vendor: VendorConfig, modelName: string): ThinkingEffort | undefined {
+    const fromRequest = this.readThinkingEffortFromModelOptions(request.options?.modelOptions);
+    if (fromRequest) {
+      return fromRequest;
+    }
+
+    return this.findConfiguredModel(vendor, modelName)?.thinkingEffort;
+  }
+
+  private buildThinkingOptions(request: GenericChatRequest, vendor: VendorConfig, modelName: string): ResolvedThinkingOptions | undefined {
+    const thinkingEffort = this.resolveThinkingEffort(request, vendor, modelName);
+    if (!thinkingEffort) {
+      return undefined;
+    }
+
+    if (thinkingEffort === 'none') {
+      return {
+        thinking: {
+          type: 'disabled'
+        }
+      };
+    }
+
+    return {
+      thinking: {
+        type: 'enabled'
+      },
+      effort: thinkingEffort
+    };
+  }
+
+  private readThinkingEffortFromModelOptions(modelOptions: unknown): ThinkingEffort | undefined {
+    if (!modelOptions || typeof modelOptions !== 'object' || Array.isArray(modelOptions)) {
+      return undefined;
+    }
+
+    const raw = (modelOptions as RequestModelOptions)[THINKING_EFFORT_MODEL_OPTION_KEY];
+    if (typeof raw !== 'string') {
+      return undefined;
+    }
+
+    const normalized = raw.trim().toLowerCase();
+    if (normalized === 'low' || normalized === 'medium' || normalized === 'high') {
+      return 'high';
+    }
+    if (normalized === 'xhigh' || normalized === 'max') {
+      return 'max';
+    }
+    if (normalized === 'none' || normalized === 'disabled') {
+      return 'none';
+    }
+    return THINKING_EFFORT_VALUES.includes(normalized as ThinkingEffort)
+      ? normalized as ThinkingEffort
+      : undefined;
+  }
+
+  private readTemperatureFromModelOptions(modelOptions: unknown): number | undefined {
+    if (!modelOptions || typeof modelOptions !== 'object' || Array.isArray(modelOptions)) {
+      return undefined;
+    }
+
+    const raw = (modelOptions as RequestModelOptions)[TEMPERATURE_MODEL_OPTION_KEY];
+    if (typeof raw === 'number' && Number.isFinite(raw)) {
+      return this.normalizeModelOptionTemperature(raw);
+    }
+    if (typeof raw === 'string' && raw.trim().length > 0) {
+      return this.normalizeModelOptionTemperature(Number(raw));
+    }
+    return undefined;
+  }
+
+  private normalizeModelOptionTemperature(value: number): number | undefined {
+    if (!Number.isFinite(value)) {
+      return undefined;
+    }
+
+    const supportedTemperatures = [0.1, 0.4, 0.7, 1];
+    return supportedTemperatures.find(candidate => Math.abs(candidate - value) < 1e-9);
+  }
+
   private shouldSendOutputTokenLimit(
-    vendor: VendorConfig,
-    modelName: string,
+    _vendor: VendorConfig,
+    _modelName: string,
     protocol: OutputLimitProtocol
   ): boolean {
     if (protocol === 'anthropic') {
       // Anthropic-compatible endpoints require max_tokens in request payloads.
       return true;
     }
-    const model = this.findConfiguredModel(vendor, modelName);
-    return model?.maxOutputTokens !== 0;
+    return false;
   }
 
   protected createModel(modelInfo: AIModelConfig): BaseLanguageModel {
@@ -530,19 +679,10 @@ export class GenericAIProvider extends BaseAIProvider {
     vendor: VendorConfig,
     compositeId: string
   ): AIModelConfig {
-    const explicitMaxInputTokens = model.maxInputTokens !== undefined && model.maxInputTokens > 0
-      ? model.maxInputTokens
-      : undefined;
-    const explicitMaxOutputTokens = model.maxOutputTokens !== undefined && model.maxOutputTokens > 0
-      ? model.maxOutputTokens
-      : undefined;
     const resolvedTokens = this.resolveTokenWindowLimits(
-      model.contextSize
-        ?? (explicitMaxInputTokens !== undefined && explicitMaxOutputTokens !== undefined
-          ? explicitMaxInputTokens + explicitMaxOutputTokens
-          : DEFAULT_CONTEXT_WINDOW_SIZE),
-      explicitMaxInputTokens,
-      explicitMaxOutputTokens
+      model.contextSize ?? DEFAULT_CONTEXT_WINDOW_SIZE,
+      undefined,
+      undefined
     );
     const toolCalling = model.capabilities?.tools ?? DEFAULT_MODEL_TOOLS;
     const imageInput = model.capabilities?.vision ?? vendor.defaultVision;
@@ -652,6 +792,15 @@ export class GenericAIProvider extends BaseAIProvider {
     for (const vendorModel of vendor.models) {
       configuredApiStyleByName.set(vendorModel.name.trim().toLowerCase(), vendorModel.apiStyle ?? vendor.defaultApiStyle);
     }
+    logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} append resolved models`, {
+      vendor: vendor.name,
+      incomingCount: models.length,
+      incomingModels: this.summarizeResolvedModelsForLog(models),
+      configuredApiStyles: Array.from(configuredApiStyleByName.entries()).slice(0, 20).map(([name, apiStyle]) => ({
+        name,
+        apiStyle
+      }))
+    });
 
     for (const model of models) {
       const actualName = model.id.includes('/') ? model.id.substring(model.id.indexOf('/') + 1) : model.id;
@@ -681,8 +830,19 @@ export class GenericAIProvider extends BaseAIProvider {
     try {
       const baseUrl = normalizeHttpBaseUrl(vendor.baseUrl);
       if (!baseUrl) {
+        logger.warn(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} skip /models discovery because normalized baseUrl is empty`, {
+          vendor: this.summarizeVendorForLog(vendor)
+        });
         return { models: [], failed: false };
       }
+      logger.info(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} starting /models discovery`, {
+        vendor: vendor.name,
+        baseUrl,
+        defaultApiStyle: vendor.defaultApiStyle,
+        configuredModelCount: vendor.models.length,
+        apiKeyPresent: apiKey.trim().length > 0,
+        apiKeyLength: apiKey.length
+      });
 
       const resolved = await this.withOptionalV1Retry(vendor, baseUrl, async retryBaseUrl => {
         const response = await this.fetchJson<any>(`${retryBaseUrl}/models`, {
@@ -700,16 +860,56 @@ export class GenericAIProvider extends BaseAIProvider {
           : Array.isArray(data)
             ? data
             : [];
+      logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} raw /models response`, {
+        vendor: vendor.name,
+        requestedBaseUrl: baseUrl,
+        resolvedBaseUrl: resolved.baseUrl,
+        status: response.status,
+        topLevelType: Array.isArray(data) ? 'array' : typeof data,
+        topLevelKeys: data && typeof data === 'object' && !Array.isArray(data)
+          ? Object.keys(data as Record<string, unknown>).slice(0, 20)
+          : [],
+        entryCount: entries.length,
+        entryPreview: entries.slice(0, 10).map(entry => this.summarizeRawDiscoveryEntryForLog(entry))
+      });
 
       const models: AIModelConfig[] = [];
       const seen = new Set<string>();
+      let skippedMissingIdCount = 0;
+      let skippedDuplicateCount = 0;
+      let skippedNonChatCount = 0;
+      const skippedPreview: Array<Record<string, unknown>> = [];
 
       for (const entry of entries) {
         const modelId = this.readModelId(entry);
-        if (!modelId || seen.has(modelId.toLowerCase())) {
+        if (!modelId) {
+          skippedMissingIdCount += 1;
+          if (skippedPreview.length < 10) {
+            skippedPreview.push({
+              reason: 'missing-id',
+              entry: this.summarizeRawDiscoveryEntryForLog(entry)
+            });
+          }
+          continue;
+        }
+        if (seen.has(modelId.toLowerCase())) {
+          skippedDuplicateCount += 1;
+          if (skippedPreview.length < 10) {
+            skippedPreview.push({
+              reason: 'duplicate',
+              modelId
+            });
+          }
           continue;
         }
         if (!this.isLikelyChatModel(modelId)) {
+          skippedNonChatCount += 1;
+          if (skippedPreview.length < 10) {
+            skippedPreview.push({
+              reason: 'non-chat-model',
+              modelId
+            });
+          }
           continue;
         }
         seen.add(modelId.toLowerCase());
@@ -739,9 +939,28 @@ export class GenericAIProvider extends BaseAIProvider {
         });
       }
 
+      logger.info(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} completed /models discovery`, {
+        vendor: vendor.name,
+        resolvedBaseUrl: resolved.baseUrl,
+        status: response.status,
+        entryCount: entries.length,
+        acceptedCount: models.length,
+        skippedMissingIdCount,
+        skippedDuplicateCount,
+        skippedNonChatCount
+      });
+      logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} /models discovery details`, {
+        vendor: vendor.name,
+        models: this.summarizeResolvedModelsForLog(models),
+        skippedPreview
+      });
+
       return { models, failed: false };
     } catch (error) {
-      logger.warn(`Failed to discover models from ${vendor.name}`, error);
+      logger.warn(`Failed to discover models from ${vendor.name}`, {
+        vendor: this.summarizeVendorForLog(vendor),
+        error: this.summarizeError(error)
+      });
       return {
         models: [],
         failed: true,
@@ -763,7 +982,8 @@ export class GenericAIProvider extends BaseAIProvider {
   ): Promise<vscode.LanguageModelChatResponse> {
     const messages = this.convertMessages(request.messages);
     const supportsToolCalling = !!request.capabilities.toolCalling;
-    const sampling = this.resolveSamplingOptions(vendor, modelName);
+    const sampling = this.resolveSamplingOptions(request, vendor, modelName);
+    const thinkingOptions = this.buildThinkingOptions(request, vendor, modelName);
     const tools = supportsToolCalling ? this.buildToolDefinitions(request.options) : undefined;
     const toolChoice = supportsToolCalling ? this.buildToolChoice(request.options) : undefined;
     const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName, 'openai-chat')
@@ -779,6 +999,8 @@ export class GenericAIProvider extends BaseAIProvider {
       stream: true,
       temperature: sampling.temperature,
       ...(sampling.topP > 0 ? { top_p: sampling.topP } : {}),
+      ...(thinkingOptions ? { thinking: thinkingOptions.thinking } : {}),
+      ...(thinkingOptions?.effort ? { reasoning_effort: thinkingOptions.effort } : {}),
       ...(maxTokens === undefined ? {} : { max_tokens: maxTokens })
     };
 
@@ -789,6 +1011,8 @@ export class GenericAIProvider extends BaseAIProvider {
         payload: {
           temperature: payload.temperature,
           topP: payload.top_p,
+          thinking: payload.thinking,
+          reasoningEffort: payload.reasoning_effort,
           maxTokens: payload.max_tokens,
           stream: payload.stream,
           toolChoice: payload.tool_choice,
@@ -978,7 +1202,8 @@ export class GenericAIProvider extends BaseAIProvider {
     token?: vscode.CancellationToken
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
-    const sampling = this.resolveSamplingOptions(vendor, modelName);
+    const sampling = this.resolveSamplingOptions(request, vendor, modelName);
+    const thinkingOptions = this.buildThinkingOptions(request, vendor, modelName);
     const tools = request.capabilities.toolCalling
       ? buildOpenAIResponsesToolDefinitions(this.buildToolDefinitions(request.options))
       : undefined;
@@ -994,6 +1219,8 @@ export class GenericAIProvider extends BaseAIProvider {
       tool_choice: toolChoice,
       temperature: sampling.temperature,
       ...(sampling.topP > 0 ? { top_p: sampling.topP } : {}),
+      ...(thinkingOptions ? { thinking: thinkingOptions.thinking } : {}),
+      ...(thinkingOptions?.effort ? { reasoning_effort: thinkingOptions.effort } : {}),
       stream: true,
       ...(maxOutputTokens === undefined ? {} : { max_output_tokens: maxOutputTokens })
     };
@@ -1005,6 +1232,8 @@ export class GenericAIProvider extends BaseAIProvider {
         payload: {
           temperature: payload.temperature,
           topP: payload.top_p,
+          thinking: payload.thinking,
+          reasoningEffort: payload.reasoning_effort,
           maxOutputTokens: payload.max_output_tokens,
           toolChoice: payload.tool_choice,
           toolCount: payload.tools?.length ?? 0,
@@ -1163,7 +1392,8 @@ export class GenericAIProvider extends BaseAIProvider {
     token?: vscode.CancellationToken
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
-    const sampling = this.resolveSamplingOptions(vendor, modelName);
+    const sampling = this.resolveSamplingOptions(request, vendor, modelName);
+    const thinkingOptions = this.buildThinkingOptions(request, vendor, modelName);
     const { system, messages } = toAnthropicMessages(providerMessages, () => this.generateToolCallId());
     const tools = request.capabilities.toolCalling ? buildAnthropicToolDefinitions(this.buildToolDefinitions(request.options)) : undefined;
     const streamAllowed = !this.isStreamingDisabledForSession(request.modelId);
@@ -1177,6 +1407,8 @@ export class GenericAIProvider extends BaseAIProvider {
       messages,
       tools,
       tool_choice: tools ? buildAnthropicToolChoice(request.options) : undefined,
+      ...(thinkingOptions ? { thinking: thinkingOptions.thinking } : {}),
+      ...(thinkingOptions?.effort ? { output_config: { effort: thinkingOptions.effort } } : {}),
       temperature: sampling.temperature,
       stream: streamAllowed,
       ...(maxTokens === undefined ? {} : { max_tokens: maxTokens })
@@ -1188,6 +1420,7 @@ export class GenericAIProvider extends BaseAIProvider {
         baseUrl,
         payload: {
           maxTokens: payload.max_tokens,
+          outputConfig: payload.output_config,
           temperature: payload.temperature,
           topP: payload.top_p,
           stream: payload.stream,
@@ -2337,6 +2570,78 @@ export class GenericAIProvider extends BaseAIProvider {
   private async readParsedResponse<T>(response: Response): Promise<T> {
     const data = await this.readResponseData(response);
     return data as T;
+  }
+
+  private summarizeVendorForLog(vendor: VendorConfig): Record<string, unknown> {
+    return {
+      name: vendor.name,
+      baseUrl: vendor.baseUrl,
+      normalizedBaseUrl: normalizeHttpBaseUrl(vendor.baseUrl),
+      defaultApiStyle: vendor.defaultApiStyle,
+      useModelsEndpoint: vendor.useModelsEndpoint,
+      defaultVision: vendor.defaultVision,
+      configuredModelCount: vendor.models.length,
+      configuredModels: this.summarizeVendorModelConfigsForLog(vendor.models)
+    };
+  }
+
+  private summarizeVendorModelConfigsForLog(
+    models: readonly VendorModelConfig[]
+  ): Array<Record<string, unknown>> {
+    return models.slice(0, 20).map(model => ({
+      name: model.name,
+      apiStyle: model.apiStyle,
+      description: model.description,
+      thinkingEffort: model.thinkingEffort,
+      contextSize: model.contextSize,
+      capabilities: model.capabilities
+    }));
+  }
+
+  private summarizeResolvedModelsForLog(models: readonly AIModelConfig[]): Array<Record<string, unknown>> {
+    return models.slice(0, 20).map(model => ({
+      id: model.id,
+      vendor: model.vendor,
+      family: model.family,
+      name: model.name,
+      apiStyle: model.apiStyle,
+      version: model.version,
+      maxTokens: model.maxTokens,
+      maxInputTokens: model.maxInputTokens,
+      maxOutputTokens: model.maxOutputTokens,
+      capabilities: model.capabilities
+    }));
+  }
+
+  private summarizeDiscoveryStateForLog(
+    state: VendorDiscoveryState | undefined
+  ): Record<string, unknown> | undefined {
+    if (!state) {
+      return undefined;
+    }
+    return {
+      signature: state.signature,
+      suppressRetry: state.suppressRetry,
+      cachedModelCount: state.cachedModels.length,
+      cachedModels: this.summarizeResolvedModelsForLog(state.cachedModels)
+    };
+  }
+
+  private summarizeRawDiscoveryEntryForLog(entry: unknown): Record<string, unknown> {
+    const raw = entry && typeof entry === 'object'
+      ? entry as Record<string, unknown>
+      : undefined;
+    const genericEntry = raw as any;
+    const runtime = genericEntry
+      ? this.readRuntimeFromGenericModelEntry(genericEntry)
+      : undefined;
+    return {
+      id: genericEntry ? this.readModelId(genericEntry) : undefined,
+      keys: raw ? Object.keys(raw).slice(0, 20) : [],
+      runtime,
+      name: typeof raw?.name === 'string' ? raw.name : undefined,
+      model: typeof raw?.model === 'string' ? raw.model : undefined
+    };
   }
 
   private async *readSseEvents(response: Response): AsyncIterable<ParsedSseEvent> {

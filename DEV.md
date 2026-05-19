@@ -12,6 +12,12 @@ npm run compile
 # 代码检查
 npm run lint
 
+# 扩展完整测试（unit + VS Code Desktop）
+npm test
+
+# 仅运行 VS Code Desktop 冒烟测试
+npm run test:desktop
+
 # GitHub Pages 冒烟测试
 npm run test:pages
 
@@ -21,6 +27,17 @@ npm run package:vsix
 # 打包预览版
 npm run package:vsix:pre
 ```
+
+## 扩展测试
+
+| 命令 | 说明 |
+| --- | --- |
+| `npm run test:unit` | 运行 `src/test/runTest.ts` 里的纯代码回归测试。 |
+| `npm run test:desktop` | 通过 `@vscode/test-cli` 调用 `@vscode/test-electron`，首次运行会下载 Stable VS Code Desktop 到 `.vscode-test/`，然后启动隔离测试实例执行 `src/test/suite/**/*.test.ts`。 |
+| `npm test` | 先跑 `test:unit`，再跑 `test:desktop`。 |
+| `Run Extension Tests` | VS Code 调试入口，读取仓库根目录 `.vscode-test.js`。 |
+
+更多测试分层与执行链路见 [docs/testing.md](docs/testing.md)。
 
 ## 打包发布
 
@@ -158,8 +175,8 @@ npm run test:pages
 ## 多协议供应商接入说明
 
 - 配置入口优先使用 `Coding Plans: Manage Vendor Configuration`。该命令从 `coding-plans.vendors` 动态生成供应商 QuickPick，选择供应商后可设置 API Key、刷新模型或打开供应商设置。
-- `coding-plans.vendors[].apiKey` 已标记为 deprecated，仅保留兼容用途；为保证 API Key 安全，建议优先使用 VS Code Secret Storage，而不是写入 `settings.json`。若此处仍配置了值，它会覆盖 Secret Storage 中同名供应商的 key。
-- Copilot Chat 的原生 Add Models 表单只用于添加 `Coding Plans` provider group 和填写 Group Name；`vendorName/apiKey` 字段保留为旧 group 配置兼容项，不再作为必填交互。
+- API Key 统一通过 VS Code Secret Storage 保存；`coding-plans.vendors` 只保留供应商与模型元数据，不接受 `apiKey` 字段。
+- VS Code 1.120 起按公开 `LanguageModelChatProvider` 接口直接枚举 provider 模型；当前实现通过 `languageModelChatProviders` contribution 声明 vendor，并在运行时注册 `registerLanguageModelChatProvider('coding-plans', adapter)`，不依赖 `managementCommand`。
 - 调试请求链路时，可通过 `coding-plans.logLevel` 控制输出面板日志级别；需要完整追踪时切到 `debug`，日常建议保持 `info`。
 - `coding-plans.vendors[].defaultApiStyle` 用于声明供应商默认协议风格，模型也可以通过 `coding-plans.vendors[].models[].apiStyle` 单独覆盖：
   - `openai-chat`：请求 `baseUrl + /chat/completions`
@@ -167,22 +184,31 @@ npm run test:pages
   - `anthropic`：请求 `baseUrl + /messages`
 - `coding-plans.vendors[].usageUrl` 为可选套餐 usage 接口；当前默认按 `Authorization: Bearer <API Key>` 轮询，并将识别到的小时额度、周额度或次数额度以百分比显示在状态栏。
 - `coding-plans.vendors[].models[].contextSize` 现在是描述模型上下文的首选字段。
-- 未显式设置 `maxOutputTokens` 时，运行时会按总上下文动态推导隐式输出预留：`min(30000, max(4096, floor(totalContextWindow * 0.2)))`；极小上下文窗口会再按总窗口安全收敛。
+- 运行时会按总上下文动态推导隐式输出预留：`min(30000, max(4096, floor(totalContextWindow * 0.2)))`；极小上下文窗口会再按总窗口安全收敛。
 - `coding-plans.advanced.defaultReservedOutput` 的默认值为 `60000`，用于请求侧输出预算覆盖；发送请求时会自动按模型上限收敛，不改变模型隐式默认输出预留的推导公式。
-- `coding-plans.vendors[].models[].maxInputTokens` / `maxOutputTokens` 已标记为 deprecated，保留兼容旧配置与特殊覆盖用途。两者仍允许配置为 `0`。其中 `maxInputTokens: 0` 的语义为”未设置”；`maxOutputTokens` 默认值就是 `0`，表示”未设置”；在 `openai-chat` / `openai-responses` 下不主动下发 `max_tokens` / `max_output_tokens`，但当上游协议端点强制要求 `max_tokens` 时需自动补发兼容值。`maxInputTokens` 仍仅用于本地元数据和预算，不直接传给 API。自动刷新/写回 `vendors` 配置时不再默认补入这两个字段；只有用户显式配置的现有模型项会被原样保留。
 - 新增采样参数：
   - `coding-plans.vendors[].defaultTemperature` / `defaultTopP`：供应商默认采样值
   - `coding-plans.vendors[].models[].temperature` / `topP`：模型级覆盖值
-  - 继承顺序固定为 `models[].temperature/topP` > `vendors[].defaultTemperature/defaultTopP` > 内置默认值 `0.2/0`
-  - `topP = 0` 表示请求中省略 `top_p`
+  - `request.modelOptions.temperature` 仍作为 API 调用方传入的请求级覆盖项；VS Code 1.120 公开模型信息接口不再提供 `configurationSchema` UI 声明
+  - 继承顺序固定为 `request.modelOptions.temperature` > `models[].temperature` > `vendors[].defaultTemperature` > 内置默认值 `0.1`
+  - `topP = 0` 表示请求中省略 `top_p`；模型行 `More Actions` 不提供 `topP` 配置，默认保持留空
   - 建议：编码场景默认保持 `topP 0`；仅当上游明确需要或你想显式控制 nucleus sampling 时再设置为正数
   - `anthropic` 请求仅发送 `temperature`，不发送 `top_p`，以兼容会拒绝同时指定两者的上游
-- 需兼容旧字段 `apiStyle`；未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
-- 需继续兼容旧字段 `maxInputTokens` / `maxOutputTokens`；当模型同时提供 `contextSize` 与这两个旧字段时，总上下文窗口优先按 `contextSize` 处理，仅在输入或输出上限超过 `contextSize` 时才收敛。
+- 新增 thinking effort：
+  - `coding-plans.vendors[].models[].thinkingEffort`：模型级配置，支持 `none` / `high` / `max`
+  - `request.modelOptions.thinkingEffort` 仍作为 API 调用方传入的请求级覆盖项；VS Code 1.120 公开模型信息接口不再提供 `configurationSchema` UI 声明
+  - 不提供 vendor/provider 级 thinking 配置，避免一个 provider 配置影响同组全部模型
+  - 继承顺序固定为 `request.modelOptions.thinkingEffort` > `vendors[].models[].thinkingEffort` > 不发送
+  - 协议映射：
+    - `none`：发送 `thinking: { type: "disabled" }`
+    - `high` / `max`：发送 `thinking: { type: "enabled" }`
+    - `openai-chat` / `openai-responses`：额外发送 `reasoning_effort`
+    - `anthropic`：额外发送 `output_config.effort`
+- 未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
 - 请求链路默认优先上游真实流式传输；若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志，不新增单独的 stream 配置开关。
 - `capabilities` 现在按必填语义处理；对旧配置要在归一化时自动补齐 `tools=true` 与 `vision=defaultVision`。
-- 当 `useModelsEndpoint: true` 时，刷新模型列表只按 `name` 同步增删；设置中已有模型项的 `description`、`temperature`、`topP`、`capabilities`、`contextSize`、`maxInputTokens`、`maxOutputTokens` 等字段应保持原样，新发现模型不应自动写入采样参数，也不应自动写入 `maxInputTokens` / `maxOutputTokens`。
+- 当 `useModelsEndpoint: true` 时，刷新模型列表只按 `name` 同步增删；设置中已有模型项的 `description`、`temperature`、`topP`、`capabilities`、`contextSize` 等字段保持原样，新发现模型不自动写入采样参数。
 - 若修改协议相关行为，请同步检查：
   - `src/providers/genericProvider.ts`
   - `src/config/configStore.ts`

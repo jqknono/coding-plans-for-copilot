@@ -45,7 +45,6 @@ import {
   LEGACY_COMMIT_MESSAGE_SUMMARY_MAX_CHUNKS_SETTING_KEY,
   LEGACY_COMMIT_MESSAGE_SUMMARY_TRIGGER_LINES_SETTING_KEY,
   LEGACY_COMMIT_MESSAGE_WARN_ON_VALIDATION_FAILURE_SETTING_KEY,
-  PLACEHOLDER_MODEL_ID_SUFFIXES,
   REQUEST_SOURCE_COMMIT_MESSAGE,
   REQUEST_SOURCE_MODEL_OPTION_KEY,
   RECENT_COMMIT_STYLE_MAX_ENTRY_LENGTH,
@@ -142,7 +141,13 @@ type ChatModelsSelectionCacheState = {
   inFlight?: Promise<vscode.LanguageModelChat[]>;
 };
 
+type CommitMessageModelSource = {
+  getAvailableModels(): vscode.LanguageModelChat[];
+  refreshModels(): Promise<void>;
+};
+
 let chatModelsSelectionCache: ChatModelsSelectionCacheState | undefined;
+let commitMessageModelSource: CommitMessageModelSource | undefined;
 
 const LANGUAGE_ENFORCEMENT_RULES: Record<CommitMessageLanguage, LanguageEnforcementRule> = {
   'zh-cn': {
@@ -968,10 +973,6 @@ async function getDiff(repo: GitRepository): Promise<string> {
   return repo.diff(false);
 }
 
-function isPlaceholderModelId(modelId: string): boolean {
-  return PLACEHOLDER_MODEL_ID_SUFFIXES.some(suffix => modelId.endsWith(suffix));
-}
-
 function isCopilotVendor(vendor: string): boolean {
   return normalizeValue(vendor) === 'copilot';
 }
@@ -1065,6 +1066,16 @@ export function invalidateCommitMessageModelSelectionCache(reason: string): void
     modelCount: previous?.models.length,
     ageMs: previous ? Date.now() - previous.fetchedAt : undefined
   });
+}
+
+export function registerCommitMessageModelSource(source?: CommitMessageModelSource): void {
+  const hadPreviousSource = !!commitMessageModelSource;
+  commitMessageModelSource = source;
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-registered`, {
+    hasSource: !!source,
+    hadPreviousSource
+  });
+  invalidateCommitMessageModelSelectionCache('commit-message-model-source-updated');
 }
 
 function getCodingPlansVendorName(model: vscode.LanguageModelChat): string | undefined {
@@ -1298,17 +1309,11 @@ async function selectModel(
   };
 
   throwIfCancelled(token);
-  const allModels = await selectChatModelsWithTimeout(token, { vendor: CODING_PLANS_VENDOR });
+  const allModels = await getCodingPlansModelsForCommitMessageSelection(token);
   throwIfCancelled(token);
-  let filteredPlaceholderCount = 0;
   let filteredCopilotCount = 0;
   const models = allModels
     .filter(model => {
-      const placeholder = isPlaceholderModelId(model.id);
-      if (placeholder) {
-        filteredPlaceholderCount += 1;
-        return false;
-      }
       const copilot = isCopilotVendor(model.vendor);
       if (copilot) {
         filteredCopilotCount += 1;
@@ -1328,7 +1333,6 @@ async function selectModel(
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} models prepared`, {
     allModelCount: allModels.length,
     keptModelCount: models.length,
-    filteredPlaceholderCount,
     filteredCopilotCount,
     modelGroups: summarizeModelGroupsForLog(models)
   });
@@ -1433,6 +1437,41 @@ async function selectModel(
 
   await saveModelSelection(picked.model);
   return finishSelection({ kind: 'selected', model: picked.model }, 'global-model-picked');
+}
+
+async function getCodingPlansModelsForCommitMessageSelection(
+  token?: vscode.CancellationToken
+): Promise<vscode.LanguageModelChat[]> {
+  if (!commitMessageModelSource) {
+    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-fallback-to-vscode-lm`, {
+      selector: { vendor: CODING_PLANS_VENDOR }
+    });
+    return selectChatModelsWithTimeout(token, { vendor: CODING_PLANS_VENDOR });
+  }
+
+  const startedAt = Date.now();
+  let models = commitMessageModelSource.getAvailableModels();
+  logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-read`, {
+    modelCount: models.length,
+    modelGroups: summarizeModelGroupsForLog(models),
+    elapsedMs: Date.now() - startedAt
+  });
+
+  if (models.length === 0) {
+    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-refresh-start`, {
+      elapsedMs: Date.now() - startedAt
+    });
+    await commitMessageModelSource.refreshModels();
+    throwIfCancelled(token);
+    models = commitMessageModelSource.getAvailableModels();
+    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-refresh-resolved`, {
+      modelCount: models.length,
+      modelGroups: summarizeModelGroupsForLog(models),
+      elapsedMs: Date.now() - startedAt
+    });
+  }
+
+  return models;
 }
 
 async function selectChatModelsWithTimeout(

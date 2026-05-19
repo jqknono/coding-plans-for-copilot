@@ -68,7 +68,6 @@ export const SUMMARY_JSON_SCHEMA = [
   '  "breakingChange": false',
   '}'
 ].join('\n');
-export const PLACEHOLDER_MODEL_ID_SUFFIXES = ['__setup_api_key__', '__no_models__', '__unsupported__', '__vendor_not_configured__'] as const;
 export const CONVENTIONAL_COMMIT_SUBJECT_RE = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9_.\-\/]+\))?!?: .+/i;
 
 export const ADVANCED_OPTIONS_SETTING_KEY = 'advanced';
@@ -107,8 +106,12 @@ export const MODEL_VERSION_LABEL = 'Coding Plans for Copilot';
 export const DEFAULT_CONFIGURED_MODELS: readonly string[] = [];
 export const DEFAULT_MODEL_TOOLS = true;
 export const NON_RETRYABLE_DISCOVERY_STATUS_CODES = new Set([400, 401, 403, 404]);
-export const DEFAULT_TEMPERATURE = 0.2;
+export const DEFAULT_TEMPERATURE = 0.1;
 export const DEFAULT_TOP_P = 0;
+export const THINKING_EFFORT_VALUES = ['none', 'high', 'max'] as const;
+export type ThinkingEffort = (typeof THINKING_EFFORT_VALUES)[number];
+export const TEMPERATURE_MODEL_OPTION_KEY = 'temperature';
+export const THINKING_EFFORT_MODEL_OPTION_KEY = 'thinkingEffort';
 export const RESPONSE_TRACE_ID_FIELD = '__codingPlansTraceId';
 export const REQUEST_SOURCE_MODEL_OPTION_KEY = '__codingPlansRequestSource';
 export const REQUEST_SOURCE_COMMIT_MESSAGE = 'commit-message';
