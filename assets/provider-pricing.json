@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-18T09:20:05.894Z",
+  "generatedAt": "2026-05-19T03:08:47.941Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1467,9 +1467,7 @@
             "资源包折扣权益：6 折"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "x-aio: Request timed out after 6000ms: https://code.x-aio.com/assets/index-DxkIorcN.js; Playwright fallback failed: page.goto: Timeout 6000ms exceeded. Call log: - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\""
+      ]
     },
     {
       "provider": "xfyun-ai",
@@ -1655,7 +1653,6 @@
     }
   ],
   "failures": [
-    "x-aio: Request timed out after 6000ms: https://code.x-aio.com/assets/index-DxkIorcN.js; Playwright fallback failed: page.goto: Timeout 6000ms exceeded.\nCall log:\n  - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\"\n",
     "chutes-ai: Unable to locate Chutes subscription plan pricing text"
   ]
 }
