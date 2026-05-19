@@ -2004,6 +2004,28 @@ async function runGenericProviderThinkingEffortTests(
   assert.equal(overriddenTemperaturePayload.temperature, 1);
   console.log('PASS 请求级 temperature 可覆盖模型级与供应商级默认值');
 
+  const inheritedTemperaturePayload = await capturePayload([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    defaultTemperature: 0.4,
+    models: [{
+      name: 'reasoner',
+      temperature: 0.7,
+      contextSize: 64000,
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000,
+      capabilities: { tools: false, vision: false }
+    }]
+  }], 'Vendor/reasoner', {
+    modelOptions: {
+      temperature: 0
+    }
+  });
+  assert.equal(inheritedTemperaturePayload.temperature, 0.7);
+  console.log('PASS 请求级 temperature=0 会回退到上级 temperature');
+
   const openAIResponsesPayload = await capturePayload([{
     name: 'Vendor',
     baseUrl: 'https://example.test/v1',
@@ -3905,6 +3927,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
         configurationSchema?: {
           properties?: Record<string, {
             type?: string;
+            default?: unknown;
           }>;
         };
       }).configurationSchema?.properties?.temperature?.type,
@@ -3918,7 +3941,17 @@ async function runLMChatProviderAdapterModelFilteringTests(
           }>;
         };
       }).configurationSchema?.properties?.temperature?.enum,
-      [0.1, 0.4, 0.7, 1]
+      [0, 0.1, 0.4, 0.7, 1]
+    );
+    assert.equal(
+      (allModels[1] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            default?: unknown;
+          }>;
+        };
+      }).configurationSchema?.properties?.temperature?.default,
+      0.1
     );
 
     const vendorModels = await adapter.provideLanguageModelChatInformation({

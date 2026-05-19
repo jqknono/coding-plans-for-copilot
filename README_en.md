@@ -148,13 +148,13 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].baseUrl` | `string` | Required | API base address. |
 | `coding-plans.vendors[].usageUrl` | `string` | Empty | Plan usage API address; when configured, status bar displays quota percentage. |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Protocol style: `openai-chat` / `openai-responses` / `anthropic`. |
-| `coding-plans.vendors[].defaultTemperature` | `number` | `0.1` | Vendor default temperature. When unset, runtime falls back to the global default `0.1`. |
+| `coding-plans.vendors[].defaultTemperature` | `number` | `0.1` | Deprecated. Vendor default temperature. When unset, runtime falls back to the global default `0.1`. Prefer the model row `More Actions` menu or caller-provided request-level `temperature`. |
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | Vendor default topP. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | Whether to fetch model list from `/models`. |
 | `coding-plans.vendors[].models[].name` | `string` | Required | Model name. |
 | `coding-plans.vendors[].models[].description` | `string` | Empty | Model description. |
 | `coding-plans.vendors[].models[].apiStyle` | `string` | Inherit from vendor | Model-level protocol style override. |
-| `coding-plans.vendors[].models[].temperature` | `number` | Inherit from vendor | Model-level temperature override. |
+| `coding-plans.vendors[].models[].temperature` | `number` | Inherit from vendor | Deprecated. Model-level temperature override. Prefer the model row `More Actions` menu or caller-provided request-level `temperature`. |
 | `coding-plans.vendors[].models[].topP` | `number` | Inherit from vendor | Model-level topP override. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | Model capability declaration. |
 | `coding-plans.vendors[].models[].contextSize` | `number` | Empty | Model total context window. Runtime derives the request budget from this total window. |

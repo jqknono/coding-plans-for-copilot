@@ -69,7 +69,8 @@ function createModelConfigurationSchema(): LanguageModelConfigurationSchema {
         type: 'number',
         title: getMessage('temperatureTitle'),
         description: getMessage('temperatureDescription'),
-        enum: [0.1, 0.4, 0.7, 1]
+        enum: [0, 0.1, 0.4, 0.7, 1],
+        default: 0.1
       }
     }
   };

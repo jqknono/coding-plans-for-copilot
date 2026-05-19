@@ -187,8 +187,8 @@ npm run test:pages
 - 运行时会按总上下文动态推导隐式输出预留：`min(30000, max(4096, floor(totalContextWindow * 0.2)))`；极小上下文窗口会再按总窗口安全收敛。
 - `coding-plans.advanced.defaultReservedOutput` 的默认值为 `60000`，用于请求侧输出预算覆盖；发送请求时会自动按模型上限收敛，不改变模型隐式默认输出预留的推导公式。
 - 新增采样参数：
-  - `coding-plans.vendors[].defaultTemperature` / `defaultTopP`：供应商默认采样值
-  - `coding-plans.vendors[].models[].temperature` / `topP`：模型级覆盖值
+  - `coding-plans.vendors[].defaultTemperature` / `defaultTopP`：供应商默认采样值；其中 `defaultTemperature` 已标记 deprecated
+  - `coding-plans.vendors[].models[].temperature` / `topP`：模型级覆盖值；其中 `temperature` 已标记 deprecated
   - `request.modelOptions.temperature` 仍作为 API 调用方传入的请求级覆盖项；VS Code 1.120 公开模型信息接口不再提供 `configurationSchema` UI 声明
   - 继承顺序固定为 `request.modelOptions.temperature` > `models[].temperature` > `vendors[].defaultTemperature` > 内置默认值 `0.1`
   - `topP = 0` 表示请求中省略 `top_p`；模型行 `More Actions` 不提供 `topP` 配置，默认保持留空

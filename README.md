@@ -145,13 +145,13 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].baseUrl` | `string` | 必填 | API 基础地址。 |
 | `coding-plans.vendors[].usageUrl` | `string` | 空 | 套餐 usage 接口地址，配置后状态栏显示额度百分比。 |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | 协议风格：`openai-chat` / `openai-responses` / `anthropic`。 |
-| `coding-plans.vendors[].defaultTemperature` | `number` | `0.1` | 供应商默认 temperature。未配置时运行时使用全局默认值 `0.1`。 |
+| `coding-plans.vendors[].defaultTemperature` | `number` | `0.1` | 已废弃。供应商默认 temperature；未配置时运行时使用全局默认值 `0.1`。优先使用模型行 `More Actions` 或调用方传入的请求级 `temperature`。 |
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | 供应商默认 topP；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | 是否从 `/models` 拉取模型列表。 |
 | `coding-plans.vendors[].models[].name` | `string` | 必填 | 模型名称。 |
 | `coding-plans.vendors[].models[].description` | `string` | 空 | 模型描述。 |
 | `coding-plans.vendors[].models[].apiStyle` | `string` | 继承供应商 | 模型级协议风格覆盖。 |
-| `coding-plans.vendors[].models[].temperature` | `number` | 继承供应商 | 模型级 temperature 覆盖。 |
+| `coding-plans.vendors[].models[].temperature` | `number` | 继承供应商 | 已废弃。模型级 temperature 覆盖；优先使用模型行 `More Actions` 或调用方传入的请求级 `temperature`。 |
 | `coding-plans.vendors[].models[].topP` | `number` | 继承供应商 | 模型级 topP 覆盖；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | 模型能力声明。 |
 | `coding-plans.vendors[].models[].contextSize` | `number` | 空 | 模型总上下文窗口；运行时会基于它推导输入/输出预算。 |

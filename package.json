@@ -256,7 +256,8 @@
                                 "type": "number",
                                 "exclusiveMinimum": 0,
                                 "maximum": 1,
-                                "description": "%configuration.coding-plans.vendors.defaultTemperature.description%"
+                                "description": "%configuration.coding-plans.vendors.defaultTemperature.description%",
+                                "deprecationMessage": "%configuration.coding-plans.vendors.defaultTemperature.deprecationMessage%"
                             },
                             "defaultTopP": {
                                 "type": "number",
@@ -283,7 +284,8 @@
                                             "type": "number",
                                             "exclusiveMinimum": 0,
                                             "maximum": 1,
-                                            "description": "%configuration.coding-plans.vendors.models.temperature.description%"
+                                            "description": "%configuration.coding-plans.vendors.models.temperature.description%",
+                                            "deprecationMessage": "%configuration.coding-plans.vendors.models.temperature.deprecationMessage%"
                                         },
                                         "topP": {
                                             "type": "number",
