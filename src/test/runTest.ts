@@ -3819,13 +3819,13 @@ async function runLMChatProviderAdapterModelFilteringTests(
 
   const adapter = new LMChatProviderAdapter(fakeProvider as never, configStore);
   try {
-    const nonSilentModels = await adapter.provideLanguageModelChatInformation({ silent: false } as never, {} as never);
-    assert.deepEqual(nonSilentModels.map(model => model.id), ['Vendor/coder', 'Other/coder']);
+    const unscopedModels = await adapter.provideLanguageModelChatInformation({ silent: false } as never, {} as never);
+    assert.deepEqual(unscopedModels, []);
 
-    const baseModels = await adapter.provideLanguageModelChatInformation({ silent: true } as never, {} as never);
-    assert.deepEqual(baseModels.map(model => model.id), ['Vendor/coder', 'Other/coder']);
-
-    const allModels = await adapter.provideLanguageModelChatInformation({ silent: true } as never, {} as never);
+    const allModels = await adapter.provideLanguageModelChatInformation({
+      silent: true,
+      group: 'Group'
+    } as never, {} as never);
     assert.deepEqual(allModels.map(model => model.id), ['Vendor/coder', 'Other/coder']);
     assert.equal(
       (allModels[0]?.capabilities as unknown as { agentMode?: boolean })?.agentMode,
@@ -3840,18 +3840,23 @@ async function runLMChatProviderAdapterModelFilteringTests(
       false
     );
 
+    const vendorModels = await adapter.provideLanguageModelChatInformation({
+      silent: true,
+      group: 'Group',
+      configuration: { vendorName: 'Vendor' }
+    } as never, {} as never);
+    assert.deepEqual(vendorModels.map(model => model.id), ['Vendor/coder']);
+
     availableModels = [];
     secretContext.secrets.clear();
     refreshCount = 0;
-    const silentEmptyModels = await adapter.provideLanguageModelChatInformation({ silent: true } as never, {} as never);
+    const silentEmptyModels = await adapter.provideLanguageModelChatInformation({
+      silent: true,
+      group: 'Empty'
+    } as never, {} as never);
     assert.equal(refreshCount, 1);
     assert.deepEqual(silentEmptyModels, []);
-
-    refreshCount = 0;
-    const nonSilentEmptyModels = await adapter.provideLanguageModelChatInformation({ silent: false } as never, {} as never);
-    assert.equal(refreshCount, 1);
-    assert.deepEqual(nonSilentEmptyModels, []);
-    console.log('PASS LMChatProviderAdapter 按 VS Code 1.120 接口返回真实模型，并在空结果路径保持无占位符');
+    console.log('PASS LMChatProviderAdapter 仅在显式 group 或 configuration 场景暴露模型，默认根 provider 保持隐藏');
   } finally {
     adapter.dispose();
     configStore.dispose();
@@ -3917,10 +3922,18 @@ async function runLMChatProviderAdapterCliproxyapiPickerTests(
 
   const adapter = new LMChatProviderAdapter(fakeProvider as never, configStore);
   try {
-    const pickedModels = await adapter.provideLanguageModelChatInformation({ silent: true } as never, {} as never);
+    const pickedModels = await adapter.provideLanguageModelChatInformation({
+      silent: true,
+      group: 'cliproxyapi',
+      configuration: { vendorName: 'cliproxyapi' }
+    } as never, {} as never);
     assert.deepEqual(pickedModels.map(model => model.id), ['cliproxyapi/o4-mini']);
 
-    const nonSilentModels = await adapter.provideLanguageModelChatInformation({ silent: false } as never, {} as never);
+    const nonSilentModels = await adapter.provideLanguageModelChatInformation({
+      silent: false,
+      group: 'cliproxyapi',
+      configuration: { vendorName: 'cliproxyapi' }
+    } as never, {} as never);
     assert.deepEqual(nonSilentModels.map(model => model.id), ['cliproxyapi/o4-mini']);
     assert.equal(secretContext.secrets.get('coding-plans.vendor.apiKey.cliproxyapi'), 'configured');
     assert.equal(refreshCount, 0);
@@ -3936,12 +3949,16 @@ async function runLMChatProviderAdapterCliproxyapiPickerTests(
     ]);
 
     refreshCount = 0;
-    const modelsAfterSettingsChange = await adapter.provideLanguageModelChatInformation({ silent: true } as never, {} as never);
+    const modelsAfterSettingsChange = await adapter.provideLanguageModelChatInformation({
+      silent: true,
+      group: 'cliproxyapi',
+      configuration: { vendorName: 'cliproxyapi' }
+    } as never, {} as never);
     assert.deepEqual(modelsAfterSettingsChange.map(model => model.id), ['cliproxyapi/o4-mini']);
     assert.equal(secretContext.secrets.get('coding-plans.vendor.apiKey.cliproxyapi'), 'configured');
     assert.equal(refreshCount, 0);
 
-    console.log('PASS LMChatProviderAdapter 会在 VS Code 1.120 picker 路径暴露 cliproxyapi 真实模型');
+    console.log('PASS LMChatProviderAdapter 会在显式 provider group 路径暴露 cliproxyapi 真实模型');
   } finally {
     adapter.dispose();
     configStore.dispose();

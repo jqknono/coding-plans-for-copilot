@@ -24,17 +24,16 @@ interface TestVendorConfig {
   }>;
 }
 
-async function waitForModel(modelId: string, timeoutMs = 5000): Promise<void> {
+async function assertModelHiddenOnUnscopedVendorRoot(modelId: string, timeoutMs = 1500): Promise<void> {
   const startedAt = Date.now();
   while (Date.now() - startedAt < timeoutMs) {
     const models = await vscode.lm.selectChatModels({ vendor: 'coding-plans' });
-    if (models.some(model => model.id === modelId)) {
-      return;
-    }
+    assert.ok(
+      !models.some(model => model.id === modelId),
+      '未显式添加 provider group 时，不应在未作用域化的 coding-plans 根查询中暴露模型'
+    );
     await new Promise(resolve => setTimeout(resolve, 100));
   }
-
-  assert.fail(`超时仍未在 VS Code 模型选择器中看到 ${modelId}`);
 }
 
 async function activateExtension(): Promise<vscode.Extension<unknown>> {
@@ -49,7 +48,7 @@ async function activateExtension(): Promise<vscode.Extension<unknown>> {
 }
 
 suite('VS Code Desktop Smoke Tests', () => {
-  test('extension initialization exposes configured models without manual refresh', async () => {
+  test('extension initialization keeps the unscoped coding-plans root hidden', async () => {
     assert.equal(
       typeof vscode.lm?.selectChatModels,
       'function',
@@ -78,7 +77,7 @@ suite('VS Code Desktop Smoke Tests', () => {
     try {
       await config.update('vendors', [testVendor], vscode.ConfigurationTarget.Global);
       await activateExtension();
-      await waitForModel('DesktopInit/desktop-init-model');
+      await assertModelHiddenOnUnscopedVendorRoot('DesktopInit/desktop-init-model');
     } finally {
       await config.update('vendors', previousGlobalVendors, vscode.ConfigurationTarget.Global);
     }
@@ -96,7 +95,7 @@ suite('VS Code Desktop Smoke Tests', () => {
     }
   });
 
-  test('extension models are visible through VS Code language model selector', async () => {
+  test('refresh keeps the unscoped coding-plans root hidden', async () => {
     await activateExtension();
 
     assert.equal(
@@ -127,12 +126,7 @@ suite('VS Code Desktop Smoke Tests', () => {
     try {
       await config.update('vendors', [testVendor], vscode.ConfigurationTarget.Global);
       await vscode.commands.executeCommand('coding-plans.refreshModels');
-
-      const models = await vscode.lm.selectChatModels({ vendor: 'coding-plans' });
-      assert.ok(
-        models.some(model => model.id === 'DesktopTest/desktop-smoke-model'),
-        'VS Code model selector should include the model contributed by Coding Plans'
-      );
+      await assertModelHiddenOnUnscopedVendorRoot('DesktopTest/desktop-smoke-model');
     } finally {
       await config.update('vendors', previousGlobalVendors, vscode.ConfigurationTarget.Global);
     }

@@ -28,6 +28,7 @@ interface ProviderPickerConfiguration {
 }
 
 interface PrepareLanguageModelChatModelOptionsWithConfiguration extends vscode.PrepareLanguageModelChatModelOptions {
+  group?: unknown;
   configuration?: ProviderPickerConfiguration;
 }
 
@@ -83,16 +84,28 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     _token: vscode.CancellationToken
   ): Promise<vscode.LanguageModelChatInformation[]> {
     const pickerOptions = options as PrepareLanguageModelChatModelOptionsWithConfiguration;
+    const pickerGroup = this.normalizePickerGroup(pickerOptions.group);
     const normalizedConfiguration = this.normalizePickerConfiguration(pickerOptions.configuration);
     this.logLanguageModelInformationRequest('start', options, undefined, {
+      group: pickerGroup,
       configuration: this.summarizePickerConfiguration(normalizedConfiguration),
       configuredVendors: this.summarizeConfiguredVendors(),
       availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels())
     });
 
+    // Hide the contributed provider root in "Manage Language Models".
+    // VS Code will query explicit user-added groups with an internal `group` payload.
+    if (!pickerGroup && !normalizedConfiguration) {
+      this.logLanguageModelInformationRequest('skipped-unscoped-root', options, [], {
+        group: pickerGroup
+      });
+      return [];
+    }
+
     await this.applyPickerConfiguration(normalizedConfiguration);
     const result = await this.buildModelInformation(normalizedConfiguration?.vendorName);
     this.logLanguageModelInformationRequest('resolved', options, result, {
+      group: pickerGroup,
       resultCount: result.length,
       resultPreview: this.summarizeLanguageModelInfos(result)
     });
@@ -636,8 +649,18 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     const pickerOptions = options as PrepareLanguageModelChatModelOptionsWithConfiguration;
     return {
       silent: options.silent,
+      group: this.normalizePickerGroup(pickerOptions.group),
       configuration: this.summarizePickerConfiguration(this.normalizePickerConfiguration(pickerOptions.configuration))
     };
+  }
+
+  private normalizePickerGroup(group: unknown): string | undefined {
+    if (typeof group !== 'string') {
+      return undefined;
+    }
+
+    const normalized = group.trim();
+    return normalized.length > 0 ? normalized : undefined;
   }
 
   private summarizePickerConfiguration(
