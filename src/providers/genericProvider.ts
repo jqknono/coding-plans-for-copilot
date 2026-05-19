@@ -578,13 +578,12 @@ export class GenericAIProvider extends BaseAIProvider {
     };
   }
 
-  private resolveThinkingEffort(request: GenericChatRequest, vendor: VendorConfig, modelName: string): ThinkingEffort | undefined {
+  private resolveThinkingEffort(request: GenericChatRequest, _vendor: VendorConfig, _modelName: string): ThinkingEffort | undefined {
     const fromRequest = this.readThinkingEffortFromModelOptions(request.options?.modelOptions);
     if (fromRequest) {
       return fromRequest;
     }
-
-    return this.findConfiguredModel(vendor, modelName)?.thinkingEffort;
+    return undefined;
   }
 
   private buildThinkingOptions(request: GenericChatRequest, vendor: VendorConfig, modelName: string): ResolvedThinkingOptions | undefined {
@@ -2592,7 +2591,6 @@ export class GenericAIProvider extends BaseAIProvider {
       name: model.name,
       apiStyle: model.apiStyle,
       description: model.description,
-      thinkingEffort: model.thinkingEffort,
       contextSize: model.contextSize,
       capabilities: model.capabilities
     }));

@@ -52,7 +52,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
 3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
 4. 打开 Copilot Chat（`Ctrl+L`），在模型选择器中选择 `Coding Plans` 提供的模型
-5. 如需设置 `Thinking Effort`、`temperature` 或 `topP`，在 `coding-plans.vendors[].models[]` 中配置模型级覆盖项
+5. 如需设置 `temperature` 或 `topP`，在 `coding-plans.vendors[].models[]` 中配置模型级覆盖项；`Thinking Effort` 请在模型行 `More Actions` 中按请求设置
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
 
 ### 内置供应商端点
@@ -88,7 +88,6 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
       "models": [
         {
           "name": "my-model",
-          "thinkingEffort": "max",
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 128000
         }
@@ -127,7 +126,6 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
       "models": [
         {
           "name": "gpt-5",
-          "thinkingEffort": "high",
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 400000
         }
@@ -155,7 +153,6 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].apiStyle` | `string` | 继承供应商 | 模型级协议风格覆盖。 |
 | `coding-plans.vendors[].models[].temperature` | `number` | 继承供应商 | 模型级 temperature 覆盖。 |
 | `coding-plans.vendors[].models[].topP` | `number` | 继承供应商 | 模型级 topP 覆盖；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
-| `coding-plans.vendors[].models[].thinkingEffort` | `string` | 空 | 模型级 thinking mode 覆盖；可选 `none` / `high` / `max`。模型行 `More Actions` 中该项默认值为 `max`。请求中会发送独立的 `thinking` 字段；当值为 `high` 或 `max` 时，还会分别映射到 OpenAI 兼容请求的 `reasoning_effort` 与 Anthropic 兼容请求的 `output_config.effort`。 |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | 模型能力声明。 |
 | `coding-plans.vendors[].models[].contextSize` | `number` | 空 | 模型总上下文窗口；运行时会基于它推导输入/输出预算。 |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | 请求侧默认输出 token 预算；仅作为发送请求时的预算覆盖值，最终仍会按模型输出上限收敛。 |

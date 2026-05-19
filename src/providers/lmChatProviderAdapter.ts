@@ -8,7 +8,9 @@ import { isEmptyModelResponseError } from './genericProvider';
 import {
   REQUEST_SOURCE_COMMIT_MESSAGE,
   REQUEST_SOURCE_MODEL_OPTION_KEY,
-  RESPONSE_TRACE_ID_FIELD
+  RESPONSE_TRACE_ID_FIELD,
+  TEMPERATURE_MODEL_OPTION_KEY,
+  THINKING_EFFORT_MODEL_OPTION_KEY
 } from '../constants';
 import { getMessage } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
@@ -32,6 +34,47 @@ interface PrepareLanguageModelChatModelOptionsWithConfiguration extends vscode.P
   configuration?: ProviderPickerConfiguration;
 }
 
+type LanguageModelConfigurationSchemaProperty = {
+  type: 'string' | 'number';
+  title: string;
+  description?: string;
+  enum?: Array<string | number>;
+  default?: string | number;
+  group?: 'navigation';
+};
+
+type LanguageModelConfigurationSchema = {
+  type: 'object';
+  properties: Record<string, LanguageModelConfigurationSchemaProperty>;
+};
+
+type LanguageModelChatInformationWithHiddenFields = vscode.LanguageModelChatInformation & {
+  configurationSchema?: LanguageModelConfigurationSchema;
+  isUserSelectable?: boolean;
+};
+
+function createModelConfigurationSchema(): LanguageModelConfigurationSchema {
+  return {
+    type: 'object',
+    properties: {
+      [THINKING_EFFORT_MODEL_OPTION_KEY]: {
+        type: 'string',
+        title: getMessage('thinkingEffortTitle'),
+        description: getMessage('thinkingEffortDescription'),
+        enum: ['none', 'high', 'max'],
+        default: 'max',
+        group: 'navigation'
+      },
+      [TEMPERATURE_MODEL_OPTION_KEY]: {
+        type: 'number',
+        title: getMessage('temperatureTitle'),
+        description: getMessage('temperatureDescription'),
+        enum: [0.1, 0.4, 0.7, 1]
+      }
+    }
+  };
+}
+
 function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChatInformation {
   return {
     id: model.id,
@@ -43,10 +86,11 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
     maxInputTokens: model.maxInputTokens,
     maxOutputTokens: model.maxOutputTokens,
     capabilities: { ...model.capabilities },
+    configurationSchema: createModelConfigurationSchema(),
     // isUserSelectable is an internal VS Code field not yet in public typings.
     // Without it the chat model picker filters the model out (AIo() filter).
     ...({ isUserSelectable: true } as object)
-  } as vscode.LanguageModelChatInformation;
+  } as LanguageModelChatInformationWithHiddenFields;
 }
 
 export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, vscode.Disposable {

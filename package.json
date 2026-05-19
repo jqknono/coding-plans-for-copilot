@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.8.5",
+    "version": "0.9.0",
     "publisher": "techfetch-dev",
     "repository": {
         "type": "git",
@@ -254,8 +254,8 @@
                             },
                             "defaultTemperature": {
                                 "type": "number",
-                                "minimum": 0,
-                                "maximum": 2,
+                                "exclusiveMinimum": 0,
+                                "maximum": 1,
                                 "description": "%configuration.coding-plans.vendors.defaultTemperature.description%"
                             },
                             "defaultTopP": {
@@ -281,8 +281,8 @@
                                         },
                                         "temperature": {
                                             "type": "number",
-                                            "minimum": 0,
-                                            "maximum": 2,
+                                            "exclusiveMinimum": 0,
+                                            "maximum": 1,
                                             "description": "%configuration.coding-plans.vendors.models.temperature.description%"
                                         },
                                         "topP": {
@@ -290,15 +290,6 @@
                                             "minimum": 0,
                                             "maximum": 1,
                                             "description": "%configuration.coding-plans.vendors.models.topP.description%"
-                                        },
-                                        "thinkingEffort": {
-                                            "type": "string",
-                                            "enum": [
-                                                "none",
-                                                "high",
-                                                "max"
-                                            ],
-                                            "description": "%configuration.coding-plans.vendors.models.thinkingEffort.description%"
                                         },
                                         "capabilities": {
                                             "type": "object",

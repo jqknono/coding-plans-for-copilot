@@ -14,7 +14,6 @@ type VendorModelRecord = {
   apiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
   temperature?: number;
   topP?: number;
-  thinkingEffort?: 'none' | 'high' | 'max';
   capabilities?: {
     tools?: boolean;
     vision?: boolean;
@@ -867,6 +866,31 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     defaultApiStyle: 'openai-chat',
     defaultVision: false,
     models: [{
+      name: 'legacy-reasoner',
+      thinkingEffort: 'high',
+      capabilities: { tools: true, vision: false }
+    }] as unknown as VendorModelRecord[]
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    await configStore.updateVendorModels('Vendor', [
+      { name: 'legacy-reasoner' } as VendorModelRecord,
+      { name: 'new-model' } as VendorModelRecord
+    ]);
+    const updatedVendor = getUpdatedVendor(activeState);
+    assert.equal('thinkingEffort' in (updatedVendor.models[0] as Record<string, unknown>), false);
+    console.log('PASS updateVendorModels 写回时会清理 legacy thinkingEffort 字段');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
       name: 'coder',
       capabilities: { tools: true, vision: false }
     }]
@@ -878,27 +902,6 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     assert.equal(vendor?.defaultTemperature, undefined);
     assert.equal(vendor?.models[0]?.temperature, undefined);
     console.log('PASS 未配置 temperature 时保持留空，运行时再回退到全局默认值');
-  } finally {
-    configStore.dispose();
-  }
-
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'reasoner',
-      thinkingEffort: 'high',
-      capabilities: { tools: true, vision: false }
-    }] as unknown as VendorModelRecord[]
-  }]);
-
-  configStore = new configStoreCtor(createExtensionContext() as never);
-  try {
-    const vendor = configStore.getVendors()[0];
-    assert.equal(vendor?.models[0]?.thinkingEffort, 'high');
-    console.log('PASS 模型级 thinkingEffort 归一化正常');
   } finally {
     configStore.dispose();
   }
@@ -1944,16 +1947,19 @@ async function runGenericProviderThinkingEffortTests(
     defaultVision: false,
     models: [{
       name: 'reasoner',
-      thinkingEffort: 'none',
       contextSize: 64000,
       maxInputTokens: 32000,
       maxOutputTokens: 16000,
       capabilities: { tools: false, vision: false }
     }]
-  }], 'Vendor/reasoner');
+  }], 'Vendor/reasoner', {
+    modelOptions: {
+      thinkingEffort: 'none'
+    }
+  });
   assert.deepEqual(openAIChatPayload.thinking, { type: 'disabled' });
   assert.equal('reasoning_effort' in openAIChatPayload, false);
-  console.log('PASS openai-chat 在 none 模式下会发送 thinking.disabled 且省略 reasoning_effort');
+  console.log('PASS openai-chat 在请求级 none 模式下会发送 thinking.disabled 且省略 reasoning_effort');
 
   const overriddenOpenAIChatPayload = await capturePayload([{
     name: 'Vendor',
@@ -1962,7 +1968,6 @@ async function runGenericProviderThinkingEffortTests(
     defaultVision: false,
     models: [{
       name: 'reasoner',
-      thinkingEffort: 'none',
       contextSize: 64000,
       maxInputTokens: 32000,
       maxOutputTokens: 16000,
@@ -1975,7 +1980,7 @@ async function runGenericProviderThinkingEffortTests(
   });
   assert.deepEqual(overriddenOpenAIChatPayload.thinking, { type: 'enabled' });
   assert.equal(overriddenOpenAIChatPayload.reasoning_effort, 'high');
-  console.log('PASS 请求级 thinkingEffort 可覆盖 openai-chat 的模型默认值');
+  console.log('PASS 请求级 thinkingEffort 可驱动 openai-chat 的 thinking 与 reasoning_effort');
 
   const overriddenTemperaturePayload = await capturePayload([{
     name: 'Vendor',
@@ -2006,16 +2011,19 @@ async function runGenericProviderThinkingEffortTests(
     defaultVision: false,
     models: [{
       name: 'reasoner',
-      thinkingEffort: 'high',
       contextSize: 64000,
       maxInputTokens: 32000,
       maxOutputTokens: 16000,
       capabilities: { tools: false, vision: false }
     }]
-  }], 'Vendor/reasoner');
+  }], 'Vendor/reasoner', {
+    modelOptions: {
+      thinkingEffort: 'high'
+    }
+  });
   assert.deepEqual(openAIResponsesPayload.thinking, { type: 'enabled' });
   assert.equal(openAIResponsesPayload.reasoning_effort, 'high');
-  console.log('PASS openai-responses 会发送 thinking 与 reasoning_effort');
+  console.log('PASS openai-responses 会按请求级 thinkingEffort 发送 thinking 与 reasoning_effort');
 
   const anthropicPayload = await capturePayload([{
     name: 'Vendor',
@@ -2024,16 +2032,19 @@ async function runGenericProviderThinkingEffortTests(
     defaultVision: false,
     models: [{
       name: 'reasoner',
-      thinkingEffort: 'max',
       contextSize: 64000,
       maxInputTokens: 32000,
       maxOutputTokens: 16000,
       capabilities: { tools: false, vision: false }
     }]
-  }], 'Vendor/reasoner');
+  }], 'Vendor/reasoner', {
+    modelOptions: {
+      thinkingEffort: 'max'
+    }
+  });
   assert.deepEqual(anthropicPayload.thinking, { type: 'enabled' });
   assert.deepEqual(anthropicPayload.output_config, { effort: 'max' });
-  console.log('PASS anthropic 会发送 thinking 与 output_config.effort');
+  console.log('PASS anthropic 会按请求级 thinkingEffort 发送 thinking 与 output_config.effort');
 }
 
 async function runGenericProviderAnthropicSamplingCompatibilityTests(
@@ -3832,12 +3843,82 @@ async function runLMChatProviderAdapterModelFilteringTests(
       undefined
     );
     assert.equal(
-      (allModels[0] as unknown as { configurationSchema?: { properties?: Record<string, unknown> } }).configurationSchema?.properties?.thinkingEffort !== undefined,
-      false
+      (allModels[0] as unknown as {
+        configurationSchema?: {
+          type?: string;
+          properties?: Record<string, {
+            type?: string;
+            default?: unknown;
+            group?: string;
+            enum?: unknown[];
+          }>;
+        };
+      }).configurationSchema?.type,
+      'object'
     );
     assert.equal(
-      (allModels[1] as unknown as { configurationSchema?: { properties?: Record<string, unknown> } }).configurationSchema?.properties?.thinkingEffort !== undefined,
-      false
+      (allModels[0] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            type?: string;
+            default?: unknown;
+            group?: string;
+            enum?: unknown[];
+          }>;
+        };
+      }).configurationSchema?.properties?.thinkingEffort?.type,
+      'string'
+    );
+    assert.deepEqual(
+      (allModels[0] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            enum?: unknown[];
+          }>;
+        };
+      }).configurationSchema?.properties?.thinkingEffort?.enum,
+      ['none', 'high', 'max']
+    );
+    assert.equal(
+      (allModels[0] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            default?: unknown;
+            group?: string;
+          }>;
+        };
+      }).configurationSchema?.properties?.thinkingEffort?.default,
+      'max'
+    );
+    assert.equal(
+      (allModels[0] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            group?: string;
+          }>;
+        };
+      }).configurationSchema?.properties?.thinkingEffort?.group,
+      'navigation'
+    );
+    assert.equal(
+      (allModels[1] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            type?: string;
+          }>;
+        };
+      }).configurationSchema?.properties?.temperature?.type,
+      'number'
+    );
+    assert.deepEqual(
+      (allModels[1] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            enum?: unknown[];
+          }>;
+        };
+      }).configurationSchema?.properties?.temperature?.enum,
+      [0.1, 0.4, 0.7, 1]
     );
 
     const vendorModels = await adapter.provideLanguageModelChatInformation({
@@ -3856,7 +3937,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
     } as never, {} as never);
     assert.equal(refreshCount, 1);
     assert.deepEqual(silentEmptyModels, []);
-    console.log('PASS LMChatProviderAdapter 仅在显式 group 或 configuration 场景暴露模型，默认根 provider 保持隐藏');
+    console.log('PASS LMChatProviderAdapter 仅在显式 group 或 configuration 场景暴露模型，并为 More Actions 暴露 thinkingEffort 与 temperature schema');
   } finally {
     adapter.dispose();
     configStore.dispose();

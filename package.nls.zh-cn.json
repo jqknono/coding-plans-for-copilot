@@ -10,7 +10,6 @@
   "configuration.coding-plans.vendors.defaultTopP.description": "该供应商的默认 topP，模型可单独覆盖。`0` 表示不发送 `top_p`，也是运行时默认值。仅当你需要显式控制 nucleus sampling 时再设置为正数。`anthropic` 风格请求会忽略该值，不发送 `top_p`。",
   "configuration.coding-plans.vendors.models.temperature.description": "模型级 temperature 覆盖项；未配置时继承供应商 defaultTemperature。",
   "configuration.coding-plans.vendors.models.topP.description": "模型级 topP 覆盖项；未配置时继承供应商 defaultTopP。`0` 表示不发送 `top_p`。`anthropic` 风格请求会忽略该值，不发送 `top_p`。",
-  "configuration.coding-plans.vendors.models.thinkingEffort.description": "模型级 thinking mode 覆盖项，支持 `none`、`high`、`max`。请求中会发送独立的 `thinking` 字段；当值为 `high` 或 `max` 时，还会对 OpenAI 兼容请求发送 `reasoning_effort`，对 Anthropic 兼容请求发送 `output_config.effort`。",
   "providers.codingPlans.config.vendorName.title": "供应商名称",
   "providers.codingPlans.config.vendorName.description": "可选，填写 coding-plans.vendors 中的供应商名称。设置后仅展示该供应商的模型。",
   "providers.codingPlans.config.apiKey.title": "API Key",

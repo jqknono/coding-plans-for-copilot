@@ -52,7 +52,7 @@ Click the **Install** button on the marketplace page, which will automatically o
 2. Pick the platform you've registered with from the vendor picker (e.g., Zhipu, Kimi, Volcengine, etc.)
 3. Select "Set API Key" and paste your API Key; the extension stores it and refreshes models
 4. Open Copilot Chat (`Ctrl+L`) and choose a model provided by `Coding Plans` in the model picker
-5. To configure `Thinking Effort`, `temperature`, or `topP`, set model-level overrides in `coding-plans.vendors[].models[]`
+5. To configure `temperature` or `topP`, set model-level overrides in `coding-plans.vendors[].models[]`; set `Thinking Effort` per request from the model row `More Actions` menu
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 
 ### Built-in Vendor Endpoints
@@ -91,7 +91,6 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
       "models": [
         {
           "name": "my-model",
-          "thinkingEffort": "max",
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 128000
         }
@@ -130,7 +129,6 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
       "models": [
         {
           "name": "gpt-5",
-          "thinkingEffort": "high",
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 400000
         }
@@ -158,7 +156,6 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].models[].apiStyle` | `string` | Inherit from vendor | Model-level protocol style override. |
 | `coding-plans.vendors[].models[].temperature` | `number` | Inherit from vendor | Model-level temperature override. |
 | `coding-plans.vendors[].models[].topP` | `number` | Inherit from vendor | Model-level topP override. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
-| `coding-plans.vendors[].models[].thinkingEffort` | `string` | Empty | Model-level thinking mode override. Supported values: `none` / `high` / `max`. In the model row `More Actions` menu this option defaults to `max`. Requests send a standalone `thinking` field; `high` and `max` additionally map to OpenAI-compatible `reasoning_effort` and Anthropic-compatible `output_config.effort`. |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | Model capability declaration. |
 | `coding-plans.vendors[].models[].contextSize` | `number` | Empty | Model total context window. Runtime derives the request budget from this total window. |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Request-side default output token budget. It only overrides request budgeting and is still capped by the model output limit. |

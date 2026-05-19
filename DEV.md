@@ -195,10 +195,9 @@ npm run test:pages
   - 建议：编码场景默认保持 `topP 0`；仅当上游明确需要或你想显式控制 nucleus sampling 时再设置为正数
   - `anthropic` 请求仅发送 `temperature`，不发送 `top_p`，以兼容会拒绝同时指定两者的上游
 - 新增 thinking effort：
-  - `coding-plans.vendors[].models[].thinkingEffort`：模型级配置，支持 `none` / `high` / `max`
   - `request.modelOptions.thinkingEffort` 仍作为 API 调用方传入的请求级覆盖项；VS Code 1.120 公开模型信息接口不再提供 `configurationSchema` UI 声明
-  - 不提供 vendor/provider 级 thinking 配置，避免一个 provider 配置影响同组全部模型
-  - 继承顺序固定为 `request.modelOptions.thinkingEffort` > `vendors[].models[].thinkingEffort` > 不发送
+  - 不提供 vendor/provider/model 级持久 thinking 配置，避免一个 provider 配置影响同组全部模型
+  - 继承顺序固定为 `request.modelOptions.thinkingEffort` > 不发送
   - 协议映射：
     - `none`：发送 `thinking: { type: "disabled" }`
     - `high` / `max`：发送 `thinking: { type: "enabled" }`

@@ -4,9 +4,7 @@ import {
   DEFAULT_ADVANCED_RESERVED_OUTPUT,
   DEFAULT_MODEL_CAPABILITIES_TOOLS,
   DEFAULT_MODEL_CAPABILITIES_VISION,
-  ThinkingEffort,
-  VENDOR_API_KEY_PREFIX,
-  THINKING_EFFORT_VALUES
+  VENDOR_API_KEY_PREFIX
 } from '../constants';
 
 export type VendorApiStyle = 'openai-chat' | 'openai-responses' | 'anthropic';
@@ -17,7 +15,6 @@ export interface VendorModelConfig {
   apiStyle?: VendorApiStyle;
   temperature?: number;
   topP?: number;
-  thinkingEffort?: ThinkingEffort;
   capabilities?: {
     tools?: boolean;
     vision?: boolean;
@@ -317,11 +314,7 @@ export class ConfigStore implements vscode.Disposable {
     if (!raw || typeof raw !== 'object') {
       return this.buildStoredModelEntry({ name }, name, defaultVision, defaultApiStyle);
     }
-
-    return {
-      ...(raw as VendorModelConfig),
-      name
-    };
+    return this.buildStoredModelEntry(raw, name, defaultVision, defaultApiStyle);
   }
 
   private buildStoredModelEntry(
@@ -351,7 +344,6 @@ export class ConfigStore implements vscode.Disposable {
       description: normalized.description,
       temperature: normalized.temperature,
       topP: normalized.topP,
-      thinkingEffort: normalized.thinkingEffort,
       contextSize: normalized.contextSize,
       capabilities: normalized.capabilities
     };
@@ -428,7 +420,6 @@ export class ConfigStore implements vscode.Disposable {
           ...inputModel,
           temperature: undefined,
           topP: undefined,
-          thinkingEffort: undefined,
           capabilities: {
             ...inputModel.capabilities,
             vision: defaultVision
@@ -521,7 +512,6 @@ export class ConfigStore implements vscode.Disposable {
     const apiStyle = this.normalizeApiStyle(obj.apiStyle, defaultApiStyle);
     const temperature = this.readSamplingNumber(obj.temperature, 0, 2);
     const topP = this.readSamplingNumber(obj.topP, 0, 1);
-    const thinkingEffort = this.normalizeThinkingEffort(obj.thinkingEffort);
     let capabilities: VendorModelConfig['capabilities'];
     if (obj.capabilities && typeof obj.capabilities === 'object') {
       const cap = obj.capabilities as Record<string, unknown>;
@@ -537,7 +527,6 @@ export class ConfigStore implements vscode.Disposable {
       apiStyle,
       temperature,
       topP,
-      thinkingEffort,
       capabilities,
       contextSize: contextSize === undefined ? undefined : Math.max(2, Math.floor(contextSize))
     }, defaultVision, defaultApiStyle);
@@ -554,7 +543,6 @@ export class ConfigStore implements vscode.Disposable {
       apiStyle: this.normalizeApiStyle(model.apiStyle, defaultApiStyle),
       temperature: model.temperature,
       topP: model.topP,
-      thinkingEffort: model.thinkingEffort,
       contextSize: model.contextSize,
       capabilities: {
         tools: model.capabilities?.tools ?? DEFAULT_MODEL_CAPABILITIES_TOOLS,
@@ -571,17 +559,6 @@ export class ConfigStore implements vscode.Disposable {
         : value === 'openai-chat'
           ? 'openai-chat'
           : fallback;
-  }
-
-  private normalizeThinkingEffort(value: unknown): ThinkingEffort | undefined {
-    if (typeof value !== 'string') {
-      return undefined;
-    }
-
-    const normalized = value.trim().toLowerCase();
-    return THINKING_EFFORT_VALUES.includes(normalized as ThinkingEffort)
-      ? normalized as ThinkingEffort
-      : undefined;
   }
 
   private resolveVendorsConfigTarget(): vscode.ConfigurationTarget {

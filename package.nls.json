@@ -10,7 +10,6 @@
   "configuration.coding-plans.vendors.defaultTopP.description": "Default top-p for this vendor. Models can override it individually. `0` means omit `top_p`, and is also the runtime default. Set a positive value only when you want to explicitly control nucleus sampling. `anthropic` requests ignore this value and do not send `top_p`.",
   "configuration.coding-plans.vendors.models.temperature.description": "Per-model temperature override. Inherits vendor defaultTemperature when omitted.",
   "configuration.coding-plans.vendors.models.topP.description": "Per-model top-p override. Inherits vendor defaultTopP when omitted. `0` means omit `top_p`. `anthropic` requests ignore this value and do not send `top_p`.",
-  "configuration.coding-plans.vendors.models.thinkingEffort.description": "Per-model thinking mode override. Supported values: `none`, `high`, `max`. Sends a standalone `thinking` field; `high` and `max` additionally send `reasoning_effort` for OpenAI-compatible requests and `output_config.effort` for Anthropic-compatible requests.",
   "providers.codingPlans.config.vendorName.title": "Vendor Name",
   "providers.codingPlans.config.vendorName.description": "Optional vendor name from coding-plans.vendors. When set, the picker only shows models from that vendor.",
   "providers.codingPlans.config.apiKey.title": "API Key",
