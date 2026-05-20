@@ -4145,7 +4145,6 @@ async function runLMChatProviderAdapterModelFilteringTests(
     assert.equal(
       (vendorGroupModels[0] as unknown as {
         configurationSchema?: {
-          type?: string;
           properties?: Record<string, {
             type?: string;
             default?: unknown;
@@ -4153,8 +4152,13 @@ async function runLMChatProviderAdapterModelFilteringTests(
             enum?: unknown[];
           }>;
         };
-      }).configurationSchema?.type,
-      'object'
+      }).configurationSchema
+        ? Object.prototype.hasOwnProperty.call(
+          (vendorGroupModels[0] as unknown as { configurationSchema?: Record<string, unknown> }).configurationSchema,
+          'type'
+        )
+        : false,
+      false
     );
     assert.equal(
       (vendorGroupModels[0] as unknown as {
@@ -4574,6 +4578,89 @@ async function runLMChatProviderAdapterModelOptionsForwardingTests(
   }
 }
 
+async function runLMChatProviderAdapterModelConfigurationForwardingTest(
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule
+): Promise<void> {
+  const vscode = require('vscode') as {
+    Disposable: new (callback?: () => void) => { dispose(): void };
+    LanguageModelTextPart: new (value: string) => { value: string };
+  };
+  const { LMChatProviderAdapter } = lmChatProviderAdapterModule;
+  const targetModel = {
+    id: 'Vendor/coder',
+    name: 'coder',
+    maxTokens: 64000,
+    async sendRequest(
+      _messages: unknown[],
+      options?: { modelOptions?: Record<string, unknown> }
+    ): Promise<unknown> {
+      capturedOptions = options;
+      return {
+        stream: (async function* stream(): AsyncIterable<{ value: string }> {
+          yield { value: 'ok' };
+        })()
+      };
+    }
+  };
+  let capturedOptions: { modelOptions?: Record<string, unknown> } | undefined;
+
+  const fakeProvider = {
+    getVendor(): string {
+      return 'coding-plans';
+    },
+    getModel(modelId: string): typeof targetModel | undefined {
+      return modelId === targetModel.id ? targetModel : undefined;
+    },
+    onDidChangeModels(): { dispose(): void } {
+      return new vscode.Disposable();
+    }
+  };
+
+  const adapter = new LMChatProviderAdapter(fakeProvider as never);
+  const reportedParts: Array<{ value?: string }> = [];
+  try {
+    await adapter.provideLanguageModelChatResponse(
+      {
+        id: targetModel.id,
+        name: targetModel.name
+      } as never,
+      [{
+        role: 1,
+        content: [new vscode.LanguageModelTextPart('hello')]
+      }] as never,
+      {
+        modelConfiguration: {
+          thinkingEffort: 'xhigh',
+          personality: 'friendly'
+        },
+        modelOptions: {
+          thinkingEffort: 'high'
+        }
+      } as never,
+      {
+        report(part: { value?: string }): void {
+          reportedParts.push(part);
+        }
+      } as never,
+      {
+        isCancellationRequested: false,
+        onCancellationRequested(): { dispose(): void } {
+          return new vscode.Disposable();
+        }
+      } as never
+    );
+
+    assert.deepEqual(capturedOptions?.modelOptions, {
+      thinkingEffort: 'high',
+      personality: 'friendly'
+    });
+    assert.deepEqual(reportedParts.map(part => part.value), ['ok']);
+    console.log('PASS LMChatProviderAdapter 会转发 VS Code More Actions 保存的 modelConfiguration');
+  } finally {
+    adapter.dispose();
+  }
+}
+
 async function main(): Promise<void> {
   const restore = installVscodeMock();
   try {
@@ -4613,6 +4700,7 @@ async function main(): Promise<void> {
     await runLMChatProviderAdapterModelFilteringTests(ConfigStore, lmChatProviderAdapterModule);
     await runLMChatProviderAdapterCliproxyapiPickerTests(ConfigStore, lmChatProviderAdapterModule);
     await runLMChatProviderAdapterModelOptionsForwardingTests(lmChatProviderAdapterModule);
+    await runLMChatProviderAdapterModelConfigurationForwardingTest(lmChatProviderAdapterModule);
     await runLMChatProviderAdapterProvideTokenCountTests(contextUsageStateModule, lmChatProviderAdapterModule);
     await runLMChatProviderAdapterEmptyResponseRetryTests(lmChatProviderAdapterModule);
   } finally {

@@ -50,13 +50,17 @@ type LanguageModelConfigurationSchemaProperty = {
 };
 
 type LanguageModelConfigurationSchema = {
-  type: 'object';
   properties: Record<string, LanguageModelConfigurationSchemaProperty>;
 };
 
 type LanguageModelChatInformationWithHiddenFields = vscode.LanguageModelChatInformation & {
   configurationSchema?: LanguageModelConfigurationSchema;
   isUserSelectable?: boolean;
+};
+
+type ProvideLanguageModelChatResponseOptionsWithModelConfiguration = vscode.ProvideLanguageModelChatResponseOptions & {
+  modelConfiguration?: Record<string, unknown>;
+  modelOptions?: Record<string, unknown>;
 };
 
 function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModelConfigurationSchema {
@@ -118,7 +122,6 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
   }
 
   return {
-    type: 'object',
     properties
   };
 }
@@ -719,7 +722,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   }
 
   private readRequestSource(options?: vscode.ProvideLanguageModelChatResponseOptions): string | undefined {
-    const modelOptions = options?.modelOptions as CodingPlansRequestModelOptions | undefined;
+    const modelOptions = this.readObjectRecord(options?.modelOptions) as CodingPlansRequestModelOptions | undefined;
     const source = modelOptions?.[REQUEST_SOURCE_MODEL_OPTION_KEY];
     return typeof source === 'string' && source.trim().length > 0 ? source.trim() : undefined;
   }
@@ -727,22 +730,29 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   private toForwardedRequestOptions(
     options: vscode.ProvideLanguageModelChatResponseOptions
   ): vscode.LanguageModelChatRequestOptions {
-    const modelOptions = options?.modelOptions;
-    if (!modelOptions || typeof modelOptions !== 'object' || Array.isArray(modelOptions)) {
+    const responseOptions = options as ProvideLanguageModelChatResponseOptionsWithModelConfiguration;
+    const modelConfiguration = this.readObjectRecord(responseOptions.modelConfiguration);
+    const modelOptions = this.readObjectRecord(responseOptions.modelOptions);
+    if (!modelConfiguration && !modelOptions) {
       return options as unknown as vscode.LanguageModelChatRequestOptions;
     }
 
-    const forwardedModelOptions = { ...modelOptions } as Record<string, unknown>;
+    const forwardedModelOptions = {
+      ...(modelConfiguration ?? {}),
+      ...(modelOptions ?? {})
+    };
     delete forwardedModelOptions[REQUEST_SOURCE_MODEL_OPTION_KEY];
-
-    if (Object.keys(forwardedModelOptions).length === Object.keys(modelOptions).length) {
-      return options as unknown as vscode.LanguageModelChatRequestOptions;
-    }
 
     return {
       ...options,
       modelOptions: Object.keys(forwardedModelOptions).length > 0 ? forwardedModelOptions : undefined
     } as unknown as vscode.LanguageModelChatRequestOptions;
+  }
+
+  private readObjectRecord(value: unknown): Record<string, unknown> | undefined {
+    return value && typeof value === 'object' && !Array.isArray(value)
+      ? value as Record<string, unknown>
+      : undefined;
   }
 
   private logLanguageModelInformationRequest(

@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.9] - 2026-05-20
+- feat(config): 优化模型参数配置与 Thinking Effort 协议适配
+
 ## [0.9.7] - 2026-05-20
 - Maintenance updates
 
@@ -47,9 +50,3 @@ All notable changes to this project will be documented in this file.
 - chore: 统一 API 密钥变量名并优化工作流推送逻辑
 - feat(provider): 更新服务商指标与定价并增强抓取校验
 - feat(provider): 更新模型服务商运行指标与定价数据
-
-## [0.7.16] - 2026-04-28
-- fix(provider): 清理转发至 Anthropic 的工具 Schema 扩展字段
-- feat(provider): 优化 topP 采样逻辑并增强 Anthropic 兼容性
-- ci: 在版本标签工作流中增加 GitHub Release 创建和 VSIX 上传
-- fix #98: 支持 DeepSeek 思考模型上下文往返并优化 Token 计数逻辑
