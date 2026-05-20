@@ -817,6 +817,9 @@ export class GenericAIProvider extends BaseAIProvider {
   private buildConfiguredModelsFromVendorModels(vendor: VendorConfig, vendorModels: VendorModelConfig[]): AIModelConfig[] {
     const models: AIModelConfig[] = [];
     for (const model of vendorModels) {
+      if (model.enabled === false) {
+        continue;
+      }
       const compositeId = `${vendor.name}/${model.name}`;
       models.push(this.buildModelFromVendorConfig(model, vendor, compositeId));
     }
@@ -2697,6 +2700,7 @@ export class GenericAIProvider extends BaseAIProvider {
   ): Array<Record<string, unknown>> {
     return models.slice(0, 20).map(model => ({
       name: model.name,
+      enabled: model.enabled !== false,
       apiStyle: model.apiStyle,
       description: model.description,
       contextSize: model.contextSize,

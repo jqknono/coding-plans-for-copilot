@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.6] - 2026-05-20
+- feat(provider): 优化语言模型提供程序注册与分组过滤逻辑
+
 ## [0.9.3] - 2026-05-19
 - feat(config): 废弃供应商与模型级 temperature 配置
 - feat(config): 移除模型级 thinkingEffort 配置并改为请求级设置
@@ -50,6 +53,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.7.14] - 2026-04-28
 - chore: 升级版本至 0.7.14
-
-## [0.7.12] - 2026-04-27
-- chore: 升级版本至 0.7.9 并更新变更日志

@@ -11,6 +11,7 @@ export type VendorApiStyle = 'openai-chat' | 'openai-responses' | 'anthropic';
 
 export interface VendorModelConfig {
   name: string;
+  enabled?: boolean;
   description?: string;
   apiStyle?: VendorApiStyle;
   temperature?: number;
@@ -328,6 +329,9 @@ export class ConfigStore implements vscode.Disposable {
     if (!normalized) {
       const stored: VendorModelConfig = {
         name,
+        enabled: rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'enabled')
+          ? rawObject.enabled !== false
+          : true,
         capabilities: {
           tools: DEFAULT_MODEL_CAPABILITIES_TOOLS,
           vision: defaultVision
@@ -341,6 +345,7 @@ export class ConfigStore implements vscode.Disposable {
 
     const stored: VendorModelConfig = {
       name,
+      enabled: normalized.enabled,
       description: normalized.description,
       temperature: normalized.temperature,
       topP: normalized.topP,
@@ -512,6 +517,7 @@ export class ConfigStore implements vscode.Disposable {
     const apiStyle = this.normalizeApiStyle(obj.apiStyle, defaultApiStyle);
     const temperature = this.readSamplingNumber(obj.temperature, 0, 2);
     const topP = this.readSamplingNumber(obj.topP, 0, 1);
+    const enabled = obj.enabled !== false;
     let capabilities: VendorModelConfig['capabilities'];
     if (obj.capabilities && typeof obj.capabilities === 'object') {
       const cap = obj.capabilities as Record<string, unknown>;
@@ -523,6 +529,7 @@ export class ConfigStore implements vscode.Disposable {
 
     return this.withModelDefaults({
       name,
+      enabled,
       description,
       apiStyle,
       temperature,
@@ -539,6 +546,7 @@ export class ConfigStore implements vscode.Disposable {
   ): VendorModelConfig {
     return {
       name: model.name,
+      enabled: model.enabled !== false,
       description: model.description,
       apiStyle: this.normalizeApiStyle(model.apiStyle, defaultApiStyle),
       temperature: model.temperature,

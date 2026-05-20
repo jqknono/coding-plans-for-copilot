@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.9.5",
+    "version": "0.9.6",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -279,6 +279,11 @@
                                     "properties": {
                                         "name": {
                                             "type": "string"
+                                        },
+                                        "enabled": {
+                                            "type": "boolean",
+                                            "default": true,
+                                            "description": "%configuration.coding-plans.vendors.models.enabled.description%"
                                         },
                                         "description": {
                                             "type": "string"

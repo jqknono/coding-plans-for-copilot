@@ -88,6 +88,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
       "models": [
         {
           "name": "my-model",
+          "enabled": true,
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 128000
         }
@@ -126,6 +127,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
       "models": [
         {
           "name": "gpt-5",
+          "enabled": true,
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 400000
         }
@@ -149,6 +151,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | 供应商默认 topP；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | 是否从 `/models` 拉取模型列表。 |
 | `coding-plans.vendors[].models[].name` | `string` | 必填 | 模型名称。 |
+| `coding-plans.vendors[].models[].enabled` | `boolean` | `true` | 是否在 Manage Language Models 中显示该模型；设为 `false` 时保留配置但隐藏。 |
 | `coding-plans.vendors[].models[].description` | `string` | 空 | 模型描述。 |
 | `coding-plans.vendors[].models[].apiStyle` | `string` | 继承供应商 | 模型级协议风格覆盖。 |
 | `coding-plans.vendors[].models[].temperature` | `number` | 继承供应商 | 已废弃。模型级 temperature 覆盖；仅 `openai-chat` 与 `anthropic` 运行时使用该值。Responses API 模型行请使用 `Personality`。 |

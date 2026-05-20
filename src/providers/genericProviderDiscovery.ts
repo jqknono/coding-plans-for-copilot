@@ -102,6 +102,7 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
   const vision = typeof imageInput === 'boolean' ? imageInput : undefined;
   return {
     name,
+    enabled: true,
     description: model.description?.trim() || undefined,
     contextSize: readPositiveTokenInteger(model.maxTokens),
     capabilities: {

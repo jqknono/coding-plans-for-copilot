@@ -10,6 +10,7 @@ type UpdateCall = {
 
 type VendorModelRecord = {
   name: string;
+  enabled?: boolean;
   description?: string;
   apiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
   temperature?: number;
@@ -516,6 +517,28 @@ const testCases: TestCase[] = [
     }
   },
   {
+    name: '成员变化时保留模型 enabled 状态并为新增模型默认开启',
+    initialVendors: [{
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      models: [{
+        name: 'hidden-model',
+        enabled: false,
+        capabilities: { tools: true, vision: false }
+      }]
+    }],
+    discoveredModels: [{ name: 'hidden-model' }, { name: 'new-model' }],
+    verify(context) {
+      assert.equal(context.state.updates.length, 1, '成员变化时应写回一次 vendors 配置');
+
+      const updatedVendor = getUpdatedVendor(context.state);
+      const hiddenModel = updatedVendor.models.find(model => model.name === 'hidden-model');
+      const newModel = updatedVendor.models.find(model => model.name === 'new-model');
+      assert.equal(hiddenModel?.enabled, false);
+      assert.equal(newModel?.enabled, true);
+    }
+  },
+  {
     name: '新增模型写回时使用供应商 defaultVision 且不落 token 上限',
     initialVendors: [createVendorWithSpacedModelName()],
     discoveredModels: [
@@ -808,6 +831,27 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     assert.equal(vendor?.models[0]?.temperature, undefined);
     assert.equal(vendor?.models[0]?.topP, undefined);
     console.log('PASS 模型级 apiStyle 覆盖供应商默认值');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [
+      { name: 'visible' },
+      { name: 'hidden', enabled: false }
+    ]
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    assert.equal(vendor?.models[0]?.enabled, true);
+    assert.equal(vendor?.models[1]?.enabled, false);
+    console.log('PASS 模型 enabled 字段默认开启且可显式关闭');
   } finally {
     configStore.dispose();
   }
@@ -1235,6 +1279,39 @@ function runGenericProviderContextSizeTests(
       zeroUnsetProvider.dispose();
       zeroUnsetConfigStore.dispose();
     }
+  }
+}
+
+async function runGenericProviderModelEnabledTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [
+      { name: 'visible-model', enabled: true },
+      { name: 'hidden-model', enabled: false }
+    ]
+  }]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
+
+  try {
+    await provider.refreshModels();
+    assert.deepEqual(
+      provider.getAvailableModels().map(model => model.id),
+      ['Vendor/visible-model'],
+      'enabled=false 的模型不应进入最终 Language Model 暴露列表'
+    );
+    console.log('PASS GenericAIProvider 会按模型 enabled 字段隐藏模型');
+  } finally {
+    provider.dispose();
+    configStore.dispose();
   }
 }
 
@@ -4304,6 +4381,7 @@ async function main(): Promise<void> {
     await runConfigStoreVendorApiKeySecretStorageTests(ConfigStore);
     runTokenWindowResolutionTests(baseProviderModule);
     runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
+    await runGenericProviderModelEnabledTests(ConfigStore, genericProviderModule);
     await runGenericProviderDiscoveryDefaultVisionTests(ConfigStore, genericProviderModule);
     await runGenericProviderModelChangeEventStabilityTests(ConfigStore, genericProviderModule);
     await runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);

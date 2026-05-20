@@ -91,6 +91,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
       "models": [
         {
           "name": "my-model",
+          "enabled": true,
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 128000
         }
@@ -129,6 +130,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
       "models": [
         {
           "name": "gpt-5",
+          "enabled": true,
           "capabilities": { "tools": true, "vision": false },
           "contextSize": 400000
         }
@@ -152,6 +154,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | Vendor default topP. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | Whether to fetch model list from `/models`. |
 | `coding-plans.vendors[].models[].name` | `string` | Required | Model name. |
+| `coding-plans.vendors[].models[].enabled` | `boolean` | `true` | Whether to show this model in Manage Language Models; set to `false` to keep it configured but hidden. |
 | `coding-plans.vendors[].models[].description` | `string` | Empty | Model description. |
 | `coding-plans.vendors[].models[].apiStyle` | `string` | Inherit from vendor | Model-level protocol style override. |
 | `coding-plans.vendors[].models[].temperature` | `number` | Inherit from vendor | Deprecated. Model-level temperature override. Runtime uses it only for `openai-chat` and `anthropic`. Use `Personality` from the model row for Responses API models. |
