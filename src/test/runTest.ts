@@ -3918,17 +3918,29 @@ async function runLMChatProviderAdapterModelFilteringTests(
     const unscopedModels = await adapter.provideLanguageModelChatInformation({ silent: false } as never, {} as never);
     assert.deepEqual(unscopedModels, []);
 
-    const allModels = await adapter.provideLanguageModelChatInformation({
+    const defaultRootModels = await adapter.provideLanguageModelChatInformation({
+      silent: true,
+      group: 'Coding Plans'
+    } as never, {} as never);
+    assert.deepEqual(defaultRootModels, []);
+
+    const unresolvedGroupModels = await adapter.provideLanguageModelChatInformation({
       silent: true,
       group: 'Group'
     } as never, {} as never);
-    assert.deepEqual(allModels.map(model => model.id), ['Vendor/coder', 'Other/coder']);
+    assert.deepEqual(unresolvedGroupModels, []);
+
+    const vendorGroupModels = await adapter.provideLanguageModelChatInformation({
+      silent: true,
+      group: 'Vendor'
+    } as never, {} as never);
+    assert.deepEqual(vendorGroupModels.map(model => model.id), ['Vendor/coder']);
     assert.equal(
-      (allModels[0]?.capabilities as unknown as { agentMode?: boolean })?.agentMode,
+      (vendorGroupModels[0]?.capabilities as unknown as { agentMode?: boolean })?.agentMode,
       undefined
     );
     assert.equal(
-      (allModels[0] as unknown as {
+      (vendorGroupModels[0] as unknown as {
         configurationSchema?: {
           type?: string;
           properties?: Record<string, {
@@ -3942,7 +3954,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       'object'
     );
     assert.equal(
-      (allModels[0] as unknown as {
+      (vendorGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             type?: string;
@@ -3955,7 +3967,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       'string'
     );
     assert.deepEqual(
-      (allModels[0] as unknown as {
+      (vendorGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             enum?: unknown[];
@@ -3965,7 +3977,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       ['none', 'high', 'max']
     );
     assert.equal(
-      (allModels[0] as unknown as {
+      (vendorGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             default?: unknown;
@@ -3976,7 +3988,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       'max'
     );
     assert.equal(
-      (allModels[0] as unknown as {
+      (vendorGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             group?: string;
@@ -3986,7 +3998,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       'navigation'
     );
     assert.equal(
-      (allModels[0] as unknown as {
+      (vendorGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             type?: string;
@@ -3997,7 +4009,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       'number'
     );
     assert.deepEqual(
-      (allModels[0] as unknown as {
+      (vendorGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             enum?: unknown[];
@@ -4007,7 +4019,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       [0, 0.1, 0.4, 0.7, 1]
     );
     assert.equal(
-      (allModels[0] as unknown as {
+      (vendorGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             default?: unknown;
@@ -4016,8 +4028,14 @@ async function runLMChatProviderAdapterModelFilteringTests(
       }).configurationSchema?.properties?.temperature?.default,
       0.1
     );
+
+    const otherGroupModels = await adapter.provideLanguageModelChatInformation({
+      silent: true,
+      group: 'Other'
+    } as never, {} as never);
+    assert.deepEqual(otherGroupModels.map(model => model.id), ['Other/coder']);
     assert.equal(
-      (allModels[1] as unknown as {
+      (otherGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, unknown>;
         };
@@ -4025,7 +4043,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       undefined
     );
     assert.equal(
-      (allModels[1] as unknown as {
+      (otherGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             type?: string;
@@ -4036,7 +4054,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       'string'
     );
     assert.deepEqual(
-      (allModels[1] as unknown as {
+      (otherGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             enum?: unknown[];
@@ -4046,7 +4064,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       ['pragmatic', 'friendly']
     );
     assert.equal(
-      (allModels[1] as unknown as {
+      (otherGroupModels[0] as unknown as {
         configurationSchema?: {
           properties?: Record<string, {
             default?: unknown;
@@ -4068,11 +4086,11 @@ async function runLMChatProviderAdapterModelFilteringTests(
     refreshCount = 0;
     const silentEmptyModels = await adapter.provideLanguageModelChatInformation({
       silent: true,
-      group: 'Empty'
+      group: 'Vendor'
     } as never, {} as never);
     assert.equal(refreshCount, 1);
     assert.deepEqual(silentEmptyModels, []);
-    console.log('PASS LMChatProviderAdapter 仅在显式 group 或 configuration 场景暴露模型，并按协议暴露 More Actions schema');
+    console.log('PASS LMChatProviderAdapter 仅在真实供应商 group 或 configuration 场景暴露模型，并按协议暴露 More Actions schema');
   } finally {
     adapter.dispose();
     configStore.dispose();

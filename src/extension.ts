@@ -498,6 +498,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   const adapter = new LMChatProviderAdapter(genericProvider, configStore, contextUsageState);
   context.subscriptions.push(adapter);
+  registerLanguageModelProvider(adapter);
   context.subscriptions.push(
     genericProvider.onDidChangeModels(() => {
       if (suppressProviderModelChangeUiSyncDepth > 0) {
@@ -529,7 +530,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
       internalModelCount: genericProvider.getAvailableModels().length,
       internalModelIds: genericProvider.getAvailableModels().map(model => model.id)
     });
-    registerLanguageModelProvider(adapter);
+    if (!languageModelProviderRegistration) {
+      registerLanguageModelProvider(adapter);
+    }
     void logLanguageModelInventorySnapshot('after-register-language-model-provider', genericProvider, configStore).catch(error => {
       logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} failed to log inventory after provider registration`, {
         error: getCompactErrorMessage(error)
@@ -547,7 +550,9 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     }
   }).catch(error => {
     logger.error('Failed to initialize generic provider models.', error);
-    registerLanguageModelProvider(adapter);
+    if (!languageModelProviderRegistration) {
+      registerLanguageModelProvider(adapter);
+    }
   });
 
   context.subscriptions.push(
@@ -585,7 +590,6 @@ export function deactivate(): void {
   providers.forEach(provider => provider.dispose());
   providers.clear();
 }
-
 
 
 

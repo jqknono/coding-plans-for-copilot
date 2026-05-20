@@ -145,26 +145,35 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     const pickerOptions = options as PrepareLanguageModelChatModelOptionsWithConfiguration;
     const pickerGroup = this.normalizePickerGroup(pickerOptions.group);
     const normalizedConfiguration = this.normalizePickerConfiguration(pickerOptions.configuration);
+    const resolvedVendorName = this.resolvePickerVendorName(pickerGroup, normalizedConfiguration);
     this.logLanguageModelInformationRequest('start', options, undefined, {
       group: pickerGroup,
       configuration: this.summarizePickerConfiguration(normalizedConfiguration),
+      resolvedVendorName,
       configuredVendors: this.summarizeConfiguredVendors(),
       availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels())
     });
 
     // Hide the contributed provider root in "Manage Language Models".
-    // VS Code will query explicit user-added groups with an internal `group` payload.
-    if (!pickerGroup && !normalizedConfiguration) {
+    // VS Code can query the default provider group with only a `group` label.
+    // Only expose models once the query resolves to a real configured vendor.
+    if (!resolvedVendorName) {
       this.logLanguageModelInformationRequest('skipped-unscoped-root', options, [], {
-        group: pickerGroup
+        group: pickerGroup,
+        resolvedVendorName
       });
       return [];
     }
 
-    await this.applyPickerConfiguration(normalizedConfiguration);
-    const result = await this.buildModelInformation(normalizedConfiguration?.vendorName);
+    const resolvedConfiguration = normalizedConfiguration
+      ? { ...normalizedConfiguration, vendorName: resolvedVendorName }
+      : { vendorName: resolvedVendorName };
+
+    await this.applyPickerConfiguration(resolvedConfiguration);
+    const result = await this.buildModelInformation(resolvedVendorName);
     this.logLanguageModelInformationRequest('resolved', options, result, {
       group: pickerGroup,
+      resolvedVendorName,
       resultCount: result.length,
       resultPreview: this.summarizeLanguageModelInfos(result)
     });
@@ -238,6 +247,36 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     }
 
     return models.filter(model => model.family.toLowerCase() === normalizedVendorName);
+  }
+
+  private resolvePickerVendorName(
+    group: string | undefined,
+    configuration?: { vendorName?: string; apiKey?: string }
+  ): string | undefined {
+    if (configuration?.vendorName) {
+      return configuration.vendorName;
+    }
+
+    if (!group) {
+      return undefined;
+    }
+
+    const normalizedGroup = group.trim().toLowerCase();
+    if (!normalizedGroup) {
+      return undefined;
+    }
+
+    const configuredVendor = this.configStore
+      ?.getVendors()
+      .find(vendor => vendor.name.trim().toLowerCase() === normalizedGroup);
+    if (configuredVendor) {
+      return configuredVendor.name;
+    }
+
+    return this.provider
+      .getAvailableModels()
+      .find(model => model.family.trim().toLowerCase() === normalizedGroup)
+      ?.family;
   }
 
   async provideLanguageModelChatResponse(

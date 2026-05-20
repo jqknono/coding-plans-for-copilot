@@ -2,8 +2,11 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.9.3",
+    "version": "0.9.5",
     "publisher": "techfetch-dev",
+    "activationEvents": [
+        "onStartupFinished"
+    ],
     "repository": {
         "type": "git",
         "url": "https://github.com/jqknono/coding-plans-for-copilot.git"
