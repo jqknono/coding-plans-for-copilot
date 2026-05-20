@@ -618,7 +618,11 @@ export class ConfigStore implements vscode.Disposable {
     }
 
     if (typeof value === 'string') {
-      const parsed = Number(value.trim());
+      const normalized = value.trim().toLowerCase();
+      if (normalized.length === 0 || normalized === 'inherit' || normalized === 'none') {
+        return undefined;
+      }
+      const parsed = Number(normalized);
       if (Number.isFinite(parsed) && parsed >= min && parsed <= max) {
         return parsed;
       }

@@ -6,9 +6,14 @@ import { BaseAIProvider, BaseLanguageModel, getCompactErrorMessage } from './bas
 import { ConfigStore } from '../config/configStore';
 import { isEmptyModelResponseError } from './genericProvider';
 import {
+  ANTHROPIC_EFFORT_VALUES,
+  ANTHROPIC_THINKING_MODEL_OPTION_KEY,
+  CHAT_THINKING_EFFORT_VALUES,
+  EFFORT_MODEL_OPTION_KEY,
   REQUEST_SOURCE_COMMIT_MESSAGE,
   REQUEST_SOURCE_MODEL_OPTION_KEY,
   RESPONSE_TRACE_ID_FIELD,
+  RESPONSES_THINKING_EFFORT_VALUES,
   TEMPERATURE_MODEL_OPTION_KEY,
   THINKING_EFFORT_MODEL_OPTION_KEY,
   PERSONALITY_MODEL_OPTION_KEY
@@ -55,16 +60,44 @@ type LanguageModelChatInformationWithHiddenFields = vscode.LanguageModelChatInfo
 };
 
 function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModelConfigurationSchema {
-  const properties: Record<string, LanguageModelConfigurationSchemaProperty> = {
-    [THINKING_EFFORT_MODEL_OPTION_KEY]: {
+  const properties: Record<string, LanguageModelConfigurationSchemaProperty> = {};
+
+  if (model.apiStyle === 'anthropic') {
+    properties[ANTHROPIC_THINKING_MODEL_OPTION_KEY] = {
+      type: 'string',
+      title: getMessage('anthropicThinkingTitle'),
+      description: getMessage('anthropicThinkingDescription'),
+      enum: ['enabled', 'disabled'],
+      default: 'enabled',
+      group: 'navigation'
+    };
+    properties[EFFORT_MODEL_OPTION_KEY] = {
+      type: 'string',
+      title: getMessage('effortTitle'),
+      description: getMessage('anthropicEffortDescription'),
+      enum: [...ANTHROPIC_EFFORT_VALUES],
+      default: 'max',
+      group: 'navigation'
+    };
+  } else if (model.apiStyle === 'openai-responses') {
+    properties[THINKING_EFFORT_MODEL_OPTION_KEY] = {
+      type: 'string',
+      title: getMessage('thinkingEffortTitle'),
+      description: getMessage('responsesThinkingEffortDescription'),
+      enum: [...RESPONSES_THINKING_EFFORT_VALUES],
+      default: 'xhigh',
+      group: 'navigation'
+    };
+  } else {
+    properties[THINKING_EFFORT_MODEL_OPTION_KEY] = {
       type: 'string',
       title: getMessage('thinkingEffortTitle'),
       description: getMessage('thinkingEffortDescription'),
-      enum: ['none', 'high', 'max'],
+      enum: [...CHAT_THINKING_EFFORT_VALUES],
       default: 'max',
       group: 'navigation'
-    }
-  };
+    };
+  }
 
   if (model.apiStyle === 'openai-responses') {
     properties[PERSONALITY_MODEL_OPTION_KEY] = {
@@ -76,11 +109,11 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
     };
   } else {
     properties[TEMPERATURE_MODEL_OPTION_KEY] = {
-      type: 'number',
+      type: 'string',
       title: getMessage('temperatureTitle'),
       description: getMessage('temperatureDescription'),
-      enum: [0, 0.1, 0.4, 0.7, 1],
-      default: 0.1
+      enum: ['inherit', 'none', '0.1', '0.4', '0.7', '1'],
+      default: 'none'
     };
   }
 

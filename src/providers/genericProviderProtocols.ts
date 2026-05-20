@@ -1,9 +1,13 @@
 import * as vscode from 'vscode';
 import { ChatMessage, ChatToolCall, ChatToolDefinition } from './baseProvider';
-import { ThinkingEffort } from '../constants';
+import { AnthropicEffort, ChatThinkingEffort, ResponsesThinkingEffort } from '../constants';
 
 type ThinkingToggle = {
   type: 'enabled' | 'disabled';
+};
+
+type AnthropicThinkingToggle = {
+  type: 'adaptive' | 'disabled';
 };
 
 export interface OpenAIChatRequest {
@@ -14,7 +18,7 @@ export interface OpenAIChatRequest {
   temperature?: number;
   top_p?: number;
   thinking?: ThinkingToggle;
-  reasoning_effort?: Exclude<ThinkingEffort, 'none'>;
+  reasoning_effort?: Exclude<ChatThinkingEffort, 'none'>;
   max_tokens?: number;
   stream?: boolean;
 }
@@ -87,7 +91,7 @@ export interface OpenAIResponsesRequest {
   tool_choice?: 'auto' | 'required';
   top_p?: number;
   thinking?: ThinkingToggle;
-  reasoning_effort?: Exclude<ThinkingEffort, 'none'>;
+  reasoning_effort?: ResponsesThinkingEffort;
   max_output_tokens?: number;
   stream?: boolean;
 }
@@ -162,9 +166,9 @@ export interface AnthropicChatRequest {
   messages: AnthropicChatMessage[];
   tools?: AnthropicToolDefinition[];
   tool_choice?: AnthropicToolChoice;
-  thinking?: ThinkingToggle;
+  thinking?: AnthropicThinkingToggle;
   output_config?: {
-    effort: Exclude<ThinkingEffort, 'none'>;
+    effort: AnthropicEffort;
   };
   temperature?: number;
   top_p?: number;

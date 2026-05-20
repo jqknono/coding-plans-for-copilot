@@ -10,20 +10,25 @@ import {
 } from './baseProvider';
 import { ConfigStore, VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
 import {
+  ANTHROPIC_EFFORT_VALUES,
+  ANTHROPIC_THINKING_MODEL_OPTION_KEY,
+  AnthropicEffort,
+  CHAT_THINKING_EFFORT_VALUES,
+  ChatThinkingEffort,
   DEFAULT_CONTEXT_WINDOW_SIZE,
   DEFAULT_MODEL_TOOLS,
   DEFAULT_REQUEST_MAX_TOKENS,
   DEFAULT_RESPONSES_PERSONALITY,
-  DEFAULT_TEMPERATURE,
   DEFAULT_TOP_P,
+  EFFORT_MODEL_OPTION_KEY,
   PERSONALITY_MODEL_OPTION_KEY,
   PERSONALITY_VALUES,
   RESPONSE_TRACE_ID_FIELD,
+  RESPONSES_THINKING_EFFORT_VALUES,
+  ResponsesThinkingEffort,
   ResponsesPersonality,
   TEMPERATURE_MODEL_OPTION_KEY,
-  ThinkingEffort,
-  THINKING_EFFORT_MODEL_OPTION_KEY,
-  THINKING_EFFORT_VALUES
+  THINKING_EFFORT_MODEL_OPTION_KEY
 } from '../constants';
 import { getMessage, isChinese } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
@@ -101,21 +106,32 @@ interface RequestTraceContext {
 }
 
 interface ResolvedSamplingOptions {
-  temperature: number;
+  temperature?: number;
   topP: number;
 }
+
+type TemperatureModelOption = number | 'none';
 
 interface RequestModelOptions {
   [TEMPERATURE_MODEL_OPTION_KEY]?: unknown;
   [THINKING_EFFORT_MODEL_OPTION_KEY]?: unknown;
+  [EFFORT_MODEL_OPTION_KEY]?: unknown;
+  [ANTHROPIC_THINKING_MODEL_OPTION_KEY]?: unknown;
   [PERSONALITY_MODEL_OPTION_KEY]?: unknown;
 }
 
-interface ResolvedThinkingOptions {
+interface ResolvedThinkingOptions<Effort extends string> {
   thinking: {
     type: 'enabled' | 'disabled';
   };
-  effort?: Exclude<ThinkingEffort, 'none'>;
+  effort?: Effort;
+}
+
+interface ResolvedAnthropicThinkingOptions {
+  thinking?: {
+    type: 'adaptive' | 'disabled';
+  };
+  effort?: AnthropicEffort;
 }
 
 type OutputLimitProtocol = 'openai-chat' | 'openai-responses' | 'anthropic';
@@ -582,25 +598,21 @@ export class GenericAIProvider extends BaseAIProvider {
     const model = this.findConfiguredModel(vendor, modelName);
     const requestTemperature = this.readTemperatureFromModelOptions(request.options?.modelOptions);
     return {
-      temperature: requestTemperature ?? model?.temperature ?? vendor.defaultTemperature ?? DEFAULT_TEMPERATURE,
+      temperature: requestTemperature === 'none'
+        ? undefined
+        : requestTemperature ?? model?.temperature ?? vendor.defaultTemperature,
       topP: model?.topP ?? vendor.defaultTopP ?? DEFAULT_TOP_P
     };
-  }
-
-  private resolveThinkingEffort(request: GenericChatRequest, _vendor: VendorConfig, _modelName: string): ThinkingEffort | undefined {
-    const fromRequest = this.readThinkingEffortFromModelOptions(request.options?.modelOptions);
-    if (fromRequest) {
-      return fromRequest;
-    }
-    return undefined;
   }
 
   private resolveResponsesPersonality(request: GenericChatRequest): ResponsesPersonality {
     return this.readPersonalityFromModelOptions(request.options?.modelOptions) ?? DEFAULT_RESPONSES_PERSONALITY;
   }
 
-  private buildThinkingOptions(request: GenericChatRequest, vendor: VendorConfig, modelName: string): ResolvedThinkingOptions | undefined {
-    const thinkingEffort = this.resolveThinkingEffort(request, vendor, modelName);
+  private buildChatThinkingOptions(
+    request: GenericChatRequest
+  ): ResolvedThinkingOptions<Exclude<ChatThinkingEffort, 'none'>> | undefined {
+    const thinkingEffort = this.readChatThinkingEffortFromModelOptions(request.options?.modelOptions);
     if (!thinkingEffort) {
       return undefined;
     }
@@ -621,28 +633,112 @@ export class GenericAIProvider extends BaseAIProvider {
     };
   }
 
-  private readThinkingEffortFromModelOptions(modelOptions: unknown): ThinkingEffort | undefined {
+  private buildOpenAIResponsesThinkingOptions(
+    request: GenericChatRequest
+  ): ResolvedThinkingOptions<ResponsesThinkingEffort> | undefined {
+    const effort = this.readOpenAIResponsesThinkingEffortFromModelOptions(request.options?.modelOptions);
+    if (!effort) {
+      return undefined;
+    }
+
+    return {
+      thinking: {
+        type: 'enabled'
+      },
+      effort
+    };
+  }
+
+  private buildAnthropicThinkingOptions(request: GenericChatRequest): ResolvedAnthropicThinkingOptions | undefined {
+    const modelOptions = request.options?.modelOptions;
+    const thinking = this.readAnthropicThinkingFromModelOptions(modelOptions);
+    const effort = this.readAnthropicEffortFromModelOptions(modelOptions);
+    if (thinking === undefined && !effort) {
+      return undefined;
+    }
+
+    return {
+      ...(thinking === undefined ? {} : { thinking: { type: thinking ? 'adaptive' : 'disabled' } as const }),
+      ...(effort ? { effort } : {})
+    };
+  }
+
+  private readChatThinkingEffortFromModelOptions(modelOptions: unknown): ChatThinkingEffort | undefined {
+    const normalized = this.readNormalizedModelOptionString(modelOptions, THINKING_EFFORT_MODEL_OPTION_KEY);
+    if (!normalized) {
+      return undefined;
+    }
+    if (normalized === 'disabled') {
+      return 'none';
+    }
+    return CHAT_THINKING_EFFORT_VALUES.includes(normalized as ChatThinkingEffort)
+      ? normalized as ChatThinkingEffort
+      : undefined;
+  }
+
+  private readOpenAIResponsesThinkingEffortFromModelOptions(
+    modelOptions: unknown
+  ): ResponsesThinkingEffort | undefined {
+    const normalized = this.readNormalizedModelOptionString(modelOptions, THINKING_EFFORT_MODEL_OPTION_KEY);
+    if (!normalized) {
+      return undefined;
+    }
+    if (normalized === 'max') {
+      return 'xhigh';
+    }
+    return RESPONSES_THINKING_EFFORT_VALUES.includes(normalized as ResponsesThinkingEffort)
+      ? normalized as ResponsesThinkingEffort
+      : undefined;
+  }
+
+  private readAnthropicEffortFromModelOptions(modelOptions: unknown): AnthropicEffort | undefined {
+    const normalized = this.readNormalizedModelOptionString(modelOptions, EFFORT_MODEL_OPTION_KEY)
+      ?? this.readNormalizedModelOptionString(modelOptions, THINKING_EFFORT_MODEL_OPTION_KEY);
+    if (!normalized) {
+      return undefined;
+    }
+    if (normalized === 'none' || normalized === 'disabled') {
+      return undefined;
+    }
+    return ANTHROPIC_EFFORT_VALUES.includes(normalized as AnthropicEffort)
+      ? normalized as AnthropicEffort
+      : undefined;
+  }
+
+  private readAnthropicThinkingFromModelOptions(modelOptions: unknown): boolean | undefined {
     if (!modelOptions || typeof modelOptions !== 'object' || Array.isArray(modelOptions)) {
       return undefined;
     }
 
-    const raw = (modelOptions as RequestModelOptions)[THINKING_EFFORT_MODEL_OPTION_KEY];
+    const raw = (modelOptions as RequestModelOptions)[ANTHROPIC_THINKING_MODEL_OPTION_KEY];
+    if (typeof raw === 'boolean') {
+      return raw;
+    }
     if (typeof raw !== 'string') {
       return undefined;
     }
 
     const normalized = raw.trim().toLowerCase();
-    if (normalized === 'low' || normalized === 'medium' || normalized === 'high') {
-      return 'high';
+    if (normalized === 'true' || normalized === 'enabled' || normalized === 'adaptive') {
+      return true;
     }
-    if (normalized === 'xhigh' || normalized === 'max') {
-      return 'max';
+    if (normalized === 'false' || normalized === 'disabled' || normalized === 'none') {
+      return false;
     }
-    if (normalized === 'none' || normalized === 'disabled') {
-      return 'none';
+    return undefined;
+  }
+
+  private readNormalizedModelOptionString(
+    modelOptions: unknown,
+    key: keyof RequestModelOptions
+  ): string | undefined {
+    if (!modelOptions || typeof modelOptions !== 'object' || Array.isArray(modelOptions)) {
+      return undefined;
     }
-    return THINKING_EFFORT_VALUES.includes(normalized as ThinkingEffort)
-      ? normalized as ThinkingEffort
+
+    const raw = (modelOptions as RequestModelOptions)[key];
+    return typeof raw === 'string' && raw.trim().length > 0
+      ? raw.trim().toLowerCase()
       : undefined;
   }
 
@@ -662,7 +758,7 @@ export class GenericAIProvider extends BaseAIProvider {
       : undefined;
   }
 
-  private readTemperatureFromModelOptions(modelOptions: unknown): number | undefined {
+  private readTemperatureFromModelOptions(modelOptions: unknown): TemperatureModelOption | undefined {
     if (!modelOptions || typeof modelOptions !== 'object' || Array.isArray(modelOptions)) {
       return undefined;
     }
@@ -672,14 +768,25 @@ export class GenericAIProvider extends BaseAIProvider {
       return this.normalizeModelOptionTemperature(raw);
     }
     if (typeof raw === 'string' && raw.trim().length > 0) {
-      return this.normalizeModelOptionTemperature(Number(raw));
+      const normalized = raw.trim().toLowerCase();
+      if (normalized === 'inherit') {
+        return undefined;
+      }
+      if (normalized === 'none') {
+        return 'none';
+      }
+      return this.normalizeModelOptionTemperature(Number(normalized));
     }
     return undefined;
   }
 
-  private normalizeModelOptionTemperature(value: number): number | undefined {
+  private normalizeModelOptionTemperature(value: number): TemperatureModelOption | undefined {
     if (!Number.isFinite(value)) {
       return undefined;
+    }
+
+    if (Math.abs(value) < 1e-9) {
+      return 'none';
     }
 
     const supportedTemperatures = [0.1, 0.4, 0.7, 1];
@@ -1026,7 +1133,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const messages = this.convertMessages(request.messages);
     const supportsToolCalling = !!request.capabilities.toolCalling;
     const sampling = this.resolveSamplingOptions(request, vendor, modelName);
-    const thinkingOptions = this.buildThinkingOptions(request, vendor, modelName);
+    const thinkingOptions = this.buildChatThinkingOptions(request);
     const tools = supportsToolCalling ? this.buildToolDefinitions(request.options) : undefined;
     const toolChoice = supportsToolCalling ? this.buildToolChoice(request.options) : undefined;
     const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName, 'openai-chat')
@@ -1040,9 +1147,9 @@ export class GenericAIProvider extends BaseAIProvider {
       tools,
       tool_choice: toolChoice,
       stream: true,
-      temperature: sampling.temperature,
+      ...(sampling.temperature === undefined ? {} : { temperature: sampling.temperature }),
       ...(sampling.topP > 0 ? { top_p: sampling.topP } : {}),
-      ...(thinkingOptions ? { thinking: thinkingOptions.thinking } : {}),
+      ...(thinkingOptions?.thinking ? { thinking: thinkingOptions.thinking } : {}),
       ...(thinkingOptions?.effort ? { reasoning_effort: thinkingOptions.effort } : {}),
       ...(maxTokens === undefined ? {} : { max_tokens: maxTokens })
     };
@@ -1246,7 +1353,7 @@ export class GenericAIProvider extends BaseAIProvider {
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
     const sampling = this.resolveSamplingOptions(request, vendor, modelName);
-    const thinkingOptions = this.buildThinkingOptions(request, vendor, modelName);
+    const thinkingOptions = this.buildOpenAIResponsesThinkingOptions(request);
     const personality = this.resolveResponsesPersonality(request);
     const tools = request.capabilities.toolCalling
       ? buildOpenAIResponsesToolDefinitions(this.buildToolDefinitions(request.options))
@@ -1266,7 +1373,7 @@ export class GenericAIProvider extends BaseAIProvider {
       tools,
       tool_choice: responsesToolChoice,
       ...(sampling.topP > 0 ? { top_p: sampling.topP } : {}),
-      ...(thinkingOptions ? { thinking: thinkingOptions.thinking } : {}),
+      ...(thinkingOptions?.thinking ? { thinking: thinkingOptions.thinking } : {}),
       ...(thinkingOptions?.effort ? { reasoning_effort: thinkingOptions.effort } : {}),
       stream: true,
       ...(maxOutputTokens === undefined ? {} : { max_output_tokens: maxOutputTokens })
@@ -1441,7 +1548,7 @@ export class GenericAIProvider extends BaseAIProvider {
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
     const sampling = this.resolveSamplingOptions(request, vendor, modelName);
-    const thinkingOptions = this.buildThinkingOptions(request, vendor, modelName);
+    const thinkingOptions = this.buildAnthropicThinkingOptions(request);
     const { system, messages } = toAnthropicMessages(providerMessages, () => this.generateToolCallId());
     const tools = request.capabilities.toolCalling ? buildAnthropicToolDefinitions(this.buildToolDefinitions(request.options)) : undefined;
     const streamAllowed = !this.isStreamingDisabledForSession(request.modelId);
@@ -1455,9 +1562,9 @@ export class GenericAIProvider extends BaseAIProvider {
       messages,
       tools,
       tool_choice: tools ? buildAnthropicToolChoice(request.options) : undefined,
-      ...(thinkingOptions ? { thinking: thinkingOptions.thinking } : {}),
+      ...(thinkingOptions?.thinking ? { thinking: thinkingOptions.thinking } : {}),
       ...(thinkingOptions?.effort ? { output_config: { effort: thinkingOptions.effort } } : {}),
-      temperature: sampling.temperature,
+      ...(sampling.temperature === undefined ? {} : { temperature: sampling.temperature }),
       stream: streamAllowed,
       ...(maxTokens === undefined ? {} : { max_tokens: maxTokens })
     };
@@ -1468,6 +1575,7 @@ export class GenericAIProvider extends BaseAIProvider {
         baseUrl,
         payload: {
           maxTokens: payload.max_tokens,
+          thinking: payload.thinking,
           outputConfig: payload.output_config,
           temperature: payload.temperature,
           topP: payload.top_p,

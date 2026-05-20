@@ -191,20 +191,20 @@ npm run test:pages
   - `coding-plans.vendors[].defaultTemperature` / `defaultTopP`：供应商默认采样值；其中 `defaultTemperature` 已标记 deprecated
   - `coding-plans.vendors[].models[].temperature` / `topP`：模型级覆盖值；其中 `temperature` 已标记 deprecated
   - `request.modelOptions.temperature` 仍作为 API 调用方传入的请求级覆盖项；VS Code 1.120 公开模型信息接口不再提供 `configurationSchema` UI 声明
-  - 继承顺序固定为 `request.modelOptions.temperature` > `models[].temperature` > `vendors[].defaultTemperature` > 内置默认值 `0.1`
+  - 继承顺序固定为 `request.modelOptions.temperature` > `models[].temperature` > `vendors[].defaultTemperature` > 不发送
+  - `vendors[].defaultTemperature = null` / 留空表示 vendor 级不设置；`models[].temperature = inherit` 表示使用 vendor 级设置
+  - `request.modelOptions.temperature = inherit` 表示继承上级配置，`none` 表示请求中省略 `temperature`；模型行 `More Actions` 不提供 `0`，默认值为 `none`
   - `openai-responses` 请求不发送 `temperature`；模型行 `More Actions` 改为显示 `Personality`，并将 `pragmatic` / `friendly` 写入 `instructions`
   - `topP = 0` 表示请求中省略 `top_p`；模型行 `More Actions` 不提供 `topP` 配置，默认保持留空
   - 建议：编码场景默认保持 `topP 0`；仅当上游明确需要或你想显式控制 nucleus sampling 时再设置为正数
   - `anthropic` 请求仅发送 `temperature`，不发送 `top_p`，以兼容会拒绝同时指定两者的上游
 - 新增 thinking effort：
-  - `request.modelOptions.thinkingEffort` 仍作为 API 调用方传入的请求级覆盖项；VS Code 1.120 公开模型信息接口不再提供 `configurationSchema` UI 声明
-  - 不提供 vendor/provider/model 级持久 thinking 配置，避免一个 provider 配置影响同组全部模型
-  - 继承顺序固定为 `request.modelOptions.thinkingEffort` > 不发送
+  - 相关项均作为 API 调用方传入的请求级覆盖项；不提供 vendor/provider/model 级持久 thinking 配置，避免一个 provider 配置影响同组全部模型
+  - 继承顺序固定为 request modelOptions > 不发送
   - 协议映射：
-    - `none`：发送 `thinking: { type: "disabled" }`
-    - `high` / `max`：发送 `thinking: { type: "enabled" }`
-    - `openai-chat` / `openai-responses`：额外发送 `reasoning_effort`
-    - `anthropic`：额外发送 `output_config.effort`
+    - `openai-chat`：使用 `request.modelOptions.thinkingEffort`，可选 `none` / `high` / `max`；`none` 发送 `thinking: { type: "disabled" }`，`high` / `max` 发送 `thinking: { type: "enabled" }` 与 `reasoning_effort`
+    - `openai-responses`：使用 `request.modelOptions.thinkingEffort`，可选 `low` / `medium` / `high` / `xhigh`；发送 `thinking: { type: "enabled" }` 与 `reasoning_effort`
+    - `anthropic`：使用 `request.modelOptions.thinking` 作为开关，`true` 发送 `thinking: { type: "adaptive" }`，`false` 发送 `thinking: { type: "disabled" }`；使用 `request.modelOptions.effort` 发送 `output_config.effort`，可选 `low` / `medium` / `high` / `xhigh` / `max`
 - 未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
 - 请求链路默认优先上游真实流式传输；若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志，不新增单独的 stream 配置开关。
