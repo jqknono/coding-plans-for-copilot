@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-05-20T03:08:43.894Z",
+  "generatedAt": "2026-05-21T03:09:23.338Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/223d3383944d94706a15ea798ce96a0a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ccb11fcab3d4c6a09142588ec3d3836a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -540,7 +540,9 @@
             "当前状态: 暂不可购买"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "infini-ai: Infini page does not expose standard monthly coding plan prices"
     },
     {
       "provider": "jdcloud-ai",
@@ -1371,7 +1373,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.279/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.288/index.js"
       ],
       "plans": [
         {
@@ -1649,6 +1651,7 @@
     }
   ],
   "failures": [
+    "infini-ai: Infini page does not expose standard monthly coding plan prices",
     "chutes-ai: Unable to locate Chutes subscription plan pricing text"
   ]
 }
