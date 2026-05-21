@@ -203,7 +203,7 @@ npm run test:pages
   - 继承顺序固定为 request modelOptions > 不发送
   - 协议映射：
     - `openai-chat`：使用 `request.modelOptions.thinkingEffort`，可选 `none` / `high` / `max`；`none` 发送 `thinking: { type: "disabled" }`，`high` / `max` 发送 `thinking: { type: "enabled" }` 与 `reasoning_effort`
-    - `openai-responses`：使用 `request.modelOptions.thinkingEffort`，可选 `low` / `medium` / `high` / `xhigh`；发送 `thinking: { type: "enabled" }` 与 `reasoning_effort`
+    - `openai-responses`：使用 `request.modelOptions.thinkingEffort`，可选 `low` / `medium` / `high` / `xhigh`；发送 `reasoning: { effort }`
     - `anthropic`：使用 `request.modelOptions.thinking` 作为开关，`true` 发送 `thinking: { type: "adaptive" }`，`false` 发送 `thinking: { type: "disabled" }`；使用 `request.modelOptions.effort` 发送 `output_config.effort`，可选 `low` / `medium` / `high` / `xhigh` / `max`
 - 未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。

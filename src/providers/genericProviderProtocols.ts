@@ -90,8 +90,9 @@ export interface OpenAIResponsesRequest {
   tools?: OpenAIResponsesToolDefinition[];
   tool_choice?: 'auto' | 'required';
   top_p?: number;
-  thinking?: ThinkingToggle;
-  reasoning_effort?: ResponsesThinkingEffort;
+  reasoning?: {
+    effort: ResponsesThinkingEffort;
+  };
   max_output_tokens?: number;
   stream?: boolean;
 }

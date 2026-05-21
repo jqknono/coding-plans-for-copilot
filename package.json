@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.9.9",
+    "version": "0.9.10",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"

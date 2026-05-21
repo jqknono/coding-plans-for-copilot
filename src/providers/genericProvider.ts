@@ -127,6 +127,12 @@ interface ResolvedThinkingOptions<Effort extends string> {
   effort?: Effort;
 }
 
+interface ResolvedOpenAIResponsesReasoningOptions {
+  reasoning: {
+    effort: ResponsesThinkingEffort;
+  };
+}
+
 interface ResolvedAnthropicThinkingOptions {
   thinking?: {
     type: 'adaptive' | 'disabled';
@@ -279,6 +285,7 @@ export class GenericAIProvider extends BaseAIProvider {
   private modelVendorMap = new Map<string, ModelVendorMapping>();
   private readonly vendorDiscoveryState = new Map<string, VendorDiscoveryState>();
   private readonly disabledStreamingModelIds = new Set<string>();
+  private readonly disabledOpenAIResponsesReasoningModelIds = new Set<string>();
   private readonly emptyOpenAIChatPromptedModelKeys = new Set<string>();
   private readonly reasoningContentByToolCallId = new Map<string, string>();
   private refreshModelsInFlight: Promise<void> | undefined;
@@ -633,19 +640,22 @@ export class GenericAIProvider extends BaseAIProvider {
     };
   }
 
-  private buildOpenAIResponsesThinkingOptions(
+  private buildOpenAIResponsesReasoningOptions(
     request: GenericChatRequest
-  ): ResolvedThinkingOptions<ResponsesThinkingEffort> | undefined {
+  ): ResolvedOpenAIResponsesReasoningOptions | undefined {
+    if (this.disabledOpenAIResponsesReasoningModelIds.has(request.modelId)) {
+      return undefined;
+    }
+
     const effort = this.readOpenAIResponsesThinkingEffortFromModelOptions(request.options?.modelOptions);
     if (!effort) {
       return undefined;
     }
 
     return {
-      thinking: {
-        type: 'enabled'
-      },
-      effort
+      reasoning: {
+        effort
+      }
     };
   }
 
@@ -1353,7 +1363,7 @@ export class GenericAIProvider extends BaseAIProvider {
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
     const sampling = this.resolveSamplingOptions(request, vendor, modelName);
-    const thinkingOptions = this.buildOpenAIResponsesThinkingOptions(request);
+    const reasoningOptions = this.buildOpenAIResponsesReasoningOptions(request);
     const personality = this.resolveResponsesPersonality(request);
     const tools = request.capabilities.toolCalling
       ? buildOpenAIResponsesToolDefinitions(this.buildToolDefinitions(request.options))
@@ -1373,32 +1383,30 @@ export class GenericAIProvider extends BaseAIProvider {
       tools,
       tool_choice: responsesToolChoice,
       ...(sampling.topP > 0 ? { top_p: sampling.topP } : {}),
-      ...(thinkingOptions?.thinking ? { thinking: thinkingOptions.thinking } : {}),
-      ...(thinkingOptions?.effort ? { reasoning_effort: thinkingOptions.effort } : {}),
+      ...(reasoningOptions?.reasoning ? { reasoning: reasoningOptions.reasoning } : {}),
       stream: true,
       ...(maxOutputTokens === undefined ? {} : { max_output_tokens: maxOutputTokens })
     };
 
-    try {
+    const sendPayload = async (nextPayload: OpenAIResponsesRequest): Promise<vscode.LanguageModelChatResponse> => {
       logger.debug('Prepared OpenAI responses payload', {
         ...trace,
         baseUrl,
         payload: {
           personality,
-          topP: payload.top_p,
-          thinking: payload.thinking,
-          reasoningEffort: payload.reasoning_effort,
-          maxOutputTokens: payload.max_output_tokens,
-          toolChoice: payload.tool_choice,
-          toolCount: payload.tools?.length ?? 0,
+          topP: nextPayload.top_p,
+          reasoning: nextPayload.reasoning,
+          maxOutputTokens: nextPayload.max_output_tokens,
+          toolChoice: nextPayload.tool_choice,
+          toolCount: nextPayload.tools?.length ?? 0,
           providerMessages: this.summarizeProviderMessages(providerMessages),
-          instructionsLength: payload.instructions?.length ?? 0,
-          input: this.summarizeOpenAIResponsesInput(payload.input)
+          instructionsLength: nextPayload.instructions?.length ?? 0,
+          input: this.summarizeOpenAIResponsesInput(nextPayload.input)
         }
       });
       const requestInit = this.buildRequestInit(apiKey, 'openai-responses', token);
       const response = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
-        this.postWithRetry(`${retryBaseUrl}/responses`, payload, requestInit, trace)
+        this.postWithRetry(`${retryBaseUrl}/responses`, nextPayload, requestInit, trace)
       ), trace);
       if (this.isSseResponse(response)) {
         return this.buildStreamingChatResponse(
@@ -1407,7 +1415,7 @@ export class GenericAIProvider extends BaseAIProvider {
           request,
           vendor,
           modelName,
-          payload.max_output_tokens,
+          nextPayload.max_output_tokens,
           async queue => {
             const state = createOpenAIResponsesStreamState();
             for await (const event of this.readSseEvents(response)) {
@@ -1449,31 +1457,52 @@ export class GenericAIProvider extends BaseAIProvider {
         modelName,
         trace,
         parsedResponse,
-        payload.max_output_tokens
+        nextPayload.max_output_tokens
       );
+    };
+
+    let effectivePayload = payload;
+    try {
+      return await sendPayload(effectivePayload);
     } catch (error: any) {
-      if (this.shouldFallbackToNonStream(error)) {
+      let handledError = error;
+      if (this.shouldRetryOpenAIResponsesWithoutReasoning(handledError, effectivePayload)) {
+        effectivePayload = this.withoutOpenAIResponsesReasoning(effectivePayload);
+        this.disableOpenAIResponsesReasoningForSession(request.modelId, 'unsupported_parameter', trace);
+        logger.warn('OpenAI responses reasoning parameters are unsupported upstream; retrying without reasoning', {
+          ...trace,
+          error: this.summarizeError(handledError)
+        });
+        try {
+          return await sendPayload(effectivePayload);
+        } catch (retryError) {
+          handledError = retryError;
+        }
+      }
+
+      if (this.shouldFallbackToNonStream(handledError)) {
         this.disableStreamingForSession(request.modelId, 'anthropic_stream_unsupported', trace);
         logger.warn('OpenAI responses stream is unsupported upstream; retrying without stream', {
           ...trace,
-          error: this.summarizeError(error)
+          error: this.summarizeError(handledError)
         });
         try {
-          const fallbackPayload: OpenAIResponsesRequest = { ...payload, stream: false };
-          const requestInit = this.buildRequestInit(apiKey, 'openai-responses', token);
-          const fallbackResponse = await this.withOptionalV1Retry(vendor, baseUrl, retryBaseUrl => (
-            this.postWithRetry(`${retryBaseUrl}/responses`, fallbackPayload, requestInit, trace)
-          ), trace);
-          const parsedFallback = await this.readParsedResponse<OpenAIResponsesResponse>(fallbackResponse);
-          return this.buildOpenAIResponsesResponseFromPayload(
-            request,
-            vendor,
-            modelName,
-            trace,
-            parsedFallback,
-            fallbackPayload.max_output_tokens
-          );
+          const fallbackPayload: OpenAIResponsesRequest = { ...effectivePayload, stream: false };
+          return await sendPayload(fallbackPayload);
         } catch (fallbackError) {
+          if (this.shouldRetryOpenAIResponsesWithoutReasoning(fallbackError, effectivePayload)) {
+            const fallbackPayload = this.withoutOpenAIResponsesReasoning({ ...effectivePayload, stream: false });
+            this.disableOpenAIResponsesReasoningForSession(request.modelId, 'unsupported_parameter', trace);
+            logger.warn('OpenAI responses reasoning parameters are unsupported on non-stream retry; retrying without reasoning', {
+              ...trace,
+              error: this.summarizeError(fallbackError)
+            });
+            try {
+              return await sendPayload(fallbackPayload);
+            } catch (reasoningFallbackError) {
+              fallbackError = reasoningFallbackError;
+            }
+          }
           const providerError = this.toProviderError(fallbackError);
           logger.error('OpenAI responses fallback request failed', {
             ...trace,
@@ -1484,10 +1513,10 @@ export class GenericAIProvider extends BaseAIProvider {
         }
       }
 
-      const providerError = this.toProviderError(error);
+      const providerError = this.toProviderError(handledError);
       logger.error('OpenAI responses request failed', {
         ...trace,
-        error: this.summarizeError(error),
+        error: this.summarizeError(handledError),
         translatedError: providerError.message
       });
       throw providerError;
@@ -2672,6 +2701,23 @@ export class GenericAIProvider extends BaseAIProvider {
     });
   }
 
+  private disableOpenAIResponsesReasoningForSession(
+    modelId: string,
+    reason: string,
+    trace?: RequestTraceContext
+  ): void {
+    if (this.disabledOpenAIResponsesReasoningModelIds.has(modelId)) {
+      return;
+    }
+
+    this.disabledOpenAIResponsesReasoningModelIds.add(modelId);
+    logger.warn('Disabled OpenAI responses reasoning parameters for current session', {
+      ...trace,
+      modelId,
+      reason
+    });
+  }
+
   private buildStreamingChatResponse(
     trace: RequestTraceContext,
     protocol: VendorApiStyle,
@@ -2756,6 +2802,34 @@ export class GenericAIProvider extends BaseAIProvider {
 
     return /(stream|streaming|sse|event-stream)/i.test(detail)
       && /(unsupported|not support|not supported|invalid|unknown|only|expect)/i.test(detail);
+  }
+
+  private shouldRetryOpenAIResponsesWithoutReasoning(error: any, payload: OpenAIResponsesRequest): boolean {
+    if (!payload.reasoning) {
+      return false;
+    }
+
+    const status = typeof error?.response?.status === 'number' ? error.response.status : undefined;
+    if (status !== 400 && status !== 422) {
+      return false;
+    }
+
+    const detail = [
+      this.readApiErrorMessage(error),
+      typeof error?.response?.data === 'string' ? error.response.data : undefined
+    ]
+      .filter((value): value is string => typeof value === 'string' && value.trim().length > 0)
+      .join(' ')
+      .toLowerCase();
+
+    return /(unsupported|unknown|unrecognized|invalid|not support|not supported)/.test(detail)
+      && /(reasoning|reasoning[_\s-]?effort|reasoning\.effort)/.test(detail);
+  }
+
+  private withoutOpenAIResponsesReasoning(payload: OpenAIResponsesRequest): OpenAIResponsesRequest {
+    const nextPayload: OpenAIResponsesRequest = { ...payload };
+    delete nextPayload.reasoning;
+    return nextPayload;
   }
 
   private hasMalformedAnthropicStreamToolArguments(toolCalls: ChatToolCall[]): boolean {

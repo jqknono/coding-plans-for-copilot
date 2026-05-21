@@ -2102,6 +2102,101 @@ async function runGenericProviderThinkingEffortTests(
     }
   }
 
+  async function captureOpenAIResponsesReasoningFallbackPayloads(): Promise<Record<string, unknown>[]> {
+    activeState = createState([{
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-responses',
+      defaultVision: false,
+      models: [{
+        name: 'reasoner',
+        contextSize: 64000,
+        maxInputTokens: 32000,
+        maxOutputTokens: 16000,
+        capabilities: { tools: false, vision: false }
+      }]
+    }]);
+    const configStore = new configStoreCtor(createExtensionContext() as never);
+    const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+      refreshModels(): Promise<void>;
+      sendRequest(
+        request: {
+          modelId: string;
+          messages: Array<{ role: string; content: Array<{ value: string }> }>;
+          capabilities: { toolCalling: boolean; imageInput: boolean };
+          options?: { tools?: unknown[]; modelOptions?: Record<string, unknown> };
+        }
+      ): Promise<unknown>;
+      dispose(): void;
+    };
+
+    const payloads: Record<string, unknown>[] = [];
+    globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+      const payload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
+      payloads.push(payload);
+      if (payloads.length === 1) {
+        return new Response(JSON.stringify({
+          detail: 'Unsupported parameter: reasoning'
+        }), {
+          status: 400,
+          headers: {
+            'content-type': 'application/json'
+          }
+        });
+      }
+
+      return new Response(JSON.stringify({
+        id: 'resp_reasoning',
+        output: [{
+          type: 'message',
+          role: 'assistant',
+          content: [{
+            type: 'output_text',
+            text: 'ok'
+          }]
+        }],
+        usage: {
+          input_tokens: 1,
+          output_tokens: 1,
+          total_tokens: 2
+        }
+      }), {
+        status: 200,
+        headers: {
+          'content-type': 'application/json'
+        }
+      });
+    }) as typeof globalThis.fetch;
+
+    try {
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
+        vendorName === 'Vendor' ? 'configured' : ''
+      );
+      await provider.refreshModels();
+      const request = {
+        modelId: 'Vendor/reasoner',
+        messages: [{
+          role: 'user',
+          content: [{ value: 'reply with ok' }]
+        }],
+        capabilities: { toolCalling: false, imageInput: false },
+        options: {
+          tools: [],
+          modelOptions: {
+            thinkingEffort: 'high'
+          }
+        }
+      };
+      await provider.sendRequest(request);
+      await provider.sendRequest(request);
+      return payloads;
+    } finally {
+      globalThis.fetch = originalFetch;
+      provider.dispose();
+      configStore.dispose();
+    }
+  }
+
   const openAIChatPayload = await capturePayload([{
     name: 'Vendor',
     baseUrl: 'https://example.test/v1',
@@ -2245,11 +2340,19 @@ async function runGenericProviderThinkingEffortTests(
       thinkingEffort: 'high'
     }
   });
-  assert.deepEqual(openAIResponsesPayload.thinking, { type: 'enabled' });
-  assert.equal(openAIResponsesPayload.reasoning_effort, 'high');
+  assert.deepEqual(openAIResponsesPayload.reasoning, { effort: 'high' });
+  assert.equal('thinking' in openAIResponsesPayload, false);
+  assert.equal('reasoning_effort' in openAIResponsesPayload, false);
   assert.equal('temperature' in openAIResponsesPayload, false);
   assert.equal(openAIResponsesPayload.instructions, 'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.');
-  console.log('PASS openai-responses 会按请求级 thinkingEffort 发送 thinking 与 reasoning_effort');
+  console.log('PASS openai-responses 会按请求级 thinkingEffort 发送 reasoning.effort');
+
+  const responsesReasoningFallbackPayloads = await captureOpenAIResponsesReasoningFallbackPayloads();
+  assert.equal(responsesReasoningFallbackPayloads.length, 3);
+  assert.deepEqual(responsesReasoningFallbackPayloads[0].reasoning, { effort: 'high' });
+  assert.equal('reasoning' in responsesReasoningFallbackPayloads[1], false);
+  assert.equal('reasoning' in responsesReasoningFallbackPayloads[2], false);
+  console.log('PASS openai-responses 遇到 reasoning 参数不兼容时会去掉 reasoning 重试并记住会话降级');
 
   const openAIResponsesXhighPayload = await capturePayload([{
     name: 'Vendor',
@@ -2268,9 +2371,10 @@ async function runGenericProviderThinkingEffortTests(
       thinkingEffort: 'xhigh'
     }
   });
-  assert.deepEqual(openAIResponsesXhighPayload.thinking, { type: 'enabled' });
-  assert.equal(openAIResponsesXhighPayload.reasoning_effort, 'xhigh');
-  console.log('PASS openai-responses 会按请求级 thinkingEffort=xhigh 发送 reasoning_effort=xhigh');
+  assert.deepEqual(openAIResponsesXhighPayload.reasoning, { effort: 'xhigh' });
+  assert.equal('thinking' in openAIResponsesXhighPayload, false);
+  assert.equal('reasoning_effort' in openAIResponsesXhighPayload, false);
+  console.log('PASS openai-responses 会按请求级 thinkingEffort=xhigh 发送 reasoning.effort=xhigh');
 
   const anthropicPayload = await capturePayload([{
     name: 'Vendor',
