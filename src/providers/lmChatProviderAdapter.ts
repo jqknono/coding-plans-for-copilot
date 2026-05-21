@@ -71,8 +71,8 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
       type: 'string',
       title: getMessage('anthropicThinkingTitle'),
       description: getMessage('anthropicThinkingDescription'),
-      enum: ['enabled', 'disabled'],
-      default: 'enabled',
+      enum: ['think', 'non-think'],
+      default: 'think',
       group: 'navigation'
     };
     properties[EFFORT_MODEL_OPTION_KEY] = {

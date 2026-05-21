@@ -4431,7 +4431,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
           }>;
         };
       }).configurationSchema?.properties?.thinking?.enum,
-      ['enabled', 'disabled']
+      ['think', 'non-think']
     );
     assert.equal(
       (anthropicGroupModels[0] as unknown as {
@@ -4441,7 +4441,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
           }>;
         };
       }).configurationSchema?.properties?.thinking?.default,
-      'enabled'
+      'think'
     );
     assert.deepEqual(
       (anthropicGroupModels[0] as unknown as {

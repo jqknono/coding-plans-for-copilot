@@ -729,10 +729,10 @@ export class GenericAIProvider extends BaseAIProvider {
     }
 
     const normalized = raw.trim().toLowerCase();
-    if (normalized === 'true' || normalized === 'enabled' || normalized === 'adaptive') {
+    if (normalized === 'true' || normalized === 'enabled' || normalized === 'adaptive' || normalized === 'think') {
       return true;
     }
-    if (normalized === 'false' || normalized === 'disabled' || normalized === 'none') {
+    if (normalized === 'false' || normalized === 'disabled' || normalized === 'none' || normalized === 'non-think') {
       return false;
     }
     return undefined;

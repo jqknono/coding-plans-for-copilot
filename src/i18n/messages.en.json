@@ -60,7 +60,7 @@
   "effortTitle": "Effort",
   "anthropicEffortDescription": "More Actions effort configuration for Anthropic API models. Supported values: `low`, `medium`, `high`, `xhigh`, `max`. Saved values are passed by VS Code with model requests.",
   "anthropicThinkingTitle": "Thinking",
-  "anthropicThinkingDescription": "Request-level thinking toggle for Anthropic API models. Supported values: `enabled`, `disabled`. When enabled, adaptive thinking is sent; when disabled, disabled thinking is sent.",
+  "anthropicThinkingDescription": "Request-level thinking toggle for Anthropic API models. Supported values: `think`, `non-think`. When set to think, adaptive thinking is sent; when set to non-think, thinking is disabled.",
   "unsupportedModelName": "Not Supported",
   "unsupportedModelTooltip": "{0} does not provide a model discovery API. This provider is currently unsupported.",
   "unsupportedModelDetail": "Not supported",
