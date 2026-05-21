@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.11] - 2026-05-21
+- feat(provider): 更新 Anthropic thinking 配置项名称与值
+
 ## [0.9.10] - 2026-05-21
 - feat(provider): 更新 openai-responses 协议并添加推理参数自动降级
 
@@ -35,13 +38,3 @@ All notable changes to this project will be documented in this file.
 - feat(config): 更新内置供应商配置并优化模型视觉能力管理
 - docs: update README - remove Claude Code ref, add DeepSeek, remove Infini, use English commands
 - docs: use raw.githubusercontent.com for preview image
-
-## [0.7.18] - 2026-05-06
-- docs: add dashboard preview screenshot
-- feat(provider): 支持在模型返回空响应时自动切换至 Responses API
-- feat(pages): 抓取失败的 provider 不再显示套餐卡片
-- chore(metrics): 更新 OpenRouter 提供商指标数据
-- chore(assets): 更新 OpenRouter 提供商指标与定价数据
-- chore: 统一 API 密钥变量名并优化工作流推送逻辑
-- feat(provider): 更新服务商指标与定价并增强抓取校验
-- feat(provider): 更新模型服务商运行指标与定价数据
