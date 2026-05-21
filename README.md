@@ -157,7 +157,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].temperature` | `number` / `"inherit"` | `"inherit"` | 已废弃。模型级 temperature 覆盖；`"inherit"` 表示使用供应商 `defaultTemperature`。仅 `openai-chat` 与 `anthropic` 运行时使用该值。Responses API 模型行请使用 `Personality`。 |
 | `coding-plans.vendors[].models[].topP` | `number` | 继承供应商 | 模型级 topP 覆盖；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | 模型能力声明。 |
-| `coding-plans.vendors[].models[].contextSize` | `number` | 空 | 模型总上下文窗口；运行时会基于它推导输入/输出预算。 |
+| `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | 模型总上下文窗口；未配置时默认 400k，运行时会基于它推导输入/输出预算。 |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | 请求侧默认输出 token 预算；仅作为发送请求时的预算覆盖值，最终仍会按模型输出上限收敛。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示"生成 Commit 消息"命令。 |
 | `coding-plans.commitMessage.language` | `string` | `en` | 提交消息语言：`en` / `zh-cn`。 |

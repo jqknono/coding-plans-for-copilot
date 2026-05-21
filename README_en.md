@@ -160,7 +160,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].models[].temperature` | `number` / `"inherit"` | `"inherit"` | Deprecated. Model-level temperature override. `"inherit"` uses the vendor `defaultTemperature`. Runtime uses it only for `openai-chat` and `anthropic`. Use `Personality` from the model row for Responses API models. |
 | `coding-plans.vendors[].models[].topP` | `number` | Inherit from vendor | Model-level topP override. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | Model capability declaration. |
-| `coding-plans.vendors[].models[].contextSize` | `number` | Empty | Model total context window. Runtime derives the request budget from this total window. |
+| `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | Model total context window. Defaults to 400k when omitted. Runtime derives the request budget from this total window. |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Request-side default output token budget. It only overrides request budgeting and is still capped by the model output limit. |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show "Generate Commit Message" command. |
 | `coding-plans.commitMessage.language` | `string` | `en` | Commit message language: `en` / `zh-cn`. |

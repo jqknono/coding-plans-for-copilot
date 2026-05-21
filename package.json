@@ -344,7 +344,7 @@
                                         },
                                         "contextSize": {
                                             "type": "number",
-                                            "description": "Preferred total context window size for the model. Language model context display uses this value directly when provided, and runtime derives the output budget from this total window."
+                                            "description": "Preferred total context window size for the model. When omitted, the extension defaults to 400000 tokens. Language model context display uses this value directly when provided, and runtime derives the output budget from this total window."
                                         },
                                         "apiStyle": {
                                             "type": "string",

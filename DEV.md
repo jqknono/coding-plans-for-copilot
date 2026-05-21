@@ -185,6 +185,7 @@ npm run test:pages
 - `coding-plans.vendors[].usageUrl` 为可选套餐 usage 接口；当前默认按 `Authorization: Bearer <API Key>` 轮询，并将识别到的小时额度、周额度或次数额度以百分比显示在状态栏。
 - `coding-plans.vendors[].models[].contextSize` 现在是描述模型上下文的首选字段。
 - `coding-plans.vendors[].models[].enabled` 默认 `true`；设为 `false` 时模型保留在配置中，但不会进入最终 Language Model 暴露列表，因此不会显示在 VS Code `Manage Language Models` 中。
+- 未配置 `contextSize` 时，扩展默认按 `400000` tokens 的总上下文窗口构建模型。
 - 运行时会按总上下文动态推导隐式输出预留：`min(30000, max(4096, floor(totalContextWindow * 0.2)))`；极小上下文窗口会再按总窗口安全收敛。
 - `coding-plans.advanced.defaultReservedOutput` 的默认值为 `60000`，用于请求侧输出预算覆盖；发送请求时会自动按模型上限收敛，不改变模型隐式默认输出预留的推导公式。
 - 新增采样参数：

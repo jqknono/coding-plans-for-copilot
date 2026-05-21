@@ -1117,6 +1117,14 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
   };
 
   try {
+    const defaultWindow = provider.resolveTokenWindowLimits(undefined, undefined, undefined);
+    assert.deepEqual(defaultWindow, {
+      maxTokens: 400000,
+      maxInputTokens: 370000,
+      maxOutputTokens: 30000
+    });
+    console.log('PASS runtime token window 未配置时默认使用 400k 上下文');
+
     const capped = provider.resolveTokenWindowLimits(64000, 128000, 96000);
     assert.deepEqual(capped, {
       maxTokens: 64000,
@@ -4818,7 +4826,6 @@ void main().catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;
 });
-
 
 
 
