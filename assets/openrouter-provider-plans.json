@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-05-19T09:18:40.316Z",
-  "generatedAtBeijing": "2026年5月19日 17:18:40",
-  "sourceGeneratedAt": "2026-05-19T09:18:22.040Z",
-  "sourceGeneratedAtBeijing": "2026年5月19日 17:18:22",
-  "sourceMetricsGeneratedAt": "2026-05-19T09:18:22.707Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年5月19日 17:18:22",
+  "generatedAt": "2026-05-21T09:17:12.280Z",
+  "generatedAtBeijing": "2026年5月21日 17:17:12",
+  "sourceGeneratedAt": "2026-05-21T09:15:46.156Z",
+  "sourceGeneratedAtBeijing": "2026年5月21日 17:15:46",
+  "sourceMetricsGeneratedAt": "2026-05-21T09:15:47.821Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年5月21日 17:15:47",
   "summary": {
     "openrouterProviderCount": 82,
-    "metricsProviderCount": 38,
-    "resolvedMetricsProviderCount": 38,
+    "metricsProviderCount": 40,
+    "resolvedMetricsProviderCount": 40,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
-    "heuristicProviderCount": 7,
-    "providersWithPlans": 15,
-    "pendingCount": 23,
-    "blockedPendingCount": 0,
+    "heuristicProviderCount": 6,
+    "providersWithPlans": 14,
+    "pendingCount": 26,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -61,7 +61,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/223d3383944d94706a15ea798ce96a0a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ccb11fcab3d4c6a09142588ec3d3836a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -648,32 +648,32 @@
       "sourceUrls": [
         "https://www.morphllm.com",
         "https://www.morphllm.com/pricing",
-        "https://www.morphllm.com/_next/static/chunks/b2885a7261335520.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/93aefb6717700fb0.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/457ba81ab2e61d33.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/eb5c283bcf5fe3ff.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/turbopack-974ed1163ec99808.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/c9ac5102a5bcc4bf.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/f95a148c70d61715.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/ff45d253b72fd075.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/fa0d302a90576cbd.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV",
-        "https://www.morphllm.com/_next/static/chunks/633d7d3d46b4bcf2.js?dpl=dpl_3Tp18rR3q75XSjfHVwn2zUxjzqPV"
+        "https://www.morphllm.com/_next/static/chunks/b2885a7261335520.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/60d6359fe4d599a2.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/2798b4294536dbda.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/eb5c283bcf5fe3ff.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/turbopack-ce3b5a5422f9352b.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/c9ac5102a5bcc4bf.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/f95a148c70d61715.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/865942cbf1d825e3.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/67231a7db935e639.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n",
+        "https://www.morphllm.com/_next/static/chunks/633d7d3d46b4bcf2.js?dpl=dpl_37EtMS3hc8sk5qSU1prkBvXtZ64n"
       ],
       "pricingPageUrl": "https://www.morphllm.com/pricing",
       "officialWebsiteUrl": "https://www.morphllm.com",
@@ -755,7 +755,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.267/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.288/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1005,62 +1005,6 @@
       "parseMode": "official-website-heuristic"
     },
     {
-      "slug": "wandb",
-      "openrouterName": "WandB",
-      "providerId": null,
-      "plans": [
-        {
-          "name": "Pro",
-          "currentPrice": 60,
-          "currentPriceText": "$60/month",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "来源: https://site.wandb.ai/pricing/",
-          "serviceDetails": [
-            "Professionals working to optimize AI applications and models",
-            "All features from Free +",
-            "Unlimited teams for collaboration",
-            "Team-based access controls",
-            "Service Accounts",
-            "Priority email & chat support",
-            "Model seats: up to 10",
-            "Storage: 100 GB/mo",
-            "Weave data ingestion: 1.5 GB/mo"
-          ]
-        },
-        {
-          "name": "Inference add-on",
-          "currentPrice": 5,
-          "currentPriceText": "$5/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "W&B pricing comparison table",
-          "serviceDetails": [
-            "Run open source AI models. View per model pricing.",
-            "Free credit for a limited time",
-            "Additional inference billed monthly",
-            "Develop GenAI applications",
-            "Monitor and analyze the performance of your GenAI models during development and in production, capturing inputs, outputs, and metadata for each inference.",
-            "Compare different recipes including fine-tuning, RAG, LLMs, and datasets, side-by-side for accuracy, latency, and token usage.",
-            "Monitor the Performance, Cost, and Health of Your LLM Applications."
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://site.wandb.ai/pricing/",
-        "https://site.wandb.ai"
-      ],
-      "pricingPageUrl": "https://site.wandb.ai/pricing/",
-      "officialWebsiteUrl": "https://site.wandb.ai",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://wandb.ai/site/privacy/",
-      "termsOfServiceUrl": "https://site.wandb.ai/terms/",
-      "statusPageUrl": null,
-      "parseMode": "official-website-heuristic"
-    },
-    {
       "slug": "z-ai",
       "openrouterName": "Z.AI",
       "providerId": null,
@@ -1164,6 +1108,15 @@
       "blocked": false
     },
     {
+      "slug": "baseten",
+      "openrouterName": "BaseTen",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.baseten.co",
+      "pricingPageUrl": "https://www.baseten.co/pricing/",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $1.74 / $0.145）",
+      "blocked": false
+    },
+    {
       "slug": "crucible",
       "openrouterName": "Crucible",
       "providerId": null,
@@ -1191,6 +1144,15 @@
       "blocked": false
     },
     {
+      "slug": "dekallm",
+      "openrouterName": "DekaLLM",
+      "providerId": null,
+      "officialWebsiteUrl": "https://docs.cloudeka.ai",
+      "pricingPageUrl": "https://docs.cloudeka.ai",
+      "reason": "官网价格页探测失败：https://docs.cloudeka.ai/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "fireworks",
       "openrouterName": "Fireworks",
       "providerId": null,
@@ -1204,9 +1166,9 @@
       "openrouterName": "Friendli",
       "providerId": null,
       "officialWebsiteUrl": "https://friendli.ai",
-      "pricingPageUrl": "https://friendli.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 2.9 / $ 3.9 / $ 4.5）",
-      "blocked": false
+      "pricingPageUrl": "https://friendli.ai",
+      "reason": "官网价格页探测失败：https://friendli.ai/pricing: Request timeout after 9000ms",
+      "blocked": true
     },
     {
       "slug": "gmicloud",
@@ -1286,7 +1248,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://novita.ai",
       "pricingPageUrl": "https://novita.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.67 / $0.13 / $3.38）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.64 / $0.135 / $3.38）",
       "blocked": false
     },
     {
@@ -1333,6 +1295,15 @@
       "pricingPageUrl": "https://www.together.ai/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.40 / $4.40 / $0.30）",
       "blocked": false
+    },
+    {
+      "slug": "wandb",
+      "openrouterName": "WandB",
+      "providerId": null,
+      "officialWebsiteUrl": "https://site.wandb.ai",
+      "pricingPageUrl": "https://site.wandb.ai",
+      "reason": "官网价格页探测失败：https://site.wandb.ai/pricing: Request timeout after 9000ms",
+      "blocked": true
     }
   ]
 }
