@@ -1,0 +1,65 @@
+{
+  "date": "2026-05-23",
+  "generatedAt": "2026-05-23T07:06:58.933Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 47,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Claude Code, Codex": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1214908",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1214908",
+      "title": "Vibe Coding 了一个项目， 2 周基本已全部完成，感慨一下我已经基本上可以下岗了。",
+      "content": "项目背景 售卖国外 eSIM 套餐，对接红茶移动 Api 处理交付。 技术栈 后端：Laravel 前端：Vue + tailwindcss 小程序端：Uni-App App 端：React Native 成本 编程工具：Antigravity + Codex + Claude Code 时间成本：一个人大约 2 周 预览地址： TravelGo 测试环境随时删除所有数据。",
+      "author": "hnhertt",
+      "createdAt": "2026-05-23T05:24:20.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude Code, Codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享使用AI编码助手（Claude Code, Codex）完成eSIM销售项目的经验，强调工具效率提升了开发速度。",
+        "topics": [
+          "编程工具",
+          "AI 编码助手",
+          "项目完成",
+          "时间成本"
+        ],
+        "planMentioned": "Claude Code, Codex",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-23T07:10:51.939Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1214923: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"cognitivecomputations/dolphin-mistral-24b-venice-edition:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"prov",
+    "analysis failed for v2ex-1214866: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"google/gemma-4-31b-it:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Google AI Studio\",\"is_b"
+  ]
+}
