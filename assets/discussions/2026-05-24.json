@@ -1,0 +1,130 @@
+{
+  "date": "2026-05-24",
+  "generatedAt": "2026-05-24T07:17:51.521Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 3,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 3,
+    "supplierMentions": {
+      "DeepSeek": 1,
+      "aicoding.sh": 1,
+      "OpenAI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1215048",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1215048",
+      "title": "开源 OpenSeek: 给 DeepSeek V4 写了一层 Claude Code 同款的 TUI agent harness",
+      "content": "截至 2026/05 ，coding agent 这个赛道在 GitHub 上已经分成几条不同的线： 闭源旗舰 : Claude Code （ Anthropic 官方），Cursor 。体验最好，但贵 + 锁定。 开源通用 : OpenCode （ 164k+ Star ，Go 写的）、Aider （ Python ，VSCode 替代）、Cline 。 DeepSeek 原生 : DeepSeek-TUI （ Rust 写的，过去一周从 ~2k 涨到 24k+ Star ）。 GUI 切换器 : cc-switch （ 78k+ Star ，Tauri 写的，管理上面这些 agent 的 provider 配置）。 如果诉求是 「我想要 Claude Code 同款的工程（ MCP / LSP / Plan-Agent-YOLO 三模式 / 真正的 sub-agent fan-out ），但走 DeepSeek V4 把成本压一个数量级」 ，目前 OpenCode + 手动配 DeepSeek 是一条路，但 OpenCode 的 harness 不是为 DeepSeek 优化的（ ",
+      "author": "lichamnesia",
+      "createdAt": "2026-05-24T04:44:07.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "讨论了OpenSeek项目，这是一个为DeepSeek V4编写的TUI agent harness，提供27个提供商支持，包括成本优化技术（如cache-aware prompt assembly）和MCP/LSP集成，旨在降低使用DeepSeek V4的成本。",
+        "topics": [
+          "DeepSeek V4",
+          "TUI agent",
+          "成本优化",
+          "cache-aware prompt assembly",
+          "reasoning_content replay",
+          "MCP client",
+          "LSP feedback"
+        ],
+        "planMentioned": "DeepSeek V4",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-24T07:22:17.546Z"
+    },
+    {
+      "id": "v2ex-1215033",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1215033",
+      "title": "Claude API 国内直连，新用户免费领 10 美元额度",
+      "content": "用 Claude Code 最头疼的问题：网络不稳定、官方付费门槛高、团队多人使用没法统一管理。 aicoding.sh 做的事情很简单——提供一个稳定的 Claude API 中转节点，国内直连，零配置接入 Claude Code 。 价格体系完全透明：按官方价 1.9 折、2.9 折、4.9 折三档消耗余额，按量计费，用多少扣多少，后台实时可查每一笔调用明细。没有包月套餐，没有隐藏费用。 目前服务数万用户，企业客户超过 100 家，支持对公转账和发票。 技术侧只需要设置一个环境变量就能跑起来，五分钟完成接入。 新人福利：加入用户社群直接送 10 美元体验额度，够跑几天重度开发了。 详情和接入文档： https://aicoding.sh",
+      "author": "aicodingsh",
+      "createdAt": "2026-05-24T02:58:05.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "aicoding.sh",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.98,
+        "summary": "The post promotes a service (aicoding.sh) offering discounted access to Claude API with transparent pricing tiers (1.9/2.9/4.9折) and a free $10 credit for new users. It emphasizes stability, no hidden fees, and easy integration for AI coding assistance.",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "体验卡",
+          "免费额度"
+        ],
+        "planMentioned": "Claude API",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-24T07:22:18.940Z"
+    },
+    {
+      "id": "v2ex-1215013",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1215013",
+      "title": "openai 周限又重置了，已经放弃 claude 了",
+      "content": "好订阅，不易封号，gpt5.5 和 codex 使用体验顶级，额度量大管饱，还经常找理由重置额度，针对正规订阅的付费用户，体验感觉各方面都比 A\\要好，claudecode 的优势感觉现在也不明显了，codex 已经取消上下文小圆圈显示，让你尽情使用，其自动上下文压缩目前在一众工具默认配置里也是顶尖的，订阅的性价比我觉得比国内一众的 plan 套餐还要好",
+      "author": "layxy",
+      "createdAt": "2026-05-24T00:04:42.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.95,
+        "summary": "用户分享了订阅 OpenAI 的体验，认为其 Codex 的额度和性价比优于 Claude Code 及国内的 AI 编码套餐。",
+        "topics": [
+          "订阅",
+          "性价比",
+          "额度",
+          "套餐对比",
+          "使用体验"
+        ],
+        "planMentioned": "OpenAI subscription",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-24T07:22:20.416Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1215061: LLM returned no choices (response keys: error)"
+  ]
+}
