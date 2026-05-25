@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-25T03:10:28.250Z",
+  "generatedAt": "2026-05-25T09:28:33.085Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1373,7 +1373,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.288/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.290/index.js"
       ],
       "plans": [
         {
@@ -1465,9 +1465,7 @@
             "使用 LingClaw 构建个人助理"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "x-aio: Request timed out after 6000ms: https://code.x-aio.com/assets/index-C9iJKT_h.js; Playwright fallback failed: page.goto: Timeout 6000ms exceeded. Call log: - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\""
+      ]
     },
     {
       "provider": "xfyun-ai",
@@ -1653,7 +1651,6 @@
     }
   ],
   "failures": [
-    "x-aio: Request timed out after 6000ms: https://code.x-aio.com/assets/index-C9iJKT_h.js; Playwright fallback failed: page.goto: Timeout 6000ms exceeded.\nCall log:\n  - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\"\n",
     "infini-ai: Infini page does not expose standard monthly coding plan prices",
     "chutes-ai: Unable to locate Chutes subscription plan pricing text"
   ]
