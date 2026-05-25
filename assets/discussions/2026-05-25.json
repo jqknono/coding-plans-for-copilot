@@ -1,0 +1,99 @@
+{
+  "date": "2026-05-25",
+  "generatedAt": "2026-05-25T07:50:47.448Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 56,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "Unity2.ai": 1,
+      "阿里云": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1215290",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1215290",
+      "title": "Unity2.ai｜稳定供应大厂客户的 AI API 与套餐平台",
+      "content": "Unity2.ai 长期为国内头部企业提供稳定服务，日均承载超 300 亿 token 调用。我们将 GPT 、Claude 、Gemini 等主流 AI 模型整合至同一账户与统一额度体系中，面向开发者、团队、企业及个人用户，提供高性价比、稳定可靠的 API 与组合套餐服务。 企业级稳定供应 ：大厂级资源池验证，日均 300 亿 token ，5000rpm 调用规模，高并发场景下依然稳定 量大价优，支持余额与订阅套餐 ：适配高频调用、个人长期使用与团队集中采购，调用成本透明可控 主流模型统一接入 ：GPT 、Claude 、Gemini 等模型一键切换，一站式管理所有 AI 服务成本 组合订阅现已全新上线| Claude 和 GPT 共享平台总额度！！ 无需重复订阅，Claude 与 GPT 随心切换，高效控制成本，一站式解决性价比难题！ 当前档位：go 日卡 /plus 周卡 /pro 周卡 /max 月卡 /ultra 月卡 以 go 日卡为例： ¥19.9 / 天 平台共享额度：$19.9 Claude 低价分组最多可用约 $50 GPT 低价分组最多可用约 $66 更多订阅权",
+      "author": "Unity2Ai",
+      "createdAt": "2026-05-25T06:06:06.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Unity2.ai",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.98,
+        "summary": "Unity2.ai offers API and subscription plans for multiple AI models (GPT, Claude, Gemini) with shared quotas, cost control, and promotions for developers and enterprises.",
+        "topics": [
+          "定价",
+          "套餐",
+          "API",
+          "模型",
+          "优惠",
+          "体验"
+        ],
+        "planMentioned": "go日卡, plus周卡, pro周卡, max月卡, ultra月卡",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-25T07:54:34.634Z"
+    },
+    {
+      "id": "v2ex-1215235",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1215235",
+      "title": "阿里云的客户经理回访电话说后面阿里 coding plan pro 挡位会上 qwen3.7 plus，其他第三方模型没问",
+      "content": "11 点打来的，我特意问的 目前是 qwen3.6 plus qwen3.5plus",
+      "author": "lynn1su",
+      "createdAt": "2026-05-25T03:06:55.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里云",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "阿里云客户经理透露，阿里 Coding Plan Pro 将升级至 Qwen3.7 Plus，目前使用 Qwen3.6 Plus 和 Qwen3.5 Plus。",
+        "topics": [
+          "阿里云",
+          "Coding Plan Pro",
+          "Qwen3.7 Plus",
+          "模型升级",
+          "客户经理回访"
+        ],
+        "planMentioned": "阿里 Coding Plan Pro",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-05-25T07:54:36.383Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1215308: LLM output schema validation failed: isRelevant: expected boolean, got undefined; isCodingPlan: expected boolean, got undefined; relevance: expected number 0-1, got undefined; category: expected non-empty string, got undefined",
+    "analysis failed for v2ex-1215305: HTTP 429: {\"error\":{\"message\":\"Provider returned error\",\"code\":429,\"metadata\":{\"raw\":\"qwen/qwen3-next-80b-a3b-instruct:free is temporarily rate-limited upstream. Please retry shortly, or add your own key to accumulate your rate limits: https://openrouter.ai/settings/integrations\",\"provider_name\":\"Venice\",\"is_"
+  ]
+}
