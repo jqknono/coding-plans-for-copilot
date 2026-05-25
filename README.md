@@ -1,5 +1,7 @@
 # 编码套餐 for Copilot
 
+![编码套餐使用演示](https://raw.githubusercontent.com/jqknono/coding-plans-for-copilot/main/assets/tutorial.gif)
+
 **一键切换多厂商 AI 模型，打破 Copilot 套餐限制。**
 
 支持智谱、Kimi、讯飞、火山引擎、MiniMax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、小米 MiMo、DeepSeek 等国产大厂，以及**任何**遵循 OpenAI Chat、OpenAI Responses 或 Anthropic 协议风格的供应商。无需改变使用习惯，直接在 VS Code Copilot Chat 中调用。

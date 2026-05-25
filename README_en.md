@@ -1,5 +1,7 @@
 # Coding Plans for Copilot
 
+![Coding Plans walkthrough](https://raw.githubusercontent.com/jqknono/coding-plans-for-copilot/main/assets/tutorial.gif)
+
 **Switch between multiple AI model vendors with one click, breaking Copilot plan limitations.**
 
 Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcengine, MiniMax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Xiaomi MiMo, DeepSeek, as well as **any** vendor that follows OpenAI Chat, OpenAI Responses, or Anthropic protocol styles. No need to change usage habits; call them directly in VS Code Copilot Chat.
