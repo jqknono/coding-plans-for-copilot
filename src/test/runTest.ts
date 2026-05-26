@@ -3365,6 +3365,36 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   });
   console.log('PASS anthropic 流式事件可正确累积文本与工具调用');
 
+  const anthropicUsageState = createAnthropicStreamState();
+  applyAnthropicStreamEvent(anthropicUsageState, 'message_start', {
+    message: {
+      id: 'msg_usage_1',
+      role: 'assistant',
+      usage: {
+        input_tokens: 350,
+        cache_creation_input_tokens: 24,
+        cache_read_input_tokens: 23296
+      }
+    }
+  });
+  applyAnthropicStreamEvent(anthropicUsageState, 'message_delta', {
+    usage: {
+      output_tokens: 75
+    },
+    delta: {
+      type: 'message_delta',
+      stop_reason: 'end_turn'
+    }
+  });
+  const finalizedAnthropicUsage = finalizeAnthropicStreamState(anthropicUsageState, () => 'tool_generated');
+  assert.deepEqual(finalizedAnthropicUsage.usage, {
+    input_tokens: 350,
+    cache_creation_input_tokens: 24,
+    cache_read_input_tokens: 23296,
+    output_tokens: 75
+  });
+  console.log('PASS anthropic 流式 usage 会合并输入、缓存输入与输出统计');
+
   const anthropicServerToolState = createAnthropicStreamState();
   applyAnthropicStreamEvent(anthropicServerToolState, 'content_block_start', {
     index: 0,
@@ -4304,7 +4334,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
           }>;
         };
       }).configurationSchema?.properties?.thinkingEffort?.default,
-      'max'
+      'high'
     );
     assert.equal(
       (vendorGroupModels[0] as unknown as {
@@ -4826,8 +4856,6 @@ void main().catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;
 });
-
-
 
 
 

@@ -98,7 +98,7 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
       title: getMessage('thinkingEffortTitle'),
       description: getMessage('thinkingEffortDescription'),
       enum: [...CHAT_THINKING_EFFORT_VALUES],
-      default: 'max',
+      default: 'high',
       group: 'navigation'
     };
   }

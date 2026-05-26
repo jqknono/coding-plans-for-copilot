@@ -1,6 +1,6 @@
 # VS Code Chat Context Window 的值是怎么来的
 
-更新时间：2026-04-22
+更新时间：2026-05-26
 
 ## 一句话结论
 
@@ -66,6 +66,7 @@
 | [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) | `provideTokenCount(...)` 固定返回 `0`；既不做本地 prompt token 估算，也不复用上一轮上游 usage 作为当前请求 token 计数 |
 | [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) | `reportUsageToProgress(...)` 会读取响应里的 usage |
 | [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) | `updateContextUsageState(...)` 会把 usage 缓存到本仓库自己的 `CodingPlans Context` 状态栏状态里 |
+| [src/providers/genericProviderProtocols.ts](../src/providers/genericProviderProtocols.ts) | Anthropic 流式响应会合并 `message_start` 与 `message_delta` 的 usage，保留 `input_tokens`、缓存输入 token 与 `output_tokens` 后再更新 `CodingPlans Context` |
 | VS Code 源码 `src/vs/workbench/api/browser/mainThreadLanguageModels.ts` / `src/vs/workbench/api/common/extHostLanguageModels.ts` | `provideTokenCount(...)` 只被桥接到 `computeTokenLength(...)` / `countTokens(...)` 能力；本次未找到原生 `Context Window` UI 消费这条路径的源码 |
 
 因此可以明确下结论：

@@ -201,8 +201,13 @@ export interface AnthropicChatResponse {
   content?: AnthropicResponseContentBlock[];
   stop_reason?: string;
   usage?: {
+    prompt_tokens?: number;
+    completion_tokens?: number;
+    total_tokens?: number;
     input_tokens?: number;
     output_tokens?: number;
+    cache_creation_input_tokens?: number;
+    cache_read_input_tokens?: number;
   };
 }
 
@@ -662,7 +667,7 @@ export function applyAnthropicStreamEvent(
       state.responseId = payload.message.id;
     }
     if (payload.message.usage) {
-      state.usage = payload.message.usage;
+      state.usage = mergeAnthropicUsage(state.usage, payload.message.usage);
     }
     return { textDelta };
   }
@@ -718,7 +723,7 @@ export function applyAnthropicStreamEvent(
 
   if (resolvedEventType === 'message_delta') {
     if (payload.usage) {
-      state.usage = payload.usage;
+      state.usage = mergeAnthropicUsage(state.usage, payload.usage);
     }
     if (typeof payload.delta?.stop_reason === 'string' && payload.delta.stop_reason.length > 0) {
       state.stopReason = payload.delta.stop_reason;
@@ -726,6 +731,23 @@ export function applyAnthropicStreamEvent(
   }
 
   return { textDelta };
+}
+
+function mergeAnthropicUsage(
+  current: AnthropicChatResponse['usage'],
+  next: AnthropicChatResponse['usage']
+): AnthropicChatResponse['usage'] {
+  if (!current) {
+    return next ? { ...next } : undefined;
+  }
+  if (!next) {
+    return { ...current };
+  }
+
+  return {
+    ...current,
+    ...next
+  };
 }
 
 export function finalizeAnthropicStreamState(
