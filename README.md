@@ -77,6 +77,8 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 ### 配置示例
 
+> Moonshot/Kimi 注意事项：部分 Anthropic-compatible 入口在开启 thinking 且发生工具调用续轮时，会要求 assistant tool-call 历史消息携带非标准 `reasoning_content` 字段，并可能返回 `thinking is enabled but reasoning_content is missing in assistant tool call message`。本项目不为 Anthropic 路径默认发送该字段。使用 Moonshot/Kimi 的 Anthropic 入口时，建议在模型行 `More Actions` 中关闭 thinking；如需 thinking 能力，优先改用 OpenAI Chat 兼容 API 并配置 `apiStyle` 为 `openai-chat`。详见 [Moonshot Anthropic Thinking Tool-Call Compatibility](docs/moonshot-anthropic-thinking-tool-call.md)。
+
 **Anthropic 风格示例**
 
 ```json

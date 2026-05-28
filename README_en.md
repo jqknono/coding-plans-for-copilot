@@ -80,6 +80,8 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 
 ### Configuration Examples
 
+> Moonshot/Kimi note: some Anthropic-compatible entrypoints require a non-standard `reasoning_content` field on assistant tool-call history messages when thinking is enabled and a tool continuation occurs. They may return `thinking is enabled but reasoning_content is missing in assistant tool call message`. This project does not send that field by default on the Anthropic path. When using Moonshot/Kimi Anthropic entrypoints, disable thinking from the model row `More Actions`; if you need thinking, prefer the OpenAI Chat-compatible API and set `apiStyle` to `openai-chat`. See [Moonshot Anthropic Thinking Tool-Call Compatibility](docs/moonshot-anthropic-thinking-tool-call.md).
+
 **Anthropic Style Example**
 
 ```json

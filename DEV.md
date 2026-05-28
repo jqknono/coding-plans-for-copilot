@@ -206,6 +206,7 @@ npm run test:pages
     - `openai-chat`：使用 `request.modelOptions.thinkingEffort`，可选 `none` / `high` / `max`；模型行 `More Actions` 默认值为 `high`；`none` 发送 `thinking: { type: "disabled" }`，`high` / `max` 发送 `thinking: { type: "enabled" }` 与 `reasoning_effort`
     - `openai-responses`：使用 `request.modelOptions.thinkingEffort`，可选 `low` / `medium` / `high` / `xhigh`；发送 `reasoning: { effort }`
     - `anthropic`：使用 `request.modelOptions.thinking` 作为开关，`true` 发送 `thinking: { type: "adaptive" }`，`false` 发送 `thinking: { type: "disabled" }`；使用 `request.modelOptions.effort` 发送 `output_config.effort`，可选 `low` / `medium` / `high` / `xhigh` / `max`
+  - Moonshot/Kimi Anthropic-compatible 入口在 thinking + tool continuation 场景下可能要求上一条 assistant tool-call 历史消息携带非标准 `reasoning_content`，否则返回 `thinking is enabled but reasoning_content is missing in assistant tool call message`；当前不在 Anthropic 路径实现该字段的 tool continuation 回传，建议关闭 thinking 或改走 `openai-chat` 兼容 API。
 - 未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
 - 请求链路默认优先上游真实流式传输；若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志，不新增单独的 stream 配置开关。
