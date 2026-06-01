@@ -156,6 +156,11 @@ async function loadPlaywrightChromium(label) {
   return chromium;
 }
 
+function getPlaywrightLaunchOptions() {
+  const channel = String(process.env.PLAYWRIGHT_BROWSER_CHANNEL || "").trim();
+  return channel ? { channel, headless: true } : { headless: true };
+}
+
 async function blockNonEssentialPlaywrightRequests(page) {
   await page.route("**/*", (route) => {
     const request = route.request();
@@ -1787,7 +1792,7 @@ async function parseZAiCustomPricing() {
   const sourceUrl = "https://z.ai/subscribe";
   const docsUrl = "https://docs.z.ai/devpack/overview";
   const chromium = await loadPlaywrightChromium("z.ai parser");
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch(getPlaywrightLaunchOptions());
   try {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);

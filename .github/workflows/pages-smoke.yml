@@ -2,6 +2,7 @@ name: GitHub Pages Smoke Tests
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
+  PLAYWRIGHT_BROWSER_CHANNEL: "chrome"
 
 on:
   workflow_dispatch:
@@ -23,8 +24,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
+      - name: Verify system Chrome
+        run: |
+          command -v google-chrome
+          google-chrome --version
 
       - name: Start local Pages preview
         run: |

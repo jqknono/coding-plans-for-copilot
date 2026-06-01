@@ -63,12 +63,17 @@ async function fetchJsonDirect(url) {
 // ─── Playwright fallback (bypasses Cloudflare) ───
 let _browser = null;
 
+function getPlaywrightLaunchOptions() {
+  const channel = String(process.env.PLAYWRIGHT_BROWSER_CHANNEL || "").trim();
+  return channel ? { channel, headless: true } : { headless: true };
+}
+
 async function getPlaywrightBrowser() {
   try {
     const { chromium } = require("playwright");
     if (!_browser) {
       console.log("[linuxdo] launching Playwright (headless chromium)...");
-      _browser = await chromium.launch({ headless: true });
+      _browser = await chromium.launch(getPlaywrightLaunchOptions());
     }
     return _browser;
   } catch {

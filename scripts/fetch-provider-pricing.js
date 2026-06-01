@@ -626,6 +626,11 @@ async function loadPlaywrightChromium(label) {
   return chromium;
 }
 
+function getPlaywrightLaunchOptions() {
+  const channel = String(process.env.PLAYWRIGHT_BROWSER_CHANNEL || "").trim();
+  return channel ? { channel, headless: true } : { headless: true };
+}
+
 async function blockNonEssentialPlaywrightRequests(page) {
   await page.route("**/*", (route) => {
     const request = route.request();
@@ -643,7 +648,7 @@ async function blockNonEssentialPlaywrightRequests(page) {
 
 async function fetchRenderedPageText(pageUrl, label, options = {}) {
   const chromium = await loadPlaywrightChromium(label);
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch(getPlaywrightLaunchOptions());
   try {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);
@@ -676,7 +681,7 @@ async function fetchRenderedPageText(pageUrl, label, options = {}) {
 
 async function fetchRenderedPageHtml(pageUrl, label, options = {}) {
   const chromium = await loadPlaywrightChromium(label);
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch(getPlaywrightLaunchOptions());
   try {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);
@@ -1018,7 +1023,7 @@ function buildKimiCodePlansFromGoodsPayload(payload, options = {}) {
 
 async function fetchKimiDomesticMembershipTextWithPlaywright() {
   const chromium = await loadPlaywrightChromium("Kimi domestic membership parser");
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch(getPlaywrightLaunchOptions());
   try {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);
@@ -1169,7 +1174,7 @@ async function parseTencentCodingPlansWithPlaywright(pageUrl) {
     throw new Error("Playwright is unavailable for Tencent fallback");
   }
 
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch(getPlaywrightLaunchOptions());
   try {
     const page = await browser.newPage();
     await page.goto(pageUrl, {
@@ -1219,7 +1224,7 @@ async function parseZhipuCodingPlansWithPlaywright() {
   const pageUrl = "https://bigmodel.cn/glm-coding";
   const docsUrl = "https://docs.bigmodel.cn/cn/coding-plan/overview";
   const chromium = await loadPlaywrightChromium("Zhipu parser");
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium.launch(getPlaywrightLaunchOptions());
   try {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);

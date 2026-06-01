@@ -314,11 +314,12 @@ test("workflow verifies discussion labels without migration step", () => {
   assert.match(workflow, /verify_discussions:[\s\S]*run:\s*npm run crawler:verify-discussion-labels/);
 });
 
-test("workflow installs Playwright chromium before crawling linuxdo", () => {
+test("workflow verifies system Chrome before crawling linuxdo", () => {
   const workflow = loadWorkflowText();
+  assert.match(workflow, /PLAYWRIGHT_BROWSER_CHANNEL:\s*"chrome"/);
   assert.match(
     workflow,
-    /jobs:\s*crawl:[\s\S]*Install Playwright Chromium[\s\S]*npx playwright install --with-deps chromium[\s\S]*Run community crawler/,
+    /jobs:\s*crawl:[\s\S]*Verify system Chrome[\s\S]*google-chrome --version[\s\S]*Run community crawler/,
   );
 });
 
