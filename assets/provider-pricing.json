@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-05-28T09:23:26.849Z",
+  "generatedAt": "2026-06-01T11:41:32.872Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -36,12 +36,9 @@
             "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
             "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
             "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
-            "n n: n Pro 高级套餐 n",
-            "n 支持的模型 n: n 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 n 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7 n 不支持以上未列出的模型。 n",
-            "n 价格 n: n ¥ 200 /月 n",
-            "n 用量限制 n: n n n 每 5 小时 6,000 次请求 n n n 每周 45,000 次请求 n n n 每月 90,000 次请求 n n n",
-            "支持的模型: 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7 不支持以上未列出的模型。",
-            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
+            "支持的模型: 支持的模型判断说明 判定规则： 1. 本清单为精确字符串白名单 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 3. 禁止做版本兼容推理 判定示范： - ❌ \"GLM-5.1 \" → 清单只有 glm-5.0 → 不支持 - ❌ \"qwen3-coder-max \" → 清单无此项 → 不支持 仅支持以下精确版本： 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
+            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求",
+            "支持的模型: 支持的模型判断说明 判定规则： 1. 本清单为精确字符串白名单 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 3. 禁止做版本兼容推理 判定示范： - ❌ \"GLM-5.1\" → 清单只有 glm-5.0 → 不支持 - ❌ \"qwen3-coder-max\" → 清单无此项 → 不支持 仅支持以下精确版本： 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7"
           ]
         }
       ]
@@ -581,7 +578,9 @@
             "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: Task timed out after 30000ms"
     },
     {
       "provider": "kilo-pass",
@@ -895,96 +894,21 @@
       ],
       "plans": [
         {
-          "name": "Plus-极速版",
-          "currentPrice": 98,
-          "currentPriceText": "¥98/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "用量: 1500次模型调用/5 小时",
-          "serviceDetails": [
-            "1500次模型调用 / 5 小时",
-            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
-            "2.5 倍 Starter 套餐用量",
-            "约支持1~2个OpenClaw agent",
-            "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "生成图像和语音",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
-          ]
-        },
-        {
-          "name": "Max-极速版",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "用量: 4500次模型调用/5 小时",
-          "serviceDetails": [
-            "4500次模型调用 / 5 小时",
-            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
-            "7.5 倍 Starter 套餐用量",
-            "约支持2~3个OpenClaw agent",
-            "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "生成图片、语音、音乐和视频",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
-          ]
-        },
-        {
-          "name": "Ultra-极速版",
-          "currentPrice": 899,
-          "currentPriceText": "¥899/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "用量: 30000次模型调用/5 小时",
-          "serviceDetails": [
-            "30000次模型调用 / 5 小时",
-            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
-            "50 倍 Starter 套餐用量",
-            "约支持4~5个OpenClaw agent",
-            "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "生成图片、语音、音乐和视频",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
-          ]
-        },
-        {
-          "name": "Starter",
-          "currentPrice": 29,
-          "currentPriceText": "¥29/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "用量: 600次模型调用/5小时",
-          "serviceDetails": [
-            "600次模型调用 / 5小时",
-            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
-            "约支持1个OpenClaw agent",
-            "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
-          ]
-        },
-        {
           "name": "Plus",
           "currentPrice": 49,
           "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 1500次模型调用/5 小时",
+          "notes": "用量: 月度约 6 亿+ token M3 用量",
           "serviceDetails": [
-            "1500次模型调用 / 5 小时",
-            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
-            "2.5 倍 Starter 套餐用量",
-            "约支持1~2个OpenClaw agent",
+            "月度约 6 亿+ token M3 用量",
+            "支持 MiniMax 全系模型（M3 / M2.7 / 图像 / 语音 / 音乐）",
+            "可同时支持 3-4 个 Agent 并发运行",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "生成图像和语音",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
+            "1M 长上下文，适合处理长文档 / 大型代码库",
+            "M3 原生多模态理解：图像 / 视频输入",
+            "文本 / 图像 / 语音 / 音乐 共享同一额度"
           ]
         },
         {
@@ -994,16 +918,35 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 4500次模型调用/5 小时",
+          "notes": "用量: 月度约 18 亿+ token M3 用量",
           "serviceDetails": [
-            "4500次模型调用 / 5 小时",
-            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
-            "7.5 倍 Starter 套餐用量",
-            "约支持2~3个OpenClaw agent",
+            "月度约 18 亿+ token M3 用量",
+            "支持 MiniMax 全系模型（M3 / M2.7 / 图像 / 语音 / 音乐）",
+            "可同时支持 4-5 个 Agent 并发运行",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "生成图像、语音、音乐和视频",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
+            "1M 长上下文，适合处理长文档 / 大型代码库",
+            "M3 原生多模态理解：图像 / 视频输入",
+            "文本 / 图像 / 语音 / 音乐 共享同一额度",
+            "支持视频生成，3 条 / 日"
+          ]
+        },
+        {
+          "name": "Ultra",
+          "currentPrice": 469,
+          "currentPriceText": "¥469/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 月度约 55 亿+ token M3 用量",
+          "serviceDetails": [
+            "月度约 55 亿+ token M3 用量",
+            "支持 MiniMax 全系模型（M3 / M2.7 / 图像 / 语音 / 音乐）",
+            "可同时支持 6-7 个 Agent 并发运行",
+            "支持主流的编程工具，并持续扩展中",
+            "1M 长上下文，适合处理长文档 / 大型代码库",
+            "M3 原生多模态理解：图像 / 视频输入",
+            "文本 / 图像 / 语音 / 音乐 共享同一额度",
+            "支持视频生成，5 条 / 日"
           ]
         }
       ]
@@ -1651,6 +1594,7 @@
     }
   ],
   "failures": [
+    "jdcloud-ai: Task timed out after 30000ms",
     "infini-ai: Infini page does not expose standard monthly coding plan prices",
     "chutes-ai: Unable to locate Chutes subscription plan pricing text"
   ]
