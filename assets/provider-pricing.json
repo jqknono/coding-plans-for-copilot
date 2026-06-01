@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-01T11:41:32.872Z",
+  "generatedAt": "2026-05-28T09:23:26.849Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -201,20 +201,6 @@
       ],
       "plans": [
         {
-          "name": "Base",
-          "currentPrice": 3,
-          "currentPriceText": "$3/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "Frontier models not included",
-          "serviceDetails": [
-            "5X the value of pay-as-you-go",
-            "3% off PAYG pricing",
-            "PAYG requests beyond limit"
-          ]
-        },
-        {
           "name": "Plus",
           "currentPrice": 10,
           "currentPriceText": "$10/月",
@@ -225,8 +211,7 @@
           "serviceDetails": [
             "5X the value of pay-as-you-go",
             "6% off PAYG pricing",
-            "PAYG requests beyond limit",
-            "Access to frontier models"
+            "PAYG requests beyond limit"
           ]
         },
         {
@@ -240,13 +225,10 @@
           "serviceDetails": [
             "5X the value of pay-as-you-go",
             "10% off PAYG pricing",
-            "PAYG requests beyond limit",
-            "Access to frontier models"
+            "PAYG requests beyond limit"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "chutes-ai: Unable to locate Chutes subscription plan pricing text"
+      ]
     },
     {
       "provider": "compshare-ai",
@@ -502,7 +484,8 @@
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.b0dda214.js",
+        "https://docs.infini-ai.com/gen-studio/coding-plan/",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.b7091830.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -515,9 +498,9 @@
           "unit": "月",
           "notes": "暂不可购买",
           "serviceDetails": [
-            "1000次请求每5小时",
-            "支持Minimax、GLM、DeepSeek、Kimi等热门模型，持续上新",
-            "适配Claude Code、Cline等主流编程工具，持续更新...",
+            "适用场景：轻量日常改 Bug、写脚本、补单测、文档生成",
+            "用量限制：5 小时：1,000 次，7 天：6,000 次，月度：12,000 次",
+            "适配工具：Claude Code、Cursor、Roo Code (Cline)",
             "当前状态: 暂不可购买"
           ]
         },
@@ -530,16 +513,13 @@
           "unit": "月",
           "notes": "暂不可购买",
           "serviceDetails": [
-            "5000次请求每5小时",
-            "5倍Lite套餐用量",
-            "支持Minimax、GLM、DeepSeek、Kimi等热门模型，持续上新",
-            "适配Claude Code、Cline等主流编程工具，持续更新...",
+            "适用场景：高频生产力复杂排障、架构重构、连续迭代、多人协作",
+            "用量限制：5 小时：5,000 次，7 天：30,000 次，月度：60,000 次",
+            "适配工具：Claude Code、Cursor、Roo Code (Cline)",
             "当前状态: 暂不可购买"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "infini-ai: Infini page does not expose standard monthly coding plan prices"
+      ]
     },
     {
       "provider": "jdcloud-ai",
@@ -1594,7 +1574,6 @@
     }
   ],
   "failures": [
-    "jdcloud-ai: Task timed out after 30000ms",
     "infini-ai: Infini page does not expose standard monthly coding plan prices",
     "chutes-ai: Unable to locate Chutes subscription plan pricing text"
   ]

@@ -8,6 +8,8 @@ const {
   buildKimiCodePlansFromGoodsPayload,
   extractInfiniRouteChunkUrls,
   extractProviderIdFromFailure,
+  parseChutesPlansFromText,
+  parseInfiniCodingPlansFromDocsText,
   parseInfiniPlanFromBundle,
   parseInfiniServiceDetailsByTier,
   parseAliyunTokenPlansFromDocsHtml,
@@ -15,6 +17,7 @@ const {
   parseKimiDomesticMembershipPlansFromText,
   parseJdCloudCodingPlansFromDocsText,
   parseJdCloudCodingPlansFromPageHtml,
+  parseJdCloudCodingPlansFromText,
   restoreFailedProvidersFromSnapshot,
 } = require("../../scripts/fetch-provider-pricing.js");
 
@@ -150,6 +153,68 @@ test("parseJdCloudCodingPlansFromDocsText reads PackageOverview usage details", 
           "用量限制：Lite套餐的5倍用量。 每5小时：最多约 6,000 次请求。 每周：最多约 45,000 次请求。 每订阅月：最多约 90,000 次请求。",
           "支持模型：DeepSeek-V3.2、GLM-5、GLM-4.7、MiniMax-M2.5、Kimi-K2.5、Kimi-K2-Turbo、Qwen3-Coder",
           "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享",
+        ],
+      },
+    ],
+  );
+});
+
+test("parseJdCloudCodingPlansFromText reads current rendered activity page pricing", () => {
+  const pageText = `
+    Coding Plan Lite
+    产品首购
+    可购1个
+    每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求
+    19.9
+    元
+    /
+    1个月
+    原价：40元/1个月
+    模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等
+    工具：Claude Code、OpenCode、OpenClaw、Roo Code、Cursor
+    立即抢购
+    Coding Plan Pro
+    产品首购
+    可购1个
+    每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验
+    99.9
+    元
+    /
+    1个月
+    原价：200元/1个月
+    权益：享受 Lite 套餐的全部能力与权益
+    月用量： Lite 版的 5 倍用量
+    立即抢购
+  `;
+
+  const plans = parseJdCloudCodingPlansFromText(pageText);
+
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      originalPriceText: plan.originalPriceText,
+      serviceDetails: plan.serviceDetails,
+    })),
+    [
+      {
+        name: "Coding Plan Lite",
+        currentPriceText: "¥19.9/月",
+        originalPriceText: "¥40/月",
+        serviceDetails: [
+          "每天10:30开抢，每月最多18,000次请求，适合轻度开发者，满足日常基础代码辅助需求",
+          "模型：DeepSeek、GLM、MiniMax 、Qwen3-Coder、Kimi等",
+          "工具：Claude Code、OpenCode、OpenClaw、Roo Code、Cursor",
+        ],
+      },
+      {
+        name: "Coding Plan Pro",
+        currentPriceText: "¥99.9/月",
+        originalPriceText: "¥200/月",
+        serviceDetails: [
+          "每天10:30开抢，每月最多90,000次请求，适合重度开发者，享更高的调用额度与极速体验",
+          "权益：享受 Lite 套餐的全部能力与权益",
+          "月用量：Lite 版的 5 倍用量",
         ],
       },
     ],
@@ -307,6 +372,115 @@ test("Infini bundle parsers handle current request-limit wording", () => {
     "支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新",
     "适配Claude Code、Cline等主流编程工具，持续更新...",
   ]);
+});
+
+test("extractInfiniRouteChunkUrls accepts current async chunk loader helper", () => {
+  const mainScriptText = String.raw`path:"platform/ai",name:"platformAi",component:()=>tr((()=>import("./Index.c75df2cd.js")),["assets/js/Index.c75df2cd.js","assets/js/request.3e4c8420.js","assets/js/index.6f3221fe.js"])`;
+
+  const urls = extractInfiniRouteChunkUrls(
+    mainScriptText,
+    "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.b7091830.js",
+  );
+
+  assert.deepEqual(urls, [
+    "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.c75df2cd.js",
+    "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/request.3e4c8420.js",
+    "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/index.6f3221fe.js",
+  ]);
+});
+
+test("parseInfiniCodingPlansFromDocsText reads current docs pricing table", () => {
+  const pageText = `
+    GenStudio Infini 编码套餐（Coding Plan）是面向开发者的 AI 编程订阅服务。
+    清晰的预算管理：告别按 Token 计费的焦虑。Lite 与 Pro 包月套餐提供充足请求额度，实现可预期的成本控制。
+    Lite 与 Pro 套餐均支持上述所有厂商的模型，核心区别在于请求用量额度。
+    套餐 适用场景 5 小时配额 7 天配额 1 个月配额 价格 (刊例价)
+    Infini Coding Lite 轻量日常改 Bug、写脚本、补单测、文档生成 1,000 次 6,000 次 12,000 次 40 元/月
+    Infini Coding Pro 高频生产力复杂排障、架构重构、连续迭代、多人协作 5,000 次 30,000 次 60,000 次 200 元/月
+    Coding Plan 提供兼容 Anthropic 和 OpenAI 协议的接口，支持 Claude Code、Cursor、Roo Code (Cline) 等主流编程辅助工具。
+  `;
+
+  const plans = parseInfiniCodingPlansFromDocsText(pageText);
+
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      serviceDetails: plan.serviceDetails,
+    })),
+    [
+      {
+        name: "Infini Coding Lite",
+        currentPriceText: "¥40/月",
+        serviceDetails: [
+          "适用场景：轻量日常改 Bug、写脚本、补单测、文档生成",
+          "用量限制：5 小时：1,000 次，7 天：6,000 次，月度：12,000 次",
+          "适配工具：Claude Code、Cursor、Roo Code (Cline)",
+        ],
+      },
+      {
+        name: "Infini Coding Pro",
+        currentPriceText: "¥200/月",
+        serviceDetails: [
+          "适用场景：高频生产力复杂排障、架构重构、连续迭代、多人协作",
+          "用量限制：5 小时：5,000 次，7 天：30,000 次，月度：60,000 次",
+          "适配工具：Claude Code、Cursor、Roo Code (Cline)",
+        ],
+      },
+    ],
+  );
+});
+
+test("parseChutesPlansFromText tolerates home page plans without Base tier", () => {
+  const pageText = `
+    Pricing
+    Choose a plan that fits your needs.
+    Plus
+    $10
+    per month
+    5X the value of pay-as-you-go
+    6% off PAYG pricing
+    PAYG requests beyond limit
+    View limits
+    Get Started
+    Best Value
+    Pro
+    $20
+    per month
+    5X the value of pay-as-you-go
+    10% off PAYG pricing
+    PAYG requests beyond limit
+    View limits
+    Get Started
+    Enterprise
+    Contact us
+    Custom billing only
+  `;
+
+  const plans = parseChutesPlansFromText(pageText);
+
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      notes: plan.notes,
+      serviceDetails: plan.serviceDetails,
+    })),
+    [
+      {
+        name: "Plus",
+        currentPriceText: "$10/月",
+        notes: null,
+        serviceDetails: ["5X the value of pay-as-you-go", "6% off PAYG pricing", "PAYG requests beyond limit"],
+      },
+      {
+        name: "Pro",
+        currentPriceText: "$20/月",
+        notes: "Best Value",
+        serviceDetails: ["5X the value of pay-as-you-go", "10% off PAYG pricing", "PAYG requests beyond limit"],
+      },
+    ],
+  );
 });
 
 test("parseAliyunTokenPlansFromDocsHtml reads team seat and shared credit package pricing", () => {

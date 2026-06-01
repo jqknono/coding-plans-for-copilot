@@ -555,6 +555,50 @@ function parseJdCloudCodingPlansFromPageHtml(html) {
   return parseJdCloudCodingPlansFromDocsText(decodedHtml);
 }
 
+function parseJdCloudCodingPlansFromText(pageText) {
+  const text = normalizeText(pageText);
+  if (!/Coding\s*Plan\s*(Lite|Pro)/i.test(text) || !/原价：/i.test(text)) {
+    return [];
+  }
+
+  const plans = [];
+  const planMatches = text.matchAll(
+    /Coding\s*Plan\s*(Lite|Pro)\s*产品首购\s*可购1个\s*([\s\S]{0,220}?)\s*([0-9]+(?:\.[0-9]+)?)\s*元\s*\/\s*1个月\s*原价：\s*([0-9]+(?:\.[0-9]+)?)\s*元\s*\/\s*1个月\s*([\s\S]{0,260}?)(?=立即抢购|Coding\s*Plan\s*(?:Lite|Pro)|多生态兼容|$)/gi,
+  );
+
+  for (const match of planMatches) {
+    const tier = normalizeText(match[1]);
+    const description = normalizeText(match[2]);
+    const currentAmount = Number.parseFloat(match[3]);
+    const originalAmount = Number.parseFloat(match[4]);
+    const detailText = normalizeText(match[5]);
+    const detailMatches = detailText.matchAll(/(模型|工具|权益|月用量)：\s*([^：]+?)(?=(?:模型|工具|权益|月用量)：|$)/g);
+    const details = [];
+
+    for (const detailMatch of detailMatches) {
+      const label = normalizeText(detailMatch[1]);
+      const value = normalizeText(detailMatch[2]);
+      if (label && value) {
+        details.push(`${label}：${value}`);
+      }
+    }
+
+    plans.push(
+      asPlan({
+        name: `Coding Plan ${tier}`,
+        currentPriceText: Number.isFinite(currentAmount) ? `¥${formatAmount(currentAmount)}/月` : null,
+        currentPrice: Number.isFinite(currentAmount) ? currentAmount : null,
+        originalPriceText: Number.isFinite(originalAmount) ? `¥${formatAmount(originalAmount)}/月` : null,
+        originalPrice: Number.isFinite(originalAmount) ? originalAmount : null,
+        unit: "月",
+        serviceDetails: [description || null, ...details],
+      }),
+    );
+  }
+
+  return dedupePlans(plans);
+}
+
 async function loadExistingPricingSnapshot(outputFile = OUTPUT_FILE) {
   try {
     const raw = await fs.readFile(outputFile, "utf8");
@@ -2036,7 +2080,10 @@ async function parseJdCloudCodingPlans() {
       waitForTimeoutMs: 12_000,
       timeoutMs: 20_000,
     });
-    pricingPlans = parseJdCloudCodingPlansFromPageHtml(rendered.html);
+    pricingPlans = parseJdCloudCodingPlansFromText(rendered.text);
+    if (pricingPlans.length === 0) {
+      pricingPlans = parseJdCloudCodingPlansFromPageHtml(rendered.html);
+    }
   } catch (error) {
     errors.push(`Playwright price parse failed: ${error.message || error}`);
   }
@@ -2045,6 +2092,9 @@ async function parseJdCloudCodingPlans() {
     try {
       const html = await fetchText(priceUrl);
       pricingPlans = parseJdCloudCodingPlansFromPageHtml(html);
+      if (pricingPlans.length === 0) {
+        pricingPlans = parseJdCloudCodingPlansFromText(stripTags(html));
+      }
     } catch (error) {
       errors.push(`price HTML fetch failed: ${error.message || error}`);
     }
@@ -2508,7 +2558,7 @@ function extractInfiniRouteChunkUrls(mainScriptText, mainScriptUrl) {
     return absoluteUrl(chunkPath, mainScriptUrl);
   };
   const routeMatch = String(mainScriptText || "").match(
-    /path:"platform\/ai",name:"platformAi",component:\(\)=>mt\(\(\(\)=>import\("\.\/([^"]+)"\)\),\[([^\]]+)\]\)/,
+    /path:"platform\/ai",name:"platformAi",component:\(\)=>[A-Za-z_$][\w$]*\(\(\(\)=>import\("\.\/([^"]+)"\)\),\[([^\]]+)\]\)/,
   );
   if (!routeMatch) {
     return [];
@@ -2602,6 +2652,7 @@ function buildInfiniStaticFallbackPlans() {
 
 async function parseInfiniCodingPlans() {
   const pageUrl = "https://cloud.infini-ai.com/platform/ai";
+  const docsUrl = "https://docs.infini-ai.com/gen-studio/coding-plan/";
   const canPurchaseUrl = "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase";
   const html = await fetchText(pageUrl);
   const mainScriptUrl =
@@ -2641,13 +2692,15 @@ async function parseInfiniCodingPlans() {
     }
   }
   if (selectedPlans.length === 0) {
-    const rendered = await fetchRenderedPageText(pageUrl, "Infini fallback parser", {
-      waitForText: /Infini\s+Coding\s+Plan|无穹编码套餐/,
+    const rendered = await fetchRenderedPageText(docsUrl, "Infini docs parser", {
+      waitForText: /Infini\s+Coding\s+Plan|Lite\s+与\s+Pro\s+包月套餐|40\s*元\/月/,
+      timeoutMs: 20_000,
+      waitForTimeoutMs: 12_000,
     }).catch(() => null);
-    if (!/Infini\s+Coding\s+Plan|无穹编码套餐/i.test(rendered?.text || "")) {
+    selectedPlans = parseInfiniCodingPlansFromDocsText(rendered?.text || "");
+    if (selectedPlans.length === 0) {
       throw new Error("Infini page does not expose standard monthly coding plan prices");
     }
-    selectedPlans = buildInfiniStaticFallbackPlans();
   }
 
   let canPurchaseItems = [];
@@ -2698,7 +2751,7 @@ async function parseInfiniCodingPlans() {
 
   return {
     provider: PROVIDER_IDS.INFINI,
-    sourceUrls: unique([pageUrl, mainScriptUrl, selectedChunkUrl, canPurchaseUrl]),
+    sourceUrls: unique([pageUrl, docsUrl, mainScriptUrl, selectedChunkUrl, canPurchaseUrl]),
     fetchedAt: new Date().toISOString(),
     plans: dedupePlans(plans),
   };
@@ -2792,6 +2845,49 @@ function parseAliyunServiceDetailsFromDocsHtml(html) {
   }
 
   return detailsByTier;
+}
+
+function parseInfiniCodingPlansFromDocsText(pageText) {
+  const rawText = decodeUnicodeLiteral(String(pageText || ""));
+  const text = /<[^>]+>/.test(rawText) ? normalizeText(stripTags(rawText)) : normalizeText(rawText);
+  if (!/Infini\s+编码套餐|Infini\s+Coding\s+Plan|Coding Plan/i.test(text)) {
+    return [];
+  }
+
+  const toolsText = /支持\s+Claude Code、Cursor、Roo Code \(Cline\)\s+等主流编程辅助工具/.test(text)
+    ? "Claude Code、Cursor、Roo Code (Cline)"
+    : null;
+  const planMatches = text.matchAll(
+    /Infini\s+Coding\s+(Lite|Pro)\s+(.+?)\s+([0-9,]+)\s*次\s+([0-9,]+)\s*次\s+([0-9,]+)\s*次\s+([0-9]+(?:\.[0-9]+)?)\s*元\s*\/\s*月/gi,
+  );
+  const plans = [];
+
+  for (const match of planMatches) {
+    const tier = normalizeText(match[1]);
+    const scenario = normalizeText(match[2]);
+    const quota5Hour = normalizeText(match[3]);
+    const quota7Day = normalizeText(match[4]);
+    const quotaMonth = normalizeText(match[5]);
+    const currentAmount = Number.parseFloat(match[6]);
+
+    plans.push(
+      asPlan({
+        name: `Infini Coding ${tier}`,
+        currentPriceText: Number.isFinite(currentAmount) ? `¥${formatAmount(currentAmount)}/月` : null,
+        currentPrice: Number.isFinite(currentAmount) ? currentAmount : null,
+        unit: "月",
+        serviceDetails: [
+          scenario ? `适用场景：${scenario}` : null,
+          quota5Hour && quota7Day && quotaMonth
+            ? `用量限制：5 小时：${quota5Hour} 次，7 天：${quota7Day} 次，月度：${quotaMonth} 次`
+            : null,
+          toolsText ? `适配工具：${toolsText}` : null,
+        ],
+      }),
+    );
+  }
+
+  return dedupePlans(plans);
 }
 
 async function parseAliyunCodingPlans() {
@@ -3851,42 +3947,74 @@ async function parseSyntheticPlans() {
   };
 }
 
+function parseChutesPlansFromText(pageText) {
+  const text = normalizeText(pageText);
+  if (!/Choose a plan that fits your needs/i.test(text) && !/Pricing/i.test(text)) {
+    return [];
+  }
+
+  const tierNames = ["Base", "Plus", "Pro", "Enterprise"];
+  const plans = [];
+
+  for (let index = 0; index < tierNames.length; index += 1) {
+    const tier = tierNames[index];
+    const nextTier = tierNames[index + 1] || "AI Compute for Everyone";
+    const blockMatch = text.match(new RegExp(`\\b${tier}\\b([\\s\\S]{0,320}?)(?=\\b${nextTier}\\b|$)`, "i"));
+    if (!blockMatch) {
+      continue;
+    }
+
+    const block = normalizeText(blockMatch[1]);
+    const priceMatch = block.match(/\$\s*([0-9]+(?:\.[0-9]+)?)\s*per\s*month/i);
+    if (!priceMatch) {
+      continue;
+    }
+
+    const currentAmount = Number.parseFloat(priceMatch[1]);
+    const details = [];
+    const valueMatch = block.match(/([0-9]+X\s+the value of pay-as-you-go)/i);
+    const discountMatch = block.match(/([0-9]+%\s+off\s+PAYG\s+pricing)/i);
+    if (valueMatch) {
+      details.push(valueMatch[1]);
+    }
+    if (discountMatch) {
+      details.push(discountMatch[1]);
+    }
+    if (/PAYG requests beyond limit/i.test(block)) {
+      details.push("PAYG requests beyond limit");
+    }
+    if (/Frontier models not included/i.test(block)) {
+      details.push("Frontier models not included");
+    }
+    if (/Access to frontier models/i.test(block)) {
+      details.push("Access to frontier models");
+    }
+
+    plans.push(
+      asPlan({
+        name: tier,
+        currentPriceText: Number.isFinite(currentAmount) ? `$${formatAmount(currentAmount)}/月` : null,
+        currentPrice: Number.isFinite(currentAmount) ? currentAmount : null,
+        unit: "月",
+        notes: new RegExp(`Best Value\\s+${tier}\\b`, "i").test(text) ? "Best Value" : null,
+        serviceDetails: details,
+      }),
+    );
+  }
+
+  return dedupePlans(plans);
+}
+
 async function parseChutesPlans() {
   const pageUrl = "https://chutes.ai/";
   const pricingUrl = "https://chutes.ai/pricing";
   const { text } = await fetchRenderedPageText(pageUrl, "Chutes pricing parser", {
-    waitForText: /Choose a plan that fits your needs|Base\s+\$3/,
+    waitForText: /Choose a plan that fits your needs|Plus\s+\$10|Pro\s+\$20/,
   });
-  if (!/Base\s+\$3\s+per month/i.test(text) || !/Plus\s+\$10\s+per month/i.test(text)) {
+  const plans = parseChutesPlansFromText(text);
+  if (plans.length === 0) {
     throw new Error("Unable to locate Chutes subscription plan pricing text");
   }
-
-  const plans = [
-    asPlan({
-      name: "Base",
-      currentPriceText: "$3/月",
-      currentPrice: 3,
-      unit: "月",
-      notes: "Frontier models not included",
-      serviceDetails: ["5X the value of pay-as-you-go", "3% off PAYG pricing", "PAYG requests beyond limit"],
-    }),
-    asPlan({
-      name: "Plus",
-      currentPriceText: "$10/月",
-      currentPrice: 10,
-      unit: "月",
-      notes: null,
-      serviceDetails: ["5X the value of pay-as-you-go", "6% off PAYG pricing", "PAYG requests beyond limit", "Access to frontier models"],
-    }),
-    asPlan({
-      name: "Pro",
-      currentPriceText: "$20/月",
-      currentPrice: 20,
-      unit: "月",
-      notes: "Best Value",
-      serviceDetails: ["5X the value of pay-as-you-go", "10% off PAYG pricing", "PAYG requests beyond limit", "Access to frontier models"],
-    }),
-  ];
 
   return {
     provider: PROVIDER_IDS.CHUTES,
@@ -4073,12 +4201,15 @@ module.exports = {
   extractProviderIdFromFailure,
   extractInfiniRouteChunkUrls,
   buildKimiCodePlansFromGoodsPayload,
+  parseChutesPlansFromText,
   parseInfiniPlanFromBundle,
+  parseInfiniCodingPlansFromDocsText,
   parseInfiniServiceDetailsByTier,
   parseAliyunTokenPlansFromDocsHtml,
   parseCompshareCodingPlansFromHtml,
   parseKimiDomesticMembershipPlansFromText,
   parseJdCloudCodingPlansFromDocsText,
   parseJdCloudCodingPlansFromPageHtml,
+  parseJdCloudCodingPlansFromText,
   restoreFailedProvidersFromSnapshot,
 };
