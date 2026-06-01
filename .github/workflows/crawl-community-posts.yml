@@ -4,12 +4,11 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 on:
-  schedule:
-    - cron: "0 6 * * *" # 06:00 UTC = 14:00 Beijing time
   workflow_dispatch:
 
 jobs:
   crawl:
+    if: ${{ false }} # Temporarily disabled.
     runs-on: ubuntu-latest
     permissions:
       contents: read

@@ -4,8 +4,6 @@ env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: "true"
 
 on:
-  schedule:
-    - cron: "0 2 * * *"
   workflow_dispatch:
 
 concurrency:
@@ -14,6 +12,7 @@ concurrency:
 
 jobs:
   update-pricing:
+    if: ${{ false }} # Temporarily disabled.
     runs-on: ubuntu-latest
     permissions:
       contents: write
