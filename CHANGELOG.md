@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.13] - 2026-06-01
+- docs: 更新 Moonshot/Kimi 使用 Anthropic 协议的注意事项
+- feat(model): 将 thinkingEffort 默认值调整为 high 并优化 Anthropic 使用量统计
+- docs(readme): 添加项目使用演示动图
+- docs(config): 将默认模型上下文窗口大小更新为 400k tokens
+- docs(changelog): 更新版本变更日志 0.9.11
+- feat(provider): 更新 Anthropic thinking 配置项名称与值
+- docs(changelog): 更新版本记录 0.9.10
+- feat(provider): 更新 openai-responses 协议并添加推理参数自动降级
+- feat(adapter): 支持转发模型配置并更新版本号
+- feat(config): 优化模型参数配置与 Thinking Effort 协议适配
+- chore(release): 发布版本 0.9.7
+- feat(config): 新增模型 enabled 配置项以支持隐藏模型
+- feat(provider): 优化语言模型提供程序注册与分组过滤逻辑
+- feat(provider): 优化 openai-responses 协议支持并引入 Personality 配置
+
 ## [0.9.0] - 2026-05-19
 - feat(config): 废弃供应商与模型级 temperature 配置
 - feat(config): 移除模型级 thinkingEffort 配置并改为请求级设置
@@ -50,6 +66,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.7.14] - 2026-04-28
 - chore: 升级版本至 0.7.14
-
-## [0.7.12] - 2026-04-27
-- chore: 升级版本至 0.7.9 并更新变更日志
