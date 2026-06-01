@@ -472,7 +472,7 @@
         "crawler:setup-categories": "node ./scripts/discussions/setup-discussion-categories.js"
     },
     "devDependencies": {
-        "@playwright/test": "^1.58.2",
+        "@playwright/test": "1.58.2",
         "@types/mocha": "^10.0.10",
         "@types/node": "^20.14.9",
         "@types/vscode": "^1.120.0",
