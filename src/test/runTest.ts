@@ -2226,25 +2226,27 @@ async function runGenericProviderThinkingEffortTests(
   assert.equal('reasoning_effort' in openAIChatPayload, false);
   console.log('PASS openai-chat 在请求级 none 模式下会发送 thinking.disabled 且省略 reasoning_effort');
 
-  const overriddenOpenAIChatPayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'reasoner',
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      thinkingEffort: 'high'
-    }
-  });
-  assert.deepEqual(overriddenOpenAIChatPayload.thinking, { type: 'enabled' });
-  assert.equal(overriddenOpenAIChatPayload.reasoning_effort, 'high');
+  for (const thinkingEffort of ['low', 'medium', 'high', 'xhigh', 'max'] as const) {
+    const overriddenOpenAIChatPayload = await capturePayload([{
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [{
+        name: 'reasoner',
+        contextSize: 64000,
+        maxInputTokens: 32000,
+        maxOutputTokens: 16000,
+        capabilities: { tools: false, vision: false }
+      }]
+    }], 'Vendor/reasoner', {
+      modelOptions: {
+        thinkingEffort
+      }
+    });
+    assert.deepEqual(overriddenOpenAIChatPayload.thinking, { type: 'enabled' });
+    assert.equal(overriddenOpenAIChatPayload.reasoning_effort, thinkingEffort);
+  }
   console.log('PASS 请求级 thinkingEffort 可驱动 openai-chat 的 thinking 与 reasoning_effort');
 
   const overriddenTemperaturePayload = await capturePayload([{
@@ -4323,7 +4325,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
           }>;
         };
       }).configurationSchema?.properties?.thinkingEffort?.enum,
-      ['none', 'high', 'max']
+      ['none', 'low', 'medium', 'high', 'xhigh', 'max']
     );
     assert.equal(
       (vendorGroupModels[0] as unknown as {
@@ -4856,8 +4858,6 @@ void main().catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;
 });
-
-
 
 
 

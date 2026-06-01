@@ -54,7 +54,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
 3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
 4. 打开 Copilot Chat（`Ctrl+L`），在模型选择器中选择 `Coding Plans` 提供的模型
-5. 如需设置 `topP`，在 `coding-plans.vendors[].models[]` 中配置模型级覆盖项；`temperature` 与 `Thinking Effort` 请在模型行 `More Actions` 中按请求设置；Responses API 模型会在 `More Actions` 中显示 `Personality`，并通过 `instructions` 生效
+5. 如需设置 `topP`，在 `coding-plans.vendors[].models[]` 中配置模型级覆盖项；`temperature` 与 `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型的 `Thinking Effort` 支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`；Responses API 模型会在 `More Actions` 中显示 `Personality`，并通过 `instructions` 生效
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
 
 ### 内置供应商端点

@@ -55,7 +55,7 @@
   "personalityTitle": "Personality",
   "personalityDescription": "Request style for Responses API models. Supported values: `pragmatic`, `friendly`. The value is written into instructions and is not sent as an upstream parameter.",
   "thinkingEffortTitle": "Thinking Effort",
-  "thinkingEffortDescription": "Shown in the model row More Actions menu. Supported values: `none`, `high`, `max`; the default is `high`. Saved values are passed by VS Code with model requests.",
+  "thinkingEffortDescription": "Shown in the model row More Actions menu. Supported values: `none`, `low`, `medium`, `high`, `xhigh`, `max`; the default is `high`. Saved values are passed by VS Code with model requests.",
   "responsesThinkingEffortDescription": "More Actions configuration for Responses API models. Supported values: `low`, `medium`, `high`, `xhigh`. Saved values are passed by VS Code with model requests.",
   "effortTitle": "Effort",
   "anthropicEffortDescription": "More Actions effort configuration for Anthropic API models. Supported values: `low`, `medium`, `high`, `xhigh`, `max`. Saved values are passed by VS Code with model requests.",

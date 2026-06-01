@@ -54,7 +54,7 @@ Click the **Install** button on the marketplace page, which will automatically o
 2. Pick the platform you've registered with from the vendor picker (e.g., Zhipu, Kimi, Volcengine, etc.)
 3. Select "Set API Key" and paste your API Key; the extension stores it and refreshes models
 4. Open Copilot Chat (`Ctrl+L`) and choose a model provided by `Coding Plans` in the model picker
-5. To configure `topP`, set model-level overrides in `coding-plans.vendors[].models[]`; set `temperature` and `Thinking Effort` per request from the model row `More Actions` menu; Responses API models show `Personality` in `More Actions` and apply it through `instructions`
+5. To configure `topP`, set model-level overrides in `coding-plans.vendors[].models[]`; set `temperature` and `Thinking Effort` per request from the model row `More Actions` menu, where OpenAI Chat-compatible models support `none` / `low` / `medium` / `high` / `xhigh` / `max`; Responses API models show `Personality` in `More Actions` and apply it through `instructions`
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 
 ### Built-in Vendor Endpoints
