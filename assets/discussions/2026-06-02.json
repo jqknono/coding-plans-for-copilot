@@ -1,0 +1,63 @@
+{
+  "date": "2026-06-02",
+  "generatedAt": "2026-06-02T07:47:16.259Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 57,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "GitHub Copilot": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1217324",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1217324",
+      "title": "copilot 用不了了现在用什么",
+      "content": "之前 copilot 按次数扣费，我就用来跑工作流 昨天恢复按量计费，一天就把点数跑完了 现在还有没有什么适合跑工作流的 coding plan 呀",
+      "author": "koukyo",
+      "createdAt": "2026-06-02T06:53:44.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.97,
+        "supplier": "GitHub Copilot",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.94,
+        "summary": "之前 Copilot 按次数扣费，用来跑工作流，恢复按量计费后一天点数就用完了，想找其他适合跑工作流的 coding plan。",
+        "topics": [
+          "定价",
+          "套餐",
+          "工作流",
+          "体验"
+        ],
+        "planMentioned": "Copilot",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-02T07:49:28.988Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
