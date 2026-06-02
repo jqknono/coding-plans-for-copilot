@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-05-28T09:23:26.849Z",
+  "generatedAt": "2026-06-02T03:14:38.062Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ccb11fcab3d4c6a09142588ec3d3836a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/2067fc06c9361065889d1d792d26142a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -558,9 +558,7 @@
             "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "jdcloud-ai: Task timed out after 30000ms"
+      ]
     },
     {
       "provider": "kilo-pass",
@@ -1388,7 +1386,9 @@
             "使用 LingClaw 构建个人助理"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "x-aio: Request failed: https://code.x-aio.com/assets/index-C9iJKT_h.js -> 525; Playwright fallback failed: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-linux64/chrome-headless-shell ╔═════════════════════════════════════════════════════════════════════════╗ ║ Looks like Playwright Test or Playwright was just installed or updated. ║ ║ Please run the following command to download new browsers: ║ ║ ║ ║ npx playwright install ║ ║ ║ ║ <3 Playwright Team ║ ╚═════════════════════════════════════════════════════════════════════════╝"
     },
     {
       "provider": "xfyun-ai",
@@ -1574,7 +1574,6 @@
     }
   ],
   "failures": [
-    "infini-ai: Infini page does not expose standard monthly coding plan prices",
-    "chutes-ai: Unable to locate Chutes subscription plan pricing text"
+    "x-aio: Request failed: https://code.x-aio.com/assets/index-C9iJKT_h.js -> 525; Playwright fallback failed: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-linux64/chrome-headless-shell\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
   ]
 }
