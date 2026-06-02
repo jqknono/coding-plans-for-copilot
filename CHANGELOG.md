@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.9.15] - 2026-06-02
+- Maintenance updates
+
 ## [0.9.14] - 2026-06-02
 - feat(config): 将 API Key 字段标记为废弃并支持临时回退配置
 - feat(pricing): 更新 AI 供应商套餐信息与解析脚本
@@ -63,9 +66,3 @@ All notable changes to this project will be documented in this file.
 - chore: 统一 API 密钥变量名并优化工作流推送逻辑
 - feat(provider): 更新服务商指标与定价并增强抓取校验
 - feat(provider): 更新模型服务商运行指标与定价数据
-
-## [0.7.16] - 2026-04-28
-- fix(provider): 清理转发至 Anthropic 的工具 Schema 扩展字段
-- feat(provider): 优化 topP 采样逻辑并增强 Anthropic 兼容性
-- ci: 在版本标签工作流中增加 GitHub Release 创建和 VSIX 上传
-- fix #98: 支持 DeepSeek 思考模型上下文往返并优化 Token 计数逻辑
