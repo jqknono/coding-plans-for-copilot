@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-06-01T11:20:47.642Z",
-  "generatedAtBeijing": "2026年6月1日 19:20:47",
-  "sourceGeneratedAt": "2026-05-28T09:23:26.849Z",
-  "sourceGeneratedAtBeijing": "2026年5月28日 17:23:26",
-  "sourceMetricsGeneratedAt": "2026-05-28T09:23:27.479Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年5月28日 17:23:27",
+  "generatedAt": "2026-06-02T09:34:49.575Z",
+  "generatedAtBeijing": "2026年6月2日 17:34:49",
+  "sourceGeneratedAt": "2026-06-02T09:34:26.623Z",
+  "sourceGeneratedAtBeijing": "2026年6月2日 17:34:26",
+  "sourceMetricsGeneratedAt": "2026-06-02T09:34:36.938Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年6月2日 17:34:36",
   "summary": {
-    "openrouterProviderCount": 84,
-    "metricsProviderCount": 39,
-    "resolvedMetricsProviderCount": 39,
+    "openrouterProviderCount": 83,
+    "metricsProviderCount": 37,
+    "resolvedMetricsProviderCount": 37,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
-    "heuristicProviderCount": 7,
-    "providersWithPlans": 15,
-    "pendingCount": 24,
+    "heuristicProviderCount": 8,
+    "providersWithPlans": 16,
+    "pendingCount": 21,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -50,18 +50,15 @@
             "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
             "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
             "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
-            "n n: n Pro 高级套餐 n",
-            "n 支持的模型 n: n 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 n 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7 n 不支持以上未列出的模型。 n",
-            "n 价格 n: n ¥ 200 /月 n",
-            "n 用量限制 n: n n n 每 5 小时 6,000 次请求 n n n 每周 45,000 次请求 n n n 每月 90,000 次请求 n n n",
-            "支持的模型: 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7 不支持以上未列出的模型。",
-            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
+            "支持的模型: 支持的模型判断说明 判定规则： 1. 本清单为精确字符串白名单 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 3. 禁止做版本兼容推理 判定示范： - ❌ \"GLM-5.1 \" → 清单只有 glm-5.0 → 不支持 - ❌ \"qwen3-coder-max \" → 清单无此项 → 不支持 仅支持以下精确版本： 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
+            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求",
+            "支持的模型: 支持的模型判断说明 判定规则： 1. 本清单为精确字符串白名单 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 3. 禁止做版本兼容推理 判定示范： - ❌ \"GLM-5.1\" → 清单只有 glm-5.0 → 不支持 - ❌ \"qwen3-coder-max\" → 清单无此项 → 不支持 仅支持以下精确版本： 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7"
           ]
         }
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ccb11fcab3d4c6a09142588ec3d3836a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/2067fc06c9361065889d1d792d26142a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -126,20 +123,6 @@
       "providerId": "chutes-ai",
       "plans": [
         {
-          "name": "Base",
-          "currentPrice": 3,
-          "currentPriceText": "$3/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "Frontier models not included",
-          "serviceDetails": [
-            "5X the value of pay-as-you-go",
-            "3% off PAYG pricing",
-            "PAYG requests beyond limit"
-          ]
-        },
-        {
           "name": "Plus",
           "currentPrice": 10,
           "currentPriceText": "$10/月",
@@ -150,8 +133,7 @@
           "serviceDetails": [
             "5X the value of pay-as-you-go",
             "6% off PAYG pricing",
-            "PAYG requests beyond limit",
-            "Access to frontier models"
+            "PAYG requests beyond limit"
           ]
         },
         {
@@ -165,8 +147,7 @@
           "serviceDetails": [
             "5X the value of pay-as-you-go",
             "10% off PAYG pricing",
-            "PAYG requests beyond limit",
-            "Access to frontier models"
+            "PAYG requests beyond limit"
           ]
         }
       ],
@@ -238,84 +219,58 @@
       "parseMode": "official-website-heuristic"
     },
     {
+      "slug": "digitalocean",
+      "openrouterName": "DigitalOcean",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 4,
+          "currentPriceText": "$4/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.digitalocean.com/pricing",
+          "serviceDetails": null
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 12,
+          "currentPriceText": "$12/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": null
+        },
+        {
+          "name": "官网价格参考 3",
+          "currentPrice": 11,
+          "currentPriceText": "$11/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": null
+        }
+      ],
+      "sourceUrls": [
+        "https://www.digitalocean.com",
+        "https://www.digitalocean.com/pricing"
+      ],
+      "pricingPageUrl": "https://www.digitalocean.com/pricing",
+      "officialWebsiteUrl": "https://www.digitalocean.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.digitalocean.com/legal/privacy-policy",
+      "termsOfServiceUrl": "https://www.digitalocean.com/legal/terms-of-service-agreement",
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
+    },
+    {
       "slug": "minimax",
       "openrouterName": "Minimax",
       "providerId": "minimax-ai",
       "plans": [
-        {
-          "name": "Plus-极速版",
-          "currentPrice": 98,
-          "currentPriceText": "¥98/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "用量: 1500次模型调用/5 小时",
-          "serviceDetails": [
-            "1500次模型调用 / 5 小时",
-            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
-            "2.5 倍 Starter 套餐用量",
-            "约支持1~2个OpenClaw agent",
-            "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "生成图像和语音",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
-          ]
-        },
-        {
-          "name": "Max-极速版",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "用量: 4500次模型调用/5 小时",
-          "serviceDetails": [
-            "4500次模型调用 / 5 小时",
-            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
-            "7.5 倍 Starter 套餐用量",
-            "约支持2~3个OpenClaw agent",
-            "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "生成图片、语音、音乐和视频",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
-          ]
-        },
-        {
-          "name": "Ultra-极速版",
-          "currentPrice": 899,
-          "currentPriceText": "¥899/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "用量: 30000次模型调用/5 小时",
-          "serviceDetails": [
-            "30000次模型调用 / 5 小时",
-            "支持最新MiniMax-M2.7-highspeed，约100 TPS 极速推理，同类产品3倍生成速度",
-            "50 倍 Starter 套餐用量",
-            "约支持4~5个OpenClaw agent",
-            "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "生成图片、语音、音乐和视频",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
-          ]
-        },
-        {
-          "name": "Starter",
-          "currentPrice": 29,
-          "currentPriceText": "¥29/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "用量: 600次模型调用/5小时",
-          "serviceDetails": [
-            "600次模型调用 / 5小时",
-            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
-            "约支持1个OpenClaw agent",
-            "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
-          ]
-        },
         {
           "name": "Plus",
           "currentPrice": 49,
@@ -323,16 +278,15 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 1500次模型调用/5 小时",
+          "notes": "用量: 月度约 6 亿+ token M3 用量",
           "serviceDetails": [
-            "1500次模型调用 / 5 小时",
-            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
-            "2.5 倍 Starter 套餐用量",
-            "约支持1~2个OpenClaw agent",
+            "月度约 6 亿+ token M3 用量",
+            "支持 MiniMax 全系模型（M3 / M2.7 / 图像 / 语音 / 音乐）",
+            "可同时支持 3-4 个 Agent 并发运行",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "生成图像和语音",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
+            "1M 长上下文，适合处理长文档 / 大型代码库",
+            "M3 原生多模态理解：图像 / 视频输入",
+            "文本 / 图像 / 语音 / 音乐 共享同一额度"
           ]
         },
         {
@@ -342,16 +296,35 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 4500次模型调用/5 小时",
+          "notes": "用量: 月度约 18 亿+ token M3 用量",
           "serviceDetails": [
-            "4500次模型调用 / 5 小时",
-            "支持最新 MiniMax M2.7，正常约50TPS，低峰时段100TPS",
-            "7.5 倍 Starter 套餐用量",
-            "约支持2~3个OpenClaw agent",
+            "月度约 18 亿+ token M3 用量",
+            "支持 MiniMax 全系模型（M3 / M2.7 / 图像 / 语音 / 音乐）",
+            "可同时支持 4-5 个 Agent 并发运行",
             "支持主流的编程工具，并持续扩展中",
-            "支持图像理解、联网搜索 MCP",
-            "生成图像、语音、音乐和视频",
-            "每周可使用额度为「每5 小时额度」的 10 倍"
+            "1M 长上下文，适合处理长文档 / 大型代码库",
+            "M3 原生多模态理解：图像 / 视频输入",
+            "文本 / 图像 / 语音 / 音乐 共享同一额度",
+            "支持视频生成，3 条 / 日"
+          ]
+        },
+        {
+          "name": "Ultra",
+          "currentPrice": 469,
+          "currentPriceText": "¥469/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "用量: 月度约 71 亿+ token M3 用量",
+          "serviceDetails": [
+            "月度约 71 亿+ token M3 用量",
+            "支持 MiniMax 全系模型（M3 / M2.7 / 图像 / 语音 / 音乐）",
+            "可同时支持 6-7 个 Agent 并发运行",
+            "支持主流的编程工具，并持续扩展中",
+            "1M 长上下文，适合处理长文档 / 大型代码库",
+            "M3 原生多模态理解：图像 / 视频输入",
+            "文本 / 图像 / 语音 / 音乐 共享同一额度",
+            "支持视频生成，5 条 / 日"
           ]
         }
       ],
@@ -627,32 +600,32 @@
       "sourceUrls": [
         "https://www.morphllm.com",
         "https://www.morphllm.com/pricing",
-        "https://www.morphllm.com/_next/static/chunks/b2885a7261335520.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/e0a709afa02b6120.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/02358f949ab85c00.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/eb5c283bcf5fe3ff.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/turbopack-2a8e6f7278167d71.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/9d8a0360fde0cc13.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/e3a8e497b7887fea.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/a801ccbb12136f9b.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/d55a36085e604737.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/43cd937b16dc2bef.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw",
-        "https://www.morphllm.com/_next/static/chunks/0e068d9382545dd9.js?dpl=dpl_AJusroMfiHqsYKR1cwYaig498qUw"
+        "https://www.morphllm.com/_next/static/chunks/b2885a7261335520.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/0b007e76ffe885df.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/89ca7c0a67c37e57.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/eb5c283bcf5fe3ff.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/turbopack-a9c6a74ec64c96e7.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/9d8a0360fde0cc13.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/e3a8e497b7887fea.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/a801ccbb12136f9b.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/8baf6e3d9bdf4e6f.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/a17c71869cf3b607.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz",
+        "https://www.morphllm.com/_next/static/chunks/0e068d9382545dd9.js?dpl=dpl_F7it24PjBup271ia4KsUtPNu3ZDz"
       ],
       "pricingPageUrl": "https://www.morphllm.com/pricing",
       "officialWebsiteUrl": "https://www.morphllm.com",
@@ -1139,7 +1112,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.06 / $0.084 / $0.15）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.096 / $0.15 / $0.14）",
       "blocked": false
     },
     {
@@ -1206,15 +1179,6 @@
       "blocked": false
     },
     {
-      "slug": "google-vertex",
-      "openrouterName": "Google",
-      "providerId": null,
-      "officialWebsiteUrl": "https://cloud.google.com",
-      "pricingPageUrl": "https://cloud.google.com",
-      "reason": "云平台按量计费 + $300 免费试用额度，无套餐订阅",
-      "blocked": false
-    },
-    {
       "slug": "inceptron",
       "openrouterName": "Inceptron",
       "providerId": null,
@@ -1260,30 +1224,12 @@
       "blocked": false
     },
     {
-      "slug": "nextbit",
-      "openrouterName": "NextBit",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.nextbit256.com",
-      "pricingPageUrl": "https://www.nextbit256.com",
-      "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
       "slug": "novita",
       "openrouterName": "Novita",
       "providerId": null,
       "officialWebsiteUrl": "https://novita.ai",
       "pricingPageUrl": "https://novita.ai/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.6 / $0.135 / $3.2）",
-      "blocked": false
-    },
-    {
-      "slug": "open-inference",
-      "openrouterName": "OpenInference",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.openinference.xyz",
-      "pricingPageUrl": "https://www.openinference.xyz",
-      "reason": "官网价格页探测失败：https://www.openinference.xyz/pricing: HTTP 404",
       "blocked": false
     },
     {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-02T03:14:38.062Z",
+  "generatedAt": "2026-06-02T09:34:26.623Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -519,7 +519,9 @@
             "当前状态: 暂不可购买"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "infini-ai: Task timed out after 30000ms"
     },
     {
       "provider": "jdcloud-ai",
@@ -558,7 +560,9 @@
             "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: Task timed out after 30000ms"
     },
     {
       "provider": "kilo-pass",
@@ -915,9 +919,9 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "用量: 月度约 55 亿+ token M3 用量",
+          "notes": "用量: 月度约 71 亿+ token M3 用量",
           "serviceDetails": [
-            "月度约 55 亿+ token M3 用量",
+            "月度约 71 亿+ token M3 用量",
             "支持 MiniMax 全系模型（M3 / M2.7 / 图像 / 语音 / 音乐）",
             "可同时支持 6-7 个 Agent 并发运行",
             "支持主流的编程工具，并持续扩展中",
@@ -1386,9 +1390,7 @@
             "使用 LingClaw 构建个人助理"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "x-aio: Request failed: https://code.x-aio.com/assets/index-C9iJKT_h.js -> 525; Playwright fallback failed: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-linux64/chrome-headless-shell ╔═════════════════════════════════════════════════════════════════════════╗ ║ Looks like Playwright Test or Playwright was just installed or updated. ║ ║ Please run the following command to download new browsers: ║ ║ ║ ║ npx playwright install ║ ║ ║ ║ <3 Playwright Team ║ ╚═════════════════════════════════════════════════════════════════════════╝"
+      ]
     },
     {
       "provider": "xfyun-ai",
@@ -1570,10 +1572,14 @@
             "高峰期专属资源优先保障"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "zhipu-ai: Task timed out after 30000ms"
     }
   ],
   "failures": [
-    "x-aio: Request failed: https://code.x-aio.com/assets/index-C9iJKT_h.js -> 525; Playwright fallback failed: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-linux64/chrome-headless-shell\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝"
+    "zhipu-ai: Task timed out after 30000ms",
+    "jdcloud-ai: Task timed out after 30000ms",
+    "infini-ai: Task timed out after 30000ms"
   ]
 }
