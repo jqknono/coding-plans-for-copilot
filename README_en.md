@@ -152,6 +152,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors` | `array` | Built-in vendor templates | Vendor configuration list. |
 | `coding-plans.vendors[].name` | `string` | Required | Vendor unique name. |
 | `coding-plans.vendors[].baseUrl` | `string` | Required | API base address. |
+| `coding-plans.vendors[].apiKey` | `string` | Empty | Deprecated. Vendor API key. When non-empty, it takes precedence over the same vendor key stored in VS Code Secret Storage. |
 | `coding-plans.vendors[].usageUrl` | `string` | Empty | Plan usage API address; when configured, status bar displays quota percentage. |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Protocol style: `openai-chat` / `openai-responses` / `anthropic`. |
 | `coding-plans.vendors[].defaultTemperature` | `number` / `null` | Empty | Deprecated. Vendor default temperature. When unset or `null`, runtime omits `temperature`. Runtime uses it only for `openai-chat` and `anthropic`. |
@@ -179,7 +180,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.commitMessage.options.requireConventionalType` | `boolean` | `true` | Whether to enforce Conventional Commits type. |
 | `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | Whether to show warning on validation failure. |
 
-API keys are stored through "Set API Key" in VS Code Secret Storage. `coding-plans.vendors` no longer supports API key fields.
+API keys should be stored through "Set API Key" in VS Code Secret Storage. `coding-plans.vendors[].apiKey` is kept only as a deprecated temporary entry; when non-empty, it takes precedence over Secret Storage.
 
 ### Context Window Display
 
@@ -202,7 +203,7 @@ Limited by VS Code's public API, this extension additionally implements context 
 
 ### Multi-Workspace Independent Configuration
 
-Vendor configurations can be saved per workspace/folder; API Keys are stored in VS Code Secret Storage (local) by vendor name.
+Vendor configurations can be saved per workspace/folder; API Keys should be stored in VS Code Secret Storage (local) by vendor name.
 
 ## 📊 GitHub Pages Dashboard
 

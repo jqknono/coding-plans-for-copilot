@@ -175,7 +175,7 @@ npm run test:pages
 ## 多协议供应商接入说明
 
 - 配置入口优先使用 `Coding Plans: Manage Vendor Configuration`。该命令从 `coding-plans.vendors` 动态生成供应商 QuickPick，选择供应商后可设置 API Key、刷新模型或打开供应商设置。
-- API Key 统一通过 VS Code Secret Storage 保存；`coding-plans.vendors` 只保留供应商与模型元数据，不接受 `apiKey` 字段。
+- API Key 推荐通过 VS Code Secret Storage 保存；`coding-plans.vendors[].apiKey` 作为已废弃字段保留，非空时优先于 Secret Storage 生效。
 - VS Code 1.120 起按公开 `LanguageModelChatProvider` 接口直接枚举 provider 模型；当前实现通过 `languageModelChatProviders` contribution 声明 vendor，并在运行时注册 `registerLanguageModelChatProvider('coding-plans', adapter)`，不依赖 `managementCommand`。
 - 调试请求链路时，可通过 `coding-plans.logLevel` 控制输出面板日志级别；需要完整追踪时切到 `debug`，日常建议保持 `info`。
 - `coding-plans.vendors[].defaultApiStyle` 用于声明供应商默认协议风格，模型也可以通过 `coding-plans.vendors[].models[].apiStyle` 单独覆盖：

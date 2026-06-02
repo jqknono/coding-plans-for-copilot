@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.9.13",
+    "version": "0.9.14",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -240,6 +240,11 @@
                             },
                             "baseUrl": {
                                 "type": "string"
+                            },
+                            "apiKey": {
+                                "type": "string",
+                                "description": "%configuration.coding-plans.vendors.apiKey.description%",
+                                "deprecationMessage": "%configuration.coding-plans.vendors.apiKey.deprecationMessage%"
                             },
                             "usageUrl": {
                                 "type": "string",

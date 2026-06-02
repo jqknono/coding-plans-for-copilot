@@ -6,6 +6,8 @@
   "commands.category": "编码套餐",
   "configuration.title": "编码套餐",
   "configuration.coding-plans.vendors.description": "配置 AI 模型供应商及其端点和模型。",
+  "configuration.coding-plans.vendors.apiKey.description": "该供应商的已废弃 API Key。非空时优先于 VS Code Secret Storage 中保存的供应商密钥。",
+  "configuration.coding-plans.vendors.apiKey.deprecationMessage": "已废弃：请使用 Coding Plans: Manage Coding Plans Configuration 将 API Key 保存到 VS Code Secret Storage。",
   "configuration.coding-plans.vendors.defaultTemperature.description": "该供应商的默认 temperature；留空时默认请求不发送 temperature，模型可单独覆盖。建议：代码生成/重构用 0.1-0.3，需更灵活表达时可用 0.3-0.5。",
   "configuration.coding-plans.vendors.defaultTemperature.deprecationMessage": "已废弃：仅 openai-chat 与 anthropic 运行时使用；Responses API 请使用模型行 Personality。",
   "configuration.coding-plans.vendors.defaultTopP.description": "该供应商的默认 topP，模型可单独覆盖。`0` 表示不发送 `top_p`，也是运行时默认值。仅当你需要显式控制 nucleus sampling 时再设置为正数。`anthropic` 风格请求会忽略该值，不发送 `top_p`。",

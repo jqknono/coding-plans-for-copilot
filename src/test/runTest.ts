@@ -1013,6 +1013,24 @@ async function runConfigStoreVendorApiKeySecretStorageTests(configStoreCtor: Con
   activeState = createState([{
     name: 'Vendor',
     baseUrl: 'https://example.test/v1',
+    apiKey: ' config-key ',
+    defaultApiStyle: 'openai-chat',
+    models: []
+  }]);
+
+  secretContext = createExtensionContextWithSecrets();
+  secretContext.secrets.set('coding-plans.vendor.apiKey.Vendor', 'secret-key');
+  configStore = new configStoreCtor(secretContext.context as never);
+  try {
+    assert.equal(await configStore.getApiKey('Vendor'), 'config-key');
+    console.log('PASS ConfigStore 优先读取 vendors[].apiKey');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
     defaultApiStyle: 'openai-chat',
     models: []
   }]);
@@ -4858,7 +4876,6 @@ void main().catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;
 });
-
 
 
 

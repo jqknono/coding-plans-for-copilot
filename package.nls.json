@@ -6,6 +6,8 @@
   "commands.category": "Coding Plans",
   "configuration.title": "Coding Plans",
   "configuration.coding-plans.vendors.description": "Configure AI model vendors with their endpoints and models.",
+  "configuration.coding-plans.vendors.apiKey.description": "Deprecated API key for this vendor. When non-empty, it takes precedence over the vendor key stored in VS Code Secret Storage.",
+  "configuration.coding-plans.vendors.apiKey.deprecationMessage": "Deprecated: use Coding Plans: Manage Coding Plans Configuration to store API keys in VS Code Secret Storage.",
   "configuration.coding-plans.vendors.defaultTemperature.description": "Default temperature for this vendor. Leave empty to omit temperature by default. Models can override it individually. Recommended: 0.1-0.3 for coding, 0.3-0.5 for more creative output.",
   "configuration.coding-plans.vendors.defaultTemperature.deprecationMessage": "Deprecated: used at runtime only by openai-chat and anthropic; use the model row Personality option for Responses API.",
   "configuration.coding-plans.vendors.defaultTopP.description": "Default top-p for this vendor. Models can override it individually. `0` means omit `top_p`, and is also the runtime default. Set a positive value only when you want to explicitly control nucleus sampling. `anthropic` requests ignore this value and do not send `top_p`.",
