@@ -2001,6 +2001,134 @@ async function runGenericProviderOutputLimitToggleTests(
   console.log('PASS openai-responses 使用 Personality 写入 instructions，忽略 temperature 参数');
 }
 
+async function runGenericProviderMultimodalPayloadTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule
+): Promise<void> {
+  const vscode = require('vscode') as {
+    LanguageModelTextPart: new (value: string) => { value: string };
+    LanguageModelDataPart: new (data: Uint8Array, mimeType: string) => { data: Uint8Array; mimeType: string };
+  };
+  const { GenericAIProvider } = genericProviderModule;
+  const originalFetch = globalThis.fetch;
+
+  async function capturePayload(apiStyle: 'openai-chat' | 'openai-responses' | 'anthropic'): Promise<Record<string, unknown>> {
+    activeState = createState([{
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: apiStyle,
+      defaultVision: true,
+      models: [{
+        name: 'vision-coder',
+        apiStyle,
+        contextSize: 64000,
+        capabilities: { tools: false, vision: true }
+      }]
+    }]);
+    const configStore = new configStoreCtor(createExtensionContext() as never);
+    const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+      refreshModels(): Promise<void>;
+      sendRequest(
+        request: {
+          modelId: string;
+          messages: Array<{ role: number; content: unknown[] }>;
+          capabilities: { toolCalling: boolean; imageInput: boolean };
+          options?: { tools?: unknown[] };
+        }
+      ): Promise<unknown>;
+      dispose(): void;
+    };
+
+    let payload: Record<string, unknown> | undefined;
+    globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+      payload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
+      const body = apiStyle === 'openai-responses'
+        ? {
+          id: 'resp_test',
+          output: [{
+            type: 'message',
+            role: 'assistant',
+            content: [{ type: 'output_text', text: 'ok' }]
+          }]
+        }
+        : apiStyle === 'anthropic'
+          ? {
+            id: 'msg_test',
+            role: 'assistant',
+            content: [{ type: 'text', text: 'ok' }]
+          }
+          : {
+            id: 'chatcmpl_test',
+            created: 0,
+            model: 'vision-coder',
+            choices: [{
+              index: 0,
+              message: { role: 'assistant', content: 'ok' },
+              finish_reason: 'stop'
+            }]
+          };
+      return new Response(JSON.stringify(body), {
+        status: 200,
+        headers: {
+          'content-type': 'application/json'
+        }
+      });
+    }) as typeof globalThis.fetch;
+
+    try {
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
+        vendorName === 'Vendor' ? 'configured' : ''
+      );
+      await provider.refreshModels();
+      await provider.sendRequest({
+        modelId: 'Vendor/vision-coder',
+        messages: [{
+          role: 1,
+          content: [
+            new vscode.LanguageModelTextPart('describe this image'),
+            new vscode.LanguageModelDataPart(new Uint8Array([1, 2, 3]), 'image/png')
+          ]
+        }],
+        capabilities: { toolCalling: false, imageInput: true },
+        options: { tools: [] }
+      });
+      assert.ok(payload);
+      return payload;
+    } finally {
+      globalThis.fetch = originalFetch;
+      provider.dispose();
+      configStore.dispose();
+    }
+  }
+
+  const openAIChatPayload = await capturePayload('openai-chat');
+  const openAIChatMessages = openAIChatPayload.messages as Array<{ content: Array<Record<string, unknown>> }>;
+  assert.equal(openAIChatMessages[0]?.content[0]?.type, 'text');
+  assert.equal(openAIChatMessages[0]?.content[1]?.type, 'image_url');
+  assert.deepEqual(openAIChatMessages[0]?.content[1]?.image_url, { url: 'data:image/png;base64,AQID' });
+  console.log('PASS openai-chat 会把 LanguageModelDataPart 图片转成 image_url');
+
+  const openAIResponsesPayload = await capturePayload('openai-responses');
+  const responsesInput = openAIResponsesPayload.input as Array<{ content: Array<Record<string, unknown>> }>;
+  assert.equal(responsesInput[0]?.content[0]?.type, 'input_text');
+  assert.equal(responsesInput[0]?.content[1]?.type, 'input_image');
+  assert.equal(responsesInput[0]?.content[1]?.image_url, 'data:image/png;base64,AQID');
+  console.log('PASS openai-responses 会把 LanguageModelDataPart 图片转成 input_image');
+
+  const anthropicPayload = await capturePayload('anthropic');
+  const anthropicMessages = anthropicPayload.messages as Array<{ content: Array<Record<string, unknown>> }>;
+  assert.equal(anthropicMessages[0]?.content[0]?.type, 'text');
+  assert.deepEqual(anthropicMessages[0]?.content[1], {
+    type: 'image',
+    source: {
+      type: 'base64',
+      media_type: 'image/png',
+      data: 'AQID'
+    }
+  });
+  console.log('PASS anthropic 会把 LanguageModelDataPart 图片转成 base64 image block');
+}
+
 async function runGenericProviderThinkingEffortTests(
   configStoreCtor: ConfigStoreCtor,
   genericProviderModule: GenericProviderModule
@@ -4848,6 +4976,7 @@ async function main(): Promise<void> {
     await runGenericProviderModelChangeEventStabilityTests(ConfigStore, genericProviderModule);
     await runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
     await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule, tokenUsageModule);
+    await runGenericProviderMultimodalPayloadTests(ConfigStore, genericProviderModule);
     await runGenericProviderThinkingEffortTests(ConfigStore, genericProviderModule);
     await runGenericProviderAnthropicSamplingCompatibilityTests(ConfigStore, genericProviderModule);
     await runGenericProviderAnthropicStreamFallbackTests(ConfigStore, genericProviderModule);
@@ -4876,8 +5005,6 @@ void main().catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;
 });
-
-
 
 
 

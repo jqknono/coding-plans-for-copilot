@@ -57,6 +57,20 @@ export interface ChatToolDefinition {
   };
 }
 
+export interface ChatTextContentPart {
+  type: 'text';
+  text: string;
+}
+
+export interface ChatImageContentPart {
+  type: 'image';
+  mimeType: string;
+  data: string;
+}
+
+export type ChatContentPart = ChatTextContentPart | ChatImageContentPart;
+export type ChatMessageContent = string | ChatContentPart[];
+
 export function normalizeHttpBaseUrl(value: string | undefined): string | undefined {
   const trimmed = (value || '').trim();
   if (trimmed.length === 0) {
@@ -206,7 +220,7 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
 
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system' | 'tool';
-  content: string;
+  content: ChatMessageContent;
   tool_calls?: ChatToolCall[];
   tool_call_id?: string;
   reasoning_content?: string;
@@ -803,12 +817,19 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return 'system';
   }
 
-  protected readMessageContent(content: string | ReadonlyArray<vscode.LanguageModelInputPart | unknown>): string {
+  protected readMessageContent(content: string | ReadonlyArray<vscode.LanguageModelInputPart | ChatContentPart | unknown>): string {
     if (typeof content === 'string') {
       return content;
     }
 
     return content.map(part => {
+      if (part && typeof part === 'object' && 'type' in part && (part as { type?: unknown }).type === 'text') {
+        const text = (part as { text?: unknown }).text;
+        if (typeof text === 'string') {
+          return text;
+        }
+      }
+
       if (part instanceof vscode.LanguageModelTextPart) {
         return part.value;
       }
@@ -828,14 +849,14 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     const normalized: ChatMessage[] = [];
 
     for (const message of messages) {
-      const textParts: string[] = [];
+      const contentParts: ChatContentPart[] = [];
       const toolCalls: vscode.LanguageModelToolCallPart[] = [];
       const toolResults: vscode.LanguageModelToolResultPart[] = [];
       let reasoningContent: string | undefined;
 
       for (const part of message.content) {
         if (part instanceof vscode.LanguageModelTextPart) {
-          textParts.push(part.value);
+          contentParts.push({ type: 'text', text: part.value });
         } else if (part instanceof vscode.LanguageModelToolCallPart) {
           toolCalls.push(part);
         } else if (part instanceof vscode.LanguageModelToolResultPart) {
@@ -846,16 +867,20 @@ export abstract class BaseAIProvider implements vscode.Disposable {
             reasoningContent = encodedReasoningContent;
             continue;
           }
-          textParts.push(this.readDataPartContent(part));
+          const contentPart = this.readDataPartContent(part);
+          if (contentPart) {
+            contentParts.push(contentPart);
+          }
         } else if (part && typeof part === 'object' && 'value' in part) {
           const value = (part as { value?: unknown }).value;
           if (typeof value === 'string') {
-            textParts.push(value);
+            contentParts.push({ type: 'text', text: value });
           }
         }
       }
 
-      const textContent = textParts.join('');
+      const content = this.compactMessageContent(contentParts);
+      const textContent = this.readMessageContent(content);
 
       if (toolResults.length > 0) {
         for (const result of toolResults) {
@@ -877,7 +902,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       if (toolCalls.length > 0) {
         normalized.push({
           role: 'assistant',
-          content: textContent,
+          content,
           ...(reasoningContent ? { reasoning_content: reasoningContent } : {}),
           tool_calls: toolCalls.map(call => ({
             id: call.callId || this.makeToolCallId(),
@@ -894,7 +919,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       const role = this.toChatRole(message.role);
       normalized.push({
         role,
-        content: textContent,
+        content,
         ...(role === 'assistant' && reasoningContent ? { reasoning_content: reasoningContent } : {})
       });
     }
@@ -973,16 +998,49 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return parts;
   }
 
-  private readDataPartContent(part: vscode.LanguageModelDataPart): string {
+  private readDataPartContent(part: vscode.LanguageModelDataPart): ChatContentPart | undefined {
     try {
       const decoder = new TextDecoder();
       if (part.mimeType.startsWith('text/') || part.mimeType.includes('json')) {
-        return decoder.decode(part.data);
+        return { type: 'text', text: decoder.decode(part.data) };
       }
-      return '';
+      if (part.mimeType.startsWith('image/')) {
+        return {
+          type: 'image',
+          mimeType: part.mimeType,
+          data: this.encodeBase64(part.data)
+        };
+      }
+      return undefined;
     } catch {
-      return '';
+      return undefined;
     }
+  }
+
+  private compactMessageContent(parts: ChatContentPart[]): ChatMessageContent {
+    const hasImage = parts.some(part => part.type === 'image');
+    if (!hasImage) {
+      return parts
+        .filter((part): part is ChatTextContentPart => part.type === 'text')
+        .map(part => part.text)
+        .join('');
+    }
+
+    return parts.filter(part => part.type === 'image' || part.text.length > 0);
+  }
+
+  private encodeBase64(data: Uint8Array): string {
+    if (typeof Buffer !== 'undefined') {
+      return Buffer.from(data).toString('base64');
+    }
+
+    let binary = '';
+    const chunkSize = 0x8000;
+    for (let offset = 0; offset < data.length; offset += chunkSize) {
+      const chunk = data.subarray(offset, offset + chunkSize);
+      binary += String.fromCharCode(...chunk);
+    }
+    return btoa(binary);
   }
 
   private createReasoningDataPart(reasoningContent: string): vscode.LanguageModelDataPart {
@@ -1014,7 +1072,8 @@ export abstract class BaseAIProvider implements vscode.Disposable {
         return part.value;
       }
       if (part instanceof vscode.LanguageModelDataPart) {
-        return this.readDataPartContent(part);
+        const contentPart = this.readDataPartContent(part);
+        return contentPart?.type === 'text' ? contentPart.text : '';
       }
       try {
         return JSON.stringify(part);

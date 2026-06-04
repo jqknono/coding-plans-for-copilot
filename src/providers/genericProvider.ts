@@ -73,6 +73,7 @@ import {
   summarizeOpenAIChatResponse,
   summarizeOpenAIResponsesResponse,
   toAnthropicMessages,
+  toOpenAIChatMessages,
   toOpenAIResponsesPayloadParts
 } from './genericProviderProtocols';
 import {
@@ -1140,7 +1141,8 @@ export class GenericAIProvider extends BaseAIProvider {
     trace: RequestTraceContext,
     token?: vscode.CancellationToken
   ): Promise<vscode.LanguageModelChatResponse> {
-    const messages = this.convertMessages(request.messages);
+    const providerMessages = this.convertMessages(request.messages);
+    const messages = toOpenAIChatMessages(providerMessages);
     const supportsToolCalling = !!request.capabilities.toolCalling;
     const sampling = this.resolveSamplingOptions(request, vendor, modelName);
     const thinkingOptions = this.buildChatThinkingOptions(request);
@@ -1177,7 +1179,7 @@ export class GenericAIProvider extends BaseAIProvider {
           stream: payload.stream,
           toolChoice: payload.tool_choice,
           toolCount: payload.tools?.length ?? 0,
-          messages: this.summarizeProviderMessages(messages)
+          messages: this.summarizeProviderMessages(providerMessages)
         }
       });
       const requestInit = this.buildRequestInit(apiKey, 'openai-chat', token);
@@ -2421,8 +2423,11 @@ export class GenericAIProvider extends BaseAIProvider {
         contentLength: typeof item.content === 'string'
           ? item.content.length
           : Array.isArray(item.content)
-            ? item.content.reduce((total, part) => total + (typeof part.text === 'string' ? part.text.length : 0), 0)
-            : 0
+            ? item.content.reduce((total, part) => total + ('text' in part && typeof part.text === 'string' ? part.text.length : 0), 0)
+            : 0,
+        imagePartCount: Array.isArray(item.content)
+          ? item.content.filter(part => part.type === 'input_image').length
+          : 0
       };
     });
   }
@@ -3135,9 +3140,6 @@ export class GenericAIProvider extends BaseAIProvider {
     }
   }
 }
-
-
-
 
 
 

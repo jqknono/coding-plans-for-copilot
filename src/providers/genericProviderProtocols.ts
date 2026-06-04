@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ChatMessage, ChatToolCall, ChatToolDefinition } from './baseProvider';
+import { ChatContentPart, ChatImageContentPart, ChatMessage, ChatMessageContent, ChatToolCall, ChatToolDefinition } from './baseProvider';
 import { AnthropicEffort, ChatThinkingEffort, ResponsesThinkingEffort } from '../constants';
 
 type ThinkingToggle = {
@@ -12,7 +12,7 @@ type AnthropicThinkingToggle = {
 
 export interface OpenAIChatRequest {
   model: string;
-  messages: ChatMessage[];
+  messages: OpenAIChatMessage[];
   tools?: ChatToolDefinition[];
   tool_choice?: 'auto' | 'required';
   temperature?: number;
@@ -21,6 +21,28 @@ export interface OpenAIChatRequest {
   reasoning_effort?: Exclude<ChatThinkingEffort, 'none'>;
   max_tokens?: number;
   stream?: boolean;
+}
+
+interface OpenAIChatTextContentPart {
+  type: 'text';
+  text: string;
+}
+
+interface OpenAIChatImageContentPart {
+  type: 'image_url';
+  image_url: {
+    url: string;
+  };
+}
+
+type OpenAIChatContentPart = OpenAIChatTextContentPart | OpenAIChatImageContentPart;
+
+export interface OpenAIChatMessage {
+  role: 'user' | 'assistant' | 'system' | 'tool';
+  content: string | OpenAIChatContentPart[];
+  tool_calls?: ChatToolCall[];
+  tool_call_id?: string;
+  reasoning_content?: string;
 }
 
 export interface OpenAIChatResponse {
@@ -57,6 +79,11 @@ interface OpenAIResponsesInputTextContent {
   text: string;
 }
 
+interface OpenAIResponsesInputImageContent {
+  type: 'input_image';
+  image_url: string;
+}
+
 interface OpenAIResponsesInputToolCallContent {
   type: 'function_call';
   call_id: string;
@@ -70,7 +97,7 @@ interface OpenAIResponsesInputToolResultContent {
   output: string;
 }
 
-type OpenAIResponsesInputContent = OpenAIResponsesInputTextContent;
+type OpenAIResponsesInputContent = OpenAIResponsesInputTextContent | OpenAIResponsesInputImageContent;
 
 interface OpenAIResponsesInputMessage {
   type?: 'message';
@@ -137,6 +164,15 @@ interface AnthropicTextContentBlock {
   text: string;
 }
 
+interface AnthropicImageContentBlock {
+  type: 'image';
+  source: {
+    type: 'base64';
+    media_type: string;
+    data: string;
+  };
+}
+
 interface AnthropicToolUseContentBlock {
   type: 'tool_use';
   id: string;
@@ -152,6 +188,7 @@ interface AnthropicToolResultContentBlock {
 
 type AnthropicRequestContentBlock =
   | AnthropicTextContentBlock
+  | AnthropicImageContentBlock
   | AnthropicToolUseContentBlock
   | AnthropicToolResultContentBlock;
 
@@ -830,6 +867,35 @@ export function buildOpenAIResponsesToolDefinitions(
   }));
 }
 
+export function toOpenAIChatMessages(messages: ChatMessage[]): OpenAIChatMessage[] {
+  return messages.map(message => ({
+    ...message,
+    content: toOpenAIChatContent(message.content)
+  }));
+}
+
+function toOpenAIChatContent(content: ChatMessageContent): OpenAIChatMessage['content'] {
+  if (typeof content === 'string') {
+    return content;
+  }
+
+  return content.map(part => {
+    if (part.type === 'image') {
+      return {
+        type: 'image_url',
+        image_url: {
+          url: toDataUrl(part)
+        }
+      };
+    }
+
+    return {
+      type: 'text',
+      text: part.text
+    };
+  });
+}
+
 export function toOpenAIResponsesInput(
   messages: ChatMessage[],
   generateToolCallId: GenerateToolCallId
@@ -846,8 +912,9 @@ export function toOpenAIResponsesPayloadParts(
 
   for (const message of messages) {
     if (message.role === 'system') {
-      if (message.content.trim().length > 0) {
-        instructionParts.push(message.content);
+      const textContent = getTextContent(message.content);
+      if (textContent.trim().length > 0) {
+        instructionParts.push(textContent);
       }
       continue;
     }
@@ -856,17 +923,18 @@ export function toOpenAIResponsesPayloadParts(
       input.push({
         type: 'function_call_output',
         call_id: message.tool_call_id || generateToolCallId(),
-        output: message.content
+        output: getTextContent(message.content)
       });
       continue;
     }
 
     if (message.role === 'assistant' && message.tool_calls && message.tool_calls.length > 0) {
-      if (message.content.trim().length > 0) {
+      const textContent = getTextContent(message.content);
+      if (textContent.trim().length > 0) {
         input.push({
           type: 'message',
           role: 'assistant',
-          content: message.content
+          content: textContent
         });
       }
 
@@ -884,7 +952,7 @@ export function toOpenAIResponsesPayloadParts(
     input.push({
       type: 'message',
       role: message.role,
-      content: message.content
+      content: toOpenAIResponsesContent(message.content)
     });
   }
 
@@ -893,6 +961,26 @@ export function toOpenAIResponsesPayloadParts(
     ...(instructions.length > 0 ? { instructions } : {}),
     input
   };
+}
+
+function toOpenAIResponsesContent(content: ChatMessageContent): string | OpenAIResponsesInputContent[] {
+  if (typeof content === 'string') {
+    return content;
+  }
+
+  return content.map(part => {
+    if (part.type === 'image') {
+      return {
+        type: 'input_image',
+        image_url: toDataUrl(part)
+      };
+    }
+
+    return {
+      type: 'input_text',
+      text: part.text
+    };
+  });
 }
 
 export function parseOpenAIResponsesResponse(
@@ -947,6 +1035,24 @@ function appendAnthropicTextBlock(message: AnthropicChatMessage, text: string): 
   message.content = `${message.content}${text}`;
 }
 
+function appendAnthropicContentBlocks(message: AnthropicChatMessage, content: ChatMessageContent): void {
+  const blocks = toAnthropicContentBlocks(content);
+  if (blocks.length === 0) {
+    return;
+  }
+
+  if (Array.isArray(message.content)) {
+    message.content.push(...blocks);
+    return;
+  }
+
+  const existingText = message.content;
+  message.content = [
+    ...(existingText.trim().length > 0 ? [{ type: 'text' as const, text: existingText }] : []),
+    ...blocks
+  ];
+}
+
 export function toAnthropicMessages(
   messages: ChatMessage[],
   generateToolCallId: GenerateToolCallId
@@ -956,8 +1062,9 @@ export function toAnthropicMessages(
 
   for (const message of messages) {
     if (message.role === 'system') {
-      if (message.content.trim().length > 0) {
-        systemParts.push(message.content);
+      const textContent = getTextContent(message.content);
+      if (textContent.trim().length > 0) {
+        systemParts.push(textContent);
       }
       continue;
     }
@@ -966,7 +1073,7 @@ export function toAnthropicMessages(
       const toolResultBlock: AnthropicToolResultContentBlock = {
         type: 'tool_result',
         tool_use_id: message.tool_call_id || generateToolCallId(),
-        content: message.content
+        content: getTextContent(message.content)
       };
       const lastMessage = normalizedMessages[normalizedMessages.length - 1];
       if (lastMessage?.role === 'user') {
@@ -991,8 +1098,9 @@ export function toAnthropicMessages(
 
     if (message.role === 'assistant' && message.tool_calls && message.tool_calls.length > 0) {
       const contentBlocks: AnthropicRequestContentBlock[] = [];
-      if (message.content.trim().length > 0) {
-        contentBlocks.push({ type: 'text', text: message.content });
+      const textContent = getTextContent(message.content);
+      if (textContent.trim().length > 0) {
+        contentBlocks.push({ type: 'text', text: textContent });
       }
       for (const toolCall of message.tool_calls) {
         contentBlocks.push({
@@ -1009,11 +1117,15 @@ export function toAnthropicMessages(
     const role = message.role === 'assistant' ? 'assistant' : 'user';
     const lastMessage = normalizedMessages[normalizedMessages.length - 1];
     if (role === 'user' && lastMessage?.role === 'user') {
-      appendAnthropicTextBlock(lastMessage, message.content);
+      appendAnthropicContentBlocks(lastMessage, message.content);
       continue;
     }
 
-    normalizedMessages.push({ role, content: message.content });
+    const contentBlocks = toAnthropicContentBlocks(message.content);
+    normalizedMessages.push({
+      role,
+      content: contentBlocks.length > 0 ? contentBlocks : getTextContent(message.content)
+    });
   }
 
   return {
@@ -1053,6 +1165,47 @@ export function parseAnthropicResponse(
     content: textParts.join(''),
     toolCalls
   };
+}
+
+function getTextContent(content: ChatMessageContent): string {
+  if (typeof content === 'string') {
+    return content;
+  }
+
+  return content
+    .filter((part): part is Extract<ChatContentPart, { type: 'text' }> => part.type === 'text')
+    .map(part => part.text)
+    .join('');
+}
+
+function toDataUrl(part: ChatImageContentPart): string {
+  return `data:${part.mimeType};base64,${part.data}`;
+}
+
+function toAnthropicContentBlocks(content: ChatMessageContent): AnthropicRequestContentBlock[] {
+  if (typeof content === 'string') {
+    return content.trim().length > 0 ? [{ type: 'text', text: content }] : [];
+  }
+
+  const blocks: AnthropicRequestContentBlock[] = content.map(part => {
+    if (part.type === 'image') {
+      return {
+        type: 'image',
+        source: {
+          type: 'base64',
+          media_type: part.mimeType,
+          data: part.data
+        }
+      };
+    }
+
+    return {
+      type: 'text',
+      text: part.text
+    };
+  });
+
+  return blocks.filter(block => block.type !== 'text' || block.text.trim().length > 0);
 }
 
 function isAnthropicTextBlock(block: AnthropicResponseContentBlock): block is AnthropicResponseTextContentBlock {
