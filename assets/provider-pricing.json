@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-04T03:13:37.245Z",
+  "generatedAt": "2026-06-04T09:26:25.597Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -248,8 +248,8 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "调用次数 / 5小时: 约 200 次",
-            "调用次数 / 每周: 约 650 次",
+            "调用次数 / 5小时: 约 300 次",
+            "调用次数 / 每周: 约 750 次",
             "调用次数 / 每月: 约 1,900 次",
             "最大并发: 3",
             "支持模型: 套餐内全部模型",
@@ -267,8 +267,8 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "调用次数 / 5小时: 约 400 次",
-            "调用次数 / 每周: 约 1,300 次",
+            "调用次数 / 5小时: 约 600 次",
+            "调用次数 / 每周: 约 1,500 次",
             "调用次数 / 每月: 约 3,800 次",
             "最大并发: 5",
             "支持模型: 套餐内全部模型",
@@ -286,8 +286,8 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "调用次数 / 5小时: 约 800 次",
-            "调用次数 / 每周: 约 2,600 次",
+            "调用次数 / 5小时: 约 1,200 次",
+            "调用次数 / 每周: 约 3,000 次",
             "调用次数 / 每月: 约 7,600 次",
             "最大并发: 10",
             "支持模型: 套餐内全部模型",
@@ -305,8 +305,8 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "调用次数 / 5小时: 约 2,000 次",
-            "调用次数 / 每周: 约 6,500 次",
+            "调用次数 / 5小时: 约 3,000 次",
+            "调用次数 / 每周: 约 7,500 次",
             "调用次数 / 每月: 约 19,000 次",
             "最大并发: 10",
             "支持模型: 套餐内全部模型",
@@ -324,8 +324,8 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "调用次数 / 5小时: 约 3,000 次",
-            "调用次数 / 每周: 约 10,500 次",
+            "调用次数 / 5小时: 约 4,800 次",
+            "调用次数 / 每周: 约 12,000 次",
             "调用次数 / 每月: 约 31,000 次",
             "最大并发: 10",
             "支持模型: 套餐内全部模型",
@@ -343,8 +343,8 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "调用次数 / 5小时: 约 4,000 次",
-            "调用次数 / 每周: 约 13,500 次",
+            "调用次数 / 5小时: 约 6,000 次",
+            "调用次数 / 每周: 约 15,000 次",
             "调用次数 / 每月: 约 39,000 次",
             "最大并发: 10",
             "支持模型: 套餐内全部模型",
@@ -488,7 +488,7 @@
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
         "https://docs.infini-ai.com/gen-studio/coding-plan/",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.f86b7910.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.0feb723e.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -720,77 +720,77 @@
           ]
         },
         {
-          "name": "Adagio（海外）",
+          "name": "Adagio（REGION_CN）",
           "currentPrice": 0,
-          "currentPriceText": "$0/月",
+          "currentPriceText": "¥0/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": "试用计划",
           "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
+            "计价币种: 人民币（CNY）",
+            "适用区域: REGION_CN",
             "会员等级: 免费试用",
             "Kimi Code 试用套餐权益"
           ]
         },
         {
-          "name": "Moderato（海外）",
-          "currentPrice": 19,
-          "currentPriceText": "$19/月",
+          "name": "Andante（REGION_CN）",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
+            "计价币种: 人民币（CNY）",
+            "适用区域: REGION_CN",
+            "会员等级: LEVEL_TRIAL",
+            "Kimi Code 月度订阅权益"
+          ]
+        },
+        {
+          "name": "Moderato（REGION_CN）",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 人民币（CNY）",
+            "适用区域: REGION_CN",
             "会员等级: 基础会员",
             "Kimi Code 月度订阅权益"
           ]
         },
         {
-          "name": "Allegretto（海外）",
-          "currentPrice": 39,
-          "currentPriceText": "$39/月",
+          "name": "Allegretto（REGION_CN）",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
+            "计价币种: 人民币（CNY）",
+            "适用区域: REGION_CN",
             "会员等级: 进阶会员",
             "Kimi Code 月度订阅权益"
           ]
         },
         {
-          "name": "Allegro（海外）",
-          "currentPrice": 99,
-          "currentPriceText": "$99/月",
+          "name": "Allegro（REGION_CN）",
+          "currentPrice": 699,
+          "currentPriceText": "¥699/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
+            "计价币种: 人民币（CNY）",
+            "适用区域: REGION_CN",
             "会员等级: 高级会员",
-            "Kimi Code 月度订阅权益"
-          ]
-        },
-        {
-          "name": "Vivace（海外）",
-          "currentPrice": 199,
-          "currentPriceText": "$199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
-            "会员等级: 旗舰会员",
             "Kimi Code 月度订阅权益"
           ]
         }
