@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-03T09:44:09.077Z",
+  "generatedAt": "2026-06-04T03:13:37.245Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/2067fc06c9361065889d1d792d26142a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/9ab31cbde426582497baf5c95e445dec.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -36,9 +36,12 @@
             "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
             "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
             "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
-            "支持的模型: 支持的模型判断说明 判定规则： 1. 本清单为精确字符串白名单 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 3. 禁止做版本兼容推理 判定示范： - ❌ \"GLM-5.1 \" → 清单只有 glm-5.0 → 不支持 - ❌ \"qwen3-coder-max \" → 清单无此项 → 不支持 仅支持以下精确版本： 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
-            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求",
-            "支持的模型: 支持的模型判断说明 判定规则： 1. 本清单为精确字符串白名单 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 3. 禁止做版本兼容推理 判定示范： - ❌ \"GLM-5.1\" → 清单只有 glm-5.0 → 不支持 - ❌ \"qwen3-coder-max\" → 清单无此项 → 不支持 仅支持以下精确版本： 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7"
+            "n n: n Pro 高级套餐 n",
+            "n 支持的模型 n: n n 支持的模型判断说明 n n 判定规则： n 1. 本清单为精确字符串白名单 n 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 n 3. 禁止做版本兼容推理 n n 判定示范： n - ❌ \"GLM-5.1 \" → 清单只有 glm-5.0 → 不支持 n - ❌ \"qwen3-coder-max \" → 清单无此项 → 不支持 n n n 仅支持以下精确版本： n 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 n 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7 n",
+            "n 价格 n: n ¥ 200 /月 n",
+            "n 用量限制 n: n n n 每 5 小时 6,000 次请求 n n n 每周 45,000 次请求 n n n 每月 90,000 次请求 n n n",
+            "支持的模型: 支持的模型判断说明 判定规则： 1. 本清单为精确字符串白名单 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 3. 禁止做版本兼容推理 判定示范： - ❌ \"GLM-5.1\" → 清单只有 glm-5.0 → 不支持 - ❌ \"qwen3-coder-max\" → 清单无此项 → 不支持 仅支持以下精确版本： 推荐模型： qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
+            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求"
           ]
         }
       ]
@@ -485,7 +488,7 @@
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
         "https://docs.infini-ai.com/gen-studio/coding-plan/",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.17b8c9f3.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.f86b7910.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -1188,7 +1191,7 @@
       "provider": "tencent-cloud-ai",
       "sourceUrls": [
         "https://cloud.tencent.com/document/product/1772/128947",
-        "https://console.cloud.tencent.com/tokenhub/codingplan"
+        "https://buy.cloud.tencent.com/hunyuan"
       ],
       "plans": [
         {
@@ -1200,7 +1203,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "用量限制: 每 5 小时：最多约 1,200 次请求每周：最多约 9,000 次请求每订阅月：最多约 18,000 次请求",
+            "用量限制: 每 5 小时：最多约 1,200 次请求 每周：最多约 9,000 次请求 每订阅月：最多约 18,000 次请求",
             "支持模型: 选用 Tencent HY 2.0 Instruct、GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个模型",
             "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具"
           ]
@@ -1214,7 +1217,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "用量限制: 每 5 小时：最多约 6,000 次请求每周：最多约 45,000 次请求每订阅月：最多约 90,000 次请求",
+            "用量限制: 每 5 小时：最多约 6,000 次请求 每周：最多约 45,000 次请求 每订阅月：最多约 90,000 次请求",
             "支持模型: 选用 Tencent HY 2.0 Instruct、GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个模型",
             "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具"
           ]
@@ -1294,7 +1297,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.156/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.296/index.js"
       ],
       "plans": [
         {
@@ -1306,9 +1309,9 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "能力: 支持 Doubao、GLM、DeepSeek、Kimi等模型",
-            "适配: 支持自由切换模型，或开启Auto模式",
-            "工具: 支持 Claude Code、Cursor等主流编程工具"
+            "能力: Doubao-Seed-Code 与 DeepSeek-V3.2 驱动",
+            "适配: 适配Claude Code等主流编程工具",
+            "用量: 用量达 Claude Pro 的 3 倍"
           ]
         },
         {
