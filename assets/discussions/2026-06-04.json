@@ -1,0 +1,97 @@
+{
+  "date": "2026-06-04",
+  "generatedAt": "2026-06-04T07:45:41.954Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 58,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "Cursor": 1,
+      "Claude": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1217901",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1217901",
+      "title": "Cursor 额度快到期了，我 vibe coding 了一款 Chrome 划词总结扩展（零手写代码）",
+      "content": "Cursor 订阅快到期了，额度还没用完。 于是本着不浪费，榨干它的最后一点剩余价值，开启「每天 vibe coding 一个小项目」模式——全程不敲一行代码，全靠对话让 AI 写。今天的成果：AI 页面总结，一款 Chrome 扩展。 欢迎大家来使用，star ，收藏 https://github.com/ljp-777/chrome-ai-summary",
+      "author": "qifengle7",
+      "createdAt": "2026-06-04T07:06:49.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Cursor",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享了如何利用Cursor订阅剩余额度开发Chrome扩展，通过对话式AI编程创建页面总结工具，强调不手动编码。",
+        "topics": [
+          "订阅",
+          "Cursor",
+          "vibe coding",
+          "Chrome 扩展",
+          "零手写代码"
+        ],
+        "planMentioned": "Cursor",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-04T07:47:22.780Z"
+    },
+    {
+      "id": "v2ex-1217826",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1217826",
+      "title": "vibecoding 如何降本增效",
+      "content": "之前无脑梭哈 claude ，发现 token 用的非常快，成本太大了，如果用国内模型输出结果又不符合预期。所以想在这问问各位 V 友大佬们有没有方法能让我既要又要？目前我的策略是基础的能国内模型做的尽量用国内模型，复杂的用 Claude 。听说项目用 spec 工具可以提效减少不必要的 token 目前还是一知半解希望大佬可以赐教～感谢",
+      "author": "JerryCanDo",
+      "createdAt": "2026-06-04T03:17:16.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户讨论如何通过优化模型选择（国内模型 vs Claude）和使用spec工具降低AI编码成本，同时保持效率。",
+        "topics": [
+          "定价",
+          "Claude",
+          "套餐对比",
+          "token 使用",
+          "成本优化",
+          "国内模型"
+        ],
+        "planMentioned": "Claude",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-04T07:47:24.883Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
