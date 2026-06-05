@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-04T09:26:25.597Z",
+  "generatedAt": "2026-06-05T03:13:03.379Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -720,77 +720,77 @@
           ]
         },
         {
-          "name": "Adagio（REGION_CN）",
+          "name": "Adagio（海外）",
           "currentPrice": 0,
-          "currentPriceText": "¥0/月",
+          "currentPriceText": "$0/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": "试用计划",
           "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: REGION_CN",
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
             "会员等级: 免费试用",
             "Kimi Code 试用套餐权益"
           ]
         },
         {
-          "name": "Andante（REGION_CN）",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
+          "name": "Moderato（海外）",
+          "currentPrice": 19,
+          "currentPriceText": "$19/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: REGION_CN",
-            "会员等级: LEVEL_TRIAL",
-            "Kimi Code 月度订阅权益"
-          ]
-        },
-        {
-          "name": "Moderato（REGION_CN）",
-          "currentPrice": 99,
-          "currentPriceText": "¥99/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: REGION_CN",
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
             "会员等级: 基础会员",
             "Kimi Code 月度订阅权益"
           ]
         },
         {
-          "name": "Allegretto（REGION_CN）",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
+          "name": "Allegretto（海外）",
+          "currentPrice": 39,
+          "currentPriceText": "$39/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: REGION_CN",
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
             "会员等级: 进阶会员",
             "Kimi Code 月度订阅权益"
           ]
         },
         {
-          "name": "Allegro（REGION_CN）",
-          "currentPrice": 699,
-          "currentPriceText": "¥699/月",
+          "name": "Allegro（海外）",
+          "currentPrice": 99,
+          "currentPriceText": "$99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: REGION_CN",
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
             "会员等级: 高级会员",
+            "Kimi Code 月度订阅权益"
+          ]
+        },
+        {
+          "name": "Vivace（海外）",
+          "currentPrice": 199,
+          "currentPriceText": "$199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
+            "会员等级: 旗舰会员",
             "Kimi Code 月度订阅权益"
           ]
         }
