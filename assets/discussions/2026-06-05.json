@@ -1,0 +1,95 @@
+{
+  "date": "2026-06-05",
+  "generatedAt": "2026-06-05T07:37:09.238Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 2,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "cursor": 1,
+      "Vibe Coding": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1218184",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1218184",
+      "title": "讨论一下近期廉价 ai coding 渠道",
+      "content": "继 team plus 凉凉之后，当前时间点我所知道的： cursor 免费号续杯，￥ 49.9 月卡，能换 60 个号 虽然免费号只能用 auto ，但最近套壳 kimi 新模型+成熟的 agent 工程加持，体感不输 5.5 ，速度很快，但一个号对话不了几次额度就用光了 cursor pro 号续杯，￥ 488 两月 60 天卡，号称给 120 个 pro 号，约合 24 亿 token 他是一个插件形式装到 cursor 里，4 月的时候我用过，换号有 bug ，现在改没改善不清楚 反重力续杯，￥ 480 月卡，标称 10 亿额度 反重力几个月前我用过，ide 和 agent bug 多多，最近什么情况不清楚",
+      "author": "werwer",
+      "createdAt": "2026-06-05T06:37:57.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "cursor",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.55,
+        "summary": "讨论了最近的廉价 AI coding 渠道，包括 Cursor 免费和付费套餐、Kimi 新模型以及反重力服务的定价、 token 额度和使用体验。",
+        "topics": [
+          "定价",
+          "续费",
+          "token额度",
+          "使用体验",
+          "bug"
+        ],
+        "planMentioned": "cursor pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-05T07:38:14.068Z"
+    },
+    {
+      "id": "v2ex-1218088",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1218088",
+      "title": "我把英语学习变成了看小说，感谢 Vibe Coding",
+      "content": "有了 Vibe Coding 后，搞了小说的阅读翻译站点 https://novel.febug.com/ ，数据源来自笔趣阁。目前 token 还够免费。 大家伙可以先白嫖，后面 token 不够了，再考虑加一个广告 or 限制免费使用阅读章数。",
+      "author": "mtda",
+      "createdAt": "2026-06-05T01:53:02.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Vibe Coding",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户使用 Vibe Coding 的免费 token 创建小说阅读翻译站点，计划后续通过广告或限制免费章数来维持运营。",
+        "topics": [
+          "Vibe Coding",
+          "token",
+          "免费额度",
+          "小说站点"
+        ],
+        "planMentioned": "Vibe Coding 免费 token 计划",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/141",
+      "analyzedAt": "2026-06-05T07:38:17.845Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
