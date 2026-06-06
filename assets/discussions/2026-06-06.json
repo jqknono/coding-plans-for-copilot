@@ -1,0 +1,98 @@
+{
+  "date": "2026-06-06",
+  "generatedAt": "2026-06-06T07:11:00.719Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 5,
+    "relevantPosts": 2,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Anthropic": 1,
+      "Cursor": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1218411",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1218411",
+      "title": "claude desktop cowork 限额翻倍了：“Do more with double the usage in Cowork, now until July 5”",
+      "content": "但是是五小时限额不是周限额，而且还只限 cowork 模式。我让 codex 查了下具体信息： 活动内容：Claude Cowork 的 5 小时用量限制翻倍，方便一次 session 里跑更大、更复杂的任务。 适用对象：公告写的是 all paid plans ，也就是付费套餐用户。 时间：现在到 2026 年 7 月 5 日。 适用范围：看起来是 Cowork 专属，不是 Claude Chat / Claude Code / API 全部翻倍。 不是永久提额：属于临时促销活动。 依旧小气嗷 anthropic ，扣扣搜搜这一块，算力不够用这一块。",
+      "author": "haoofun",
+      "createdAt": "2026-06-06T07:04:03.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Anthropic",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "讨论 Claude Desktop Cowork 模式的临时用量翻倍活动，并吐槽 Anthropic 的额度限制过于吝啬。",
+        "topics": [
+          "额度",
+          "付费套餐",
+          "用量限制",
+          "促销活动"
+        ],
+        "planMentioned": "paid plans",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/143",
+      "analyzedAt": "2026-06-06T07:12:34.836Z"
+    },
+    {
+      "id": "v2ex-1218388",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1218388",
+      "title": "Cursor 20 刀套餐如果只用 auto 会不会比 GPT plus 更耐用？",
+      "content": "最近几天 GPT 和 Claude 都太让我没有安全感了，至少要有另外一个工具在用不了的时候能够完全替代，cursor 还没有用过不知道怎么样，所以想问问大家 至于 DeepSeek 和 kimi 也尝试过，偶尔会出现莫名其妙的 bug ，比如开了子代理在空转，疯狂消耗额度没工作，又或者是遇到权限不会请求，TUI 里不断滚动 yes or no",
+      "author": "desususula",
+      "createdAt": "2026-06-06T04:58:47.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Cursor",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户比较Cursor 20元套餐的耐用性（尤其auto模式）与GPT Plus，同时提及DeepSeek和Kimi的稳定性问题（如bug、资源消耗）。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "Cursor",
+          "GPT Plus",
+          "DeepSeek",
+          "Kimi",
+          "bug",
+          "资源消耗"
+        ],
+        "planMentioned": "Cursor 20元套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-06T07:12:36.409Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
