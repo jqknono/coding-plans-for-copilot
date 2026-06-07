@@ -1,0 +1,66 @@
+{
+  "date": "2026-06-07",
+  "generatedAt": "2026-06-07T07:30:54.653Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 50,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Cursor": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1218511",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1218511",
+      "title": "Wolf RBAC 五年来最重要的更新： 40 刀 vibe coding，给开源权限系统接了个 AI Agent",
+      "content": "我是 Wolf 的作者。Wolf 是一个开源 RBAC 权限系统，维护了五年多，一直在做「稳」的事——加字段、修 Bug 、补文档。 0.7.1 之后终于做了一件真正大的： 在 Console 里内嵌了一个 AI Agent ，可以用自然语言直接管理 RBAC 。这是 Wolf 五年来最重要的功能更新，没有之一。 整个 Agent 框架基于 pi-mono （ @mariozechner/pi-agent-core + @mariozechner/pi-ai ），不是另起炉灶写一套管理后台，而是让 AI 通过 Tool Calling 去调 Wolf 现有的 Controller ——鉴权、参数校验、缓存刷新、审计日志，全部走原链路。 能干什么 说人话就是：你在 Console 左侧点「 AI 助手」，然后直接聊： 「 oa-app 下有哪些角色？每个角色绑了哪些权限？」 「在 pi-mono 下新建一个 viewer 角色，把所有 read_ 开头的权限给它。」 「最近 7 天有没有 403 的访问记录？」 「重置用户 lily 的密码。」 AI 能做什么 = 当前登录用户在 Con",
+      "author": "igeeky",
+      "createdAt": "2026-06-07T02:30:48.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.92,
+        "supplier": "Cursor",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "Wolf RBAC 系统发布重大更新，集成 AI Agent 可通过自然语言管理权限，作者使用 Cursor（Claude）进行 vibe coding，花费约 40 美元订阅费用，并详细描述实现细节与功能。",
+        "topics": [
+          "定价",
+          "Cursor",
+          "订阅",
+          "AI Agent",
+          "RBAC",
+          "vibe coding",
+          "功能更新"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-07T07:32:21.832Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
