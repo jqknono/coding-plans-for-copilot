@@ -3,6 +3,7 @@
   "description": "通过配置的供应商资料接入 AI 模型套餐。",
   "commands.coding-plans.manage.title": "管理编码套餐配置",
   "commands.coding-plans.refreshModels.title": "刷新编码套餐模型列表",
+  "commands.coding-plans.updateModels.title": "更新编码套餐 models 列表",
   "commands.category": "编码套餐",
   "configuration.title": "编码套餐",
   "configuration.coding-plans.vendors.description": "配置 AI 模型供应商及其端点和模型。",

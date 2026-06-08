@@ -55,6 +55,7 @@ Click the **Install** button on the marketplace page, which will automatically o
 3. Select "Set API Key" and paste your API Key; the extension stores it and refreshes models
 4. Open Copilot Chat (`Ctrl+L`) and choose a model provided by `Coding Plans` in the model picker
 5. To configure `topP`, set model-level overrides in `coding-plans.vendors[].models[]`; set `temperature` and `Thinking Effort` per request from the model row `More Actions` menu, where OpenAI Chat-compatible models support `none` / `low` / `medium` / `high` / `xhigh` / `max`; Responses API models show `Personality` in `More Actions` and apply it through `instructions`
+6. When a vendor has `useModelsEndpoint` enabled, run `Coding Plans: Update Coding Plans Models List` to request `/models`, write the result back to `coding-plans.vendors[].models`, and refresh the VS Code model picker.
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 
 ### Built-in Vendor Endpoints
@@ -157,7 +158,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Protocol style: `openai-chat` / `openai-responses` / `anthropic`. |
 | `coding-plans.vendors[].defaultTemperature` | `number` / `null` | Empty | Deprecated. Vendor default temperature. When unset or `null`, runtime omits `temperature`. Runtime uses it only for `openai-chat` and `anthropic`. |
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | Vendor default topP. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
-| `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | Whether to fetch model list from `/models`. |
+| `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | Whether to fetch model list from `/models`; running `Coding Plans: Update Coding Plans Models List` writes discovered models back to `models`. |
 | `coding-plans.vendors[].models[].name` | `string` | Required | Model name. |
 | `coding-plans.vendors[].models[].enabled` | `boolean` | `true` | Whether to show this model in Manage Language Models; set to `false` to keep it configured but hidden. |
 | `coding-plans.vendors[].models[].description` | `string` | Empty | Model description. |

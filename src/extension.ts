@@ -16,7 +16,8 @@ import {
   CODING_PLANS_VENDOR,
   LANGUAGE_MODELS_REFRESH_LOG_PREFIX,
   PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS,
-  REFRESH_MODELS_COMMAND
+  REFRESH_MODELS_COMMAND,
+  UPDATE_MODELS_COMMAND
 } from './constants';
 import { logger } from './logging/outputChannelLogger';
 
@@ -356,6 +357,29 @@ async function refreshCodingPlansModels(
   logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} command completed`);
 }
 
+async function runModelsUpdateCommand(
+  configStore: ConfigStore,
+  genericProvider: GenericAIProvider,
+  adapter: LMChatProviderAdapter
+): Promise<void> {
+  if (refreshModelsCommandInProgress) {
+    logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} skipped re-entrant refresh command`);
+    return;
+  }
+
+  refreshModelsCommandInProgress = true;
+  try {
+    await refreshCodingPlansModels(configStore, genericProvider, adapter);
+    vscode.window.showInformationMessage(getMessage('modelsRefreshed', 'Coding Plan'));
+  } catch (error) {
+    vscode.window.showErrorMessage(
+      getMessage('refreshModelsFailed', getCompactErrorMessage(error))
+    );
+  } finally {
+    refreshModelsCommandInProgress = false;
+  }
+}
+
 export async function manageVendorConfiguration(
   configStore: ConfigStore,
   genericProvider: GenericAIProvider,
@@ -563,22 +587,13 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   context.subscriptions.push(
     vscode.commands.registerCommand(REFRESH_MODELS_COMMAND, async () => {
-      if (refreshModelsCommandInProgress) {
-        logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} skipped re-entrant refresh command`);
-        return;
-      }
+      await runModelsUpdateCommand(configStore, genericProvider, adapter);
+    })
+  );
 
-      refreshModelsCommandInProgress = true;
-      try {
-        await refreshCodingPlansModels(configStore, genericProvider, adapter);
-        vscode.window.showInformationMessage(getMessage('modelsRefreshed', 'Coding Plan'));
-      } catch (error) {
-        vscode.window.showErrorMessage(
-          getMessage('refreshModelsFailed', getCompactErrorMessage(error))
-        );
-      } finally {
-        refreshModelsCommandInProgress = false;
-      }
+  context.subscriptions.push(
+    vscode.commands.registerCommand(UPDATE_MODELS_COMMAND, async () => {
+      await runModelsUpdateCommand(configStore, genericProvider, adapter);
     })
   );
 
@@ -590,6 +605,5 @@ export function deactivate(): void {
   providers.forEach(provider => provider.dispose());
   providers.clear();
 }
-
 
 

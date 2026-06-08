@@ -5,6 +5,7 @@ const EXTENSION_ID = 'techfetch-dev.coding-plans-for-copilot';
 const EXPECTED_COMMANDS = [
   'coding-plans.manage',
   'coding-plans.refreshModels',
+  'coding-plans.updateModels',
   'coding-plans.generateCommitMessage',
   'coding-plans.selectCommitMessageModel'
 ];
