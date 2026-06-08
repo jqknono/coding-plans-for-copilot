@@ -1,0 +1,94 @@
+{
+  "date": "2026-06-08",
+  "generatedAt": "2026-06-08T07:52:27.771Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "阿里百炼": 2
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1218778",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1218778",
+      "title": "大家不要怕麻烦 还是用国外的吧 阿里百炼 coding plan 429 很容易",
+      "content": "这周我现在 700 次调用 十分抱歉带给您不好的体验，CodingPlan 为了保障所有用户的服务质量和系统稳定性，除了调用次数限制外，还会对短时间内的资源消耗进行综合评估。当系统检测到短时间内资源消耗较高时，会进行临时限制，通常一小时后即可恢复。建议您将大型任务拆分为多个小任务，分时段提交，这样既能避免触发限制，也有助于获得更好的响应质量。",
+      "author": "Melville",
+      "createdAt": "2026-06-08T07:18:59.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "阿里百炼",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "帖子讨论了阿里百炼AI编程套餐的使用限制和资源消耗政策，建议用户将大型任务拆分为小任务以避免触发限制。",
+        "topics": [
+          "调用次数限制",
+          "资源消耗",
+          "使用限制",
+          "阿里百炼",
+          "订阅"
+        ],
+        "planMentioned": "阿里百炼 coding plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-08T07:54:29.258Z"
+    },
+    {
+      "id": "v2ex-1218657",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1218657",
+      "title": "阿里百炼 coding plan 上新模型了 qwen3.7 plus",
+      "content": "",
+      "author": "lynn1su",
+      "createdAt": "2026-06-08T01:55:01.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.92,
+        "supplier": "阿里百炼",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "阿里百炼的 coding plan 近期上新了 qwen3.7 plus 模型。",
+        "topics": [
+          "套餐",
+          "模型上新",
+          "阿里百炼",
+          "qwen3.7 plus"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-08T07:54:31.415Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
