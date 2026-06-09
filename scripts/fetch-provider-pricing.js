@@ -2807,6 +2807,7 @@ function parseAliyunServiceDetailsFromDocsHtml(html) {
   const cleanupDocsValue = (value) =>
     normalizeText(
       String(value || "")
+        .replace(/\\n/gi, " ")
         .replace(/\\+&nbsp;?/gi, " ")
         .replace(/\\+/g, " ")
         .replace(/\s+/g, " "),
