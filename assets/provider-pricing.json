@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-08T09:43:55.981Z",
+  "generatedAt": "2026-06-09T03:11:37.027Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -488,7 +488,7 @@
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
         "https://docs.infini-ai.com/gen-studio/coding-plan/",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.0feb723e.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.03d16b37.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
