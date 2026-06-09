@@ -1,0 +1,101 @@
+{
+  "date": "2026-06-09",
+  "generatedAt": "2026-06-09T07:22:10.242Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 61,
+    "postsAfterKeywordFilter": 5,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "AnyPal": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1219067",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1219067",
+      "title": "Vibe Coding 不是软件工程？符合软件工程规范的 AI 软件工程平台来了。",
+      "content": "过去半年，我们团队尝试了全流程的 Vibe Coding 模式。刚开始用提示词生成代码的感觉非常爽快，但随着项目规模扩大，技术债开始爆发。 Vibe Coding 的核心问题并不在于某几行代码的质量低下，而在于它完全缺乏全局观，且不遵循软件工程的规范。 没有宏观架构，没有项目长期记忆，没有自动化审计，我们意识到 Vibe Coding Is Not Engineering 。 为了使 AI 编程更符合软件工程规范，我们开发了这个项目。 AnyPal：将 Vibe Coding 带入软件工程时代 AnyPal 是由 Pomesoft 研发的全栈 AI 编程平台，支持导入国内外主流模型 API 。它在保留 Vibe Coding 快速生成体验的同时，引入了软件工程的规范。 多 Agent 协同与对抗审计：内置工程经理，架构师等 11 个 AI 角色与 6 个反方审查员，支持 Coder 与 Adversary （测试/安全等）多 Agent 左右互搏，在代码交付前完成质量闭环。 成本优化：对抗审计配合 S/M/L/XL 任务规模自动切换模型，可以极大降本增效，将 Token 花在刀刃上。 ",
+      "author": "Exia2",
+      "createdAt": "2026-06-09T06:35:55.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.72,
+        "supplier": "AnyPal",
+        "supplierCategory": "tool",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.88,
+        "summary": "帖子介绍 AnyPal 这个 AI 编程平台，强调其通过多 Agent、对抗审计、长期记忆和 Plan 模式提升 AI 编程工程化能力，并提供免费订阅、内置模型 Token 预充值和限量 Token 补贴。文中还将其与 GitHub Copilot + Opus 4.7 进行成本/性价比对比。",
+        "topics": [
+          "AI编程平台",
+          "套餐",
+          "订阅",
+          "Token补贴",
+          "成本优化",
+          "性价比",
+          "Copilot",
+          "DeepSeek",
+          "Kimi",
+          "内测"
+        ],
+        "planMentioned": "免费订阅",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-09T07:25:30.391Z"
+    },
+    {
+      "id": "v2ex-1219001",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1219001",
+      "title": "一个月 400 刀订阅，换来的关于 AI 编程的个人理解",
+      "content": "标题是有点噱头，毕竟说白了就是消费了两个 200 刀套餐的消费者，如果说“怎么不被封”可能大家还更有兴趣。不过那类讨论已经很多了，就不赘述了。 还需要足够强大的基底来支持 AI 编程 这种基底必须能让 AI 编程可以实现廉价、稳定、可大规模提升测试速度（比如加硬件）的端到端的测试。 不要指望一次就能生成结果 这种有各种例子来说明其是不现实的。如果一次生成就能用的，大概率都是些小玩具。 不应该把希望放在将产品需求、开发文档、测试用例在代码开发前完成 这种大概就是 SDD 想实现的幻想，写得完备，然后启动 AI ，一切搞定。 软件工程的复杂度一方面是因为软件工程的需求实现的本质是在用一套对现实世界建模导致的复杂度，另外一方面是糟糕的实现额外添加的。随着模型的能力增加，后者可能也许大概会减少，但是前者是不可避免的，SDD 其实也只能解决后者。 产品层面要抵制住 AI 的诱惑 不要因为 AI 介入了，就开始狂加功能，“能做”和“应该做”是两回事。 复杂度很多时候就是因为什么都做带来的。 产品只要够简单就不可能复杂（什么废话）。 如果你不够了解这个领域，那就先做起来，然后推翻再做 遇到一个问题，",
+      "author": "beimenjun",
+      "createdAt": "2026-06-09T03:30:15.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": "other",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享了花费400美元/月订阅AI编程服务的体验，强调AI编程需要强大的基础设施支持，并讨论了AI如何通过迭代开发减少复杂度并提升产品质量。",
+        "topics": [
+          "订阅",
+          "AI 编程",
+          "套餐",
+          "成本",
+          "产品设计",
+          "迭代开发"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-09T07:25:32.834Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
