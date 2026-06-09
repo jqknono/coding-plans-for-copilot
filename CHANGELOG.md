@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.10.2] - 2026-06-09
+- fix(assets): 优化套餐配置信息的文本格式
+- feat(commands): 新增更新模型列表命令
+
 ## [0.10.1] - 2026-06-04
 - feat(providers): 支持多模态消息内容并更新版本至 0.10.0
 - feat(config): 将 API Key 字段标记为废弃并支持临时回退配置
