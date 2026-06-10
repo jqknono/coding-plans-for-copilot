@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-06-09T09:16:17.123Z",
-  "generatedAtBeijing": "2026年6月9日 17:16:17",
-  "sourceGeneratedAt": "2026-06-09T09:16:04.272Z",
-  "sourceGeneratedAtBeijing": "2026年6月9日 17:16:04",
-  "sourceMetricsGeneratedAt": "2026-06-09T09:16:04.889Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年6月9日 17:16:04",
+  "generatedAt": "2026-06-10T09:22:04.956Z",
+  "generatedAtBeijing": "2026年6月10日 17:22:04",
+  "sourceGeneratedAt": "2026-06-10T09:21:51.474Z",
+  "sourceGeneratedAtBeijing": "2026年6月10日 17:21:51",
+  "sourceMetricsGeneratedAt": "2026-06-10T09:21:52.104Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年6月10日 17:21:52",
   "summary": {
-    "openrouterProviderCount": 84,
-    "metricsProviderCount": 36,
-    "resolvedMetricsProviderCount": 36,
+    "openrouterProviderCount": 85,
+    "metricsProviderCount": 39,
+    "resolvedMetricsProviderCount": 39,
     "unresolvedMetricsProviderCount": 0,
-    "structuredProviderCount": 8,
+    "structuredProviderCount": 9,
     "heuristicProviderCount": 8,
-    "providersWithPlans": 16,
-    "pendingCount": 20,
+    "providersWithPlans": 17,
+    "pendingCount": 22,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -50,9 +50,9 @@
             "能力: 支持千问系列模型 Qwen3.5-Plus、Qwen3-Max、Qwen3-Coder-Next、Qwen3-Coder-Plus 和第三方模型 MiniMax M2.5、GLM-5、Kimi-k2.5、GLM-4.7 等，更多模型持续接入中。",
             "工具: 支持 Qwen Code、Qoder、OpenClaw、OpenCode、Claude Code、Claude Code IDE插件、Codex、Cline、Cursor、Kilo CLI、Kilo Code IDE 插件等工具。",
             "权益: 更大容量，更快、更稳，专为 AI Coding 场景打造。",
-            "支持的模型: 判定规则：1. 本清单为精确字符串白名单 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 3. 禁止做版本兼容推理。判定示范：❌ \"GLM-5.1\" → 清单只有 glm-5.0 → 不支持；❌ \"qwen3-coder-max\" → 清单无此项 → 不支持。仅支持以下精确版本：推荐模型：qwen3.7-plus（支持图片理解）、qwen3.6-plus（支持图片理解）、kimi-k2.5（支持图片理解）、glm-5、MiniMax-M2.5；更多模型：qwen3.5-plus（支持图片理解）、qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
-            "价格: ¥200/月",
-            "用量限制: 每 5 小时 6,000 次请求，每周 45,000 次请求，每月 90,000 次请求"
+            "支持的模型: 支持的模型判断说明 判定规则： 1. 本清单为精确字符串白名单 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 3. 禁止做版本兼容推理 判定示范： - ❌ \"GLM-5.1 \" → 清单只有 glm-5.0 → 不支持 - ❌ \"qwen3-coder-max \" → 清单无此项 → 不支持 仅支持以下精确版本： 推荐模型： qwen3.7-plus （支持图片理解）、 qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
+            "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求",
+            "支持的模型: 支持的模型判断说明 判定规则： 1. 本清单为精确字符串白名单 2. 必须逐字符完全匹配，版本号/子型号任何差异均视为不支持 3. 禁止做版本兼容推理 判定示范： - ❌ \"GLM-5.1\" → 清单只有 glm-5.0 → 不支持 - ❌ \"qwen3-coder-max\" → 清单无此项 → 不支持 仅支持以下精确版本： 推荐模型： qwen3.7-plus （支持图片理解）、 qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7"
           ]
         }
       ],
@@ -114,6 +114,56 @@
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/Plr0fi68q-intl-en",
       "termsOfServiceUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/bmesahnjh-intl-en",
+      "statusPageUrl": null,
+      "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "cerebras",
+      "openrouterName": "Cerebras",
+      "providerId": "cerebras-code",
+      "plans": [
+        {
+          "name": "Cerebras Code Pro",
+          "currentPrice": 50,
+          "currentPriceText": "$50/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "速率限制可能调整",
+          "serviceDetails": [
+            "Qwen3-Coder access with fast, high-context completions",
+            "最高 24 million tokens/day",
+            "适合 indie devs、simple agentic workflows、weekend projects",
+            "OpenAI-compatible inference endpoint",
+            "131k-token context window"
+          ]
+        },
+        {
+          "name": "Cerebras Code Max",
+          "currentPrice": 200,
+          "currentPriceText": "$200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "速率限制可能调整",
+          "serviceDetails": [
+            "Qwen3-Coder access for heavy coding workflows",
+            "最高 120 million tokens/day",
+            "适合 full-time development、IDE integrations、code refactoring、multi-agent systems",
+            "OpenAI-compatible inference endpoint",
+            "131k-token context window"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.cerebras.ai/blog/introducing-cerebras-code",
+        "https://www.cerebras.ai"
+      ],
+      "pricingPageUrl": "https://www.cerebras.ai/blog/introducing-cerebras-code",
+      "officialWebsiteUrl": "https://www.cerebras.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.cerebras.ai/privacy-policy",
+      "termsOfServiceUrl": "https://www.cerebras.ai/terms-of-service",
       "statusPageUrl": null,
       "parseMode": "provider-pricing-structured"
     },
@@ -600,33 +650,33 @@
       "sourceUrls": [
         "https://www.morphllm.com",
         "https://www.morphllm.com/pricing",
-        "https://www.morphllm.com/_next/static/chunks/18c1eb289b41dc75.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/221d503c2f0b397d.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/048634a2386705b3.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/548a61d016d1397b.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/turbopack-f5de01e436a89a1e.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/4c99feeb9ef3c9bd.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/a801ccbb12136f9b.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/d41cf3439fb860a3.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/459d6b190f1276b8.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/b2cb70ad024e32c4.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ",
-        "https://www.morphllm.com/_next/static/chunks/500d576468426d3e.js?dpl=dpl_HGnjjXuRvUeyddKtRSXfgn4S1hoQ"
+        "https://www.morphllm.com/_next/static/chunks/18c1eb289b41dc75.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/a69d37cce1179b5a.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/048634a2386705b3.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/7aa5cf3aab424ac1.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/turbopack-b30297e43c7440bd.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/16df5bdb666d0e14.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/a801ccbb12136f9b.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/d41cf3439fb860a3.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/d2ec80e0a86aa1d3.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/b2cb70ad024e32c4.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi",
+        "https://www.morphllm.com/_next/static/chunks/2fc46e0ecfcd6a65.js?dpl=dpl_FrFxMguaDwxxGX233uLgc2rkJKfi"
       ],
       "pricingPageUrl": "https://www.morphllm.com/pricing",
       "officialWebsiteUrl": "https://www.morphllm.com",
@@ -1113,7 +1163,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.096 / $0.15 / $0.14）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.086 / $0.08 / $0.15）",
       "blocked": false
     },
     {
@@ -1180,6 +1230,15 @@
       "blocked": false
     },
     {
+      "slug": "google-vertex",
+      "openrouterName": "Google",
+      "providerId": null,
+      "officialWebsiteUrl": "https://cloud.google.com",
+      "pricingPageUrl": "https://cloud.google.com",
+      "reason": "云平台按量计费 + $300 免费试用额度，无套餐订阅",
+      "blocked": false
+    },
+    {
       "slug": "inceptron",
       "openrouterName": "Inceptron",
       "providerId": null,
@@ -1213,6 +1272,15 @@
       "officialWebsiteUrl": "https://modelrun.org",
       "pricingPageUrl": "https://modelrun.org",
       "reason": "官网价格页探测失败：https://modelrun.org/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "nextbit",
+      "openrouterName": "NextBit",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.nextbit256.com",
+      "pricingPageUrl": "https://www.nextbit256.com",
+      "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
       "blocked": false
     },
     {
