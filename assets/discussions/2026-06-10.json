@@ -1,0 +1,64 @@
+{
+  "date": "2026-06-10",
+  "generatedAt": "2026-06-10T07:37:20.363Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 5,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Claude360": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1219352",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1219352",
+      "title": "🚀 Claude360 福利活动来啦！",
+      "content": "🚀 Claude360 福利活动来啦！ 大家好，我们是 Claude360 —— 一个面向开发者和团队的 Claude / GPT 模型中转服务平台 。 为了让更多开发者和团队低成本体验 Claude / GPT 系列模型，Claude360 长期开放多项福利活动，欢迎大家体验使用！ 🌐 官网地址： 👉 https://claude360.xyz 🎁 活动一：新用户首充福利 首充仅需 ¥9.9 ，到账 ¥20 额度 ✅ 仅限新用户首次充值享受一次。 支持接入： Claude Code Cursor Windsurf Cline 其他支持 API 配置的 AI 编程工具 🤖 已支持模型 Claude360 当前支持多种 Claude / GPT 系列模型： Claude 系列 Claude Opus 4.8 Claude Sonnet 系列 Claude Haiku 系列 GPT 系列 GPT-5.5 GPT 系列模型 其他 Kiro 反代分组 适用于： AI 编程 代码审查 文档生成 自动化开发 Agent 工作流 团队协作开发 💰 活动二：充值阶梯赠送 除首充福利外，所有",
+      "author": "Johnhpure",
+      "createdAt": "2026-06-10T05:30:51.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude360",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "Claude360 offers discounted API access to Claude/GPT models for coding tasks, with new user discounts, recharge rewards, team trial credits, and a giveaway.",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "抽奖",
+          "团队试用",
+          "体验卡"
+        ],
+        "planMentioned": "Claude360 API access plans (new user, recharge rewards, team trial)",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/150",
+      "analyzedAt": "2026-06-10T07:40:27.885Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
