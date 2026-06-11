@@ -31,6 +31,14 @@ type VendorModelRecord = {
   supportsReasoningEffort?: Array<'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max'>;
   reasoningEffortFormat?: 'chat-completions' | 'responses';
   zeroDataRetentionEnabled?: boolean;
+  price?: {
+    inputCost?: number;
+    cacheCost?: number;
+    outputCost?: number;
+    longContextInputCost?: number;
+    longContextCacheCost?: number;
+    longContextOutputCost?: number;
+  };
 };
 
 type VendorRecord = {
@@ -1060,6 +1068,14 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
           supportsReasoningEffort: ['high', 'xhigh'],
           reasoningEffortFormat: 'responses',
           zeroDataRetentionEnabled: false,
+          price: {
+            inputCost: 4,
+            cacheCost: 1,
+            outputCost: 12,
+            longContextInputCost: 6,
+            longContextCacheCost: 2,
+            longContextOutputCost: 18,
+          },
         },
       ],
     },
@@ -1082,6 +1098,14 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     assert.deepEqual(model?.supportsReasoningEffort, ['high', 'xhigh']);
     assert.equal(model?.reasoningEffortFormat, 'responses');
     assert.equal(model?.zeroDataRetentionEnabled, false);
+    assert.deepEqual(model?.price, {
+      inputCost: 4,
+      cacheCost: 1,
+      outputCost: 12,
+      longContextInputCost: 6,
+      longContextCacheCost: 2,
+      longContextOutputCost: 18,
+    });
     console.log('PASS Copilot 风格模型参数可归一化到现有 vendor/model 配置');
   } finally {
     configStore.dispose();
@@ -1101,6 +1125,11 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
           supportsReasoningEffort: ['high', 'xhigh'],
           streaming: false,
           zeroDataRetentionEnabled: false,
+          price: {
+            inputCost: 4,
+            cacheCost: 1,
+            outputCost: 12,
+          },
         },
       ],
     },
@@ -1119,6 +1148,11 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     assert.deepEqual(preservedModel?.supportsReasoningEffort, ['high', 'xhigh']);
     assert.equal(preservedModel?.streaming, false);
     assert.equal(preservedModel?.zeroDataRetentionEnabled, false);
+    assert.deepEqual(preservedModel?.price, {
+      inputCost: 4,
+      cacheCost: 1,
+      outputCost: 12,
+    });
     console.log('PASS updateVendorModels 写回时保留 Copilot 风格模型覆盖字段');
   } finally {
     configStore.dispose();
@@ -1515,6 +1549,14 @@ async function runGenericProviderContextSizeTests(
           supportsReasoningEffort: ['high', 'xhigh'],
           reasoningEffortFormat: 'responses',
           zeroDataRetentionEnabled: false,
+          price: {
+            inputCost: 8,
+            cacheCost: 1,
+            outputCost: 8,
+            longContextInputCost: 10,
+            longContextCacheCost: 2,
+            longContextOutputCost: 20,
+          },
         },
       ],
     },
@@ -1535,6 +1577,12 @@ async function runGenericProviderContextSizeTests(
       supportsReasoningEffort?: string[];
       reasoningEffortFormat?: string;
       zeroDataRetentionEnabled?: boolean;
+      inputCost?: number;
+      cacheCost?: number;
+      outputCost?: number;
+      longContextInputCost?: number;
+      longContextCacheCost?: number;
+      longContextOutputCost?: number;
     }>;
     dispose(): void;
   };
@@ -1554,6 +1602,12 @@ async function runGenericProviderContextSizeTests(
     assert.deepEqual(models[0]?.supportsReasoningEffort, ['high', 'xhigh']);
     assert.equal(models[0]?.reasoningEffortFormat, 'responses');
     assert.equal(models[0]?.zeroDataRetentionEnabled, false);
+    assert.equal(models[0]?.inputCost, 8);
+    assert.equal(models[0]?.cacheCost, 1);
+    assert.equal(models[0]?.outputCost, 8);
+    assert.equal(models[0]?.longContextInputCost, 10);
+    assert.equal(models[0]?.longContextCacheCost, 2);
+    assert.equal(models[0]?.longContextOutputCost, 20);
     console.log('PASS GenericAIProvider 构建模型时应用 Copilot 风格参数');
   } finally {
     copilotProvider.dispose();
@@ -5143,6 +5197,12 @@ async function runLMChatProviderAdapterModelFilteringTests(
       maxInputTokens: 32000,
       maxOutputTokens: 16000,
       capabilities: { toolCalling: true, imageInput: false },
+      inputCost: 4,
+      cacheCost: 1,
+      outputCost: 12,
+      longContextInputCost: 6,
+      longContextCacheCost: 2,
+      longContextOutputCost: 18,
     },
     {
       id: 'Other/coder',
@@ -5358,6 +5418,12 @@ async function runLMChatProviderAdapterModelFilteringTests(
       ).configurationSchema?.properties?.temperature?.default,
       'none',
     );
+    assert.equal((vendorGroupModels[0] as unknown as { inputCost?: number }).inputCost, 4);
+    assert.equal((vendorGroupModels[0] as unknown as { cacheCost?: number }).cacheCost, 1);
+    assert.equal((vendorGroupModels[0] as unknown as { outputCost?: number }).outputCost, 12);
+    assert.equal((vendorGroupModels[0] as unknown as { longContextInputCost?: number }).longContextInputCost, 6);
+    assert.equal((vendorGroupModels[0] as unknown as { longContextCacheCost?: number }).longContextCacheCost, 2);
+    assert.equal((vendorGroupModels[0] as unknown as { longContextOutputCost?: number }).longContextOutputCost, 18);
 
     availableModels = [
       {

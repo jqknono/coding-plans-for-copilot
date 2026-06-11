@@ -426,6 +426,43 @@
                                         "zeroDataRetentionEnabled": {
                                             "type": "boolean",
                                             "description": "Declarative Copilot-style metadata. This does not change upstream provider retention behavior."
+                                        },
+                                        "price": {
+                                            "type": "object",
+                                            "additionalProperties": false,
+                                            "description": "Cost metadata shown in Manage Language Models. Values are credits per 1M tokens.",
+                                            "properties": {
+                                                "inputCost": {
+                                                    "type": "number",
+                                                    "minimum": 0,
+                                                    "description": "Input cost in credits per 1M tokens."
+                                                },
+                                                "cacheCost": {
+                                                    "type": "number",
+                                                    "minimum": 0,
+                                                    "description": "Cached input cost in credits per 1M tokens."
+                                                },
+                                                "outputCost": {
+                                                    "type": "number",
+                                                    "minimum": 0,
+                                                    "description": "Output cost in credits per 1M tokens."
+                                                },
+                                                "longContextInputCost": {
+                                                    "type": "number",
+                                                    "minimum": 0,
+                                                    "description": "Long-context input cost in credits per 1M tokens shown in model hover details when supported by VS Code."
+                                                },
+                                                "longContextCacheCost": {
+                                                    "type": "number",
+                                                    "minimum": 0,
+                                                    "description": "Long-context cached input cost in credits per 1M tokens shown in model hover details when supported by VS Code."
+                                                },
+                                                "longContextOutputCost": {
+                                                    "type": "number",
+                                                    "minimum": 0,
+                                                    "description": "Long-context output cost in credits per 1M tokens shown in model hover details when supported by VS Code."
+                                                }
+                                            }
                                         }
                                     }
                                 },

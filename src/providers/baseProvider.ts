@@ -47,6 +47,12 @@ export interface AIModelConfig {
   supportsReasoningEffort?: ReasoningEffortValue[];
   reasoningEffortFormat?: ReasoningEffortFormat;
   zeroDataRetentionEnabled?: boolean;
+  inputCost?: number;
+  cacheCost?: number;
+  outputCost?: number;
+  longContextInputCost?: number;
+  longContextCacheCost?: number;
+  longContextOutputCost?: number;
   description: string;
 }
 
@@ -199,6 +205,12 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   public readonly supportsReasoningEffort?: readonly ReasoningEffortValue[];
   public readonly reasoningEffortFormat?: ReasoningEffortFormat;
   public readonly zeroDataRetentionEnabled?: boolean;
+  public readonly inputCost?: number;
+  public readonly cacheCost?: number;
+  public readonly outputCost?: number;
+  public readonly longContextInputCost?: number;
+  public readonly longContextCacheCost?: number;
+  public readonly longContextOutputCost?: number;
   public readonly description: string;
 
   constructor(
@@ -226,6 +238,12 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
     this.supportsReasoningEffort = modelInfo.supportsReasoningEffort;
     this.reasoningEffortFormat = modelInfo.reasoningEffortFormat;
     this.zeroDataRetentionEnabled = modelInfo.zeroDataRetentionEnabled;
+    this.inputCost = modelInfo.inputCost;
+    this.cacheCost = modelInfo.cacheCost;
+    this.outputCost = modelInfo.outputCost;
+    this.longContextInputCost = modelInfo.longContextInputCost;
+    this.longContextCacheCost = modelInfo.longContextCacheCost;
+    this.longContextOutputCost = modelInfo.longContextOutputCost;
     this.description = modelInfo.description;
   }
 

@@ -114,7 +114,31 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
     supportsReasoningEffort: model.supportsReasoningEffort,
     reasoningEffortFormat: model.reasoningEffortFormat,
     zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
+    price: buildPriceConfig(model),
   };
+}
+
+function buildPriceConfig(model: AIModelConfig): VendorModelConfig['price'] {
+  const price: NonNullable<VendorModelConfig['price']> = {};
+  if (model.inputCost !== undefined) {
+    price.inputCost = model.inputCost;
+  }
+  if (model.cacheCost !== undefined) {
+    price.cacheCost = model.cacheCost;
+  }
+  if (model.outputCost !== undefined) {
+    price.outputCost = model.outputCost;
+  }
+  if (model.longContextInputCost !== undefined) {
+    price.longContextInputCost = model.longContextInputCost;
+  }
+  if (model.longContextCacheCost !== undefined) {
+    price.longContextCacheCost = model.longContextCacheCost;
+  }
+  if (model.longContextOutputCost !== undefined) {
+    price.longContextOutputCost = model.longContextOutputCost;
+  }
+  return Object.values(price).some((entry) => entry !== undefined) ? price : undefined;
 }
 
 function readPositiveTokenInteger(value: number | undefined): number | undefined {

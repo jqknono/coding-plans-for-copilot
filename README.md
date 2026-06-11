@@ -135,6 +135,11 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
           "apiStyle": "openai-responses",
           "enabled": true,
           "editTools": ["apply-patch"],
+          "price": {
+            "inputCost": 4,
+            "cacheCost": 1,
+            "outputCost": 12
+          },
           "maxInputTokens": 400000,
           "maxOutputTokens": 128000,
           "reasoningEffortFormat": "responses",
@@ -177,6 +182,10 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | 模型总上下文窗口；未配置时默认 400k，运行时会基于它推导输入/输出预算。 |
 | `coding-plans.vendors[].models[].maxInputTokens` | `number` | 由 `contextSize` 推导 | 显式输入 token 上限，优先于 `contextSize` 推导值。 |
 | `coding-plans.vendors[].models[].maxOutputTokens` | `number` | 由 `contextSize` 推导 | 显式输出 token 上限，优先于 `contextSize` 推导值。 |
+| `coding-plans.vendors[].models[].price.inputCost` | `number` | 空 | 输入成本元数据，单位为 credits / 1M tokens，显示在 Manage Language Models 的 Cost 列。 |
+| `coding-plans.vendors[].models[].price.cacheCost` | `number` | 空 | 缓存输入成本元数据，单位为 credits / 1M tokens，显示在 Manage Language Models 的 Cost 列。 |
+| `coding-plans.vendors[].models[].price.outputCost` | `number` | 空 | 输出成本元数据，单位为 credits / 1M tokens，显示在 Manage Language Models 的 Cost 列。 |
+| `coding-plans.vendors[].models[].price.longContextInputCost` / `longContextCacheCost` / `longContextOutputCost` | `number` | 空 | 长上下文成本元数据，单位为 credits / 1M tokens；VS Code 支持时会在模型 hover 详情中显示。 |
 | `coding-plans.vendors[].models[].streaming` | `boolean` | `true` | 是否优先使用流式请求；设为 `false` 时发送非流式请求。 |
 | `coding-plans.vendors[].models[].thinking` | `boolean` | `true` | 是否展示并发送 reasoning/thinking 相关参数；设为 `false` 时不暴露对应模型行选项。 |
 | `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | 协议默认值 | 限制模型行 `Thinking Effort` / `Effort` 可选项，并阻止未声明值进入请求 payload。 |

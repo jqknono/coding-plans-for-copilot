@@ -12,6 +12,15 @@ export type VendorApiType = 'chat' | 'responses' | 'anthropic';
 export type ReasoningEffortValue = 'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
 export type ReasoningEffortFormat = 'chat-completions' | 'responses';
 
+export interface VendorModelPriceConfig {
+  inputCost?: number;
+  cacheCost?: number;
+  outputCost?: number;
+  longContextInputCost?: number;
+  longContextCacheCost?: number;
+  longContextOutputCost?: number;
+}
+
 export interface VendorModelConfig {
   name: string;
   enabled?: boolean;
@@ -38,6 +47,7 @@ export interface VendorModelConfig {
   supportsReasoningEffort?: ReasoningEffortValue[];
   reasoningEffortFormat?: ReasoningEffortFormat;
   zeroDataRetentionEnabled?: boolean;
+  price?: VendorModelPriceConfig;
 }
 
 export interface VendorConfig {
@@ -406,6 +416,9 @@ export class ConfigStore implements vscode.Disposable {
     if (normalized.zeroDataRetentionEnabled !== undefined) {
       stored.zeroDataRetentionEnabled = normalized.zeroDataRetentionEnabled;
     }
+    if (normalized.price !== undefined) {
+      stored.price = normalized.price;
+    }
     return stored;
   }
 
@@ -595,6 +608,7 @@ export class ConfigStore implements vscode.Disposable {
     const supportsReasoningEffort = this.readReasoningEffortArray(obj.supportsReasoningEffort);
     const reasoningEffortFormat = this.normalizeReasoningEffortFormat(obj.reasoningEffortFormat);
     const zeroDataRetentionEnabled = this.readBooleanValue(obj.zeroDataRetentionEnabled);
+    const price = this.normalizeModelPrice(obj.price);
     let capabilities: VendorModelConfig['capabilities'];
     if (obj.capabilities && typeof obj.capabilities === 'object') {
       const cap = obj.capabilities as Record<string, unknown>;
@@ -632,6 +646,7 @@ export class ConfigStore implements vscode.Disposable {
         supportsReasoningEffort,
         reasoningEffortFormat,
         zeroDataRetentionEnabled,
+        price,
       },
       defaultVision,
       defaultApiStyle,
@@ -664,6 +679,7 @@ export class ConfigStore implements vscode.Disposable {
       supportsReasoningEffort: model.supportsReasoningEffort,
       reasoningEffortFormat: model.reasoningEffortFormat,
       zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
+      price: model.price,
     };
   }
 
@@ -689,6 +705,42 @@ export class ConfigStore implements vscode.Disposable {
 
   private normalizeReasoningEffortFormat(value: unknown): ReasoningEffortFormat | undefined {
     return value === 'responses' || value === 'chat-completions' ? value : undefined;
+  }
+
+  private normalizeModelPrice(value: unknown): VendorModelPriceConfig | undefined {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) {
+      return undefined;
+    }
+
+    const obj = value as Record<string, unknown>;
+    const price: VendorModelPriceConfig = {};
+    const inputCost = this.readNonNegativeNumber(obj.inputCost);
+    const cacheCost = this.readNonNegativeNumber(obj.cacheCost);
+    const outputCost = this.readNonNegativeNumber(obj.outputCost);
+    const longContextInputCost = this.readNonNegativeNumber(obj.longContextInputCost);
+    const longContextCacheCost = this.readNonNegativeNumber(obj.longContextCacheCost);
+    const longContextOutputCost = this.readNonNegativeNumber(obj.longContextOutputCost);
+
+    if (inputCost !== undefined) {
+      price.inputCost = inputCost;
+    }
+    if (cacheCost !== undefined) {
+      price.cacheCost = cacheCost;
+    }
+    if (outputCost !== undefined) {
+      price.outputCost = outputCost;
+    }
+    if (longContextInputCost !== undefined) {
+      price.longContextInputCost = longContextInputCost;
+    }
+    if (longContextCacheCost !== undefined) {
+      price.longContextCacheCost = longContextCacheCost;
+    }
+    if (longContextOutputCost !== undefined) {
+      price.longContextOutputCost = longContextOutputCost;
+    }
+
+    return Object.values(price).some((entry) => entry !== undefined) ? price : undefined;
   }
 
   private resolveVendorsConfigTarget(): vscode.ConfigurationTarget {
@@ -795,6 +847,21 @@ export class ConfigStore implements vscode.Disposable {
       const parsed = Number(value.trim());
       if (Number.isFinite(parsed) && parsed >= 0) {
         return Math.floor(parsed);
+      }
+    }
+
+    return undefined;
+  }
+
+  private readNonNegativeNumber(value: unknown): number | undefined {
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+      return value;
+    }
+
+    if (typeof value === 'string') {
+      const parsed = Number(value.trim());
+      if (Number.isFinite(parsed) && parsed >= 0) {
+        return parsed;
       }
     }
 

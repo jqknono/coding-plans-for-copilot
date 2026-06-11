@@ -894,6 +894,12 @@ export class GenericAIProvider extends BaseAIProvider {
       supportsReasoningEffort: model.supportsReasoningEffort,
       reasoningEffortFormat: model.reasoningEffortFormat ?? this.apiStyleToReasoningEffortFormat(apiStyle),
       zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
+      inputCost: model.price?.inputCost,
+      cacheCost: model.price?.cacheCost,
+      outputCost: model.price?.outputCost,
+      longContextInputCost: model.price?.longContextInputCost,
+      longContextCacheCost: model.price?.longContextCacheCost,
+      longContextOutputCost: model.price?.longContextOutputCost,
       description: model.description || getMessage('genericDynamicModelDescription', vendor.name, model.name),
     };
   }
@@ -1050,6 +1056,12 @@ export class GenericAIProvider extends BaseAIProvider {
         maxInputTokens: model.maxInputTokens,
         maxOutputTokens: model.maxOutputTokens,
         capabilities: model.capabilities,
+        inputCost: model.inputCost,
+        cacheCost: model.cacheCost,
+        outputCost: model.outputCost,
+        longContextInputCost: model.longContextInputCost,
+        longContextCacheCost: model.longContextCacheCost,
+        longContextOutputCost: model.longContextOutputCost,
         description: model.description,
       })),
     );
@@ -3003,6 +3015,7 @@ export class GenericAIProvider extends BaseAIProvider {
       description: model.description,
       contextSize: model.contextSize,
       capabilities: model.capabilities,
+      price: model.price,
     }));
   }
 
@@ -3018,6 +3031,9 @@ export class GenericAIProvider extends BaseAIProvider {
       maxInputTokens: model.maxInputTokens,
       maxOutputTokens: model.maxOutputTokens,
       capabilities: model.capabilities,
+      inputCost: model.inputCost,
+      cacheCost: model.cacheCost,
+      outputCost: model.outputCost,
     }));
   }
 

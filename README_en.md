@@ -138,6 +138,11 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
           "apiStyle": "openai-responses",
           "enabled": true,
           "editTools": ["apply-patch"],
+          "price": {
+            "inputCost": 4,
+            "cacheCost": 1,
+            "outputCost": 12
+          },
           "maxInputTokens": 400000,
           "maxOutputTokens": 128000,
           "reasoningEffortFormat": "responses",
@@ -180,6 +185,10 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | Model total context window. Defaults to 400k when omitted. Runtime derives the request budget from this total window. |
 | `coding-plans.vendors[].models[].maxInputTokens` | `number` | Derived from `contextSize` | Explicit input token limit, taking precedence over the derived `contextSize` value. |
 | `coding-plans.vendors[].models[].maxOutputTokens` | `number` | Derived from `contextSize` | Explicit output token limit, taking precedence over the derived `contextSize` value. |
+| `coding-plans.vendors[].models[].price.inputCost` | `number` | Empty | Input cost metadata in credits per 1M tokens, shown in the Manage Language Models Cost column. |
+| `coding-plans.vendors[].models[].price.cacheCost` | `number` | Empty | Cached input cost metadata in credits per 1M tokens, shown in the Manage Language Models Cost column. |
+| `coding-plans.vendors[].models[].price.outputCost` | `number` | Empty | Output cost metadata in credits per 1M tokens, shown in the Manage Language Models Cost column. |
+| `coding-plans.vendors[].models[].price.longContextInputCost` / `longContextCacheCost` / `longContextOutputCost` | `number` | Empty | Long-context cost metadata in credits per 1M tokens. VS Code shows it in model hover details when supported. |
 | `coding-plans.vendors[].models[].streaming` | `boolean` | `true` | Whether to prefer streaming requests; set to `false` to send non-streaming requests. |
 | `coding-plans.vendors[].models[].thinking` | `boolean` | `true` | Whether to expose and send reasoning/thinking parameters. |
 | `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | Protocol defaults | Restricts model-row effort options and blocks unsupported effort values from request payloads. |

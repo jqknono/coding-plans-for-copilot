@@ -62,6 +62,12 @@ type LanguageModelChatInformationWithHiddenFields = vscode.LanguageModelChatInfo
   reasoningEffortFormat?: string;
   thinking?: boolean;
   zeroDataRetentionEnabled?: boolean;
+  inputCost?: number;
+  cacheCost?: number;
+  outputCost?: number;
+  longContextInputCost?: number;
+  longContextCacheCost?: number;
+  longContextOutputCost?: number;
 };
 
 type ProvideLanguageModelChatResponseOptionsWithModelConfiguration = vscode.ProvideLanguageModelChatResponseOptions & {
@@ -177,6 +183,12 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
       reasoningEffortFormat: model.reasoningEffortFormat,
       thinking: model.thinking,
       zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
+      inputCost: model.inputCost,
+      cacheCost: model.cacheCost,
+      outputCost: model.outputCost,
+      longContextInputCost: model.longContextInputCost,
+      longContextCacheCost: model.longContextCacheCost,
+      longContextOutputCost: model.longContextOutputCost,
     } as object),
   } as LanguageModelChatInformationWithHiddenFields;
 }
@@ -878,6 +890,9 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       maxInputTokens: model.maxInputTokens,
       maxOutputTokens: model.maxOutputTokens,
       capabilities: model.capabilities,
+      inputCost: model.inputCost,
+      cacheCost: model.cacheCost,
+      outputCost: model.outputCost,
     }));
   }
 
@@ -893,6 +908,9 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       maxInputTokens: model.maxInputTokens,
       maxOutputTokens: model.maxOutputTokens,
       capabilities: model.capabilities,
+      inputCost: (model as LanguageModelChatInformationWithHiddenFields).inputCost,
+      cacheCost: (model as LanguageModelChatInformationWithHiddenFields).cacheCost,
+      outputCost: (model as LanguageModelChatInformationWithHiddenFields).outputCost,
     }));
   }
 }

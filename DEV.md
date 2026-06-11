@@ -184,6 +184,7 @@ npm run test:pages
   - `anthropic`：请求 `baseUrl + /messages`
 - `coding-plans.vendors[].usageUrl` 为可选套餐 usage 接口；当前默认按 `Authorization: Bearer <API Key>` 轮询，并将识别到的小时额度、周额度或次数额度以百分比显示在状态栏。
 - `coding-plans.vendors[].models[].contextSize` 是描述模型总上下文的首选字段；显式 `maxInputTokens` / `maxOutputTokens` 会优先用于 VS Code 模型信息和请求预算。
+- `coding-plans.vendors[].models[].price.inputCost` / `cacheCost` / `outputCost` 是 VS Code Manage Language Models 成本列读取的 Copilot 风格元数据，单位为 credits / 1M tokens。
 - `coding-plans.vendors[].models[].toolCalling` / `vision` 是 Copilot 风格能力别名，会归一化到 `capabilities.tools` / `capabilities.vision`。
 - `coding-plans.vendors[].models[].enabled` 默认 `true`；设为 `false` 时模型保留在配置中，但不会进入最终 Language Model 暴露列表，因此不会显示在 VS Code `Manage Language Models` 中。
 - 未配置 `contextSize` 时，扩展默认按 `400000` tokens 的总上下文窗口构建模型。
@@ -214,7 +215,7 @@ npm run test:pages
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
 - 请求链路默认优先上游真实流式传输；若模型配置 `streaming: false`，直接发送非流式请求。若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志。
 - `capabilities` 可省略；归一化时自动补齐 `tools=true` 与 `vision=defaultVision`。
-- 当 `useModelsEndpoint: true` 时，刷新模型列表只按 `name` 同步增删；设置中已有模型项的 `description`、`temperature`、`topP`、`capabilities`、`contextSize`、`maxInputTokens`、`maxOutputTokens`、`apiStyle`、`streaming`、`thinking`、`editTools`、`supportsReasoningEffort` 等字段保持原样，新发现模型不自动写入采样参数。
+- 当 `useModelsEndpoint: true` 时，刷新模型列表只按 `name` 同步增删；设置中已有模型项的 `description`、`temperature`、`topP`、`capabilities`、`contextSize`、`maxInputTokens`、`maxOutputTokens`、`apiStyle`、`streaming`、`thinking`、`editTools`、`supportsReasoningEffort`、`price` 等字段保持原样，新发现模型不自动写入采样参数或成本参数。
 - 若修改协议相关行为，请同步检查：
   - `src/providers/genericProvider.ts`
   - `src/config/configStore.ts`
