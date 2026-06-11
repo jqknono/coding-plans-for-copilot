@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.11.1",
+    "version": "0.11.2",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -345,6 +345,11 @@
                                                     "type": "boolean",
                                                     "default": false,
                                                     "description": "Whether to enable vision input capability."
+                                                },
+                                                "thinking": {
+                                                    "type": "boolean",
+                                                    "default": true,
+                                                    "description": "Whether to expose and send reasoning/thinking controls for this model."
                                                 }
                                             },
                                             "required": [
@@ -354,17 +359,18 @@
                                         },
                                         "contextSize": {
                                             "type": "number",
-                                            "description": "Preferred total context window size for the model. When omitted, the extension defaults to 400000 tokens. Language model context display uses this value directly when provided, and runtime derives the output budget from this total window."
+                                            "minimum": 1,
+                                            "description": "Primary total context window size for this model. When present, it takes precedence over maxInputTokens/maxOutputTokens for model declaration and is split into maxInputTokens=80% plus maxOutputTokens=20% so VS Code reports the expected total context."
                                         },
                                         "maxInputTokens": {
                                             "type": "number",
                                             "minimum": 1,
-                                            "description": "Maximum input tokens exposed to VS Code for this model. Takes precedence over contextSize-derived input budget."
+                                            "description": "Alternative explicit input context token limit. Used when contextSize is not set."
                                         },
                                         "maxOutputTokens": {
                                             "type": "number",
                                             "minimum": 1,
-                                            "description": "Maximum output tokens exposed to VS Code for this model. Takes precedence over contextSize-derived output budget."
+                                            "description": "Alternative explicit output token limit. Used when contextSize is not set."
                                         },
                                         "apiStyle": {
                                             "type": "string",
@@ -379,11 +385,6 @@
                                             "type": "boolean",
                                             "default": true,
                                             "description": "Whether this model should use streaming requests when supported."
-                                        },
-                                        "thinking": {
-                                            "type": "boolean",
-                                            "default": true,
-                                            "description": "Whether to expose and send reasoning/thinking controls for this model."
                                         },
                                         "editTools": {
                                             "type": "array",

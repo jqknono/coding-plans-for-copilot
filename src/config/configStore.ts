@@ -32,6 +32,7 @@ export interface VendorModelConfig {
   capabilities?: {
     tools?: boolean;
     vision?: boolean;
+    thinking?: boolean;
   };
   toolCalling?: boolean | number;
   vision?: boolean;
@@ -184,21 +185,26 @@ export class ConfigStore implements vscode.Disposable {
 
       const defaultVision = typeof vendorObj.defaultVision === 'boolean' ? vendorObj.defaultVision : false;
       const defaultApiStyle = this.normalizeApiStyle(vendorObj.defaultApiStyle ?? vendorObj.apiType);
+      const rawModels = Array.isArray(vendorObj.models) ? vendorObj.models : [];
       const nextModels = this.buildUpdatedModelEntries(
         inputNames,
         models,
-        Array.isArray(vendorObj.models) ? vendorObj.models : [],
+        rawModels,
         existingNameByKey,
         defaultVision,
         defaultApiStyle,
       );
-      const normalizedCurrentModels = this.sortModels(
-        currentNames.map((currentName) => ({ name: existingNameByKey.get(currentName.toLowerCase()) ?? currentName })),
+      const normalizedCurrentModels = this.buildUpdatedModelEntries(
+        currentNames,
+        [],
+        rawModels,
+        existingNameByKey,
+        defaultVision,
+        defaultApiStyle,
       );
 
-      // Only compare names.
-      const currentSignature = JSON.stringify(normalizedCurrentModels.map((m) => m.name));
-      const nextSignature = JSON.stringify(nextModels.map((model) => model.name));
+      const currentSignature = JSON.stringify(normalizedCurrentModels);
+      const nextSignature = JSON.stringify(nextModels);
       if (currentSignature === nextSignature) {
         return rawVendor;
       }
@@ -401,9 +407,6 @@ export class ConfigStore implements vscode.Disposable {
     if (normalized.streaming !== undefined) {
       stored.streaming = normalized.streaming;
     }
-    if (normalized.thinking !== undefined) {
-      stored.thinking = normalized.thinking;
-    }
     if (normalized.editTools !== undefined) {
       stored.editTools = normalized.editTools;
     }
@@ -492,7 +495,7 @@ export class ConfigStore implements vscode.Disposable {
               topP: undefined,
               capabilities: {
                 ...inputModel.capabilities,
-                vision: defaultVision,
+                vision: inputModel.vision ?? defaultVision,
               },
             },
             canonical,
@@ -595,6 +598,11 @@ export class ConfigStore implements vscode.Disposable {
     const contextSize = this.readPositiveNumber(obj.contextSize);
     const maxInputTokens = this.readPositiveNumber(obj.maxInputTokens);
     const maxOutputTokens = this.readPositiveNumber(obj.maxOutputTokens);
+    const normalizedContextSize = contextSize === undefined ? undefined : Math.max(1, Math.floor(contextSize));
+    const normalizedMaxInputTokens =
+      maxInputTokens === undefined ? undefined : Math.max(1, Math.floor(maxInputTokens));
+    const normalizedMaxOutputTokens =
+      maxOutputTokens === undefined ? undefined : Math.max(1, Math.floor(maxOutputTokens));
     const apiType = this.normalizeApiType(obj.apiType);
     const apiStyle = this.normalizeApiStyle(obj.apiStyle ?? obj.apiType, defaultApiStyle);
     const temperature = this.readSamplingNumber(obj.temperature, 0, 2);
@@ -615,6 +623,7 @@ export class ConfigStore implements vscode.Disposable {
       capabilities = {
         tools: typeof cap.tools === 'boolean' ? cap.tools : undefined,
         vision: typeof cap.vision === 'boolean' ? cap.vision : undefined,
+        thinking: typeof cap.thinking === 'boolean' ? cap.thinking : undefined,
       };
     }
     capabilities = {
@@ -625,6 +634,11 @@ export class ConfigStore implements vscode.Disposable {
             ? toolCalling
             : undefined,
       vision: typeof capabilities?.vision === 'boolean' ? capabilities.vision : vision,
+      ...(typeof capabilities?.thinking === 'boolean'
+        ? { thinking: capabilities.thinking }
+        : typeof thinking === 'boolean'
+          ? { thinking }
+          : {}),
     };
 
     return this.withModelDefaults(
@@ -637,11 +651,10 @@ export class ConfigStore implements vscode.Disposable {
         temperature,
         topP,
         capabilities,
-        contextSize: contextSize === undefined ? undefined : Math.max(2, Math.floor(contextSize)),
-        maxInputTokens: maxInputTokens === undefined ? undefined : Math.max(1, Math.floor(maxInputTokens)),
-        maxOutputTokens: maxOutputTokens === undefined ? undefined : Math.max(1, Math.floor(maxOutputTokens)),
+        contextSize: normalizedContextSize,
+        maxInputTokens: normalizedMaxInputTokens,
+        maxOutputTokens: normalizedMaxOutputTokens,
         streaming,
-        thinking,
         editTools,
         supportsReasoningEffort,
         reasoningEffortFormat,
@@ -672,9 +685,9 @@ export class ConfigStore implements vscode.Disposable {
       capabilities: {
         tools: model.capabilities?.tools ?? DEFAULT_MODEL_CAPABILITIES_TOOLS,
         vision: model.capabilities?.vision ?? defaultVision,
+        ...(typeof model.capabilities?.thinking === 'boolean' ? { thinking: model.capabilities.thinking } : {}),
       },
       streaming: model.streaming,
-      thinking: model.thinking,
       editTools: model.editTools,
       supportsReasoningEffort: model.supportsReasoningEffort,
       reasoningEffortFormat: model.reasoningEffortFormat,
@@ -885,26 +898,6 @@ export class ConfigStore implements vscode.Disposable {
     }
 
     return undefined;
-  }
-
-  private sortModels(models: VendorModelConfig[]): VendorModelConfig[] {
-    return [...models].sort((left, right) => {
-      const leftKey = left.name.toLowerCase();
-      const rightKey = right.name.toLowerCase();
-      if (leftKey < rightKey) {
-        return -1;
-      }
-      if (leftKey > rightKey) {
-        return 1;
-      }
-      if (left.name < right.name) {
-        return -1;
-      }
-      if (left.name > right.name) {
-        return 1;
-      }
-      return 0;
-    });
   }
 
   dispose(): void {

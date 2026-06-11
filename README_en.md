@@ -56,6 +56,7 @@ Click the **Install** button on the marketplace page, which will automatically o
 4. Open Copilot Chat (`Ctrl+L`) and choose a model provided by `Coding Plans` in the model picker
 5. To configure `topP`, set model-level overrides in `coding-plans.vendors[].models[]`; set `temperature` and `Thinking Effort` per request from the model row `More Actions` menu, where OpenAI Chat-compatible models support `none` / `low` / `medium` / `high` / `xhigh` / `max`; Responses API models show `Personality` in `More Actions` and apply it through `instructions`
 6. When a vendor has `useModelsEndpoint` enabled, run `Coding Plans: Update Coding Plans Models List` to request `/models`, write the result back to `coding-plans.vendors[].models`, and refresh the VS Code model picker.
+   - During refresh, the extension prefers [models.dev](https://models.dev/) `catalog.json` and falls back to `api.json` to enrich newly discovered models by model ID/name with `description`, `capabilities`, `contextSize`, and `price`. Matching ignores tags after `:` in the final model path segment, such as `:free`. The `description` shows `id | Lab | Family | Weights | ReleaseDate`, where `Lab` comes from the model ID prefix, not the provider. `capabilities.thinking` maps to models.dev `reasoning`. Prices prefer a models.dev provider with the same name as the configured vendor; otherwise they use the median price across all matching providers. If the catalog cannot be fetched or matched, it keeps the upstream `/models` data and built-in defaults. Existing model entries are not overwritten.
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 
 ### Built-in Vendor Endpoints
@@ -98,7 +99,8 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
           "name": "my-model",
           "enabled": true,
           "capabilities": { "tools": true, "vision": false },
-          "contextSize": 128000
+          "maxInputTokens": 128000,
+          "maxOutputTokens": 30000
         }
       ]
     }
@@ -148,7 +150,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
           "reasoningEffortFormat": "responses",
           "streaming": true,
           "supportsReasoningEffort": ["high", "xhigh"],
-          "thinking": true,
+          "capabilities": { "tools": true, "vision": false, "thinking": true },
           "toolCalling": true,
           "vision": false,
           "zeroDataRetentionEnabled": false
@@ -179,18 +181,18 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].models[].apiStyle` | `string` | Inherit from vendor | Model-level protocol style override. |
 | `coding-plans.vendors[].models[].temperature` | `number` / `"inherit"` | `"inherit"` | Deprecated. Model-level temperature override. `"inherit"` uses the vendor `defaultTemperature`. Runtime uses it only for `openai-chat` and `anthropic`. Use `Personality` from the model row for Responses API models. |
 | `coding-plans.vendors[].models[].topP` | `number` | Inherit from vendor | Model-level topP override. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
-| `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | Model capability declaration. |
+| `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | Model capability declaration. `thinking` maps to models.dev `reasoning`. |
 | `coding-plans.vendors[].models[].toolCalling` | `boolean` / `number` | `true` | Copilot-style tool-calling alias, equivalent to `capabilities.tools`. |
 | `coding-plans.vendors[].models[].vision` | `boolean` | Inherits `defaultVision` | Copilot-style vision alias, equivalent to `capabilities.vision`. |
-| `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | Model total context window. Defaults to 400k when omitted. Runtime derives the request budget from this total window. |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | Derived from `contextSize` | Explicit input token limit, taking precedence over the derived `contextSize` value. |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | Derived from `contextSize` | Explicit output token limit, taking precedence over the derived `contextSize` value. |
+| `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | Primary total model context window, sourced from models.dev `limit.context`. Automatic refresh only writes this field for new models. Runtime splits it into `maxInputTokens=80%` and `maxOutputTokens=20%` so VS Code Language Models reports the expected total context. |
+| `coding-plans.vendors[].models[].maxInputTokens` | `number` | `400000` | Alternative explicit input context token limit, used only when `contextSize` is not set. |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `30000` | Alternative explicit output token limit, used only when `contextSize` is not set. |
 | `coding-plans.vendors[].models[].price.inputCost` | `number` | Empty | Input cost metadata in credits per 1M tokens, shown in the Manage Language Models Cost column. |
 | `coding-plans.vendors[].models[].price.cacheCost` | `number` | Empty | Cached input cost metadata in credits per 1M tokens, shown in the Manage Language Models Cost column. |
 | `coding-plans.vendors[].models[].price.outputCost` | `number` | Empty | Output cost metadata in credits per 1M tokens, shown in the Manage Language Models Cost column. |
 | `coding-plans.vendors[].models[].price.longContextInputCost` / `longContextCacheCost` / `longContextOutputCost` | `number` | Empty | Long-context cost metadata in credits per 1M tokens. VS Code shows it in model hover details when supported. |
 | `coding-plans.vendors[].models[].streaming` | `boolean` | `true` | Whether to prefer streaming requests; set to `false` to send non-streaming requests. |
-| `coding-plans.vendors[].models[].thinking` | `boolean` | `true` | Whether to expose and send reasoning/thinking parameters. |
+| `coding-plans.vendors[].models[].capabilities.thinking` | `boolean` | `true` | Whether to expose and send reasoning/thinking parameters. |
 | `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | Protocol defaults | Restricts model-row effort options and blocks unsupported effort values from request payloads. |
 | `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch"]` | Copilot-style edit tool declaration; currently supports `apply-patch`. |
 | `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | Derived from protocol | Copilot-style reasoning effort wire-format metadata: `chat-completions` / `responses`. Not applicable for anthropic protocol. |
@@ -218,7 +220,7 @@ Limited by VS Code's public API, this extension additionally implements context 
 - **System Instructions**: System-class prompts occupy (system prompts, mode descriptions, strategy prompts, etc.), counted as prompt tokens.
 - **Tool Definitions**: Tool definitions occupy (tool names, descriptions, parameter JSON Schema), counted as prompt tokens.
 - **Reserved Output**: Output token budget reserved for this round of response, not the actual generated reply content.
-- **Context Window**: The denominator prioritizes `contextSize` from model configuration. The current public API does not provide an interface to return upstream usage breakdown to the native Context Window, so this extension maintains the numerator display of the context window itself.
+- **Context Window**: When `contextSize` is configured, runtime splits the total window into 80% input and 20% output. When `contextSize` is not configured, it uses explicit `maxInputTokens/maxOutputTokens`. The current public API does not provide an interface to return upstream usage breakdown to the native Context Window, so this extension maintains the numerator display of the context window itself.
 - Status bar displays a unified `CodingPlans` entry: the body shows a concise percentage of plan usage and context ratio; hover to view detailed information.
 - If the vendor has `usageUrl` configured, it additionally displays plan quota percentage.
 

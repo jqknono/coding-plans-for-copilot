@@ -17,7 +17,6 @@ import {
   AnthropicEffort,
   CHAT_THINKING_EFFORT_VALUES,
   ChatThinkingEffort,
-  DEFAULT_CONTEXT_WINDOW_SIZE,
   DEFAULT_MODEL_TOOLS,
   DEFAULT_REQUEST_MAX_TOKENS,
   DEFAULT_RESPONSES_PERSONALITY,
@@ -44,6 +43,7 @@ import {
   toVendorModelConfigs,
   toVendorStateKey,
 } from './genericProviderDiscovery';
+import { ModelsDevCatalog, fetchModelsDevCatalog, resolveModelsDevModelConfig } from './modelsDevCatalog';
 import {
   AnthropicStreamEvent,
   AnthropicChatRequest,
@@ -291,6 +291,7 @@ export class GenericAIProvider extends BaseAIProvider {
   private refreshModelsPending = false;
   private forceDiscoveryRetryRequested = false;
   private modelsSnapshot = '';
+  private modelsDevCatalogPromise: Promise<ModelsDevCatalog | undefined> | undefined;
 
   constructor(
     context: vscode.ExtensionContext,
@@ -485,7 +486,7 @@ export class GenericAIProvider extends BaseAIProvider {
       }
 
       // When useModelsEndpoint is enabled, discovered model names are the source of truth.
-      // Existing configured entries are preserved verbatim; only newly discovered names are appended.
+      // User-authored overrides are preserved while models.dev metadata refreshes automatic fields.
       const discoveredVendorModels = toVendorModelConfigs(discovered.models);
       const mergedVendorModels = mergeConfiguredModelOverrides(
         vendor.models,
@@ -868,7 +869,7 @@ export class GenericAIProvider extends BaseAIProvider {
     compositeId: string,
   ): AIModelConfig {
     const resolvedTokens = this.resolveTokenWindowLimits(
-      model.contextSize ?? DEFAULT_CONTEXT_WINDOW_SIZE,
+      model.contextSize,
       model.maxInputTokens,
       model.maxOutputTokens,
     );
@@ -889,7 +890,7 @@ export class GenericAIProvider extends BaseAIProvider {
       apiStyle,
       apiType: model.apiType ?? this.apiStyleToApiType(apiStyle),
       streaming: model.streaming,
-      thinking: model.thinking,
+      thinking: model.capabilities?.thinking ?? model.thinking,
       editTools: model.editTools,
       supportsReasoningEffort: model.supportsReasoningEffort,
       reasoningEffortFormat: model.reasoningEffortFormat ?? this.apiStyleToReasoningEffortFormat(apiStyle),
@@ -1067,6 +1068,18 @@ export class GenericAIProvider extends BaseAIProvider {
     );
   }
 
+  private async getModelsDevCatalog(): Promise<ModelsDevCatalog | undefined> {
+    if (!this.modelsDevCatalogPromise) {
+      this.modelsDevCatalogPromise = fetchModelsDevCatalog().catch((error) => {
+        logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} models.dev catalog unavailable`, {
+          error: this.summarizeError(error),
+        });
+        return undefined;
+      });
+    }
+    return this.modelsDevCatalogPromise;
+  }
+
   private async discoverModelsFromApi(vendor: VendorConfig, apiKey: string): Promise<ModelDiscoveryResult> {
     try {
       const baseUrl = normalizeHttpBaseUrl(vendor.baseUrl);
@@ -1104,11 +1117,13 @@ export class GenericAIProvider extends BaseAIProvider {
           : Array.isArray(data)
             ? data
             : [];
+      const modelsDevCatalog = entries.length > 0 ? await this.getModelsDevCatalog() : undefined;
       logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} raw /models response`, {
         vendor: vendor.name,
         requestedBaseUrl: baseUrl,
         resolvedBaseUrl: resolved.baseUrl,
         status: response.status,
+        modelsDevCatalogAvailable: modelsDevCatalog !== undefined,
         topLevelType: Array.isArray(data) ? 'array' : typeof data,
         topLevelKeys:
           data && typeof data === 'object' && !Array.isArray(data)
@@ -1159,13 +1174,17 @@ export class GenericAIProvider extends BaseAIProvider {
         }
         seen.add(modelId.toLowerCase());
 
+        const modelsDevConfig = resolveModelsDevModelConfig(modelsDevCatalog, vendor, modelId);
         const runtime = this.readRuntimeFromGenericModelEntry(entry);
         const resolvedTokens = this.resolveTokenWindowLimits(
-          runtime.maxTokens,
+          modelsDevConfig?.contextSize ?? runtime.maxTokens,
           runtime.maxInputTokens,
           runtime.maxOutputTokens,
         );
         const compositeId = `${vendor.name}/${modelId}`;
+        const modelsDevToolCalling = modelsDevConfig?.capabilities?.tools;
+        const modelsDevVision = modelsDevConfig?.capabilities?.vision;
+        const modelsDevThinking = modelsDevConfig?.capabilities?.thinking;
         models.push({
           id: compositeId,
           vendor: 'coding-plans',
@@ -1176,11 +1195,19 @@ export class GenericAIProvider extends BaseAIProvider {
           maxInputTokens: resolvedTokens.maxInputTokens,
           maxOutputTokens: resolvedTokens.maxOutputTokens,
           capabilities: {
-            toolCalling: runtime.toolCalling ?? DEFAULT_MODEL_TOOLS,
-            imageInput: runtime.imageInput ?? vendor.defaultVision,
+            toolCalling: modelsDevToolCalling ?? runtime.toolCalling ?? DEFAULT_MODEL_TOOLS,
+            imageInput: modelsDevVision ?? vendor.defaultVision,
           },
           apiStyle: vendor.defaultApiStyle,
-          description: getMessage('genericDynamicModelDescription', vendor.name, modelId),
+          thinking: modelsDevThinking,
+          inputCost: modelsDevConfig?.price?.inputCost,
+          cacheCost: modelsDevConfig?.price?.cacheCost,
+          outputCost: modelsDevConfig?.price?.outputCost,
+          longContextInputCost: modelsDevConfig?.price?.longContextInputCost,
+          longContextCacheCost: modelsDevConfig?.price?.longContextCacheCost,
+          longContextOutputCost: modelsDevConfig?.price?.longContextOutputCost,
+          modelsDevEnriched: modelsDevConfig !== undefined,
+          description: modelsDevConfig?.description ?? getMessage('genericDynamicModelDescription', vendor.name, modelId),
         });
       }
 

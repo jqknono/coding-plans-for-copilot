@@ -3,10 +3,10 @@ import {
   DEFAULT_CONFIGURED_MODELS,
   DEFAULT_CONTEXT_WINDOW_SIZE,
   DEFAULT_MODEL_EDIT_TOOLS,
+  DEFAULT_RESERVED_OUTPUT_RATIO,
   DEFAULT_RESERVED_OUTPUT_TOKENS,
   DEFAULT_TOKEN_SIDE_LIMIT,
   MODEL_VERSION_LABEL,
-  resolveImplicitReservedOutputTokens,
 } from '../constants';
 import { logger } from '../logging/outputChannelLogger';
 
@@ -29,15 +29,15 @@ export interface AIModelConfig {
   apiType?: string;
   version?: string;
   /**
-   * Total context window size in tokens.
+   * Maximum input context window size in tokens.
    */
   maxTokens: number;
   /**
-   * @deprecated Prefer the model total context window instead of per-direction limits when configuring models.
+   * Maximum input context window size in tokens.
    */
   maxInputTokens?: number;
   /**
-   * @deprecated Prefer the model total context window instead of per-direction limits when configuring models.
+   * Maximum output token budget exposed for this model.
    */
   maxOutputTokens?: number;
   capabilities?: ModelCapabilities;
@@ -53,6 +53,7 @@ export interface AIModelConfig {
   longContextInputCost?: number;
   longContextCacheCost?: number;
   longContextOutputCost?: number;
+  modelsDevEnriched?: boolean;
   description: string;
 }
 
@@ -533,61 +534,36 @@ export abstract class BaseAIProvider implements vscode.Disposable {
   }
 
   protected resolveTokenWindowLimits(
-    totalContextWindow: number | undefined,
+    contextSize: number | undefined,
     explicitMaxInputTokens: number | undefined,
     explicitMaxOutputTokens: number | undefined,
   ): Pick<ResolvedModelRuntimeSettings, 'maxTokens' | 'maxInputTokens' | 'maxOutputTokens'> {
-    const hasExplicitTotalContextWindow = totalContextWindow !== undefined;
-    const fallbackTotal = Math.max(2, Math.floor(totalContextWindow ?? DEFAULT_CONTEXT_WINDOW_SIZE));
-    const defaultReservedOutputTokens = resolveImplicitReservedOutputTokens(fallbackTotal);
     const normalizeTokenValue = (value: number | undefined): number | undefined => {
       if (value === undefined) {
         return undefined;
       }
-      const normalized = Math.max(1, Math.floor(value));
-      return hasExplicitTotalContextWindow ? Math.min(normalized, fallbackTotal) : normalized;
+      if (!Number.isFinite(value) || value <= 0) {
+        return undefined;
+      }
+      return Math.max(1, Math.floor(value));
     };
-    const maxInputTokens = normalizeTokenValue(explicitMaxInputTokens);
-    const maxOutputTokens = normalizeTokenValue(explicitMaxOutputTokens);
 
-    if (maxInputTokens !== undefined && maxOutputTokens !== undefined) {
+    const normalizedContextSize = normalizeTokenValue(contextSize);
+    if (normalizedContextSize !== undefined) {
+      const maxOutputTokens = Math.max(1, Math.floor(normalizedContextSize * DEFAULT_RESERVED_OUTPUT_RATIO));
       return {
-        maxTokens: hasExplicitTotalContextWindow
-          ? fallbackTotal
-          : Math.max(fallbackTotal, maxInputTokens + maxOutputTokens),
-        maxInputTokens,
+        maxTokens: normalizedContextSize,
+        maxInputTokens: Math.max(1, normalizedContextSize - maxOutputTokens),
         maxOutputTokens,
       };
     }
 
-    if (maxInputTokens !== undefined) {
-      const derivedMaxOutputTokens = hasExplicitTotalContextWindow
-        ? Math.max(1, fallbackTotal - maxInputTokens)
-        : defaultReservedOutputTokens;
-      return {
-        maxTokens: Math.max(maxInputTokens + derivedMaxOutputTokens, hasExplicitTotalContextWindow ? fallbackTotal : 0),
-        maxInputTokens,
-        maxOutputTokens: derivedMaxOutputTokens,
-      };
-    }
-
-    if (maxOutputTokens !== undefined) {
-      const derivedMaxInputTokens = hasExplicitTotalContextWindow
-        ? Math.max(1, fallbackTotal - maxOutputTokens)
-        : Math.max(1, DEFAULT_CONTEXT_WINDOW_SIZE - maxOutputTokens);
-      return {
-        maxTokens: Math.max(derivedMaxInputTokens + maxOutputTokens, hasExplicitTotalContextWindow ? fallbackTotal : 0),
-        maxInputTokens: derivedMaxInputTokens,
-        maxOutputTokens,
-      };
-    }
-
-    const derivedMaxOutputTokens = defaultReservedOutputTokens;
-    const derivedMaxInputTokens = Math.max(1, fallbackTotal - derivedMaxOutputTokens);
+    const maxInputTokens = normalizeTokenValue(explicitMaxInputTokens) ?? DEFAULT_CONTEXT_WINDOW_SIZE;
+    const maxOutputTokens = normalizeTokenValue(explicitMaxOutputTokens) ?? DEFAULT_RESERVED_OUTPUT_TOKENS;
     return {
-      maxTokens: derivedMaxInputTokens + derivedMaxOutputTokens,
-      maxInputTokens: derivedMaxInputTokens,
-      maxOutputTokens: derivedMaxOutputTokens,
+      maxTokens: maxInputTokens,
+      maxInputTokens,
+      maxOutputTokens,
     };
   }
 
@@ -620,7 +596,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
           | unknown;
       };
 
-      const legacyContextWindow = this.readPositiveInteger(parsed.contextSize);
+      const legacyContextSize = this.readPositiveInteger(parsed.contextSize);
       const maxInputTokens = this.readPositiveInteger(parsed.maxInputTokens);
       const maxOutputTokens = this.readPositiveInteger(parsed.maxOutputTokens);
 
@@ -638,8 +614,8 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       const imageInput = this.readBooleanValue(capabilities?.imageInput ?? capabilities?.vision);
 
       const normalized: Partial<ResolvedModelRuntimeSettings> = {};
-      if (legacyContextWindow !== undefined || maxInputTokens !== undefined || maxOutputTokens !== undefined) {
-        const resolvedTokens = this.resolveTokenWindowLimits(legacyContextWindow, maxInputTokens, maxOutputTokens);
+      if (legacyContextSize !== undefined || maxInputTokens !== undefined || maxOutputTokens !== undefined) {
+        const resolvedTokens = this.resolveTokenWindowLimits(legacyContextSize, maxInputTokens, maxOutputTokens);
         normalized.maxTokens = resolvedTokens.maxTokens;
         normalized.maxInputTokens = resolvedTokens.maxInputTokens;
         normalized.maxOutputTokens = resolvedTokens.maxOutputTokens;

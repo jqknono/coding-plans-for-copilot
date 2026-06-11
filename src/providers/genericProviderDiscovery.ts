@@ -67,7 +67,7 @@ export function mergeConfiguredModelOverrides(
         ...discovered,
         capabilities: {
           ...discovered.capabilities,
-          vision: defaultVisionForNewModels,
+          vision: discovered.capabilities?.vision ?? defaultVisionForNewModels,
         },
       };
     }
@@ -102,14 +102,13 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
     enabled: true,
     description: model.description?.trim() || undefined,
     contextSize: readPositiveTokenInteger(model.maxTokens),
-    maxInputTokens: readPositiveTokenInteger(model.maxInputTokens),
-    maxOutputTokens: readPositiveTokenInteger(model.maxOutputTokens),
     capabilities: {
       tools,
       vision,
+      thinking: model.thinking,
     },
+    vision: model.modelsDevEnriched && typeof vision === 'boolean' ? vision : undefined,
     streaming: model.streaming,
-    thinking: model.thinking,
     editTools: model.editTools,
     supportsReasoningEffort: model.supportsReasoningEffort,
     reasoningEffortFormat: model.reasoningEffortFormat,
