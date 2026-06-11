@@ -18,7 +18,7 @@ export interface ModelCapabilities {
 }
 
 export type ReasoningEffortValue = 'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
-export type ReasoningEffortFormat = 'chat' | 'responses' | 'anthropic';
+export type ReasoningEffortFormat = 'chat-completions' | 'responses';
 
 export interface AIModelConfig {
   id: string;

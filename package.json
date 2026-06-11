@@ -428,11 +428,10 @@
                                         "reasoningEffortFormat": {
                                             "type": "string",
                                             "enum": [
-                                                "chat",
-                                                "responses",
-                                                "anthropic"
+                                                "chat-completions",
+                                                "responses"
                                             ],
-                                            "description": "Copilot-style reasoning effort wire format metadata. Defaults to the selected API style."
+                                            "description": "Copilot-style reasoning effort wire format metadata. Defaults to the selected API style when not configured. Not applicable for anthropic API style."
                                         },
                                         "zeroDataRetentionEnabled": {
                                             "type": "boolean",

@@ -29,7 +29,7 @@ type VendorModelRecord = {
   thinking?: boolean;
   editTools?: string[];
   supportsReasoningEffort?: Array<'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max'>;
-  reasoningEffortFormat?: 'chat' | 'responses' | 'anthropic';
+  reasoningEffortFormat?: 'chat-completions' | 'responses';
   zeroDataRetentionEnabled?: boolean;
 };
 

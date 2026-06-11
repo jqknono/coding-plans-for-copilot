@@ -6,6 +6,7 @@ import {
   ChatMessage,
   ChatToolCall,
   ReasoningEffortValue,
+  ReasoningEffortFormat,
   getCompactErrorMessage,
   normalizeHttpBaseUrl,
 } from './baseProvider';
@@ -901,8 +902,15 @@ export class GenericAIProvider extends BaseAIProvider {
     return apiStyle === 'openai-responses' ? 'responses' : apiStyle === 'anthropic' ? 'anthropic' : 'chat';
   }
 
-  private apiStyleToReasoningEffortFormat(apiStyle: VendorApiStyle): 'chat' | 'responses' | 'anthropic' {
-    return this.apiStyleToApiType(apiStyle);
+  private apiStyleToReasoningEffortFormat(apiStyle: VendorApiStyle): ReasoningEffortFormat | undefined {
+    if (apiStyle === 'openai-responses') {
+      return 'responses';
+    }
+    if (apiStyle === 'openai-chat') {
+      return 'chat-completions';
+    }
+    // anthropic style does not use reasoningEffortFormat
+    return undefined;
   }
 
   private buildConfiguredModelsForVendor(vendor: VendorConfig): AIModelConfig[] {

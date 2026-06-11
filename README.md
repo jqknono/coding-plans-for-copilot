@@ -181,7 +181,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].thinking` | `boolean` | `true` | 是否展示并发送 reasoning/thinking 相关参数；设为 `false` 时不暴露对应模型行选项。 |
 | `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | 协议默认值 | 限制模型行 `Thinking Effort` / `Effort` 可选项，并阻止未声明值进入请求 payload。 |
 | `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch"]` | Copilot 风格编辑工具声明；当前支持 `apply-patch`。 |
-| `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | 由协议推导 | Copilot 风格 reasoning effort 格式元数据：`chat` / `responses` / `anthropic`。 |
+| `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | 由协议推导 | Copilot 风格 reasoning effort 格式元数据：`chat-completions` / `responses`。anthropic 协议不关注此项。 |
 | `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | 空 | 声明性元数据，不代表上游真实数据保留策略。 |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | 请求侧默认输出 token 预算；仅作为发送请求时的预算覆盖值，最终仍会按模型输出上限收敛。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示"生成 Commit 消息"命令。 |

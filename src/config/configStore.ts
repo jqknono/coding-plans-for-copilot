@@ -10,7 +10,7 @@ import {
 export type VendorApiStyle = 'openai-chat' | 'openai-responses' | 'anthropic';
 export type VendorApiType = 'chat' | 'responses' | 'anthropic';
 export type ReasoningEffortValue = 'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
-export type ReasoningEffortFormat = 'chat' | 'responses' | 'anthropic';
+export type ReasoningEffortFormat = 'chat-completions' | 'responses';
 
 export interface VendorModelConfig {
   name: string;
@@ -698,7 +698,7 @@ export class ConfigStore implements vscode.Disposable {
   }
 
   private normalizeReasoningEffortFormat(value: unknown): ReasoningEffortFormat | undefined {
-    return value === 'responses' || value === 'anthropic' || value === 'chat' ? value : undefined;
+    return value === 'responses' || value === 'chat-completions' ? value : undefined;
   }
 
   private resolveVendorsConfigTarget(): vscode.ConfigurationTarget {

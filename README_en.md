@@ -184,7 +184,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].models[].thinking` | `boolean` | `true` | Whether to expose and send reasoning/thinking parameters. |
 | `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | Protocol defaults | Restricts model-row effort options and blocks unsupported effort values from request payloads. |
 | `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch"]` | Copilot-style edit tool declaration; currently supports `apply-patch`. |
-| `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | Derived from protocol | Copilot-style reasoning effort wire-format metadata: `chat` / `responses` / `anthropic`. |
+| `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | Derived from protocol | Copilot-style reasoning effort wire-format metadata: `chat-completions` / `responses`. Not applicable for anthropic protocol. |
 | `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | Empty | Declarative metadata only; it does not change upstream provider retention behavior. |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Request-side default output token budget. It only overrides request budgeting and is still capped by the model output limit. |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show "Generate Commit Message" command. |
