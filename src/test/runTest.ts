@@ -1645,8 +1645,13 @@ async function runGenericProviderContextSizeTests(
 
   try {
     await defaultEditToolProvider.refreshModels();
-    assert.deepEqual(defaultEditToolProvider.getAvailableModels()[0]?.editTools, ['apply-patch', 'multi-find-replace']);
-    console.log('PASS 运行时模型默认声明 apply-patch 和 multi-find-replace editTools');
+    assert.deepEqual(defaultEditToolProvider.getAvailableModels()[0]?.editTools, [
+      'apply-patch',
+      'multi-find-replace',
+      'find-replace',
+      'code-rewrite',
+    ]);
+    console.log('PASS 运行时模型默认声明四种 editTools');
   } finally {
     defaultEditToolProvider.dispose();
     defaultEditToolConfigStore.dispose();
@@ -1890,6 +1895,52 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
         },
       },
     },
+    openai: {
+      id: 'openai',
+      name: 'OpenAI',
+      models: {
+        'gpt-4.1': {
+          id: 'openai/gpt-4.1',
+          name: 'GPT 4.1',
+          family: 'gpt-4.1',
+          open_weights: false,
+          release_date: '2025-04-14',
+          reasoning: true,
+          tool_call: true,
+          modalities: {
+            input: ['text', 'image'],
+            output: ['text'],
+          },
+          limit: {
+            context: 1047576,
+            output: 32768,
+          },
+        },
+      },
+    },
+    anthropic: {
+      id: 'anthropic',
+      name: 'Anthropic',
+      models: {
+        'claude-sonnet-4.5': {
+          id: 'anthropic/claude-sonnet-4.5',
+          name: 'Claude Sonnet 4.5',
+          family: 'claude-sonnet',
+          open_weights: false,
+          release_date: '2025-09-29',
+          reasoning: true,
+          tool_call: true,
+          modalities: {
+            input: ['text', 'image'],
+            output: ['text'],
+          },
+          limit: {
+            context: 200000,
+            output: 64000,
+          },
+        },
+      },
+    },
     openrouter: {
       id: 'openrouter',
       name: 'OpenRouter',
@@ -2016,6 +2067,7 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
   assert.equal(proxyGemini?.maxOutputTokens, undefined);
   assert.deepEqual(proxyGemini?.capabilities, { tools: true, vision: true, thinking: true });
   assert.equal(proxyGemini?.thinking, undefined);
+  assert.equal(proxyGemini?.apiStyle, 'openai-chat');
   assert.equal(
     proxyGemini?.description,
     'gemini-3-flash-preview |  | gemini-flash | Closed | 2025-12-17',
@@ -2106,6 +2158,34 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
     cacheCost: 0.2,
     outputCost: 4,
   });
+
+  const openAiGpt = resolveModelsDevModelConfig(
+    catalog,
+    {
+      name: 'Proxy Vendor',
+      baseUrl: 'https://proxy.example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      useModelsEndpoint: true,
+      models: [],
+    },
+    'gpt-4.1',
+  );
+  assert.equal(openAiGpt?.apiStyle, 'openai-responses');
+
+  const anthropicClaude = resolveModelsDevModelConfig(
+    catalog,
+    {
+      name: 'Proxy Vendor',
+      baseUrl: 'https://proxy.example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      useModelsEndpoint: true,
+      models: [],
+    },
+    'claude-sonnet-4.5',
+  );
+  assert.equal(anthropicClaude?.apiStyle, 'anthropic');
 
   const proxyGeminiLite = resolveModelsDevModelConfig(
     catalog,
@@ -2297,6 +2377,7 @@ async function runGenericProviderDiscoveryDefaultVisionTests(
 
     const updatedVendor = getUpdatedVendor(activeState);
     const refreshedModel = updatedVendor.models.find((model) => model.name === 'fresh-vision-model');
+    assert.equal(refreshedModel?.apiStyle, 'openai-chat');
     assert.deepEqual(refreshedModel?.capabilities, { tools: true, vision: false });
     assert.equal(provider.models[0]?.capabilities?.imageInput, false);
     console.log('PASS /models 刷新新增模型时 defaultVision=false 会覆盖发现到的 vision=true');
@@ -5762,9 +5843,6 @@ async function runCommitMessageGeneratorTests(
         },
       ];
     },
-    async refreshModels(): Promise<void> {
-      return undefined;
-    },
   });
   await selectCommitMessageModel();
   assert.deepEqual(
@@ -6317,9 +6395,24 @@ async function runLMChatProviderAdapterModelFilteringTests(
       ).configurationSchema?.properties?.thinkingEffort?.default,
       'high',
     );
-    assert.deepEqual((limitedVendorModels[0] as unknown as { editTools?: readonly string[] }).editTools, [
-      'apply-patch',
-    ]);
+    assert.equal((limitedVendorModels[0] as unknown as { editTools?: readonly string[] }).editTools, undefined);
+    assert.equal(
+      (
+        limitedVendorModels[0]?.capabilities as {
+          editTools?: readonly string[];
+          editToolsHint?: readonly string[];
+        }
+      ).editTools,
+      undefined,
+    );
+    assert.deepEqual(
+      (
+        limitedVendorModels[0]?.capabilities as {
+          editToolsHint?: readonly string[];
+        }
+      ).editToolsHint,
+      ['apply-patch'],
+    );
     assert.equal(
       (limitedVendorModels[0] as unknown as { zeroDataRetentionEnabled?: boolean }).zeroDataRetentionEnabled,
       false,

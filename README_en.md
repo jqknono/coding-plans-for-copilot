@@ -6,11 +6,14 @@
 
 Supports domestic major vendors like Zhipu, Kimi, iFlytek, Volcengine, MiniMax, Baidu Qianfan, Tencent Cloud, JD Cloud, Kuaishou KAT, X-AIO, Compshare, Alibaba Cloud, Xiaomi MiMo, DeepSeek, as well as **any** vendor that follows OpenAI Chat, OpenAI Responses, or Anthropic protocol styles. No need to change usage habits; call them directly in VS Code Copilot Chat.
 
+This extension is a general protocol adapter, not a clone of Copilot's private endpoint protocol. It sends public OpenAI/Anthropic-compatible fields and avoids Copilot-private request fields; as a result, it can work with Codex, Claude Code, and similar reverse-proxied APIs that native VS Code/Copilot Chat endpoint requests usually cannot call directly.
+
 ---
 
 ## Core Features
 
 - **Multi-Protocol Unified Access**: Supports OpenAI Chat (`/chat/completions`), OpenAI Responses (`/responses`), and Anthropic (`/messages`) three protocol styles, adapting to any compatible vendor.
+- **General Request Format**: Avoids Copilot-private request fields and sends public compatible fields, enabling Codex, Claude Code, and similar reverse-proxied OpenAI/Anthropic-style APIs.
 - **Anthropic Protocol First**: Built-in vendors default to Anthropic-style endpoints (`/messages`).
 - **Zero Learning Curve**: Fully integrated into VS Code Copilot Chat without changing any operational habits.
 - **Flexible Model Management**: Supports dynamic fetching from `/models` endpoint, or custom model lists.
@@ -56,7 +59,7 @@ Click the **Install** button on the marketplace page, which will automatically o
 4. Open Copilot Chat (`Ctrl+L`) and choose a model provided by `Coding Plans` in the model picker
 5. To configure `topP`, set model-level overrides in `coding-plans.vendors[].models[]`; set `temperature` and `Thinking Effort` per request from the model row `More Actions` menu, where OpenAI Chat-compatible models support `none` / `low` / `medium` / `high` / `xhigh` / `max`; Responses API models show `Personality` in `More Actions` and apply it through `instructions`
 6. When a vendor has `useModelsEndpoint` enabled, run `Coding Plans: Update Coding Plans Models List` to request `/models`, write the result back to `coding-plans.vendors[].models`, and refresh the VS Code model picker.
-   - During refresh, the extension prefers [models.dev](https://models.dev/) `catalog.json` and falls back to `api.json` to enrich newly discovered models by model ID/name with `description`, `capabilities`, `contextSize`, and `price`. Matching ignores tags after `:` in the final model path segment, such as `:free`. The `description` shows `id | Lab | Family | Weights | ReleaseDate`, where `Lab` comes from the model ID prefix, not the provider. `capabilities.thinking` maps to models.dev `reasoning`. Prices prefer a models.dev provider with the same name as the configured vendor; otherwise they use the median price across all matching providers. If the catalog cannot be fetched or matched, it keeps the upstream `/models` data and built-in defaults. Existing model entries are not overwritten.
+   - During refresh, the extension prefers [models.dev](https://models.dev/) `catalog.json` and falls back to `api.json` to enrich newly discovered models by model ID/name with `description`, `capabilities`, `contextSize`, `apiStyle`, and `price`. Matching ignores tags after `:` in the final model path segment, such as `:free`. The `description` shows `id | Lab | Family | Weights | ReleaseDate`, where `Lab` comes from the model ID prefix, not the provider. `capabilities.thinking` maps to models.dev `reasoning`. New model `apiStyle` is inferred from the model source: OpenAI uses `openai-responses`, Anthropic uses `anthropic`, and all others default to `openai-chat`. Prices prefer a models.dev provider with the same name as the configured vendor; otherwise they use the median price across all matching providers. If the catalog cannot be fetched or matched, it keeps the upstream `/models` data and built-in defaults. Existing model entries are not overwritten.
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 
 ### Built-in Vendor Endpoints
@@ -194,7 +197,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].models[].streaming` | `boolean` | `true` | Whether to prefer streaming requests; set to `false` to send non-streaming requests. |
 | `coding-plans.vendors[].models[].capabilities.thinking` | `boolean` | `true` | Whether to expose and send reasoning/thinking parameters. |
 | `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | Protocol defaults | Restricts model-row effort options and blocks unsupported effort values from request payloads. |
-| `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch"]` | Copilot-style edit tool declaration; currently supports `apply-patch`. |
+| `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch","multi-find-replace","find-replace","code-rewrite"]` | Copilot-style edit tool declaration passed through to VS Code/Copilot as `capabilities.editToolsHint` for edit-tool preference selection. |
 | `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | Derived from protocol | Copilot-style reasoning effort wire-format metadata: `chat-completions` / `responses`. Not applicable for anthropic protocol. |
 | `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | Empty | Declarative metadata only; it does not change upstream provider retention behavior. |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Request-side default output token budget. It only overrides request budgeting and is still capped by the model output limit. |

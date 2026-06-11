@@ -57,7 +57,6 @@ type LanguageModelChatInformationWithHiddenFields = vscode.LanguageModelChatInfo
   configurationSchema?: LanguageModelConfigurationSchema;
   isUserSelectable?: boolean;
   apiType?: string;
-  editTools?: readonly string[];
   supportsReasoningEffort?: readonly string[];
   reasoningEffortFormat?: string;
   thinking?: boolean;
@@ -68,6 +67,10 @@ type LanguageModelChatInformationWithHiddenFields = vscode.LanguageModelChatInfo
   longContextInputCost?: number;
   longContextCacheCost?: number;
   longContextOutputCost?: number;
+};
+
+type LanguageModelChatCapabilitiesWithHiddenFields = vscode.LanguageModelChatCapabilities & {
+  editToolsHint?: readonly string[];
 };
 
 type ProvideLanguageModelChatResponseOptionsWithModelConfiguration = vscode.ProvideLanguageModelChatResponseOptions & {
@@ -171,14 +174,16 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
     version: model.version,
     maxInputTokens: model.maxInputTokens,
     maxOutputTokens: model.maxOutputTokens,
-    capabilities: { ...model.capabilities },
+    capabilities: {
+      ...model.capabilities,
+      editToolsHint: model.editTools,
+    } as LanguageModelChatCapabilitiesWithHiddenFields,
     configurationSchema: createModelConfigurationSchema(model),
     // isUserSelectable is an internal VS Code field not yet in public typings.
     // Without it the chat model picker filters the model out (AIo() filter).
     ...({
       isUserSelectable: true,
       apiType: model.apiType,
-      editTools: model.editTools,
       supportsReasoningEffort: model.supportsReasoningEffort,
       reasoningEffortFormat: model.reasoningEffortFormat,
       thinking: model.thinking,

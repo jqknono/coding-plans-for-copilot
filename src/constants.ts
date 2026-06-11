@@ -82,7 +82,7 @@ export const DEFAULT_RESERVED_OUTPUT_TOKENS = 30000;
 export const DEFAULT_RESERVED_OUTPUT_RATIO = 0.2;
 export const DEFAULT_MODEL_CAPABILITIES_TOOLS = true;
 export const DEFAULT_MODEL_CAPABILITIES_VISION = false;
-export const DEFAULT_MODEL_EDIT_TOOLS = ['apply-patch', 'multi-find-replace'] as const;
+export const DEFAULT_MODEL_EDIT_TOOLS = ['apply-patch', 'multi-find-replace', 'find-replace', 'code-rewrite'] as const;
 
 export const LOG_LEVEL_PRIORITY = {
   DEBUG: 10,

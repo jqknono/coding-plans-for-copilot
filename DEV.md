@@ -204,7 +204,7 @@ npm run test:pages
   - `anthropic` 请求仅发送 `temperature`，不发送 `top_p`，以兼容会拒绝同时指定两者的上游
 - 新增 thinking effort：
   - effort 具体值仍来自 API 调用方传入的请求级覆盖项；模型级 `capabilities.thinking: false` 会隐藏并禁止发送 thinking/reasoning 参数，`supportsReasoningEffort` 会限制模型行可选项并阻止未声明值进入 payload。
-  - `editTools` 默认 `["apply-patch"]`，作为 Copilot 风格模型元数据透传；当前不扩展其他 edit tool。
+  - `editTools` 默认 `["apply-patch","multi-find-replace","find-replace","code-rewrite"]`，作为 Copilot 风格模型元数据透传到 `capabilities.editToolsHint` 给 VS Code/Copilot 选择编辑工具偏好；本扩展自身不根据该字段筛选请求工具。
   - `reasoningEffortFormat` 与 `zeroDataRetentionEnabled` 作为 Copilot 风格元数据保留；后者不代表上游真实数据保留策略。
   - 继承顺序固定为 request modelOptions > 不发送
   - 协议映射：
@@ -213,6 +213,7 @@ npm run test:pages
     - `anthropic`：使用 `request.modelOptions.thinking` 作为开关，`true` 发送 `thinking: { type: "adaptive" }`，`false` 发送 `thinking: { type: "disabled" }`；使用 `request.modelOptions.effort` 发送 `output_config.effort`，可选 `low` / `medium` / `high` / `xhigh` / `max`
   - Moonshot/Kimi Anthropic-compatible 入口在 thinking + tool continuation 场景下可能要求上一条 assistant tool-call 历史消息携带非标准 `reasoning_content`，否则返回 `thinking is enabled but reasoning_content is missing in assistant tool call message`；当前不在 Anthropic 路径实现该字段的 tool continuation 回传，建议关闭 thinking 或改走 `openai-chat` 兼容 API。
 - 未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
+- `/models` 自动发现新增模型时会写入推导出的 `models[].apiStyle`：OpenAI 来源模型使用 `openai-responses`，Anthropic 来源模型使用 `anthropic`，其它模型使用 `openai-chat`；已有模型配置不被刷新覆盖。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
 - 请求链路默认优先上游真实流式传输；若模型配置 `streaming: false`，直接发送非流式请求。若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志。
 - `capabilities` 可省略；归一化时自动补齐 `tools=true` 与 `vision=defaultVision`。

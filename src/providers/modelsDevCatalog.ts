@@ -1,4 +1,4 @@
-import { VendorConfig, VendorModelConfig } from '../config/configStore';
+import { VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
 
 export const MODELS_DEV_CATALOG_URL = 'https://models.dev/catalog.json';
 export const MODELS_DEV_API_URL = 'https://models.dev/api.json';
@@ -141,10 +141,12 @@ export function resolveModelsDevModelConfig(
 
   const limit = readModelsDevLimit(model);
   const price = resolveModelsDevPrice(matches, vendor);
+  const modelKey = pickModelsDevDescriptionModelKey(globalMatch?.modelKey, readMatchedModelKey(bestMatch), modelName);
   const description = buildModelsDevDescription(
     model,
-    pickModelsDevDescriptionModelKey(globalMatch?.modelKey, readMatchedModelKey(bestMatch), modelName),
+    modelKey,
   );
+  const apiStyle = inferDefaultApiStyleForModel(modelName, model, modelKey);
   const tools = readModelsDevBooleanCapability(model, matches, 'tool_call');
   const reasoning = readModelsDevBooleanCapability(model, matches, 'reasoning');
   const vision = readsImageInputFromModels(model, matches);
@@ -162,9 +164,36 @@ export function resolveModelsDevModelConfig(
     ...(capabilities === undefined ? {} : { capabilities }),
     ...(price === undefined ? {} : { price }),
     ...(description === undefined ? {} : { description }),
+    apiStyle,
   };
 
   return Object.keys(normalized).length > 0 ? normalized : undefined;
+}
+
+export function inferDefaultApiStyleForModel(
+  modelName: string,
+  model?: ModelsDevModel,
+  modelKey?: string,
+): VendorApiStyle {
+  const lab = model ? readModelsDevLab(model, modelKey) : readModelProviderPrefix(modelName);
+  const normalizedLab = normalizeComparableText(lab ?? '');
+  if (normalizedLab === 'openai') {
+    return 'openai-responses';
+  }
+  if (normalizedLab === 'anthropic') {
+    return 'anthropic';
+  }
+
+  const modelKeyText = normalizeComparableText(readModelSuffix(modelKey ?? model?.id ?? modelName));
+  const preferredProviders = getCanonicalProviderOrder(modelKeyText);
+  if (preferredProviders.includes('openai')) {
+    return 'openai-responses';
+  }
+  if (preferredProviders.includes('anthropic')) {
+    return 'anthropic';
+  }
+
+  return 'openai-chat';
 }
 
 function resolveModelsDevModelMatches(

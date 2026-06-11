@@ -11,6 +11,8 @@
 - 本仓库包含两部分：
   - VS Code 扩展（`src/`）：多厂商模型接入 + Commit Message 生成。
   - 价格/性能看板（`pages/` + `assets/` + `scripts/`）：展示编码套餐与 OpenRouter provider 性能指标。
+- VS Code 扩展的核心定位是通用 OpenAI Chat、OpenAI Responses、Anthropic 协议适配器；请求构造应优先使用公开/通用协议字段，避免依赖 Copilot 私有请求字段。
+- 与原生 VS Code/Copilot Chat 内置 endpoint 请求不同，本插件应保持对 Codex、Claude Code 等反代出的 OpenAI/Anthropic 风格 API 的兼容性；不要为了贴近 Copilot 私有 endpoint 而牺牲通用兼容。
 - 看板核心数据文件：
   - `assets/provider-pricing.json`（国内/已结构化套餐）
   - `assets/openrouter-provider-metrics.json`（OpenRouter 指标）

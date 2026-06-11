@@ -143,7 +143,6 @@ type ChatModelsSelectionCacheState = {
 
 type CommitMessageModelSource = {
   getAvailableModels(): vscode.LanguageModelChat[];
-  refreshModels(): Promise<void>;
 };
 
 let chatModelsSelectionCache: ChatModelsSelectionCacheState | undefined;
@@ -1435,20 +1434,6 @@ async function getCodingPlansModelsForCommitMessageSelection(
     modelGroups: summarizeModelGroupsForLog(models),
     elapsedMs: Date.now() - startedAt,
   });
-
-  if (models.length === 0) {
-    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-refresh-start`, {
-      elapsedMs: Date.now() - startedAt,
-    });
-    await commitMessageModelSource.refreshModels();
-    throwIfCancelled(token);
-    models = commitMessageModelSource.getAvailableModels();
-    logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-refresh-resolved`, {
-      modelCount: models.length,
-      modelGroups: summarizeModelGroupsForLog(models),
-      elapsedMs: Date.now() - startedAt,
-    });
-  }
 
   return models;
 }

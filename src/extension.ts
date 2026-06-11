@@ -534,7 +534,6 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   providers.set('coding-plans', genericProvider);
   registerCommitMessageModelSource({
     getAvailableModels: () => genericProvider.getAvailableModels(),
-    refreshModels: () => genericProvider.refreshModels(),
   });
 
   const adapter = new LMChatProviderAdapter(genericProvider, configStore, contextUsageState);

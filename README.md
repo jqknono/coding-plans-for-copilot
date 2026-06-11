@@ -6,11 +6,14 @@
 
 支持智谱、Kimi、讯飞、火山引擎、MiniMax、百度千帆、腾讯云、京东云、快手 KAT、X-AIO、Compshare、阿里云、小米 MiMo、DeepSeek 等国产大厂，以及**任何**遵循 OpenAI Chat、OpenAI Responses 或 Anthropic 协议风格的供应商。无需改变使用习惯，直接在 VS Code Copilot Chat 中调用。
 
+本插件定位是通用协议适配器，而不是 Copilot 私有 endpoint 的复刻。它只发送 OpenAI/Anthropic 兼容 API 能理解的公开字段，避免依赖 Copilot 私有请求字段；因此可以兼容 Codex、Claude Code 等反代出的 API，而原生 VS Code/Copilot Chat 内置请求通常不能直接兼容这类反代入口。
+
 ---
 
 ## 核心特性
 
 - **多协议统一接入**：支持 OpenAI Chat（`/chat/completions`）、OpenAI Responses（`/responses`）、Anthropic（`/messages`）三种协议风格，适配任意兼容供应商。
+- **通用请求格式**：不使用 Copilot 私有请求字段，优先发送公开兼容字段，适配 Codex、Claude Code 等反代出的 OpenAI/Anthropic 风格 API。
 - **Anthropic 协议优先**：内置供应商默认使用 Anthropic 风格端点（`/messages`）。
 - **零学习成本**：完全集成到 VS Code Copilot Chat，不改变任何操作习惯。
 - **灵活模型管理**：支持动态拉取 `/models` 端点，也可自定义模型列表。
@@ -56,7 +59,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 4. 打开 Copilot Chat（`Ctrl+L`），在模型选择器中选择 `Coding Plans` 提供的模型
 5. 如需设置 `topP`，在 `coding-plans.vendors[].models[]` 中配置模型级覆盖项；`temperature` 与 `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型的 `Thinking Effort` 支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`；Responses API 模型会在 `More Actions` 中显示 `Personality`，并通过 `instructions` 生效
 6. 当供应商启用 `useModelsEndpoint` 时，可执行 `Coding Plans: Update Coding Plans Models List`，扩展会重新请求 `/models`，写回 `coding-plans.vendors[].models` 并刷新 VS Code 模型选择器。
-   - 刷新过程中会优先使用 [models.dev](https://models.dev/) 的 `catalog.json`，失败时回退 `api.json`，按模型 ID/名称为新发现模型补全 `description`、`capabilities`、`contextSize` 和 `price`；匹配时会忽略模型名最后路径段中 `:` 后的标记（如 `:free`）；`description` 会显示 `id | Lab | Family | Weights | ReleaseDate`，其中 `Lab` 来自模型 ID 前缀而非 provider；`capabilities.thinking` 对应 models.dev 的 `reasoning`；价格优先使用与当前供应商同名的 models.dev provider，若没有则使用所有匹配 provider 价格的中位数；如果无法获取或无法匹配，则保留上游 `/models` 与内置默认值。已有模型配置不会被刷新覆盖。
+   - 刷新过程中会优先使用 [models.dev](https://models.dev/) 的 `catalog.json`，失败时回退 `api.json`，按模型 ID/名称为新发现模型补全 `description`、`capabilities`、`contextSize`、`apiStyle` 和 `price`；匹配时会忽略模型名最后路径段中 `:` 后的标记（如 `:free`）；`description` 会显示 `id | Lab | Family | Weights | ReleaseDate`，其中 `Lab` 来自模型 ID 前缀而非 provider；`capabilities.thinking` 对应 models.dev 的 `reasoning`；新模型 `apiStyle` 按模型来源推导：OpenAI 使用 `openai-responses`，Anthropic 使用 `anthropic`，其它默认 `openai-chat`；价格优先使用与当前供应商同名的 models.dev provider，若没有则使用所有匹配 provider 价格的中位数；如果无法获取或无法匹配，则保留上游 `/models` 与内置默认值。已有模型配置不会被刷新覆盖。
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
 
 ### 内置供应商端点
@@ -191,7 +194,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].streaming` | `boolean` | `true` | 是否优先使用流式请求；设为 `false` 时发送非流式请求。 |
 | `coding-plans.vendors[].models[].capabilities.thinking` | `boolean` | `true` | 是否展示并发送 reasoning/thinking 相关参数；设为 `false` 时不暴露对应模型行选项。 |
 | `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | 协议默认值 | 限制模型行 `Thinking Effort` / `Effort` 可选项，并阻止未声明值进入请求 payload。 |
-| `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch"]` | Copilot 风格编辑工具声明；当前支持 `apply-patch`。 |
+| `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch","multi-find-replace","find-replace","code-rewrite"]` | Copilot 风格编辑工具声明；透传到 VS Code/Copilot 的 `capabilities.editToolsHint`，用于选择编辑工具偏好。 |
 | `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | 由协议推导 | Copilot 风格 reasoning effort 格式元数据：`chat-completions` / `responses`。anthropic 协议不关注此项。 |
 | `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | 空 | 声明性元数据，不代表上游真实数据保留策略。 |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | 请求侧默认输出 token 预算；仅作为发送请求时的预算覆盖值，最终仍会按模型输出上限收敛。 |

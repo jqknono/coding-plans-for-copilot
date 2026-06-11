@@ -392,12 +392,16 @@
                                                 "type": "string",
                                                 "enum": [
                                                     "apply-patch",
-                                                    "multi-find-replace"
+                                                    "multi-find-replace",
+                                                    "find-replace",
+                                                    "code-rewrite"
                                                 ]
                                             },
                                             "default": [
                                                 "apply-patch",
-                                                "multi-find-replace"
+                                                "multi-find-replace",
+                                                "find-replace",
+                                                "code-rewrite"
                                             ],
                                             "description": "Copilot-style edit tools supported by this model."
                                         },

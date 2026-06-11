@@ -101,6 +101,7 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
     name,
     enabled: true,
     description: model.description?.trim() || undefined,
+    apiStyle: readVendorApiStyle(model.apiStyle),
     contextSize: readPositiveTokenInteger(model.maxTokens),
     capabilities: {
       tools,
@@ -115,6 +116,10 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
     zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
     price: buildPriceConfig(model),
   };
+}
+
+function readVendorApiStyle(value: unknown): VendorApiStyle | undefined {
+  return value === 'openai-responses' || value === 'anthropic' || value === 'openai-chat' ? value : undefined;
 }
 
 function buildPriceConfig(model: AIModelConfig): VendorModelConfig['price'] {

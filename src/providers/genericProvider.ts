@@ -43,7 +43,12 @@ import {
   toVendorModelConfigs,
   toVendorStateKey,
 } from './genericProviderDiscovery';
-import { ModelsDevCatalog, fetchModelsDevCatalog, resolveModelsDevModelConfig } from './modelsDevCatalog';
+import {
+  ModelsDevCatalog,
+  fetchModelsDevCatalog,
+  inferDefaultApiStyleForModel,
+  resolveModelsDevModelConfig,
+} from './modelsDevCatalog';
 import {
   AnthropicStreamEvent,
   AnthropicChatRequest,
@@ -1175,6 +1180,7 @@ export class GenericAIProvider extends BaseAIProvider {
         seen.add(modelId.toLowerCase());
 
         const modelsDevConfig = resolveModelsDevModelConfig(modelsDevCatalog, vendor, modelId);
+        const inferredApiStyle = modelsDevConfig?.apiStyle ?? inferDefaultApiStyleForModel(modelId);
         const runtime = this.readRuntimeFromGenericModelEntry(entry);
         const resolvedTokens = this.resolveTokenWindowLimits(
           modelsDevConfig?.contextSize ?? runtime.maxTokens,
@@ -1198,7 +1204,7 @@ export class GenericAIProvider extends BaseAIProvider {
             toolCalling: modelsDevToolCalling ?? runtime.toolCalling ?? DEFAULT_MODEL_TOOLS,
             imageInput: modelsDevVision ?? vendor.defaultVision,
           },
-          apiStyle: vendor.defaultApiStyle,
+          apiStyle: inferredApiStyle,
           thinking: modelsDevThinking,
           inputCost: modelsDevConfig?.price?.inputCost,
           cacheCost: modelsDevConfig?.price?.cacheCost,
