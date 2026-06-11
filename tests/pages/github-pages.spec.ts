@@ -21,7 +21,9 @@ async function openOrgFilter(page: Page): Promise<Locator> {
   const filter = page.locator('[data-filter="org"]');
   await filter.getByRole('textbox', { name: '厂商筛选' }).click();
   await expect(filter.locator('.searchable-select-dropdown')).toBeVisible();
-  await expect.poll(async () => filter.locator('.searchable-select-option:not(.is-all-option)').count()).toBeGreaterThan(1);
+  await expect
+    .poll(async () => filter.locator('.searchable-select-option:not(.is-all-option)').count())
+    .toBeGreaterThan(1);
   return filter;
 }
 
@@ -36,10 +38,7 @@ test('首页渲染与 Tab 切换正常', async ({ page }) => {
   const discussionLink = hero.getByRole('link', { name: '打开讨论' });
   await expect(projectLink).toBeVisible();
   await expect(projectLink).toHaveText('');
-  await expect(projectLink).toHaveAttribute(
-    'href',
-    'https://github.com/jqknono/chinese-llm-for-copilot',
-  );
+  await expect(projectLink).toHaveAttribute('href', 'https://github.com/jqknono/chinese-llm-for-copilot');
   await expect(discussionLink).toBeVisible();
   await expect(discussionLink).toHaveText('');
   await expect(discussionLink).toHaveAttribute(
@@ -62,9 +61,9 @@ test('首页渲染与 Tab 切换正常', async ({ page }) => {
     const domesticPanel = document.querySelector('#domesticPanel');
     const pluginIntro = document.querySelector('.plugin-intro');
     return Boolean(
-      domesticPanel
-        && pluginIntro
-        && (domesticPanel.compareDocumentPosition(pluginIntro) & Node.DOCUMENT_POSITION_FOLLOWING),
+      domesticPanel &&
+      pluginIntro &&
+      domesticPanel.compareDocumentPosition(pluginIntro) & Node.DOCUMENT_POSITION_FOLLOWING,
     );
   });
   expect(pluginIntroFollowsDomesticPanel).toBe(true);
@@ -196,7 +195,9 @@ test('海外套餐展示 Venice WandB 与 Cloudflare 的服务详情', async ({ 
   const veniceCard = page.locator('#provider-card-venice');
   await expect(veniceCard).toBeVisible();
   await expect(veniceCard.getByRole('heading', { name: 'Pro Plus' })).toBeVisible();
-  await expect(veniceCard.getByText('7,500 credits / month for video, music, frontier image generation, LLMs, and API')).toBeVisible();
+  await expect(
+    veniceCard.getByText('7,500 credits / month for video, music, frontier image generation, LLMs, and API'),
+  ).toBeVisible();
 
   const wandbCard = page.locator('#provider-card-wandb');
   await expect(wandbCard).toBeVisible();
@@ -243,7 +244,9 @@ test('指标页展示 1M 输入缓存与输出价格', async ({ page }) => {
   await expect(page.getByText('美元人民币汇率')).toHaveCount(0);
   await expect(page.locator('#metricsTableContainer .metric-price').first()).toContainText('输入');
   await expect(page.locator('#metricsTableContainer .metric-price').first()).toContainText('输出');
-  await expect.poll(async () => page.locator('#metricsTableContainer .metric-price').filter({ hasText: '¥' }).count()).toBeGreaterThan(0);
+  await expect
+    .poll(async () => page.locator('#metricsTableContainer .metric-price').filter({ hasText: '¥' }).count())
+    .toBeGreaterThan(0);
   await expect(page.locator('#metricsTableContainer .metric-price').first()).not.toContainText('$');
   await expect.poll(async () => page.locator('#metricsTableContainer .metric-cache-badge').count()).toBeGreaterThan(0);
 });
@@ -346,11 +349,7 @@ test('指标页价格排序优先使用缓存命中价格', async ({ page }) => 
   await page.getByRole('columnheader', { name: /1M价格/ }).click();
 
   const providerNames = await page.locator('#metricsTableContainer tbody tr .metric-provider').allTextContents();
-  expect(providerNames.map((text) => text.trim()).slice(0, 3)).toEqual([
-    'Cache C',
-    'Cache B',
-    'No Cache A',
-  ]);
+  expect(providerNames.map((text) => text.trim()).slice(0, 3)).toEqual(['Cache C', 'Cache B', 'No Cache A']);
 });
 
 test('指标页支持缓存优惠筛选', async ({ page }) => {
@@ -412,7 +411,10 @@ test('指标页套餐标记和查看套餐跳转正常', async ({ page }) => {
     const original = (window as Window & typeof globalThis).navigateToProviderCard;
     if (typeof original === 'function') {
       (window as Window & typeof globalThis).navigateToProviderCard = ((tab: string, cardId: string) => {
-        (window as Window & { __lastNavigateArgs?: { tab: string; cardId: string } | null }).__lastNavigateArgs = { tab, cardId };
+        (window as Window & { __lastNavigateArgs?: { tab: string; cardId: string } | null }).__lastNavigateArgs = {
+          tab,
+          cardId,
+        };
         return original(tab, cardId);
       }) as typeof original;
     }
@@ -421,8 +423,9 @@ test('指标页套餐标记和查看套餐跳转正常', async ({ page }) => {
   const jumpButton = page.getByRole('button', { name: '查看套餐' }).first();
   await jumpButton.click();
 
-  const navigateArgs = await page.evaluate(() =>
-    (window as Window & { __lastNavigateArgs?: { tab: string; cardId: string } | null }).__lastNavigateArgs ?? null
+  const navigateArgs = await page.evaluate(
+    () =>
+      (window as Window & { __lastNavigateArgs?: { tab: string; cardId: string } | null }).__lastNavigateArgs ?? null,
   );
   expect(navigateArgs).not.toBeNull();
 
@@ -432,6 +435,7 @@ test('指标页套餐标记和查看套餐跳转正常', async ({ page }) => {
   await expect(page).toHaveURL(expectedHash);
   await expect(page.locator(expectedPanel)).not.toHaveClass(/hidden/);
   await expect(page.locator(`#${navigateArgs?.cardId}`)).toHaveCount(1);
-  await expect(page.getByRole('tab', { name: navigateArgs?.tab === 'domestic' ? '大陆套餐' : '海外套餐' })).toHaveAttribute('aria-selected', 'true');
+  await expect(
+    page.getByRole('tab', { name: navigateArgs?.tab === 'domestic' ? '大陆套餐' : '海外套餐' }),
+  ).toHaveAttribute('aria-selected', 'true');
 });
-

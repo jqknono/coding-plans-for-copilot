@@ -6,7 +6,7 @@ import {
   DEFAULT_RESERVED_OUTPUT_TOKENS,
   DEFAULT_TOKEN_SIDE_LIMIT,
   MODEL_VERSION_LABEL,
-  resolveImplicitReservedOutputTokens
+  resolveImplicitReservedOutputTokens,
 } from '../constants';
 import { logger } from '../logging/outputChannelLogger';
 
@@ -123,8 +123,8 @@ function sanitizeErrorMessage(value: string): string {
   const collapsed = value
     .replace(/\r/g, '\n')
     .split('\n')
-    .map(part => part.trim())
-    .filter(part => part.length > 0)
+    .map((part) => part.trim())
+    .filter((part) => part.length > 0)
     .join(' ')
     .trim();
 
@@ -159,7 +159,7 @@ const UNSUPPORTED_FORWARDED_TOOL_SCHEMA_KEYS = new Set([
   'markdownDescription',
   'markdownEnumDescriptions',
   'patternErrorMessage',
-  'suggestSortText'
+  'suggestSortText',
 ]);
 
 function sanitizeToolMetadataValue(value: unknown): unknown {
@@ -168,14 +168,14 @@ function sanitizeToolMetadataValue(value: unknown): unknown {
   }
 
   if (Array.isArray(value)) {
-    return value.map(item => sanitizeToolMetadataValue(item));
+    return value.map((item) => sanitizeToolMetadataValue(item));
   }
 
   if (value && typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>)
         .filter(([key]) => !UNSUPPORTED_FORWARDED_TOOL_SCHEMA_KEYS.has(key))
-        .map(([key, nestedValue]) => [key, sanitizeToolMetadataValue(nestedValue)])
+        .map(([key, nestedValue]) => [key, sanitizeToolMetadataValue(nestedValue)]),
     );
   }
 
@@ -203,7 +203,7 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
 
   constructor(
     protected provider: BaseAIProvider,
-    modelInfo: AIModelConfig
+    modelInfo: AIModelConfig,
   ) {
     this.id = modelInfo.id;
     this.vendor = modelInfo.vendor;
@@ -217,13 +217,12 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
     this.maxOutputTokens = Math.max(1, Math.floor(modelInfo.maxOutputTokens ?? DEFAULT_TOKEN_SIDE_LIMIT));
     this.capabilities = modelInfo.capabilities ?? {
       toolCalling: true,
-      imageInput: true
+      imageInput: true,
     };
     this.streaming = modelInfo.streaming;
     this.thinking = modelInfo.thinking;
-    this.editTools = modelInfo.editTools && modelInfo.editTools.length > 0
-      ? [...modelInfo.editTools]
-      : [...DEFAULT_MODEL_EDIT_TOOLS];
+    this.editTools =
+      modelInfo.editTools && modelInfo.editTools.length > 0 ? [...modelInfo.editTools] : [...DEFAULT_MODEL_EDIT_TOOLS];
     this.supportsReasoningEffort = modelInfo.supportsReasoningEffort;
     this.reasoningEffortFormat = modelInfo.reasoningEffortFormat;
     this.zeroDataRetentionEnabled = modelInfo.zeroDataRetentionEnabled;
@@ -233,13 +232,10 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   abstract sendRequest(
     messages: vscode.LanguageModelChatMessage[],
     options?: vscode.LanguageModelChatRequestOptions,
-    token?: vscode.CancellationToken
+    token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse>;
 
-  countTokens(
-    _text: string | vscode.LanguageModelChatMessage,
-    _token?: vscode.CancellationToken
-  ): Promise<number> {
+  countTokens(_text: string | vscode.LanguageModelChatMessage, _token?: vscode.CancellationToken): Promise<number> {
     // Local token counting is intentionally disabled. Usage is sourced only from upstream API responses.
     return Promise.resolve(0);
   }
@@ -269,12 +265,14 @@ interface GenericModelListEntry {
   function_calling?: unknown;
   image_input?: unknown;
   vision?: unknown;
-  capabilities?: {
-    tool_calling?: unknown;
-    function_calling?: unknown;
-    image_input?: unknown;
-    vision?: unknown;
-  } | unknown;
+  capabilities?:
+    | {
+        tool_calling?: unknown;
+        function_calling?: unknown;
+        image_input?: unknown;
+        vision?: unknown;
+      }
+    | unknown;
 }
 
 interface ResolvedModelRuntimeSettings {
@@ -344,8 +342,8 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     try {
       this.modelDiscoveryUnsupported = false;
       const resolvedModels = await this.resolveModelConfigs();
-      this.models = resolvedModels.map(model => this.createModel(model));
-      logger.info(`${this.getVendor()} models refreshed`, { modelIds: this.models.map(m => m.id) });
+      this.models = resolvedModels.map((model) => this.createModel(model));
+      logger.info(`${this.getVendor()} models refreshed`, { modelIds: this.models.map((m) => m.id) });
       this.modelChangedEmitter.fire();
     } catch (error: any) {
       logger.error(`Failed to refresh ${this.getVendor()} models`, error);
@@ -386,22 +384,18 @@ export abstract class BaseAIProvider implements vscode.Disposable {
 
   protected buildConfiguredModelConfigs(
     describe: (modelId: string) => string,
-    fallbackFamily: string
+    fallbackFamily: string,
   ): AIModelConfig[] {
     const modelSettings = this.readModelSettingsById();
-    return this.getConfiguredModelIds().map(modelId => this.buildModelConfig(
-      modelId,
-      undefined,
-      describe,
-      fallbackFamily,
-      modelSettings
-    ));
+    return this.getConfiguredModelIds().map((modelId) =>
+      this.buildModelConfig(modelId, undefined, describe, fallbackFamily, modelSettings),
+    );
   }
 
   protected async resolveModelConfigsFromGenericModelApi(
     fetchPayload: () => Promise<unknown>,
     describe: (modelId: string) => string,
-    fallbackFamily: string
+    fallbackFamily: string,
   ): Promise<AIModelConfig[]> {
     try {
       const payload = await fetchPayload();
@@ -419,7 +413,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
   protected buildModelConfigsFromGenericPayload(
     payload: unknown,
     describe: (modelId: string) => string,
-    fallbackFamily: string
+    fallbackFamily: string,
   ): AIModelConfig[] {
     const modelSettings = this.readModelSettingsById();
     const deduped = new Set<string>();
@@ -438,13 +432,15 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       }
       deduped.add(dedupeKey);
 
-      models.push(this.buildModelConfig(
-        modelId,
-        this.readRuntimeFromGenericModelEntry(entry),
-        describe,
-        fallbackFamily,
-        modelSettings
-      ));
+      models.push(
+        this.buildModelConfig(
+          modelId,
+          this.readRuntimeFromGenericModelEntry(entry),
+          describe,
+          fallbackFamily,
+          modelSettings,
+        ),
+      );
     }
 
     return models;
@@ -460,12 +456,14 @@ export abstract class BaseAIProvider implements vscode.Disposable {
 
   protected isLikelyChatModel(modelId: string): boolean {
     const lower = modelId.toLowerCase();
-    return !lower.includes('embedding')
-      && !lower.includes('rerank')
-      && !lower.includes('speech')
-      && !lower.includes('tts')
-      && !lower.includes('asr')
-      && !lower.includes('audio');
+    return (
+      !lower.includes('embedding') &&
+      !lower.includes('rerank') &&
+      !lower.includes('speech') &&
+      !lower.includes('tts') &&
+      !lower.includes('asr') &&
+      !lower.includes('audio')
+    );
   }
 
   private buildModelConfig(
@@ -473,7 +471,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     discovered: Partial<ResolvedModelRuntimeSettings> | undefined,
     describe: (modelId: string) => string,
     fallbackFamily: string,
-    modelSettings: Map<string, Partial<ResolvedModelRuntimeSettings>>
+    modelSettings: Map<string, Partial<ResolvedModelRuntimeSettings>>,
   ): AIModelConfig {
     const runtime = this.resolveModelRuntimeSettings(modelId, discovered, modelSettings);
     return {
@@ -487,22 +485,22 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       maxOutputTokens: runtime.maxOutputTokens,
       capabilities: {
         toolCalling: runtime.toolCalling,
-        imageInput: runtime.imageInput
+        imageInput: runtime.imageInput,
       },
-      description: describe(modelId)
+      description: describe(modelId),
     };
   }
 
   private resolveModelRuntimeSettings(
     modelId: string,
     discovered: Partial<ResolvedModelRuntimeSettings> | undefined,
-    modelSettings: Map<string, Partial<ResolvedModelRuntimeSettings>>
+    modelSettings: Map<string, Partial<ResolvedModelRuntimeSettings>>,
   ): ResolvedModelRuntimeSettings {
     const override = modelSettings.get(modelId.toLowerCase());
     const resolvedTokens = this.resolveTokenWindowLimits(
       override?.maxTokens ?? discovered?.maxTokens,
       override?.maxInputTokens ?? discovered?.maxInputTokens,
-      override?.maxOutputTokens ?? discovered?.maxOutputTokens
+      override?.maxOutputTokens ?? discovered?.maxOutputTokens,
     );
     const toolCalling = override?.toolCalling ?? discovered?.toolCalling ?? true;
     const imageInput = override?.imageInput ?? discovered?.imageInput ?? true;
@@ -512,14 +510,14 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       maxInputTokens: resolvedTokens.maxInputTokens,
       maxOutputTokens: resolvedTokens.maxOutputTokens,
       toolCalling,
-      imageInput
+      imageInput,
     };
   }
 
   protected resolveTokenWindowLimits(
     totalContextWindow: number | undefined,
     explicitMaxInputTokens: number | undefined,
-    explicitMaxOutputTokens: number | undefined
+    explicitMaxOutputTokens: number | undefined,
   ): Pick<ResolvedModelRuntimeSettings, 'maxTokens' | 'maxInputTokens' | 'maxOutputTokens'> {
     const hasExplicitTotalContextWindow = totalContextWindow !== undefined;
     const fallbackTotal = Math.max(2, Math.floor(totalContextWindow ?? DEFAULT_CONTEXT_WINDOW_SIZE));
@@ -536,9 +534,11 @@ export abstract class BaseAIProvider implements vscode.Disposable {
 
     if (maxInputTokens !== undefined && maxOutputTokens !== undefined) {
       return {
-        maxTokens: hasExplicitTotalContextWindow ? fallbackTotal : Math.max(fallbackTotal, maxInputTokens + maxOutputTokens),
+        maxTokens: hasExplicitTotalContextWindow
+          ? fallbackTotal
+          : Math.max(fallbackTotal, maxInputTokens + maxOutputTokens),
         maxInputTokens,
-        maxOutputTokens
+        maxOutputTokens,
       };
     }
 
@@ -549,7 +549,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       return {
         maxTokens: Math.max(maxInputTokens + derivedMaxOutputTokens, hasExplicitTotalContextWindow ? fallbackTotal : 0),
         maxInputTokens,
-        maxOutputTokens: derivedMaxOutputTokens
+        maxOutputTokens: derivedMaxOutputTokens,
       };
     }
 
@@ -560,7 +560,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       return {
         maxTokens: Math.max(derivedMaxInputTokens + maxOutputTokens, hasExplicitTotalContextWindow ? fallbackTotal : 0),
         maxInputTokens: derivedMaxInputTokens,
-        maxOutputTokens
+        maxOutputTokens,
       };
     }
 
@@ -569,7 +569,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return {
       maxTokens: derivedMaxInputTokens + derivedMaxOutputTokens,
       maxInputTokens: derivedMaxInputTokens,
-      maxOutputTokens: derivedMaxOutputTokens
+      maxOutputTokens: derivedMaxOutputTokens,
     };
   }
 
@@ -592,26 +592,29 @@ export abstract class BaseAIProvider implements vscode.Disposable {
         maxInputTokens?: unknown;
         maxOutputTokens?: unknown;
         contextSize?: unknown;
-        capabilities?: {
-          tools?: unknown;
-          vision?: unknown;
-          toolCalling?: unknown;
-          imageInput?: unknown;
-        } | unknown;
+        capabilities?:
+          | {
+              tools?: unknown;
+              vision?: unknown;
+              toolCalling?: unknown;
+              imageInput?: unknown;
+            }
+          | unknown;
       };
 
       const legacyContextWindow = this.readPositiveInteger(parsed.contextSize);
       const maxInputTokens = this.readPositiveInteger(parsed.maxInputTokens);
       const maxOutputTokens = this.readPositiveInteger(parsed.maxOutputTokens);
 
-      const capabilities = parsed.capabilities && typeof parsed.capabilities === 'object'
-        ? parsed.capabilities as {
-          tools?: unknown;
-          vision?: unknown;
-          toolCalling?: unknown;
-          imageInput?: unknown;
-        }
-        : undefined;
+      const capabilities =
+        parsed.capabilities && typeof parsed.capabilities === 'object'
+          ? (parsed.capabilities as {
+              tools?: unknown;
+              vision?: unknown;
+              toolCalling?: unknown;
+              imageInput?: unknown;
+            })
+          : undefined;
 
       const toolCalling = this.readToolCallingValue(capabilities?.toolCalling ?? capabilities?.tools);
       const imageInput = this.readBooleanValue(capabilities?.imageInput ?? capabilities?.vision);
@@ -674,29 +677,20 @@ export abstract class BaseAIProvider implements vscode.Disposable {
   }
 
   protected readRuntimeFromGenericModelEntry(entry: GenericModelListEntry): Partial<ResolvedModelRuntimeSettings> {
-    const maxTokens = this.pickPositiveInteger([
-      entry.context_length,
-      entry.max_tokens
-    ]);
-    const maxInputTokens = this.pickPositiveInteger([
-      entry.max_input_tokens,
-      entry.input_token_limit
-    ]);
-    const maxOutputTokens = this.pickPositiveInteger([
-      entry.max_output_tokens,
-      entry.output_token_limit
-    ]);
+    const maxTokens = this.pickPositiveInteger([entry.context_length, entry.max_tokens]);
+    const maxInputTokens = this.pickPositiveInteger([entry.max_input_tokens, entry.input_token_limit]);
+    const maxOutputTokens = this.pickPositiveInteger([entry.max_output_tokens, entry.output_token_limit]);
     const toolCalling = this.readToolCallingValue(
-      this.readFromCapabilities(entry, 'tool_calling')
-      ?? this.readFromCapabilities(entry, 'function_calling')
-      ?? entry.tool_calling
-      ?? entry.function_calling
+      this.readFromCapabilities(entry, 'tool_calling') ??
+        this.readFromCapabilities(entry, 'function_calling') ??
+        entry.tool_calling ??
+        entry.function_calling,
     );
     const imageInput = this.readBooleanValue(
-      this.readFromCapabilities(entry, 'image_input')
-      ?? this.readFromCapabilities(entry, 'vision')
-      ?? entry.image_input
-      ?? entry.vision
+      this.readFromCapabilities(entry, 'image_input') ??
+        this.readFromCapabilities(entry, 'vision') ??
+        entry.image_input ??
+        entry.vision,
     );
 
     const runtime: Partial<ResolvedModelRuntimeSettings> = {};
@@ -719,7 +713,10 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return runtime;
   }
 
-  protected readFromCapabilities(entry: GenericModelListEntry, key: 'tool_calling' | 'function_calling' | 'image_input' | 'vision'): unknown {
+  protected readFromCapabilities(
+    entry: GenericModelListEntry,
+    key: 'tool_calling' | 'function_calling' | 'image_input' | 'vision',
+  ): unknown {
     if (!entry.capabilities || typeof entry.capabilities !== 'object') {
       return undefined;
     }
@@ -831,7 +828,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
   }
 
   getModel(modelId: string): BaseLanguageModel | undefined {
-    return this.models.find(m => m.id === modelId);
+    return this.models.find((m) => m.id === modelId);
   }
 
   protected toChatRole(role: vscode.LanguageModelChatMessageRole | string): 'user' | 'assistant' | 'system' {
@@ -844,32 +841,36 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return 'system';
   }
 
-  protected readMessageContent(content: string | ReadonlyArray<vscode.LanguageModelInputPart | ChatContentPart | unknown>): string {
+  protected readMessageContent(
+    content: string | ReadonlyArray<vscode.LanguageModelInputPart | ChatContentPart | unknown>,
+  ): string {
     if (typeof content === 'string') {
       return content;
     }
 
-    return content.map(part => {
-      if (part && typeof part === 'object' && 'type' in part && (part as { type?: unknown }).type === 'text') {
-        const text = (part as { text?: unknown }).text;
-        if (typeof text === 'string') {
-          return text;
+    return content
+      .map((part) => {
+        if (part && typeof part === 'object' && 'type' in part && (part as { type?: unknown }).type === 'text') {
+          const text = (part as { text?: unknown }).text;
+          if (typeof text === 'string') {
+            return text;
+          }
         }
-      }
 
-      if (part instanceof vscode.LanguageModelTextPart) {
-        return part.value;
-      }
-
-      if (part && typeof part === 'object' && 'value' in part) {
-        const value = (part as { value?: unknown }).value;
-        if (typeof value === 'string') {
-          return value;
+        if (part instanceof vscode.LanguageModelTextPart) {
+          return part.value;
         }
-      }
 
-      return '';
-    }).join('');
+        if (part && typeof part === 'object' && 'value' in part) {
+          const value = (part as { value?: unknown }).value;
+          if (typeof value === 'string') {
+            return value;
+          }
+        }
+
+        return '';
+      })
+      .join('');
   }
 
   public toProviderMessages(messages: vscode.LanguageModelChatMessage[]): ChatMessage[] {
@@ -914,13 +915,13 @@ export abstract class BaseAIProvider implements vscode.Disposable {
           normalized.push({
             role: 'tool',
             tool_call_id: result.callId,
-            content: this.stringifyToolResultContent(result.content)
+            content: this.stringifyToolResultContent(result.content),
           });
         }
         if (textContent.trim().length > 0) {
           normalized.push({
             role: 'user',
-            content: textContent
+            content: textContent,
           });
         }
         continue;
@@ -931,14 +932,14 @@ export abstract class BaseAIProvider implements vscode.Disposable {
           role: 'assistant',
           content,
           ...(reasoningContent ? { reasoning_content: reasoningContent } : {}),
-          tool_calls: toolCalls.map(call => ({
+          tool_calls: toolCalls.map((call) => ({
             id: call.callId || this.makeToolCallId(),
             type: 'function',
             function: {
               name: call.name,
-              arguments: JSON.stringify(call.input ?? {})
-            }
-          }))
+              arguments: JSON.stringify(call.input ?? {}),
+            },
+          })),
         });
         continue;
       }
@@ -947,39 +948,38 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       normalized.push({
         role,
         content,
-        ...(role === 'assistant' && reasoningContent ? { reasoning_content: reasoningContent } : {})
+        ...(role === 'assistant' && reasoningContent ? { reasoning_content: reasoningContent } : {}),
       });
     }
 
     return normalized;
   }
 
-  public buildToolDefinitions(
-    options?: vscode.LanguageModelChatRequestOptions
-  ): ChatToolDefinition[] | undefined {
+  public buildToolDefinitions(options?: vscode.LanguageModelChatRequestOptions): ChatToolDefinition[] | undefined {
     if (!options?.tools || options.tools.length === 0) {
       return undefined;
     }
 
-    return options.tools.map(tool => ({
+    return options.tools.map((tool) => ({
       type: 'function',
       function: {
         name: tool.name,
-        description: typeof sanitizeToolMetadataValue(tool.description) === 'string'
-          ? sanitizeToolMetadataValue(tool.description) as string
-          : undefined,
-        parameters: sanitizeToolMetadataValue(tool.inputSchema || {
-          type: 'object',
-          properties: {},
-          additionalProperties: true
-        }) as object
-      }
+        description:
+          typeof sanitizeToolMetadataValue(tool.description) === 'string'
+            ? (sanitizeToolMetadataValue(tool.description) as string)
+            : undefined,
+        parameters: sanitizeToolMetadataValue(
+          tool.inputSchema || {
+            type: 'object',
+            properties: {},
+            additionalProperties: true,
+          },
+        ) as object,
+      },
     }));
   }
 
-  public buildToolChoice(
-    options?: vscode.LanguageModelChatRequestOptions
-  ): 'auto' | 'required' | undefined {
+  public buildToolChoice(options?: vscode.LanguageModelChatRequestOptions): 'auto' | 'required' | undefined {
     if (!options?.tools || options.tools.length === 0) {
       return undefined;
     }
@@ -994,7 +994,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
   public buildResponseParts(
     content: string,
     toolCalls?: ChatToolCall[],
-    reasoningContent?: string
+    reasoningContent?: string,
   ): vscode.LanguageModelResponsePart[] {
     const parts: vscode.LanguageModelResponsePart[] = [];
 
@@ -1017,8 +1017,8 @@ export abstract class BaseAIProvider implements vscode.Disposable {
         new vscode.LanguageModelToolCallPart(
           toolCall.id || this.makeToolCallId(),
           name,
-          this.parseToolArguments(toolCall.function.arguments)
-        )
+          this.parseToolArguments(toolCall.function.arguments),
+        ),
       );
     }
 
@@ -1035,7 +1035,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
         return {
           type: 'image',
           mimeType: part.mimeType,
-          data: this.encodeBase64(part.data)
+          data: this.encodeBase64(part.data),
         };
       }
       return undefined;
@@ -1045,15 +1045,15 @@ export abstract class BaseAIProvider implements vscode.Disposable {
   }
 
   private compactMessageContent(parts: ChatContentPart[]): ChatMessageContent {
-    const hasImage = parts.some(part => part.type === 'image');
+    const hasImage = parts.some((part) => part.type === 'image');
     if (!hasImage) {
       return parts
         .filter((part): part is ChatTextContentPart => part.type === 'text')
-        .map(part => part.text)
+        .map((part) => part.text)
         .join('');
     }
 
-    return parts.filter(part => part.type === 'image' || part.text.length > 0);
+    return parts.filter((part) => part.type === 'image' || part.text.length > 0);
   }
 
   private encodeBase64(data: Uint8Array): string {
@@ -1073,7 +1073,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
   private createReasoningDataPart(reasoningContent: string): vscode.LanguageModelDataPart {
     return new vscode.LanguageModelDataPart(
       new TextEncoder().encode(JSON.stringify({ reasoning_content: reasoningContent })),
-      INTERNAL_REASONING_CONTENT_MIME_TYPE
+      INTERNAL_REASONING_CONTENT_MIME_TYPE,
     );
   }
 
@@ -1093,21 +1093,27 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     }
   }
 
-  private stringifyToolResultContent(content: Array<vscode.LanguageModelTextPart | vscode.LanguageModelPromptTsxPart | vscode.LanguageModelDataPart | unknown>): string {
-    const resultParts = content.map(part => {
-      if (part instanceof vscode.LanguageModelTextPart) {
-        return part.value;
-      }
-      if (part instanceof vscode.LanguageModelDataPart) {
-        const contentPart = this.readDataPartContent(part);
-        return contentPart?.type === 'text' ? contentPart.text : '';
-      }
-      try {
-        return JSON.stringify(part);
-      } catch {
-        return String(part);
-      }
-    }).filter(part => part.length > 0);
+  private stringifyToolResultContent(
+    content: Array<
+      vscode.LanguageModelTextPart | vscode.LanguageModelPromptTsxPart | vscode.LanguageModelDataPart | unknown
+    >,
+  ): string {
+    const resultParts = content
+      .map((part) => {
+        if (part instanceof vscode.LanguageModelTextPart) {
+          return part.value;
+        }
+        if (part instanceof vscode.LanguageModelDataPart) {
+          const contentPart = this.readDataPartContent(part);
+          return contentPart?.type === 'text' ? contentPart.text : '';
+        }
+        try {
+          return JSON.stringify(part);
+        } catch {
+          return String(part);
+        }
+      })
+      .filter((part) => part.length > 0);
 
     return resultParts.join('\n');
   }
@@ -1133,9 +1139,8 @@ export abstract class BaseAIProvider implements vscode.Disposable {
   }
 
   dispose(): void {
-    this.disposables.forEach(d => d.dispose());
+    this.disposables.forEach((d) => d.dispose());
     this.disposables = [];
     this.modelChangedEmitter.dispose();
   }
 }
-

@@ -1,21 +1,19 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
-const fs = require("node:fs/promises");
-const path = require("node:path");
+const fs = require('node:fs/promises');
+const path = require('node:path');
 
-const { loadEnvFileIfPresent } = require("./env");
-const { matchesKeywords } = require("./keywords");
-const { fetchV2exPosts, fetchRepliesForPosts } = require("./sources/v2ex");
-const { fetchLinuxDoPosts } = require("./sources/linuxdo");
-const { analyzePosts, setAvailableCategories } = require("./analyzer");
-const { createDiscussionForPost, getDiscussionCategories } = require("./github-discussion");
+const { loadEnvFileIfPresent } = require('./env');
+const { matchesKeywords } = require('./keywords');
+const { fetchV2exPosts, fetchRepliesForPosts } = require('./sources/v2ex');
+const { fetchLinuxDoPosts } = require('./sources/linuxdo');
+const { analyzePosts, setAvailableCategories } = require('./analyzer');
+const { createDiscussionForPost, getDiscussionCategories } = require('./github-discussion');
 
-const DISCUSSIONS_DIR = path.resolve(__dirname, "..", "..", "assets", "discussions");
-const RELEVANCE_THRESHOLD = Number.parseFloat(
-  process.env.CRAWLER_RELEVANCE_THRESHOLD || "0.7"
-);
+const DISCUSSIONS_DIR = path.resolve(__dirname, '..', '..', 'assets', 'discussions');
+const RELEVANCE_THRESHOLD = Number.parseFloat(process.env.CRAWLER_RELEVANCE_THRESHOLD || '0.7');
 
 function printUsage() {
   console.log(`Usage: node scripts/crawler/index.js [options]
@@ -49,23 +47,26 @@ Examples:
 function parseArgs() {
   const args = process.argv.slice(2);
 
-  if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
+  if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
     printUsage();
     process.exit(0);
   }
 
-  const sourceArg = args.find((a) => a.startsWith("--source="));
-  const daysArg = args.find((a) => a.startsWith("--days="));
-  const discussion = args.includes("--discussion");
+  const sourceArg = args.find((a) => a.startsWith('--source='));
+  const daysArg = args.find((a) => a.startsWith('--days='));
+  const discussion = args.includes('--discussion');
   return {
-    source: sourceArg ? sourceArg.split("=")[1] : null,
-    days: daysArg ? Number.parseInt(daysArg.split("=")[1], 10) : 1,
+    source: sourceArg ? sourceArg.split('=')[1] : null,
+    days: daysArg ? Number.parseInt(daysArg.split('=')[1], 10) : 1,
     discussion,
   };
 }
 
 function stripTags(value) {
-  return String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  return String(value || '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function summarizeAnalysisOutcomes(analysisResults, relevanceThreshold) {
@@ -108,30 +109,30 @@ function summarizeAnalysisOutcomes(analysisResults, relevanceThreshold) {
 async function main() {
   const { source: sourceFilter, days, discussion: publishDiscussions } = parseArgs();
 
-  console.log(`[crawler] mode: ${publishDiscussions ? "\x1b[36mpublish\x1b[0m" : "\x1b[33mdry-run\x1b[0m"}`);
-  console.log("[crawler] loading environment...");
+  console.log(`[crawler] mode: ${publishDiscussions ? '\x1b[36mpublish\x1b[0m' : '\x1b[33mdry-run\x1b[0m'}`);
+  console.log('[crawler] loading environment...');
   await loadEnvFileIfPresent();
 
   // Check required environment variables
   const missing = [];
-  if (!process.env.APIKEY) missing.push("APIKEY");
-  if (!process.env.BASE_URL) missing.push("BASE_URL");
-  if (!process.env.MODEL) missing.push("MODEL");
+  if (!process.env.APIKEY) missing.push('APIKEY');
+  if (!process.env.BASE_URL) missing.push('BASE_URL');
+  if (!process.env.MODEL) missing.push('MODEL');
   if (missing.length > 0) {
-    console.error(`\x1b[31m❌ [crawler] missing required environment variables: ${missing.join(", ")}\x1b[0m`);
+    console.error(`\x1b[31m❌ [crawler] missing required environment variables: ${missing.join(', ')}\x1b[0m`);
     printUsage();
     process.exit(1);
   }
 
   const generatedAt = new Date().toISOString();
   const cutoffTime = new Date(Date.now() - days * 24 * 60 * 60 * 1000);
-  console.log(`[crawler] date filter: posts since ${cutoffTime.toISOString()} (${days} day${days > 1 ? "s" : ""})`);
+  console.log(`[crawler] date filter: posts since ${cutoffTime.toISOString()} (${days} day${days > 1 ? 's' : ''})`);
   const failures = [];
 
   // Phase 1: Fetch posts from sources
   let allPosts = [];
 
-  if (!sourceFilter || sourceFilter === "v2ex") {
+  if (!sourceFilter || sourceFilter === 'v2ex') {
     try {
       const v2exPosts = await fetchV2exPosts({ failures });
       allPosts = allPosts.concat(v2exPosts);
@@ -141,7 +142,7 @@ async function main() {
     }
   }
 
-  if (!sourceFilter || sourceFilter === "linuxdo") {
+  if (!sourceFilter || sourceFilter === 'linuxdo') {
     try {
       const linuxDoPosts = await fetchLinuxDoPosts({ failures });
       allPosts = allPosts.concat(linuxDoPosts);
@@ -154,9 +155,7 @@ async function main() {
   console.log(`[crawler] total posts fetched: ${allPosts.length}`);
 
   // Phase 2: Filter by keywords
-  const filtered = allPosts.filter(
-    (post) => matchesKeywords(post.title) || matchesKeywords(post.content)
-  );
+  const filtered = allPosts.filter((post) => matchesKeywords(post.title) || matchesKeywords(post.content));
   console.log(`[crawler] posts matching keywords: ${filtered.length}`);
 
   // Phase 2.1: Filter by date
@@ -164,16 +163,18 @@ async function main() {
     if (!post.createdAt) return true; // keep posts without timestamp
     return new Date(post.createdAt) >= cutoffTime;
   });
-  console.log(`[crawler] posts within last ${days} day${days > 1 ? "s" : ""}: ${dateFiltered.length} (filtered out ${filtered.length - dateFiltered.length} older posts)`);
+  console.log(
+    `[crawler] posts within last ${days} day${days > 1 ? 's' : ''}: ${dateFiltered.length} (filtered out ${filtered.length - dateFiltered.length} older posts)`,
+  );
 
   if (dateFiltered.length === 0) {
-    console.log("[crawler] no matching posts found, writing empty output");
+    console.log('[crawler] no matching posts found, writing empty output');
     await writeOutput(generatedAt, sourceFilter, [], failures);
     return;
   }
 
   // Phase 2.5: Fetch replies for V2EX posts
-  const v2exFiltered = dateFiltered.filter((p) => p.source === "v2ex");
+  const v2exFiltered = dateFiltered.filter((p) => p.source === 'v2ex');
   if (v2exFiltered.length > 0) {
     console.log(`[crawler] fetching replies for ${v2exFiltered.length} V2EX posts...`);
     await fetchRepliesForPosts(v2exFiltered, failures);
@@ -185,19 +186,16 @@ async function main() {
   if (publishDiscussions) {
     try {
       categories = await getDiscussionCategories();
-      console.log(`[crawler] available categories: ${categories.map((c) => c.name).join(", ")}`);
+      console.log(`[crawler] available categories: ${categories.map((c) => c.name).join(', ')}`);
     } catch (error) {
       console.warn(`\x1b[33m⚠️ [crawler] failed to fetch categories: ${error.message}\x1b[0m`);
     }
   }
   setAvailableCategories(categories);
 
-  console.log("[crawler] analyzing posts with LLM...");
+  console.log('[crawler] analyzing posts with LLM...');
   const analysisResults = await analyzePosts(dateFiltered);
-  const analysisSummary = summarizeAnalysisOutcomes(
-    analysisResults,
-    RELEVANCE_THRESHOLD,
-  );
+  const analysisSummary = summarizeAnalysisOutcomes(analysisResults, RELEVANCE_THRESHOLD);
   console.log(
     `[crawler] analysis summary: selected=${analysisSummary.selected}, ` +
       `analysisErrors=${analysisSummary.analysisErrors}, ` +
@@ -251,7 +249,7 @@ async function main() {
   console.log(`[crawler] supplier mentions: ${JSON.stringify(supplierMentions)}`);
   if (relevantPosts.length === 0 && analysisResults.length > 0) {
     console.warn(
-      "[crawler] no posts selected for discussion creation; " +
+      '[crawler] no posts selected for discussion creation; ' +
         `selected=${analysisSummary.selected}, ` +
         `analysisErrors=${analysisSummary.analysisErrors}, ` +
         `notCodingPlan=${analysisSummary.notCodingPlan}, ` +
@@ -261,7 +259,15 @@ async function main() {
   }
 
   // Phase 5: Write output to date-partitioned files
-  await writeOutput(generatedAt, sourceFilter, relevantPosts, failures, supplierMentions, allPosts.length, dateFiltered.length);
+  await writeOutput(
+    generatedAt,
+    sourceFilter,
+    relevantPosts,
+    failures,
+    supplierMentions,
+    allPosts.length,
+    dateFiltered.length,
+  );
 
   // Phase 5.5: Save new discussions to the same date-partitioned files
   const newDiscussions = relevantPosts.filter((p) => p.discussionUrl);
@@ -270,16 +276,22 @@ async function main() {
   }
 }
 
-async function writeOutput(generatedAt, sourceFilter, posts, failures, supplierMentions = {}, totalFetched = 0, afterFilter = 0) {
-  const sources = sourceFilter ? [sourceFilter] : ["v2ex", "linuxdo"];
-  const sentimentMap = { positive: "正面", negative: "负面", neutral: "中性" };
+async function writeOutput(
+  generatedAt,
+  sourceFilter,
+  posts,
+  failures,
+  supplierMentions = {},
+  totalFetched = 0,
+  afterFilter = 0,
+) {
+  const sources = sourceFilter ? [sourceFilter] : ['v2ex', 'linuxdo'];
+  const sentimentMap = { positive: '正面', negative: '负面', neutral: '中性' };
 
   // Group posts by createdAt date
   const byDate = new Map();
   for (const post of posts) {
-    const dateStr = post.createdAt
-      ? new Date(post.createdAt).toISOString().slice(0, 10)
-      : "unknown";
+    const dateStr = post.createdAt ? new Date(post.createdAt).toISOString().slice(0, 10) : 'unknown';
     if (!byDate.has(dateStr)) byDate.set(dateStr, []);
     byDate.get(dateStr).push(post);
   }
@@ -292,7 +304,7 @@ async function writeOutput(generatedAt, sourceFilter, posts, failures, supplierM
     // Load existing file if present (append mode)
     let existing = [];
     try {
-      const raw = await fs.readFile(filePath, "utf8");
+      const raw = await fs.readFile(filePath, 'utf8');
       const parsed = JSON.parse(raw);
       existing = parsed.posts || [];
     } catch {
@@ -311,8 +323,8 @@ async function writeOutput(generatedAt, sourceFilter, posts, failures, supplierM
       generatedAt,
       config: {
         sources,
-        keywords: ["套餐", "coding", "plan"],
-        llmModel: process.env.MODEL || "openrouter/free",
+        keywords: ['套餐', 'coding', 'plan'],
+        llmModel: process.env.MODEL || 'openrouter/free',
         relevanceThreshold: RELEVANCE_THRESHOLD,
       },
       summary: {
@@ -327,20 +339,18 @@ async function writeOutput(generatedAt, sourceFilter, posts, failures, supplierM
       failures,
     };
 
-    await fs.writeFile(filePath, JSON.stringify(output, null, 2), "utf8");
+    await fs.writeFile(filePath, JSON.stringify(output, null, 2), 'utf8');
     console.log(`[crawler] ${existing.length} posts written to ${filePath}`);
   }
 }
 
 async function writeNewDiscussions(posts, generatedAt) {
-  const sentimentMap = { positive: "正面", negative: "负面", neutral: "中性" };
+  const sentimentMap = { positive: '正面', negative: '负面', neutral: '中性' };
 
   // Group by post createdAt date (YYYY-MM-DD)
   const byDate = new Map();
   for (const post of posts) {
-    const dateStr = post.createdAt
-      ? new Date(post.createdAt).toISOString().slice(0, 10)
-      : "unknown";
+    const dateStr = post.createdAt ? new Date(post.createdAt).toISOString().slice(0, 10) : 'unknown';
     if (!byDate.has(dateStr)) byDate.set(dateStr, []);
     byDate.get(dateStr).push(post);
   }
@@ -352,7 +362,7 @@ async function writeNewDiscussions(posts, generatedAt) {
     let existing = [];
     let existingOutput = {};
     try {
-      const raw = await fs.readFile(filePath, "utf8");
+      const raw = await fs.readFile(filePath, 'utf8');
       existingOutput = JSON.parse(raw);
       existing = existingOutput.posts || [];
     } catch {
@@ -373,14 +383,14 @@ async function writeNewDiscussions(posts, generatedAt) {
     existingOutput.summary.discussionsCreated = existing.filter((p) => p.discussionUrl).length;
     existingOutput.summary.discussionsSkipped = existing.filter((p) => !p.discussionUrl).length;
 
-    await fs.writeFile(filePath, JSON.stringify(existingOutput, null, 2), "utf8");
+    await fs.writeFile(filePath, JSON.stringify(existingOutput, null, 2), 'utf8');
     console.log(`[crawler] updated discussion URLs in ${filePath}`);
   }
 }
 
 if (require.main === module) {
   main().catch((error) => {
-    console.error("\x1b[31m💥 [crawler] fatal:\x1b[0m", error);
+    console.error('\x1b[31m💥 [crawler] fatal:\x1b[0m', error);
     process.exit(1);
   });
 }

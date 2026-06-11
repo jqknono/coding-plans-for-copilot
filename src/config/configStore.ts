@@ -4,7 +4,7 @@ import {
   DEFAULT_ADVANCED_RESERVED_OUTPUT,
   DEFAULT_MODEL_CAPABILITIES_TOOLS,
   DEFAULT_MODEL_CAPABILITIES_VISION,
-  VENDOR_API_KEY_PREFIX
+  VENDOR_API_KEY_PREFIX,
 } from '../constants';
 
 export type VendorApiStyle = 'openai-chat' | 'openai-responses' | 'anthropic';
@@ -58,6 +58,12 @@ export interface AdvancedOptions {
   defaultReservedOutput: number;
 }
 
+export interface VendorValidationError {
+  vendorIndex: number;
+  vendorName: string;
+  field: string;
+  reason: string;
+}
 export class ConfigStore implements vscode.Disposable {
   private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
   public readonly onDidChange = this.onDidChangeEmitter.event;
@@ -65,11 +71,11 @@ export class ConfigStore implements vscode.Disposable {
 
   constructor(private readonly context: vscode.ExtensionContext) {
     this.disposables.push(
-      vscode.workspace.onDidChangeConfiguration(e => {
+      vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('coding-plans.vendors')) {
           this.onDidChangeEmitter.fire();
         }
-      })
+      }),
     );
   }
 
@@ -80,7 +86,7 @@ export class ConfigStore implements vscode.Disposable {
       return { defaultReservedOutput: DEFAULT_ADVANCED_RESERVED_OUTPUT };
     }
     return {
-      defaultReservedOutput: this.readNonNegativeInteger(raw.defaultReservedOutput) ?? DEFAULT_ADVANCED_RESERVED_OUTPUT
+      defaultReservedOutput: this.readNonNegativeInteger(raw.defaultReservedOutput) ?? DEFAULT_ADVANCED_RESERVED_OUTPUT,
     };
   }
 
@@ -91,7 +97,7 @@ export class ConfigStore implements vscode.Disposable {
   }
 
   getVendor(name: string): VendorConfig | undefined {
-    return this.getVendors().find(v => v.name === name);
+    return this.getVendors().find((v) => v.name === name);
   }
 
   async getApiKey(vendorName: string): Promise<string> {
@@ -132,11 +138,11 @@ export class ConfigStore implements vscode.Disposable {
 
     // Model names discovered from `/models` are the source of truth for membership.
     const inputNames = models
-      .map(model => (typeof model?.name === 'string' ? model.name.trim() : ''))
-      .filter(name => name.length > 0);
+      .map((model) => (typeof model?.name === 'string' ? model.name.trim() : ''))
+      .filter((name) => name.length > 0);
     let changed = false;
 
-    const updatedVendors = rawVendors.map(rawVendor => {
+    const updatedVendors = rawVendors.map((rawVendor) => {
       if (!rawVendor || typeof rawVendor !== 'object') {
         return rawVendor;
       }
@@ -174,15 +180,15 @@ export class ConfigStore implements vscode.Disposable {
         Array.isArray(vendorObj.models) ? vendorObj.models : [],
         existingNameByKey,
         defaultVision,
-        defaultApiStyle
+        defaultApiStyle,
       );
       const normalizedCurrentModels = this.sortModels(
-        currentNames.map(currentName => ({ name: existingNameByKey.get(currentName.toLowerCase()) ?? currentName }))
+        currentNames.map((currentName) => ({ name: existingNameByKey.get(currentName.toLowerCase()) ?? currentName })),
       );
 
       // Only compare names.
-      const currentSignature = JSON.stringify(normalizedCurrentModels.map(m => m.name));
-      const nextSignature = JSON.stringify(nextModels.map(model => model.name));
+      const currentSignature = JSON.stringify(normalizedCurrentModels.map((m) => m.name));
+      const nextSignature = JSON.stringify(nextModels.map((model) => model.name));
       if (currentSignature === nextSignature) {
         return rawVendor;
       }
@@ -190,7 +196,7 @@ export class ConfigStore implements vscode.Disposable {
       changed = true;
       return {
         ...vendorObj,
-        models: nextModels
+        models: nextModels,
       };
     });
 
@@ -215,7 +221,7 @@ export class ConfigStore implements vscode.Disposable {
     }
 
     let changed = false;
-    const updatedVendors = rawVendors.map(rawVendor => {
+    const updatedVendors = rawVendors.map((rawVendor) => {
       if (!rawVendor || typeof rawVendor !== 'object') {
         return rawVendor;
       }
@@ -234,7 +240,7 @@ export class ConfigStore implements vscode.Disposable {
       changed = true;
       return {
         ...vendorObj,
-        baseUrl: normalizedBaseUrl
+        baseUrl: normalizedBaseUrl,
       };
     });
 
@@ -245,11 +251,7 @@ export class ConfigStore implements vscode.Disposable {
     await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
   }
 
-  async updateVendorModelApiStyle(
-    vendorName: string,
-    modelName: string,
-    apiStyle: VendorApiStyle
-  ): Promise<boolean> {
+  async updateVendorModelApiStyle(vendorName: string, modelName: string, apiStyle: VendorApiStyle): Promise<boolean> {
     const config = vscode.workspace.getConfiguration('coding-plans');
     const rawVendors = config.get<unknown[]>('vendors', []);
     if (!Array.isArray(rawVendors)) {
@@ -264,7 +266,7 @@ export class ConfigStore implements vscode.Disposable {
     }
 
     let changed = false;
-    const updatedVendors = rawVendors.map(rawVendor => {
+    const updatedVendors = rawVendors.map((rawVendor) => {
       if (!rawVendor || typeof rawVendor !== 'object') {
         return rawVendor;
       }
@@ -276,7 +278,7 @@ export class ConfigStore implements vscode.Disposable {
       }
 
       let vendorChanged = false;
-      const nextModels = vendorObj.models.map(rawModel => {
+      const nextModels = vendorObj.models.map((rawModel) => {
         if (!rawModel || typeof rawModel !== 'object') {
           return rawModel;
         }
@@ -294,7 +296,7 @@ export class ConfigStore implements vscode.Disposable {
         vendorChanged = true;
         return {
           ...modelObj,
-          apiStyle: normalizedApiStyle
+          apiStyle: normalizedApiStyle,
         };
       });
 
@@ -305,7 +307,7 @@ export class ConfigStore implements vscode.Disposable {
       changed = true;
       return {
         ...vendorObj,
-        models: nextModels
+        models: nextModels,
       };
     });
 
@@ -330,7 +332,7 @@ export class ConfigStore implements vscode.Disposable {
     raw: unknown,
     name: string,
     defaultVision: boolean,
-    defaultApiStyle: VendorApiStyle
+    defaultApiStyle: VendorApiStyle,
   ): VendorModelConfig {
     if (!raw || typeof raw !== 'object') {
       return this.buildStoredModelEntry({ name }, name, defaultVision, defaultApiStyle);
@@ -342,20 +344,19 @@ export class ConfigStore implements vscode.Disposable {
     raw: unknown,
     name: string,
     defaultVision: boolean,
-    defaultApiStyle: VendorApiStyle
+    defaultApiStyle: VendorApiStyle,
   ): VendorModelConfig {
-    const rawObject = raw && typeof raw === 'object' ? raw as Record<string, unknown> : undefined;
+    const rawObject = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : undefined;
     const normalized = this.normalizeModel(raw, defaultVision, defaultApiStyle);
     if (!normalized) {
       const stored: VendorModelConfig = {
         name,
-        enabled: rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'enabled')
-          ? rawObject.enabled !== false
-          : true,
+        enabled:
+          rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'enabled') ? rawObject.enabled !== false : true,
         capabilities: {
           tools: DEFAULT_MODEL_CAPABILITIES_TOOLS,
-          vision: defaultVision
-        }
+          vision: defaultVision,
+        },
       };
       if (rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'apiStyle')) {
         stored.apiStyle = this.normalizeApiStyle(rawObject.apiStyle, defaultApiStyle);
@@ -377,13 +378,14 @@ export class ConfigStore implements vscode.Disposable {
       contextSize: normalized.contextSize,
       maxInputTokens: normalized.maxInputTokens,
       maxOutputTokens: normalized.maxOutputTokens,
-      capabilities: normalized.capabilities
+      capabilities: normalized.capabilities,
     };
 
-    if (rawObject && (
-      Object.prototype.hasOwnProperty.call(rawObject, 'apiStyle')
-      || Object.prototype.hasOwnProperty.call(rawObject, 'apiType')
-    )) {
+    if (
+      rawObject &&
+      (Object.prototype.hasOwnProperty.call(rawObject, 'apiStyle') ||
+        Object.prototype.hasOwnProperty.call(rawObject, 'apiType'))
+    ) {
       stored.apiStyle = normalized.apiStyle;
     }
     if (normalized.toolCalling !== undefined) {
@@ -419,7 +421,7 @@ export class ConfigStore implements vscode.Disposable {
     rawModels: unknown[],
     existingNameByKey: Map<string, string>,
     defaultVision: boolean,
-    defaultApiStyle: VendorApiStyle
+    defaultApiStyle: VendorApiStyle,
   ): VendorModelConfig[] {
     const existingModelByKey = new Map<string, VendorModelConfig>();
     for (const rawModel of rawModels) {
@@ -475,15 +477,22 @@ export class ConfigStore implements vscode.Disposable {
       const canonical = existingNameByKey.get(key) ?? name;
       const inputModel = inputModelByKey.get(key);
       if (inputModel) {
-        normalized.push(this.buildStoredModelEntry({
-          ...inputModel,
-          temperature: undefined,
-          topP: undefined,
-          capabilities: {
-            ...inputModel.capabilities,
-            vision: defaultVision
-          }
-        }, canonical, defaultVision, defaultApiStyle));
+        normalized.push(
+          this.buildStoredModelEntry(
+            {
+              ...inputModel,
+              temperature: undefined,
+              topP: undefined,
+              capabilities: {
+                ...inputModel.capabilities,
+                vision: defaultVision,
+              },
+            },
+            canonical,
+            defaultVision,
+            defaultApiStyle,
+          ),
+        );
         continue;
       }
 
@@ -519,9 +528,7 @@ export class ConfigStore implements vscode.Disposable {
     if (!Array.isArray(raw)) {
       return [];
     }
-    return raw
-      .map(v => this.normalizeVendor(v))
-      .filter((v): v is VendorConfig => v !== undefined);
+    return raw.map((v) => this.normalizeVendor(v)).filter((v): v is VendorConfig => v !== undefined);
   }
 
   private normalizeVendor(raw: unknown): VendorConfig | undefined {
@@ -534,30 +541,39 @@ export class ConfigStore implements vscode.Disposable {
       return undefined;
     }
     const baseUrl = typeof obj.baseUrl === 'string' ? obj.baseUrl.trim() : '';
-    const apiKey = typeof obj.apiKey === 'string' && obj.apiKey.trim().length > 0
-      ? obj.apiKey.trim()
-      : undefined;
-    const usageUrl = typeof obj.usageUrl === 'string' && obj.usageUrl.trim().length > 0
-      ? obj.usageUrl.trim()
-      : undefined;
+    const apiKey = typeof obj.apiKey === 'string' && obj.apiKey.trim().length > 0 ? obj.apiKey.trim() : undefined;
+    const usageUrl =
+      typeof obj.usageUrl === 'string' && obj.usageUrl.trim().length > 0 ? obj.usageUrl.trim() : undefined;
     const apiType = this.normalizeApiType(obj.apiType);
     const defaultApiStyle = this.normalizeApiStyle(obj.defaultApiStyle ?? obj.apiType);
     const defaultTemperature = this.readSamplingNumber(obj.defaultTemperature, 0, 2);
     const defaultTopP = this.readSamplingNumber(obj.defaultTopP, 0, 1);
-    const useModelsEndpoint = typeof obj.useModelsEndpoint === 'boolean' ? obj.useModelsEndpoint : false;
+    const useModelsEndpoint = typeof obj.useModelsEndpoint === 'boolean' ? obj.useModelsEndpoint : true;
     const defaultVision = typeof obj.defaultVision === 'boolean' ? obj.defaultVision : false;
     const models = Array.isArray(obj.models)
       ? obj.models
-          .map(m => this.normalizeModel(m, defaultVision, defaultApiStyle))
+          .map((m) => this.normalizeModel(m, defaultVision, defaultApiStyle))
           .filter((m): m is VendorModelConfig => m !== undefined)
       : [];
-    return { name, baseUrl, apiKey, usageUrl, apiType, defaultApiStyle, defaultTemperature, defaultTopP, useModelsEndpoint, defaultVision, models };
+    return {
+      name,
+      baseUrl,
+      apiKey,
+      usageUrl,
+      apiType,
+      defaultApiStyle,
+      defaultTemperature,
+      defaultTopP,
+      useModelsEndpoint,
+      defaultVision,
+      models,
+    };
   }
 
   private normalizeModel(
     raw: unknown,
     defaultVision = DEFAULT_MODEL_CAPABILITIES_VISION,
-    defaultApiStyle: VendorApiStyle = 'openai-chat'
+    defaultApiStyle: VendorApiStyle = 'openai-chat',
   ): VendorModelConfig | undefined {
     if (!raw || typeof raw !== 'object') {
       return undefined;
@@ -568,9 +584,7 @@ export class ConfigStore implements vscode.Disposable {
       return undefined;
     }
     const description =
-      typeof obj.description === 'string' && obj.description.trim().length > 0
-        ? obj.description.trim()
-        : undefined;
+      typeof obj.description === 'string' && obj.description.trim().length > 0 ? obj.description.trim() : undefined;
     const contextSize = this.readPositiveNumber(obj.contextSize);
     const maxInputTokens = this.readPositiveNumber(obj.maxInputTokens);
     const maxOutputTokens = this.readPositiveNumber(obj.maxOutputTokens);
@@ -596,37 +610,46 @@ export class ConfigStore implements vscode.Disposable {
       };
     }
     capabilities = {
-      tools: typeof capabilities?.tools === 'boolean' ? capabilities.tools : (typeof toolCalling === 'boolean' ? toolCalling : undefined),
-      vision: typeof capabilities?.vision === 'boolean' ? capabilities.vision : vision
+      tools:
+        typeof capabilities?.tools === 'boolean'
+          ? capabilities.tools
+          : typeof toolCalling === 'boolean'
+            ? toolCalling
+            : undefined,
+      vision: typeof capabilities?.vision === 'boolean' ? capabilities.vision : vision,
     };
 
-    return this.withModelDefaults({
-      name,
-      enabled,
-      description,
-      apiStyle,
-      apiType,
-      temperature,
-      topP,
-      capabilities,
-      toolCalling,
-      vision,
-      contextSize: contextSize === undefined ? undefined : Math.max(2, Math.floor(contextSize)),
-      maxInputTokens: maxInputTokens === undefined ? undefined : Math.max(1, Math.floor(maxInputTokens)),
-      maxOutputTokens: maxOutputTokens === undefined ? undefined : Math.max(1, Math.floor(maxOutputTokens)),
-      streaming,
-      thinking,
-      editTools,
-      supportsReasoningEffort,
-      reasoningEffortFormat,
-      zeroDataRetentionEnabled
-    }, defaultVision, defaultApiStyle);
+    return this.withModelDefaults(
+      {
+        name,
+        enabled,
+        description,
+        apiStyle,
+        apiType,
+        temperature,
+        topP,
+        capabilities,
+        toolCalling,
+        vision,
+        contextSize: contextSize === undefined ? undefined : Math.max(2, Math.floor(contextSize)),
+        maxInputTokens: maxInputTokens === undefined ? undefined : Math.max(1, Math.floor(maxInputTokens)),
+        maxOutputTokens: maxOutputTokens === undefined ? undefined : Math.max(1, Math.floor(maxOutputTokens)),
+        streaming,
+        thinking,
+        editTools,
+        supportsReasoningEffort,
+        reasoningEffortFormat,
+        zeroDataRetentionEnabled,
+      },
+      defaultVision,
+      defaultApiStyle,
+    );
   }
 
   private withModelDefaults(
     model: VendorModelConfig,
     defaultVision = DEFAULT_MODEL_CAPABILITIES_VISION,
-    defaultApiStyle: VendorApiStyle = 'openai-chat'
+    defaultApiStyle: VendorApiStyle = 'openai-chat',
   ): VendorModelConfig {
     return {
       name: model.name,
@@ -641,7 +664,7 @@ export class ConfigStore implements vscode.Disposable {
       maxOutputTokens: model.maxOutputTokens,
       capabilities: {
         tools: model.capabilities?.tools ?? DEFAULT_MODEL_CAPABILITIES_TOOLS,
-        vision: model.capabilities?.vision ?? defaultVision
+        vision: model.capabilities?.vision ?? defaultVision,
       },
       toolCalling: model.toolCalling,
       vision: model.vision,
@@ -650,7 +673,7 @@ export class ConfigStore implements vscode.Disposable {
       editTools: model.editTools,
       supportsReasoningEffort: model.supportsReasoningEffort,
       reasoningEffortFormat: model.reasoningEffortFormat,
-      zeroDataRetentionEnabled: model.zeroDataRetentionEnabled
+      zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
     };
   }
 
@@ -757,8 +780,8 @@ export class ConfigStore implements vscode.Disposable {
       return undefined;
     }
     const normalized = value
-      .map(item => typeof item === 'string' ? item.trim() : '')
-      .filter(item => item.length > 0);
+      .map((item) => (typeof item === 'string' ? item.trim() : ''))
+      .filter((item) => item.length > 0);
     if (normalized.length === 0) {
       return undefined;
     }
@@ -768,7 +791,7 @@ export class ConfigStore implements vscode.Disposable {
   private readReasoningEffortArray(value: unknown): ReasoningEffortValue[] | undefined {
     const allowed = new Set<ReasoningEffortValue>(['none', 'low', 'medium', 'high', 'xhigh', 'max']);
     const values = this.readStringArray(value)
-      ?.map(item => item.toLowerCase())
+      ?.map((item) => item.toLowerCase())
       .filter((item): item is ReasoningEffortValue => allowed.has(item as ReasoningEffortValue));
     return values && values.length > 0 ? values : undefined;
   }
@@ -828,8 +851,48 @@ export class ConfigStore implements vscode.Disposable {
   }
 
   dispose(): void {
-    this.disposables.forEach(d => d.dispose());
+    this.disposables.forEach((d) => d.dispose());
     this.onDidChangeEmitter.dispose();
   }
-}
 
+  /**
+   * Validates all configured vendors against required fields.
+   * Returns an array of errors for vendors with missing required fields.
+   */
+  validateVendorConfigs(): VendorValidationError[] {
+    const config = vscode.workspace.getConfiguration('coding-plans');
+    const raw = config.get<unknown[]>('vendors', []);
+    if (!Array.isArray(raw)) {
+      return [];
+    }
+
+    const errors: VendorValidationError[] = [];
+    for (let i = 0; i < raw.length; i++) {
+      const rawVendor = raw[i];
+      if (!rawVendor || typeof rawVendor !== 'object') {
+        continue;
+      }
+      const obj = rawVendor as Record<string, unknown>;
+      const vendorName = typeof obj.name === 'string' ? obj.name.trim() : `#${i + 1}`;
+
+      if (typeof obj.name !== 'string' || obj.name.trim().length === 0) {
+        errors.push({ vendorIndex: i, vendorName, field: 'name', reason: 'name is required' });
+      }
+
+      if (typeof obj.baseUrl !== 'string' || obj.baseUrl.trim().length === 0) {
+        errors.push({ vendorIndex: i, vendorName, field: 'baseUrl', reason: 'baseUrl is required' });
+      }
+
+      if (typeof obj.useModelsEndpoint !== 'boolean') {
+        errors.push({
+          vendorIndex: i,
+          vendorName,
+          field: 'useModelsEndpoint',
+          reason: 'useModelsEndpoint is required (boolean)',
+        });
+      }
+    }
+
+    return errors;
+  }
+}

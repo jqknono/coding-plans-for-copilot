@@ -15,7 +15,7 @@ function escapeRegExp(value) {
 function runGit(args, options = {}) {
   const result = spawnSync('git', args, {
     cwd: repoRoot,
-    encoding: 'utf8'
+    encoding: 'utf8',
   });
 
   if (result.status !== 0) {
@@ -33,7 +33,7 @@ function runGit(args, options = {}) {
 function hasTag(tag) {
   const result = spawnSync('git', ['rev-parse', '--verify', `${tag}^{commit}`], {
     cwd: repoRoot,
-    encoding: 'utf8'
+    encoding: 'utf8',
   });
   return result.status === 0;
 }
@@ -52,7 +52,7 @@ function ensureChangelogFile() {
     fs.writeFileSync(
       changelogPath,
       '# Changelog\n\nAll notable changes to this project will be documented in this file.\n\n',
-      'utf8'
+      'utf8',
     );
   }
   return fs.readFileSync(changelogPath, 'utf8');

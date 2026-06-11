@@ -1,49 +1,49 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
-const fs = require("node:fs/promises");
-const path = require("node:path");
+const fs = require('node:fs/promises');
+const path = require('node:path');
 
-const OUTPUT_FILE = path.resolve(__dirname, "..", "assets", "openrouter-provider-metrics.json");
-const ENV_FILE = path.resolve(__dirname, "..", ".env");
-const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || "https://openrouter.ai/api/v1";
-const EXCHANGE_RATE_API_URL = process.env.EXCHANGE_RATE_API_URL || "https://open.er-api.com/v6/latest/USD";
-const REQUEST_TIMEOUT_MS = Number.parseInt(process.env.OPENROUTER_REQUEST_TIMEOUT_MS || "20000", 10);
-const ENDPOINT_CONCURRENCY = Math.max(1, Number.parseInt(process.env.OPENROUTER_ENDPOINT_CONCURRENCY || "4", 10));
+const OUTPUT_FILE = path.resolve(__dirname, '..', 'assets', 'openrouter-provider-metrics.json');
+const ENV_FILE = path.resolve(__dirname, '..', '.env');
+const OPENROUTER_BASE_URL = process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1';
+const EXCHANGE_RATE_API_URL = process.env.EXCHANGE_RATE_API_URL || 'https://open.er-api.com/v6/latest/USD';
+const REQUEST_TIMEOUT_MS = Number.parseInt(process.env.OPENROUTER_REQUEST_TIMEOUT_MS || '20000', 10);
+const ENDPOINT_CONCURRENCY = Math.max(1, Number.parseInt(process.env.OPENROUTER_ENDPOINT_CONCURRENCY || '4', 10));
 const ENDPOINT_REQUEST_RETRY_COUNT = 2;
 const ENDPOINT_REQUEST_RETRY_DELAY_MS = 750;
 const DEFAULT_ORGANIZATIONS = [
-  "deepseek",
-  "qwen",
-  "moonshotai",
-  "z-ai",
-  "minimax",
-  "bytedance",
-  "bytedance-seed",
-  "kwaipilot",
-  "meituan",
-  "mistralai",
-  "stepfun",
-  "xiaomi",
+  'deepseek',
+  'qwen',
+  'moonshotai',
+  'z-ai',
+  'minimax',
+  'bytedance',
+  'bytedance-seed',
+  'kwaipilot',
+  'meituan',
+  'mistralai',
+  'stepfun',
+  'xiaomi',
 ];
 const DEFAULT_MODELS_PER_ORG = 5;
 const DEFAULT_MODEL_MAX_AGE_DAYS = 180;
 
 function parseDotEnv(text) {
   const result = {};
-  for (const line of String(text || "").split(/\r?\n/g)) {
+  for (const line of String(text || '').split(/\r?\n/g)) {
     const trimmed = line.trim();
-    if (!trimmed || trimmed.startsWith("#")) {
+    if (!trimmed || trimmed.startsWith('#')) {
       continue;
     }
-    const separatorIndex = trimmed.indexOf("=");
+    const separatorIndex = trimmed.indexOf('=');
     if (separatorIndex <= 0) {
       continue;
     }
     const key = trimmed.slice(0, separatorIndex).trim();
     let value = trimmed.slice(separatorIndex + 1).trim();
-    if ((value.startsWith("\"") && value.endsWith("\"")) || (value.startsWith("'") && value.endsWith("'"))) {
+    if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
       value = value.slice(1, -1);
     }
     result[key] = value;
@@ -53,7 +53,7 @@ function parseDotEnv(text) {
 
 async function loadEnvFileIfPresent() {
   try {
-    const text = await fs.readFile(ENV_FILE, "utf8");
+    const text = await fs.readFile(ENV_FILE, 'utf8');
     const parsed = parseDotEnv(text);
     for (const [key, value] of Object.entries(parsed)) {
       if (!process.env[key]) {
@@ -61,7 +61,7 @@ async function loadEnvFileIfPresent() {
       }
     }
   } catch (error) {
-    if (error && error.code === "ENOENT") {
+    if (error && error.code === 'ENOENT') {
       return;
     }
     throw error;
@@ -69,11 +69,18 @@ async function loadEnvFileIfPresent() {
 }
 
 function readOrganizations() {
-  const raw = String(process.env.OPENROUTER_MODEL_ORGS || "").trim();
+  const raw = String(process.env.OPENROUTER_MODEL_ORGS || '').trim();
   if (!raw) {
     return [...DEFAULT_ORGANIZATIONS];
   }
-  const normalized = [...new Set(raw.split(",").map((item) => item.trim().toLowerCase()).filter(Boolean))];
+  const normalized = [
+    ...new Set(
+      raw
+        .split(',')
+        .map((item) => item.trim().toLowerCase())
+        .filter(Boolean),
+    ),
+  ];
   return normalized.length > 0 ? normalized : [...DEFAULT_ORGANIZATIONS];
 }
 
@@ -111,8 +118,8 @@ function isModelInAgeWindow(model, maxAgeDays, nowSeconds) {
 }
 
 function parseModelId(modelId) {
-  const normalized = String(modelId || "").trim();
-  const separatorIndex = normalized.indexOf("/");
+  const normalized = String(modelId || '').trim();
+  const separatorIndex = normalized.indexOf('/');
   if (!normalized || separatorIndex <= 0 || separatorIndex >= normalized.length - 1) {
     return null;
   }
@@ -127,11 +134,11 @@ function formatBeijingTime(isoText) {
   if (Number.isNaN(date.getTime())) {
     return null;
   }
-  return new Intl.DateTimeFormat("zh-CN", {
-    dateStyle: "medium",
-    timeStyle: "medium",
+  return new Intl.DateTimeFormat('zh-CN', {
+    dateStyle: 'medium',
+    timeStyle: 'medium',
     hour12: false,
-    timeZone: "Asia/Shanghai",
+    timeZone: 'Asia/Shanghai',
   }).format(date);
 }
 
@@ -143,7 +150,7 @@ function sleep(delayMs) {
 }
 
 function readHttpStatusFromError(error) {
-  const message = String(error?.message || "");
+  const message = String(error?.message || '');
   const matched = message.match(/\bHTTP\s+(\d{3})\b/i);
   if (!matched) {
     return null;
@@ -158,24 +165,19 @@ function isRetryableFetchError(error) {
     return true;
   }
 
-  const message = String(error?.message || "").toLowerCase();
-  const code = String(error?.code || error?.cause?.code || "").toUpperCase();
+  const message = String(error?.message || '').toLowerCase();
+  const code = String(error?.code || error?.cause?.code || '').toUpperCase();
   return (
-    message.includes("request timeout")
-    || message.includes("timed out")
-    || code === "ETIMEDOUT"
-    || code === "ECONNRESET"
-    || code === "UND_ERR_CONNECT_TIMEOUT"
+    message.includes('request timeout') ||
+    message.includes('timed out') ||
+    code === 'ETIMEDOUT' ||
+    code === 'ECONNRESET' ||
+    code === 'UND_ERR_CONNECT_TIMEOUT'
   );
 }
 
 async function fetchJson(url, options = {}) {
-  const {
-    timeoutMs = REQUEST_TIMEOUT_MS,
-    retryCount = 0,
-    retryDelayMs = 0,
-    ...fetchOptions
-  } = options;
+  const { timeoutMs = REQUEST_TIMEOUT_MS, retryCount = 0, retryDelayMs = 0, ...fetchOptions } = options;
 
   for (let attempt = 0; attempt <= retryCount; attempt += 1) {
     const controller = new AbortController();
@@ -190,9 +192,7 @@ async function fetchJson(url, options = {}) {
       }
       return await response.json();
     } catch (error) {
-      const normalizedError = controller.signal.aborted
-        ? new Error(`Request timeout after ${timeoutMs}ms`)
-        : error;
+      const normalizedError = controller.signal.aborted ? new Error(`Request timeout after ${timeoutMs}ms`) : error;
       const shouldRetry = attempt < retryCount && isRetryableFetchError(normalizedError);
       if (!shouldRetry) {
         throw normalizedError;
@@ -203,7 +203,7 @@ async function fetchJson(url, options = {}) {
     }
   }
 
-  throw new Error("Unreachable fetchJson retry state");
+  throw new Error('Unreachable fetchJson retry state');
 }
 
 function sortByCreatedDesc(left, right) {
@@ -212,14 +212,14 @@ function sortByCreatedDesc(left, right) {
   if (rightCreated !== leftCreated) {
     return rightCreated - leftCreated;
   }
-  return String(left?.id || "").localeCompare(String(right?.id || ""));
+  return String(left?.id || '').localeCompare(String(right?.id || ''));
 }
 
 function uniqueByModelId(models) {
   const seen = new Set();
   const result = [];
   for (const model of models || []) {
-    const id = String(model?.id || "").trim();
+    const id = String(model?.id || '').trim();
     if (!id || seen.has(id)) {
       continue;
     }
@@ -232,9 +232,9 @@ function uniqueByModelId(models) {
 function buildHeaders(apiKey) {
   return {
     Authorization: `Bearer ${apiKey}`,
-    Accept: "application/json",
-    "Content-Type": "application/json",
-    "User-Agent": "coding-plans-for-copilot-metrics-fetcher/1.0",
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+    'User-Agent': 'coding-plans-for-copilot-metrics-fetcher/1.0',
   };
 }
 
@@ -242,10 +242,10 @@ function toFiniteNumberOrNull(value) {
   if (value === null || value === undefined) {
     return null;
   }
-  if (typeof value === "number") {
+  if (typeof value === 'number') {
     return Number.isFinite(value) ? value : null;
   }
-  if (typeof value === "string") {
+  if (typeof value === 'string') {
     const trimmed = value.trim();
     if (!trimmed) {
       return null;
@@ -262,7 +262,7 @@ function toPositiveFiniteNumberOrNull(value) {
 }
 
 function normalizeEndpointPricing(pricing) {
-  if (!pricing || typeof pricing !== "object") {
+  if (!pricing || typeof pricing !== 'object') {
     return null;
   }
 
@@ -271,12 +271,7 @@ function normalizeEndpointPricing(pricing) {
   const inputCacheRead = toPositiveFiniteNumberOrNull(pricing.input_cache_read);
   const inputCacheWrite = toPositiveFiniteNumberOrNull(pricing.input_cache_write);
 
-  if (
-    prompt === null
-    && completion === null
-    && inputCacheRead === null
-    && inputCacheWrite === null
-  ) {
+  if (prompt === null && completion === null && inputCacheRead === null && inputCacheWrite === null) {
     return null;
   }
 
@@ -285,21 +280,16 @@ function normalizeEndpointPricing(pricing) {
     input_cache_read: inputCacheRead,
     input_cache_write: inputCacheWrite,
     completion,
-    has_input_cache_read_discount: prompt !== null
-      && prompt > 0
-      && inputCacheRead !== null
-      && inputCacheRead < prompt,
-    input_cache_read_discount_rate: prompt !== null
-      && prompt > 0
-      && inputCacheRead !== null
-      && inputCacheRead < prompt
-      ? 1 - inputCacheRead / prompt
-      : null,
+    has_input_cache_read_discount: prompt !== null && prompt > 0 && inputCacheRead !== null && inputCacheRead < prompt,
+    input_cache_read_discount_rate:
+      prompt !== null && prompt > 0 && inputCacheRead !== null && inputCacheRead < prompt
+        ? 1 - inputCacheRead / prompt
+        : null,
   };
 }
 
 function withCnyPricing(pricing, usdCnyRate) {
-  if (!pricing || typeof pricing !== "object") {
+  if (!pricing || typeof pricing !== 'object') {
     return pricing || null;
   }
   if (!Number.isFinite(usdCnyRate) || usdCnyRate <= 0) {
@@ -308,7 +298,7 @@ function withCnyPricing(pricing, usdCnyRate) {
   const convert = (value) => (value === null || value === undefined ? null : value * usdCnyRate);
   return {
     ...pricing,
-    currency: "USD",
+    currency: 'USD',
     cny: {
       exchange_rate: usdCnyRate,
       prompt: convert(pricing.prompt),
@@ -323,10 +313,10 @@ async function fetchUsdCnyExchangeRate() {
   const override = toFiniteNumberOrNull(process.env.USD_CNY_EXCHANGE_RATE);
   if (override !== null && override > 0) {
     return {
-      base: "USD",
-      quote: "CNY",
+      base: 'USD',
+      quote: 'CNY',
       rate: override,
-      source: "USD_CNY_EXCHANGE_RATE",
+      source: 'USD_CNY_EXCHANGE_RATE',
       fetchedAt: new Date().toISOString(),
       providerTimestamp: null,
     };
@@ -334,17 +324,17 @@ async function fetchUsdCnyExchangeRate() {
 
   const payload = await fetchJson(EXCHANGE_RATE_API_URL, {
     headers: {
-      Accept: "application/json",
-      "User-Agent": "coding-plans-for-copilot-metrics-fetcher/1.0",
+      Accept: 'application/json',
+      'User-Agent': 'coding-plans-for-copilot-metrics-fetcher/1.0',
     },
   });
   const rate = toFiniteNumberOrNull(payload?.rates?.CNY);
   if (rate === null || rate <= 0) {
-    throw new Error("USD/CNY exchange rate is unavailable");
+    throw new Error('USD/CNY exchange rate is unavailable');
   }
   return {
-    base: String(payload?.base_code || "USD"),
-    quote: "CNY",
+    base: String(payload?.base_code || 'USD'),
+    quote: 'CNY',
     rate,
     source: EXCHANGE_RATE_API_URL,
     fetchedAt: new Date().toISOString(),
@@ -353,24 +343,26 @@ async function fetchUsdCnyExchangeRate() {
 }
 
 function parseProviderSlugFromTag(tag) {
-  const raw = String(tag || "").trim().toLowerCase();
+  const raw = String(tag || '')
+    .trim()
+    .toLowerCase();
   if (!raw) {
     return null;
   }
-  const slashIndex = raw.indexOf("/");
+  const slashIndex = raw.indexOf('/');
   const slug = slashIndex >= 0 ? raw.slice(0, slashIndex) : raw;
   return slug || null;
 }
 
 function normalizeProviderEndpoint(endpoint) {
-  const providerName = String(endpoint?.provider_name || "").trim() || String(endpoint?.name || "").trim();
-  const tag = String(endpoint?.tag || "").trim() || null;
+  const providerName = String(endpoint?.provider_name || '').trim() || String(endpoint?.name || '').trim();
+  const tag = String(endpoint?.tag || '').trim() || null;
   const providerSlug = parseProviderSlugFromTag(tag);
   if (!providerName && !providerSlug) {
     return null;
   }
   return {
-    providerName: providerName || providerSlug || "--",
+    providerName: providerName || providerSlug || '--',
     providerSlug,
     tag,
     quantization: endpoint?.quantization || null,
@@ -381,9 +373,8 @@ function normalizeProviderEndpoint(endpoint) {
     context_length: toFiniteNumberOrNull(endpoint?.context_length),
     max_completion_tokens: toFiniteNumberOrNull(endpoint?.max_completion_tokens),
     pricing: normalizeEndpointPricing(endpoint?.pricing),
-    supports_implicit_caching: typeof endpoint?.supports_implicit_caching === "boolean"
-      ? endpoint.supports_implicit_caching
-      : null,
+    supports_implicit_caching:
+      typeof endpoint?.supports_implicit_caching === 'boolean' ? endpoint.supports_implicit_caching : null,
   };
 }
 
@@ -392,10 +383,10 @@ function readMetricP50(metric) {
 }
 
 function hasPercentileStats(metric) {
-  if (!metric || typeof metric !== "object") {
+  if (!metric || typeof metric !== 'object') {
     return false;
   }
-  return ["p50", "p75", "p90", "p99"].every((key) => toFiniteNumberOrNull(metric[key]) !== null);
+  return ['p50', 'p75', 'p90', 'p99'].every((key) => toFiniteNumberOrNull(metric[key]) !== null);
 }
 
 function getMetricsValidationErrors(output) {
@@ -405,30 +396,35 @@ function getMetricsValidationErrors(output) {
   const endpoints = models.flatMap((model) => (Array.isArray(model?.endpoints) ? model.endpoints : []));
   const latencyCount = endpoints.filter((endpoint) => hasPercentileStats(endpoint?.latency_last_30m)).length;
   const throughputCount = endpoints.filter((endpoint) => hasPercentileStats(endpoint?.throughput_last_30m)).length;
-  const uptimeCount = endpoints.filter((endpoint) => (
-    toFiniteNumberOrNull(endpoint?.uptime_last_5m) !== null
-    || toFiniteNumberOrNull(endpoint?.uptime_last_30m) !== null
-    || toFiniteNumberOrNull(endpoint?.uptime_last_1d) !== null
-  )).length;
+  const uptimeCount = endpoints.filter(
+    (endpoint) =>
+      toFiniteNumberOrNull(endpoint?.uptime_last_5m) !== null ||
+      toFiniteNumberOrNull(endpoint?.uptime_last_30m) !== null ||
+      toFiniteNumberOrNull(endpoint?.uptime_last_1d) !== null,
+  ).length;
 
   if (models.length === 0) {
-    errors.push("No OpenRouter models matched the configured organization and age filters.");
+    errors.push('No OpenRouter models matched the configured organization and age filters.');
   }
   if (endpoints.length === 0) {
-    errors.push("No OpenRouter provider endpoints were fetched.");
+    errors.push('No OpenRouter provider endpoints were fetched.');
   }
   if (failures.length > 0) {
-    const preview = failures.slice(0, 5).join("; ");
-    errors.push(`OpenRouter endpoint fetch failures: ${failures.length}${preview ? ` (${preview})` : ""}`);
+    const preview = failures.slice(0, 5).join('; ');
+    errors.push(`OpenRouter endpoint fetch failures: ${failures.length}${preview ? ` (${preview})` : ''}`);
   }
   if (endpoints.length > 0 && uptimeCount === 0) {
-    errors.push("OpenRouter provider availability metrics are empty for every endpoint.");
+    errors.push('OpenRouter provider availability metrics are empty for every endpoint.');
   }
   if (endpoints.length > 0 && latencyCount === 0) {
-    errors.push("OpenRouter provider latency metrics are empty for every endpoint. Check that APIKEY is an OpenRouter API key allowed to view endpoint performance metrics.");
+    errors.push(
+      'OpenRouter provider latency metrics are empty for every endpoint. Check that APIKEY is an OpenRouter API key allowed to view endpoint performance metrics.',
+    );
   }
   if (endpoints.length > 0 && throughputCount === 0) {
-    errors.push("OpenRouter provider throughput metrics are empty for every endpoint. Check that APIKEY is an OpenRouter API key allowed to view endpoint performance metrics.");
+    errors.push(
+      'OpenRouter provider throughput metrics are empty for every endpoint. Check that APIKEY is an OpenRouter API key allowed to view endpoint performance metrics.',
+    );
   }
 
   return errors;
@@ -439,13 +435,13 @@ async function writeJsonFileAtomically(filePath, data) {
   const temporaryFile = path.join(directory, `.${path.basename(filePath)}.${process.pid}.${Date.now()}.tmp`);
   await fs.mkdir(directory, { recursive: true });
   try {
-    await fs.writeFile(temporaryFile, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+    await fs.writeFile(temporaryFile, `${JSON.stringify(data, null, 2)}\n`, 'utf8');
     await fs.rename(temporaryFile, filePath);
   } catch (error) {
     try {
       await fs.unlink(temporaryFile);
     } catch (unlinkError) {
-      if (!unlinkError || unlinkError.code !== "ENOENT") {
+      if (!unlinkError || unlinkError.code !== 'ENOENT') {
         // Preserve the original write failure; cleanup failure is secondary.
       }
     }
@@ -494,14 +490,16 @@ function compareEndpointQuality(left, right) {
     }
   }
 
-  return String(left?.tag || "").localeCompare(String(right?.tag || ""));
+  return String(left?.tag || '').localeCompare(String(right?.tag || ''));
 }
 
 function keepBestEndpointPerProvider(endpoints) {
   const bestByProvider = new Map();
   for (const endpoint of endpoints || []) {
-    const providerSlug = String(endpoint?.providerSlug || "").trim().toLowerCase();
-    const providerName = String(endpoint?.providerName || "").trim();
+    const providerSlug = String(endpoint?.providerSlug || '')
+      .trim()
+      .toLowerCase();
+    const providerName = String(endpoint?.providerName || '').trim();
     const providerKey = providerSlug || providerName.toLowerCase();
     if (!providerKey) {
       continue;
@@ -512,13 +510,13 @@ function keepBestEndpointPerProvider(endpoints) {
     }
   }
   return [...bestByProvider.values()].sort((left, right) => {
-    const leftName = String(left?.providerName || "");
-    const rightName = String(right?.providerName || "");
+    const leftName = String(left?.providerName || '');
+    const rightName = String(right?.providerName || '');
     const byName = leftName.localeCompare(rightName);
     if (byName !== 0) {
       return byName;
     }
-    return String(left?.providerSlug || "").localeCompare(String(right?.providerSlug || ""));
+    return String(left?.providerSlug || '').localeCompare(String(right?.providerSlug || ''));
   });
 }
 
@@ -542,9 +540,9 @@ async function mapWithConcurrency(values, concurrency, mapper) {
 async function main() {
   await loadEnvFileIfPresent();
 
-  const apiKey = String(process.env.APIKEY || "").trim();
+  const apiKey = String(process.env.APIKEY || '').trim();
   if (!apiKey) {
-    throw new Error("Missing environment variable APIKEY");
+    throw new Error('Missing environment variable APIKEY');
   }
 
   const organizations = readOrganizations();
@@ -562,15 +560,19 @@ async function main() {
   const selectedModels = [];
   for (const organization of organizations) {
     const orgModels = allModels
-      .filter((model) => String(model?.id || "").toLowerCase().startsWith(`${organization}/`))
+      .filter((model) =>
+        String(model?.id || '')
+          .toLowerCase()
+          .startsWith(`${organization}/`),
+      )
       .filter((model) => isModelInAgeWindow(model, modelMaxAgeDays, nowSeconds))
       .sort(sortByCreatedDesc)
       .slice(0, modelsPerOrganization);
     for (const model of orgModels) {
       selectedModels.push({
         organization,
-        id: String(model?.id || ""),
-        name: String(model?.name || model?.id || ""),
+        id: String(model?.id || ''),
+        name: String(model?.name || model?.id || ''),
         created: Number.isFinite(Number(model?.created)) ? Number(model.created) : null,
       });
     }
@@ -597,13 +599,12 @@ async function main() {
         retryDelayMs: ENDPOINT_REQUEST_RETRY_DELAY_MS,
       });
       const endpointList = Array.isArray(payload?.data?.endpoints) ? payload.data.endpoints : [];
-      const normalized = keepBestEndpointPerProvider(endpointList
-        .map((entry) => normalizeProviderEndpoint(entry))
-        .filter(Boolean))
-        .map((endpoint) => ({
-          ...endpoint,
-          pricing: withCnyPricing(endpoint.pricing, exchangeRate.rate),
-        }));
+      const normalized = keepBestEndpointPerProvider(
+        endpointList.map((entry) => normalizeProviderEndpoint(entry)).filter(Boolean),
+      ).map((endpoint) => ({
+        ...endpoint,
+        pricing: withCnyPricing(endpoint.pricing, exchangeRate.rate),
+      }));
 
       return {
         ...model,
@@ -612,7 +613,7 @@ async function main() {
         providerCount: normalized.length,
       };
     } catch (error) {
-      const message = error?.message || String(error || "unknown error");
+      const message = error?.message || String(error || 'unknown error');
       failures.push(`${model.id}: ${message}`);
       return {
         ...model,
@@ -630,9 +631,9 @@ async function main() {
     generatedAt,
     generatedAtBeijing: formatBeijingTime(generatedAt),
     captureWindow: {
-      timezone: "Asia/Shanghai",
-      targetLocalTime: "16:00",
-      note: "Data should be refreshed daily at 16:00 Beijing time.",
+      timezone: 'Asia/Shanghai',
+      targetLocalTime: '16:00',
+      note: 'Data should be refreshed daily at 16:00 Beijing time.',
     },
     config: {
       organizations,
@@ -656,39 +657,41 @@ async function main() {
 
   const validationErrors = getMetricsValidationErrors(output);
   if (validationErrors.length > 0) {
-    throw new Error(`OpenRouter provider metrics validation failed: ${validationErrors.join(" | ")}`);
+    throw new Error(`OpenRouter provider metrics validation failed: ${validationErrors.join(' | ')}`);
   }
 
   await writeJsonFileAtomically(OUTPUT_FILE, output);
 
   console.log(`[metrics] wrote ${OUTPUT_FILE}`);
-  console.log(`[metrics] organizations=${organizations.length} models=${modelEntries.length} providers=${endpointCount}`);
+  console.log(
+    `[metrics] organizations=${organizations.length} models=${modelEntries.length} providers=${endpointCount}`,
+  );
   console.log(`[metrics] USD/CNY=${exchangeRate.rate}`);
 }
 
 function printHelp() {
-  console.log("Usage: node scripts/fetch-openrouter-provider-metrics.js [-h|--help]");
-  console.log("");
-  console.log("Fetches OpenRouter provider endpoint metrics into assets/openrouter-provider-metrics.json.");
-  console.log("The output file is updated only after endpoint fetches and performance metrics pass validation.");
-  console.log("");
-  console.log("Environment variables:");
-  console.log("  APIKEY                           OpenRouter API key");
+  console.log('Usage: node scripts/fetch-openrouter-provider-metrics.js [-h|--help]');
+  console.log('');
+  console.log('Fetches OpenRouter provider endpoint metrics into assets/openrouter-provider-metrics.json.');
+  console.log('The output file is updated only after endpoint fetches and performance metrics pass validation.');
+  console.log('');
+  console.log('Environment variables:');
+  console.log('  APIKEY                           OpenRouter API key');
   console.log(`  OPENROUTER_BASE_URL              API base URL (default: ${OPENROUTER_BASE_URL})`);
   console.log(`  OPENROUTER_REQUEST_TIMEOUT_MS    Per-request timeout in ms (default: ${REQUEST_TIMEOUT_MS})`);
   console.log(`  OPENROUTER_ENDPOINT_CONCURRENCY  Concurrent endpoint fetches (default: ${ENDPOINT_CONCURRENCY})`);
-  console.log("  USD_CNY_EXCHANGE_RATE            Optional USD/CNY override");
+  console.log('  USD_CNY_EXCHANGE_RATE            Optional USD/CNY override');
   console.log(`  EXCHANGE_RATE_API_URL            Exchange-rate API URL (default: ${EXCHANGE_RATE_API_URL})`);
 }
 
 if (require.main === module) {
-  if (process.argv.includes("-h") || process.argv.includes("--help")) {
+  if (process.argv.includes('-h') || process.argv.includes('--help')) {
     printHelp();
     process.exit(0);
   }
 
   main().catch((error) => {
-    console.error("[metrics] fatal:", error && error.message ? error.message : error);
+    console.error('[metrics] fatal:', error && error.message ? error.message : error);
     process.exit(1);
   });
 }

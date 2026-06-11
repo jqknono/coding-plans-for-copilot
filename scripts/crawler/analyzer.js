@@ -1,16 +1,20 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
 const REQUEST_TIMEOUT_MS = 30_000;
-const DELAY_MS = Number.parseInt(process.env.CRAWLER_LLM_DELAY_MS || "2000", 10);
+const DELAY_MS = Number.parseInt(process.env.CRAWLER_LLM_DELAY_MS || '2000', 10);
 const MAX_CONTENT_CHARS = 2000;
-const MAX_RETRIES = Number.parseInt(process.env.CRAWLER_LLM_MAX_RETRIES || "3", 10);
+const MAX_RETRIES = Number.parseInt(process.env.CRAWLER_LLM_MAX_RETRIES || '3', 10);
 
-const VALID_SENTIMENTS = new Set(["positive", "negative", "neutral"]);
-const VALID_LANGUAGES = new Set(["zh", "en", "other"]);
+const VALID_SENTIMENTS = new Set(['positive', 'negative', 'neutral']);
+const VALID_LANGUAGES = new Set(['zh', 'en', 'other']);
 const VALID_SUPPLIER_CATEGORIES = new Set([
-  "chinese-provider", "international-provider", "aggregator", "tool", "other",
+  'chinese-provider',
+  'international-provider',
+  'aggregator',
+  'tool',
+  'other',
 ]);
 
 let availableCategories = [];
@@ -20,9 +24,10 @@ function setAvailableCategories(categories) {
 }
 
 function buildSystemPrompt() {
-  const categoryList = availableCategories.length > 0
-    ? `Available discussion categories (MUST choose one for the "category" field):\n${availableCategories.map((c) => `- ${c.name}`).join("\n")}`
-    : "No categories available.";
+  const categoryList =
+    availableCategories.length > 0
+      ? `Available discussion categories (MUST choose one for the "category" field):\n${availableCategories.map((c) => `- ${c.name}`).join('\n')}`
+      : 'No categories available.';
 
   return `${SYSTEM_PROMPT_BASE}\n\n${categoryList}`;
 }
@@ -84,16 +89,16 @@ function sleep(ms) {
 
 function truncateContent(text, maxChars) {
   if (!text || text.length <= maxChars) return text;
-  return text.slice(0, maxChars) + "...";
+  return text.slice(0, maxChars) + '...';
 }
 
 async function callLLM(messages, { noJsonFormat, rawContent } = {}) {
-  const baseUrl = process.env.BASE_URL || "https://openrouter.ai/api/v1";
+  const baseUrl = process.env.BASE_URL || 'https://openrouter.ai/api/v1';
   const apiKey = process.env.APIKEY;
-  const model = process.env.MODEL || "openrouter/free";
+  const model = process.env.MODEL || 'openrouter/free';
 
   if (!apiKey) {
-    throw new Error("No API key configured. Set APIKEY in .env");
+    throw new Error('No API key configured. Set APIKEY in .env');
   }
 
   const body = {
@@ -102,15 +107,15 @@ async function callLLM(messages, { noJsonFormat, rawContent } = {}) {
     temperature: 0.1,
   };
   if (!noJsonFormat) {
-    body.response_format = { type: "json_object" };
+    body.response_format = { type: 'json_object' };
   }
 
   console.log(`[analyzer] POST ${baseUrl}/chat/completions model=${model} json_format=${!noJsonFormat}`);
 
   const response = await fetch(`${baseUrl}/chat/completions`, {
-    method: "POST",
+    method: 'POST',
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${apiKey}`,
     },
     body: JSON.stringify(body),
@@ -118,22 +123,27 @@ async function callLLM(messages, { noJsonFormat, rawContent } = {}) {
   });
 
   if (!response.ok) {
-    const respBody = await response.text().catch(() => "");
-    const isJsonFormatError = respBody.includes("response_format") || respBody.includes("json_object") || respBody.includes("INVALID_ARGUMENT");
-    throw new Error(`HTTP ${response.status}: ${respBody.slice(0, 300)}`, { cause: isJsonFormatError ? "json_format_unsupported" : undefined });
+    const respBody = await response.text().catch(() => '');
+    const isJsonFormatError =
+      respBody.includes('response_format') || respBody.includes('json_object') || respBody.includes('INVALID_ARGUMENT');
+    throw new Error(`HTTP ${response.status}: ${respBody.slice(0, 300)}`, {
+      cause: isJsonFormatError ? 'json_format_unsupported' : undefined,
+    });
   }
 
   const data = await response.json();
 
   if (!data.choices?.length) {
     console.log(`[analyzer] LLM response missing choices: ${JSON.stringify(data).slice(0, 300)}`);
-    throw new Error(`LLM returned no choices (response keys: ${Object.keys(data).join(",")})`);
+    throw new Error(`LLM returned no choices (response keys: ${Object.keys(data).join(',')})`);
   }
 
   const content = data.choices[0].message?.content;
   if (!content) {
     const msg = data.choices[0].message || {};
-    console.log(`[analyzer] LLM choice[0].message keys: ${Object.keys(msg).join(",")} finish_reason=${data.choices[0].finish_reason}`);
+    console.log(
+      `[analyzer] LLM choice[0].message keys: ${Object.keys(msg).join(',')} finish_reason=${data.choices[0].finish_reason}`,
+    );
     if (msg.tool_calls) console.log(`[analyzer] unexpected tool_calls in response`);
     if (msg.refusal) console.log(`[analyzer] model refused: ${msg.refusal.slice(0, 200)}`);
     throw new Error(`LLM returned empty content (finish_reason=${data.choices[0].finish_reason})`);
@@ -160,35 +170,42 @@ async function callLLM(messages, { noJsonFormat, rawContent } = {}) {
 function validateAnalysis(obj) {
   const errors = [];
 
-  if (typeof obj.isRelevant !== "boolean") {
+  if (typeof obj.isRelevant !== 'boolean') {
     errors.push(`isRelevant: expected boolean, got ${typeof obj.isRelevant}`);
   }
-  if (typeof obj.isCodingPlan !== "boolean") {
+  if (typeof obj.isCodingPlan !== 'boolean') {
     errors.push(`isCodingPlan: expected boolean, got ${typeof obj.isCodingPlan}`);
   }
-  if (typeof obj.relevance !== "number" || obj.relevance < 0 || obj.relevance > 1) {
+  if (typeof obj.relevance !== 'number' || obj.relevance < 0 || obj.relevance > 1) {
     errors.push(`relevance: expected number 0-1, got ${obj.relevance}`);
   }
   if (obj.sentiment !== undefined && obj.sentiment !== null && !VALID_SENTIMENTS.has(obj.sentiment)) {
-    errors.push(`sentiment: expected one of [${[...VALID_SENTIMENTS].join(",")}], got "${obj.sentiment}"`);
+    errors.push(`sentiment: expected one of [${[...VALID_SENTIMENTS].join(',')}], got "${obj.sentiment}"`);
   }
-  if (obj.sentimentConfidence !== undefined && (typeof obj.sentimentConfidence !== "number" || obj.sentimentConfidence < 0 || obj.sentimentConfidence > 1)) {
+  if (
+    obj.sentimentConfidence !== undefined &&
+    (typeof obj.sentimentConfidence !== 'number' || obj.sentimentConfidence < 0 || obj.sentimentConfidence > 1)
+  ) {
     errors.push(`sentimentConfidence: expected number 0-1, got ${obj.sentimentConfidence}`);
   }
-  if (obj.supplierCategory !== undefined && obj.supplierCategory !== null && !VALID_SUPPLIER_CATEGORIES.has(obj.supplierCategory)) {
+  if (
+    obj.supplierCategory !== undefined &&
+    obj.supplierCategory !== null &&
+    !VALID_SUPPLIER_CATEGORIES.has(obj.supplierCategory)
+  ) {
     errors.push(`supplierCategory: invalid value "${obj.supplierCategory}"`);
   }
   if (obj.language !== undefined && obj.language !== null && !VALID_LANGUAGES.has(obj.language)) {
-    errors.push(`language: expected one of [${[...VALID_LANGUAGES].join(",")}], got "${obj.language}"`);
+    errors.push(`language: expected one of [${[...VALID_LANGUAGES].join(',')}], got "${obj.language}"`);
   }
   if (obj.topics !== undefined && !Array.isArray(obj.topics)) {
     errors.push(`topics: expected array, got ${typeof obj.topics}`);
   }
-  if (obj.summary !== undefined && typeof obj.summary !== "string") {
+  if (obj.summary !== undefined && typeof obj.summary !== 'string') {
     errors.push(`summary: expected string, got ${typeof obj.summary}`);
   }
   if (availableCategories.length > 0) {
-    if (typeof obj.category !== "string" || obj.category.trim() === "") {
+    if (typeof obj.category !== 'string' || obj.category.trim() === '') {
       errors.push(`category: expected non-empty string, got ${typeof obj.category}`);
     } else if (!availableCategories.some((c) => c.name === obj.category || c.slug === obj.category)) {
       errors.push(`category: expected one of available categories, got "${obj.category}"`);
@@ -212,7 +229,7 @@ function parseAndValidateAnalysis(content) {
 
   const errors = validateAnalysis(parsed);
   if (errors.length > 0) {
-    throw new Error(`LLM output schema validation failed: ${errors.join("; ")}`);
+    throw new Error(`LLM output schema validation failed: ${errors.join('; ')}`);
   }
 
   return parsed;
@@ -226,8 +243,8 @@ Content: ${truncateContent(post.content, MAX_CONTENT_CHARS)}
 Source: ${post.source}`;
 
   const messages = [
-    { role: "system", content: buildSystemPrompt() },
-    { role: "user", content: userPrompt },
+    { role: 'system', content: buildSystemPrompt() },
+    { role: 'user', content: userPrompt },
   ];
 
   let lastError = null;
@@ -243,7 +260,7 @@ Source: ${post.source}`;
       console.warn(`[analyzer] attempt ${attempt}/${MAX_RETRIES} failed for ${post.id}: ${error.message}`);
 
       // If json_object format is unsupported, retry without it
-      if (error.cause === "json_format_unsupported" && !noJsonFormat) {
+      if (error.cause === 'json_format_unsupported' && !noJsonFormat) {
         noJsonFormat = true;
         console.log("[analyzer] retrying without response_format (model doesn't support json_object)");
       }
@@ -255,7 +272,7 @@ Source: ${post.source}`;
   }
 
   console.error(`[analyzer] all ${MAX_RETRIES} attempts failed for ${post.id}`);
-  return { analysisError: true, error: lastError?.message || "Unknown error" };
+  return { analysisError: true, error: lastError?.message || 'Unknown error' };
 }
 
 async function analyzePosts(posts, options = {}) {

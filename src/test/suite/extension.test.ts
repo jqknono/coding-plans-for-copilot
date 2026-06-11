@@ -7,7 +7,7 @@ const EXPECTED_COMMANDS = [
   'coding-plans.refreshModels',
   'coding-plans.updateModels',
   'coding-plans.generateCommitMessage',
-  'coding-plans.selectCommitMessageModel'
+  'coding-plans.selectCommitMessageModel',
 ];
 
 interface TestVendorConfig {
@@ -30,10 +30,10 @@ async function assertModelHiddenOnUnscopedVendorRoot(modelId: string, timeoutMs 
   while (Date.now() - startedAt < timeoutMs) {
     const models = await vscode.lm.selectChatModels({ vendor: 'coding-plans' });
     assert.ok(
-      !models.some(model => model.id === modelId),
-      '未显式添加 provider group 时，不应在未作用域化的 coding-plans 根查询中暴露模型'
+      !models.some((model) => model.id === modelId),
+      '未显式添加 provider group 时，不应在未作用域化的 coding-plans 根查询中暴露模型',
     );
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise((resolve) => setTimeout(resolve, 100));
   }
 }
 
@@ -50,11 +50,7 @@ async function activateExtension(): Promise<vscode.Extension<unknown>> {
 
 suite('VS Code Desktop Smoke Tests', () => {
   test('extension initialization keeps the unscoped coding-plans root hidden', async () => {
-    assert.equal(
-      typeof vscode.lm?.selectChatModels,
-      'function',
-      'VS Code 1.120 应提供 vscode.lm.selectChatModels'
-    );
+    assert.equal(typeof vscode.lm?.selectChatModels, 'function', 'VS Code 1.120 应提供 vscode.lm.selectChatModels');
 
     const config = vscode.workspace.getConfiguration('coding-plans');
     const previousGlobalVendors = config.inspect<TestVendorConfig[]>('vendors')?.globalValue;
@@ -69,10 +65,10 @@ suite('VS Code Desktop Smoke Tests', () => {
           contextSize: 32000,
           capabilities: {
             tools: true,
-            vision: false
-          }
-        }
-      ]
+            vision: false,
+          },
+        },
+      ],
     };
 
     try {
@@ -89,21 +85,14 @@ suite('VS Code Desktop Smoke Tests', () => {
 
     const registeredCommands = await vscode.commands.getCommands(true);
     for (const command of EXPECTED_COMMANDS) {
-      assert.ok(
-        registeredCommands.includes(command),
-        `激活后应注册命令 ${command}`
-      );
+      assert.ok(registeredCommands.includes(command), `激活后应注册命令 ${command}`);
     }
   });
 
   test('refresh keeps the unscoped coding-plans root hidden', async () => {
     await activateExtension();
 
-    assert.equal(
-      typeof vscode.lm?.selectChatModels,
-      'function',
-      'VS Code 1.120 应提供 vscode.lm.selectChatModels'
-    );
+    assert.equal(typeof vscode.lm?.selectChatModels, 'function', 'VS Code 1.120 应提供 vscode.lm.selectChatModels');
 
     const config = vscode.workspace.getConfiguration('coding-plans');
     const previousGlobalVendors = config.inspect<TestVendorConfig[]>('vendors')?.globalValue;
@@ -118,10 +107,10 @@ suite('VS Code Desktop Smoke Tests', () => {
           contextSize: 32000,
           capabilities: {
             tools: true,
-            vision: false
-          }
-        }
-      ]
+            vision: false,
+          },
+        },
+      ],
     };
 
     try {

@@ -111,7 +111,7 @@ function createState(vendors: unknown[]): MockState {
   return {
     vendors,
     updates: [],
-    listeners: new Set<ConfigChangeListener>()
+    listeners: new Set<ConfigChangeListener>(),
   };
 }
 
@@ -126,11 +126,11 @@ function createVscodeMock() {
   const configurationTarget = {
     WorkspaceFolder: 1,
     Workspace: 2,
-    Global: 3
+    Global: 3,
   };
   const statusBarAlignment = {
     Left: 1,
-    Right: 2
+    Right: 2,
   };
   const createdStatusBarItems: Array<Record<string, unknown>> = [];
   const shownWarningMessages: Array<{ message: string; items: unknown[] }> = [];
@@ -152,21 +152,21 @@ function createVscodeMock() {
     constructor(
       public readonly callId: string,
       public readonly name: string,
-      public readonly input: unknown
+      public readonly input: unknown,
     ) {}
   }
 
   class FakeLanguageModelToolResultPart {
     constructor(
       public readonly callId: string,
-      public readonly content: unknown[]
+      public readonly content: unknown[],
     ) {}
   }
 
   class FakeLanguageModelDataPart {
     constructor(
       public readonly data: Uint8Array,
-      public readonly mimeType: string
+      public readonly mimeType: string,
     ) {}
   }
 
@@ -176,15 +176,17 @@ function createVscodeMock() {
     constructor(
       public readonly role: number,
       content: string | unknown[],
-      public readonly name?: string
+      public readonly name?: string,
     ) {
       this.content = typeof content === 'string' ? [new FakeLanguageModelTextPart(content)] : content;
     }
   }
 
   const fakeLanguageModelChatMessageCtor = FakeLanguageModelChatMessage as unknown as Record<string, unknown>;
-  fakeLanguageModelChatMessageCtor['User'] = (content: string | unknown[], name?: string) => new FakeLanguageModelChatMessage(1, content, name);
-  fakeLanguageModelChatMessageCtor['Assistant'] = (content: string | unknown[], name?: string) => new FakeLanguageModelChatMessage(2, content, name);
+  fakeLanguageModelChatMessageCtor['User'] = (content: string | unknown[], name?: string) =>
+    new FakeLanguageModelChatMessage(1, content, name);
+  fakeLanguageModelChatMessageCtor['Assistant'] = (content: string | unknown[], name?: string) =>
+    new FakeLanguageModelChatMessage(2, content, name);
 
   class FakeChatRequestTurn {
     constructor(public readonly prompt: string) {}
@@ -221,11 +223,11 @@ function createVscodeMock() {
     LanguageModelChatMessage: FakeLanguageModelChatMessage,
     LanguageModelChatToolMode: {
       Auto: 1,
-      Required: 2
+      Required: 2,
     },
     LanguageModelChatMessageRole: {
       User: 1,
-      Assistant: 2
+      Assistant: 2,
     },
     ChatRequestTurn: FakeChatRequestTurn,
     ChatResponseTurn: FakeChatResponseTurn,
@@ -234,7 +236,7 @@ function createVscodeMock() {
     Uri: {
       joinPath(...parts: unknown[]): string {
         return parts.map(String).join('/');
-      }
+      },
     },
     window: {
       createOutputChannel() {
@@ -244,7 +246,7 @@ function createVscodeMock() {
           },
           dispose(): void {
             return undefined;
-          }
+          },
         };
       },
       createStatusBarItem() {
@@ -261,7 +263,7 @@ function createVscodeMock() {
           },
           dispose(): void {
             return undefined;
-          }
+          },
         };
         createdStatusBarItems.push(item);
         return item;
@@ -285,19 +287,17 @@ function createVscodeMock() {
         shownQuickPicks.push({ items: resolvedItems, options });
         const selection = nextQuickPickSelections.shift();
         if (typeof selection === 'string') {
-          return resolvedItems.find(item => (
-            item
-            && typeof item === 'object'
-            && 'label' in item
-            && (item as { label?: unknown }).label === selection
-          ));
+          return resolvedItems.find(
+            (item) =>
+              item && typeof item === 'object' && 'label' in item && (item as { label?: unknown }).label === selection,
+          );
         }
         return selection;
       },
       async showInputBox(options?: unknown): Promise<string | undefined> {
         shownInputBoxes.push(options);
         return nextInputBoxValues.shift();
-      }
+      },
     },
     testState: {
       createdStatusBarItems,
@@ -316,7 +316,7 @@ function createVscodeMock() {
       },
       enqueueInputBoxValue(value: string | undefined): void {
         nextInputBoxValues.push(value);
-      }
+      },
     },
     commands: {
       registerCommand(command: string, callback: (...args: unknown[]) => unknown): FakeDisposable {
@@ -332,7 +332,7 @@ function createVscodeMock() {
       },
       async getCommands(): Promise<string[]> {
         return Array.from(registeredCommands.keys());
-      }
+      },
     },
     lm: {
       registerLanguageModelChatProvider(): FakeDisposable {
@@ -340,10 +340,10 @@ function createVscodeMock() {
       },
       async invokeTool(_name: string, _options: unknown): Promise<{ content: unknown[] }> {
         return { content: [new FakeLanguageModelTextPart('tool-result')] };
-      }
+      },
     },
     env: {
-      language: 'zh-cn'
+      language: 'zh-cn',
     },
     workspace: {
       onDidChangeConfiguration(listener: ConfigChangeListener): FakeDisposable {
@@ -370,14 +370,14 @@ function createVscodeMock() {
                 listener({
                   affectsConfiguration(changedSection: string): boolean {
                     return changedSection === 'coding-plans.vendors';
-                  }
+                  },
                 });
               }
             }
-          }
+          },
         };
-      }
-    }
+      },
+    },
   };
 }
 
@@ -385,7 +385,12 @@ function readMarkdownStringValue(value: unknown): string {
   if (typeof value === 'string') {
     return value;
   }
-  if (value && typeof value === 'object' && 'value' in value && typeof (value as { value?: unknown }).value === 'string') {
+  if (
+    value &&
+    typeof value === 'object' &&
+    'value' in value &&
+    typeof (value as { value?: unknown }).value === 'string'
+  ) {
     return (value as { value: string }).value;
   }
   return String(value ?? '');
@@ -408,7 +413,9 @@ function installVscodeMock(): () => void {
   };
 }
 
-function createExtensionContext(): { secrets: { get(): Promise<undefined>; store(): Promise<void>; delete(): Promise<void>; }; } {
+function createExtensionContext(): {
+  secrets: { get(): Promise<undefined>; store(): Promise<void>; delete(): Promise<void> };
+} {
   return {
     secrets: {
       async get(): Promise<undefined> {
@@ -419,13 +426,19 @@ function createExtensionContext(): { secrets: { get(): Promise<undefined>; store
       },
       async delete(): Promise<void> {
         return undefined;
-      }
-    }
+      },
+    },
   };
 }
 
 function createExtensionContextWithSecrets(): {
-  context: { secrets: { get(key: string): Promise<string | undefined>; store(key: string, value: string): Promise<void>; delete(key: string): Promise<void>; }; };
+  context: {
+    secrets: {
+      get(key: string): Promise<string | undefined>;
+      store(key: string, value: string): Promise<void>;
+      delete(key: string): Promise<void>;
+    };
+  };
   secrets: Map<string, string>;
 } {
   const secrets = new Map<string, string>();
@@ -440,10 +453,10 @@ function createExtensionContextWithSecrets(): {
         },
         async delete(key: string): Promise<void> {
           secrets.delete(key);
-        }
-      }
+        },
+      },
     },
-    secrets
+    secrets,
   };
 }
 
@@ -458,9 +471,9 @@ function createVendorWithSpacedModelName(): VendorRecord {
         temperature: 0.25,
         topP: 0.95,
         capabilities: { tools: true, vision: false },
-        contextSize: 128000
-      }
-    ]
+        contextSize: 128000,
+      },
+    ],
   };
 }
 
@@ -480,7 +493,7 @@ const testCases: TestCase[] = [
     discoveredModels: [{ name: 'gpt-4o' }],
     verify(context) {
       verifyNoWriteback(context, '仅名称空格差异');
-    }
+    },
   },
   {
     name: '仅大小写不同不写回',
@@ -493,15 +506,15 @@ const testCases: TestCase[] = [
             name: 'GPT-4o',
             description: 'Case stable',
             capabilities: { tools: true, vision: false },
-            contextSize: 128000
-          }
-        ]
-      }
+            contextSize: 128000,
+          },
+        ],
+      },
     ],
     discoveredModels: [{ name: 'gpt-4o' }],
     verify(context) {
       verifyNoWriteback(context, '仅名称大小写差异');
-    }
+    },
   },
   {
     name: '成员变化时规范化旧名称并保留字段',
@@ -512,8 +525,8 @@ const testCases: TestCase[] = [
       assert.equal(context.changeCount(), 1, '成员变化时应触发一次 ConfigStore 配置变更事件');
 
       const updatedVendor = getUpdatedVendor(context.state);
-      const existingModel = updatedVendor.models.find(model => model.name === 'gpt-4o');
-      const newModel = updatedVendor.models.find(model => model.name === 'gpt-4.1');
+      const existingModel = updatedVendor.models.find((model) => model.name === 'gpt-4o');
+      const newModel = updatedVendor.models.find((model) => model.name === 'gpt-4.1');
 
       assert.ok(existingModel, '已有模型应保留且名称被规范化');
       assert.equal(existingModel?.description, 'Keep me');
@@ -523,49 +536,53 @@ const testCases: TestCase[] = [
       assert.equal(existingModel?.contextSize, 128000);
       assert.ok(newModel, '新模型应被追加到配置中');
       assert.equal(newModel?.description, undefined);
-      assert.ok(!updatedVendor.models.some(model => model.name === ' gpt-4o '), '写回配置时不应保留带空格名称');
-    }
+      assert.ok(!updatedVendor.models.some((model) => model.name === ' gpt-4o '), '写回配置时不应保留带空格名称');
+    },
   },
   {
     name: '成员变化时保留模型 enabled 状态并为新增模型默认开启',
-    initialVendors: [{
-      name: 'Vendor',
-      baseUrl: 'https://example.test/v1',
-      models: [{
-        name: 'hidden-model',
-        enabled: false,
-        capabilities: { tools: true, vision: false }
-      }]
-    }],
+    initialVendors: [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        models: [
+          {
+            name: 'hidden-model',
+            enabled: false,
+            capabilities: { tools: true, vision: false },
+          },
+        ],
+      },
+    ],
     discoveredModels: [{ name: 'hidden-model' }, { name: 'new-model' }],
     verify(context) {
       assert.equal(context.state.updates.length, 1, '成员变化时应写回一次 vendors 配置');
 
       const updatedVendor = getUpdatedVendor(context.state);
-      const hiddenModel = updatedVendor.models.find(model => model.name === 'hidden-model');
-      const newModel = updatedVendor.models.find(model => model.name === 'new-model');
+      const hiddenModel = updatedVendor.models.find((model) => model.name === 'hidden-model');
+      const newModel = updatedVendor.models.find((model) => model.name === 'new-model');
       assert.equal(hiddenModel?.enabled, false);
       assert.equal(newModel?.enabled, true);
-    }
+    },
   },
   {
     name: '新增模型写回时使用供应商 defaultVision 且不落 token 上限',
     initialVendors: [createVendorWithSpacedModelName()],
     discoveredModels: [
       { name: 'gpt-4o' },
-        {
-          name: 'gpt-4.1',
-          description: 'Fresh from /models',
-          capabilities: { tools: true, vision: true },
-          maxInputTokens: 128000,
-          maxOutputTokens: 128000
-        }
+      {
+        name: 'gpt-4.1',
+        description: 'Fresh from /models',
+        capabilities: { tools: true, vision: true },
+        maxInputTokens: 128000,
+        maxOutputTokens: 128000,
+      },
     ],
     verify(context) {
       assert.equal(context.state.updates.length, 1, '新增模型时应写回一次 vendors 配置');
 
       const updatedVendor = getUpdatedVendor(context.state);
-      const newModel = updatedVendor.models.find(model => model.name === 'gpt-4.1');
+      const newModel = updatedVendor.models.find((model) => model.name === 'gpt-4.1');
 
       assert.ok(newModel, '新增模型应被写回到配置');
       assert.equal(newModel?.description, 'Fresh from /models');
@@ -573,7 +590,7 @@ const testCases: TestCase[] = [
       assert.equal(newModel?.topP, undefined);
       assert.deepEqual(newModel?.capabilities, { tools: true, vision: false });
       assert.equal(newModel?.contextSize, undefined);
-    }
+    },
   },
   {
     name: '重复刷新两次后不再写回',
@@ -587,10 +604,16 @@ const testCases: TestCase[] = [
       assert.equal(context.changeCount(), 1, '第二次刷新不应再触发新的 ConfigStore 变更事件');
 
       const updatedVendor = getUpdatedVendor(context.state);
-      assert.ok(updatedVendor.models.some(model => model.name === 'gpt-4o'), '第一次刷新后的规范化名称应被保留');
-      assert.ok(updatedVendor.models.some(model => model.name === 'gpt-4.1'), '第一次刷新新增的模型应被保留');
-      assert.ok(!updatedVendor.models.some(model => model.name === ' gpt-4o '), '第二次刷新后仍不应写回带空格名称');
-    }
+      assert.ok(
+        updatedVendor.models.some((model) => model.name === 'gpt-4o'),
+        '第一次刷新后的规范化名称应被保留',
+      );
+      assert.ok(
+        updatedVendor.models.some((model) => model.name === 'gpt-4.1'),
+        '第一次刷新新增的模型应被保留',
+      );
+      assert.ok(!updatedVendor.models.some((model) => model.name === ' gpt-4o '), '第二次刷新后仍不应写回带空格名称');
+    },
   },
   {
     name: '首次稳定顺序后相同集合换序不写回',
@@ -605,11 +628,11 @@ const testCases: TestCase[] = [
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(
-        updatedVendor.models.map(model => model.name),
+        updatedVendor.models.map((model) => model.name),
         ['gpt-4.1', 'gpt-4o'],
-        '第一次刷新后模型顺序应稳定，第二次换序不应改写顺序'
+        '第一次刷新后模型顺序应稳定，第二次换序不应改写顺序',
       );
-    }
+    },
   },
   {
     name: '发现列表含重复模型名时只写回一次且结果去重',
@@ -619,13 +642,13 @@ const testCases: TestCase[] = [
         { name: 'gpt-4o' },
         { name: 'gpt-4.1' },
         { name: 'gpt-4o' },
-        { name: 'GPT-4.1' }
+        { name: 'GPT-4.1' },
       ]);
       await configStore.updateVendorModels('Vendor', [
         { name: 'gpt-4o' },
         { name: 'gpt-4.1' },
         { name: 'gpt-4o' },
-        { name: 'GPT-4.1' }
+        { name: 'GPT-4.1' },
       ]);
     },
     verify(context) {
@@ -634,11 +657,11 @@ const testCases: TestCase[] = [
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(
-        updatedVendor.models.map(model => model.name),
+        updatedVendor.models.map((model) => model.name),
         ['gpt-4.1', 'gpt-4o'],
-        '写回配置时应按名称去重并保持稳定顺序'
+        '写回配置时应按名称去重并保持稳定顺序',
       );
-    }
+    },
   },
   {
     name: '发现列表含空名称时被忽略且不影响幂等',
@@ -648,13 +671,13 @@ const testCases: TestCase[] = [
         { name: 'gpt-4o' },
         { name: '' },
         { name: '   ' },
-        { name: 'gpt-4.1' }
+        { name: 'gpt-4.1' },
       ]);
       await configStore.updateVendorModels('Vendor', [
         { name: 'gpt-4o' },
         { name: '   ' },
         { name: '' },
-        { name: 'gpt-4.1' }
+        { name: 'gpt-4.1' },
       ]);
     },
     verify(context) {
@@ -663,20 +686,17 @@ const testCases: TestCase[] = [
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(
-        updatedVendor.models.map(model => model.name),
+        updatedVendor.models.map((model) => model.name),
         ['gpt-4.1', 'gpt-4o'],
-        '空名称和空白名称应被忽略，最终结果只保留有效模型'
+        '空名称和空白名称应被忽略，最终结果只保留有效模型',
       );
-    }
+    },
   },
   {
     name: '未知 vendor 名称时不写回且不触发事件',
     initialVendors: [createVendorWithSpacedModelName()],
     async run(configStore) {
-      await configStore.updateVendorModels('Unknown Vendor', [
-        { name: 'gpt-4o' },
-        { name: 'gpt-4.1' }
-      ]);
+      await configStore.updateVendorModels('Unknown Vendor', [{ name: 'gpt-4o' }, { name: 'gpt-4.1' }]);
     },
     verify(context) {
       assert.equal(context.state.updates.length, 0, '未知 vendor 名称时不应写回 vendors 配置');
@@ -684,24 +704,18 @@ const testCases: TestCase[] = [
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(
-        updatedVendor.models.map(model => model.name),
+        updatedVendor.models.map((model) => model.name),
         [' gpt-4o '],
-        '未知 vendor 名称时应保持原始配置不变'
+        '未知 vendor 名称时应保持原始配置不变',
       );
-    }
+    },
   },
   {
     name: '空 vendorName 时直接 no-op',
     initialVendors: [createVendorWithSpacedModelName()],
     async run(configStore) {
-      await configStore.updateVendorModels('', [
-        { name: 'gpt-4o' },
-        { name: 'gpt-4.1' }
-      ]);
-      await configStore.updateVendorModels('   ', [
-        { name: 'gpt-4o' },
-        { name: 'gpt-4.1' }
-      ]);
+      await configStore.updateVendorModels('', [{ name: 'gpt-4o' }, { name: 'gpt-4.1' }]);
+      await configStore.updateVendorModels('   ', [{ name: 'gpt-4o' }, { name: 'gpt-4.1' }]);
     },
     verify(context) {
       assert.equal(context.state.updates.length, 0, '空 vendorName 或空白 vendorName 时不应写回 vendors 配置');
@@ -709,11 +723,11 @@ const testCases: TestCase[] = [
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(
-        updatedVendor.models.map(model => model.name),
+        updatedVendor.models.map((model) => model.name),
         [' gpt-4o '],
-        '空 vendorName 或空白 vendorName 时应保持原始配置不变'
+        '空 vendorName 或空白 vendorName 时应保持原始配置不变',
       );
-    }
+    },
   },
   {
     name: 'models 为空数组时清空已有模型且二次调用幂等',
@@ -728,7 +742,7 @@ const testCases: TestCase[] = [
 
       const updatedVendor = getUpdatedVendor(context.state);
       assert.deepEqual(updatedVendor.models, [], '传入空数组时应正确清空已有模型');
-    }
+    },
   },
   {
     name: '可按模型写回 apiStyle 且保留已有模型配置',
@@ -743,14 +757,14 @@ const testCases: TestCase[] = [
             description: 'Keep me',
             apiStyle: 'openai-chat',
             temperature: 0.2,
-            capabilities: { tools: true, vision: false }
+            capabilities: { tools: true, vision: false },
           },
           {
             name: 'gpt-4o',
-            apiStyle: 'openai-chat'
-          }
-        ]
-      }
+            apiStyle: 'openai-chat',
+          },
+        ],
+      },
     ],
     async run(configStore) {
       const changed = await configStore.updateVendorModelApiStyle('Vendor', 'gpt-5.5', 'openai-responses');
@@ -761,15 +775,15 @@ const testCases: TestCase[] = [
       assert.equal(context.changeCount(), 1, '模型协议切换应触发一次配置变更事件');
 
       const updatedVendor = getUpdatedVendor(context.state);
-      const switchedModel = updatedVendor.models.find(model => model.name === 'gpt-5.5');
-      const untouchedModel = updatedVendor.models.find(model => model.name === 'gpt-4o');
+      const switchedModel = updatedVendor.models.find((model) => model.name === 'gpt-5.5');
+      const untouchedModel = updatedVendor.models.find((model) => model.name === 'gpt-4o');
       assert.equal(switchedModel?.apiStyle, 'openai-responses');
       assert.equal(switchedModel?.description, 'Keep me');
       assert.equal(switchedModel?.temperature, 0.2);
       assert.deepEqual(switchedModel?.capabilities, { tools: true, vision: false });
       assert.equal(untouchedModel?.apiStyle, 'openai-chat');
-    }
-  }
+    },
+  },
 ];
 
 async function runTestCase(configStoreCtor: ConfigStoreCtor, testCase: TestCase): Promise<void> {
@@ -790,7 +804,7 @@ async function runTestCase(configStoreCtor: ConfigStoreCtor, testCase: TestCase)
 
     testCase.verify({
       state: activeState,
-      changeCount: () => changeCount
+      changeCount: () => changeCount,
     });
     console.log(`PASS ${testCase.name}`);
   } finally {
@@ -800,13 +814,15 @@ async function runTestCase(configStoreCtor: ConfigStoreCtor, testCase: TestCase)
 }
 
 async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Promise<void> {
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'anthropic',
-    defaultVision: true,
-    models: [{ name: 'claude-3' }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'anthropic',
+      defaultVision: true,
+      models: [{ name: 'claude-3' }],
+    },
+  ]);
 
   let configStore = new configStoreCtor(createExtensionContext() as never);
   try {
@@ -821,17 +837,21 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'r1',
-      apiStyle: 'anthropic',
-      capabilities: { tools: false }
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        {
+          name: 'r1',
+          apiStyle: 'anthropic',
+          capabilities: { tools: false },
+        },
+      ],
+    },
+  ]);
 
   configStore = new configStoreCtor(createExtensionContext() as never);
   try {
@@ -845,16 +865,15 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [
-      { name: 'visible' },
-      { name: 'hidden', enabled: false }
-    ]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [{ name: 'visible' }, { name: 'hidden', enabled: false }],
+    },
+  ]);
 
   configStore = new configStoreCtor(createExtensionContext() as never);
   try {
@@ -866,13 +885,15 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-responses',
-    defaultVision: true,
-    models: []
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-responses',
+      defaultVision: true,
+      models: [],
+    },
+  ]);
 
   configStore = new configStoreCtor(createExtensionContext() as never);
   try {
@@ -887,20 +908,24 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    defaultTemperature: 0.2,
-    defaultTopP: 1,
-    models: [{
-      name: 'coder',
-      temperature: 0.35,
-      topP: 0.92,
-      capabilities: { tools: true, vision: false }
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      defaultTemperature: 0.2,
+      defaultTopP: 1,
+      models: [
+        {
+          name: 'coder',
+          temperature: 0.35,
+          topP: 0.92,
+          capabilities: { tools: true, vision: false },
+        },
+      ],
+    },
+  ]);
 
   configStore = new configStoreCtor(createExtensionContext() as never);
   try {
@@ -914,18 +939,22 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    defaultTemperature: null as unknown as number,
-    models: [{
-      name: 'coder',
-      temperature: 'inherit' as unknown as number,
-      capabilities: { tools: true, vision: false }
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      defaultTemperature: null as unknown as number,
+      models: [
+        {
+          name: 'coder',
+          temperature: 'inherit' as unknown as number,
+          capabilities: { tools: true, vision: false },
+        },
+      ],
+    },
+  ]);
 
   configStore = new configStoreCtor(createExtensionContext() as never);
   try {
@@ -937,23 +966,27 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'legacy-reasoner',
-      thinkingEffort: 'high',
-      capabilities: { tools: true, vision: false }
-    }] as unknown as VendorModelRecord[]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        {
+          name: 'legacy-reasoner',
+          thinkingEffort: 'high',
+          capabilities: { tools: true, vision: false },
+        },
+      ] as unknown as VendorModelRecord[],
+    },
+  ]);
 
   configStore = new configStoreCtor(createExtensionContext() as never);
   try {
     await configStore.updateVendorModels('Vendor', [
       { name: 'legacy-reasoner' } as VendorModelRecord,
-      { name: 'new-model' } as VendorModelRecord
+      { name: 'new-model' } as VendorModelRecord,
     ]);
     const updatedVendor = getUpdatedVendor(activeState);
     assert.equal('thinkingEffort' in (updatedVendor.models[0] as Record<string, unknown>), false);
@@ -962,16 +995,20 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'coder',
-      capabilities: { tools: true, vision: false }
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        {
+          name: 'coder',
+          capabilities: { tools: true, vision: false },
+        },
+      ],
+    },
+  ]);
 
   configStore = new configStoreCtor(createExtensionContext() as never);
   try {
@@ -983,14 +1020,16 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    usageUrl: ' https://example.test/usage ',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: []
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      usageUrl: ' https://example.test/usage ',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [],
+    },
+  ]);
 
   configStore = new configStoreCtor(createExtensionContext() as never);
   try {
@@ -1001,26 +1040,30 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    apiType: 'responses',
-    defaultVision: false,
-    models: [{
-      name: 'gpt-5.5',
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
       apiType: 'responses',
-      maxInputTokens: 400000,
-      maxOutputTokens: 128000,
-      toolCalling: true,
-      vision: true,
-      streaming: false,
-      thinking: true,
-      editTools: ['apply-patch'],
-      supportsReasoningEffort: ['high', 'xhigh'],
-      reasoningEffortFormat: 'responses',
-      zeroDataRetentionEnabled: false
-    }]
-  }]);
+      defaultVision: false,
+      models: [
+        {
+          name: 'gpt-5.5',
+          apiType: 'responses',
+          maxInputTokens: 400000,
+          maxOutputTokens: 128000,
+          toolCalling: true,
+          vision: true,
+          streaming: false,
+          thinking: true,
+          editTools: ['apply-patch'],
+          supportsReasoningEffort: ['high', 'xhigh'],
+          reasoningEffortFormat: 'responses',
+          zeroDataRetentionEnabled: false,
+        },
+      ],
+    },
+  ]);
 
   configStore = new configStoreCtor(createExtensionContext() as never);
   try {
@@ -1046,29 +1089,33 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-responses',
-    defaultVision: false,
-    models: [{
-      name: 'gpt-5.5',
-      apiType: 'responses',
-      editTools: ['apply-patch'],
-      supportsReasoningEffort: ['high', 'xhigh'],
-      streaming: false,
-      zeroDataRetentionEnabled: false
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-responses',
+      defaultVision: false,
+      models: [
+        {
+          name: 'gpt-5.5',
+          apiType: 'responses',
+          editTools: ['apply-patch'],
+          supportsReasoningEffort: ['high', 'xhigh'],
+          streaming: false,
+          zeroDataRetentionEnabled: false,
+        },
+      ],
+    },
+  ]);
 
   configStore = new configStoreCtor(createExtensionContext() as never);
   try {
     await configStore.updateVendorModels('Vendor', [
       { name: 'gpt-5.5' } as VendorModelRecord,
-      { name: 'new-model' } as VendorModelRecord
+      { name: 'new-model' } as VendorModelRecord,
     ]);
     const updatedVendor = getUpdatedVendor(activeState);
-    const preservedModel = updatedVendor.models.find(model => model.name === 'gpt-5.5');
+    const preservedModel = updatedVendor.models.find((model) => model.name === 'gpt-5.5');
     assert.equal(preservedModel?.apiType, 'responses');
     assert.deepEqual(preservedModel?.editTools, ['apply-patch']);
     assert.deepEqual(preservedModel?.supportsReasoningEffort, ['high', 'xhigh']);
@@ -1081,12 +1128,14 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
 }
 
 async function runConfigStoreVendorApiKeySecretStorageTests(configStoreCtor: ConfigStoreCtor): Promise<void> {
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    models: []
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      models: [],
+    },
+  ]);
 
   let secretContext = createExtensionContextWithSecrets();
   secretContext.secrets.set('coding-plans.vendor.apiKey.Vendor', 'secret-key');
@@ -1098,13 +1147,15 @@ async function runConfigStoreVendorApiKeySecretStorageTests(configStoreCtor: Con
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    apiKey: ' config-key ',
-    defaultApiStyle: 'openai-chat',
-    models: []
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      apiKey: ' config-key ',
+      defaultApiStyle: 'openai-chat',
+      models: [],
+    },
+  ]);
 
   secretContext = createExtensionContextWithSecrets();
   secretContext.secrets.set('coding-plans.vendor.apiKey.Vendor', 'secret-key');
@@ -1116,12 +1167,14 @@ async function runConfigStoreVendorApiKeySecretStorageTests(configStoreCtor: Con
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    models: []
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      models: [],
+    },
+  ]);
 
   secretContext = createExtensionContextWithSecrets();
   configStore = new configStoreCtor(secretContext.context as never);
@@ -1132,12 +1185,14 @@ async function runConfigStoreVendorApiKeySecretStorageTests(configStoreCtor: Con
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    models: []
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      models: [],
+    },
+  ]);
 
   secretContext = createExtensionContextWithSecrets();
   secretContext.secrets.set('coding-plans.vendor.apiKey.Vendor', 'secret-key');
@@ -1199,20 +1254,22 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
     resolveTokenWindowLimits(
       totalContextWindow: number | undefined,
       explicitMaxInputTokens: number | undefined,
-      explicitMaxOutputTokens: number | undefined
+      explicitMaxOutputTokens: number | undefined,
     ): {
       maxTokens: number;
       maxInputTokens: number;
       maxOutputTokens: number;
     };
-    buildToolDefinitions(options?: { tools?: Array<{ name: string; description?: string; inputSchema?: object }> }): Array<{
-      type: 'function';
-      function: {
-        name: string;
-        description?: string;
-        parameters?: object;
-      };
-    }> | undefined;
+    buildToolDefinitions(options?: { tools?: Array<{ name: string; description?: string; inputSchema?: object }> }):
+      | Array<{
+          type: 'function';
+          function: {
+            name: string;
+            description?: string;
+            parameters?: object;
+          };
+        }>
+      | undefined;
     toProviderMessages(messages: import('vscode').LanguageModelChatMessage[]): Array<{
       role: string;
       content: string;
@@ -1227,7 +1284,7 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
     assert.deepEqual(defaultWindow, {
       maxTokens: 400000,
       maxInputTokens: 370000,
-      maxOutputTokens: 30000
+      maxOutputTokens: 30000,
     });
     console.log('PASS runtime token window 未配置时默认使用 400k 上下文');
 
@@ -1235,7 +1292,7 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
     assert.deepEqual(capped, {
       maxTokens: 64000,
       maxInputTokens: 64000,
-      maxOutputTokens: 64000
+      maxOutputTokens: 64000,
     });
     console.log('PASS runtime token window 解析优先使用 contextSize');
 
@@ -1243,55 +1300,61 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
     assert.deepEqual(preserved, {
       maxTokens: 64000,
       maxInputTokens: 32000,
-      maxOutputTokens: 16000
+      maxOutputTokens: 16000,
     });
     console.log('PASS runtime token window 在上下限较小时保持原值');
     const sanitizedTools = provider.buildToolDefinitions({
-      tools: [{
-        name: 'search_codebase',
-        description: 'Searching codebase for "{1}"',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            query: {
-              type: 'string',
-              description: 'Use "{1}" as the semantic query.',
-              enumDescriptions: ['Search "{1}"']
-            }
+      tools: [
+        {
+          name: 'search_codebase',
+          description: 'Searching codebase for "{1}"',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              query: {
+                type: 'string',
+                description: 'Use "{1}" as the semantic query.',
+                enumDescriptions: ['Search "{1}"'],
+              },
+            },
+            enumDescriptions: ['Root "{1}"'],
+            markdownDescription: 'Pick "{1}"',
           },
-          enumDescriptions: ['Root "{1}"'],
-          markdownDescription: 'Pick "{1}"'
-        }
-      }]
+        },
+      ],
     });
-    assert.deepEqual(sanitizedTools, [{
-      type: 'function',
-      function: {
-        name: 'search_codebase',
-        description: 'Searching codebase for "value"',
-        parameters: {
-          type: 'object',
-          properties: {
-            query: {
-              type: 'string',
-              description: 'Use "value" as the semantic query.'
-            }
-          }
-        }
-      }
-    }]);
+    assert.deepEqual(sanitizedTools, [
+      {
+        type: 'function',
+        function: {
+          name: 'search_codebase',
+          description: 'Searching codebase for "value"',
+          parameters: {
+            type: 'object',
+            properties: {
+              query: {
+                type: 'string',
+                description: 'Use "value" as the semantic query.',
+              },
+            },
+          },
+        },
+      },
+    ]);
     console.log('PASS 工具定义转发前会清洗未替换占位符并移除 VS Code 扩展 schema 字段');
 
     const providerMessages = provider.toProviderMessages([
       vscode.LanguageModelChatMessage.User([
         new vscode.LanguageModelTextPart('你好'),
-        new vscode.LanguageModelDataPart(new TextEncoder().encode('{"ttl":300}'), 'cache_control')
-      ])
+        new vscode.LanguageModelDataPart(new TextEncoder().encode('{"ttl":300}'), 'cache_control'),
+      ]),
     ] as unknown as import('vscode').LanguageModelChatMessage[]);
-    assert.deepEqual(providerMessages, [{
-      role: 'user',
-      content: '你好'
-    }]);
+    assert.deepEqual(providerMessages, [
+      {
+        role: 'user',
+        content: '你好',
+      },
+    ]);
     console.log('PASS 非文本 data part 不会被串成占位文本转发给上游模型');
   } finally {
     provider.dispose();
@@ -1300,19 +1363,23 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
 
 async function runGenericProviderContextSizeTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'context-budget',
-      contextSize: 64000
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        {
+          name: 'context-budget',
+          contextSize: 64000,
+        },
+      ],
+    },
+  ]);
 
   const configStore = new configStoreCtor(createExtensionContext() as never);
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
@@ -1337,16 +1404,20 @@ async function runGenericProviderContextSizeTests(
     configStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'context-output-budget',
-      contextSize: 131072
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        {
+          name: 'context-output-budget',
+          contextSize: 131072,
+        },
+      ],
+    },
+  ]);
 
   const cappedConfigStore = new configStoreCtor(createExtensionContext() as never);
   const cappedProvider = new GenericAIProvider(createExtensionContext() as never, cappedConfigStore) as unknown as {
@@ -1381,21 +1452,28 @@ async function runGenericProviderContextSizeTests(
 
   const implicitReserveScenarios = [32000, 64000, 128000, 200000];
   for (const contextSize of implicitReserveScenarios) {
-    activeState = createState([{
-      name: 'Vendor',
-      baseUrl: 'https://example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      models: [{
-        name: `zero-unset-runtime-${contextSize}`,
-        contextSize,
-        maxInputTokens: 0,
-        maxOutputTokens: 0
-      }]
-    }]);
+    activeState = createState([
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [
+          {
+            name: `zero-unset-runtime-${contextSize}`,
+            contextSize,
+            maxInputTokens: 0,
+            maxOutputTokens: 0,
+          },
+        ],
+      },
+    ]);
 
     const zeroUnsetConfigStore = new configStoreCtor(createExtensionContext() as never);
-    const zeroUnsetProvider = new GenericAIProvider(createExtensionContext() as never, zeroUnsetConfigStore) as unknown as {
+    const zeroUnsetProvider = new GenericAIProvider(
+      createExtensionContext() as never,
+      zeroUnsetConfigStore,
+    ) as unknown as {
       buildConfiguredModelsForVendor(vendor: VendorRecord): Array<{
         maxTokens: number;
         maxInputTokens: number;
@@ -1418,27 +1496,31 @@ async function runGenericProviderContextSizeTests(
     }
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'copilot-runtime',
-      apiType: 'responses',
-      contextSize: 640000,
-      maxInputTokens: 400000,
-      maxOutputTokens: 128000,
-      toolCalling: true,
-      vision: true,
-      streaming: false,
-      thinking: true,
-      editTools: ['apply-patch'],
-      supportsReasoningEffort: ['high', 'xhigh'],
-      reasoningEffortFormat: 'responses',
-      zeroDataRetentionEnabled: false
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        {
+          name: 'copilot-runtime',
+          apiType: 'responses',
+          contextSize: 640000,
+          maxInputTokens: 400000,
+          maxOutputTokens: 128000,
+          toolCalling: true,
+          vision: true,
+          streaming: false,
+          thinking: true,
+          editTools: ['apply-patch'],
+          supportsReasoningEffort: ['high', 'xhigh'],
+          reasoningEffortFormat: 'responses',
+          zeroDataRetentionEnabled: false,
+        },
+      ],
+    },
+  ]);
 
   const copilotConfigStore = new configStoreCtor(createExtensionContext() as never);
   const copilotProvider = new GenericAIProvider(createExtensionContext() as never, copilotConfigStore) as unknown as {
@@ -1480,18 +1562,25 @@ async function runGenericProviderContextSizeTests(
     copilotConfigStore.dispose();
   }
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'default-edit-tool'
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        {
+          name: 'default-edit-tool',
+        },
+      ],
+    },
+  ]);
 
   const defaultEditToolConfigStore = new configStoreCtor(createExtensionContext() as never);
-  const defaultEditToolProvider = new GenericAIProvider(createExtensionContext() as never, defaultEditToolConfigStore) as unknown as {
+  const defaultEditToolProvider = new GenericAIProvider(
+    createExtensionContext() as never,
+    defaultEditToolConfigStore,
+  ) as unknown as {
     refreshModels(): Promise<void>;
     getAvailableModels(): Array<{
       editTools: readonly string[];
@@ -1511,19 +1600,21 @@ async function runGenericProviderContextSizeTests(
 
 async function runGenericProviderModelEnabledTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [
-      { name: 'visible-model', enabled: true },
-      { name: 'hidden-model', enabled: false }
-    ]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        { name: 'visible-model', enabled: true },
+        { name: 'hidden-model', enabled: false },
+      ],
+    },
+  ]);
 
   const configStore = new configStoreCtor(createExtensionContext() as never);
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
@@ -1531,9 +1622,9 @@ async function runGenericProviderModelEnabledTests(
   try {
     await provider.refreshModels();
     assert.deepEqual(
-      provider.getAvailableModels().map(model => model.id),
+      provider.getAvailableModels().map((model) => model.id),
       ['Vendor/visible-model'],
-      'enabled=false 的模型不应进入最终 Language Model 暴露列表'
+      'enabled=false 的模型不应进入最终 Language Model 暴露列表',
     );
     console.log('PASS GenericAIProvider 会按模型 enabled 字段隐藏模型');
   } finally {
@@ -1544,19 +1635,21 @@ async function runGenericProviderModelEnabledTests(
 
 async function runGenericProviderDiscoveryDefaultVisionTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
   const originalFetch = globalThis.fetch;
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    useModelsEndpoint: true,
-    models: []
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      useModelsEndpoint: true,
+      models: [],
+    },
+  ]);
 
   const configStore = new configStoreCtor(createExtensionContext() as never);
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
@@ -1572,32 +1665,37 @@ async function runGenericProviderDiscoveryDefaultVisionTests(
   };
 
   globalThis.fetch = (async (_url: string | URL | Request): Promise<Response> => {
-    return new Response(JSON.stringify({
-      data: [{
-        id: 'fresh-vision-model',
-        context_length: 64000,
-        capabilities: {
-          tool_calling: true,
-          image_input: true
-        }
-      }]
-    }), {
-      status: 200,
-      headers: {
-        'content-type': 'application/json'
-      }
-    });
+    return new Response(
+      JSON.stringify({
+        data: [
+          {
+            id: 'fresh-vision-model',
+            context_length: 64000,
+            capabilities: {
+              tool_calling: true,
+              image_input: true,
+            },
+          },
+        ],
+      }),
+      {
+        status: 200,
+        headers: {
+          'content-type': 'application/json',
+        },
+      },
+    );
   }) as typeof globalThis.fetch;
 
   try {
-    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-      vendorName === 'Vendor' ? 'configured' : ''
-    );
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+      vendorName: string,
+    ) => (vendorName === 'Vendor' ? 'configured' : '');
 
     await provider.refreshModels();
 
     const updatedVendor = getUpdatedVendor(activeState);
-    const refreshedModel = updatedVendor.models.find(model => model.name === 'fresh-vision-model');
+    const refreshedModel = updatedVendor.models.find((model) => model.name === 'fresh-vision-model');
     assert.deepEqual(refreshedModel?.capabilities, { tools: true, vision: false });
     assert.equal(provider.models[0]?.capabilities?.imageInput, false);
     console.log('PASS /models 刷新新增模型时 defaultVision=false 会覆盖发现到的 vision=true');
@@ -1610,16 +1708,18 @@ async function runGenericProviderDiscoveryDefaultVisionTests(
 
 async function runGenericProviderModelChangeEventStabilityTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{ name: 'stable-model' }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [{ name: 'stable-model' }],
+    },
+  ]);
 
   const configStore = new configStoreCtor(createExtensionContext() as never);
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
@@ -1633,13 +1733,15 @@ async function runGenericProviderModelChangeEventStabilityTests(
     await provider.refreshModels();
     assert.equal(eventCount, 1, '相同模型信息重复刷新不应重复通知 VS Code');
 
-    activeState.vendors = [{
-      name: 'Vendor',
-      baseUrl: 'https://example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      models: [{ name: 'stable-model' }, { name: 'new-model' }]
-    }];
+    activeState.vendors = [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [{ name: 'stable-model' }, { name: 'new-model' }],
+      },
+    ];
     await provider.refreshModels();
     assert.equal(eventCount, 2, '模型信息变化时仍应通知 VS Code');
     console.log('PASS GenericAIProvider 仅在模型信息实际变化时发送模型变更事件');
@@ -1652,7 +1754,7 @@ async function runGenericProviderModelChangeEventStabilityTests(
 
 async function runGenericProviderEmptyResponseTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
   const vscodeMock = require('vscode') as {
@@ -1660,18 +1762,22 @@ async function runGenericProviderEmptyResponseTests(
       shownWarningMessages: Array<{ message: string; items: unknown[] }>;
     };
   };
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'empty-response-guard',
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        {
+          name: 'empty-response-guard',
+          contextSize: 64000,
+          maxInputTokens: 32000,
+          maxOutputTokens: 16000,
+        },
+      ],
+    },
+  ]);
 
   const configStore = new configStoreCtor(createExtensionContext() as never);
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
@@ -1687,7 +1793,7 @@ async function runGenericProviderEmptyResponseTests(
       vendor: VendorRecord,
       modelName: string,
       content: string,
-      toolCalls: unknown[] | undefined
+      toolCalls: unknown[] | undefined,
     ): void;
     dispose(): void;
   };
@@ -1697,44 +1803,47 @@ async function runGenericProviderEmptyResponseTests(
   try {
     vscodeMock.testState.shownWarningMessages.length = 0;
     assert.throws(
-      () => provider.ensureNonEmptyCompletion(
-        'openai-chat',
-        {
-          traceId: 'trace_empty',
-          vendorName: 'Vendor',
-          modelId: 'Vendor/empty-response-guard',
-          modelName: 'empty-response-guard',
-          protocol: 'openai-chat'
-        },
-        vendor,
-        'empty-response-guard',
-        '   ',
-        []
-      ),
-      /requestFailed|empty response|空响应/i
+      () =>
+        provider.ensureNonEmptyCompletion(
+          'openai-chat',
+          {
+            traceId: 'trace_empty',
+            vendorName: 'Vendor',
+            modelId: 'Vendor/empty-response-guard',
+            modelName: 'empty-response-guard',
+            protocol: 'openai-chat',
+          },
+          vendor,
+          'empty-response-guard',
+          '   ',
+          [],
+        ),
+      /requestFailed|empty response|空响应/i,
     );
     await Promise.resolve();
     assert.equal(vscodeMock.testState.shownWarningMessages.length, 1);
-    assert.match(vscodeMock.testState.shownWarningMessages[0]?.message ?? '', /switchToResponsesApiPrompt|Responses API/i);
+    assert.match(
+      vscodeMock.testState.shownWarningMessages[0]?.message ?? '',
+      /switchToResponsesApiPrompt|Responses API/i,
+    );
     console.log('PASS GenericAIProvider 会把空 completion 视为上游错误');
 
-    assert.doesNotThrow(() => provider.ensureNonEmptyCompletion(
-      'openai-chat',
-      { traceId: 'trace_text' },
-      vendor,
-      'empty-response-guard',
-      'fix: keep content',
-      []
-    ));
+    assert.doesNotThrow(() =>
+      provider.ensureNonEmptyCompletion(
+        'openai-chat',
+        { traceId: 'trace_text' },
+        vendor,
+        'empty-response-guard',
+        'fix: keep content',
+        [],
+      ),
+    );
 
-    assert.doesNotThrow(() => provider.ensureNonEmptyCompletion(
-      'openai-chat',
-      { traceId: 'trace_tool' },
-      vendor,
-      'empty-response-guard',
-      '',
-      [{}]
-    ));
+    assert.doesNotThrow(() =>
+      provider.ensureNonEmptyCompletion('openai-chat', { traceId: 'trace_tool' }, vendor, 'empty-response-guard', '', [
+        {},
+      ]),
+    );
     console.log('PASS GenericAIProvider 在存在文本或工具调用时保留 completion');
   } finally {
     provider.dispose();
@@ -1745,7 +1854,7 @@ async function runGenericProviderEmptyResponseTests(
 async function runGenericProviderOutputLimitToggleTests(
   configStoreCtor: ConfigStoreCtor,
   genericProviderModule: GenericProviderModule,
-  tokenUsageModule: TokenUsageModule
+  tokenUsageModule: TokenUsageModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
   const { readAttachedTokenUsage } = tokenUsageModule;
@@ -1753,69 +1862,74 @@ async function runGenericProviderOutputLimitToggleTests(
 
   async function capturePayload(
     vendors: VendorRecord[],
-    modelId: string
+    modelId: string,
   ): Promise<{ payload: Record<string, unknown>; response: unknown }> {
     activeState = createState(vendors);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
-      sendRequest(
-        request: {
-          modelId: string;
-          messages: Array<{ role: string; content: Array<{ value: string }> }>;
-          capabilities: { toolCalling: boolean; imageInput: boolean };
-          options?: { tools?: unknown[] };
-        }
-      ): Promise<unknown>;
+      sendRequest(request: {
+        modelId: string;
+        messages: Array<{ role: string; content: Array<{ value: string }> }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options?: { tools?: unknown[] };
+      }): Promise<unknown>;
       dispose(): void;
     };
 
     let payload: Record<string, unknown> | undefined;
     globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
       payload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
-      return new Response(JSON.stringify({
-        id: 'chatcmpl_test',
-        created: 0,
-        model: 'coder',
-        choices: [{
-          index: 0,
-          message: {
-            role: 'assistant',
-            content: 'ok'
+      return new Response(
+        JSON.stringify({
+          id: 'chatcmpl_test',
+          created: 0,
+          model: 'coder',
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: 'assistant',
+                content: 'ok',
+              },
+              finish_reason: 'stop',
+            },
+          ],
+          usage: {
+            prompt_tokens: 1,
+            completion_tokens: 1,
+            total_tokens: 2,
           },
-          finish_reason: 'stop'
-        }],
-        usage: {
-          prompt_tokens: 1,
-          completion_tokens: 1,
-          total_tokens: 2
-        }
-      }), {
-        status: 200,
-        headers: {
-          'content-type': 'application/json'
-        }
-      });
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
     }) as typeof globalThis.fetch;
 
     try {
-      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-        vendorName === 'Vendor' ? 'configured' : ''
-      );
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+        vendorName: string,
+      ) => (vendorName === 'Vendor' ? 'configured' : '');
       await provider.refreshModels();
       const response = await provider.sendRequest({
         modelId,
-        messages: [{
-          role: 'user',
-          content: [{ value: 'reply with ok' }]
-        }],
+        messages: [
+          {
+            role: 'user',
+            content: [{ value: 'reply with ok' }],
+          },
+        ],
         capabilities: { toolCalling: false, imageInput: false },
-        options: { tools: [] }
+        options: { tools: [] },
       });
       assert.ok(payload);
       return {
         payload,
-        response
+        response,
       };
     } finally {
       globalThis.fetch = originalFetch;
@@ -1827,63 +1941,70 @@ async function runGenericProviderOutputLimitToggleTests(
   async function captureOpenAIResponsesPayload(
     vendors: VendorRecord[],
     modelId: string,
-    messages: Array<{ role: string | number; content: Array<{ value: string }> }> = [{
-      role: 'user',
-      content: [{ value: 'reply with ok' }]
-    }],
-    options: { modelOptions?: Record<string, unknown> } = {}
+    messages: Array<{ role: string | number; content: Array<{ value: string }> }> = [
+      {
+        role: 'user',
+        content: [{ value: 'reply with ok' }],
+      },
+    ],
+    options: { modelOptions?: Record<string, unknown> } = {},
   ): Promise<Record<string, unknown>> {
     activeState = createState(vendors);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
-      sendRequest(
-        request: {
-          modelId: string;
-          messages: Array<{ role: string | number; content: Array<{ value: string }> }>;
-          capabilities: { toolCalling: boolean; imageInput: boolean };
-          options?: { tools?: unknown[]; modelOptions?: Record<string, unknown> };
-        }
-      ): Promise<unknown>;
+      sendRequest(request: {
+        modelId: string;
+        messages: Array<{ role: string | number; content: Array<{ value: string }> }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options?: { tools?: unknown[]; modelOptions?: Record<string, unknown> };
+      }): Promise<unknown>;
       dispose(): void;
     };
 
     let payload: Record<string, unknown> | undefined;
     globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
       payload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
-      return new Response(JSON.stringify({
-        id: 'resp_test',
-        output: [{
-          type: 'message',
-          role: 'assistant',
-          content: [{
-            type: 'output_text',
-            text: 'ok'
-          }]
-        }],
-        usage: {
-          input_tokens: 1,
-          output_tokens: 1,
-          total_tokens: 2
-        }
-      }), {
-        status: 200,
-        headers: {
-          'content-type': 'application/json'
-        }
-      });
+      return new Response(
+        JSON.stringify({
+          id: 'resp_test',
+          output: [
+            {
+              type: 'message',
+              role: 'assistant',
+              content: [
+                {
+                  type: 'output_text',
+                  text: 'ok',
+                },
+              ],
+            },
+          ],
+          usage: {
+            input_tokens: 1,
+            output_tokens: 1,
+            total_tokens: 2,
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
     }) as typeof globalThis.fetch;
 
     try {
-      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-        vendorName === 'Vendor' ? 'configured' : ''
-      );
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+        vendorName: string,
+      ) => (vendorName === 'Vendor' ? 'configured' : '');
       await provider.refreshModels();
       await provider.sendRequest({
         modelId,
         messages,
         capabilities: { toolCalling: false, imageInput: false },
-        options: { tools: [], ...options }
+        options: { tools: [], ...options },
       });
       assert.ok(payload);
       return payload;
@@ -1896,20 +2017,18 @@ async function runGenericProviderOutputLimitToggleTests(
 
   async function capturePayloadWithRequiredMaxTokensRetry(
     vendors: VendorRecord[],
-    modelId: string
+    modelId: string,
   ): Promise<{ payloads: Record<string, unknown>[]; response: unknown }> {
     activeState = createState(vendors);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
-      sendRequest(
-        request: {
-          modelId: string;
-          messages: Array<{ role: string; content: Array<{ value: string }> }>;
-          capabilities: { toolCalling: boolean; imageInput: boolean };
-          options?: { tools?: unknown[] };
-        }
-      ): Promise<unknown>;
+      sendRequest(request: {
+        modelId: string;
+        messages: Array<{ role: string; content: Array<{ value: string }> }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options?: { tools?: unknown[] };
+      }): Promise<unknown>;
       dispose(): void;
     };
 
@@ -1921,61 +2040,71 @@ async function runGenericProviderOutputLimitToggleTests(
       callCount += 1;
 
       if (callCount === 1) {
-        return new Response(JSON.stringify({
-          error: {
-            type: 'invalid_request_error',
-            message: 'missing field max_tokens at line 1 column 42'
-          }
-        }), {
-          status: 400,
-          headers: {
-            'content-type': 'application/json'
-          }
-        });
+        return new Response(
+          JSON.stringify({
+            error: {
+              type: 'invalid_request_error',
+              message: 'missing field max_tokens at line 1 column 42',
+            },
+          }),
+          {
+            status: 400,
+            headers: {
+              'content-type': 'application/json',
+            },
+          },
+        );
       }
 
-      return new Response(JSON.stringify({
-        id: 'chatcmpl_test',
-        created: 0,
-        model: 'coder',
-        choices: [{
-          index: 0,
-          message: {
-            role: 'assistant',
-            content: 'ok'
+      return new Response(
+        JSON.stringify({
+          id: 'chatcmpl_test',
+          created: 0,
+          model: 'coder',
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: 'assistant',
+                content: 'ok',
+              },
+              finish_reason: 'stop',
+            },
+          ],
+          usage: {
+            prompt_tokens: 1,
+            completion_tokens: 1,
+            total_tokens: 2,
           },
-          finish_reason: 'stop'
-        }],
-        usage: {
-          prompt_tokens: 1,
-          completion_tokens: 1,
-          total_tokens: 2
-        }
-      }), {
-        status: 200,
-        headers: {
-          'content-type': 'application/json'
-        }
-      });
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
     }) as typeof globalThis.fetch;
 
     try {
-      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-        vendorName === 'Vendor' ? 'configured' : ''
-      );
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+        vendorName: string,
+      ) => (vendorName === 'Vendor' ? 'configured' : '');
       await provider.refreshModels();
       const response = await provider.sendRequest({
         modelId,
-        messages: [{
-          role: 'user',
-          content: [{ value: 'reply with ok' }]
-        }],
+        messages: [
+          {
+            role: 'user',
+            content: [{ value: 'reply with ok' }],
+          },
+        ],
         capabilities: { toolCalling: false, imageInput: false },
-        options: { tools: [] }
+        options: { tools: [] },
       });
       return {
         payloads,
-        response
+        response,
       };
     } finally {
       globalThis.fetch = originalFetch;
@@ -1984,204 +2113,282 @@ async function runGenericProviderOutputLimitToggleTests(
     }
   }
 
-  const zeroOutputDisabledResult = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      capabilities: { tools: true, vision: false }
-    }]
-  }], 'Vendor/coder');
+  const zeroOutputDisabledResult = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [
+          {
+            name: 'coder',
+            contextSize: 64000,
+            capabilities: { tools: true, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/coder',
+  );
   assert.equal('max_tokens' in zeroOutputDisabledResult.payload, false);
   assert.equal('top_p' in zeroOutputDisabledResult.payload, false);
   assert.equal(readAttachedTokenUsage(zeroOutputDisabledResult.response)?.outputBuffer, undefined);
   console.log('PASS openai-chat 在 maxOutputTokens/topP 为 0 时不会下发 max_tokens/top_p');
 
-  const requiredMaxTokensRetryResult = await capturePayloadWithRequiredMaxTokensRetry([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      capabilities: { tools: true, vision: false }
-    }]
-  }], 'Vendor/coder');
+  const requiredMaxTokensRetryResult = await capturePayloadWithRequiredMaxTokensRetry(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [
+          {
+            name: 'coder',
+            contextSize: 64000,
+            capabilities: { tools: true, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/coder',
+  );
   assert.equal(requiredMaxTokensRetryResult.payloads.length, 2);
   assert.equal('max_tokens' in requiredMaxTokensRetryResult.payloads[0], false);
   assert.equal(requiredMaxTokensRetryResult.payloads[1]?.max_tokens, resolveImplicitReservedOutputForTest(64000));
   assert.equal(requiredMaxTokensRetryResult.payloads[1]?.stream, false);
   assert.equal(
     readAttachedTokenUsage(requiredMaxTokensRetryResult.response)?.outputBuffer,
-    resolveImplicitReservedOutputForTest(64000)
+    resolveImplicitReservedOutputForTest(64000),
   );
   console.log('PASS 上游要求 max_tokens 时会自动重试并补发 max_tokens');
 
-  const implicitReserveRetryResult = await capturePayloadWithRequiredMaxTokensRetry([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'dynamic-coder',
-      contextSize: 64000,
-      capabilities: { tools: true, vision: false }
-    }]
-  }], 'Vendor/dynamic-coder');
+  const implicitReserveRetryResult = await capturePayloadWithRequiredMaxTokensRetry(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [
+          {
+            name: 'dynamic-coder',
+            contextSize: 64000,
+            capabilities: { tools: true, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/dynamic-coder',
+  );
   assert.equal(implicitReserveRetryResult.payloads.length, 2);
   assert.equal('max_tokens' in implicitReserveRetryResult.payloads[0], false);
   assert.equal(implicitReserveRetryResult.payloads[1]?.max_tokens, resolveImplicitReservedOutputForTest(64000));
   assert.equal(implicitReserveRetryResult.payloads[1]?.stream, false);
   assert.equal(
     readAttachedTokenUsage(implicitReserveRetryResult.response)?.outputBuffer,
-    resolveImplicitReservedOutputForTest(64000)
+    resolveImplicitReservedOutputForTest(64000),
   );
   console.log('PASS 动态默认输出预留会影响补发的 max_tokens 与 outputBuffer');
 
-  const positiveOutputResult = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      capabilities: { tools: true, vision: false }
-    }]
-  }], 'Vendor/coder');
+  const positiveOutputResult = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [
+          {
+            name: 'coder',
+            contextSize: 64000,
+            capabilities: { tools: true, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/coder',
+  );
   assert.equal('max_tokens' in positiveOutputResult.payload, false);
   assert.equal('top_p' in positiveOutputResult.payload, false);
   assert.equal('temperature' in positiveOutputResult.payload, false);
   assert.equal(readAttachedTokenUsage(positiveOutputResult.response)?.outputBuffer, undefined);
   console.log('PASS openai-chat 在未配置 temperature/topP 时默认不发送 temperature/top_p');
 
-  const positiveTopPResult = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    defaultTopP: 0.95,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      capabilities: { tools: true, vision: false }
-    }]
-  }], 'Vendor/coder');
+  const positiveTopPResult = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        defaultTopP: 0.95,
+        models: [
+          {
+            name: 'coder',
+            contextSize: 64000,
+            capabilities: { tools: true, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/coder',
+  );
   assert.equal(positiveTopPResult.payload.top_p, 0.95);
   console.log('PASS openai-chat 在 topP 为正数时会发送 top_p');
 
-  const modelZeroTopPResult = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    defaultTopP: 0.95,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      topP: 0,
-      capabilities: { tools: true, vision: false }
-    }]
-  }], 'Vendor/coder');
+  const modelZeroTopPResult = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        defaultTopP: 0.95,
+        models: [
+          {
+            name: 'coder',
+            contextSize: 64000,
+            topP: 0,
+            capabilities: { tools: true, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/coder',
+  );
   assert.equal('top_p' in modelZeroTopPResult.payload, false);
   console.log('PASS openai-chat 模型显式 topP=0 时会覆盖供应商默认值并省略 top_p');
 
-  const responsesDefaultTopPResult = await captureOpenAIResponsesPayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-responses',
-    defaultVision: false,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/coder');
+  const responsesDefaultTopPResult = await captureOpenAIResponsesPayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-responses',
+        defaultVision: false,
+        models: [
+          {
+            name: 'coder',
+            contextSize: 64000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/coder',
+  );
   assert.equal('temperature' in responsesDefaultTopPResult, false);
-  assert.equal(responsesDefaultTopPResult.instructions, 'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.');
+  assert.equal(
+    responsesDefaultTopPResult.instructions,
+    'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.',
+  );
   assert.equal('top_p' in responsesDefaultTopPResult, false);
   console.log('PASS openai-responses 默认不发送 temperature，且在未配置 topP 时不发送 top_p');
 
-  const responsesPositiveTopPResult = await captureOpenAIResponsesPayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-responses',
-    defaultVision: false,
-    defaultTopP: 0.85,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/coder');
+  const responsesPositiveTopPResult = await captureOpenAIResponsesPayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-responses',
+        defaultVision: false,
+        defaultTopP: 0.85,
+        models: [
+          {
+            name: 'coder',
+            contextSize: 64000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/coder',
+  );
   assert.equal('temperature' in responsesPositiveTopPResult, false);
   assert.equal(responsesPositiveTopPResult.top_p, 0.85);
   console.log('PASS openai-responses 在 topP 为正数时会发送 top_p');
 
-  const responsesSystemPromptResult = await captureOpenAIResponsesPayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-responses',
-    defaultVision: false,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/coder', [
-    {
-      role: 3,
-      content: [{ value: 'system policy' }]
-    },
-    {
-      role: 'user',
-      content: [{ value: 'reply with ok' }]
-    }
-  ]);
+  const responsesSystemPromptResult = await captureOpenAIResponsesPayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-responses',
+        defaultVision: false,
+        models: [
+          {
+            name: 'coder',
+            contextSize: 64000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/coder',
+    [
+      {
+        role: 3,
+        content: [{ value: 'system policy' }],
+      },
+      {
+        role: 'user',
+        content: [{ value: 'reply with ok' }],
+      },
+    ],
+  );
   assert.equal(
     responsesSystemPromptResult.instructions,
-    'system policy\n\nPersonality: pragmatic. Be concise, direct, practical, and focused on actionable results.'
+    'system policy\n\nPersonality: pragmatic. Be concise, direct, practical, and focused on actionable results.',
   );
   assert.deepEqual(
-    (responsesSystemPromptResult.input as Array<{ role?: string }>).map(item => item.role),
-    ['user']
+    (responsesSystemPromptResult.input as Array<{ role?: string }>).map((item) => item.role),
+    ['user'],
   );
   console.log('PASS openai-responses 会把 system 消息发送到 instructions 字段');
 
-  const responsesFriendlyPersonalityResult = await captureOpenAIResponsesPayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-responses',
-    defaultVision: false,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/coder', [{
-    role: 'user',
-    content: [{ value: 'reply with ok' }]
-  }], {
-    modelOptions: {
-      temperature: 1,
-      personality: 'friendly'
-    }
-  });
+  const responsesFriendlyPersonalityResult = await captureOpenAIResponsesPayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-responses',
+        defaultVision: false,
+        models: [
+          {
+            name: 'coder',
+            contextSize: 64000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/coder',
+    [
+      {
+        role: 'user',
+        content: [{ value: 'reply with ok' }],
+      },
+    ],
+    {
+      modelOptions: {
+        temperature: 1,
+        personality: 'friendly',
+      },
+    },
+  );
   assert.equal('temperature' in responsesFriendlyPersonalityResult, false);
   assert.equal(
     responsesFriendlyPersonalityResult.instructions,
-    'Personality: friendly. Be warm, clear, collaborative, and focused on useful next steps.'
+    'Personality: friendly. Be warm, clear, collaborative, and focused on useful next steps.',
   );
   console.log('PASS openai-responses 使用 Personality 写入 instructions，忽略 temperature 参数');
 }
 
 async function runGenericProviderMultimodalPayloadTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const vscode = require('vscode') as {
     LanguageModelTextPart: new (value: string) => { value: string };
@@ -2190,85 +2397,96 @@ async function runGenericProviderMultimodalPayloadTests(
   const { GenericAIProvider } = genericProviderModule;
   const originalFetch = globalThis.fetch;
 
-  async function capturePayload(apiStyle: 'openai-chat' | 'openai-responses' | 'anthropic'): Promise<Record<string, unknown>> {
-    activeState = createState([{
-      name: 'Vendor',
-      baseUrl: 'https://example.test/v1',
-      defaultApiStyle: apiStyle,
-      defaultVision: true,
-      models: [{
-        name: 'vision-coder',
-        apiStyle,
-        contextSize: 64000,
-        capabilities: { tools: false, vision: true }
-      }]
-    }]);
+  async function capturePayload(
+    apiStyle: 'openai-chat' | 'openai-responses' | 'anthropic',
+  ): Promise<Record<string, unknown>> {
+    activeState = createState([
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: apiStyle,
+        defaultVision: true,
+        models: [
+          {
+            name: 'vision-coder',
+            apiStyle,
+            contextSize: 64000,
+            capabilities: { tools: false, vision: true },
+          },
+        ],
+      },
+    ]);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
-      sendRequest(
-        request: {
-          modelId: string;
-          messages: Array<{ role: number; content: unknown[] }>;
-          capabilities: { toolCalling: boolean; imageInput: boolean };
-          options?: { tools?: unknown[] };
-        }
-      ): Promise<unknown>;
+      sendRequest(request: {
+        modelId: string;
+        messages: Array<{ role: number; content: unknown[] }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options?: { tools?: unknown[] };
+      }): Promise<unknown>;
       dispose(): void;
     };
 
     let payload: Record<string, unknown> | undefined;
     globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
       payload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
-      const body = apiStyle === 'openai-responses'
-        ? {
-          id: 'resp_test',
-          output: [{
-            type: 'message',
-            role: 'assistant',
-            content: [{ type: 'output_text', text: 'ok' }]
-          }]
-        }
-        : apiStyle === 'anthropic'
+      const body =
+        apiStyle === 'openai-responses'
           ? {
-            id: 'msg_test',
-            role: 'assistant',
-            content: [{ type: 'text', text: 'ok' }]
-          }
-          : {
-            id: 'chatcmpl_test',
-            created: 0,
-            model: 'vision-coder',
-            choices: [{
-              index: 0,
-              message: { role: 'assistant', content: 'ok' },
-              finish_reason: 'stop'
-            }]
-          };
+              id: 'resp_test',
+              output: [
+                {
+                  type: 'message',
+                  role: 'assistant',
+                  content: [{ type: 'output_text', text: 'ok' }],
+                },
+              ],
+            }
+          : apiStyle === 'anthropic'
+            ? {
+                id: 'msg_test',
+                role: 'assistant',
+                content: [{ type: 'text', text: 'ok' }],
+              }
+            : {
+                id: 'chatcmpl_test',
+                created: 0,
+                model: 'vision-coder',
+                choices: [
+                  {
+                    index: 0,
+                    message: { role: 'assistant', content: 'ok' },
+                    finish_reason: 'stop',
+                  },
+                ],
+              };
       return new Response(JSON.stringify(body), {
         status: 200,
         headers: {
-          'content-type': 'application/json'
-        }
+          'content-type': 'application/json',
+        },
       });
     }) as typeof globalThis.fetch;
 
     try {
-      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-        vendorName === 'Vendor' ? 'configured' : ''
-      );
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+        vendorName: string,
+      ) => (vendorName === 'Vendor' ? 'configured' : '');
       await provider.refreshModels();
       await provider.sendRequest({
         modelId: 'Vendor/vision-coder',
-        messages: [{
-          role: 1,
-          content: [
-            new vscode.LanguageModelTextPart('describe this image'),
-            new vscode.LanguageModelDataPart(new Uint8Array([1, 2, 3]), 'image/png')
-          ]
-        }],
+        messages: [
+          {
+            role: 1,
+            content: [
+              new vscode.LanguageModelTextPart('describe this image'),
+              new vscode.LanguageModelDataPart(new Uint8Array([1, 2, 3]), 'image/png'),
+            ],
+          },
+        ],
         capabilities: { toolCalling: false, imageInput: true },
-        options: { tools: [] }
+        options: { tools: [] },
       });
       assert.ok(payload);
       return payload;
@@ -2301,15 +2519,15 @@ async function runGenericProviderMultimodalPayloadTests(
     source: {
       type: 'base64',
       media_type: 'image/png',
-      data: 'AQID'
-    }
+      data: 'AQID',
+    },
   });
   console.log('PASS anthropic 会把 LanguageModelDataPart 图片转成 base64 image block');
 }
 
 async function runGenericProviderThinkingEffortTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
   const originalFetch = globalThis.fetch;
@@ -2317,20 +2535,18 @@ async function runGenericProviderThinkingEffortTests(
   async function capturePayload(
     vendors: VendorRecord[],
     modelId: string,
-    options?: { modelOptions?: Record<string, unknown> }
+    options?: { modelOptions?: Record<string, unknown> },
   ): Promise<Record<string, unknown>> {
     activeState = createState(vendors);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
-      sendRequest(
-        request: {
-          modelId: string;
-          messages: Array<{ role: string; content: Array<{ value: string }> }>;
-          capabilities: { toolCalling: boolean; imageInput: boolean };
-          options?: { tools?: unknown[]; modelOptions?: Record<string, unknown> };
-        }
-      ): Promise<unknown>;
+      sendRequest(request: {
+        modelId: string;
+        messages: Array<{ role: string; content: Array<{ value: string }> }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options?: { tools?: unknown[]; modelOptions?: Record<string, unknown> };
+      }): Promise<unknown>;
       dispose(): void;
     };
 
@@ -2342,88 +2558,107 @@ async function runGenericProviderThinkingEffortTests(
       const isAnthropicPayload = requestUrl.includes('/messages');
 
       if (isResponsesPayload) {
-        return new Response(JSON.stringify({
-          id: 'resp_reasoning',
-          output: [{
-            type: 'message',
-            role: 'assistant',
-            content: [{
-              type: 'output_text',
-              text: 'ok'
-            }]
-          }],
-          usage: {
-            input_tokens: 1,
-            output_tokens: 1,
-            total_tokens: 2
-          }
-        }), {
-          status: 200,
-          headers: {
-            'content-type': 'application/json'
-          }
-        });
+        return new Response(
+          JSON.stringify({
+            id: 'resp_reasoning',
+            output: [
+              {
+                type: 'message',
+                role: 'assistant',
+                content: [
+                  {
+                    type: 'output_text',
+                    text: 'ok',
+                  },
+                ],
+              },
+            ],
+            usage: {
+              input_tokens: 1,
+              output_tokens: 1,
+              total_tokens: 2,
+            },
+          }),
+          {
+            status: 200,
+            headers: {
+              'content-type': 'application/json',
+            },
+          },
+        );
       }
 
       if (isAnthropicPayload) {
-        return new Response(JSON.stringify({
-          id: 'msg_reasoning',
-          role: 'assistant',
-          content: [{
-            type: 'text',
-            text: 'ok'
-          }],
-          stop_reason: 'end_turn',
-          usage: {
-            input_tokens: 1,
-            output_tokens: 1
-          }
-        }), {
-          status: 200,
-          headers: {
-            'content-type': 'application/json'
-          }
-        });
+        return new Response(
+          JSON.stringify({
+            id: 'msg_reasoning',
+            role: 'assistant',
+            content: [
+              {
+                type: 'text',
+                text: 'ok',
+              },
+            ],
+            stop_reason: 'end_turn',
+            usage: {
+              input_tokens: 1,
+              output_tokens: 1,
+            },
+          }),
+          {
+            status: 200,
+            headers: {
+              'content-type': 'application/json',
+            },
+          },
+        );
       }
 
-      return new Response(JSON.stringify({
-        id: 'chat_reasoning',
-        created: 0,
-        model: 'reasoner',
-        choices: [{
-          index: 0,
-          message: {
-            role: 'assistant',
-            content: 'ok'
+      return new Response(
+        JSON.stringify({
+          id: 'chat_reasoning',
+          created: 0,
+          model: 'reasoner',
+          choices: [
+            {
+              index: 0,
+              message: {
+                role: 'assistant',
+                content: 'ok',
+              },
+              finish_reason: 'stop',
+            },
+          ],
+          usage: {
+            prompt_tokens: 1,
+            completion_tokens: 1,
+            total_tokens: 2,
           },
-          finish_reason: 'stop'
-        }],
-        usage: {
-          prompt_tokens: 1,
-          completion_tokens: 1,
-          total_tokens: 2
-        }
-      }), {
-        status: 200,
-        headers: {
-          'content-type': 'application/json'
-        }
-      });
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
     }) as typeof globalThis.fetch;
 
     try {
-      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-        vendorName === 'Vendor' ? 'configured' : ''
-      );
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+        vendorName: string,
+      ) => (vendorName === 'Vendor' ? 'configured' : '');
       await provider.refreshModels();
       await provider.sendRequest({
         modelId,
-        messages: [{
-          role: 'user',
-          content: [{ value: 'reply with ok' }]
-        }],
+        messages: [
+          {
+            role: 'user',
+            content: [{ value: 'reply with ok' }],
+          },
+        ],
         capabilities: { toolCalling: false, imageInput: false },
-        options: { tools: [], ...options }
+        options: { tools: [], ...options },
       });
       assert.ok(payload);
       return payload;
@@ -2435,30 +2670,32 @@ async function runGenericProviderThinkingEffortTests(
   }
 
   async function captureOpenAIResponsesReasoningFallbackPayloads(): Promise<Record<string, unknown>[]> {
-    activeState = createState([{
-      name: 'Vendor',
-      baseUrl: 'https://example.test/v1',
-      defaultApiStyle: 'openai-responses',
-      defaultVision: false,
-      models: [{
-        name: 'reasoner',
-        contextSize: 64000,
-        maxInputTokens: 32000,
-        maxOutputTokens: 16000,
-        capabilities: { tools: false, vision: false }
-      }]
-    }]);
+    activeState = createState([
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-responses',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ]);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
-      sendRequest(
-        request: {
-          modelId: string;
-          messages: Array<{ role: string; content: Array<{ value: string }> }>;
-          capabilities: { toolCalling: boolean; imageInput: boolean };
-          options?: { tools?: unknown[]; modelOptions?: Record<string, unknown> };
-        }
-      ): Promise<unknown>;
+      sendRequest(request: {
+        modelId: string;
+        messages: Array<{ role: string; content: Array<{ value: string }> }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options?: { tools?: unknown[]; modelOptions?: Record<string, unknown> };
+      }): Promise<unknown>;
       dispose(): void;
     };
 
@@ -2467,57 +2704,69 @@ async function runGenericProviderThinkingEffortTests(
       const payload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
       payloads.push(payload);
       if (payloads.length === 1) {
-        return new Response(JSON.stringify({
-          detail: 'Unsupported parameter: reasoning'
-        }), {
-          status: 400,
-          headers: {
-            'content-type': 'application/json'
-          }
-        });
+        return new Response(
+          JSON.stringify({
+            detail: 'Unsupported parameter: reasoning',
+          }),
+          {
+            status: 400,
+            headers: {
+              'content-type': 'application/json',
+            },
+          },
+        );
       }
 
-      return new Response(JSON.stringify({
-        id: 'resp_reasoning',
-        output: [{
-          type: 'message',
-          role: 'assistant',
-          content: [{
-            type: 'output_text',
-            text: 'ok'
-          }]
-        }],
-        usage: {
-          input_tokens: 1,
-          output_tokens: 1,
-          total_tokens: 2
-        }
-      }), {
-        status: 200,
-        headers: {
-          'content-type': 'application/json'
-        }
-      });
+      return new Response(
+        JSON.stringify({
+          id: 'resp_reasoning',
+          output: [
+            {
+              type: 'message',
+              role: 'assistant',
+              content: [
+                {
+                  type: 'output_text',
+                  text: 'ok',
+                },
+              ],
+            },
+          ],
+          usage: {
+            input_tokens: 1,
+            output_tokens: 1,
+            total_tokens: 2,
+          },
+        }),
+        {
+          status: 200,
+          headers: {
+            'content-type': 'application/json',
+          },
+        },
+      );
     }) as typeof globalThis.fetch;
 
     try {
-      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-        vendorName === 'Vendor' ? 'configured' : ''
-      );
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+        vendorName: string,
+      ) => (vendorName === 'Vendor' ? 'configured' : '');
       await provider.refreshModels();
       const request = {
         modelId: 'Vendor/reasoner',
-        messages: [{
-          role: 'user',
-          content: [{ value: 'reply with ok' }]
-        }],
+        messages: [
+          {
+            role: 'user',
+            content: [{ value: 'reply with ok' }],
+          },
+        ],
         capabilities: { toolCalling: false, imageInput: false },
         options: {
           tools: [],
           modelOptions: {
-            thinkingEffort: 'high'
-          }
-        }
+            thinkingEffort: 'high',
+          },
+        },
       };
       await provider.sendRequest(request);
       await provider.sendRequest(request);
@@ -2529,196 +2778,270 @@ async function runGenericProviderThinkingEffortTests(
     }
   }
 
-  const openAIChatPayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'reasoner',
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      thinkingEffort: 'none'
-    }
-  });
+  const openAIChatPayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        thinkingEffort: 'none',
+      },
+    },
+  );
   assert.deepEqual(openAIChatPayload.thinking, { type: 'disabled' });
   assert.equal('reasoning_effort' in openAIChatPayload, false);
   console.log('PASS openai-chat 在请求级 none 模式下会发送 thinking.disabled 且省略 reasoning_effort');
 
   for (const thinkingEffort of ['low', 'medium', 'high', 'xhigh', 'max'] as const) {
-    const overriddenOpenAIChatPayload = await capturePayload([{
-      name: 'Vendor',
-      baseUrl: 'https://example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      models: [{
-        name: 'reasoner',
-        contextSize: 64000,
-        maxInputTokens: 32000,
-        maxOutputTokens: 16000,
-        capabilities: { tools: false, vision: false }
-      }]
-    }], 'Vendor/reasoner', {
-      modelOptions: {
-        thinkingEffort
-      }
-    });
+    const overriddenOpenAIChatPayload = await capturePayload(
+      [
+        {
+          name: 'Vendor',
+          baseUrl: 'https://example.test/v1',
+          defaultApiStyle: 'openai-chat',
+          defaultVision: false,
+          models: [
+            {
+              name: 'reasoner',
+              contextSize: 64000,
+              maxInputTokens: 32000,
+              maxOutputTokens: 16000,
+              capabilities: { tools: false, vision: false },
+            },
+          ],
+        },
+      ],
+      'Vendor/reasoner',
+      {
+        modelOptions: {
+          thinkingEffort,
+        },
+      },
+    );
     assert.deepEqual(overriddenOpenAIChatPayload.thinking, { type: 'enabled' });
     assert.equal(overriddenOpenAIChatPayload.reasoning_effort, thinkingEffort);
   }
   console.log('PASS 请求级 thinkingEffort 可驱动 openai-chat 的 thinking 与 reasoning_effort');
 
-  const overriddenTemperaturePayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    defaultTemperature: 0.4,
-    models: [{
-      name: 'reasoner',
-      temperature: 0.7,
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      temperature: '1'
-    }
-  });
+  const overriddenTemperaturePayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        defaultTemperature: 0.4,
+        models: [
+          {
+            name: 'reasoner',
+            temperature: 0.7,
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        temperature: '1',
+      },
+    },
+  );
   assert.equal(overriddenTemperaturePayload.temperature, 1);
   console.log('PASS 请求级 temperature 可覆盖模型级与供应商级默认值');
 
-  const requestInheritedTemperaturePayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    defaultTemperature: 0.4,
-    models: [{
-      name: 'reasoner',
-      temperature: 0.7,
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      temperature: 'inherit'
-    }
-  });
+  const requestInheritedTemperaturePayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        defaultTemperature: 0.4,
+        models: [
+          {
+            name: 'reasoner',
+            temperature: 0.7,
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        temperature: 'inherit',
+      },
+    },
+  );
   assert.equal(requestInheritedTemperaturePayload.temperature, 0.7);
   console.log('PASS 请求级 temperature=inherit 会继承模型级与供应商级默认值');
 
-  const inheritedModelTemperaturePayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    defaultTemperature: 0.4,
-    models: [{
-      name: 'reasoner',
-      temperature: 'inherit' as unknown as number,
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner');
+  const inheritedModelTemperaturePayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        defaultTemperature: 0.4,
+        models: [
+          {
+            name: 'reasoner',
+            temperature: 'inherit' as unknown as number,
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+  );
   assert.equal(inheritedModelTemperaturePayload.temperature, 0.4);
   console.log('PASS 模型级 temperature=inherit 会使用供应商 defaultTemperature');
 
-  const omittedTemperaturePayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    defaultTemperature: 0.4,
-    models: [{
-      name: 'reasoner',
-      temperature: 0.7,
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      temperature: 'none'
-    }
-  });
+  const omittedTemperaturePayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        defaultTemperature: 0.4,
+        models: [
+          {
+            name: 'reasoner',
+            temperature: 0.7,
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        temperature: 'none',
+      },
+    },
+  );
   assert.equal('temperature' in omittedTemperaturePayload, false);
   console.log('PASS 请求级 temperature=none 会省略 temperature 参数');
 
-  const openAIResponsesPayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-responses',
-    defaultVision: false,
-    models: [{
-      name: 'reasoner',
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      thinkingEffort: 'high'
-    }
-  });
+  const openAIResponsesPayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-responses',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        thinkingEffort: 'high',
+      },
+    },
+  );
   assert.deepEqual(openAIResponsesPayload.reasoning, { effort: 'high' });
   assert.equal('thinking' in openAIResponsesPayload, false);
   assert.equal('reasoning_effort' in openAIResponsesPayload, false);
   assert.equal('temperature' in openAIResponsesPayload, false);
-  assert.equal(openAIResponsesPayload.instructions, 'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.');
+  assert.equal(
+    openAIResponsesPayload.instructions,
+    'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.',
+  );
   console.log('PASS openai-responses 会按请求级 thinkingEffort 发送 reasoning.effort');
 
-  const unsupportedOpenAIResponsesEffortPayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-responses',
-    defaultVision: false,
-    models: [{
-      name: 'reasoner',
-      apiType: 'responses',
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      supportsReasoningEffort: ['xhigh'],
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      thinkingEffort: 'high'
-    }
-  });
+  const unsupportedOpenAIResponsesEffortPayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-responses',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            apiType: 'responses',
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            supportsReasoningEffort: ['xhigh'],
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        thinkingEffort: 'high',
+      },
+    },
+  );
   assert.equal('reasoning' in unsupportedOpenAIResponsesEffortPayload, false);
   console.log('PASS supportsReasoningEffort 会阻止未声明支持的 openai-responses effort 下发');
 
-  const nonStreamingOpenAIResponsesPayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-responses',
-    defaultVision: false,
-    models: [{
-      name: 'reasoner',
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      streaming: false,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      thinkingEffort: 'xhigh'
-    }
-  });
+  const nonStreamingOpenAIResponsesPayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-responses',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            streaming: false,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        thinkingEffort: 'xhigh',
+      },
+    },
+  );
   assert.equal(nonStreamingOpenAIResponsesPayload.stream, false);
   console.log('PASS streaming=false 会让 openai-responses 走非流式请求');
 
@@ -2729,68 +3052,92 @@ async function runGenericProviderThinkingEffortTests(
   assert.equal('reasoning' in responsesReasoningFallbackPayloads[2], false);
   console.log('PASS openai-responses 遇到 reasoning 参数不兼容时会去掉 reasoning 重试并记住会话降级');
 
-  const openAIResponsesXhighPayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-responses',
-    defaultVision: false,
-    models: [{
-      name: 'reasoner',
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      thinkingEffort: 'xhigh'
-    }
-  });
+  const openAIResponsesXhighPayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-responses',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        thinkingEffort: 'xhigh',
+      },
+    },
+  );
   assert.deepEqual(openAIResponsesXhighPayload.reasoning, { effort: 'xhigh' });
   assert.equal('thinking' in openAIResponsesXhighPayload, false);
   assert.equal('reasoning_effort' in openAIResponsesXhighPayload, false);
   console.log('PASS openai-responses 会按请求级 thinkingEffort=xhigh 发送 reasoning.effort=xhigh');
 
-  const anthropicPayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/anthropic/v1',
-    defaultApiStyle: 'anthropic',
-    defaultVision: false,
-    models: [{
-      name: 'reasoner',
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      effort: 'xhigh',
-      thinking: true
-    }
-  });
+  const anthropicPayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/anthropic/v1',
+        defaultApiStyle: 'anthropic',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        effort: 'xhigh',
+        thinking: true,
+      },
+    },
+  );
   assert.deepEqual(anthropicPayload.thinking, { type: 'adaptive' });
   assert.deepEqual(anthropicPayload.output_config, { effort: 'xhigh' });
   console.log('PASS anthropic 会分别按请求级 thinking 开关与 effort 发送 thinking 和 output_config.effort');
 
-  const anthropicThinkingDisabledPayload = await capturePayload([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/anthropic/v1',
-    defaultApiStyle: 'anthropic',
-    defaultVision: false,
-    models: [{
-      name: 'reasoner',
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: false, vision: false }
-    }]
-  }], 'Vendor/reasoner', {
-    modelOptions: {
-      effort: 'low',
-      thinking: false
-    }
-  });
+  const anthropicThinkingDisabledPayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/anthropic/v1',
+        defaultApiStyle: 'anthropic',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        effort: 'low',
+        thinking: false,
+      },
+    },
+  );
   assert.deepEqual(anthropicThinkingDisabledPayload.thinking, { type: 'disabled' });
   assert.deepEqual(anthropicThinkingDisabledPayload.output_config, { effort: 'low' });
   console.log('PASS anthropic thinking=false 会发送 disabled thinking 且保留独立 effort');
@@ -2798,77 +3145,86 @@ async function runGenericProviderThinkingEffortTests(
 
 async function runGenericProviderAnthropicSamplingCompatibilityTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
   const originalFetch = globalThis.fetch;
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/anthropic/v1',
-    defaultApiStyle: 'anthropic',
-    defaultTemperature: 0.4,
-    defaultTopP: 0.9,
-    defaultVision: false,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      temperature: 0.25,
-      topP: 0.8,
-      capabilities: { tools: false, vision: false }
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/anthropic/v1',
+      defaultApiStyle: 'anthropic',
+      defaultTemperature: 0.4,
+      defaultTopP: 0.9,
+      defaultVision: false,
+      models: [
+        {
+          name: 'coder',
+          contextSize: 64000,
+          temperature: 0.25,
+          topP: 0.8,
+          capabilities: { tools: false, vision: false },
+        },
+      ],
+    },
+  ]);
 
   const configStore = new configStoreCtor(createExtensionContext() as never);
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
     refreshModels(): Promise<void>;
-    sendRequest(
-      request: {
-        modelId: string;
-        messages: Array<{ role: string; content: Array<{ value: string }> }>;
-        capabilities: { toolCalling: boolean; imageInput: boolean };
-        options?: { tools?: unknown[] };
-      }
-    ): Promise<unknown>;
+    sendRequest(request: {
+      modelId: string;
+      messages: Array<{ role: string; content: Array<{ value: string }> }>;
+      capabilities: { toolCalling: boolean; imageInput: boolean };
+      options?: { tools?: unknown[] };
+    }): Promise<unknown>;
     dispose(): void;
   };
 
   let payload: Record<string, unknown> | undefined;
   globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
     payload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
-    return new Response(JSON.stringify({
-      id: 'msg_test',
-      role: 'assistant',
-      content: [{
-        type: 'text',
-        text: 'ok'
-      }],
-      stop_reason: 'end_turn',
-      usage: {
-        input_tokens: 4,
-        output_tokens: 2
-      }
-    }), {
-      status: 200,
-      headers: {
-        'content-type': 'application/json'
-      }
-    });
+    return new Response(
+      JSON.stringify({
+        id: 'msg_test',
+        role: 'assistant',
+        content: [
+          {
+            type: 'text',
+            text: 'ok',
+          },
+        ],
+        stop_reason: 'end_turn',
+        usage: {
+          input_tokens: 4,
+          output_tokens: 2,
+        },
+      }),
+      {
+        status: 200,
+        headers: {
+          'content-type': 'application/json',
+        },
+      },
+    );
   }) as typeof globalThis.fetch;
 
   try {
-    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-      vendorName === 'Vendor' ? 'configured' : ''
-    );
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+      vendorName: string,
+    ) => (vendorName === 'Vendor' ? 'configured' : '');
     await provider.refreshModels();
     await provider.sendRequest({
       modelId: 'Vendor/coder',
-      messages: [{
-        role: 'user',
-        content: [{ value: 'reply with ok' }]
-      }],
+      messages: [
+        {
+          role: 'user',
+          content: [{ value: 'reply with ok' }],
+        },
+      ],
       capabilities: { toolCalling: false, imageInput: false },
-      options: { tools: [] }
+      options: { tools: [] },
     });
 
     assert.ok(payload);
@@ -2885,36 +3241,38 @@ async function runGenericProviderAnthropicSamplingCompatibilityTests(
 
 async function runGenericProviderAnthropicStreamFallbackTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
   const originalFetch = globalThis.fetch;
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/anthropic/v1',
-    defaultApiStyle: 'anthropic',
-    defaultVision: false,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: true, vision: false }
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/anthropic/v1',
+      defaultApiStyle: 'anthropic',
+      defaultVision: false,
+      models: [
+        {
+          name: 'coder',
+          contextSize: 64000,
+          maxInputTokens: 32000,
+          maxOutputTokens: 16000,
+          capabilities: { tools: true, vision: false },
+        },
+      ],
+    },
+  ]);
 
   const configStore = new configStoreCtor(createExtensionContext() as never);
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
     refreshModels(): Promise<void>;
-    sendRequest(
-      request: {
-        modelId: string;
-        messages: Array<{ role: string; content: Array<{ value: string }> }>;
-        capabilities: { toolCalling: boolean; imageInput: boolean };
-        options?: { tools?: unknown[] };
-      }
-    ): Promise<{ text: AsyncIterable<string> }>;
+    sendRequest(request: {
+      modelId: string;
+      messages: Array<{ role: string; content: Array<{ value: string }> }>;
+      capabilities: { toolCalling: boolean; imageInput: boolean };
+      options?: { tools?: unknown[] };
+    }): Promise<{ text: AsyncIterable<string> }>;
     dispose(): void;
   };
 
@@ -2938,9 +3296,9 @@ async function runGenericProviderAnthropicStreamFallbackTests(
             content: [],
             usage: {
               input_tokens: 11,
-              output_tokens: 2
-            }
-          }
+              output_tokens: 2,
+            },
+          },
         })}`,
         '',
         'event: content_block_start',
@@ -2950,8 +3308,8 @@ async function runGenericProviderAnthropicStreamFallbackTests(
           content_block: {
             type: 'tool_use',
             id: 'toolu_stream',
-            name: 'read_file'
-          }
+            name: 'read_file',
+          },
         })}`,
         '',
         'event: content_block_delta',
@@ -2960,69 +3318,76 @@ async function runGenericProviderAnthropicStreamFallbackTests(
           index: 0,
           delta: {
             type: 'input_json_delta',
-            partial_json: '{1}'
-          }
+            partial_json: '{1}',
+          },
         })}`,
         '',
         'event: message_delta',
         `data: ${JSON.stringify({
           type: 'message_delta',
           delta: {
-            stop_reason: 'tool_use'
+            stop_reason: 'tool_use',
           },
           usage: {
             input_tokens: 11,
-            output_tokens: 2
-          }
+            output_tokens: 2,
+          },
         })}`,
         '',
         'data: [DONE]',
-        ''
+        '',
       ].join('\n');
 
       return new Response(sseBody, {
         status: 200,
         headers: {
-          'content-type': 'text/event-stream'
-        }
+          'content-type': 'text/event-stream',
+        },
       });
     }
 
-    return new Response(JSON.stringify({
-      id: 'msg_fallback',
-      type: 'message',
-      role: 'assistant',
-      model: 'coder',
-      content: [{
-        type: 'text',
-        text: 'fallback answer'
-      }],
-      stop_reason: 'end_turn',
-      usage: {
-        input_tokens: 13,
-        output_tokens: 4
-      }
-    }), {
-      status: 200,
-      headers: {
-        'content-type': 'application/json'
-      }
-    });
+    return new Response(
+      JSON.stringify({
+        id: 'msg_fallback',
+        type: 'message',
+        role: 'assistant',
+        model: 'coder',
+        content: [
+          {
+            type: 'text',
+            text: 'fallback answer',
+          },
+        ],
+        stop_reason: 'end_turn',
+        usage: {
+          input_tokens: 13,
+          output_tokens: 4,
+        },
+      }),
+      {
+        status: 200,
+        headers: {
+          'content-type': 'application/json',
+        },
+      },
+    );
   }) as typeof globalThis.fetch;
 
   try {
-    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-      vendorName === 'Vendor' ? 'configured' : ''
-    );
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+      vendorName: string,
+    ) => (vendorName === 'Vendor' ? 'configured' : '');
     await provider.refreshModels();
     const firstResponse = await provider.sendRequest({
       modelId: 'Vendor/coder',
-      messages: [{
-        role: 'user',
-        content: [{ value: 'read the file' }]
-      }],
+      messages: [
+        {
+          role: 'user',
+          content: [{ value: 'read the file' }],
+        },
+      ],
       capabilities: { toolCalling: true, imageInput: false },
-      options: { tools: [] }
+      options: { tools: [] },
     });
     const textChunks: string[] = [];
     for await (const chunk of firstResponse.text) {
@@ -3031,12 +3396,14 @@ async function runGenericProviderAnthropicStreamFallbackTests(
 
     const secondResponse = await provider.sendRequest({
       modelId: 'Vendor/coder',
-      messages: [{
-        role: 'user',
-        content: [{ value: 'read the file again' }]
-      }],
+      messages: [
+        {
+          role: 'user',
+          content: [{ value: 'read the file again' }],
+        },
+      ],
       capabilities: { toolCalling: true, imageInput: false },
-      options: { tools: [] }
+      options: { tools: [] },
     });
     const secondTextChunks: string[] = [];
     for await (const chunk of secondResponse.text) {
@@ -3059,36 +3426,38 @@ async function runGenericProviderAnthropicStreamFallbackTests(
 
 async function runGenericProviderAnthropicStreamErrorEventTests(
   configStoreCtor: ConfigStoreCtor,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
   const originalFetch = globalThis.fetch;
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/anthropic/v1',
-    defaultApiStyle: 'anthropic',
-    defaultVision: false,
-    models: [{
-      name: 'coder',
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: true, vision: false }
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/anthropic/v1',
+      defaultApiStyle: 'anthropic',
+      defaultVision: false,
+      models: [
+        {
+          name: 'coder',
+          contextSize: 64000,
+          maxInputTokens: 32000,
+          maxOutputTokens: 16000,
+          capabilities: { tools: true, vision: false },
+        },
+      ],
+    },
+  ]);
 
   const configStore = new configStoreCtor(createExtensionContext() as never);
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
     refreshModels(): Promise<void>;
-    sendRequest(
-      request: {
-        modelId: string;
-        messages: Array<{ role: string; content: Array<{ value: string }> }>;
-        capabilities: { toolCalling: boolean; imageInput: boolean };
-        options?: { tools?: unknown[] };
-      }
-    ): Promise<{ text: AsyncIterable<string> }>;
+    sendRequest(request: {
+      modelId: string;
+      messages: Array<{ role: string; content: Array<{ value: string }> }>;
+      capabilities: { toolCalling: boolean; imageInput: boolean };
+      options?: { tools?: unknown[] };
+    }): Promise<{ text: AsyncIterable<string> }>;
     dispose(): void;
   };
   const payloads: Record<string, unknown>[] = [];
@@ -3101,68 +3470,78 @@ async function runGenericProviderAnthropicStreamErrorEventTests(
         type: 'error',
         error: {
           type: 'overloaded_error',
-          message: 'model overloaded'
+          message: 'model overloaded',
         },
-        request_id: 'req_stream_error'
+        request_id: 'req_stream_error',
       })}`,
       '',
       'data: [DONE]',
-      ''
+      '',
     ].join('\n');
 
     return new Response(sseBody, {
       status: 200,
       headers: {
-        'content-type': 'text/event-stream'
-      }
+        'content-type': 'text/event-stream',
+      },
     });
   }) as typeof globalThis.fetch;
 
   try {
-    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-      vendorName === 'Vendor' ? 'configured' : ''
-    );
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+      vendorName: string,
+    ) => (vendorName === 'Vendor' ? 'configured' : '');
     await provider.refreshModels();
     const response = await provider.sendRequest({
       modelId: 'Vendor/coder',
-      messages: [{
-        role: 'user',
-        content: [{ value: 'hello' }]
-      }],
+      messages: [
+        {
+          role: 'user',
+          content: [{ value: 'hello' }],
+        },
+      ],
       capabilities: { toolCalling: true, imageInput: false },
-      options: { tools: [] }
+      options: { tools: [] },
     });
 
-    await assert.rejects(async () => {
-      for await (const chunk of response.text) {
-        void chunk;
-        // consume stream
-      }
-    }, error => {
-      const message = error instanceof Error ? error.message : String(error);
-      assert.match(message, /requestFailed/);
-      assert.doesNotMatch(message, /emptyModelResponse/);
-      return true;
-    });
+    await assert.rejects(
+      async () => {
+        for await (const chunk of response.text) {
+          void chunk;
+          // consume stream
+        }
+      },
+      (error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        assert.match(message, /requestFailed/);
+        assert.doesNotMatch(message, /emptyModelResponse/);
+        return true;
+      },
+    );
 
     const secondResponse = await provider.sendRequest({
       modelId: 'Vendor/coder',
-      messages: [{
-        role: 'user',
-        content: [{ value: 'hello again' }]
-      }],
+      messages: [
+        {
+          role: 'user',
+          content: [{ value: 'hello again' }],
+        },
+      ],
       capabilities: { toolCalling: true, imageInput: false },
-      options: { tools: [] }
+      options: { tools: [] },
     });
-    await assert.rejects(async () => {
-      for await (const chunk of secondResponse.text) {
-        void chunk;
-      }
-    }, error => {
-      const message = error instanceof Error ? error.message : String(error);
-      assert.match(message, /requestFailed/);
-      return true;
-    });
+    await assert.rejects(
+      async () => {
+        for await (const chunk of secondResponse.text) {
+          void chunk;
+        }
+      },
+      (error) => {
+        const message = error instanceof Error ? error.message : String(error);
+        assert.match(message, /requestFailed/);
+        return true;
+      },
+    );
     assert.equal(payloads[0]?.stream, true);
     assert.equal(payloads[1]?.stream, false);
     console.log('PASS anthropic 流式 error 事件后当前会话会持续使用非流式');
@@ -3176,41 +3555,45 @@ async function runGenericProviderAnthropicStreamErrorEventTests(
 async function runGenericProviderOpenAIReasoningContinuationTests(
   configStoreCtor: ConfigStoreCtor,
   baseProviderModule: BaseProviderModule,
-  genericProviderModule: GenericProviderModule
+  genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
-  const reasoningContentMimeType = (baseProviderModule as Record<string, unknown>)['INTERNAL_REASONING_CONTENT_MIME_TYPE'];
+  const reasoningContentMimeType = (baseProviderModule as Record<string, unknown>)[
+    'INTERNAL_REASONING_CONTENT_MIME_TYPE'
+  ];
   if (typeof reasoningContentMimeType !== 'string') {
     throw new Error('INTERNAL_REASONING_CONTENT_MIME_TYPE is unavailable in baseProviderModule');
   }
   const vscode = require('vscode') as typeof import('vscode');
   const originalFetch = globalThis.fetch;
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/openai/v1',
-    defaultApiStyle: 'openai-chat',
-    defaultVision: false,
-    models: [{
-      name: 'deepseek-v4-flash',
-      contextSize: 64000,
-      maxInputTokens: 32000,
-      maxOutputTokens: 16000,
-      capabilities: { tools: true, vision: false }
-    }]
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/openai/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        {
+          name: 'deepseek-v4-flash',
+          contextSize: 64000,
+          maxInputTokens: 32000,
+          maxOutputTokens: 16000,
+          capabilities: { tools: true, vision: false },
+        },
+      ],
+    },
+  ]);
 
   const configStore = new configStoreCtor(createExtensionContext() as never);
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
     refreshModels(): Promise<void>;
-    sendRequest(
-      request: {
-        modelId: string;
-        messages: Array<{ role: string; content: unknown[] }>;
-        capabilities: { toolCalling: boolean; imageInput: boolean };
-        options?: { tools?: unknown[] };
-      }
-    ): Promise<{ stream: AsyncIterable<unknown>; text: AsyncIterable<string> }>;
+    sendRequest(request: {
+      modelId: string;
+      messages: Array<{ role: string; content: unknown[] }>;
+      capabilities: { toolCalling: boolean; imageInput: boolean };
+      options?: { tools?: unknown[] };
+    }): Promise<{ stream: AsyncIterable<unknown>; text: AsyncIterable<string> }>;
     dispose(): void;
   };
   const payloads: Record<string, unknown>[] = [];
@@ -3221,74 +3604,85 @@ async function runGenericProviderOpenAIReasoningContinuationTests(
       const sseBody = [
         `data: ${JSON.stringify({
           id: 'chat_reasoning_1',
-          choices: [{
-            index: 0,
-            delta: {
-              reasoning_content: [{ type: 'reasoning', text: 'Need the get_date tool first.' }],
-              tool_calls: [{
-                index: 0,
-                id: 'call_reasoning_1',
-                type: 'function',
-                function: {
-                  name: 'get_date',
-                  arguments: '{}'
-                }
-              }]
+          choices: [
+            {
+              index: 0,
+              delta: {
+                reasoning_content: [{ type: 'reasoning', text: 'Need the get_date tool first.' }],
+                tool_calls: [
+                  {
+                    index: 0,
+                    id: 'call_reasoning_1',
+                    type: 'function',
+                    function: {
+                      name: 'get_date',
+                      arguments: '{}',
+                    },
+                  },
+                ],
+              },
+              finish_reason: 'tool_calls',
             },
-            finish_reason: 'tool_calls'
-          }]
+          ],
         })}`,
         '',
         'data: [DONE]',
-        ''
+        '',
       ].join('\n');
       return new Response(sseBody, {
         status: 200,
         headers: {
-          'content-type': 'text/event-stream'
-        }
+          'content-type': 'text/event-stream',
+        },
       });
     }
 
-    return new Response(JSON.stringify({
-      id: 'chat_reasoning_2',
-      created: 1,
-      model: 'deepseek-v4-flash',
-      choices: [{
-        index: 0,
-        message: {
-          role: 'assistant',
-          content: 'done'
+    return new Response(
+      JSON.stringify({
+        id: 'chat_reasoning_2',
+        created: 1,
+        model: 'deepseek-v4-flash',
+        choices: [
+          {
+            index: 0,
+            message: {
+              role: 'assistant',
+              content: 'done',
+            },
+            finish_reason: 'stop',
+          },
+        ],
+        usage: {
+          prompt_tokens: 20,
+          completion_tokens: 2,
+          total_tokens: 22,
         },
-        finish_reason: 'stop'
-      }],
-      usage: {
-        prompt_tokens: 20,
-        completion_tokens: 2,
-        total_tokens: 22
-      }
-    }), {
-      status: 200,
-      headers: {
-        'content-type': 'application/json'
-      }
-    });
+      }),
+      {
+        status: 200,
+        headers: {
+          'content-type': 'application/json',
+        },
+      },
+    );
   }) as typeof globalThis.fetch;
 
   try {
-    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (vendorName: string) => (
-      vendorName === 'Vendor' ? 'configured' : ''
-    );
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+      vendorName: string,
+    ) => (vendorName === 'Vendor' ? 'configured' : '');
     await provider.refreshModels();
 
     const firstResponse = await provider.sendRequest({
       modelId: 'Vendor/deepseek-v4-flash',
-      messages: [{
-        role: 'user',
-        content: [{ value: 'Please call get_date first.' }]
-      }],
+      messages: [
+        {
+          role: 'user',
+          content: [{ value: 'Please call get_date first.' }],
+        },
+      ],
       capabilities: { toolCalling: true, imageInput: false },
-      options: { tools: [] }
+      options: { tools: [] },
     });
 
     const firstResponseParts: unknown[] = [];
@@ -3303,41 +3697,48 @@ async function runGenericProviderOpenAIReasoningContinuationTests(
     assert.deepEqual(firstResponseText, []);
     assert.equal(firstResponseParts.length, 2);
 
-    const reasoningPart = firstResponseParts.find(part => part instanceof vscode.LanguageModelDataPart);
+    const reasoningPart = firstResponseParts.find((part) => part instanceof vscode.LanguageModelDataPart);
     assert.ok(reasoningPart instanceof vscode.LanguageModelDataPart);
     const typedReasoningPart = reasoningPart as import('vscode').LanguageModelDataPart;
     assert.equal(typedReasoningPart.mimeType, reasoningContentMimeType);
     assert.deepEqual(JSON.parse(new TextDecoder().decode(typedReasoningPart.data)), {
-      reasoning_content: 'Need the get_date tool first.'
+      reasoning_content: 'Need the get_date tool first.',
     });
 
-    const toolCallPart = firstResponseParts.find(part => part instanceof vscode.LanguageModelToolCallPart);
+    const toolCallPart = firstResponseParts.find((part) => part instanceof vscode.LanguageModelToolCallPart);
     assert.ok(toolCallPart instanceof vscode.LanguageModelToolCallPart);
     const typedToolCallPart = toolCallPart as import('vscode').LanguageModelToolCallPart;
     assert.equal(typedToolCallPart.callId, 'call_reasoning_1');
     assert.equal(typedToolCallPart.name, 'get_date');
     assert.deepEqual(typedToolCallPart.input, {});
 
-    const roundTrippedAssistantParts = firstResponseParts.filter(part => part instanceof vscode.LanguageModelToolCallPart);
+    const roundTrippedAssistantParts = firstResponseParts.filter(
+      (part) => part instanceof vscode.LanguageModelToolCallPart,
+    );
     assert.equal(roundTrippedAssistantParts.length, 1);
 
     const secondResponse = await provider.sendRequest({
       modelId: 'Vendor/deepseek-v4-flash',
-      messages: [{
-        role: 'user',
-        content: [{ value: 'Please call get_date first.' }]
-      }, {
-        role: 'assistant',
-        content: roundTrippedAssistantParts
-      }, {
-        role: 'user',
-        content: [new vscode.LanguageModelToolResultPart(
-          'call_reasoning_1',
-          [new vscode.LanguageModelTextPart('2026-04-27')]
-        )]
-      }],
+      messages: [
+        {
+          role: 'user',
+          content: [{ value: 'Please call get_date first.' }],
+        },
+        {
+          role: 'assistant',
+          content: roundTrippedAssistantParts,
+        },
+        {
+          role: 'user',
+          content: [
+            new vscode.LanguageModelToolResultPart('call_reasoning_1', [
+              new vscode.LanguageModelTextPart('2026-04-27'),
+            ]),
+          ],
+        },
+      ],
       capabilities: { toolCalling: true, imageInput: false },
-      options: { tools: [] }
+      options: { tools: [] },
     });
 
     const secondResponseText: string[] = [];
@@ -3347,26 +3748,32 @@ async function runGenericProviderOpenAIReasoningContinuationTests(
 
     assert.deepEqual(secondResponseText, ['done']);
     assert.equal(payloads.length, 2);
-    assert.deepEqual(payloads[1]?.messages, [{
-      role: 'user',
-      content: 'Please call get_date first.'
-    }, {
-      role: 'assistant',
-      content: '',
-      reasoning_content: 'Need the get_date tool first.',
-      tool_calls: [{
-        id: 'call_reasoning_1',
-        type: 'function',
-        function: {
-          name: 'get_date',
-          arguments: '{}'
-        }
-      }]
-    }, {
-      role: 'tool',
-      tool_call_id: 'call_reasoning_1',
-      content: '2026-04-27'
-    }]);
+    assert.deepEqual(payloads[1]?.messages, [
+      {
+        role: 'user',
+        content: 'Please call get_date first.',
+      },
+      {
+        role: 'assistant',
+        content: '',
+        reasoning_content: 'Need the get_date tool first.',
+        tool_calls: [
+          {
+            id: 'call_reasoning_1',
+            type: 'function',
+            function: {
+              name: 'get_date',
+              arguments: '{}',
+            },
+          },
+        ],
+      },
+      {
+        role: 'tool',
+        tool_call_id: 'call_reasoning_1',
+        content: '2026-04-27',
+      },
+    ]);
     console.log('PASS openai-chat 会在 tool continuation 中保留并回传 reasoning_content');
   } finally {
     globalThis.fetch = originalFetch;
@@ -3387,243 +3794,332 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
     createAnthropicStreamState,
     applyAnthropicStreamEvent,
     finalizeAnthropicStreamState,
-    toAnthropicMessages
+    toAnthropicMessages,
   } = protocolsModule;
 
   const openAIChatState = createOpenAIChatStreamState();
-  const chatDelta = applyOpenAIChatStreamChunk(openAIChatState, {
-    id: 'chat_1',
-    choices: [{
-      index: 0,
-      delta: {
-        content: 'hello ',
-        tool_calls: [{
+  const chatDelta = applyOpenAIChatStreamChunk(
+    openAIChatState,
+    {
+      id: 'chat_1',
+      choices: [
+        {
           index: 0,
-          id: 'call_1',
-          function: {
-            name: 'search',
-            arguments: '{'
-          }
-        }]
-      }
-    }]
-  }, () => 'generated_call');
-  applyOpenAIChatStreamChunk(openAIChatState, {
-    choices: [{
-      index: 0,
-      delta: {
-        content: 'world',
-        tool_calls: [{
+          delta: {
+            content: 'hello ',
+            tool_calls: [
+              {
+                index: 0,
+                id: 'call_1',
+                function: {
+                  name: 'search',
+                  arguments: '{',
+                },
+              },
+            ],
+          },
+        },
+      ],
+    },
+    () => 'generated_call',
+  );
+  applyOpenAIChatStreamChunk(
+    openAIChatState,
+    {
+      choices: [
+        {
           index: 0,
-          function: {
-            arguments: '"q":"repo"}'
-          }
-        }]
+          delta: {
+            content: 'world',
+            tool_calls: [
+              {
+                index: 0,
+                function: {
+                  arguments: '"q":"repo"}',
+                },
+              },
+            ],
+          },
+          finish_reason: 'stop',
+        },
+      ],
+      usage: {
+        prompt_tokens: 10,
+        completion_tokens: 4,
+        total_tokens: 14,
       },
-      finish_reason: 'stop'
-    }],
-    usage: {
-      prompt_tokens: 10,
-      completion_tokens: 4,
-      total_tokens: 14
-    }
-  }, () => 'generated_call');
+    },
+    () => 'generated_call',
+  );
   const finalizedChat = finalizeOpenAIChatStreamState(openAIChatState, () => 'generated_call');
   assert.equal(chatDelta.textDelta, 'hello ');
   assert.equal(finalizedChat.content, 'hello world');
-  assert.deepEqual(finalizedChat.toolCalls, [{
-    id: 'call_1',
-    type: 'function',
-    function: {
-      name: 'search',
-      arguments: '{"q":"repo"}'
-    }
-  }]);
+  assert.deepEqual(finalizedChat.toolCalls, [
+    {
+      id: 'call_1',
+      type: 'function',
+      function: {
+        name: 'search',
+        arguments: '{"q":"repo"}',
+      },
+    },
+  ]);
   assert.deepEqual(finalizedChat.usage, {
     prompt_tokens: 10,
     completion_tokens: 4,
-    total_tokens: 14
+    total_tokens: 14,
   });
   console.log('PASS openai-chat 流式文本与工具调用可正确累积');
 
   const reasoningOnlyChatState = createOpenAIChatStreamState();
-  const reasoningOnlyChatDelta = applyOpenAIChatStreamChunk(reasoningOnlyChatState, {
-    choices: [{
-      index: 0,
-      delta: {
-        reasoning_content: [{ type: 'reasoning', text: 'fallback ' }]
-      }
-    }]
-  }, () => 'generated_call');
-  applyOpenAIChatStreamChunk(reasoningOnlyChatState, {
-    choices: [{
-      index: 0,
-      message: {
-        reasoning: [{ type: 'reasoning', text: 'text' }]
-      }
-    }]
-  }, () => 'generated_call');
+  const reasoningOnlyChatDelta = applyOpenAIChatStreamChunk(
+    reasoningOnlyChatState,
+    {
+      choices: [
+        {
+          index: 0,
+          delta: {
+            reasoning_content: [{ type: 'reasoning', text: 'fallback ' }],
+          },
+        },
+      ],
+    },
+    () => 'generated_call',
+  );
+  applyOpenAIChatStreamChunk(
+    reasoningOnlyChatState,
+    {
+      choices: [
+        {
+          index: 0,
+          message: {
+            reasoning: [{ type: 'reasoning', text: 'text' }],
+          },
+        },
+      ],
+    },
+    () => 'generated_call',
+  );
   const finalizedReasoningOnlyChat = finalizeOpenAIChatStreamState(reasoningOnlyChatState, () => 'generated_call');
   assert.equal(reasoningOnlyChatDelta.textDelta, '');
   assert.equal(finalizedReasoningOnlyChat.content, 'fallback text');
   assert.equal(finalizedReasoningOnlyChat.reasoningContent, 'fallback text');
 
   const reasoningToolCallState = createOpenAIChatStreamState();
-  applyOpenAIChatStreamChunk(reasoningToolCallState, {
-    choices: [{
-      index: 0,
-      delta: {
-        reasoning_content: [{ type: 'reasoning', text: 'Need the tool first.' }],
-        tool_calls: [{
+  applyOpenAIChatStreamChunk(
+    reasoningToolCallState,
+    {
+      choices: [
+        {
           index: 0,
-          id: 'call_reasoning_1',
-          function: {
-            name: 'lookup',
-            arguments: '{}'
-          }
-        }]
-      },
-      finish_reason: 'tool_calls'
-    }]
-  }, () => 'generated_call');
+          delta: {
+            reasoning_content: [{ type: 'reasoning', text: 'Need the tool first.' }],
+            tool_calls: [
+              {
+                index: 0,
+                id: 'call_reasoning_1',
+                function: {
+                  name: 'lookup',
+                  arguments: '{}',
+                },
+              },
+            ],
+          },
+          finish_reason: 'tool_calls',
+        },
+      ],
+    },
+    () => 'generated_call',
+  );
   const finalizedReasoningToolCall = finalizeOpenAIChatStreamState(reasoningToolCallState, () => 'generated_call');
   assert.equal(finalizedReasoningToolCall.content, '');
   assert.equal(finalizedReasoningToolCall.reasoningContent, 'Need the tool first.');
-  assert.deepEqual(finalizedReasoningToolCall.toolCalls, [{
-    id: 'call_reasoning_1',
-    type: 'function',
-    function: {
-      name: 'lookup',
-      arguments: '{}'
-    }
-  }]);
+  assert.deepEqual(finalizedReasoningToolCall.toolCalls, [
+    {
+      id: 'call_reasoning_1',
+      type: 'function',
+      function: {
+        name: 'lookup',
+        arguments: '{}',
+      },
+    },
+  ]);
 
   const mixedProxyChatState = createOpenAIChatStreamState();
-  applyOpenAIChatStreamChunk(mixedProxyChatState, {
-    choices: [{
-      index: 0,
-      delta: {
-        reasoning_content: [{ type: 'reasoning', text: 'proxy ' }]
-      }
-    }]
-  }, () => 'generated_call');
-  const mixedProxyChatDelta = applyOpenAIChatStreamChunk(mixedProxyChatState, {
-    choices: [{
-      index: 0,
-      message: {
-        content: [{ type: 'text', text: 'reply' }]
-      }
-    }]
-  }, () => 'generated_call');
+  applyOpenAIChatStreamChunk(
+    mixedProxyChatState,
+    {
+      choices: [
+        {
+          index: 0,
+          delta: {
+            reasoning_content: [{ type: 'reasoning', text: 'proxy ' }],
+          },
+        },
+      ],
+    },
+    () => 'generated_call',
+  );
+  const mixedProxyChatDelta = applyOpenAIChatStreamChunk(
+    mixedProxyChatState,
+    {
+      choices: [
+        {
+          index: 0,
+          message: {
+            content: [{ type: 'text', text: 'reply' }],
+          },
+        },
+      ],
+    },
+    () => 'generated_call',
+  );
   const finalizedMixedProxyChat = finalizeOpenAIChatStreamState(mixedProxyChatState, () => 'generated_call');
   assert.equal(mixedProxyChatDelta.textDelta, 'reply');
   assert.equal(finalizedMixedProxyChat.content, 'reply');
   console.log('PASS openai-chat 可兼容代理常见的非标准 chunk 字段');
 
   const cacheControlChatState = createOpenAIChatStreamState();
-  const cacheControlChatDelta = applyOpenAIChatStreamChunk(cacheControlChatState, {
-    choices: [{
-      index: 0,
-      delta: {
-        content: [
-          { type: 'text', text: 'hello ' },
-          { type: 'cache_control', value: '[cache_control 9 bytes]' }
-        ]
-      }
-    }]
-  }, () => 'generated_call');
+  const cacheControlChatDelta = applyOpenAIChatStreamChunk(
+    cacheControlChatState,
+    {
+      choices: [
+        {
+          index: 0,
+          delta: {
+            content: [
+              { type: 'text', text: 'hello ' },
+              { type: 'cache_control', value: '[cache_control 9 bytes]' },
+            ],
+          },
+        },
+      ],
+    },
+    () => 'generated_call',
+  );
   const finalizedCacheControlChat = finalizeOpenAIChatStreamState(cacheControlChatState, () => 'generated_call');
   assert.equal(cacheControlChatDelta.textDelta, 'hello ');
   assert.equal(finalizedCacheControlChat.content, 'hello ');
-  assert.equal(readOpenAIChatMessageText({
-    content: [
-      { type: 'text', text: 'hello ' },
-      { type: 'cache_control', value: '[cache_control 9 bytes]' }
-    ]
-  }), 'hello ');
+  assert.equal(
+    readOpenAIChatMessageText({
+      content: [
+        { type: 'text', text: 'hello ' },
+        { type: 'cache_control', value: '[cache_control 9 bytes]' },
+      ],
+    }),
+    'hello ',
+  );
   console.log('PASS openai-chat 响应中的 cache_control 非文本块不会泄漏到最终文本');
 
   const responsesState = createOpenAIResponsesStreamState();
-  const responsesDelta = applyOpenAIResponsesStreamEvent(responsesState, 'response.output_text.delta', {
-    delta: 'partial '
-  }, () => 'resp_call');
-  applyOpenAIResponsesStreamEvent(responsesState, 'response.function_call_arguments.delta', {
-    item: {
-      id: 'item_1',
-      call_id: 'resp_call',
-      name: 'lookup'
+  const responsesDelta = applyOpenAIResponsesStreamEvent(
+    responsesState,
+    'response.output_text.delta',
+    {
+      delta: 'partial ',
     },
-    delta: '{"id":'
-  }, () => 'resp_call');
-  applyOpenAIResponsesStreamEvent(responsesState, 'response.output_item.done', {
-    item: {
-      id: 'item_1',
-      type: 'function_call',
-      call_id: 'resp_call',
-      name: 'lookup',
-      arguments: '{"id":42}'
-    }
-  }, () => 'resp_call');
-  applyOpenAIResponsesStreamEvent(responsesState, 'response.completed', {
-    response: {
-      id: 'resp_1',
-      output_text: 'partial done',
-      usage: {
-        input_tokens: 12,
-        output_tokens: 5,
-        total_tokens: 17
-      }
-    }
-  }, () => 'resp_call');
+    () => 'resp_call',
+  );
+  applyOpenAIResponsesStreamEvent(
+    responsesState,
+    'response.function_call_arguments.delta',
+    {
+      item: {
+        id: 'item_1',
+        call_id: 'resp_call',
+        name: 'lookup',
+      },
+      delta: '{"id":',
+    },
+    () => 'resp_call',
+  );
+  applyOpenAIResponsesStreamEvent(
+    responsesState,
+    'response.output_item.done',
+    {
+      item: {
+        id: 'item_1',
+        type: 'function_call',
+        call_id: 'resp_call',
+        name: 'lookup',
+        arguments: '{"id":42}',
+      },
+    },
+    () => 'resp_call',
+  );
+  applyOpenAIResponsesStreamEvent(
+    responsesState,
+    'response.completed',
+    {
+      response: {
+        id: 'resp_1',
+        output_text: 'partial done',
+        usage: {
+          input_tokens: 12,
+          output_tokens: 5,
+          total_tokens: 17,
+        },
+      },
+    },
+    () => 'resp_call',
+  );
   const finalizedResponses = finalizeOpenAIResponsesStreamState(responsesState, () => 'resp_call');
   assert.equal(responsesDelta.textDelta, 'partial ');
   assert.equal(finalizedResponses.content, 'partial ');
-  assert.deepEqual(finalizedResponses.toolCalls, [{
-    id: 'resp_call',
-    type: 'function',
-    function: {
-      name: 'lookup',
-      arguments: '{"id":42}'
-    }
-  }]);
+  assert.deepEqual(finalizedResponses.toolCalls, [
+    {
+      id: 'resp_call',
+      type: 'function',
+      function: {
+        name: 'lookup',
+        arguments: '{"id":42}',
+      },
+    },
+  ]);
   assert.deepEqual(finalizedResponses.usage, {
     input_tokens: 12,
     output_tokens: 5,
-    total_tokens: 17
+    total_tokens: 17,
   });
   console.log('PASS openai-responses 流式事件可正确累积文本与工具调用');
 
-  const anthropicNormalized = toAnthropicMessages([
-    {
-      role: 'assistant',
-      content: '',
-      tool_calls: [{
-        id: 'call_1',
-        type: 'function',
-        function: {
-          name: 'read_file',
-          arguments: '{"path":"/tmp/a"}'
-        }
-      }, {
-        id: 'call_2',
-        type: 'function',
-        function: {
-          name: 'read_file',
-          arguments: '{"path":"/tmp/b"}'
-        }
-      }]
-    },
-    {
-      role: 'tool',
-      tool_call_id: 'call_1',
-      content: 'A'
-    },
-    {
-      role: 'tool',
-      tool_call_id: 'call_2',
-      content: 'B'
-    }
-  ], () => 'generated_call');
+  const anthropicNormalized = toAnthropicMessages(
+    [
+      {
+        role: 'assistant',
+        content: '',
+        tool_calls: [
+          {
+            id: 'call_1',
+            type: 'function',
+            function: {
+              name: 'read_file',
+              arguments: '{"path":"/tmp/a"}',
+            },
+          },
+          {
+            id: 'call_2',
+            type: 'function',
+            function: {
+              name: 'read_file',
+              arguments: '{"path":"/tmp/b"}',
+            },
+          },
+        ],
+      },
+      {
+        role: 'tool',
+        tool_call_id: 'call_1',
+        content: 'A',
+      },
+      {
+        role: 'tool',
+        tool_call_id: 'call_2',
+        content: 'B',
+      },
+    ],
+    () => 'generated_call',
+  );
   assert.equal(anthropicNormalized.messages.length, 2);
   const mergedToolResults = anthropicNormalized.messages[1]?.content;
   assert.ok(Array.isArray(mergedToolResults));
@@ -3631,48 +4127,56 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   assert.deepEqual(mergedToolResults[0], {
     type: 'tool_result',
     tool_use_id: 'call_1',
-    content: 'A'
+    content: 'A',
   });
   assert.deepEqual(mergedToolResults[1], {
     type: 'tool_result',
     tool_use_id: 'call_2',
-    content: 'B'
+    content: 'B',
   });
   console.log('PASS anthropic 会将同一轮连续 tool_result 合并到一个 user 消息');
-  const anthropicMergedTurn = toAnthropicMessages([
-    {
-      role: 'assistant',
-      content: '',
-      tool_calls: [{
-        id: 'call_3',
-        type: 'function',
-        function: {
-          name: 'read_file',
-          arguments: '{"path":"/tmp/c"}'
-        }
-      }]
-    },
-    {
-      role: 'tool',
-      tool_call_id: 'call_3',
-      content: 'C'
-    },
-    {
-      role: 'user',
-      content: '继续总结 C'
-    }
-  ], () => 'generated_call');
+  const anthropicMergedTurn = toAnthropicMessages(
+    [
+      {
+        role: 'assistant',
+        content: '',
+        tool_calls: [
+          {
+            id: 'call_3',
+            type: 'function',
+            function: {
+              name: 'read_file',
+              arguments: '{"path":"/tmp/c"}',
+            },
+          },
+        ],
+      },
+      {
+        role: 'tool',
+        tool_call_id: 'call_3',
+        content: 'C',
+      },
+      {
+        role: 'user',
+        content: '继续总结 C',
+      },
+    ],
+    () => 'generated_call',
+  );
   assert.equal(anthropicMergedTurn.messages.length, 2);
   const mergedTurnContent = anthropicMergedTurn.messages[1]?.content;
   assert.ok(Array.isArray(mergedTurnContent));
-  assert.deepEqual(mergedTurnContent, [{
-    type: 'tool_result',
-    tool_use_id: 'call_3',
-    content: 'C'
-  }, {
-    type: 'text',
-    text: '继续总结 C'
-  }]);
+  assert.deepEqual(mergedTurnContent, [
+    {
+      type: 'tool_result',
+      tool_use_id: 'call_3',
+      content: 'C',
+    },
+    {
+      type: 'text',
+      text: '继续总结 C',
+    },
+  ]);
   console.log('PASS anthropic 会将同一轮的 tool_result 与后续用户文本合并为单个 user turn');
 
   const anthropicState = createAnthropicStreamState();
@@ -3680,55 +4184,57 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
     index: 0,
     content_block: {
       type: 'text',
-      text: 'Hi '
-    }
+      text: 'Hi ',
+    },
   });
   applyAnthropicStreamEvent(anthropicState, 'content_block_delta', {
     index: 0,
     delta: {
       type: 'text_delta',
-      text: 'there'
-    }
+      text: 'there',
+    },
   });
   applyAnthropicStreamEvent(anthropicState, 'content_block_start', {
     index: 1,
     content_block: {
       type: 'tool_use',
       id: 'toolu_1',
-      name: 'run'
-    }
+      name: 'run',
+    },
   });
   applyAnthropicStreamEvent(anthropicState, 'content_block_delta', {
     index: 1,
     delta: {
       type: 'input_json_delta',
-      partial_json: '{"cmd":"npm test"}'
-    }
+      partial_json: '{"cmd":"npm test"}',
+    },
   });
   applyAnthropicStreamEvent(anthropicState, 'message_delta', {
     usage: {
       input_tokens: 9,
-      output_tokens: 3
+      output_tokens: 3,
     },
     delta: {
       type: 'message_delta',
-      stop_reason: 'end_turn'
-    }
+      stop_reason: 'end_turn',
+    },
   });
   const finalizedAnthropic = finalizeAnthropicStreamState(anthropicState, () => 'tool_generated');
   assert.equal(anthropicDelta.textDelta, 'Hi ');
   assert.equal(finalizedAnthropic.content, 'Hi there');
-  assert.deepEqual(finalizedAnthropic.toolCalls, [{
-    id: 'toolu_1',
-    type: 'function',
-    function: {
-      name: 'run',
-      arguments: '{"cmd":"npm test"}'
-    }
-  }]);
+  assert.deepEqual(finalizedAnthropic.toolCalls, [
+    {
+      id: 'toolu_1',
+      type: 'function',
+      function: {
+        name: 'run',
+        arguments: '{"cmd":"npm test"}',
+      },
+    },
+  ]);
   assert.deepEqual(finalizedAnthropic.usage, {
     input_tokens: 9,
-    output_tokens: 3
+    output_tokens: 3,
   });
   console.log('PASS anthropic 流式事件可正确累积文本与工具调用');
 
@@ -3740,25 +4246,25 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
       usage: {
         input_tokens: 350,
         cache_creation_input_tokens: 24,
-        cache_read_input_tokens: 23296
-      }
-    }
+        cache_read_input_tokens: 23296,
+      },
+    },
   });
   applyAnthropicStreamEvent(anthropicUsageState, 'message_delta', {
     usage: {
-      output_tokens: 75
+      output_tokens: 75,
     },
     delta: {
       type: 'message_delta',
-      stop_reason: 'end_turn'
-    }
+      stop_reason: 'end_turn',
+    },
   });
   const finalizedAnthropicUsage = finalizeAnthropicStreamState(anthropicUsageState, () => 'tool_generated');
   assert.deepEqual(finalizedAnthropicUsage.usage, {
     input_tokens: 350,
     cache_creation_input_tokens: 24,
     cache_read_input_tokens: 23296,
-    output_tokens: 75
+    output_tokens: 75,
   });
   console.log('PASS anthropic 流式 usage 会合并输入、缓存输入与输出统计');
 
@@ -3768,26 +4274,28 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
     content_block: {
       type: 'server_tool_use',
       id: 'srvtool_1',
-      name: 'str_replace_editor'
-    }
+      name: 'str_replace_editor',
+    },
   });
   applyAnthropicStreamEvent(anthropicServerToolState, 'content_block_delta', {
     index: 0,
     delta: {
       type: 'input_json_delta',
-      partial_json: '{"command":"view","path":"README.md"}'
-    }
+      partial_json: '{"command":"view","path":"README.md"}',
+    },
   });
   const finalizedAnthropicServerTool = finalizeAnthropicStreamState(anthropicServerToolState, () => 'tool_generated');
   assert.equal(finalizedAnthropicServerTool.content, '');
-  assert.deepEqual(finalizedAnthropicServerTool.toolCalls, [{
-    id: 'srvtool_1',
-    type: 'function',
-    function: {
-      name: 'str_replace_editor',
-      arguments: '{"command":"view","path":"README.md"}'
-    }
-  }]);
+  assert.deepEqual(finalizedAnthropicServerTool.toolCalls, [
+    {
+      id: 'srvtool_1',
+      type: 'function',
+      function: {
+        name: 'str_replace_editor',
+        arguments: '{"command":"view","path":"README.md"}',
+      },
+    },
+  ]);
   console.log('PASS anthropic 流式事件可兼容 server_tool_use 工具块');
 
   const anthropicCompatState = createAnthropicStreamState();
@@ -3795,21 +4303,21 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
     index: 0,
     content_block: {
       type: 'text',
-      text: ''
-    }
+      text: '',
+    },
   });
   const compatDeltaWithoutType = applyAnthropicStreamEvent(anthropicCompatState, 'content_block_delta', {
     index: 0,
     delta: {
-      text: 'compat '
-    }
+      text: 'compat ',
+    },
   });
   applyAnthropicStreamEvent(anthropicCompatState, 'content_block_delta', {
     index: 0,
     delta: {
       type: 'unsupported_delta_type',
-      text: 'text'
-    }
+      text: 'text',
+    },
   });
   const finalizedAnthropicCompat = finalizeAnthropicStreamState(anthropicCompatState, () => 'tool_generated');
   assert.equal(compatDeltaWithoutType.textDelta, 'compat ');
@@ -3817,28 +4325,35 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   assert.deepEqual(finalizedAnthropicCompat.toolCalls, []);
   console.log('PASS anthropic 流式文本兼容无 type/非标准 delta.type 事件');
 
-  const parsedAnthropicServerTool = protocolsModule.parseAnthropicResponse({
-    id: 'msg_server_tool',
-    role: 'assistant',
-    content: [{
-      type: 'server_tool_use',
-      id: 'srvtool_2',
-      name: 'web_fetch',
-      input: {
-        url: 'https://example.test'
-      }
-    }]
-  }, () => 'tool_generated');
+  const parsedAnthropicServerTool = protocolsModule.parseAnthropicResponse(
+    {
+      id: 'msg_server_tool',
+      role: 'assistant',
+      content: [
+        {
+          type: 'server_tool_use',
+          id: 'srvtool_2',
+          name: 'web_fetch',
+          input: {
+            url: 'https://example.test',
+          },
+        },
+      ],
+    },
+    () => 'tool_generated',
+  );
   assert.deepEqual(parsedAnthropicServerTool, {
     content: '',
-    toolCalls: [{
-      id: 'srvtool_2',
-      type: 'function',
-      function: {
-        name: 'web_fetch',
-        arguments: '{"url":"https://example.test"}'
-      }
-    }]
+    toolCalls: [
+      {
+        id: 'srvtool_2',
+        type: 'function',
+        function: {
+          name: 'web_fetch',
+          arguments: '{"url":"https://example.test"}',
+        },
+      },
+    ],
   });
   console.log('PASS anthropic 非流式响应可兼容 server_tool_use 工具块');
 }
@@ -3846,56 +4361,72 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
 function runTokenUsageNormalizationTests(tokenUsageModule: TokenUsageModule): void {
   const { normalizeTokenUsage, readAttachedTokenUsage, attachTokenUsage } = tokenUsageModule;
 
-  const openAIChatUsage = normalizeTokenUsage('openai-chat', {
-    prompt_tokens: 1014,
-    completion_tokens: 140,
-    total_tokens: 1154
-  }, 200000);
+  const openAIChatUsage = normalizeTokenUsage(
+    'openai-chat',
+    {
+      prompt_tokens: 1014,
+      completion_tokens: 140,
+      total_tokens: 1154,
+    },
+    200000,
+  );
   assert.deepEqual(openAIChatUsage, {
     promptTokens: 1014,
     completionTokens: 140,
     totalTokens: 1154,
-    outputBuffer: 200000
+    outputBuffer: 200000,
   });
   console.log('PASS openai-chat usage 正常映射');
 
-  const openAIResponsesUsage = normalizeTokenUsage('openai-responses', {
-    input_tokens: 1147,
-    output_tokens: 104,
-    total_tokens: 1251
-  }, 65500);
+  const openAIResponsesUsage = normalizeTokenUsage(
+    'openai-responses',
+    {
+      input_tokens: 1147,
+      output_tokens: 104,
+      total_tokens: 1251,
+    },
+    65500,
+  );
   assert.deepEqual(openAIResponsesUsage, {
     promptTokens: 1147,
     completionTokens: 104,
     totalTokens: 1251,
-    outputBuffer: 65500
+    outputBuffer: 65500,
   });
   console.log('PASS openai-responses usage 正常映射');
 
-  const anthropicUsage = normalizeTokenUsage('anthropic', {
-    input_tokens: 321,
-    output_tokens: 79
-  }, 8192);
+  const anthropicUsage = normalizeTokenUsage(
+    'anthropic',
+    {
+      input_tokens: 321,
+      output_tokens: 79,
+    },
+    8192,
+  );
   assert.deepEqual(anthropicUsage, {
     promptTokens: 321,
     completionTokens: 79,
     totalTokens: 400,
-    outputBuffer: 8192
+    outputBuffer: 8192,
   });
   console.log('PASS anthropic usage 正常映射');
 
-  const anthropicCompatUsage = normalizeTokenUsage('anthropic', {
-    input_tokens: 350,
-    cache_read_input_tokens: 23296,
-    completion_tokens: 525,
-    prompt_tokens: 331,
-    total_tokens: 856
-  }, 30000);
+  const anthropicCompatUsage = normalizeTokenUsage(
+    'anthropic',
+    {
+      input_tokens: 350,
+      cache_read_input_tokens: 23296,
+      completion_tokens: 525,
+      prompt_tokens: 331,
+      total_tokens: 856,
+    },
+    30000,
+  );
   assert.deepEqual(anthropicCompatUsage, {
     promptTokens: 331,
     completionTokens: 525,
     totalTokens: 856,
-    outputBuffer: 30000
+    outputBuffer: 30000,
   });
   console.log('PASS anthropic 兼容接口会优先使用 prompt/completion/total 统计');
 
@@ -3903,38 +4434,38 @@ function runTokenUsageNormalizationTests(tokenUsageModule: TokenUsageModule): vo
     input_tokens: 350,
     cache_creation_input_tokens: 24,
     cache_read_input_tokens: 23296,
-    output_tokens: 75
+    output_tokens: 75,
   });
   assert.deepEqual(anthropicCachedUsage, {
     promptTokens: 23670,
     completionTokens: 75,
     totalTokens: 23745,
-    outputBuffer: undefined
+    outputBuffer: undefined,
   });
   console.log('PASS anthropic 缺失 prompt_tokens 时会把 cache 输入计入上下文占用');
 
   const correctedUsage = normalizeTokenUsage('openai-chat', {
     prompt_tokens: 1000,
     completion_tokens: 100,
-    total_tokens: 1300
+    total_tokens: 1300,
   });
   assert.deepEqual(correctedUsage, {
     promptTokens: 1000,
     completionTokens: 300,
     totalTokens: 1300,
-    outputBuffer: undefined
+    outputBuffer: undefined,
   });
   console.log('PASS totalTokens 与 prompt+completion 不一致时按 totalTokens 纠偏');
 
   const fallbackUsage = normalizeTokenUsage('openai-responses', {
     input_tokens: 900,
-    output_tokens: 120
+    output_tokens: 120,
   });
   assert.deepEqual(fallbackUsage, {
     promptTokens: 900,
     completionTokens: 120,
     totalTokens: 1020,
-    outputBuffer: undefined
+    outputBuffer: undefined,
   });
   console.log('PASS 缺失 totalTokens 时回退到 prompt+completion');
 
@@ -3945,11 +4476,7 @@ function runTokenUsageNormalizationTests(tokenUsageModule: TokenUsageModule): vo
 }
 
 function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateModule): void {
-  const {
-    ContextUsageState,
-    buildContextStatusText,
-    buildContextStatusTooltip
-  } = contextUsageStateModule;
+  const { ContextUsageState, buildContextStatusText, buildContextStatusTooltip } = contextUsageStateModule;
 
   const state = new ContextUsageState();
   assert.equal(buildContextStatusText(undefined), 'CodingPlans\u00A0Context\u00A0--');
@@ -3965,7 +4492,7 @@ function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateMod
     promptTokens: 21770,
     completionTokens: 8,
     totalTokens: 21778,
-    outputBuffer: 1
+    outputBuffer: 1,
   });
 
   const snapshot = state.getSnapshot();
@@ -3984,7 +4511,7 @@ function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateMod
     promptTokens: 331,
     completionTokens: 525,
     totalTokens: 856,
-    outputBuffer: 60000
+    outputBuffer: 60000,
   };
   assert.equal(buildContextStatusText(reservedSnapshot), 'CodingPlans\u00A0Context\u00A048%');
   const reservedTooltip = buildContextStatusTooltip(reservedSnapshot);
@@ -3998,7 +4525,7 @@ function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateMod
 
 function runPlanUsageStatusTests(
   planUsageStatusModule: PlanUsageStatusModule,
-  contextUsageStateModule: ContextUsageStateModule
+  contextUsageStateModule: ContextUsageStateModule,
 ): void {
   const {
     CodingPlanStatusBarController,
@@ -4008,7 +4535,7 @@ function runPlanUsageStatusTests(
     buildCodingPlanStatusTooltip,
     buildPlanUsageStatusText,
     buildPlanUsageStatusTooltip,
-    parseVendorPlanUsageSnapshot
+    parseVendorPlanUsageSnapshot,
   } = planUsageStatusModule;
   const { ContextUsageState } = contextUsageStateModule;
   const vscodeMock = require('vscode') as { testState: { createdStatusBarItems: Array<Record<string, unknown>> } };
@@ -4033,7 +4560,7 @@ function runPlanUsageStatusTests(
             currentValue: 127694464,
             remaining: 672305536,
             percentage: 15,
-            nextResetTime: Date.UTC(2026, 2, 30, 10, 0, 0)
+            nextResetTime: Date.UTC(2026, 2, 30, 10, 0, 0),
           },
           {
             type: 'TIME_LIMIT',
@@ -4045,39 +4572,39 @@ function runPlanUsageStatusTests(
             percentage: 45,
             usageDetails: [
               { modelCode: 'search-prime', usage: 1433 },
-              { modelCode: 'web-reader', usage: 395 }
-            ]
-          }
-        ]
-      }
+              { modelCode: 'web-reader', usage: 395 },
+            ],
+          },
+        ],
+      },
     },
-    Date.UTC(2026, 2, 30, 8, 0, 0)
+    Date.UTC(2026, 2, 30, 8, 0, 0),
   );
 
   assert.ok(snapshot, '智谱 usage 响应应可被解析');
   assert.equal(snapshot?.vendor, 'zhipu');
   assert.equal(snapshot?.productName, 'GLM Coding Max');
   assert.deepEqual(
-    snapshot?.limits.map(limit => ({
+    snapshot?.limits.map((limit) => ({
       label: limit.label,
       percentage: limit.percentage,
       used: limit.used,
-      limit: limit.limit
+      limit: limit.limit,
     })),
     [
       {
         label: '5h',
         percentage: 15,
         used: 127694464,
-        limit: 800000000
+        limit: 800000000,
       },
       {
         label: 'MCP',
         percentage: 45,
         used: 1828,
-        limit: 4000
-      }
-    ]
+        limit: 4000,
+      },
+    ],
   );
 
   assert.equal(buildPlanUsageStatusText(snapshot), 'CodingPlans Usage 5h 15% | MCP 45%');
@@ -4101,12 +4628,9 @@ function runPlanUsageStatusTests(
     promptTokens: 21770,
     completionTokens: 8,
     totalTokens: 21778,
-    outputBuffer: 1
+    outputBuffer: 1,
   };
-  assert.equal(
-    buildCodingPlanStatusText(contextSnapshot, snapshot),
-    'CodingPlans 5h 15% | MCP 45% | Ctx 17%'
-  );
+  assert.equal(buildCodingPlanStatusText(contextSnapshot, snapshot), 'CodingPlans 5h 15% | MCP 45% | Ctx 17%');
   const mergedTooltip = buildCodingPlanStatusTooltip(contextSnapshot, snapshot);
   assert.match(mergedTooltip, /\*\*Plan Usage\*\*/);
   assert.match(mergedTooltip, /\*\*Context\*\*/);
@@ -4125,7 +4649,10 @@ function runPlanUsageStatusTests(
   assert.match(detailsHtml, /<h2>Context<\/h2>/);
   assert.match(detailsHtml, /GLM Coding Max/);
   assert.match(detailsHtml, /glm-4\.7/);
-  assert.match(detailsHtml, /background-color: var\(--vscode-editorHoverWidget-background, var\(--vscode-editor-background\)\);/);
+  assert.match(
+    detailsHtml,
+    /background-color: var\(--vscode-editorHoverWidget-background, var\(--vscode-editor-background\)\);/,
+  );
   assert.doesNotMatch(detailsHtml, /color-mix\(/);
   assert.doesNotMatch(detailsHtml, /Source:/);
   assert.doesNotMatch(detailsHtml, /open\.bigmodel\.cn\/api\/monitor\/usage\/quota\/limit/);
@@ -4146,8 +4673,11 @@ function runPlanUsageStatusTests(
   console.log('PASS CodingPlans 状态栏仅保留 hover，不再绑定点击命令');
 }
 
-async function runCommitMessageGeneratorTests(commitMessageGeneratorModule: CommitMessageGeneratorModule): Promise<void> {
-  const { commitMessageTestUtils, registerCommitMessageModelSource, selectCommitMessageModel } = commitMessageGeneratorModule;
+async function runCommitMessageGeneratorTests(
+  commitMessageGeneratorModule: CommitMessageGeneratorModule,
+): Promise<void> {
+  const { commitMessageTestUtils, registerCommitMessageModelSource, selectCommitMessageModel } =
+    commitMessageGeneratorModule;
   const vscodeMock = require('vscode') as {
     testState: {
       shownInformationMessages: Array<{ message: string; items: unknown[] }>;
@@ -4158,21 +4688,23 @@ async function runCommitMessageGeneratorTests(commitMessageGeneratorModule: Comm
 
   registerCommitMessageModelSource(undefined);
 
-  const normalizedMessage = commitMessageTestUtils.sanitizeGeneratedCommitMessage([
-    '```',
-    'fix(bridge):移除手动认证配置需求并完善本地桥接架构',
-    '- 删除旧版认证配置说明',
-    '- 新增 bridge 命令行工具',
-    '```'
-  ].join('\n'));
+  const normalizedMessage = commitMessageTestUtils.sanitizeGeneratedCommitMessage(
+    [
+      '```',
+      'fix(bridge):移除手动认证配置需求并完善本地桥接架构',
+      '- 删除旧版认证配置说明',
+      '- 新增 bridge 命令行工具',
+      '```',
+    ].join('\n'),
+  );
   assert.equal(
     normalizedMessage,
     [
       'fix(bridge): 移除手动认证配置需求并完善本地桥接架构',
       '',
       '- 删除旧版认证配置说明',
-      '- 新增 bridge 命令行工具'
-    ].join('\n')
+      '- 新增 bridge 命令行工具',
+    ].join('\n'),
   );
   console.log('PASS commit message 题头会自动补齐 Conventional Commits 冒号后的空格');
 
@@ -4189,16 +4721,34 @@ async function runCommitMessageGeneratorTests(commitMessageGeneratorModule: Comm
       subjectMaxLength: 72,
       requireConventionalType: true,
       warnOnValidationFailure: true,
-      llmMaxPromptLength: 20000
+      llmMaxPromptLength: 20000,
     },
-    false
+    false,
   );
-  assert.match(prompt, /Prefer no body or 1 bullet for narrow changes such as deleting, renaming, or moving a single file\./);
-  assert.match(prompt, /Prefer 2 or 3 bullet points only when the diff clearly contains multiple meaningful change groups\./);
-  assert.match(prompt, /Each bullet should group related edits by intent or outcome, not narrate the diff file-by-file\./);
-  assert.match(prompt, /Avoid repetitive file-by-file bullets\. Verb-led bullets are acceptable when they stay concise and strictly reflect the diff\./);
-  assert.match(prompt, /For narrow changes such as deleting or renaming a single file, the body may be omitted entirely\./);
-  assert.match(prompt, /Never invent motivations, architecture changes, or side effects that are not directly supported by the diff\./);
+  assert.match(
+    prompt,
+    /Prefer no body or 1 bullet for narrow changes such as deleting, renaming, or moving a single file\./,
+  );
+  assert.match(
+    prompt,
+    /Prefer 2 or 3 bullet points only when the diff clearly contains multiple meaningful change groups\./,
+  );
+  assert.match(
+    prompt,
+    /Each bullet should group related edits by intent or outcome, not narrate the diff file-by-file\./,
+  );
+  assert.match(
+    prompt,
+    /Avoid repetitive file-by-file bullets\. Verb-led bullets are acceptable when they stay concise and strictly reflect the diff\./,
+  );
+  assert.match(
+    prompt,
+    /For narrow changes such as deleting or renaming a single file, the body may be omitted entirely\./,
+  );
+  assert.match(
+    prompt,
+    /Never invent motivations, architecture changes, or side effects that are not directly supported by the diff\./,
+  );
   console.log('PASS commit message prompt 会明确要求聚合式高信号摘要');
 
   const recentStyleBlock = commitMessageTestUtils.buildStyleReferenceBlock([
@@ -4206,17 +4756,18 @@ async function runCommitMessageGeneratorTests(commitMessageGeneratorModule: Comm
       'build(vsix): 优化 .vscodeignore 策略为白名单模式',
       '',
       '- 将 .vscodeignore 改为默认忽略所有文件并仅包含特定白名单文件。',
-      '- 更新打包测试逻辑，通过显式列表验证 VSIX 内容并增加金丝雀测试。'
+      '- 更新打包测试逻辑，通过显式列表验证 VSIX 内容并增加金丝雀测试。',
     ].join('\n'),
-    [
-      'chore: update provider pricing'
-    ].join('\n')
+    ['chore: update provider pricing'].join('\n'),
   ]);
   assert.ok(recentStyleBlock);
   assert.match(recentStyleBlock, /The first line should look like it belongs next to these samples\./);
   assert.match(recentStyleBlock, /If the samples use Conventional Commits, keep the same type\/scope style\./);
   assert.match(recentStyleBlock, /Use these samples for style only, not as evidence of what changed now\./);
-  assert.match(recentStyleBlock, /Do not copy exact change details, identifiers, tickets, scopes, topics, files, dependencies, providers, metrics, or workflows/);
+  assert.match(
+    recentStyleBlock,
+    /Do not copy exact change details, identifiers, tickets, scopes, topics, files, dependencies, providers, metrics, or workflows/,
+  );
 
   const stylePrompt = commitMessageTestUtils.buildDiffGenerationPrompt(
     'diff --git a/src/bridge.ts b/src/bridge.ts',
@@ -4231,21 +4782,30 @@ async function runCommitMessageGeneratorTests(commitMessageGeneratorModule: Comm
       subjectMaxLength: 72,
       requireConventionalType: true,
       warnOnValidationFailure: true,
-      llmMaxPromptLength: 20000
+      llmMaxPromptLength: 20000,
     },
     false,
-    recentStyleBlock
+    recentStyleBlock,
   );
   const styleIndex = stylePrompt.indexOf('STYLE REQUIREMENT');
   const fallbackFormatIndex = stylePrompt.indexOf('FALLBACK FORMAT REQUIREMENT');
   assert.ok(styleIndex >= 0);
   assert.ok(fallbackFormatIndex > styleIndex);
   assert.match(stylePrompt, /Use the fallback format rules only for details that the recent samples do not decide\./);
-  assert.match(stylePrompt, /If STYLE conflicts with body length, bullet, or subject format details below, follow STYLE\./);
+  assert.match(
+    stylePrompt,
+    /If STYLE conflicts with body length, bullet, or subject format details below, follow STYLE\./,
+  );
   assert.match(stylePrompt, /CURRENT DIFF \(ONLY CHANGE EVIDENCE\):/);
-  assert.match(stylePrompt, /Generate the commit message from this diff only\. Use recent commit messages only for writing style\./);
+  assert.match(
+    stylePrompt,
+    /Generate the commit message from this diff only\. Use recent commit messages only for writing style\./,
+  );
   assert.match(stylePrompt, /Any topic, file, or action absent from this diff must be excluded from the output\./);
-  assert.match(stylePrompt, /Recent commit messages are style references only; they are not evidence for the current change\./);
+  assert.match(
+    stylePrompt,
+    /Recent commit messages are style references only; they are not evidence for the current change\./,
+  );
   console.log('PASS commit message recent style 提示词会优先约束格式与正文风格');
 
   const noBodyIssues = commitMessageTestUtils.validateCommitMessage(
@@ -4261,9 +4821,9 @@ async function runCommitMessageGeneratorTests(commitMessageGeneratorModule: Comm
       subjectMaxLength: 72,
       requireConventionalType: true,
       warnOnValidationFailure: true,
-      llmMaxPromptLength: 20000
+      llmMaxPromptLength: 20000,
     },
-    false
+    false,
   );
   assert.deepEqual(noBodyIssues, []);
   console.log('PASS commit message 校验允许窄变更仅输出题头');
@@ -4289,7 +4849,7 @@ async function runCommitMessageGeneratorTests(commitMessageGeneratorModule: Comm
           },
           async countTokens(): Promise<number> {
             return 0;
-          }
+          },
         },
         {
           vendor: 'coding-plans',
@@ -4304,21 +4864,21 @@ async function runCommitMessageGeneratorTests(commitMessageGeneratorModule: Comm
           },
           async countTokens(): Promise<number> {
             return 0;
-          }
-        }
+          },
+        },
       ];
     },
     async refreshModels(): Promise<void> {
       return undefined;
-    }
+    },
   });
   await selectCommitMessageModel();
   assert.deepEqual(
-    activeState.updates.slice(previousUpdateCount).map(update => ({ key: update.key, value: update.value })),
+    activeState.updates.slice(previousUpdateCount).map((update) => ({ key: update.key, value: update.value })),
     [
       { key: 'commitMessage.modelVendor', value: 'cliproxyapi' },
-      { key: 'commitMessage.modelId', value: 'gpt-5.4' }
-    ]
+      { key: 'commitMessage.modelId', value: 'gpt-5.4' },
+    ],
   );
   console.log('PASS commit message 模型选择可直接使用扩展内部模型源，不依赖 unscoped provider 枚举');
   registerCommitMessageModelSource(undefined);
@@ -4326,7 +4886,7 @@ async function runCommitMessageGeneratorTests(commitMessageGeneratorModule: Comm
 
 async function runLMChatProviderAdapterProvideTokenCountTests(
   contextUsageStateModule: ContextUsageStateModule,
-  lmChatProviderAdapterModule: LMChatProviderAdapterModule
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule,
 ): Promise<void> {
   const vscode = require('vscode') as {
     Disposable: new (callback?: () => void) => { dispose(): void };
@@ -4340,18 +4900,18 @@ async function runLMChatProviderAdapterProvideTokenCountTests(
     },
     onDidChangeModels(): { dispose(): void } {
       return new vscode.Disposable();
-    }
+    },
   };
 
   const usageState = new ContextUsageState();
   const adapter = new LMChatProviderAdapter(fakeProvider as never, undefined, usageState);
   const model = {
     id: 'vendor/model',
-    name: 'model'
+    name: 'model',
   } as never;
   const otherModel = {
     id: 'vendor/other',
-    name: 'other'
+    name: 'other',
   } as never;
 
   assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
@@ -4367,7 +4927,7 @@ async function runLMChatProviderAdapterProvideTokenCountTests(
     promptTokens: 1000,
     completionTokens: 20,
     totalTokens: 1020,
-    outputBuffer: 10
+    outputBuffer: 10,
   });
 
   assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
@@ -4384,7 +4944,7 @@ async function runLMChatProviderAdapterProvideTokenCountTests(
     promptTokens: 1200,
     completionTokens: 30,
     totalTokens: 1230,
-    outputBuffer: 12
+    outputBuffer: 12,
   });
 
   assert.equal(await adapter.provideTokenCount(model, 'hello', {} as never), 0);
@@ -4396,7 +4956,7 @@ async function runLMChatProviderAdapterProvideTokenCountTests(
 }
 
 async function runLMChatProviderAdapterEmptyResponseRetryTests(
-  lmChatProviderAdapterModule: LMChatProviderAdapterModule
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule,
 ): Promise<void> {
   const vscode = require('vscode') as {
     Disposable: new (callback?: () => void) => { dispose(): void };
@@ -4419,7 +4979,7 @@ async function runLMChatProviderAdapterEmptyResponseRetryTests(
             error.code = 'coding-plans.empty-model-response';
             throw error;
           })(),
-          text: (async function* () {})()
+          text: (async function* () {})(),
         };
       }
 
@@ -4429,9 +4989,9 @@ async function runLMChatProviderAdapterEmptyResponseRetryTests(
         })(),
         text: (async function* () {
           yield 'retry succeeded';
-        })()
+        })(),
       };
-    }
+    },
   };
 
   const fakeProvider = {
@@ -4443,7 +5003,7 @@ async function runLMChatProviderAdapterEmptyResponseRetryTests(
     },
     onDidChangeModels(): { dispose(): void } {
       return new vscode.Disposable();
-    }
+    },
   };
 
   const adapter = new LMChatProviderAdapter(fakeProvider as never);
@@ -4451,34 +5011,39 @@ async function runLMChatProviderAdapterEmptyResponseRetryTests(
   const progress = {
     report(part: { value?: string }): void {
       reportedParts.push(part);
-    }
+    },
   };
   const model = {
     id: targetModel.id,
-    name: targetModel.name
+    name: targetModel.name,
   } as never;
-  const messages = [{
-    role: 1,
-    content: [new vscode.LanguageModelTextPart('hello')]
-  }] as never;
+  const messages = [
+    {
+      role: 1,
+      content: [new vscode.LanguageModelTextPart('hello')],
+    },
+  ] as never;
   const token = {
     isCancellationRequested: false,
     onCancellationRequested(): { dispose(): void } {
       return new vscode.Disposable();
-    }
+    },
   } as never;
 
   await adapter.provideLanguageModelChatResponse(model, messages, {} as never, progress as never, token);
 
   assert.equal(sendCount, 2);
-  assert.deepEqual(reportedParts.map(part => part.value), ['retry succeeded']);
+  assert.deepEqual(
+    reportedParts.map((part) => part.value),
+    ['retry succeeded'],
+  );
   adapter.dispose();
   console.log('PASS LMChatProviderAdapter 会在空响应且尚未输出内容时自动重试');
 }
 
 async function runManageVendorConfigurationTests(
   configStoreCtor: ConfigStoreCtor,
-  extensionModule: ExtensionModule
+  extensionModule: ExtensionModule,
 ): Promise<void> {
   const vscodeMock = require('vscode') as {
     testState: {
@@ -4490,12 +5055,14 @@ async function runManageVendorConfigurationTests(
     };
   };
 
-  activeState = createState([{
-    name: 'Vendor',
-    baseUrl: 'https://example.test/v1',
-    defaultApiStyle: 'openai-chat',
-    models: []
-  }]);
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      models: [],
+    },
+  ]);
   const secretContext = createExtensionContextWithSecrets();
   const configStore = new configStoreCtor(secretContext.context as never);
   let refreshCount = 0;
@@ -4507,12 +5074,12 @@ async function runManageVendorConfigurationTests(
     },
     getAvailableModels(): unknown[] {
       return [];
-    }
+    },
   };
   const fakeAdapter = {
     notifyLanguageModelInformationChanged(): void {
       notifyCount += 1;
-    }
+    },
   };
 
   vscodeMock.testState.shownInformationMessages.length = 0;
@@ -4537,7 +5104,7 @@ async function runManageVendorConfigurationTests(
 
 async function runLMChatProviderAdapterModelFilteringTests(
   configStoreCtor: ConfigStoreCtor,
-  lmChatProviderAdapterModule: LMChatProviderAdapterModule
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule,
 ): Promise<void> {
   const vscode = require('vscode') as {
     Disposable: new (callback?: () => void) => { dispose(): void };
@@ -4548,20 +5115,20 @@ async function runLMChatProviderAdapterModelFilteringTests(
       name: 'Vendor',
       baseUrl: 'https://example.test/v1',
       defaultApiStyle: 'openai-chat',
-      models: []
+      models: [],
     },
     {
       name: 'Other',
       baseUrl: 'https://other.example.test/v1',
       defaultApiStyle: 'openai-chat',
-      models: []
+      models: [],
     },
     {
       name: 'Anthropic',
       baseUrl: 'https://anthropic.example.test/v1',
       defaultApiStyle: 'anthropic',
-      models: []
-    }
+      models: [],
+    },
   ]);
   const secretContext = createExtensionContextWithSecrets();
   secretContext.secrets.set('coding-plans.vendor.apiKey.Vendor', 'configured');
@@ -4577,7 +5144,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       version: 'Vendor',
       maxInputTokens: 32000,
       maxOutputTokens: 16000,
-      capabilities: { toolCalling: true, imageInput: false }
+      capabilities: { toolCalling: true, imageInput: false },
     },
     {
       id: 'Other/coder',
@@ -4588,7 +5155,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       version: 'Other',
       maxInputTokens: 32000,
       maxOutputTokens: 16000,
-      capabilities: { toolCalling: true, imageInput: false }
+      capabilities: { toolCalling: true, imageInput: false },
     },
     {
       id: 'Anthropic/coder',
@@ -4599,8 +5166,8 @@ async function runLMChatProviderAdapterModelFilteringTests(
       version: 'Anthropic',
       maxInputTokens: 32000,
       maxOutputTokens: 16000,
-      capabilities: { toolCalling: true, imageInput: false }
-    }
+      capabilities: { toolCalling: true, imageInput: false },
+    },
   ];
   let availableModels = models;
   let refreshCount = 0;
@@ -4622,7 +5189,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
     },
     onDidChangeModels(): { dispose(): void } {
       return new vscode.Disposable();
-    }
+    },
   };
 
   const adapter = new LMChatProviderAdapter(fakeProvider as never, configStore);
@@ -4630,334 +5197,481 @@ async function runLMChatProviderAdapterModelFilteringTests(
     const unscopedModels = await adapter.provideLanguageModelChatInformation({ silent: false } as never, {} as never);
     assert.deepEqual(unscopedModels, []);
 
-    const defaultRootModels = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'Coding Plans'
-    } as never, {} as never);
+    const defaultRootModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'Coding Plans',
+      } as never,
+      {} as never,
+    );
     assert.deepEqual(defaultRootModels, []);
 
-    const unresolvedGroupModels = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'Group'
-    } as never, {} as never);
+    const unresolvedGroupModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'Group',
+      } as never,
+      {} as never,
+    );
     assert.deepEqual(unresolvedGroupModels, []);
 
-    const vendorGroupModels = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'Vendor'
-    } as never, {} as never);
-    assert.deepEqual(vendorGroupModels.map(model => model.id), ['Vendor/coder']);
-    assert.equal(
-      (vendorGroupModels[0]?.capabilities as unknown as { agentMode?: boolean })?.agentMode,
-      undefined
+    const vendorGroupModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'Vendor',
+      } as never,
+      {} as never,
     );
+    assert.deepEqual(
+      vendorGroupModels.map((model) => model.id),
+      ['Vendor/coder'],
+    );
+    assert.equal((vendorGroupModels[0]?.capabilities as unknown as { agentMode?: boolean })?.agentMode, undefined);
     assert.equal(
-      (vendorGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            type?: string;
-            default?: unknown;
-            group?: string;
-            enum?: unknown[];
-          }>;
-        };
-      }).configurationSchema
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                type?: string;
+                default?: unknown;
+                group?: string;
+                enum?: unknown[];
+              }
+            >;
+          };
+        }
+      ).configurationSchema
         ? Object.prototype.hasOwnProperty.call(
-          (vendorGroupModels[0] as unknown as { configurationSchema?: Record<string, unknown> }).configurationSchema,
-          'type'
-        )
+            (vendorGroupModels[0] as unknown as { configurationSchema?: Record<string, unknown> }).configurationSchema,
+            'type',
+          )
         : false,
-      false
+      false,
     );
     assert.equal(
-      (vendorGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            type?: string;
-            default?: unknown;
-            group?: string;
-            enum?: unknown[];
-          }>;
-        };
-      }).configurationSchema?.properties?.thinkingEffort?.type,
-      'string'
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                type?: string;
+                default?: unknown;
+                group?: string;
+                enum?: unknown[];
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingEffort?.type,
+      'string',
     );
     assert.deepEqual(
-      (vendorGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            enum?: unknown[];
-          }>;
-        };
-      }).configurationSchema?.properties?.thinkingEffort?.enum,
-      ['none', 'low', 'medium', 'high', 'xhigh', 'max']
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                enum?: unknown[];
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingEffort?.enum,
+      ['none', 'low', 'medium', 'high', 'xhigh', 'max'],
     );
     assert.equal(
-      (vendorGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            default?: unknown;
-            group?: string;
-          }>;
-        };
-      }).configurationSchema?.properties?.thinkingEffort?.default,
-      'high'
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                default?: unknown;
+                group?: string;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingEffort?.default,
+      'high',
     );
     assert.equal(
-      (vendorGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            group?: string;
-          }>;
-        };
-      }).configurationSchema?.properties?.thinkingEffort?.group,
-      'navigation'
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                group?: string;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingEffort?.group,
+      'navigation',
     );
     assert.equal(
-      (vendorGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            type?: string;
-            default?: unknown;
-          }>;
-        };
-      }).configurationSchema?.properties?.temperature?.type,
-      'string'
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                type?: string;
+                default?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.temperature?.type,
+      'string',
     );
     assert.deepEqual(
-      (vendorGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            enum?: unknown[];
-          }>;
-        };
-      }).configurationSchema?.properties?.temperature?.enum,
-      ['inherit', 'none', '0.1', '0.4', '0.7', '1']
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                enum?: unknown[];
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.temperature?.enum,
+      ['inherit', 'none', '0.1', '0.4', '0.7', '1'],
     );
     assert.equal(
-      (vendorGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            default?: unknown;
-          }>;
-        };
-      }).configurationSchema?.properties?.temperature?.default,
-      'none'
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                default?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.temperature?.default,
+      'none',
     );
 
-    availableModels = [{
-      ...models[0],
-      id: 'Vendor/limited',
-      name: 'limited',
-      apiType: 'responses',
-      editTools: ['apply-patch'],
-      supportsReasoningEffort: ['high', 'xhigh'],
-      reasoningEffortFormat: 'responses',
-      zeroDataRetentionEnabled: false
-    } as never];
-    const limitedVendorModels = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'Vendor'
-    } as never, {} as never);
+    availableModels = [
+      {
+        ...models[0],
+        id: 'Vendor/limited',
+        name: 'limited',
+        apiType: 'responses',
+        editTools: ['apply-patch'],
+        supportsReasoningEffort: ['high', 'xhigh'],
+        reasoningEffortFormat: 'responses',
+        zeroDataRetentionEnabled: false,
+      } as never,
+    ];
+    const limitedVendorModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'Vendor',
+      } as never,
+      {} as never,
+    );
     assert.deepEqual(
-      (limitedVendorModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            enum?: unknown[];
-            default?: unknown;
-          }>;
-        };
-      }).configurationSchema?.properties?.thinkingEffort?.enum,
-      ['high', 'xhigh']
+      (
+        limitedVendorModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                enum?: unknown[];
+                default?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingEffort?.enum,
+      ['high', 'xhigh'],
     );
     assert.equal(
-      (limitedVendorModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            default?: unknown;
-          }>;
-        };
-      }).configurationSchema?.properties?.thinkingEffort?.default,
-      'high'
+      (
+        limitedVendorModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                default?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingEffort?.default,
+      'high',
     );
-    assert.deepEqual(
-      (limitedVendorModels[0] as unknown as { editTools?: readonly string[] }).editTools,
-      ['apply-patch']
-    );
+    assert.deepEqual((limitedVendorModels[0] as unknown as { editTools?: readonly string[] }).editTools, [
+      'apply-patch',
+    ]);
     assert.equal(
       (limitedVendorModels[0] as unknown as { zeroDataRetentionEnabled?: boolean }).zeroDataRetentionEnabled,
-      false
+      false,
     );
 
-    availableModels = [{
-      ...models[0],
-      id: 'Vendor/non-thinking',
-      name: 'non-thinking',
-      thinking: false
-    } as never];
-    const nonThinkingVendorModels = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'Vendor'
-    } as never, {} as never);
+    availableModels = [
+      {
+        ...models[0],
+        id: 'Vendor/non-thinking',
+        name: 'non-thinking',
+        thinking: false,
+      } as never,
+    ];
+    const nonThinkingVendorModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'Vendor',
+      } as never,
+      {} as never,
+    );
     assert.equal(
-      (nonThinkingVendorModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, unknown>;
-        };
-      }).configurationSchema?.properties?.thinkingEffort,
-      undefined
+      (
+        nonThinkingVendorModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<string, unknown>;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingEffort,
+      undefined,
     );
     availableModels = models;
 
-    const otherGroupModels = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'Other'
-    } as never, {} as never);
-    assert.deepEqual(otherGroupModels.map(model => model.id), ['Other/coder']);
-    assert.equal(
-      (otherGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, unknown>;
-        };
-      }).configurationSchema?.properties?.temperature,
-      undefined
+    const otherGroupModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'Other',
+      } as never,
+      {} as never,
     );
     assert.deepEqual(
-      (otherGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            enum?: unknown[];
-          }>;
-        };
-      }).configurationSchema?.properties?.thinkingEffort?.enum,
-      ['low', 'medium', 'high', 'xhigh']
+      otherGroupModels.map((model) => model.id),
+      ['Other/coder'],
     );
     assert.equal(
-      (otherGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            default?: unknown;
-          }>;
-        };
-      }).configurationSchema?.properties?.thinkingEffort?.default,
-      'xhigh'
-    );
-    assert.equal(
-      (otherGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            type?: string;
-            default?: unknown;
-          }>;
-        };
-      }).configurationSchema?.properties?.personality?.type,
-      'string'
+      (
+        otherGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<string, unknown>;
+          };
+        }
+      ).configurationSchema?.properties?.temperature,
+      undefined,
     );
     assert.deepEqual(
-      (otherGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            enum?: unknown[];
-          }>;
-        };
-      }).configurationSchema?.properties?.personality?.enum,
-      ['pragmatic', 'friendly']
+      (
+        otherGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                enum?: unknown[];
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingEffort?.enum,
+      ['low', 'medium', 'high', 'xhigh'],
     );
     assert.equal(
-      (otherGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            default?: unknown;
-          }>;
-        };
-      }).configurationSchema?.properties?.personality?.default,
-      'pragmatic'
+      (
+        otherGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                default?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingEffort?.default,
+      'xhigh',
+    );
+    assert.equal(
+      (
+        otherGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                type?: string;
+                default?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.personality?.type,
+      'string',
+    );
+    assert.deepEqual(
+      (
+        otherGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                enum?: unknown[];
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.personality?.enum,
+      ['pragmatic', 'friendly'],
+    );
+    assert.equal(
+      (
+        otherGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                default?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.personality?.default,
+      'pragmatic',
     );
 
-    const anthropicGroupModels = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'Anthropic'
-    } as never, {} as never);
-    assert.deepEqual(anthropicGroupModels.map(model => model.id), ['Anthropic/coder']);
-    assert.equal(
-      (anthropicGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            type?: string;
-            default?: unknown;
-            group?: string;
-            enum?: unknown[];
-          }>;
-        };
-      }).configurationSchema?.properties?.thinking?.type,
-      'string'
+    const anthropicGroupModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'Anthropic',
+      } as never,
+      {} as never,
     );
     assert.deepEqual(
-      (anthropicGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            enum?: unknown[];
-          }>;
-        };
-      }).configurationSchema?.properties?.thinking?.enum,
-      ['think', 'non-think']
+      anthropicGroupModels.map((model) => model.id),
+      ['Anthropic/coder'],
     );
     assert.equal(
-      (anthropicGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            default?: unknown;
-          }>;
-        };
-      }).configurationSchema?.properties?.thinking?.default,
-      'think'
+      (
+        anthropicGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                type?: string;
+                default?: unknown;
+                group?: string;
+                enum?: unknown[];
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinking?.type,
+      'string',
     );
     assert.deepEqual(
-      (anthropicGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            enum?: unknown[];
-          }>;
-        };
-      }).configurationSchema?.properties?.effort?.enum,
-      ['low', 'medium', 'high', 'xhigh', 'max']
+      (
+        anthropicGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                enum?: unknown[];
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinking?.enum,
+      ['think', 'non-think'],
     );
     assert.equal(
-      (anthropicGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, {
-            default?: unknown;
-          }>;
-        };
-      }).configurationSchema?.properties?.effort?.default,
-      'max'
+      (
+        anthropicGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                default?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinking?.default,
+      'think',
+    );
+    assert.deepEqual(
+      (
+        anthropicGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                enum?: unknown[];
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.effort?.enum,
+      ['low', 'medium', 'high', 'xhigh', 'max'],
     );
     assert.equal(
-      (anthropicGroupModels[0] as unknown as {
-        configurationSchema?: {
-          properties?: Record<string, unknown>;
-        };
-      }).configurationSchema?.properties?.thinkingEffort,
-      undefined
+      (
+        anthropicGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                default?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.effort?.default,
+      'max',
+    );
+    assert.equal(
+      (
+        anthropicGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<string, unknown>;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingEffort,
+      undefined,
     );
 
-    const vendorModels = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'Group',
-      configuration: { vendorName: 'Vendor' }
-    } as never, {} as never);
-    assert.deepEqual(vendorModels.map(model => model.id), ['Vendor/coder']);
+    const vendorModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'Group',
+        configuration: { vendorName: 'Vendor' },
+      } as never,
+      {} as never,
+    );
+    assert.deepEqual(
+      vendorModels.map((model) => model.id),
+      ['Vendor/coder'],
+    );
 
     availableModels = [];
     secretContext.secrets.clear();
     refreshCount = 0;
-    const silentEmptyModels = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'Vendor'
-    } as never, {} as never);
+    const silentEmptyModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'Vendor',
+      } as never,
+      {} as never,
+    );
     assert.equal(refreshCount, 1);
     assert.deepEqual(silentEmptyModels, []);
-    console.log('PASS LMChatProviderAdapter 仅在真实供应商 group 或 configuration 场景暴露模型，并按协议暴露 More Actions schema');
+    console.log(
+      'PASS LMChatProviderAdapter 仅在真实供应商 group 或 configuration 场景暴露模型，并按协议暴露 More Actions schema',
+    );
   } finally {
     adapter.dispose();
     configStore.dispose();
@@ -4966,7 +5680,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
 
 async function runLMChatProviderAdapterCliproxyapiPickerTests(
   configStoreCtor: ConfigStoreCtor,
-  lmChatProviderAdapterModule: LMChatProviderAdapterModule
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule,
 ): Promise<void> {
   const vscode = require('vscode') as {
     Disposable: new (callback?: () => void) => { dispose(): void };
@@ -4979,8 +5693,8 @@ async function runLMChatProviderAdapterCliproxyapiPickerTests(
       baseUrl: 'https://cliproxyapi.jqknono.com/v1',
       defaultApiStyle: 'openai-chat',
       useModelsEndpoint: true,
-      models: []
-    }
+      models: [],
+    },
   ]);
   const secretContext = createExtensionContextWithSecrets();
   secretContext.secrets.set('coding-plans.vendor.apiKey.cliproxyapi', 'configured');
@@ -4995,8 +5709,8 @@ async function runLMChatProviderAdapterCliproxyapiPickerTests(
       version: 'cliproxyapi',
       maxInputTokens: 32000,
       maxOutputTokens: 16000,
-      capabilities: { toolCalling: true, imageInput: false }
-    }
+      capabilities: { toolCalling: true, imageInput: false },
+    },
   ];
   let refreshCount = 0;
   const fakeProvider = {
@@ -5018,24 +5732,36 @@ async function runLMChatProviderAdapterCliproxyapiPickerTests(
     },
     onDidChangeModels(): { dispose(): void } {
       return new vscode.Disposable();
-    }
+    },
   };
 
   const adapter = new LMChatProviderAdapter(fakeProvider as never, configStore);
   try {
-    const pickedModels = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'cliproxyapi',
-      configuration: { vendorName: 'cliproxyapi' }
-    } as never, {} as never);
-    assert.deepEqual(pickedModels.map(model => model.id), ['cliproxyapi/o4-mini']);
+    const pickedModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'cliproxyapi',
+        configuration: { vendorName: 'cliproxyapi' },
+      } as never,
+      {} as never,
+    );
+    assert.deepEqual(
+      pickedModels.map((model) => model.id),
+      ['cliproxyapi/o4-mini'],
+    );
 
-    const nonSilentModels = await adapter.provideLanguageModelChatInformation({
-      silent: false,
-      group: 'cliproxyapi',
-      configuration: { vendorName: 'cliproxyapi' }
-    } as never, {} as never);
-    assert.deepEqual(nonSilentModels.map(model => model.id), ['cliproxyapi/o4-mini']);
+    const nonSilentModels = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: false,
+        group: 'cliproxyapi',
+        configuration: { vendorName: 'cliproxyapi' },
+      } as never,
+      {} as never,
+    );
+    assert.deepEqual(
+      nonSilentModels.map((model) => model.id),
+      ['cliproxyapi/o4-mini'],
+    );
     assert.equal(secretContext.secrets.get('coding-plans.vendor.apiKey.cliproxyapi'), 'configured');
     assert.equal(refreshCount, 0);
 
@@ -5045,17 +5771,23 @@ async function runLMChatProviderAdapterCliproxyapiPickerTests(
         baseUrl: 'https://cliproxyapi.jqknono.com/v1',
         defaultApiStyle: 'openai-chat',
         useModelsEndpoint: false,
-        models: []
-      }
+        models: [],
+      },
     ]);
 
     refreshCount = 0;
-    const modelsAfterSettingsChange = await adapter.provideLanguageModelChatInformation({
-      silent: true,
-      group: 'cliproxyapi',
-      configuration: { vendorName: 'cliproxyapi' }
-    } as never, {} as never);
-    assert.deepEqual(modelsAfterSettingsChange.map(model => model.id), ['cliproxyapi/o4-mini']);
+    const modelsAfterSettingsChange = await adapter.provideLanguageModelChatInformation(
+      {
+        silent: true,
+        group: 'cliproxyapi',
+        configuration: { vendorName: 'cliproxyapi' },
+      } as never,
+      {} as never,
+    );
+    assert.deepEqual(
+      modelsAfterSettingsChange.map((model) => model.id),
+      ['cliproxyapi/o4-mini'],
+    );
     assert.equal(secretContext.secrets.get('coding-plans.vendor.apiKey.cliproxyapi'), 'configured');
     assert.equal(refreshCount, 0);
 
@@ -5067,7 +5799,7 @@ async function runLMChatProviderAdapterCliproxyapiPickerTests(
 }
 
 async function runLMChatProviderAdapterModelOptionsForwardingTests(
-  lmChatProviderAdapterModule: LMChatProviderAdapterModule
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule,
 ): Promise<void> {
   const vscode = require('vscode') as {
     Disposable: new (callback?: () => void) => { dispose(): void };
@@ -5083,7 +5815,7 @@ async function runLMChatProviderAdapterModelOptionsForwardingTests(
     maxTokens: 32000,
     async sendRequest(
       _messages: unknown[],
-      options?: Record<string, unknown>
+      options?: Record<string, unknown>,
     ): Promise<{
       stream: AsyncIterable<{ value: string }>;
       text: AsyncIterable<string>;
@@ -5095,9 +5827,9 @@ async function runLMChatProviderAdapterModelOptionsForwardingTests(
         })(),
         text: (async function* () {
           yield 'ok';
-        })()
+        })(),
       };
-    }
+    },
   };
 
   const fakeProvider = {
@@ -5109,7 +5841,7 @@ async function runLMChatProviderAdapterModelOptionsForwardingTests(
     },
     onDidChangeModels(): { dispose(): void } {
       return new vscode.Disposable();
-    }
+    },
   };
 
   const adapter = new LMChatProviderAdapter(fakeProvider as never);
@@ -5118,33 +5850,38 @@ async function runLMChatProviderAdapterModelOptionsForwardingTests(
     await adapter.provideLanguageModelChatResponse(
       {
         id: targetModel.id,
-        name: targetModel.name
+        name: targetModel.name,
       } as never,
-      [{
-        role: 1,
-        content: [new vscode.LanguageModelTextPart('hello')]
-      }] as never,
+      [
+        {
+          role: 1,
+          content: [new vscode.LanguageModelTextPart('hello')],
+        },
+      ] as never,
       {
         modelOptions: {
           thinkingEffort: 'high',
-          [requestSourceModelOptionKey]: 'commit-message'
-        }
+          [requestSourceModelOptionKey]: 'commit-message',
+        },
       } as never,
       {
         report(part: { value?: string }): void {
           reportedParts.push(part);
-        }
+        },
       } as never,
       {
         isCancellationRequested: false,
         onCancellationRequested(): { dispose(): void } {
           return new vscode.Disposable();
-        }
-      } as never
+        },
+      } as never,
     );
 
     assert.deepEqual(capturedOptions?.modelOptions, { thinkingEffort: 'high' });
-    assert.deepEqual(reportedParts.map(part => part.value), ['ok']);
+    assert.deepEqual(
+      reportedParts.map((part) => part.value),
+      ['ok'],
+    );
     console.log('PASS LMChatProviderAdapter 会保留 thinkingEffort 并剥离内部 source 标记');
   } finally {
     adapter.dispose();
@@ -5152,7 +5889,7 @@ async function runLMChatProviderAdapterModelOptionsForwardingTests(
 }
 
 async function runLMChatProviderAdapterModelConfigurationForwardingTest(
-  lmChatProviderAdapterModule: LMChatProviderAdapterModule
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule,
 ): Promise<void> {
   const vscode = require('vscode') as {
     Disposable: new (callback?: () => void) => { dispose(): void };
@@ -5163,17 +5900,14 @@ async function runLMChatProviderAdapterModelConfigurationForwardingTest(
     id: 'Vendor/coder',
     name: 'coder',
     maxTokens: 64000,
-    async sendRequest(
-      _messages: unknown[],
-      options?: { modelOptions?: Record<string, unknown> }
-    ): Promise<unknown> {
+    async sendRequest(_messages: unknown[], options?: { modelOptions?: Record<string, unknown> }): Promise<unknown> {
       capturedOptions = options;
       return {
         stream: (async function* stream(): AsyncIterable<{ value: string }> {
           yield { value: 'ok' };
-        })()
+        })(),
       };
-    }
+    },
   };
   let capturedOptions: { modelOptions?: Record<string, unknown> } | undefined;
 
@@ -5186,7 +5920,7 @@ async function runLMChatProviderAdapterModelConfigurationForwardingTest(
     },
     onDidChangeModels(): { dispose(): void } {
       return new vscode.Disposable();
-    }
+    },
   };
 
   const adapter = new LMChatProviderAdapter(fakeProvider as never);
@@ -5195,39 +5929,44 @@ async function runLMChatProviderAdapterModelConfigurationForwardingTest(
     await adapter.provideLanguageModelChatResponse(
       {
         id: targetModel.id,
-        name: targetModel.name
+        name: targetModel.name,
       } as never,
-      [{
-        role: 1,
-        content: [new vscode.LanguageModelTextPart('hello')]
-      }] as never,
+      [
+        {
+          role: 1,
+          content: [new vscode.LanguageModelTextPart('hello')],
+        },
+      ] as never,
       {
         modelConfiguration: {
           thinkingEffort: 'xhigh',
-          personality: 'friendly'
+          personality: 'friendly',
         },
         modelOptions: {
-          thinkingEffort: 'high'
-        }
+          thinkingEffort: 'high',
+        },
       } as never,
       {
         report(part: { value?: string }): void {
           reportedParts.push(part);
-        }
+        },
       } as never,
       {
         isCancellationRequested: false,
         onCancellationRequested(): { dispose(): void } {
           return new vscode.Disposable();
-        }
-      } as never
+        },
+      } as never,
     );
 
     assert.deepEqual(capturedOptions?.modelOptions, {
       thinkingEffort: 'high',
-      personality: 'friendly'
+      personality: 'friendly',
     });
-    assert.deepEqual(reportedParts.map(part => part.value), ['ok']);
+    assert.deepEqual(
+      reportedParts.map((part) => part.value),
+      ['ok'],
+    );
     console.log('PASS LMChatProviderAdapter 会转发 VS Code More Actions 保存的 modelConfiguration');
   } finally {
     adapter.dispose();

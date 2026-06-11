@@ -46,9 +46,11 @@ export class ContextStatusBarController implements vscode.Disposable {
     this.statusBarItem.name = 'CodingPlans Context';
     this.statusBarItem.show();
     this.disposables.push(this.statusBarItem);
-    this.disposables.push(this.usageState.onDidChange(snapshot => {
-      this.render(snapshot);
-    }));
+    this.disposables.push(
+      this.usageState.onDidChange((snapshot) => {
+        this.render(snapshot);
+      }),
+    );
     this.render(this.usageState.getSnapshot());
   }
 
@@ -70,17 +72,16 @@ export function buildContextStatusText(snapshot: LastContextUsageSnapshot | unde
     return `${CONTEXT_STATUS_LABEL}${STATUS_BAR_NO_BREAK_SPACE}--`;
   }
 
-  const percentage = Math.min(100, Math.max(0, Math.round((readOccupiedContextTokens(snapshot) / snapshot.totalContextWindow) * 100)));
+  const percentage = Math.min(
+    100,
+    Math.max(0, Math.round((readOccupiedContextTokens(snapshot) / snapshot.totalContextWindow) * 100)),
+  );
   return `${CONTEXT_STATUS_LABEL}${STATUS_BAR_NO_BREAK_SPACE}${percentage}%`;
 }
 
 export function buildContextStatusTooltip(snapshot: LastContextUsageSnapshot | undefined): string {
   if (!snapshot || snapshot.totalContextWindow <= 0) {
-    return [
-      '**CodingPlans Context**',
-      '',
-      'No completed request usage is available yet.'
-    ].join('\n');
+    return ['**CodingPlans Context**', '', 'No completed request usage is available yet.'].join('\n');
   }
 
   const occupiedContextTokens = readOccupiedContextTokens(snapshot);
@@ -98,15 +99,12 @@ export function buildContextStatusTooltip(snapshot: LastContextUsageSnapshot | u
     `- Reserved Output: ${snapshot.outputBuffer === undefined ? '--' : formatCompactTokens(snapshot.outputBuffer)}`,
     `- Occupied Context: ${formatCompactTokens(occupiedContextTokens)}`,
     `- Model: ${snapshot.modelName}`,
-    `- Updated: ${recordedAt}`
+    `- Updated: ${recordedAt}`,
   ].join('\n');
 }
 
 function readOccupiedContextTokens(snapshot: LastContextUsageSnapshot): number {
-  return Math.min(
-    snapshot.totalContextWindow,
-    snapshot.totalTokens + Math.max(snapshot.outputBuffer ?? 0, 0)
-  );
+  return Math.min(snapshot.totalContextWindow, snapshot.totalTokens + Math.max(snapshot.outputBuffer ?? 0, 0));
 }
 
 function formatCompactTokens(value: number): string {

@@ -237,7 +237,8 @@
                         "type": "object",
                         "required": [
                             "name",
-                            "baseUrl"
+                            "baseUrl",
+                            "useModelsEndpoint"
                         ],
                         "properties": {
                             "name": {
@@ -257,7 +258,7 @@
                             },
                             "useModelsEndpoint": {
                                 "type": "boolean",
-                                "default": false,
+                                "default": true,
                                 "description": "When true, fetch model list from /models during refresh."
                             },
                             "defaultVision": {

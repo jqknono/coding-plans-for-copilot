@@ -51,7 +51,7 @@ import {
   REQUEST_CANCELLED_ERROR_CODE,
   SELECT_CHAT_MODELS_CACHE_TTL_MS,
   SELECT_CHAT_MODELS_TIMEOUT_MS,
-  SUMMARY_JSON_SCHEMA
+  SUMMARY_JSON_SCHEMA,
 } from './constants';
 import { getCompactErrorMessage } from './providers/baseProvider';
 import { logger } from './logging/outputChannelLogger';
@@ -117,17 +117,17 @@ type DiffSummary = {
 type PreparedGenerationInput =
   | { kind: 'diff'; diff: string; breakingChangeExpected: boolean }
   | {
-    kind: 'summary';
-    summary: DiffSummary;
-    breakingChangeExpected: boolean;
-    /**
-     * Full diff can be very large; this is a truncated diff included ONLY as a reference
-     * so the model can follow repository style while still having direct change context.
-     */
-    diffForReference: string;
-    diffOriginalLines: number;
-    diffTruncated: boolean;
-  };
+      kind: 'summary';
+      summary: DiffSummary;
+      breakingChangeExpected: boolean;
+      /**
+       * Full diff can be very large; this is a truncated diff included ONLY as a reference
+       * so the model can follow repository style while still having direct change context.
+       */
+      diffForReference: string;
+      diffOriginalLines: number;
+      diffTruncated: boolean;
+    };
 
 type ModelSelectionResult =
   | { kind: 'selected'; model: vscode.LanguageModelChat }
@@ -151,17 +151,15 @@ let commitMessageModelSource: CommitMessageModelSource | undefined;
 
 const LANGUAGE_ENFORCEMENT_RULES: Record<CommitMessageLanguage, LanguageEnforcementRule> = {
   'zh-cn': {
-    outputRequirement: 'Output MUST be Simplified Chinese (zh-CN).'
+    outputRequirement: 'Output MUST be Simplified Chinese (zh-CN).',
   },
   en: {
-    outputRequirement: 'Output MUST be English.'
-  }
+    outputRequirement: 'Output MUST be English.',
+  },
 };
 
 function getCommitLanguage(): CommitMessageLanguage {
-  const configured = vscode.workspace
-    .getConfiguration('coding-plans')
-    .get<string>('commitMessage.language', 'en');
+  const configured = vscode.workspace.getConfiguration('coding-plans').get<string>('commitMessage.language', 'en');
 
   if (configured === 'zh-cn') {
     return 'zh-cn';
@@ -204,80 +202,77 @@ function getCommitMessageSettings(): CommitMessageSettings {
   const pipelineMode = normalizePipelineMode(
     typeof options[COMMIT_MESSAGE_OPTIONS_PIPELINE_MODE_KEY] === 'string'
       ? options[COMMIT_MESSAGE_OPTIONS_PIPELINE_MODE_KEY]
-      : config.get<string>(LEGACY_COMMIT_MESSAGE_PIPELINE_MODE_SETTING_KEY, DEFAULT_PIPELINE_MODE)
+      : config.get<string>(LEGACY_COMMIT_MESSAGE_PIPELINE_MODE_SETTING_KEY, DEFAULT_PIPELINE_MODE),
   );
 
   return {
     pipelineMode,
     maxDiffLines: readPositiveIntegerValue(
-      options[COMMIT_MESSAGE_OPTIONS_MAX_DIFF_LINES_KEY]
-      ?? config.get<number>(LEGACY_COMMIT_MESSAGE_MAX_DIFF_LINES_SETTING_KEY, DEFAULT_COMMIT_MESSAGE_MAX_DIFF_LINES),
-      DEFAULT_COMMIT_MESSAGE_MAX_DIFF_LINES
+      options[COMMIT_MESSAGE_OPTIONS_MAX_DIFF_LINES_KEY] ??
+        config.get<number>(LEGACY_COMMIT_MESSAGE_MAX_DIFF_LINES_SETTING_KEY, DEFAULT_COMMIT_MESSAGE_MAX_DIFF_LINES),
+      DEFAULT_COMMIT_MESSAGE_MAX_DIFF_LINES,
     ),
     summaryTriggerLines: readPositiveIntegerValue(
-      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_TRIGGER_LINES_KEY]
-      ?? config.get<number>(LEGACY_COMMIT_MESSAGE_SUMMARY_TRIGGER_LINES_SETTING_KEY, DEFAULT_SUMMARY_TRIGGER_LINES),
-      DEFAULT_SUMMARY_TRIGGER_LINES
+      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_TRIGGER_LINES_KEY] ??
+        config.get<number>(LEGACY_COMMIT_MESSAGE_SUMMARY_TRIGGER_LINES_SETTING_KEY, DEFAULT_SUMMARY_TRIGGER_LINES),
+      DEFAULT_SUMMARY_TRIGGER_LINES,
     ),
     summaryChunkLines: readPositiveIntegerValue(
-      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_CHUNK_LINES_KEY]
-      ?? config.get<number>(LEGACY_COMMIT_MESSAGE_SUMMARY_CHUNK_LINES_SETTING_KEY, DEFAULT_SUMMARY_CHUNK_LINES),
-      DEFAULT_SUMMARY_CHUNK_LINES
+      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_CHUNK_LINES_KEY] ??
+        config.get<number>(LEGACY_COMMIT_MESSAGE_SUMMARY_CHUNK_LINES_SETTING_KEY, DEFAULT_SUMMARY_CHUNK_LINES),
+      DEFAULT_SUMMARY_CHUNK_LINES,
     ),
     summaryMaxChunks: readPositiveIntegerValue(
-      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_MAX_CHUNKS_KEY]
-      ?? config.get<number>(LEGACY_COMMIT_MESSAGE_SUMMARY_MAX_CHUNKS_SETTING_KEY, DEFAULT_SUMMARY_MAX_CHUNKS),
-      DEFAULT_SUMMARY_MAX_CHUNKS
+      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_MAX_CHUNKS_KEY] ??
+        config.get<number>(LEGACY_COMMIT_MESSAGE_SUMMARY_MAX_CHUNKS_SETTING_KEY, DEFAULT_SUMMARY_MAX_CHUNKS),
+      DEFAULT_SUMMARY_MAX_CHUNKS,
     ),
     maxBodyBulletCount: Math.max(
       2,
       readPositiveIntegerValue(
-        options[COMMIT_MESSAGE_OPTIONS_MAX_BODY_BULLET_COUNT_KEY]
-        ?? DEFAULT_MAX_BODY_BULLET_COUNT,
-        DEFAULT_MAX_BODY_BULLET_COUNT
-      )
+        options[COMMIT_MESSAGE_OPTIONS_MAX_BODY_BULLET_COUNT_KEY] ?? DEFAULT_MAX_BODY_BULLET_COUNT,
+        DEFAULT_MAX_BODY_BULLET_COUNT,
+      ),
     ),
     subjectMaxLength: readPositiveIntegerValue(
-      options[COMMIT_MESSAGE_OPTIONS_SUBJECT_MAX_LENGTH_KEY]
-      ?? config.get<number>(LEGACY_COMMIT_MESSAGE_SUBJECT_MAX_LENGTH_SETTING_KEY, DEFAULT_SUBJECT_MAX_LENGTH),
-      DEFAULT_SUBJECT_MAX_LENGTH
+      options[COMMIT_MESSAGE_OPTIONS_SUBJECT_MAX_LENGTH_KEY] ??
+        config.get<number>(LEGACY_COMMIT_MESSAGE_SUBJECT_MAX_LENGTH_SETTING_KEY, DEFAULT_SUBJECT_MAX_LENGTH),
+      DEFAULT_SUBJECT_MAX_LENGTH,
     ),
     requireConventionalType:
       typeof options[COMMIT_MESSAGE_OPTIONS_REQUIRE_CONVENTIONAL_TYPE_KEY] === 'boolean'
         ? options[COMMIT_MESSAGE_OPTIONS_REQUIRE_CONVENTIONAL_TYPE_KEY]
         : config.get<boolean>(
-          LEGACY_COMMIT_MESSAGE_REQUIRE_CONVENTIONAL_TYPE_SETTING_KEY,
-          DEFAULT_REQUIRE_CONVENTIONAL_TYPE
-        ),
+            LEGACY_COMMIT_MESSAGE_REQUIRE_CONVENTIONAL_TYPE_SETTING_KEY,
+            DEFAULT_REQUIRE_CONVENTIONAL_TYPE,
+          ),
     warnOnValidationFailure:
       typeof options[COMMIT_MESSAGE_OPTIONS_WARN_ON_VALIDATION_FAILURE_KEY] === 'boolean'
         ? options[COMMIT_MESSAGE_OPTIONS_WARN_ON_VALIDATION_FAILURE_KEY]
         : config.get<boolean>(
-          LEGACY_COMMIT_MESSAGE_WARN_ON_VALIDATION_FAILURE_SETTING_KEY,
-          DEFAULT_WARN_ON_VALIDATION_FAILURE
-        ),
+            LEGACY_COMMIT_MESSAGE_WARN_ON_VALIDATION_FAILURE_SETTING_KEY,
+            DEFAULT_WARN_ON_VALIDATION_FAILURE,
+          ),
     llmMaxPromptLength: Math.max(
       500,
       readPositiveIntegerValue(
-        options[COMMIT_MESSAGE_OPTIONS_LLM_MAX_PROMPT_LENGTH_KEY]
-        ?? options[COMMIT_MESSAGE_OPTIONS_LEGACY_RECENT_STYLE_MAX_TOTAL_LENGTH_KEY]
-        ?? DEFAULT_LLM_MAX_PROMPT_LENGTH,
-        DEFAULT_LLM_MAX_PROMPT_LENGTH
-      )
-    )
+        options[COMMIT_MESSAGE_OPTIONS_LLM_MAX_PROMPT_LENGTH_KEY] ??
+          options[COMMIT_MESSAGE_OPTIONS_LEGACY_RECENT_STYLE_MAX_TOTAL_LENGTH_KEY] ??
+          DEFAULT_LLM_MAX_PROMPT_LENGTH,
+        DEFAULT_LLM_MAX_PROMPT_LENGTH,
+      ),
+    ),
   };
 }
 
 function getCommitLanguageEnforcementBlock(language: CommitMessageLanguage): string {
   const rule = LANGUAGE_ENFORCEMENT_RULES[language];
   const forbiddenLanguageRule =
-    language === 'zh-cn'
-      ? 'Do not output English sentences.'
-      : 'Do not output Chinese sentences.';
+    language === 'zh-cn' ? 'Do not output English sentences.' : 'Do not output Chinese sentences.';
   const lines = [
     `LANGUAGE REQUIREMENT (HIGHEST PRIORITY): ${rule.outputRequirement}`,
     'If any other instruction conflicts with this language rule, ignore the conflicting instruction.',
-    forbiddenLanguageRule
+    forbiddenLanguageRule,
   ];
 
   return lines.join('\n');
@@ -297,7 +292,7 @@ function getCommitFormatPrompt(): string {
 function getGenerationStructureBlock(
   settings: CommitMessageSettings,
   breakingChangeExpected: boolean,
-  hasStyleReference = false
+  hasStyleReference = false,
 ): string {
   const lines = [
     'OUTPUT STRUCTURE (strict):',
@@ -318,7 +313,7 @@ function getGenerationStructureBlock(
     '10) Avoid repetitive file-by-file bullets. Verb-led bullets are acceptable when they stay concise and strictly reflect the diff.',
     '11) Mention low-level implementation details only when they are necessary to understand the change.',
     '12) For narrow changes such as deleting or renaming a single file, the body may be omitted entirely.',
-    '13) Never invent motivations, architecture changes, or side effects that are not directly supported by the diff.'
+    '13) Never invent motivations, architecture changes, or side effects that are not directly supported by the diff.',
   ];
 
   if (breakingChangeExpected) {
@@ -337,7 +332,7 @@ function getFallbackFormatPrompt(formatPrompt: string, hasStyleReference: boolea
   return [
     'FALLBACK FORMAT REQUIREMENT (lower priority than STYLE):',
     'Use the fallback format rules only for details that the recent samples do not decide.',
-    formatPrompt
+    formatPrompt,
   ].join('\n');
 }
 
@@ -348,7 +343,7 @@ function getEvidenceBoundaryBlock(): string {
     'Recent commit messages are style references only; they are not evidence for the current change.',
     'Never mention a topic, file, dependency, provider, metric, workflow, or feature that appears only in recent commit samples.',
     'If the evidence is weak, keep the message minimal and generic.',
-    'Do not infer motivations, architecture changes, business impact, or completed workflows unless they are explicitly shown in the changes.'
+    'Do not infer motivations, architecture changes, business impact, or completed workflows unless they are explicitly shown in the changes.',
   ].join('\n');
 }
 
@@ -357,7 +352,7 @@ function buildDiffGenerationPrompt(
   language: CommitMessageLanguage,
   settings: CommitMessageSettings,
   breakingChangeExpected: boolean,
-  styleReferenceBlock?: string
+  styleReferenceBlock?: string,
 ): string {
   const hasStyleReference = Boolean(styleReferenceBlock);
   const languageEnforcementBlock = getCommitLanguageEnforcementBlock(language);
@@ -365,24 +360,13 @@ function buildDiffGenerationPrompt(
   const structureBlock = getGenerationStructureBlock(settings, breakingChangeExpected, hasStyleReference);
   const evidenceBoundaryBlock = getEvidenceBoundaryBlock();
 
-  const promptSections = [
-    COMMIT_MESSAGE_TASK_BLOCK,
-    '',
-    languageEnforcementBlock
-  ];
+  const promptSections = [COMMIT_MESSAGE_TASK_BLOCK, '', languageEnforcementBlock];
 
   if (styleReferenceBlock) {
     promptSections.push('', styleReferenceBlock);
   }
 
-  promptSections.push(
-    '',
-    formatPrompt,
-    '',
-    structureBlock,
-    '',
-    evidenceBoundaryBlock
-  );
+  promptSections.push('', formatPrompt, '', structureBlock, '', evidenceBoundaryBlock);
 
   promptSections.push(
     '',
@@ -391,7 +375,7 @@ function buildDiffGenerationPrompt(
     'Any topic, file, or action absent from this diff must be excluded from the output.',
     '--- BEGIN DIFF ---',
     diff,
-    '--- END DIFF ---'
+    '--- END DIFF ---',
   );
   return promptSections.join('\n');
 }
@@ -405,7 +389,7 @@ function buildSummaryGenerationPrompt(
     diff: string;
     originalLines: number;
     truncated: boolean;
-  }
+  },
 ): string {
   const hasStyleReference = Boolean(styleReferenceBlock);
   const languageEnforcementBlock = getCommitLanguageEnforcementBlock(language);
@@ -413,24 +397,13 @@ function buildSummaryGenerationPrompt(
   const structureBlock = getGenerationStructureBlock(settings, summary.breakingChange, hasStyleReference);
   const evidenceBoundaryBlock = getEvidenceBoundaryBlock();
 
-  const promptSections = [
-    COMMIT_MESSAGE_TASK_BLOCK,
-    '',
-    languageEnforcementBlock
-  ];
+  const promptSections = [COMMIT_MESSAGE_TASK_BLOCK, '', languageEnforcementBlock];
 
   if (styleReferenceBlock) {
     promptSections.push('', styleReferenceBlock);
   }
 
-  promptSections.push(
-    '',
-    formatPrompt,
-    '',
-    structureBlock,
-    '',
-    evidenceBoundaryBlock
-  );
+  promptSections.push('', formatPrompt, '', structureBlock, '', evidenceBoundaryBlock);
 
   if (diffForReference) {
     promptSections.push(
@@ -441,7 +414,7 @@ function buildSummaryGenerationPrompt(
       'If any instruction conflicts, follow LANGUAGE and STYLE requirements without inventing unsupported change content.',
       '--- BEGIN DIFF (TRUNCATED REFERENCE) ---',
       diffForReference.diff,
-      '--- END DIFF (TRUNCATED REFERENCE) ---'
+      '--- END DIFF (TRUNCATED REFERENCE) ---',
     );
   }
 
@@ -451,7 +424,7 @@ function buildSummaryGenerationPrompt(
     'Recent commit messages are style references only; do not reuse their topics unless this summary supports them.',
     '--- BEGIN CHANGE SUMMARY JSON ---',
     JSON.stringify(summary, null, 2),
-    '--- END CHANGE SUMMARY JSON ---'
+    '--- END CHANGE SUMMARY JSON ---',
   );
   return promptSections.join('\n');
 }
@@ -470,7 +443,7 @@ function buildChunkSummaryPrompt(chunk: string, chunkIndex: number, totalChunks:
     '',
     '--- BEGIN DIFF CHUNK ---',
     chunk,
-    '--- END DIFF CHUNK ---'
+    '--- END DIFF CHUNK ---',
   ].join('\n');
 }
 
@@ -489,7 +462,7 @@ function buildAggregateSummaryPrompt(chunkSummaries: DiffSummary[]): string {
     '',
     '--- BEGIN CHUNK SUMMARIES JSON ---',
     JSON.stringify(chunkSummaries, null, 2),
-    '--- END CHUNK SUMMARIES JSON ---'
+    '--- END CHUNK SUMMARIES JSON ---',
   ].join('\n');
 }
 
@@ -519,7 +492,7 @@ function trimCommitStyleSample(message: string, maxLength = RECENT_COMMIT_STYLE_
 async function getRecentCommitMessages(
   repo: GitRepository,
   count: number,
-  maxPromptLength = DEFAULT_LLM_MAX_PROMPT_LENGTH
+  maxPromptLength = DEFAULT_LLM_MAX_PROMPT_LENGTH,
 ): Promise<string[]> {
   const rootPath = getRepositoryRootPath(repo);
   if (!rootPath) {
@@ -531,10 +504,7 @@ async function getRecentCommitMessages(
   // Try to keep enough samples: avoid one long body consuming the whole style budget.
   const perEntryMaxLength = Math.max(
     80,
-    Math.min(
-      RECENT_COMMIT_STYLE_MAX_ENTRY_LENGTH,
-      Math.floor(safeMaxPromptLength / safeCount)
-    )
+    Math.min(RECENT_COMMIT_STYLE_MAX_ENTRY_LENGTH, Math.floor(safeMaxPromptLength / safeCount)),
   );
   const stdout = await new Promise<string>((resolve) => {
     execFile(
@@ -547,7 +517,7 @@ async function getRecentCommitMessages(
           return;
         }
         resolve(out);
-      }
+      },
     );
   });
 
@@ -558,8 +528,8 @@ async function getRecentCommitMessages(
   // We already cap each entry, so we can keep the full requested sample size.
   return normalizeNewlines(stdout)
     .split(COMMIT_LOG_ENTRY_SEPARATOR)
-    .map(message => trimCommitStyleSample(message, perEntryMaxLength))
-    .filter(message => message.length > 0)
+    .map((message) => trimCommitStyleSample(message, perEntryMaxLength))
+    .filter((message) => message.length > 0)
     .slice(0, safeCount);
 }
 
@@ -568,9 +538,7 @@ function buildStyleReferenceBlock(recentMessages: string[]): string | undefined 
     return undefined;
   }
 
-  const examples = recentMessages
-    .map((message, index) => `[${index + 1}]\n${message}`)
-    .join('\n\n');
+  const examples = recentMessages.map((message, index) => `[${index + 1}]\n${message}`).join('\n\n');
 
   return [
     'STYLE REQUIREMENT (HIGHEST PRIORITY AFTER LANGUAGE):',
@@ -585,7 +553,7 @@ function buildStyleReferenceBlock(recentMessages: string[]): string | undefined 
     'Do not copy exact change details, identifiers, tickets, scopes, topics, files, dependencies, providers, metrics, or workflows unless they are clearly required by the current diff.',
     '--- BEGIN RECENT COMMIT MESSAGES ---',
     examples,
-    '--- END RECENT COMMIT MESSAGES ---'
+    '--- END RECENT COMMIT MESSAGES ---',
   ].join('\n');
 }
 
@@ -603,8 +571,8 @@ function normalizeStringArray(value: unknown): string[] {
     return [];
   }
   const normalized = value
-    .map(item => (typeof item === 'string' ? item.trim() : ''))
-    .filter(item => item.length > 0);
+    .map((item) => (typeof item === 'string' ? item.trim() : ''))
+    .filter((item) => item.length > 0);
   return Array.from(new Set(normalized));
 }
 
@@ -625,7 +593,7 @@ function toDiffSummary(value: unknown): DiffSummary {
     filesChanged: normalizeStringArray(objectValue.filesChanged),
     majorChanges: normalizeStringArray(objectValue.majorChanges),
     riskNotes: normalizeStringArray(objectValue.riskNotes),
-    breakingChange: normalizeBoolean(objectValue.breakingChange)
+    breakingChange: normalizeBoolean(objectValue.breakingChange),
   };
 }
 
@@ -701,7 +669,7 @@ function splitDiffIntoChunks(diff: string, chunkLines: number, maxChunks: number
       if (cursor + safeChunkLines < lines.length) {
         remaining.unshift(
           '[NOTE] Remaining diff lines were merged into this final chunk because summaryMaxChunks was reached.',
-          ''
+          '',
         );
       }
       chunks.push(remaining.join('\n'));
@@ -725,7 +693,10 @@ function shouldUseTwoStagePipeline(settings: CommitMessageSettings, diffLineCoun
   return diffLineCount > settings.summaryTriggerLines;
 }
 
-function truncateDiffForSingleStage(diff: string, maxLines: number): { diff: string; originalLines: number; truncated: boolean } {
+function truncateDiffForSingleStage(
+  diff: string,
+  maxLines: number,
+): { diff: string; originalLines: number; truncated: boolean } {
   const normalizedDiff = normalizeNewlines(diff);
   const lines = normalizedDiff.split('\n');
   if (lines.length <= maxLines) {
@@ -734,20 +705,20 @@ function truncateDiffForSingleStage(diff: string, maxLines: number): { diff: str
   return {
     diff: lines.slice(0, maxLines).join('\n'),
     originalLines: lines.length,
-    truncated: true
+    truncated: true,
   };
 }
 
 function sanitizeGeneratedCommitMessage(raw: string): string {
   const cleaned = stripMarkdownFences(normalizeNewlines(raw));
   const lines = cleaned.split('\n');
-  const startIndex = lines.findIndex(line => line.trim().length > 0);
+  const startIndex = lines.findIndex((line) => line.trim().length > 0);
   if (startIndex < 0) {
     return '';
   }
 
   const subject = normalizeConventionalCommitSubject(lines[startIndex].trim());
-  const rest = lines.slice(startIndex + 1).map(line => line.trimEnd());
+  const rest = lines.slice(startIndex + 1).map((line) => line.trimEnd());
   while (rest.length > 0 && rest[rest.length - 1].trim().length === 0) {
     rest.pop();
   }
@@ -764,26 +735,30 @@ function sanitizeGeneratedCommitMessage(raw: string): string {
 function normalizeConventionalCommitSubject(subject: string): string {
   return subject.replace(
     /^((?:feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(?:\([^)]+\))?!?):(?=\S)/i,
-    '$1: '
+    '$1: ',
   );
 }
 
 function getBulletCount(message: string): number {
   return normalizeNewlines(message)
     .split('\n')
-    .filter(line => line.trim().startsWith('- '))
-    .length;
+    .filter((line) => line.trim().startsWith('- ')).length;
 }
 
 function getSubjectLine(message: string): string {
-  return normalizeNewlines(message).split('\n').find(line => line.trim().length > 0)?.trim() ?? '';
+  return (
+    normalizeNewlines(message)
+      .split('\n')
+      .find((line) => line.trim().length > 0)
+      ?.trim() ?? ''
+  );
 }
 
 function validateCommitMessage(
   message: string,
   language: CommitMessageLanguage,
   settings: CommitMessageSettings,
-  breakingChangeExpected: boolean
+  breakingChangeExpected: boolean,
 ): string[] {
   const issues: string[] = [];
   const normalized = normalizeNewlines(message);
@@ -832,9 +807,7 @@ function isGitRepository(value: unknown): value is GitRepository {
   if (!isRecord(value)) {
     return false;
   }
-  return typeof value.diff === 'function'
-    && isRecord(value.inputBox)
-    && typeof value.inputBox.value === 'string';
+  return typeof value.diff === 'function' && isRecord(value.inputBox) && typeof value.inputBox.value === 'string';
 }
 
 function normalizeFsPath(fsPath: string): string {
@@ -854,7 +827,7 @@ function isPathEqualOrWithin(pathToCheck: string, rootPath: string): boolean {
 }
 
 function findRepositoryByRootPath(repositories: GitRepository[], rootPath: string): GitRepository | undefined {
-  return repositories.find(repo => {
+  return repositories.find((repo) => {
     const candidateRootPath = repo.rootUri?.fsPath;
     return typeof candidateRootPath === 'string' && areFsPathsEqual(candidateRootPath, rootPath);
   });
@@ -863,7 +836,7 @@ function findRepositoryByRootPath(repositories: GitRepository[], rootPath: strin
 function getUriFromCommandContext(
   value: unknown,
   depth = 0,
-  visited: WeakSet<object> = new WeakSet<object>()
+  visited: WeakSet<object> = new WeakSet<object>(),
 ): vscode.Uri | undefined {
   if (value instanceof vscode.Uri) {
     return value;
@@ -906,7 +879,7 @@ function findRepositoryByUri(gitApi: GitAPI, uri: vscode.Uri): GitRepository | u
     return undefined;
   }
 
-  return gitApi.repositories.find(repo => {
+  return gitApi.repositories.find((repo) => {
     const repoRootPath = repo.rootUri?.fsPath;
     return typeof repoRootPath === 'string' && isPathEqualOrWithin(uri.fsPath, repoRootPath);
   });
@@ -1002,7 +975,7 @@ function normalizeSelectorValue(value: string | undefined): string | undefined {
 }
 
 function normalizeChatModelsSelector(
-  selector?: vscode.LanguageModelChatSelector
+  selector?: vscode.LanguageModelChatSelector,
 ): vscode.LanguageModelChatSelector | undefined {
   if (!selector) {
     return undefined;
@@ -1035,7 +1008,7 @@ function toSelectorCacheKey(selector?: vscode.LanguageModelChatSelector): string
     vendor: selector.vendor || '',
     family: selector.family || '',
     version: selector.version || '',
-    id: selector.id || ''
+    id: selector.id || '',
   });
 }
 
@@ -1052,7 +1025,7 @@ function toSelectorLogPayload(selector?: vscode.LanguageModelChatSelector): {
     vendor: selector.vendor,
     family: selector.family,
     version: selector.version,
-    id: selector.id
+    id: selector.id,
   };
 }
 
@@ -1064,7 +1037,7 @@ export function invalidateCommitMessageModelSelectionCache(reason: string): void
     hadCache: !!previous,
     selectorKey: previous?.selectorKey,
     modelCount: previous?.models.length,
-    ageMs: previous ? Date.now() - previous.fetchedAt : undefined
+    ageMs: previous ? Date.now() - previous.fetchedAt : undefined,
   });
 }
 
@@ -1073,7 +1046,7 @@ export function registerCommitMessageModelSource(source?: CommitMessageModelSour
   commitMessageModelSource = source;
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-registered`, {
     hasSource: !!source,
-    hadPreviousSource
+    hadPreviousSource,
   });
   invalidateCommitMessageModelSelectionCache('commit-message-model-source-updated');
 }
@@ -1127,7 +1100,7 @@ function isDistinctDisplayValue(value: string | undefined, ...others: Array<stri
   if (!target) {
     return false;
   }
-  return others.every(other => normalizeValue(other) !== target);
+  return others.every((other) => normalizeValue(other) !== target);
 }
 
 function toVendorScopedModelQuickPickItem(model: vscode.LanguageModelChat): {
@@ -1142,7 +1115,7 @@ function toVendorScopedModelQuickPickItem(model: vscode.LanguageModelChat): {
     label: model.name,
     description,
     detail,
-    model
+    model,
   };
 }
 
@@ -1170,11 +1143,13 @@ function toModelLogPayload(model: vscode.LanguageModelChat): {
     vendor: model.vendor,
     family: model.family,
     name: model.name,
-    id: model.id
+    id: model.id,
   };
 }
 
-function summarizeModelGroupsForLog(models: readonly vscode.LanguageModelChat[]): Array<{ group: string; count: number }> {
+function summarizeModelGroupsForLog(
+  models: readonly vscode.LanguageModelChat[],
+): Array<{ group: string; count: number }> {
   const grouped = new Map<string, number>();
   for (const model of models) {
     const key = getModelGroupKey(model);
@@ -1205,7 +1180,7 @@ function toGlobalModelQuickPickItem(model: vscode.LanguageModelChat): {
     label: model.name,
     description: descriptionParts.join(' · '),
     detail,
-    model
+    model,
   };
 }
 
@@ -1226,23 +1201,23 @@ async function pickVendor(models: vscode.LanguageModelChat[]): Promise<string | 
   const vendors = Array.from(vendorMap.values());
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} opening vendor picker`, {
     vendorCount: vendors.length,
-    vendors: vendors.map(item => ({ key: item.key, displayName: item.displayName, count: item.count }))
+    vendors: vendors.map((item) => ({ key: item.key, displayName: item.displayName, count: item.count })),
   });
   const picked = await vscode.window.showQuickPick(
-    vendors.map(item => ({
+    vendors.map((item) => ({
       label: item.displayName,
       description: item.key !== item.displayName ? item.key : undefined,
       detail: `${item.count} model${item.count > 1 ? 's' : ''}`,
-      vendor: item.key
+      vendor: item.key,
     })),
     {
       ignoreFocusOut: true,
-      placeHolder: getMessage('commitMessageSelectVendor')
-    }
+      placeHolder: getMessage('commitMessageSelectVendor'),
+    },
   );
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} vendor picker resolved`, {
     cancelled: !picked,
-    pickedVendor: picked?.vendor
+    pickedVendor: picked?.vendor,
   });
   return picked?.vendor;
 }
@@ -1257,7 +1232,7 @@ function readConfiguredModelSelector(): { vendor?: string; id?: string } {
   const id = (config.get<string>(COMMIT_MESSAGE_MODEL_ID_SETTING_KEY, '') || '').trim();
   return {
     vendor: vendor.length > 0 ? vendor : undefined,
-    id: id.length > 0 ? id : undefined
+    id: id.length > 0 ? id : undefined,
   };
 }
 
@@ -1276,34 +1251,34 @@ async function saveModelSelection(model: vscode.LanguageModelChat): Promise<void
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} saving model selection`, {
     selectedModel: toModelLogPayload(model),
     settingVendor: vendorToSave,
-    settingId: idToSave
+    settingId: idToSave,
   });
   await Promise.all([
     config.update(COMMIT_MESSAGE_MODEL_VENDOR_SETTING_KEY, vendorToSave, vscode.ConfigurationTarget.Global),
-    config.update(COMMIT_MESSAGE_MODEL_ID_SETTING_KEY, idToSave, vscode.ConfigurationTarget.Global)
+    config.update(COMMIT_MESSAGE_MODEL_ID_SETTING_KEY, idToSave, vscode.ConfigurationTarget.Global),
   ]);
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model selection saved`, {
-    elapsedMs: Date.now() - startedAt
+    elapsedMs: Date.now() - startedAt,
   });
 }
 
 async function selectModel(
   allowPrompt: boolean,
   forcePrompt = false,
-  token?: vscode.CancellationToken
+  token?: vscode.CancellationToken,
 ): Promise<ModelSelectionResult> {
   const startedAt = Date.now();
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectModel start`, {
     allowPrompt,
     forcePrompt,
-    hasCancellationToken: !!token
+    hasCancellationToken: !!token,
   });
   const finishSelection = (result: ModelSelectionResult, reason: string): ModelSelectionResult => {
     logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectModel resolved`, {
       reason,
       kind: result.kind,
       elapsedMs: Date.now() - startedAt,
-      model: result.kind === 'selected' ? toModelLogPayload(result.model) : undefined
+      model: result.kind === 'selected' ? toModelLogPayload(result.model) : undefined,
     });
     return result;
   };
@@ -1313,7 +1288,7 @@ async function selectModel(
   throwIfCancelled(token);
   let filteredCopilotCount = 0;
   const models = allModels
-    .filter(model => {
+    .filter((model) => {
       const copilot = isCopilotVendor(model.vendor);
       if (copilot) {
         filteredCopilotCount += 1;
@@ -1325,8 +1300,12 @@ async function selectModel(
       const ka = modelSortKey(a);
       const kb = modelSortKey(b);
       for (let i = 0; i < ka.length; i++) {
-        if (ka[i] < kb[i]) { return -1; }
-        if (ka[i] > kb[i]) { return 1; }
+        if (ka[i] < kb[i]) {
+          return -1;
+        }
+        if (ka[i] > kb[i]) {
+          return 1;
+        }
       }
       return 0;
     });
@@ -1334,7 +1313,7 @@ async function selectModel(
     allModelCount: allModels.length,
     keptModelCount: models.length,
     filteredCopilotCount,
-    modelGroups: summarizeModelGroupsForLog(models)
+    modelGroups: summarizeModelGroupsForLog(models),
   });
 
   if (models.length === 0) {
@@ -1344,7 +1323,7 @@ async function selectModel(
   const selector = readConfiguredModelSelector();
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} configured selector loaded`, {
     configuredVendor: selector.vendor,
-    configuredId: selector.id
+    configuredId: selector.id,
   });
 
   if (!forcePrompt) {
@@ -1352,31 +1331,31 @@ async function selectModel(
       const vendor = selector.vendor;
       const id = selector.id;
       const compositeId = `${vendor}/${id}`;
-      const match = models.find(m =>
-        (m.vendor === CODING_PLANS_VENDOR && (m.id === compositeId || matchesCodingPlansSelection(m, vendor, id)))
-        || (m.vendor === vendor && m.id === id)
+      const match = models.find(
+        (m) =>
+          (m.vendor === CODING_PLANS_VENDOR && (m.id === compositeId || matchesCodingPlansSelection(m, vendor, id))) ||
+          (m.vendor === vendor && m.id === id),
       );
       if (match) {
         return finishSelection({ kind: 'selected', model: match }, 'configured-vendor-id-match');
       }
       logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} configured model not found`, {
         configuredVendor: vendor,
-        configuredId: id
+        configuredId: id,
       });
       if (allowPrompt) {
         void vscode.window.showWarningMessage(getMessage('commitMessageConfiguredModelNotFound'));
       }
     } else if (selector.vendor) {
       const vendor = selector.vendor;
-      const match = models.find(m =>
-        (m.vendor === CODING_PLANS_VENDOR && matchesCodingPlansSelection(m, vendor))
-        || (m.vendor === vendor)
+      const match = models.find(
+        (m) => (m.vendor === CODING_PLANS_VENDOR && matchesCodingPlansSelection(m, vendor)) || m.vendor === vendor,
       );
       if (match) {
         return finishSelection({ kind: 'selected', model: match }, 'configured-vendor-match');
       }
       logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} configured vendor not found`, {
-        configuredVendor: selector.vendor
+        configuredVendor: selector.vendor,
       });
       if (allowPrompt) {
         void vscode.window.showWarningMessage(getMessage('commitMessageConfiguredVendorNotFound', selector.vendor));
@@ -1394,17 +1373,17 @@ async function selectModel(
       return finishSelection({ kind: 'cancelled' }, 'vendor-picker-cancelled');
     }
 
-    const vendorModels = models.filter(model => getModelGroupKey(model) === pickedVendor);
+    const vendorModels = models.filter((model) => getModelGroupKey(model) === pickedVendor);
     logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} opening model picker for vendor`, {
       vendor: pickedVendor,
-      modelCount: vendorModels.length
+      modelCount: vendorModels.length,
     });
     const pickedModel = await vscode.window.showQuickPick(
-      vendorModels.map(model => toVendorScopedModelQuickPickItem(model)),
+      vendorModels.map((model) => toVendorScopedModelQuickPickItem(model)),
       {
         ignoreFocusOut: true,
-        placeHolder: getMessage('commitMessageSelectModelForVendor', pickedVendor)
-      }
+        placeHolder: getMessage('commitMessageSelectModelForVendor', pickedVendor),
+      },
     );
 
     if (!pickedModel) {
@@ -1421,14 +1400,14 @@ async function selectModel(
   }
 
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} opening global model picker`, {
-    modelCount: models.length
+    modelCount: models.length,
   });
   const picked = await vscode.window.showQuickPick(
-    models.map(model => toGlobalModelQuickPickItem(model)),
+    models.map((model) => toGlobalModelQuickPickItem(model)),
     {
       ignoreFocusOut: true,
-      placeHolder: getMessage('commitMessageSelectModel')
-    }
+      placeHolder: getMessage('commitMessageSelectModel'),
+    },
   );
 
   if (!picked) {
@@ -1440,11 +1419,11 @@ async function selectModel(
 }
 
 async function getCodingPlansModelsForCommitMessageSelection(
-  token?: vscode.CancellationToken
+  token?: vscode.CancellationToken,
 ): Promise<vscode.LanguageModelChat[]> {
   if (!commitMessageModelSource) {
     logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-fallback-to-vscode-lm`, {
-      selector: { vendor: CODING_PLANS_VENDOR }
+      selector: { vendor: CODING_PLANS_VENDOR },
     });
     return selectChatModelsWithTimeout(token, { vendor: CODING_PLANS_VENDOR });
   }
@@ -1454,12 +1433,12 @@ async function getCodingPlansModelsForCommitMessageSelection(
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-read`, {
     modelCount: models.length,
     modelGroups: summarizeModelGroupsForLog(models),
-    elapsedMs: Date.now() - startedAt
+    elapsedMs: Date.now() - startedAt,
   });
 
   if (models.length === 0) {
     logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-refresh-start`, {
-      elapsedMs: Date.now() - startedAt
+      elapsedMs: Date.now() - startedAt,
     });
     await commitMessageModelSource.refreshModels();
     throwIfCancelled(token);
@@ -1467,7 +1446,7 @@ async function getCodingPlansModelsForCommitMessageSelection(
     logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} model-source-refresh-resolved`, {
       modelCount: models.length,
       modelGroups: summarizeModelGroupsForLog(models),
-      elapsedMs: Date.now() - startedAt
+      elapsedMs: Date.now() - startedAt,
     });
   }
 
@@ -1476,7 +1455,7 @@ async function getCodingPlansModelsForCommitMessageSelection(
 
 async function selectChatModelsWithTimeout(
   token?: vscode.CancellationToken,
-  selector?: vscode.LanguageModelChatSelector
+  selector?: vscode.LanguageModelChatSelector,
 ): Promise<vscode.LanguageModelChat[]> {
   if (!vscode.lm || typeof vscode.lm.selectChatModels !== 'function') {
     throw new Error(getMessage('commitMessageModelSelectionUnavailable'));
@@ -1499,7 +1478,7 @@ async function selectChatModelsWithTimeout(
         modelCount: cache.models.length,
         ageMs,
         ttlMs: SELECT_CHAT_MODELS_CACHE_TTL_MS,
-        elapsedMs: Date.now() - now
+        elapsedMs: Date.now() - now,
       });
       return cache.models;
     }
@@ -1510,7 +1489,7 @@ async function selectChatModelsWithTimeout(
         selector: selectorLog,
         modelCount: cache.models.length,
         ageMs,
-        ttlMs: SELECT_CHAT_MODELS_CACHE_TTL_MS
+        ttlMs: SELECT_CHAT_MODELS_CACHE_TTL_MS,
       });
     }
     if (cache.inFlight) {
@@ -1523,7 +1502,7 @@ async function selectChatModelsWithTimeout(
             modelCount: staleModels.length,
             staleAgeMs,
             reason: 'inflight-refresh-failed',
-            error: formatErrorDetail(error)
+            error: formatErrorDetail(error),
           });
           return staleModels;
         }
@@ -1535,7 +1514,7 @@ async function selectChatModelsWithTimeout(
       selector: selectorLog,
       hasExistingCache: !!cache,
       existingSelectorKey: cache?.selectorKey,
-      existingModelCount: cache?.models.length
+      existingModelCount: cache?.models.length,
     });
   }
 
@@ -1543,14 +1522,14 @@ async function selectChatModelsWithTimeout(
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} cache-refresh-start`, {
     selector: selectorLog,
     hasStaleCache: !!staleModels,
-    staleAgeMs
+    staleAgeMs,
   });
   const refreshPromise = selectChatModelsOnceWithTimeout(token, normalizedSelector);
   chatModelsSelectionCache = {
     models: staleModels || [],
     fetchedAt: staleModels ? now - (staleAgeMs || 0) : 0,
     selectorKey,
-    inFlight: refreshPromise
+    inFlight: refreshPromise,
   };
 
   try {
@@ -1558,12 +1537,12 @@ async function selectChatModelsWithTimeout(
     chatModelsSelectionCache = {
       models: refreshedModels,
       fetchedAt: Date.now(),
-      selectorKey
+      selectorKey,
     };
     logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} cache-refresh-resolved`, {
       selector: selectorLog,
       modelCount: refreshedModels.length,
-      elapsedMs: Date.now() - refreshStartedAt
+      elapsedMs: Date.now() - refreshStartedAt,
     });
     return refreshedModels;
   } catch (error: unknown) {
@@ -1571,20 +1550,20 @@ async function selectChatModelsWithTimeout(
       selector: selectorLog,
       elapsedMs: Date.now() - refreshStartedAt,
       cancelled: isRequestCancelledError(error),
-      error: formatErrorDetail(error)
+      error: formatErrorDetail(error),
     });
     if (staleModels) {
       chatModelsSelectionCache = {
         models: staleModels,
         fetchedAt: now - (staleAgeMs || 0),
-        selectorKey
+        selectorKey,
       };
       logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} stale-cache-served`, {
         selector: selectorLog,
         modelCount: staleModels.length,
         staleAgeMs,
         reason: 'refresh-failed',
-        error: formatErrorDetail(error)
+        error: formatErrorDetail(error),
       });
       return staleModels;
     }
@@ -1597,7 +1576,7 @@ async function selectChatModelsWithTimeout(
       chatModelsSelectionCache = {
         models: chatModelsSelectionCache.models,
         fetchedAt: chatModelsSelectionCache.fetchedAt,
-        selectorKey
+        selectorKey,
       };
     }
   }
@@ -1605,7 +1584,7 @@ async function selectChatModelsWithTimeout(
 
 async function selectChatModelsOnceWithTimeout(
   token?: vscode.CancellationToken,
-  selector?: vscode.LanguageModelChatSelector
+  selector?: vscode.LanguageModelChatSelector,
 ): Promise<vscode.LanguageModelChat[]> {
   if (!vscode.lm || typeof vscode.lm.selectChatModels !== 'function') {
     throw new Error(getMessage('commitMessageModelSelectionUnavailable'));
@@ -1616,7 +1595,7 @@ async function selectChatModelsOnceWithTimeout(
   logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels start`, {
     timeoutMs: SELECT_CHAT_MODELS_TIMEOUT_MS,
     hasCancellationToken: !!token,
-    selector: selectorLog
+    selector: selectorLog,
   });
   let timeoutHandle: NodeJS.Timeout | undefined;
   let cancellationDisposable: vscode.Disposable | undefined;
@@ -1625,34 +1604,36 @@ async function selectChatModelsOnceWithTimeout(
       logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels timeout`, {
         timeoutMs: SELECT_CHAT_MODELS_TIMEOUT_MS,
         elapsedMs: Date.now() - startedAt,
-        selector: selectorLog
+        selector: selectorLog,
       });
       reject(new Error(getMessage('commitMessageModelSelectionTimeout')));
     }, SELECT_CHAT_MODELS_TIMEOUT_MS);
   });
-  const cancellationPromise = token ? new Promise<never>((_, reject) => {
-    if (token.isCancellationRequested) {
-      logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels cancelled before request`, {
-        elapsedMs: Date.now() - startedAt,
-        selector: selectorLog
-      });
-      reject(createRequestCancelledError());
-      return;
-    }
-    cancellationDisposable = token.onCancellationRequested(() => {
-      logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels cancelled during request`, {
-        elapsedMs: Date.now() - startedAt,
-        selector: selectorLog
-      });
-      reject(createRequestCancelledError());
-    });
-  }) : undefined;
-  const selectModelsPromise = vscode.lm.selectChatModels(selector).then(models => {
+  const cancellationPromise = token
+    ? new Promise<never>((_, reject) => {
+        if (token.isCancellationRequested) {
+          logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels cancelled before request`, {
+            elapsedMs: Date.now() - startedAt,
+            selector: selectorLog,
+          });
+          reject(createRequestCancelledError());
+          return;
+        }
+        cancellationDisposable = token.onCancellationRequested(() => {
+          logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels cancelled during request`, {
+            elapsedMs: Date.now() - startedAt,
+            selector: selectorLog,
+          });
+          reject(createRequestCancelledError());
+        });
+      })
+    : undefined;
+  const selectModelsPromise = vscode.lm.selectChatModels(selector).then((models) => {
     logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} selectChatModels resolved`, {
       elapsedMs: Date.now() - startedAt,
       modelCount: models.length,
       selector: selectorLog,
-      modelGroups: summarizeModelGroupsForLog(models)
+      modelGroups: summarizeModelGroupsForLog(models),
     });
     return models;
   });
@@ -1667,7 +1648,7 @@ async function selectChatModelsOnceWithTimeout(
       elapsedMs: Date.now() - startedAt,
       cancelled: isRequestCancelledError(error),
       selector: selectorLog,
-      error: formatErrorDetail(error)
+      error: formatErrorDetail(error),
     });
     throw error;
   } finally {
@@ -1696,16 +1677,17 @@ function isRequestCancelledError(error: unknown): boolean {
     return true;
   }
 
-  const message = error instanceof Error
-    ? error.message
-    : typeof maybeError?.message === 'string'
-      ? maybeError.message
-      : String(error ?? '');
+  const message =
+    error instanceof Error
+      ? error.message
+      : typeof maybeError?.message === 'string'
+        ? maybeError.message
+        : String(error ?? '');
   const normalizedMessage = normalizeValue(message);
   if (
-    normalizedMessage === normalizeValue(getMessage('requestCancelled'))
-    || normalizedMessage === 'canceled'
-    || normalizedMessage === 'cancelled'
+    normalizedMessage === normalizeValue(getMessage('requestCancelled')) ||
+    normalizedMessage === 'canceled' ||
+    normalizedMessage === 'cancelled'
   ) {
     return true;
   }
@@ -1721,13 +1703,15 @@ function formatErrorDetail(error: unknown): string {
     details.push(baseMessage);
   }
 
-  const maybeError = error as {
-    name?: unknown;
-    code?: unknown;
-    cause?: unknown;
-    response?: { status?: unknown };
-    status?: unknown;
-  } | undefined;
+  const maybeError = error as
+    | {
+        name?: unknown;
+        code?: unknown;
+        cause?: unknown;
+        response?: { status?: unknown };
+        status?: unknown;
+      }
+    | undefined;
 
   if (error instanceof vscode.LanguageModelError && typeof error.code === 'string' && error.code.length > 0) {
     details.push(`lmCode=${error.code}`);
@@ -1740,11 +1724,12 @@ function formatErrorDetail(error: unknown): string {
     details.push(`code=${code}`);
   }
 
-  const status = typeof maybeError?.response?.status === 'number'
-    ? maybeError.response.status
-    : typeof maybeError?.status === 'number'
-      ? maybeError.status
-      : undefined;
+  const status =
+    typeof maybeError?.response?.status === 'number'
+      ? maybeError.response.status
+      : typeof maybeError?.status === 'number'
+        ? maybeError.status
+        : undefined;
   if (typeof status === 'number' && Number.isFinite(status)) {
     details.push(`status=${status}`);
   }
@@ -1759,7 +1744,7 @@ function formatErrorDetail(error: unknown): string {
     details.push(`cause=${causeMessage}`);
   }
 
-  const unique = Array.from(new Set(details.filter(item => item.trim().length > 0)));
+  const unique = Array.from(new Set(details.filter((item) => item.trim().length > 0)));
   return unique.join(' | ') || 'Unknown error';
 }
 
@@ -1776,21 +1761,18 @@ async function sendPrompt(
   prompt: string,
   token: vscode.CancellationToken,
   justification: string,
-  maxPromptLength: number
+  maxPromptLength: number,
 ): Promise<string> {
   const safeMaxPromptLength = Math.max(500, Math.floor(maxPromptLength));
   const originalPrompt = normalizeNewlines(prompt);
   let promptForModel = originalPrompt;
   if (originalPrompt.length > safeMaxPromptLength) {
     void vscode.window.showWarningMessage(
-      getMessage('commitMessagePromptTooLarge', originalPrompt.length, safeMaxPromptLength)
+      getMessage('commitMessagePromptTooLarge', originalPrompt.length, safeMaxPromptLength),
     );
     const truncationMarker = '\n\n[TRUNCATED] Prompt was shortened due to llmMaxPromptLength.\n\n';
     const budgetWithoutMarker = Math.max(0, safeMaxPromptLength - truncationMarker.length);
-    const headLength = Math.min(
-      budgetWithoutMarker,
-      Math.max(120, Math.floor(budgetWithoutMarker * 0.35))
-    );
+    const headLength = Math.min(budgetWithoutMarker, Math.max(120, Math.floor(budgetWithoutMarker * 0.35)));
     const tailLength = Math.max(0, budgetWithoutMarker - headLength);
     const head = originalPrompt.slice(0, headLength);
     const tail = tailLength > 0 ? originalPrompt.slice(originalPrompt.length - tailLength) : '';
@@ -1803,7 +1785,7 @@ async function sendPrompt(
     const requestOptions: vscode.LanguageModelChatRequestOptions = { justification };
     if (model.vendor === CODING_PLANS_VENDOR) {
       requestOptions.modelOptions = {
-        [REQUEST_SOURCE_MODEL_OPTION_KEY]: REQUEST_SOURCE_COMMIT_MESSAGE
+        [REQUEST_SOURCE_MODEL_OPTION_KEY]: REQUEST_SOURCE_COMMIT_MESSAGE,
       };
     }
     response = await model.sendRequest(messages, requestOptions, token);
@@ -1825,7 +1807,7 @@ async function runTwoStageSummary(
   model: vscode.LanguageModelChat,
   diff: string,
   settings: CommitMessageSettings,
-  token: vscode.CancellationToken
+  token: vscode.CancellationToken,
 ): Promise<DiffSummary> {
   const chunks = splitDiffIntoChunks(diff, settings.summaryChunkLines, settings.summaryMaxChunks);
   if (chunks.length === 0) {
@@ -1833,7 +1815,7 @@ async function runTwoStageSummary(
       filesChanged: [],
       majorChanges: [],
       riskNotes: [],
-      breakingChange: false
+      breakingChange: false,
     };
   }
 
@@ -1844,7 +1826,7 @@ async function runTwoStageSummary(
       buildChunkSummaryPrompt(chunks[i], i, chunks.length),
       token,
       'Summarize a diff chunk for commit message generation.',
-      settings.llmMaxPromptLength
+      settings.llmMaxPromptLength,
     );
     chunkSummaries.push(parseDiffSummary(rawChunkSummary));
   }
@@ -1854,7 +1836,7 @@ async function runTwoStageSummary(
     buildAggregateSummaryPrompt(chunkSummaries),
     token,
     'Aggregate chunk summaries into one structured summary.',
-    settings.llmMaxPromptLength
+    settings.llmMaxPromptLength,
   );
   return parseDiffSummary(rawAggregateSummary);
 }
@@ -1863,7 +1845,7 @@ async function prepareGenerationInput(
   model: vscode.LanguageModelChat,
   diff: string,
   settings: CommitMessageSettings,
-  token: vscode.CancellationToken
+  token: vscode.CancellationToken,
 ): Promise<PreparedGenerationInput> {
   const diffLineCount = normalizeNewlines(diff).split('\n').length;
   const useTwoStage = shouldUseTwoStagePipeline(settings, diffLineCount);
@@ -1879,7 +1861,7 @@ async function prepareGenerationInput(
         breakingChangeExpected: summary.breakingChange,
         diffForReference: truncatedForReference.diff,
         diffOriginalLines: truncatedForReference.originalLines,
-        diffTruncated: truncatedForReference.truncated
+        diffTruncated: truncatedForReference.truncated,
       };
     } catch (error: unknown) {
       const detail = error instanceof Error ? error.message : String(error);
@@ -1887,13 +1869,13 @@ async function prepareGenerationInput(
       const truncated = truncateDiffForSingleStage(diff, settings.maxDiffLines);
       if (truncated.truncated) {
         void vscode.window.showWarningMessage(
-          getMessage('commitMessageDiffTooLarge', truncated.originalLines, settings.maxDiffLines)
+          getMessage('commitMessageDiffTooLarge', truncated.originalLines, settings.maxDiffLines),
         );
       }
       return {
         kind: 'diff',
         diff: truncated.diff,
-        breakingChangeExpected: false
+        breakingChangeExpected: false,
       };
     }
   }
@@ -1901,13 +1883,13 @@ async function prepareGenerationInput(
   const truncated = truncateDiffForSingleStage(diff, settings.maxDiffLines);
   if (truncated.truncated) {
     void vscode.window.showWarningMessage(
-      getMessage('commitMessageDiffTooLarge', truncated.originalLines, settings.maxDiffLines)
+      getMessage('commitMessageDiffTooLarge', truncated.originalLines, settings.maxDiffLines),
     );
   }
   return {
     kind: 'diff',
     diff: truncated.diff,
-    breakingChangeExpected: false
+    breakingChangeExpected: false,
   };
 }
 
@@ -1915,7 +1897,7 @@ function maybeWarnOnValidationFailure(
   generatedMessage: string,
   language: CommitMessageLanguage,
   settings: CommitMessageSettings,
-  breakingChangeExpected: boolean
+  breakingChangeExpected: boolean,
 ): void {
   if (!settings.warnOnValidationFailure) {
     return;
@@ -1924,9 +1906,7 @@ function maybeWarnOnValidationFailure(
   if (issues.length === 0) {
     return;
   }
-  void vscode.window.showWarningMessage(
-    getMessage('commitMessageValidationWarning', issues.join('; '))
-  );
+  void vscode.window.showWarningMessage(getMessage('commitMessageValidationWarning', issues.join('; ')));
 }
 
 function getCommitMessagePreview(message: string): string {
@@ -1937,7 +1917,7 @@ export const commitMessageTestUtils = {
   buildDiffGenerationPrompt,
   buildStyleReferenceBlock,
   sanitizeGeneratedCommitMessage,
-  validateCommitMessage
+  validateCommitMessage,
 };
 
 export async function selectCommitMessageModel(): Promise<void> {
@@ -1947,36 +1927,36 @@ export async function selectCommitMessageModel(): Promise<void> {
     const selection = await selectModel(true, true);
     if (selection.kind === 'cancelled') {
       logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command cancelled`, {
-        elapsedMs: Date.now() - startedAt
+        elapsedMs: Date.now() - startedAt,
       });
       vscode.window.showInformationMessage(getMessage('requestCancelled'));
       return;
     }
     if (selection.kind === 'noModels') {
       logger.warn(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command found no models`, {
-        elapsedMs: Date.now() - startedAt
+        elapsedMs: Date.now() - startedAt,
       });
       vscode.window.showWarningMessage(getMessage('commitMessageNoModel'));
       return;
     }
     logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command selected model`, {
       elapsedMs: Date.now() - startedAt,
-      model: toModelLogPayload(selection.model)
+      model: toModelLogPayload(selection.model),
     });
     vscode.window.showInformationMessage(
-      getMessage('commitMessageModelSaved', `${selection.model.vendor} · ${selection.model.name}`)
+      getMessage('commitMessageModelSaved', `${selection.model.vendor} · ${selection.model.name}`),
     );
   } catch (error: unknown) {
     if (isRequestCancelledError(error)) {
       logger.info(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command cancelled by exception`, {
-        elapsedMs: Date.now() - startedAt
+        elapsedMs: Date.now() - startedAt,
       });
       vscode.window.showInformationMessage(getMessage('requestCancelled'));
       return;
     }
     logger.error(`${COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX} command failed`, {
       elapsedMs: Date.now() - startedAt,
-      error: formatErrorDetail(error)
+      error: formatErrorDetail(error),
     });
     logger.error('Failed to select commit message model.', error);
     const detail = formatErrorDetail(error);
@@ -1990,7 +1970,7 @@ export async function generateCommitMessage(commandContext?: unknown): Promise<v
       {
         location: vscode.ProgressLocation.Notification,
         title: getMessage('commitMessageGenerating'),
-        cancellable: true
+        cancellable: true,
       },
       async (progress, token) => {
         const reportProgress = (message: string, increment: number): void => {
@@ -2033,11 +2013,9 @@ export async function generateCommitMessage(commandContext?: unknown): Promise<v
         const settings = getCommitMessageSettings();
         const language = getCommitLanguage();
         const styleReferenceBlockPromise = shouldUseRecentCommitStyle()
-          ? getRecentCommitMessages(
-            repo,
-            DEFAULT_RECENT_COMMIT_STYLE_SAMPLE_SIZE,
-            settings.llmMaxPromptLength
-          ).then(buildStyleReferenceBlock)
+          ? getRecentCommitMessages(repo, DEFAULT_RECENT_COMMIT_STYLE_SAMPLE_SIZE, settings.llmMaxPromptLength).then(
+              buildStyleReferenceBlock,
+            )
           : Promise.resolve<string | undefined>(undefined);
 
         reportProgress(getMessage('commitMessageProgressPreparing'), 20);
@@ -2052,31 +2030,25 @@ export async function generateCommitMessage(commandContext?: unknown): Promise<v
         reportProgress(generationStageMessage, 20);
         const prompt =
           preparedInput.kind === 'summary'
-            ? buildSummaryGenerationPrompt(
-              preparedInput.summary,
-              language,
-              settings,
-              styleReferenceBlock,
-              {
+            ? buildSummaryGenerationPrompt(preparedInput.summary, language, settings, styleReferenceBlock, {
                 diff: preparedInput.diffForReference,
                 originalLines: preparedInput.diffOriginalLines,
-                truncated: preparedInput.diffTruncated
-              }
-            )
+                truncated: preparedInput.diffTruncated,
+              })
             : buildDiffGenerationPrompt(
-              preparedInput.diff,
-              language,
-              settings,
-              preparedInput.breakingChangeExpected,
-              styleReferenceBlock
-            );
+                preparedInput.diff,
+                language,
+                settings,
+                preparedInput.breakingChangeExpected,
+                styleReferenceBlock,
+              );
 
         const rawResult = await sendPrompt(
           model,
           prompt,
           token,
           'Generate a git commit message from code changes.',
-          settings.llmMaxPromptLength
+          settings.llmMaxPromptLength,
         );
         throwIfCancelled(token);
 
@@ -2085,19 +2057,14 @@ export async function generateCommitMessage(commandContext?: unknown): Promise<v
           throw new Error('Empty commit message generated');
         }
 
-        maybeWarnOnValidationFailure(
-          normalizedMessage,
-          language,
-          settings,
-          preparedInput.breakingChangeExpected
-        );
+        maybeWarnOnValidationFailure(normalizedMessage, language, settings, preparedInput.breakingChangeExpected);
 
         repo.inputBox.value = normalizedMessage;
         progress.report({ increment: 40 });
         vscode.window.showInformationMessage(
-          getMessage('commitMessageGenerated', getCommitMessagePreview(normalizedMessage))
+          getMessage('commitMessageGenerated', getCommitMessagePreview(normalizedMessage)),
         );
-      }
+      },
     );
   } catch (error: unknown) {
     if (isRequestCancelledError(error)) {

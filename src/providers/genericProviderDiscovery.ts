@@ -1,9 +1,6 @@
 import { AIModelConfig, normalizeHttpBaseUrl } from './baseProvider';
 import { VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
-import {
-  DEFAULT_MODEL_TOOLS,
-  NON_RETRYABLE_DISCOVERY_STATUS_CODES
-} from '../constants';
+import { DEFAULT_MODEL_TOOLS, NON_RETRYABLE_DISCOVERY_STATUS_CODES } from '../constants';
 
 export interface ModelVendorMapping {
   vendor: VendorConfig;
@@ -52,7 +49,7 @@ export function toVendorModelConfigs(discoveredModels: AIModelConfig[]): VendorM
 export function mergeConfiguredModelOverrides(
   currentModels: VendorModelConfig[],
   discoveredModels: VendorModelConfig[],
-  defaultVisionForNewModels: boolean
+  defaultVisionForNewModels: boolean,
 ): VendorModelConfig[] {
   const configuredByName = new Map<string, VendorModelConfig>();
   for (const model of currentModels) {
@@ -63,15 +60,15 @@ export function mergeConfiguredModelOverrides(
     configuredByName.set(key, model);
   }
 
-  return discoveredModels.map(discovered => {
+  return discoveredModels.map((discovered) => {
     const configured = configuredByName.get(discovered.name.trim().toLowerCase());
     if (!configured) {
       return {
         ...discovered,
         capabilities: {
           ...discovered.capabilities,
-          vision: defaultVisionForNewModels
-        }
+          vision: defaultVisionForNewModels,
+        },
       };
     }
 
@@ -109,14 +106,14 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
     maxOutputTokens: readPositiveTokenInteger(model.maxOutputTokens),
     capabilities: {
       tools,
-      vision
+      vision,
     },
     streaming: model.streaming,
     thinking: model.thinking,
     editTools: model.editTools,
     supportsReasoningEffort: model.supportsReasoningEffort,
     reasoningEffortFormat: model.reasoningEffortFormat,
-    zeroDataRetentionEnabled: model.zeroDataRetentionEnabled
+    zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
   };
 }
 

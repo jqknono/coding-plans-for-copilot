@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
 const KEYWORD_PATTERN = /套餐|coding|plan/i;
 

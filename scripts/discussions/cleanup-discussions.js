@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 /**
  * Cleanup script for Discussions that have no real community engagement.
@@ -19,22 +19,18 @@
  * In --apply mode with numbers it deletes those specific discussions.
  */
 
-const { loadEnvFileIfPresent } = require("../crawler/env");
-const {
-  graphql,
-  REPO_OWNER,
-  REPO_NAME,
-} = require("../crawler/github-discussion");
+const { loadEnvFileIfPresent } = require('../crawler/env');
+const { graphql, REPO_OWNER, REPO_NAME } = require('../crawler/github-discussion');
 
 // ─── CLI parsing ───
 
 function parseArgs(argv) {
   const args = { apply: false, numbers: [] };
   for (const arg of argv.slice(2)) {
-    if (arg === "--apply") {
+    if (arg === '--apply') {
       args.apply = true;
     } else if (/^\d+(,\d+)*$/.test(arg)) {
-      args.numbers = arg.split(",").map(Number);
+      args.numbers = arg.split(',').map(Number);
     }
   }
   return args;
@@ -45,13 +41,19 @@ function parseArgs(argv) {
 async function fetchPinnedDiscussionNumbers() {
   try {
     const data = await graphql(
-      `query($owner: String!, $name: String!) {
-        repository(owner: $owner, name: $name) {
-          pinnedDiscussions(first: 10) {
-            nodes { discussion { number } }
+      `
+        query ($owner: String!, $name: String!) {
+          repository(owner: $owner, name: $name) {
+            pinnedDiscussions(first: 10) {
+              nodes {
+                discussion {
+                  number
+                }
+              }
+            }
           }
         }
-      }`,
+      `,
       { owner: REPO_OWNER, name: REPO_NAME },
     );
     return new Set(data.repository.pinnedDiscussions.nodes.map((n) => n.discussion.number));
@@ -66,23 +68,36 @@ async function fetchAllDiscussions() {
 
   while (true) {
     const data = await graphql(
-      `query($owner: String!, $name: String!, $after: String) {
-        repository(owner: $owner, name: $name) {
-          discussions(first: 100, after: $after, orderBy: {field: CREATED_AT, direction: DESC}) {
-            pageInfo { hasNextPage endCursor }
-            nodes {
-              id
-              number
-              title
-              body
-              comments { totalCount }
-              labels(first: 20) { nodes { name } }
-              category { name }
-              createdAt
+      `
+        query ($owner: String!, $name: String!, $after: String) {
+          repository(owner: $owner, name: $name) {
+            discussions(first: 100, after: $after, orderBy: { field: CREATED_AT, direction: DESC }) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                id
+                number
+                title
+                body
+                comments {
+                  totalCount
+                }
+                labels(first: 20) {
+                  nodes {
+                    name
+                  }
+                }
+                category {
+                  name
+                }
+                createdAt
+              }
             }
           }
         }
-      }`,
+      `,
       { owner: REPO_OWNER, name: REPO_NAME, after: cursor },
     );
 
@@ -97,11 +112,15 @@ async function fetchAllDiscussions() {
 
 async function deleteDiscussion(id) {
   await graphql(
-    `mutation DeleteDiscussion($input: DeleteDiscussionInput!) {
-      deleteDiscussion(input: $input) {
-        discussion { id }
+    `
+      mutation DeleteDiscussion($input: DeleteDiscussionInput!) {
+        deleteDiscussion(input: $input) {
+          discussion {
+            id
+          }
+        }
       }
-    }`,
+    `,
     { input: { id } },
   );
 }
@@ -109,23 +128,23 @@ async function deleteDiscussion(id) {
 // ─── Interactive selection ───
 
 async function promptSelection(deletable) {
-  console.log("");
+  console.log('');
   console.log("Enter discussion numbers to delete (comma-separated), or 'q' to cancel:");
-  console.log("Example: 3,7,12");
+  console.log('Example: 3,7,12');
 
-  const { createInterface } = require("node:readline");
+  const { createInterface } = require('node:readline');
   const rl = createInterface({ input: process.stdin, output: process.stdout });
 
   return new Promise((resolve) => {
-    rl.question("> ", (answer) => {
+    rl.question('> ', (answer) => {
       rl.close();
       const trimmed = answer.trim();
-      if (trimmed.toLowerCase() === "q" || trimmed === "") {
+      if (trimmed.toLowerCase() === 'q' || trimmed === '') {
         resolve(null);
         return;
       }
       const numbers = trimmed
-        .split(",")
+        .split(',')
         .map((s) => Number.parseInt(s.trim(), 10))
         .filter((n) => !Number.isNaN(n));
       resolve(numbers);
@@ -138,15 +157,15 @@ async function promptSelection(deletable) {
 async function main() {
   const args = parseArgs(process.argv);
 
-  console.log("[cleanup] loading environment...");
+  console.log('[cleanup] loading environment...');
   await loadEnvFileIfPresent();
 
   if (!process.env.COMMUNITY_CRAWLER_TOKEN) {
-    console.error("[cleanup] COMMUNITY_CRAWLER_TOKEN not set, exiting");
+    console.error('[cleanup] COMMUNITY_CRAWLER_TOKEN not set, exiting');
     process.exit(1);
   }
 
-  console.log("[cleanup] fetching all discussions...");
+  console.log('[cleanup] fetching all discussions...');
   const pinnedNumbers = await fetchPinnedDiscussionNumbers();
   const allDiscussions = await fetchAllDiscussions();
   console.log(`[cleanup] found ${allDiscussions.length} discussions total (${pinnedNumbers.size} pinned)`);
@@ -160,32 +179,29 @@ async function main() {
   });
 
   if (deletable.length === 0) {
-    console.log("[cleanup] no deletable discussions found");
+    console.log('[cleanup] no deletable discussions found');
     return;
   }
 
   console.log(`[cleanup] ${deletable.length} deletable discussion(s):\n`);
 
   // Display table
-  const maxTitleLen = Math.min(
-    Math.max(...deletable.map((d) => d.title.length)),
-    60,
-  );
+  const maxTitleLen = Math.min(Math.max(...deletable.map((d) => d.title.length)), 60);
 
   for (const d of deletable) {
     const num = String(d.number).padStart(3);
-    const title = d.title.length > 60 ? d.title.slice(0, 57) + "..." : d.title.padEnd(maxTitleLen);
-    const category = d.category?.name ?? "?";
+    const title = d.title.length > 60 ? d.title.slice(0, 57) + '...' : d.title.padEnd(maxTitleLen);
+    const category = d.category?.name ?? '?';
     const date = new Date(d.createdAt).toISOString().slice(0, 10);
     console.log(`  #${num}  ${title}  [${category}]  ${date}`);
   }
 
   // Dry-run mode: just list and exit
   if (!args.apply) {
-    console.log("");
-    console.log("[cleanup] dry-run mode — no discussions were deleted");
-    console.log("[cleanup] re-run with --apply to delete, e.g.:");
-    const numbers = deletable.map((d) => d.number).join(",");
+    console.log('');
+    console.log('[cleanup] dry-run mode — no discussions were deleted');
+    console.log('[cleanup] re-run with --apply to delete, e.g.:');
+    const numbers = deletable.map((d) => d.number).join(',');
     console.log(`  node ./scripts/crawler/cleanup-discussions.js --apply ${numbers}`);
     return;
   }
@@ -194,11 +210,11 @@ async function main() {
   let selectedNumbers;
   if (args.numbers.length > 0) {
     selectedNumbers = args.numbers;
-    console.log(`\n[cleanup] selected from args: ${selectedNumbers.join(", ")}`);
+    console.log(`\n[cleanup] selected from args: ${selectedNumbers.join(', ')}`);
   } else {
     selectedNumbers = await promptSelection(deletable);
     if (!selectedNumbers || selectedNumbers.length === 0) {
-      console.log("[cleanup] cancelled");
+      console.log('[cleanup] cancelled');
       return;
     }
   }
@@ -207,15 +223,13 @@ async function main() {
   const deletableMap = new Map(deletable.map((d) => [d.number, d]));
   const invalid = selectedNumbers.filter((n) => !deletableMap.has(n));
   if (invalid.length > 0) {
-    console.warn(`[cleanup] warning: #${invalid.join(", #")} not in deletable list, skipping`);
+    console.warn(`[cleanup] warning: #${invalid.join(', #')} not in deletable list, skipping`);
   }
 
-  const toDelete = selectedNumbers
-    .filter((n) => deletableMap.has(n))
-    .map((n) => deletableMap.get(n));
+  const toDelete = selectedNumbers.filter((n) => deletableMap.has(n)).map((n) => deletableMap.get(n));
 
   if (toDelete.length === 0) {
-    console.log("[cleanup] nothing to delete");
+    console.log('[cleanup] nothing to delete');
     return;
   }
 
@@ -244,7 +258,7 @@ async function main() {
 
 if (require.main === module) {
   main().catch((error) => {
-    console.error("[cleanup] fatal:", error);
+    console.error('[cleanup] fatal:', error);
     process.exit(1);
   });
 }

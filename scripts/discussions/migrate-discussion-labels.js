@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 /**
  * One-time migration script for historical crawler Discussion labels.
@@ -18,10 +18,10 @@
  *   - Read-back verify after each migration.
  */
 
-const fs = require("node:fs/promises");
-const path = require("node:path");
+const fs = require('node:fs/promises');
+const path = require('node:path');
 
-const { loadEnvFileIfPresent } = require("../crawler/env");
+const { loadEnvFileIfPresent } = require('../crawler/env');
 const {
   graphql,
   getRepoId,
@@ -31,9 +31,9 @@ const {
   labelColor,
   REPO_OWNER,
   REPO_NAME,
-} = require("../crawler/github-discussion");
+} = require('../crawler/github-discussion');
 
-const DISCUSSIONS_DIR = path.resolve(__dirname, "..", "..", "assets", "discussions");
+const DISCUSSIONS_DIR = path.resolve(__dirname, '..', '..', 'assets', 'discussions');
 
 // ─── Helpers ───
 
@@ -43,7 +43,7 @@ function parseDiscussionNumber(url) {
 }
 
 function removeTagLineFromBody(body) {
-  return body.replace(/\n?> \*\*标签\*\*:[^\n]*\n?/, "\n");
+  return body.replace(/\n?> \*\*标签\*\*:[^\n]*\n?/, '\n');
 }
 
 /**
@@ -63,18 +63,27 @@ function parseTagsFromBody(body) {
 
 async function fetchDiscussion(discussionNumber) {
   const data = await graphql(
-    `query($owner: String!, $name: String!, $number: Int!) {
-      repository(owner: $owner, name: $name) {
-        discussion(number: $number) {
-          id
-          number
-          title
-          body
-          category { name }
-          labels(first: 20) { nodes { id name } }
+    `
+      query ($owner: String!, $name: String!, $number: Int!) {
+        repository(owner: $owner, name: $name) {
+          discussion(number: $number) {
+            id
+            number
+            title
+            body
+            category {
+              name
+            }
+            labels(first: 20) {
+              nodes {
+                id
+                name
+              }
+            }
+          }
         }
       }
-    }`,
+    `,
     { owner: REPO_OWNER, name: REPO_NAME, number: discussionNumber },
   );
   return data.repository.discussion;
@@ -82,22 +91,33 @@ async function fetchDiscussion(discussionNumber) {
 
 async function updateDiscussionBody(discussionId, body) {
   await graphql(
-    `mutation UpdateDiscussion($input: UpdateDiscussionInput!) {
-      updateDiscussion(input: $input) {
-        discussion { id }
+    `
+      mutation UpdateDiscussion($input: UpdateDiscussionInput!) {
+        updateDiscussion(input: $input) {
+          discussion {
+            id
+          }
+        }
       }
-    }`,
+    `,
     { input: { discussionId, body } },
   );
 }
 
 async function getRepoLabels() {
   const data = await graphql(
-    `query($owner: String!, $name: String!) {
-      repository(owner: $owner, name: $name) {
-        labels(first: 100) { nodes { id name } }
+    `
+      query ($owner: String!, $name: String!) {
+        repository(owner: $owner, name: $name) {
+          labels(first: 100) {
+            nodes {
+              id
+              name
+            }
+          }
+        }
       }
-    }`,
+    `,
     { owner: REPO_OWNER, name: REPO_NAME },
   );
   return data.repository.labels.nodes;
@@ -111,27 +131,40 @@ async function fetchAllCrawlerDiscussions() {
 
   while (true) {
     const data = await graphql(
-      `query($owner: String!, $name: String!, $after: String) {
-        repository(owner: $owner, name: $name) {
-          discussions(first: 50, after: $after, orderBy: {field: CREATED_AT, direction: DESC}) {
-            pageInfo { hasNextPage endCursor }
-            nodes {
-              id
-              number
-              title
-              body
-              category { id name }
-              labels(first: 20) { nodes { id name } }
+      `
+        query ($owner: String!, $name: String!, $after: String) {
+          repository(owner: $owner, name: $name) {
+            discussions(first: 50, after: $after, orderBy: { field: CREATED_AT, direction: DESC }) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                id
+                number
+                title
+                body
+                category {
+                  id
+                  name
+                }
+                labels(first: 20) {
+                  nodes {
+                    id
+                    name
+                  }
+                }
+              }
             }
           }
         }
-      }`,
+      `,
       { owner: REPO_OWNER, name: REPO_NAME, after: cursor },
     );
 
     const page = data.repository.discussions;
     for (const d of page.nodes) {
-      if (d.body && d.body.includes("由社区爬虫自动生成")) {
+      if (d.body && d.body.includes('由社区爬虫自动生成')) {
         discussions.push(d);
       }
     }
@@ -146,13 +179,19 @@ async function fetchAllCrawlerDiscussions() {
 
 async function getDiscussionCategories() {
   const data = await graphql(
-    `query($owner: String!, $name: String!) {
-      repository(owner: $owner, name: $name) {
-        discussionCategories(first: 20) {
-          nodes { id name slug }
+    `
+      query ($owner: String!, $name: String!) {
+        repository(owner: $owner, name: $name) {
+          discussionCategories(first: 20) {
+            nodes {
+              id
+              name
+              slug
+            }
+          }
         }
       }
-    }`,
+    `,
     { owner: REPO_OWNER, name: REPO_NAME },
   );
   return data.repository.discussionCategories.nodes;
@@ -160,11 +199,15 @@ async function getDiscussionCategories() {
 
 async function updateDiscussionCategory(discussionId, categoryId) {
   await graphql(
-    `mutation UpdateDiscussion($input: UpdateDiscussionInput!) {
-      updateDiscussion(input: $input) {
-        discussion { id }
+    `
+      mutation UpdateDiscussion($input: UpdateDiscussionInput!) {
+        updateDiscussion(input: $input) {
+          discussion {
+            id
+          }
+        }
       }
-    }`,
+    `,
     { input: { discussionId, categoryId } },
   );
 }
@@ -173,28 +216,24 @@ async function updateDiscussionCategory(discussionId, categoryId) {
 
 async function migrateDiscussion(discussion, expectedLabels, labelCache, generalCategoryId) {
   const { number, id, body, category } = discussion;
-  const existingLabelNames = new Set(
-    (discussion.labels?.nodes || []).map((l) => l.name),
-  );
+  const existingLabelNames = new Set((discussion.labels?.nodes || []).map((l) => l.name));
 
   const missingLabels = expectedLabels.filter((l) => !existingLabelNames.has(l));
-  const hasTagLine = body?.includes("**标签**") ?? false;
+  const hasTagLine = body?.includes('**标签**') ?? false;
   const cleanedBody = hasTagLine ? removeTagLineFromBody(body) : null;
-  const needsCategoryFix = category?.name !== "General" && generalCategoryId;
+  const needsCategoryFix = category?.name !== 'General' && generalCategoryId;
 
   if (missingLabels.length === 0 && !hasTagLine && !needsCategoryFix) {
     console.log(`[migrate-labels] #${number} already up-to-date, skipping`);
-    return "skipped";
+    return 'skipped';
   }
 
   const changes = [];
-  if (missingLabels.length > 0) changes.push(`labels: [${missingLabels.join(", ")}]`);
-  if (hasTagLine) changes.push("remove tag line");
+  if (missingLabels.length > 0) changes.push(`labels: [${missingLabels.join(', ')}]`);
+  if (hasTagLine) changes.push('remove tag line');
   if (needsCategoryFix) changes.push(`category: ${category?.name} → General`);
 
-  console.log(
-    `[migrate-labels] #${number} "${discussion.title?.slice(0, 50)}" → ${changes.join(", ")}`,
-  );
+  console.log(`[migrate-labels] #${number} "${discussion.title?.slice(0, 50)}" → ${changes.join(', ')}`);
 
   // Add missing labels
   if (missingLabels.length > 0) {
@@ -224,29 +263,27 @@ async function migrateDiscussion(discussion, expectedLabels, labelCache, general
 
   // Read-back verification
   const verified = await fetchDiscussion(number);
-  const verifiedLabelNames = new Set(
-    (verified.labels?.nodes || []).map((l) => l.name),
-  );
+  const verifiedLabelNames = new Set((verified.labels?.nodes || []).map((l) => l.name));
   const stillMissing = expectedLabels.filter((l) => !verifiedLabelNames.has(l));
   if (stillMissing.length > 0) {
-    throw new Error(`Post-migration verification: still missing labels: ${stillMissing.join(", ")}`);
+    throw new Error(`Post-migration verification: still missing labels: ${stillMissing.join(', ')}`);
   }
-  if (verified.body?.includes("**标签**")) {
-    throw new Error("Post-migration verification: body still contains legacy tag line");
+  if (verified.body?.includes('**标签**')) {
+    throw new Error('Post-migration verification: body still contains legacy tag line');
   }
   console.log(`[migrate-labels]   verification passed`);
 
-  return "migrated";
+  return 'migrated';
 }
 
 // ─── Main ───
 
 async function main() {
-  console.log("[migrate-labels] loading environment...");
+  console.log('[migrate-labels] loading environment...');
   await loadEnvFileIfPresent();
 
   if (!process.env.COMMUNITY_CRAWLER_TOKEN) {
-    console.error("[migrate-labels] COMMUNITY_CRAWLER_TOKEN not set, exiting");
+    console.error('[migrate-labels] COMMUNITY_CRAWLER_TOKEN not set, exiting');
     process.exit(1);
   }
 
@@ -255,7 +292,7 @@ async function main() {
   try {
     crawlerData = await loadAllDiscussions();
   } catch {
-    console.log("[migrate-labels] no discussions data, skipping Phase 1");
+    console.log('[migrate-labels] no discussions data, skipping Phase 1');
   }
 
   // Build analysis lookup: discussionNumber → analysis
@@ -277,14 +314,14 @@ async function main() {
 
   // Get General category ID for category fixes
   const categories = await getDiscussionCategories();
-  const generalCategory = categories.find((c) => c.name === "General");
+  const generalCategory = categories.find((c) => c.name === 'General');
   const generalCategoryId = generalCategory?.id ?? null;
   if (!generalCategoryId) {
-    console.warn("[migrate-labels] General category not found, cannot fix categories");
+    console.warn('[migrate-labels] General category not found, cannot fix categories');
   }
 
   // Fetch all online crawler discussions
-  console.log("[migrate-labels] fetching all crawler discussions...");
+  console.log('[migrate-labels] fetching all crawler discussions...');
   const allDiscussions = await fetchAllCrawlerDiscussions();
   console.log(`[migrate-labels] found ${allDiscussions.length} crawler discussions online`);
 
@@ -307,10 +344,8 @@ async function main() {
     }
 
     try {
-      const result = await migrateDiscussion(
-        discussion, expectedLabels, labelCache, generalCategoryId,
-      );
-      if (result === "migrated") {
+      const result = await migrateDiscussion(discussion, expectedLabels, labelCache, generalCategoryId);
+      if (result === 'migrated') {
         migrated++;
       } else {
         skipped++;
@@ -321,9 +356,7 @@ async function main() {
     }
   }
 
-  console.log(
-    `\n[migrate-labels] done: ${migrated} migrated, ${skipped} skipped, ${failed} failed`,
-  );
+  console.log(`\n[migrate-labels] done: ${migrated} migrated, ${skipped} skipped, ${failed} failed`);
 
   if (failed > 0) {
     process.exit(1);
@@ -332,7 +365,7 @@ async function main() {
 
 if (require.main === module) {
   main().catch((error) => {
-    console.error("[migrate-labels] fatal:", error);
+    console.error('[migrate-labels] fatal:', error);
     process.exit(1);
   });
 }
@@ -350,7 +383,7 @@ async function loadAllDiscussions() {
   const jsonFiles = dir.filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort();
   for (const file of jsonFiles) {
     try {
-      const raw = await fs.readFile(path.join(DISCUSSIONS_DIR, file), "utf8");
+      const raw = await fs.readFile(path.join(DISCUSSIONS_DIR, file), 'utf8');
       const data = JSON.parse(raw);
       if (data.posts) allPosts.push(...data.posts);
     } catch {

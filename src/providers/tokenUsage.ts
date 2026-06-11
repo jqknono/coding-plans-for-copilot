@@ -14,7 +14,7 @@ type NumericUsageRecord = Record<string, unknown>;
 export function normalizeTokenUsage(
   protocol: SupportedUsageProtocol,
   usage: NumericUsageRecord | undefined,
-  outputBuffer?: number
+  outputBuffer?: number,
 ): NormalizedTokenUsage | undefined {
   if (!usage || typeof usage !== 'object') {
     return undefined;
@@ -29,24 +29,21 @@ export function normalizeTokenUsage(
   }
 
   const normalizedPromptTokens = promptTokens ?? 0;
-  const normalizedTotalTokens = explicitTotalTokens ?? (normalizedPromptTokens + (completionTokens ?? 0));
-  const normalizedCompletionTokens = Math.max(
-    normalizedTotalTokens - normalizedPromptTokens,
-    0
-  );
+  const normalizedTotalTokens = explicitTotalTokens ?? normalizedPromptTokens + (completionTokens ?? 0);
+  const normalizedCompletionTokens = Math.max(normalizedTotalTokens - normalizedPromptTokens, 0);
   const normalizedOutputBuffer = readNonNegativeInteger(outputBuffer);
 
   return {
     promptTokens: normalizedPromptTokens,
     completionTokens: normalizedCompletionTokens,
     totalTokens: normalizedTotalTokens,
-    outputBuffer: normalizedOutputBuffer
+    outputBuffer: normalizedOutputBuffer,
   };
 }
 
 export function attachTokenUsage(
   target: Record<string, unknown>,
-  usage: NormalizedTokenUsage | undefined
+  usage: NormalizedTokenUsage | undefined,
 ): Record<string, unknown> {
   if (!usage) {
     return target;
@@ -85,17 +82,14 @@ function normalizeAttachedUsage(record: Record<string, unknown>): NormalizedToke
   }
 
   const normalizedPromptTokens = promptTokens ?? 0;
-  const normalizedTotalTokens = totalTokens ?? (normalizedPromptTokens + (completionTokens ?? 0));
-  const normalizedCompletionTokens = Math.max(
-    normalizedTotalTokens - normalizedPromptTokens,
-    0
-  );
+  const normalizedTotalTokens = totalTokens ?? normalizedPromptTokens + (completionTokens ?? 0);
+  const normalizedCompletionTokens = Math.max(normalizedTotalTokens - normalizedPromptTokens, 0);
 
   return {
     promptTokens: normalizedPromptTokens,
     completionTokens: normalizedCompletionTokens,
     totalTokens: normalizedTotalTokens,
-    outputBuffer
+    outputBuffer,
   };
 }
 
@@ -105,9 +99,11 @@ function readPromptTokens(protocol: SupportedUsageProtocol, usage: NumericUsageR
   }
 
   if (protocol === 'anthropic') {
-    return readNonNegativeInteger(usage.prompt_tokens)
-      ?? readAnthropicEffectiveInputTokens(usage)
-      ?? readNonNegativeInteger(usage.input_tokens);
+    return (
+      readNonNegativeInteger(usage.prompt_tokens) ??
+      readAnthropicEffectiveInputTokens(usage) ??
+      readNonNegativeInteger(usage.input_tokens)
+    );
   }
 
   return readNonNegativeInteger(usage.input_tokens);
@@ -119,8 +115,7 @@ function readCompletionTokens(protocol: SupportedUsageProtocol, usage: NumericUs
   }
 
   if (protocol === 'anthropic') {
-    return readNonNegativeInteger(usage.completion_tokens)
-      ?? readNonNegativeInteger(usage.output_tokens);
+    return readNonNegativeInteger(usage.completion_tokens) ?? readNonNegativeInteger(usage.output_tokens);
   }
 
   return readNonNegativeInteger(usage.output_tokens);
@@ -130,7 +125,7 @@ function readExplicitTotalTokens(
   protocol: SupportedUsageProtocol,
   usage: NumericUsageRecord,
   promptTokens: number | undefined,
-  completionTokens: number | undefined
+  completionTokens: number | undefined,
 ): number | undefined {
   const totalTokens = readNonNegativeInteger(usage.total_tokens);
   if (totalTokens !== undefined) {

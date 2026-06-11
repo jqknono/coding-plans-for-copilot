@@ -5,7 +5,7 @@ export const UPDATE_MODELS_COMMAND = 'coding-plans.updateModels';
 export const PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS = [
   'workbench.action.chat.refreshLanguageModels',
   'workbench.action.languageModels.refresh',
-  'workbench.action.chat.languageModels.refresh'
+  'workbench.action.chat.languageModels.refresh',
 ];
 
 export const COMMIT_MESSAGE_MODEL_VENDOR_SETTING_KEY = 'commitMessage.modelVendor';
@@ -53,13 +53,13 @@ export const COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX = '[coding-plans][commit-
 export const CODING_PLANS_VENDOR = 'coding-plans';
 export const COMMIT_MESSAGE_TASK_BLOCK = [
   'TASK: Generate a complete multi-line git commit message from change information.',
-  'You are a Git commit message generator.'
+  'You are a Git commit message generator.',
 ].join('\n');
 export const DEFAULT_COMMIT_FORMAT_PROMPT = [
   'FORMAT REQUIREMENT:',
   'Follow the Conventional Commits format: <type>(<scope>): <description>.',
   'Common types: feat, fix, docs, style, refactor, perf, test, build, ci, chore.',
-  'Output ONLY the commit message, no explanation, no markdown fences.'
+  'Output ONLY the commit message, no explanation, no markdown fences.',
 ].join('\n');
 export const SUMMARY_JSON_SCHEMA = [
   '{',
@@ -67,9 +67,10 @@ export const SUMMARY_JSON_SCHEMA = [
   '  "majorChanges": ["what changed and why"],',
   '  "riskNotes": ["potential risk or migration note"],',
   '  "breakingChange": false',
-  '}'
+  '}',
 ].join('\n');
-export const CONVENTIONAL_COMMIT_SUBJECT_RE = /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9_.\-\/]+\))?!?: .+/i;
+export const CONVENTIONAL_COMMIT_SUBJECT_RE =
+  /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9_.\-\/]+\))?!?: .+/i;
 
 export const ADVANCED_OPTIONS_SETTING_KEY = 'advanced';
 export const DEFAULT_ADVANCED_RESERVED_OUTPUT = 30000;
@@ -90,8 +91,8 @@ export function resolveImplicitReservedOutputTokens(totalContextWindow: number):
     DEFAULT_RESERVED_OUTPUT_TOKENS,
     Math.max(
       MIN_DYNAMIC_RESERVED_OUTPUT_TOKENS,
-      Math.floor(normalizedTotalContextWindow * DEFAULT_RESERVED_OUTPUT_RATIO)
-    )
+      Math.floor(normalizedTotalContextWindow * DEFAULT_RESERVED_OUTPUT_RATIO),
+    ),
   );
 
   return Math.max(1, Math.min(desiredReservedOutputTokens, normalizedTotalContextWindow - 1));
@@ -101,7 +102,7 @@ export const LOG_LEVEL_PRIORITY = {
   DEBUG: 10,
   INFO: 20,
   WARN: 30,
-  ERROR: 40
+  ERROR: 40,
 } as const;
 
 export const MODEL_VERSION_LABEL = 'Coding Plans for Copilot';

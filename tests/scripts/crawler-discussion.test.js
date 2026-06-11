@@ -1,28 +1,26 @@
-"use strict";
+'use strict';
 
-const test = require("node:test");
-const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const path = require("node:path");
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const {
   buildCanonicalLabels,
   normalizeLabelSegment,
   buildDiscussionBody,
-} = require("../../scripts/crawler/github-discussion");
+} = require('../../scripts/crawler/github-discussion');
 
-const { removeTagLineFromBody } = require("../../scripts/discussions/migrate-discussion-labels");
-const { buildExpectedState } = require("../../scripts/discussions/verify-discussion-labels");
+const { removeTagLineFromBody } = require('../../scripts/discussions/migrate-discussion-labels');
+const { buildExpectedState } = require('../../scripts/discussions/verify-discussion-labels');
 
 const {
   validateAnalysis,
   parseAndValidateAnalysis,
   setAvailableCategories,
-} = require("../../scripts/crawler/analyzer");
+} = require('../../scripts/crawler/analyzer');
 
-const {
-  summarizeAnalysisOutcomes,
-} = require("../../scripts/crawler/index");
+const { summarizeAnalysisOutcomes } = require('../../scripts/crawler/index');
 
 function withEnv(name, value, fn) {
   const previous = process.env[name];
@@ -44,140 +42,138 @@ function withEnv(name, value, fn) {
 
 function loadWorkflowText() {
   return fs.readFileSync(
-    path.resolve(__dirname, "..", "..", ".github", "workflows", "crawl-community-posts.yml"),
-    "utf8",
+    path.resolve(__dirname, '..', '..', '.github', 'workflows', 'crawl-community-posts.yml'),
+    'utf8',
   );
 }
 
 function loadPackageJson() {
-  return JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "..", "..", "package.json"), "utf8"),
-  );
+  return JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', '..', 'package.json'), 'utf8'));
 }
 
 // ─── normalizeLabelSegment ───
 
-test("normalizeLabelSegment: trims whitespace", () => {
-  assert.equal(normalizeLabelSegment("  pricing  "), "pricing");
+test('normalizeLabelSegment: trims whitespace', () => {
+  assert.equal(normalizeLabelSegment('  pricing  '), 'pricing');
 });
 
-test("normalizeLabelSegment: collapses internal spaces to single dash", () => {
-  assert.equal(normalizeLabelSegment("coding plan"), "coding-plan");
+test('normalizeLabelSegment: collapses internal spaces to single dash', () => {
+  assert.equal(normalizeLabelSegment('coding plan'), 'coding-plan');
 });
 
-test("normalizeLabelSegment: collapses multiple spaces to single dash", () => {
-  assert.equal(normalizeLabelSegment("GPT   Plus"), "GPT-Plus");
+test('normalizeLabelSegment: collapses multiple spaces to single dash', () => {
+  assert.equal(normalizeLabelSegment('GPT   Plus'), 'GPT-Plus');
 });
 
-test("normalizeLabelSegment: handles already-normalized input", () => {
-  assert.equal(normalizeLabelSegment("pricing"), "pricing");
+test('normalizeLabelSegment: handles already-normalized input', () => {
+  assert.equal(normalizeLabelSegment('pricing'), 'pricing');
 });
 
 // ─── buildCanonicalLabels ───
 
-test("buildCanonicalLabels: generates all label types", () => {
+test('buildCanonicalLabels: generates all label types', () => {
   const analysis = {
-    supplier: "OpenAI",
-    sentiment: "positive",
-    language: "en",
-    topics: ["pricing", "comparison"],
+    supplier: 'OpenAI',
+    sentiment: 'positive',
+    language: 'en',
+    topics: ['pricing', 'comparison'],
   };
   const labels = buildCanonicalLabels(analysis);
   assert.deepEqual(labels.sort(), [
-    "lang:en",
-    "sentiment:positive",
-    "supplier:OpenAI",
-    "topic:comparison",
-    "topic:pricing",
+    'lang:en',
+    'sentiment:positive',
+    'supplier:OpenAI',
+    'topic:comparison',
+    'topic:pricing',
   ]);
 });
 
-test("buildCanonicalLabels: normalizes topic with spaces", () => {
-  const analysis = { topics: ["coding plan", "GPT Plus"] };
+test('buildCanonicalLabels: normalizes topic with spaces', () => {
+  const analysis = { topics: ['coding plan', 'GPT Plus'] };
   const labels = buildCanonicalLabels(analysis);
-  assert.ok(labels.includes("topic:coding-plan"));
-  assert.ok(labels.includes("topic:GPT-Plus"));
+  assert.ok(labels.includes('topic:coding-plan'));
+  assert.ok(labels.includes('topic:GPT-Plus'));
 });
 
-test("buildCanonicalLabels: deduplicates identical labels", () => {
-  const analysis = { topics: ["pricing", "pricing"] };
+test('buildCanonicalLabels: deduplicates identical labels', () => {
+  const analysis = { topics: ['pricing', 'pricing'] };
   const labels = buildCanonicalLabels(analysis);
-  const pricingCount = labels.filter((l) => l === "topic:pricing").length;
+  const pricingCount = labels.filter((l) => l === 'topic:pricing').length;
   assert.equal(pricingCount, 1);
 });
 
-test("buildCanonicalLabels: handles empty analysis", () => {
+test('buildCanonicalLabels: handles empty analysis', () => {
   const labels = buildCanonicalLabels({});
   assert.equal(labels.length, 0);
 });
 
-test("buildCanonicalLabels: handles partial analysis", () => {
-  const analysis = { sentiment: "neutral", language: "zh" };
+test('buildCanonicalLabels: handles partial analysis', () => {
+  const analysis = { sentiment: 'neutral', language: 'zh' };
   const labels = buildCanonicalLabels(analysis);
-  assert.deepEqual(labels.sort(), ["lang:zh", "sentiment:neutral"]);
+  assert.deepEqual(labels.sort(), ['lang:zh', 'sentiment:neutral']);
 });
 
 // ─── buildDiscussionBody ───
 
-test("buildDiscussionBody: does not contain legacy tag line", () => {
+test('buildDiscussionBody: does not contain legacy tag line', () => {
   const post = {
-    url: "https://example.com/post/1",
-    source: "v2ex",
-    author: "testuser",
-    createdAt: "2025-01-01",
-    content: "Test content",
+    url: 'https://example.com/post/1',
+    source: 'v2ex',
+    author: 'testuser',
+    createdAt: '2025-01-01',
+    content: 'Test content',
     replies: [],
   };
   const analysis = {
-    supplier: "TestSupplier",
-    sentiment: "neutral",
-    language: "zh",
-    topics: ["pricing"],
-    summary: "Test summary",
+    supplier: 'TestSupplier',
+    sentiment: 'neutral',
+    language: 'zh',
+    topics: ['pricing'],
+    summary: 'Test summary',
   };
-  const body = buildDiscussionBody(post, analysis, "2025-01-01T00:00:00Z");
-  assert.ok(!body.includes("**标签**"), "Body should not contain legacy tag line");
-  assert.ok(!body.includes("标签:"), "Body should not contain legacy tag line variant");
+  const body = buildDiscussionBody(post, analysis, '2025-01-01T00:00:00Z');
+  assert.ok(!body.includes('**标签**'), 'Body should not contain legacy tag line');
+  assert.ok(!body.includes('标签:'), 'Body should not contain legacy tag line variant');
 });
 
-test("buildDiscussionBody: contains expected sections", () => {
+test('buildDiscussionBody: contains expected sections', () => {
   const post = {
-    url: "https://example.com/post/1",
-    source: "linuxdo",
-    author: "testuser",
-    createdAt: "2025-01-01",
-    content: "Test content",
-    replies: [{ author: "replier", content: "Reply text" }],
+    url: 'https://example.com/post/1',
+    source: 'linuxdo',
+    author: 'testuser',
+    createdAt: '2025-01-01',
+    content: 'Test content',
+    replies: [{ author: 'replier', content: 'Reply text' }],
   };
   const analysis = {
-    supplier: "TestSupplier",
-    sentiment: "positive",
-    language: "en",
-    topics: ["comparison"],
-    summary: "A summary",
+    supplier: 'TestSupplier',
+    sentiment: 'positive',
+    language: 'en',
+    topics: ['comparison'],
+    summary: 'A summary',
   };
-  const body = buildDiscussionBody(post, analysis, "2025-01-01T00:00:00Z");
-  assert.ok(body.includes("Linux.do"), "Should contain source label");
-  assert.ok(body.includes("testuser"), "Should contain author");
-  assert.ok(body.includes("TestSupplier"), "Should contain supplier");
-  assert.ok(body.includes("A summary"), "Should contain summary");
-  assert.ok(body.includes("Test content"), "Should contain content");
-  assert.ok(body.includes("replier"), "Should contain reply author");
-  assert.ok(body.includes("社区爬虫自动生成"), "Should contain generation marker");
+  const body = buildDiscussionBody(post, analysis, '2025-01-01T00:00:00Z');
+  assert.ok(body.includes('Linux.do'), 'Should contain source label');
+  assert.ok(body.includes('testuser'), 'Should contain author');
+  assert.ok(body.includes('TestSupplier'), 'Should contain supplier');
+  assert.ok(body.includes('A summary'), 'Should contain summary');
+  assert.ok(body.includes('Test content'), 'Should contain content');
+  assert.ok(body.includes('replier'), 'Should contain reply author');
+  assert.ok(body.includes('社区爬虫自动生成'), 'Should contain generation marker');
 });
 
 // ─── removeTagLineFromBody ───
 
-test("removeTagLineFromBody: removes legacy tag line", () => {
-  const body = "Some intro\n> **标签**: supplier:OpenAI sentiment:neutral\nMore content";
+test('removeTagLineFromBody: removes legacy tag line', () => {
+  const body = 'Some intro\n> **标签**: supplier:OpenAI sentiment:neutral\nMore content';
   const cleaned = removeTagLineFromBody(body);
-  assert.ok(!cleaned.includes("**标签**"), "Should remove tag line");
-  assert.ok(cleaned.includes("Some intro"), "Should preserve other content");
-  assert.ok(cleaned.includes("More content"), "Should preserve other content");
+  assert.ok(!cleaned.includes('**标签**'), 'Should remove tag line');
+  assert.ok(cleaned.includes('Some intro'), 'Should preserve other content');
+  assert.ok(cleaned.includes('More content'), 'Should preserve other content');
 });
 
-test("removeTagLineFromBody: returns body unchanged when no tag line", () => {
-  const body = "Some intro\nMore content\nNo tags here";
+test('removeTagLineFromBody: returns body unchanged when no tag line', () => {
+  const body = 'Some intro\nMore content\nNo tags here';
   const cleaned = removeTagLineFromBody(body);
   assert.equal(cleaned, body);
 });
@@ -195,24 +191,24 @@ test("removeTagLineFromBody: returns body unchanged when no tag line", () => {
 
 // ─── validateAnalysis ───
 
-test("validateAnalysis: passes valid complete analysis", () => {
+test('validateAnalysis: passes valid complete analysis', () => {
   const obj = {
     isRelevant: true,
     isCodingPlan: true,
     relevance: 0.9,
-    supplier: "OpenAI",
-    supplierCategory: "international-provider",
-    sentiment: "positive",
+    supplier: 'OpenAI',
+    supplierCategory: 'international-provider',
+    sentiment: 'positive',
     sentimentConfidence: 0.8,
-    summary: "A post about pricing",
-    topics: ["pricing", "copilot"],
-    planMentioned: "Pro",
-    language: "en",
+    summary: 'A post about pricing',
+    topics: ['pricing', 'copilot'],
+    planMentioned: 'Pro',
+    language: 'en',
   };
   assert.deepEqual(validateAnalysis(obj), []);
 });
 
-test("validateAnalysis: passes valid minimal analysis", () => {
+test('validateAnalysis: passes valid minimal analysis', () => {
   const obj = {
     isRelevant: false,
     isCodingPlan: false,
@@ -221,64 +217,69 @@ test("validateAnalysis: passes valid minimal analysis", () => {
   assert.deepEqual(validateAnalysis(obj), []);
 });
 
-test("validateAnalysis: rejects non-boolean isRelevant", () => {
-  const errors = validateAnalysis({ isRelevant: "yes", isCodingPlan: true, relevance: 0.5 });
-  assert.ok(errors.some((e) => e.includes("isRelevant")));
+test('validateAnalysis: rejects non-boolean isRelevant', () => {
+  const errors = validateAnalysis({ isRelevant: 'yes', isCodingPlan: true, relevance: 0.5 });
+  assert.ok(errors.some((e) => e.includes('isRelevant')));
 });
 
-test("validateAnalysis: rejects out-of-range relevance", () => {
+test('validateAnalysis: rejects out-of-range relevance', () => {
   const errors = validateAnalysis({ isRelevant: true, isCodingPlan: true, relevance: 1.5 });
-  assert.ok(errors.some((e) => e.includes("relevance")));
+  assert.ok(errors.some((e) => e.includes('relevance')));
 });
 
-test("validateAnalysis: rejects invalid sentiment", () => {
-  const errors = validateAnalysis({ isRelevant: true, isCodingPlan: true, relevance: 0.5, sentiment: "happy" });
-  assert.ok(errors.some((e) => e.includes("sentiment")));
+test('validateAnalysis: rejects invalid sentiment', () => {
+  const errors = validateAnalysis({ isRelevant: true, isCodingPlan: true, relevance: 0.5, sentiment: 'happy' });
+  assert.ok(errors.some((e) => e.includes('sentiment')));
 });
 
-test("validateAnalysis: rejects invalid language", () => {
-  const errors = validateAnalysis({ isRelevant: true, isCodingPlan: true, relevance: 0.5, language: "fr" });
-  assert.ok(errors.some((e) => e.includes("language")));
+test('validateAnalysis: rejects invalid language', () => {
+  const errors = validateAnalysis({ isRelevant: true, isCodingPlan: true, relevance: 0.5, language: 'fr' });
+  assert.ok(errors.some((e) => e.includes('language')));
 });
 
-test("validateAnalysis: rejects non-array topics", () => {
-  const errors = validateAnalysis({ isRelevant: true, isCodingPlan: true, relevance: 0.5, topics: "pricing" });
-  assert.ok(errors.some((e) => e.includes("topics")));
+test('validateAnalysis: rejects non-array topics', () => {
+  const errors = validateAnalysis({ isRelevant: true, isCodingPlan: true, relevance: 0.5, topics: 'pricing' });
+  assert.ok(errors.some((e) => e.includes('topics')));
 });
 
-test("validateAnalysis: rejects invalid supplierCategory", () => {
-  const errors = validateAnalysis({ isRelevant: true, isCodingPlan: true, relevance: 0.5, supplierCategory: "unknown" });
-  assert.ok(errors.some((e) => e.includes("supplierCategory")));
+test('validateAnalysis: rejects invalid supplierCategory', () => {
+  const errors = validateAnalysis({
+    isRelevant: true,
+    isCodingPlan: true,
+    relevance: 0.5,
+    supplierCategory: 'unknown',
+  });
+  assert.ok(errors.some((e) => e.includes('supplierCategory')));
 });
 
-test("validateAnalysis: accepts null optional fields", () => {
+test('validateAnalysis: accepts null optional fields', () => {
   const obj = {
     isRelevant: false,
     isCodingPlan: false,
     relevance: 0.2,
     supplier: null,
     supplierCategory: null,
-    sentiment: "neutral",
-    language: "zh",
+    sentiment: 'neutral',
+    language: 'zh',
   };
   assert.deepEqual(validateAnalysis(obj), []);
 });
 
-test("validateAnalysis: rejects missing isCodingPlan", () => {
+test('validateAnalysis: rejects missing isCodingPlan', () => {
   const errors = validateAnalysis({ isRelevant: true, relevance: 0.5 });
-  assert.ok(errors.some((e) => e.includes("isCodingPlan")));
+  assert.ok(errors.some((e) => e.includes('isCodingPlan')));
 });
 
-test("validateAnalysis: requires category when categories are configured", () => {
-  setAvailableCategories([{ name: "社区资讯" }]);
+test('validateAnalysis: requires category when categories are configured', () => {
+  setAvailableCategories([{ name: '社区资讯' }]);
   const errors = validateAnalysis({ isRelevant: true, isCodingPlan: true, relevance: 0.8 });
-  assert.ok(errors.some((e) => e.includes("category")));
+  assert.ok(errors.some((e) => e.includes('category')));
   setAvailableCategories([]);
 });
 
 // ─── parseAndValidateAnalysis ───
 
-test("parseAndValidateAnalysis: parses valid JSON string", () => {
+test('parseAndValidateAnalysis: parses valid JSON string', () => {
   const json = '{"isRelevant":true,"isCodingPlan":true,"relevance":0.8,"sentiment":"neutral","language":"zh"}';
   const result = parseAndValidateAnalysis(json);
   assert.equal(result.isRelevant, true);
@@ -286,35 +287,29 @@ test("parseAndValidateAnalysis: parses valid JSON string", () => {
   assert.equal(result.relevance, 0.8);
 });
 
-test("parseAndValidateAnalysis: throws on invalid JSON", () => {
-  assert.throws(
-    () => parseAndValidateAnalysis("not json at all"),
-    /invalid JSON/,
-  );
+test('parseAndValidateAnalysis: throws on invalid JSON', () => {
+  assert.throws(() => parseAndValidateAnalysis('not json at all'), /invalid JSON/);
 });
 
-test("parseAndValidateAnalysis: throws on valid JSON but invalid schema", () => {
+test('parseAndValidateAnalysis: throws on valid JSON but invalid schema', () => {
   const json = '{"isRelevant":"yes","relevance":0.5}';
-  assert.throws(
-    () => parseAndValidateAnalysis(json),
-    /schema validation failed/,
-  );
+  assert.throws(() => parseAndValidateAnalysis(json), /schema validation failed/);
 });
 
 // ─── Workflow/package regression guards ───
 
-test("workflow uses publish crawler command", () => {
+test('workflow uses publish crawler command', () => {
   const workflow = loadWorkflowText();
   assert.match(workflow, /npm run crawler:run:publish/);
 });
 
-test("workflow verifies discussion labels without migration step", () => {
+test('workflow verifies discussion labels without migration step', () => {
   const workflow = loadWorkflowText();
   assert.doesNotMatch(workflow, /npm run crawler:migrate-discussion-labels/);
   assert.match(workflow, /verify_discussions:[\s\S]*run:\s*npm run crawler:verify-discussion-labels/);
 });
 
-test("workflow verifies system Chrome before crawling linuxdo", () => {
+test('workflow verifies system Chrome before crawling linuxdo', () => {
   const workflow = loadWorkflowText();
   assert.match(workflow, /PLAYWRIGHT_BROWSER_CHANNEL:\s*"chrome"/);
   assert.match(
@@ -323,45 +318,37 @@ test("workflow verifies system Chrome before crawling linuxdo", () => {
   );
 });
 
-test("cleanup npm script stays in dry-run mode by default", () => {
+test('cleanup npm script stays in dry-run mode by default', () => {
   const pkg = loadPackageJson();
-  assert.equal(
-    pkg.scripts["crawler:cleanup-discussions"],
-    "node ./scripts/discussions/cleanup-discussions.js",
-  );
+  assert.equal(pkg.scripts['crawler:cleanup-discussions'], 'node ./scripts/discussions/cleanup-discussions.js');
 });
 
-test("buildExpectedState preserves analysis category instead of hard-coding General", () => {
+test('buildExpectedState preserves analysis category instead of hard-coding General', () => {
   const expected = buildExpectedState({
     analysis: {
-      supplier: "OpenAI",
-      sentiment: "neutral",
-      language: "zh",
-      topics: ["pricing"],
-      category: "社区资讯",
+      supplier: 'OpenAI',
+      sentiment: 'neutral',
+      language: 'zh',
+      topics: ['pricing'],
+      category: '社区资讯',
     },
   });
 
-  assert.equal(expected.expectedCategory, "社区资讯");
-  assert.deepEqual(expected.labels.sort(), [
-    "lang:zh",
-    "sentiment:neutral",
-    "supplier:OpenAI",
-    "topic:pricing",
-  ]);
+  assert.equal(expected.expectedCategory, '社区资讯');
+  assert.deepEqual(expected.labels.sort(), ['lang:zh', 'sentiment:neutral', 'supplier:OpenAI', 'topic:pricing']);
 });
 
 // ─── Linux.do fallback regression ───
 
-test("fetchLinuxDoPosts retries the same page after switching to Playwright", async () => {
+test('fetchLinuxDoPosts retries the same page after switching to Playwright', async () => {
   const originalFetch = global.fetch;
-  const playwright = require("playwright");
+  const playwright = require('playwright');
   const originalLaunch = playwright.chromium.launch;
 
   let fetchCalls = 0;
   global.fetch = async () => {
     fetchCalls += 1;
-    throw new Error("timeout");
+    throw new Error('timeout');
   };
 
   playwright.chromium.launch = async () => ({
@@ -370,16 +357,16 @@ test("fetchLinuxDoPosts retries the same page after switching to Playwright", as
         goto: async (url) => ({
           status: () => 200,
           text: async () => {
-            if (url.includes("/latest.json")) {
+            if (url.includes('/latest.json')) {
               return JSON.stringify({
                 topic_list: {
                   topics: [
                     {
                       id: 123,
-                      title: "LinuxDo coding plan post",
-                      excerpt: "coding plan",
-                      slug: "linuxdo-coding-plan-post",
-                      created_at: "2026-04-05T00:00:00.000Z",
+                      title: 'LinuxDo coding plan post',
+                      excerpt: 'coding plan',
+                      slug: 'linuxdo-coding-plan-post',
+                      created_at: '2026-04-05T00:00:00.000Z',
                     },
                   ],
                 },
@@ -390,9 +377,9 @@ test("fetchLinuxDoPosts retries the same page after switching to Playwright", as
               post_stream: {
                 posts: [
                   {
-                    cooked: "<p>coding plan details</p>",
-                    username: "tester",
-                    created_at: "2026-04-05T00:00:00.000Z",
+                    cooked: '<p>coding plan details</p>',
+                    username: 'tester',
+                    created_at: '2026-04-05T00:00:00.000Z',
                   },
                 ],
               },
@@ -406,45 +393,45 @@ test("fetchLinuxDoPosts retries the same page after switching to Playwright", as
   });
 
   try {
-    const posts = await withEnv("CRAWLER_LINUXDO_PAGES", "1", async () => {
-      const modulePath = require.resolve("../../scripts/crawler/sources/linuxdo");
+    const posts = await withEnv('CRAWLER_LINUXDO_PAGES', '1', async () => {
+      const modulePath = require.resolve('../../scripts/crawler/sources/linuxdo');
       delete require.cache[modulePath];
-      const { fetchLinuxDoPosts } = require("../../scripts/crawler/sources/linuxdo");
+      const { fetchLinuxDoPosts } = require('../../scripts/crawler/sources/linuxdo');
       return fetchLinuxDoPosts({ failures: [] });
     });
 
     assert.equal(fetchCalls, 1);
     assert.equal(posts.length, 1);
-    assert.equal(posts[0].id, "linuxdo-123");
+    assert.equal(posts[0].id, 'linuxdo-123');
   } finally {
     playwright.chromium.launch = originalLaunch;
     global.fetch = originalFetch;
-    delete require.cache[require.resolve("../../scripts/crawler/sources/linuxdo")];
+    delete require.cache[require.resolve('../../scripts/crawler/sources/linuxdo')];
   }
 });
 
-test("summarizeAnalysisOutcomes groups selected and skipped posts", () => {
+test('summarizeAnalysisOutcomes groups selected and skipped posts', () => {
   const summary = summarizeAnalysisOutcomes(
     [
       {
-        post: { id: "a" },
+        post: { id: 'a' },
         analysis: { isCodingPlan: true, isRelevant: true, relevance: 0.9 },
       },
       {
-        post: { id: "b" },
+        post: { id: 'b' },
         analysis: { isCodingPlan: false, isRelevant: false, relevance: 0.2 },
       },
       {
-        post: { id: "c" },
+        post: { id: 'c' },
         analysis: { isCodingPlan: true, isRelevant: false, relevance: 0.8 },
       },
       {
-        post: { id: "d" },
+        post: { id: 'd' },
         analysis: { isCodingPlan: true, isRelevant: true, relevance: 0.4 },
       },
       {
-        post: { id: "e" },
-        analysis: { analysisError: true, error: "timeout" },
+        post: { id: 'e' },
+        analysis: { analysisError: true, error: 'timeout' },
       },
     ],
     0.7,

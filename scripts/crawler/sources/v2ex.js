@@ -1,15 +1,15 @@
 #!/usr/bin/env node
 
-"use strict";
+'use strict';
 
-const V2EX_BASE = "https://www.v2ex.com/api";
+const V2EX_BASE = 'https://www.v2ex.com/api';
 const REQUEST_TIMEOUT_MS = 15_000;
-const DELAY_MS = Number.parseInt(process.env.CRAWLER_V2EX_DELAY_MS || "1000", 10);
+const DELAY_MS = Number.parseInt(process.env.CRAWLER_V2EX_DELAY_MS || '1000', 10);
 
 const COMMON_HEADERS = {
-  "user-agent":
-    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
-  accept: "application/json",
+  'user-agent':
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+  accept: 'application/json',
 };
 
 function sleep(ms) {
@@ -17,18 +17,21 @@ function sleep(ms) {
 }
 
 function stripTags(value) {
-  return String(value || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  return String(value || '')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 function normalizeTopic(raw) {
   return {
     id: `v2ex-${raw.id}`,
-    source: "v2ex",
-    title: raw.title || "",
-    content: stripTags(raw.content_rendered || raw.content || ""),
+    source: 'v2ex',
+    title: raw.title || '',
+    content: stripTags(raw.content_rendered || raw.content || ''),
     url: raw.url || `https://www.v2ex.com/t/${raw.id}`,
-    author: raw.member?.username || "",
-    createdAt: raw.created ? new Date(raw.created * 1000).toISOString() : "",
+    author: raw.member?.username || '',
+    createdAt: raw.created ? new Date(raw.created * 1000).toISOString() : '',
     replyCount: raw.replies || 0,
     rawApiData: raw,
   };
@@ -62,9 +65,9 @@ async function fetchReplies(topicId, failures) {
 
   return data.map((r) => ({
     id: r.id,
-    content: stripTags(r.content_rendered || r.content || ""),
-    author: r.member?.username || "",
-    createdAt: r.created ? new Date(r.created * 1000).toISOString() : "",
+    content: stripTags(r.content_rendered || r.content || ''),
+    author: r.member?.username || '',
+    createdAt: r.created ? new Date(r.created * 1000).toISOString() : '',
     thanks: r.thanks || 0,
   }));
 }
@@ -108,7 +111,7 @@ async function fetchRepliesForPosts(posts, failures) {
       post.replies = [];
       continue;
     }
-    const topicId = post.id.replace("v2ex-", "");
+    const topicId = post.id.replace('v2ex-', '');
     console.log(`[v2ex] fetching ${post.replyCount} replies for topic ${topicId}...`);
     const replies = await fetchReplies(topicId, failures);
     post.replies = replies;

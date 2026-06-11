@@ -70,19 +70,16 @@ class OutputChannelLogger implements vscode.Disposable {
     }
 
     try {
-      return JSON.stringify(
-        data,
-        (_key, value) => {
-          if (value instanceof Error) {
-            return {
-              name: value.name,
-              message: value.message,
-              stack: value.stack
-            };
-          }
-          return value;
+      return JSON.stringify(data, (_key, value) => {
+        if (value instanceof Error) {
+          return {
+            name: value.name,
+            message: value.message,
+            stack: value.stack,
+          };
         }
-      );
+        return value;
+      });
     } catch {
       return String(data);
     }

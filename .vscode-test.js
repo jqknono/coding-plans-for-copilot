@@ -11,7 +11,7 @@ module.exports = defineConfig([
     mocha: {
       ui: 'tdd',
       timeout: 20000,
-      color: true
-    }
-  }
+      color: true,
+    },
+  },
 ]);

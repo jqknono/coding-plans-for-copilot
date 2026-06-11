@@ -92,5 +92,9 @@
   "commitMessageValidationWarning": "生成的提交消息可能不满足全部规则: {0}",
   "commitMessageDiffTooLarge": "差异内容过大（{0} 行），已截断为 {1} 行。",
   "commitMessagePromptTooLarge": "提示词过长（{0} 字符），发送给模型前已截断到 {1} 字符。",
-  "commitMessageNoGitRepo": "当前工作区未找到 Git 仓库。"
+  "commitMessageNoGitRepo": "当前工作区未找到 Git 仓库。",
+  "vendorConfigError": "供应商配置错误",
+  "vendorConfigMissingField": "供应商「{0}」缺少必填字段「{1}」",
+  "vendorConfigFixInSettings": "请打开设置修复后重试",
+  "vendorConfigFixAction": "打开设置"
 }

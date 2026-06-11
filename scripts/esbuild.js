@@ -32,11 +32,7 @@ function collectFilesWithSuffix(rootDir, suffix) {
 }
 
 function createEntryPoints() {
-  return [
-    'src/extension.ts',
-    'src/test/runTest.ts',
-    ...collectFilesWithSuffix(path.join('src', 'test'), '.test.ts')
-  ];
+  return ['src/extension.ts', 'src/test/runTest.ts', ...collectFilesWithSuffix(path.join('src', 'test'), '.test.ts')];
 }
 
 async function main() {
@@ -59,7 +55,7 @@ async function main() {
     sourcemap: !production,
     minify: production,
     sourcesContent: false,
-    logLevel: 'info'
+    logLevel: 'info',
   });
 
   if (watch) {
@@ -72,7 +68,7 @@ async function main() {
   await context.dispose();
 }
 
-main().catch(error => {
+main().catch((error) => {
   console.error(error);
   process.exit(1);
 });

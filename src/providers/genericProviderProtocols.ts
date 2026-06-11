@@ -1,5 +1,12 @@
 import * as vscode from 'vscode';
-import { ChatContentPart, ChatImageContentPart, ChatMessage, ChatMessageContent, ChatToolCall, ChatToolDefinition } from './baseProvider';
+import {
+  ChatContentPart,
+  ChatImageContentPart,
+  ChatMessage,
+  ChatMessageContent,
+  ChatToolCall,
+  ChatToolDefinition,
+} from './baseProvider';
 import { AnthropicEffort, ChatThinkingEffort, ResponsesThinkingEffort } from '../constants';
 
 type ThinkingToggle = {
@@ -328,11 +335,14 @@ export interface OpenAIChatStreamState {
   responseId?: string;
   usage?: OpenAIChatResponse['usage'];
   finishReason?: string;
-  toolCalls: Map<number, {
-    id?: string;
-    name?: string;
-    arguments: string;
-  }>;
+  toolCalls: Map<
+    number,
+    {
+      id?: string;
+      name?: string;
+      arguments: string;
+    }
+  >;
 }
 
 export interface OpenAIResponsesStreamState {
@@ -340,11 +350,14 @@ export interface OpenAIResponsesStreamState {
   responseId?: string;
   usage?: OpenAIResponsesResponse['usage'];
   finalResponse?: OpenAIResponsesResponse;
-  toolCalls: Map<string, {
-    id: string;
-    name?: string;
-    arguments: string;
-  }>;
+  toolCalls: Map<
+    string,
+    {
+      id: string;
+      name?: string;
+      arguments: string;
+    }
+  >;
 }
 
 export interface AnthropicStreamState {
@@ -353,13 +366,16 @@ export interface AnthropicStreamState {
   usage?: AnthropicChatResponse['usage'];
   stopReason?: string;
   finalMessage?: AnthropicChatResponse;
-  blocks: Map<number, {
-    type: 'text' | 'tool_use';
-    text: string;
-    id?: string;
-    name?: string;
-    inputJson: string;
-  }>;
+  blocks: Map<
+    number,
+    {
+      type: 'text' | 'tool_use';
+      text: string;
+      id?: string;
+      name?: string;
+      inputJson: string;
+    }
+  >;
 }
 
 type GenerateToolCallId = () => string;
@@ -368,7 +384,7 @@ export function createOpenAIChatStreamState(): OpenAIChatStreamState {
   return {
     content: '',
     fallbackContent: '',
-    toolCalls: new Map()
+    toolCalls: new Map(),
   };
 }
 
@@ -378,7 +394,7 @@ function readOpenAICompatibleText(value: unknown): string {
   }
 
   if (Array.isArray(value)) {
-    return value.map(part => readOpenAICompatibleText(part)).join('');
+    return value.map((part) => readOpenAICompatibleText(part)).join('');
   }
 
   if (!value || typeof value !== 'object') {
@@ -400,7 +416,7 @@ function readOpenAICompatibleText(value: unknown): string {
     return stripOpenAICompatibleNonTextPlaceholders(record.content);
   }
   if (Array.isArray(record.content)) {
-    return record.content.map(part => readOpenAICompatibleText(part)).join('');
+    return record.content.map((part) => readOpenAICompatibleText(part)).join('');
   }
 
   return '';
@@ -413,26 +429,25 @@ function stripOpenAICompatibleNonTextPlaceholders(text: string): string {
 export function readOpenAIChatMessageText(
   message:
     | {
-      content?: unknown;
-      reasoning_content?: unknown;
-      reasoning?: unknown;
-    }
-    | undefined
+        content?: unknown;
+        reasoning_content?: unknown;
+        reasoning?: unknown;
+      }
+    | undefined,
 ): string {
   if (!message) {
     return '';
   }
 
-  return readOpenAIChatMessageContentText(message)
-    || readOpenAIChatMessageReasoningText(message);
+  return readOpenAIChatMessageContentText(message) || readOpenAIChatMessageReasoningText(message);
 }
 
 export function readOpenAIChatMessageContentText(
   message:
     | {
-      content?: unknown;
-    }
-    | undefined
+        content?: unknown;
+      }
+    | undefined,
 ): string {
   if (!message) {
     return '';
@@ -444,23 +459,22 @@ export function readOpenAIChatMessageContentText(
 export function readOpenAIChatMessageReasoningText(
   message:
     | {
-      reasoning_content?: unknown;
-      reasoning?: unknown;
-    }
-    | undefined
+        reasoning_content?: unknown;
+        reasoning?: unknown;
+      }
+    | undefined,
 ): string {
   if (!message) {
     return '';
   }
 
-  return readOpenAICompatibleText(message.reasoning_content)
-    || readOpenAICompatibleText(message.reasoning);
+  return readOpenAICompatibleText(message.reasoning_content) || readOpenAICompatibleText(message.reasoning);
 }
 
 export function applyOpenAIChatStreamChunk(
   state: OpenAIChatStreamState,
   chunk: OpenAIChatStreamChunk,
-  generateToolCallId: GenerateToolCallId
+  generateToolCallId: GenerateToolCallId,
 ): { textDelta: string } {
   let textDelta = '';
   if (typeof chunk.id === 'string' && chunk.id.trim().length > 0) {
@@ -471,29 +485,32 @@ export function applyOpenAIChatStreamChunk(
   }
 
   for (const choice of chunk.choices ?? []) {
-    const nextText = readOpenAICompatibleText(choice.delta?.content)
-      || readOpenAICompatibleText(choice.message?.content)
-      || readOpenAICompatibleText(choice.text)
-      || readOpenAICompatibleText(choice.output_text);
+    const nextText =
+      readOpenAICompatibleText(choice.delta?.content) ||
+      readOpenAICompatibleText(choice.message?.content) ||
+      readOpenAICompatibleText(choice.text) ||
+      readOpenAICompatibleText(choice.output_text);
     if (nextText.length > 0) {
       state.content += nextText;
       textDelta += nextText;
     }
 
-    const fallbackText = readOpenAICompatibleText(choice.delta?.reasoning_content)
-      || readOpenAICompatibleText(choice.message?.reasoning_content)
-      || readOpenAICompatibleText(choice.delta?.reasoning)
-      || readOpenAICompatibleText(choice.message?.reasoning);
+    const fallbackText =
+      readOpenAICompatibleText(choice.delta?.reasoning_content) ||
+      readOpenAICompatibleText(choice.message?.reasoning_content) ||
+      readOpenAICompatibleText(choice.delta?.reasoning) ||
+      readOpenAICompatibleText(choice.message?.reasoning);
     if (fallbackText.length > 0) {
       state.fallbackContent += fallbackText;
     }
 
-    const toolCalls = choice.delta?.tool_calls
-      ?? choice.message?.tool_calls?.map((toolCall, index) => ({
+    const toolCalls =
+      choice.delta?.tool_calls ??
+      choice.message?.tool_calls?.map((toolCall, index) => ({
         index,
         id: toolCall.id,
         type: toolCall.type,
-        function: toolCall.function
+        function: toolCall.function,
       }));
     for (const toolCall of toolCalls ?? []) {
       const toolIndex = typeof toolCall.index === 'number' ? toolCall.index : state.toolCalls.size;
@@ -517,13 +534,13 @@ export function applyOpenAIChatStreamChunk(
     }
   }
 
-  if (state.toolCalls.size === 0 && chunk.choices?.some(choice => Array.isArray(choice.message?.tool_calls))) {
+  if (state.toolCalls.size === 0 && chunk.choices?.some((choice) => Array.isArray(choice.message?.tool_calls))) {
     for (const choice of chunk.choices) {
       for (const [index, toolCall] of (choice.message?.tool_calls ?? []).entries()) {
         state.toolCalls.set(index, {
           id: toolCall.id || generateToolCallId(),
           name: toolCall.function?.name,
-          arguments: toolCall.function?.arguments ?? '{}'
+          arguments: toolCall.function?.arguments ?? '{}',
         });
       }
     }
@@ -534,7 +551,7 @@ export function applyOpenAIChatStreamChunk(
 
 export function finalizeOpenAIChatStreamState(
   state: OpenAIChatStreamState,
-  generateToolCallId: GenerateToolCallId
+  generateToolCallId: GenerateToolCallId,
 ): { content: string; reasoningContent?: string; toolCalls: ChatToolCall[]; usage?: OpenAIChatResponse['usage'] } {
   const reasoningContent = state.fallbackContent || undefined;
   const hasToolCalls = state.toolCalls.size > 0;
@@ -548,17 +565,17 @@ export function finalizeOpenAIChatStreamState(
         type: 'function',
         function: {
           name: toolCall.name || 'unknown_tool',
-          arguments: toolCall.arguments || '{}'
-        }
+          arguments: toolCall.arguments || '{}',
+        },
       })),
-    usage: state.usage
+    usage: state.usage,
   };
 }
 
 export function createOpenAIResponsesStreamState(): OpenAIResponsesStreamState {
   return {
     content: '',
-    toolCalls: new Map()
+    toolCalls: new Map(),
   };
 }
 
@@ -566,7 +583,7 @@ export function applyOpenAIResponsesStreamEvent(
   state: OpenAIResponsesStreamState,
   eventType: string | undefined,
   payload: OpenAIResponsesStreamEvent,
-  generateToolCallId: GenerateToolCallId
+  generateToolCallId: GenerateToolCallId,
 ): { textDelta: string } {
   const resolvedEventType = eventType || payload.type;
   let textDelta = '';
@@ -585,11 +602,12 @@ export function applyOpenAIResponsesStreamEvent(
   }
 
   if (resolvedEventType === 'response.output_text.delta') {
-    const deltaText = typeof payload.delta === 'string'
-      ? payload.delta
-      : typeof payload.output_text === 'string'
-        ? payload.output_text
-        : '';
+    const deltaText =
+      typeof payload.delta === 'string'
+        ? payload.delta
+        : typeof payload.output_text === 'string'
+          ? payload.output_text
+          : '';
     if (deltaText.length > 0) {
       state.content += deltaText;
       textDelta = deltaText;
@@ -626,7 +644,7 @@ export function applyOpenAIResponsesStreamEvent(
 
     if (payload.item?.type === 'message' && state.content.length === 0) {
       const fallbackText = (payload.item.content ?? [])
-        .map(content => typeof content.text === 'string' ? content.text : '')
+        .map((content) => (typeof content.text === 'string' ? content.text : ''))
         .join('');
       if (fallbackText.length > 0) {
         state.content = fallbackText;
@@ -650,7 +668,7 @@ export function applyOpenAIResponsesStreamEvent(
 
 export function finalizeOpenAIResponsesStreamState(
   state: OpenAIResponsesStreamState,
-  generateToolCallId: GenerateToolCallId
+  generateToolCallId: GenerateToolCallId,
 ): { content: string; toolCalls: ChatToolCall[]; usage?: OpenAIResponsesResponse['usage'] } {
   const mergedToolCalls = new Map<string, ChatToolCall>();
   for (const toolCall of state.toolCalls.values()) {
@@ -659,8 +677,8 @@ export function finalizeOpenAIResponsesStreamState(
       type: 'function',
       function: {
         name: toolCall.name || 'unknown_tool',
-        arguments: toolCall.arguments || '{}'
-      }
+        arguments: toolCall.arguments || '{}',
+      },
     });
   }
 
@@ -679,21 +697,21 @@ export function finalizeOpenAIResponsesStreamState(
   return {
     content: state.content,
     toolCalls: [...mergedToolCalls.values()],
-    usage: state.usage
+    usage: state.usage,
   };
 }
 
 export function createAnthropicStreamState(): AnthropicStreamState {
   return {
     content: '',
-    blocks: new Map()
+    blocks: new Map(),
   };
 }
 
 export function applyAnthropicStreamEvent(
   state: AnthropicStreamState,
   eventType: string | undefined,
-  payload: AnthropicStreamEvent
+  payload: AnthropicStreamEvent,
 ): { textDelta: string } {
   const resolvedEventType = eventType || payload.type;
   let textDelta = '';
@@ -716,20 +734,19 @@ export function applyAnthropicStreamEvent(
         text: '',
         id: payload.content_block.id,
         name: payload.content_block.name,
-        inputJson: payload.content_block.input !== undefined
-          ? JSON.stringify(payload.content_block.input)
-          : ''
+        inputJson: payload.content_block.input !== undefined ? JSON.stringify(payload.content_block.input) : '',
       });
       return { textDelta };
     }
 
-    const initialText = typeof (payload.content_block as { text?: unknown }).text === 'string'
-      ? (payload.content_block as { text: string }).text
-      : '';
+    const initialText =
+      typeof (payload.content_block as { text?: unknown }).text === 'string'
+        ? (payload.content_block as { text: string }).text
+        : '';
     state.blocks.set(payload.index, {
       type: 'text',
       text: initialText,
-      inputJson: ''
+      inputJson: '',
     });
     if (initialText.length > 0) {
       state.content += initialText;
@@ -772,7 +789,7 @@ export function applyAnthropicStreamEvent(
 
 function mergeAnthropicUsage(
   current: AnthropicChatResponse['usage'],
-  next: AnthropicChatResponse['usage']
+  next: AnthropicChatResponse['usage'],
 ): AnthropicChatResponse['usage'] {
   if (!current) {
     return next ? { ...next } : undefined;
@@ -783,13 +800,13 @@ function mergeAnthropicUsage(
 
   return {
     ...current,
-    ...next
+    ...next,
   };
 }
 
 export function finalizeAnthropicStreamState(
   state: AnthropicStreamState,
-  generateToolCallId: GenerateToolCallId
+  generateToolCallId: GenerateToolCallId,
 ): { content: string; toolCalls: ChatToolCall[]; usage?: AnthropicChatResponse['usage'] } {
   const toolCalls: ChatToolCall[] = [];
   for (const [, block] of [...state.blocks.entries()].sort((left, right) => left[0] - right[0])) {
@@ -802,8 +819,8 @@ export function finalizeAnthropicStreamState(
       type: 'function',
       function: {
         name: block.name,
-        arguments: JSON.stringify(parsedArguments)
-      }
+        arguments: JSON.stringify(parsedArguments),
+      },
     });
   }
 
@@ -820,26 +837,24 @@ export function finalizeAnthropicStreamState(
   return {
     content: state.content,
     toolCalls,
-    usage: state.usage
+    usage: state.usage,
   };
 }
 
-export function buildAnthropicToolDefinitions(
-  tools?: ChatToolDefinition[]
-): AnthropicToolDefinition[] | undefined {
+export function buildAnthropicToolDefinitions(tools?: ChatToolDefinition[]): AnthropicToolDefinition[] | undefined {
   if (!tools || tools.length === 0) {
     return undefined;
   }
 
-  return tools.map(tool => ({
+  return tools.map((tool) => ({
     name: tool.function.name,
     description: tool.function.description,
-    input_schema: tool.function.parameters
+    input_schema: tool.function.parameters,
   }));
 }
 
 export function buildAnthropicToolChoice(
-  options?: vscode.LanguageModelChatRequestOptions
+  options?: vscode.LanguageModelChatRequestOptions,
 ): AnthropicToolChoice | undefined {
   if (!options?.tools || options.tools.length === 0) {
     return undefined;
@@ -853,24 +868,24 @@ export function buildAnthropicToolChoice(
 }
 
 export function buildOpenAIResponsesToolDefinitions(
-  tools?: ChatToolDefinition[]
+  tools?: ChatToolDefinition[],
 ): OpenAIResponsesToolDefinition[] | undefined {
   if (!tools || tools.length === 0) {
     return undefined;
   }
 
-  return tools.map(tool => ({
+  return tools.map((tool) => ({
     type: 'function',
     name: tool.function.name,
     description: tool.function.description,
-    parameters: tool.function.parameters
+    parameters: tool.function.parameters,
   }));
 }
 
 export function toOpenAIChatMessages(messages: ChatMessage[]): OpenAIChatMessage[] {
-  return messages.map(message => ({
+  return messages.map((message) => ({
     ...message,
-    content: toOpenAIChatContent(message.content)
+    content: toOpenAIChatContent(message.content),
   }));
 }
 
@@ -879,33 +894,33 @@ function toOpenAIChatContent(content: ChatMessageContent): OpenAIChatMessage['co
     return content;
   }
 
-  return content.map(part => {
+  return content.map((part) => {
     if (part.type === 'image') {
       return {
         type: 'image_url',
         image_url: {
-          url: toDataUrl(part)
-        }
+          url: toDataUrl(part),
+        },
       };
     }
 
     return {
       type: 'text',
-      text: part.text
+      text: part.text,
     };
   });
 }
 
 export function toOpenAIResponsesInput(
   messages: ChatMessage[],
-  generateToolCallId: GenerateToolCallId
+  generateToolCallId: GenerateToolCallId,
 ): OpenAIResponsesInputItem[] {
   return toOpenAIResponsesPayloadParts(messages, generateToolCallId).input;
 }
 
 export function toOpenAIResponsesPayloadParts(
   messages: ChatMessage[],
-  generateToolCallId: GenerateToolCallId
+  generateToolCallId: GenerateToolCallId,
 ): { instructions?: string; input: OpenAIResponsesInputItem[] } {
   const instructionParts: string[] = [];
   const input: OpenAIResponsesInputItem[] = [];
@@ -923,7 +938,7 @@ export function toOpenAIResponsesPayloadParts(
       input.push({
         type: 'function_call_output',
         call_id: message.tool_call_id || generateToolCallId(),
-        output: getTextContent(message.content)
+        output: getTextContent(message.content),
       });
       continue;
     }
@@ -934,7 +949,7 @@ export function toOpenAIResponsesPayloadParts(
         input.push({
           type: 'message',
           role: 'assistant',
-          content: textContent
+          content: textContent,
         });
       }
 
@@ -943,7 +958,7 @@ export function toOpenAIResponsesPayloadParts(
           type: 'function_call',
           call_id: toolCall.id || generateToolCallId(),
           name: toolCall.function.name,
-          arguments: toolCall.function.arguments
+          arguments: toolCall.function.arguments,
         });
       }
       continue;
@@ -952,14 +967,14 @@ export function toOpenAIResponsesPayloadParts(
     input.push({
       type: 'message',
       role: message.role,
-      content: toOpenAIResponsesContent(message.content)
+      content: toOpenAIResponsesContent(message.content),
     });
   }
 
   const instructions = instructionParts.join('\n\n');
   return {
     ...(instructions.length > 0 ? { instructions } : {}),
-    input
+    input,
   };
 }
 
@@ -968,24 +983,24 @@ function toOpenAIResponsesContent(content: ChatMessageContent): string | OpenAIR
     return content;
   }
 
-  return content.map(part => {
+  return content.map((part) => {
     if (part.type === 'image') {
       return {
         type: 'input_image',
-        image_url: toDataUrl(part)
+        image_url: toDataUrl(part),
       };
     }
 
     return {
       type: 'input_text',
-      text: part.text
+      text: part.text,
     };
   });
 }
 
 export function parseOpenAIResponsesResponse(
   response: OpenAIResponsesResponse,
-  generateToolCallId: GenerateToolCallId
+  generateToolCallId: GenerateToolCallId,
 ): { content: string; toolCalls: ChatToolCall[] } {
   const textParts: string[] = [];
   const toolCalls: ChatToolCall[] = [];
@@ -997,15 +1012,19 @@ export function parseOpenAIResponsesResponse(
         type: 'function',
         function: {
           name: item.name,
-          arguments: typeof item.arguments === 'string' ? item.arguments : '{}'
-        }
+          arguments: typeof item.arguments === 'string' ? item.arguments : '{}',
+        },
       });
       continue;
     }
 
     if (item.type === 'message') {
       for (const contentPart of item.content ?? []) {
-        if ((contentPart.type === 'output_text' || contentPart.type === 'text') && typeof contentPart.text === 'string' && contentPart.text.trim().length > 0) {
+        if (
+          (contentPart.type === 'output_text' || contentPart.type === 'text') &&
+          typeof contentPart.text === 'string' &&
+          contentPart.text.trim().length > 0
+        ) {
           textParts.push(contentPart.text);
         }
       }
@@ -1018,7 +1037,7 @@ export function parseOpenAIResponsesResponse(
 
   return {
     content: textParts.join(''),
-    toolCalls
+    toolCalls,
   };
 }
 
@@ -1049,13 +1068,13 @@ function appendAnthropicContentBlocks(message: AnthropicChatMessage, content: Ch
   const existingText = message.content;
   message.content = [
     ...(existingText.trim().length > 0 ? [{ type: 'text' as const, text: existingText }] : []),
-    ...blocks
+    ...blocks,
   ];
 }
 
 export function toAnthropicMessages(
   messages: ChatMessage[],
-  generateToolCallId: GenerateToolCallId
+  generateToolCallId: GenerateToolCallId,
 ): { system: string; messages: AnthropicChatMessage[] } {
   const systemParts: string[] = [];
   const normalizedMessages: AnthropicChatMessage[] = [];
@@ -1073,7 +1092,7 @@ export function toAnthropicMessages(
       const toolResultBlock: AnthropicToolResultContentBlock = {
         type: 'tool_result',
         tool_use_id: message.tool_call_id || generateToolCallId(),
-        content: getTextContent(message.content)
+        content: getTextContent(message.content),
       };
       const lastMessage = normalizedMessages[normalizedMessages.length - 1];
       if (lastMessage?.role === 'user') {
@@ -1090,7 +1109,7 @@ export function toAnthropicMessages(
       } else {
         normalizedMessages.push({
           role: 'user',
-          content: [toolResultBlock]
+          content: [toolResultBlock],
         });
       }
       continue;
@@ -1107,7 +1126,7 @@ export function toAnthropicMessages(
           type: 'tool_use',
           id: toolCall.id || generateToolCallId(),
           name: toolCall.function.name,
-          input: parseToolArgumentsSafe(toolCall.function.arguments)
+          input: parseToolArgumentsSafe(toolCall.function.arguments),
         });
       }
       normalizedMessages.push({ role: 'assistant', content: contentBlocks });
@@ -1124,19 +1143,19 @@ export function toAnthropicMessages(
     const contentBlocks = toAnthropicContentBlocks(message.content);
     normalizedMessages.push({
       role,
-      content: contentBlocks.length > 0 ? contentBlocks : getTextContent(message.content)
+      content: contentBlocks.length > 0 ? contentBlocks : getTextContent(message.content),
     });
   }
 
   return {
     system: systemParts.join('\n\n').trim(),
-    messages: normalizedMessages
+    messages: normalizedMessages,
   };
 }
 
 export function parseAnthropicResponse(
   response: AnthropicChatResponse,
-  generateToolCallId: GenerateToolCallId
+  generateToolCallId: GenerateToolCallId,
 ): { content: string; toolCalls: ChatToolCall[] } {
   const textParts: string[] = [];
   const toolCalls: ChatToolCall[] = [];
@@ -1155,15 +1174,15 @@ export function parseAnthropicResponse(
         type: 'function',
         function: {
           name: block.name,
-          arguments: JSON.stringify(block.input ?? {})
-        }
+          arguments: JSON.stringify(block.input ?? {}),
+        },
       });
     }
   }
 
   return {
     content: textParts.join(''),
-    toolCalls
+    toolCalls,
   };
 }
 
@@ -1174,7 +1193,7 @@ function getTextContent(content: ChatMessageContent): string {
 
   return content
     .filter((part): part is Extract<ChatContentPart, { type: 'text' }> => part.type === 'text')
-    .map(part => part.text)
+    .map((part) => part.text)
     .join('');
 }
 
@@ -1187,45 +1206,37 @@ function toAnthropicContentBlocks(content: ChatMessageContent): AnthropicRequest
     return content.trim().length > 0 ? [{ type: 'text', text: content }] : [];
   }
 
-  const blocks: AnthropicRequestContentBlock[] = content.map(part => {
+  const blocks: AnthropicRequestContentBlock[] = content.map((part) => {
     if (part.type === 'image') {
       return {
         type: 'image',
         source: {
           type: 'base64',
           media_type: part.mimeType,
-          data: part.data
-        }
+          data: part.data,
+        },
       };
     }
 
     return {
       type: 'text',
-      text: part.text
+      text: part.text,
     };
   });
 
-  return blocks.filter(block => block.type !== 'text' || block.text.trim().length > 0);
+  return blocks.filter((block) => block.type !== 'text' || block.text.trim().length > 0);
 }
 
 function isAnthropicTextBlock(block: AnthropicResponseContentBlock): block is AnthropicResponseTextContentBlock {
   const text = (block as { text?: unknown }).text;
-  return block.type === 'text'
-    || (
-      typeof text === 'string'
-      && !isAnthropicToolUseType(block.type)
-    );
+  return block.type === 'text' || (typeof text === 'string' && !isAnthropicToolUseType(block.type));
 }
 
-function isAnthropicToolUseBlock(
-  block: { type?: string; name?: string; input?: unknown }
-): boolean {
-  return isAnthropicToolUseType(block.type)
-    || (
-      typeof block.name === 'string'
-      && block.name.trim().length > 0
-      && block.input !== undefined
-    );
+function isAnthropicToolUseBlock(block: { type?: string; name?: string; input?: unknown }): boolean {
+  return (
+    isAnthropicToolUseType(block.type) ||
+    (typeof block.name === 'string' && block.name.trim().length > 0 && block.input !== undefined)
+  );
 }
 
 function isAnthropicToolUseType(type: string | undefined): boolean {
@@ -1243,20 +1254,20 @@ export function summarizeOpenAIChatResponse(response: OpenAIChatResponse): Recor
     created: response.created,
     model: response.model,
     choiceCount: response.choices.length,
-    choices: response.choices.map(choice => ({
+    choices: response.choices.map((choice) => ({
       index: choice.index,
       finishReason: choice.finish_reason,
       role: choice.message?.role,
       contentLength: readOpenAIChatMessageText(choice.message).length,
       toolCallCount: choice.message?.tool_calls?.length ?? 0,
-      toolCalls: (choice.message?.tool_calls ?? []).map(toolCall => ({
+      toolCalls: (choice.message?.tool_calls ?? []).map((toolCall) => ({
         id: toolCall.id,
         type: toolCall.type,
         functionName: toolCall.function?.name,
-        argumentsLength: typeof toolCall.function?.arguments === 'string' ? toolCall.function.arguments.length : 0
-      }))
+        argumentsLength: typeof toolCall.function?.arguments === 'string' ? toolCall.function.arguments.length : 0,
+      })),
     })),
-    usage: response.usage
+    usage: response.usage,
   };
 }
 
@@ -1265,28 +1276,31 @@ export function summarizeOpenAIResponsesResponse(response: OpenAIResponsesRespon
     id: response.id,
     outputCount: response.output?.length ?? 0,
     outputTextLength: typeof response.output_text === 'string' ? response.output_text.length : 0,
-    output: (response.output ?? []).map(item => ({
+    output: (response.output ?? []).map((item) => ({
       type: item.type,
       role: 'role' in item ? item.role : undefined,
       name: 'name' in item ? item.name : undefined,
       callId: 'call_id' in item ? item.call_id : undefined,
       argumentsLength: 'arguments' in item && typeof item.arguments === 'string' ? item.arguments.length : 0,
       contentPartCount: 'content' in item && Array.isArray(item.content) ? item.content.length : 0,
-      contentTextLengths: 'content' in item && Array.isArray(item.content)
-        ? item.content.map(contentPart => typeof contentPart.text === 'string' ? contentPart.text.length : 0)
-        : undefined
+      contentTextLengths:
+        'content' in item && Array.isArray(item.content)
+          ? item.content.map((contentPart) => (typeof contentPart.text === 'string' ? contentPart.text.length : 0))
+          : undefined,
     })),
-    usage: response.usage
+    usage: response.usage,
   };
 }
 
-export function summarizeAnthropicResponseForLogging(response: AnthropicChatResponse | string): Record<string, unknown> {
+export function summarizeAnthropicResponseForLogging(
+  response: AnthropicChatResponse | string,
+): Record<string, unknown> {
   if (typeof response === 'string') {
     return {
       responseType: 'string',
       contentBlockCount: 0,
       contentBlocks: [],
-      contentTextPreview: buildPreview(response, 100)
+      contentTextPreview: buildPreview(response, 100),
     };
   }
 
@@ -1296,21 +1310,21 @@ export function summarizeAnthropicResponseForLogging(response: AnthropicChatResp
     role: response.role,
     stopReason: response.stop_reason,
     contentBlockCount: content.length,
-    contentBlocks: content.map(block => ({
+    contentBlocks: content.map((block) => ({
       type: block.type,
       id: 'id' in block ? block.id : undefined,
       name: 'name' in block ? block.name : undefined,
       textLength: 'text' in block && typeof block.text === 'string' ? block.text.length : 0,
-      hasInput: 'input' in block && block.input !== undefined
+      hasInput: 'input' in block && block.input !== undefined,
     })),
     contentTextPreview: buildPreview(
       content
         .filter((block): block is AnthropicResponseTextContentBlock => isAnthropicTextBlock(block))
-        .map(block => block.text ?? '')
+        .map((block) => block.text ?? '')
         .join(''),
-      100
+      100,
     ),
-    usage: response.usage
+    usage: response.usage,
   };
 }
 

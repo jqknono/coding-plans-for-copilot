@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-"use strict";
+'use strict';
 
 /**
  * Read-only verification script for crawler Discussion labels.
@@ -14,28 +14,26 @@
  * --all: verify all crawler discussions in the repo (not just those in assets/discussions/).
  */
 
-const fs = require("node:fs/promises");
-const path = require("node:path");
+const fs = require('node:fs/promises');
+const path = require('node:path');
 
-const { loadEnvFileIfPresent } = require("../crawler/env");
+const { loadEnvFileIfPresent } = require('../crawler/env');
 const {
   graphql,
   buildCanonicalLabels,
   verifyDiscussion,
   REPO_OWNER,
   REPO_NAME,
-} = require("../crawler/github-discussion");
+} = require('../crawler/github-discussion');
 
-const DISCUSSIONS_DIR = path.resolve(__dirname, "..", "..", "assets", "discussions");
+const DISCUSSIONS_DIR = path.resolve(__dirname, '..', '..', 'assets', 'discussions');
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const discussionArg = args.find((a) => a.startsWith("--discussion="));
-  const allFlag = args.includes("--all");
+  const discussionArg = args.find((a) => a.startsWith('--discussion='));
+  const allFlag = args.includes('--all');
   return {
-    discussionNumber: discussionArg
-      ? Number.parseInt(discussionArg.split("=")[1], 10)
-      : null,
+    discussionNumber: discussionArg ? Number.parseInt(discussionArg.split('=')[1], 10) : null,
     all: allFlag,
   };
 }
@@ -49,9 +47,7 @@ function buildExpectedState(post) {
   return {
     labels: buildCanonicalLabels(post.analysis),
     expectedCategory:
-      typeof post.analysis?.category === "string" && post.analysis.category.trim()
-        ? post.analysis.category
-        : null,
+      typeof post.analysis?.category === 'string' && post.analysis.category.trim() ? post.analysis.category : null,
   };
 }
 
@@ -61,27 +57,38 @@ async function fetchAllCrawlerDiscussions() {
 
   while (true) {
     const data = await graphql(
-      `query($owner: String!, $name: String!, $after: String) {
-        repository(owner: $owner, name: $name) {
-          discussions(first: 50, after: $after, orderBy: {field: CREATED_AT, direction: DESC}) {
-            pageInfo { hasNextPage endCursor }
-            nodes {
-              number
-              title
-              body
-              category { name }
-              labels(first: 20) { nodes { name } }
+      `
+        query ($owner: String!, $name: String!, $after: String) {
+          repository(owner: $owner, name: $name) {
+            discussions(first: 50, after: $after, orderBy: { field: CREATED_AT, direction: DESC }) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
+              nodes {
+                number
+                title
+                body
+                category {
+                  name
+                }
+                labels(first: 20) {
+                  nodes {
+                    name
+                  }
+                }
+              }
             }
           }
         }
-      }`,
+      `,
       { owner: REPO_OWNER, name: REPO_NAME, after: cursor },
     );
 
     const page = data.repository.discussions;
     for (const d of page.nodes) {
       // Only include crawler discussions
-      if (d.body && d.body.includes("由社区爬虫自动生成")) {
+      if (d.body && d.body.includes('由社区爬虫自动生成')) {
         discussions.push(d);
       }
     }
@@ -111,33 +118,33 @@ async function verifySingle(discussionNumber, expectedState = null) {
     const actualLabelNames = new Set(result.labels.map((l) => l.name));
     const missing = expectedState.labels.filter((l) => !actualLabelNames.has(l));
     if (missing.length > 0) {
-      errors.push(`missing labels: ${missing.join(", ")}`);
+      errors.push(`missing labels: ${missing.join(', ')}`);
     }
   }
 
   // Check body for legacy tag line
-  if (result.body.includes("**标签**")) {
-    errors.push("body still contains legacy tag line");
+  if (result.body.includes('**标签**')) {
+    errors.push('body still contains legacy tag line');
   }
 
   if (errors.length === 0) {
     console.log(
       `[verify] #${discussionNumber}: PASS ` +
-      `category="${result.category}" labels=[${result.labels.map((l) => l.name).join(", ")}]`,
+        `category="${result.category}" labels=[${result.labels.map((l) => l.name).join(', ')}]`,
     );
     return true;
   } else {
-    console.error(`[verify] #${discussionNumber}: FAILED — ${errors.join("; ")}`);
+    console.error(`[verify] #${discussionNumber}: FAILED — ${errors.join('; ')}`);
     return false;
   }
 }
 
 async function main() {
-  console.log("[verify] loading environment...");
+  console.log('[verify] loading environment...');
   await loadEnvFileIfPresent();
 
   if (!process.env.COMMUNITY_CRAWLER_TOKEN) {
-    console.error("[verify] COMMUNITY_CRAWLER_TOKEN not set, exiting");
+    console.error('[verify] COMMUNITY_CRAWLER_TOKEN not set, exiting');
     process.exit(1);
   }
 
@@ -163,7 +170,7 @@ async function main() {
     }
 
     if (expectedState?.labels) {
-      console.log(`[verify] expected labels for #${discussionNumber}: [${expectedState.labels.join(", ")}]`);
+      console.log(`[verify] expected labels for #${discussionNumber}: [${expectedState.labels.join(', ')}]`);
     }
 
     const ok = await verifySingle(discussionNumber, expectedState);
@@ -175,7 +182,7 @@ async function main() {
   try {
     crawlerData = await loadAllDiscussions();
   } catch {
-    console.error("\x1b[31m❌ [verify] cannot read discussions data\x1b[0m");
+    console.error('\x1b[31m❌ [verify] cannot read discussions data\x1b[0m');
     process.exit(1);
   }
 
@@ -192,7 +199,7 @@ async function main() {
 
   let discussions;
   if (allFlag) {
-    console.log("[verify] fetching all crawler discussions from repo...");
+    console.log('[verify] fetching all crawler discussions from repo...');
     discussions = await fetchAllCrawlerDiscussions();
   } else {
     // Only verify discussions referenced in assets/discussions/
@@ -223,7 +230,7 @@ async function main() {
 
 if (require.main === module) {
   main().catch((error) => {
-    console.error("[verify] fatal:", error);
+    console.error('[verify] fatal:', error);
     process.exit(1);
   });
 }
@@ -241,7 +248,7 @@ async function loadAllDiscussions() {
   const jsonFiles = dir.filter((f) => /^\d{4}-\d{2}-\d{2}\.json$/.test(f)).sort();
   for (const file of jsonFiles) {
     try {
-      const raw = await fs.readFile(path.join(DISCUSSIONS_DIR, file), "utf8");
+      const raw = await fs.readFile(path.join(DISCUSSIONS_DIR, file), 'utf8');
       const data = JSON.parse(raw);
       if (data.posts) allPosts.push(...data.posts);
     } catch {

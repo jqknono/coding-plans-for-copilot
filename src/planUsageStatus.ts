@@ -56,18 +56,22 @@ export class CodingPlanStatusBarController implements vscode.Disposable {
 
   constructor(
     private readonly contextUsageState: ContextUsageState,
-    private readonly usageState: PlanUsageState
+    private readonly usageState: PlanUsageState,
   ) {
     this.statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
     this.statusBarItem.name = 'CodingPlans';
     this.statusBarItem.show();
     this.disposables.push(this.statusBarItem);
-    this.disposables.push(this.contextUsageState.onDidChange(() => {
-      this.render();
-    }));
-    this.disposables.push(this.usageState.onDidChange(snapshot => {
-      this.render(snapshot);
-    }));
+    this.disposables.push(
+      this.contextUsageState.onDidChange(() => {
+        this.render();
+      }),
+    );
+    this.disposables.push(
+      this.usageState.onDidChange((snapshot) => {
+        this.render(snapshot);
+      }),
+    );
     this.render(this.usageState.getSnapshot());
   }
 
@@ -82,7 +86,9 @@ export class CodingPlanStatusBarController implements vscode.Disposable {
     const currentSnapshot = snapshot ?? this.usageState.getSnapshot();
     const contextSnapshot = this.contextUsageState.getSnapshot();
     this.statusBarItem.text = buildCodingPlanStatusText(contextSnapshot, currentSnapshot);
-    this.statusBarItem.tooltip = new vscode.MarkdownString(buildCodingPlanStatusTooltip(contextSnapshot, currentSnapshot));
+    this.statusBarItem.tooltip = new vscode.MarkdownString(
+      buildCodingPlanStatusTooltip(contextSnapshot, currentSnapshot),
+    );
     updateOpenCodingPlanDetailsPanel(contextSnapshot, currentSnapshot);
   }
 }
@@ -97,16 +103,20 @@ export class PlanUsagePollingController implements vscode.Disposable {
   constructor(
     private readonly configStore: ConfigStore,
     private readonly usageState: PlanUsageState,
-    contextUsageState?: ContextUsageState
+    contextUsageState?: ContextUsageState,
   ) {
-    this.disposables.push(this.configStore.onDidChange(() => {
-      this.scheduleRefresh(0);
-    }));
+    this.disposables.push(
+      this.configStore.onDidChange(() => {
+        this.scheduleRefresh(0);
+      }),
+    );
 
     if (contextUsageState) {
-      this.disposables.push(contextUsageState.onDidChange(snapshot => {
-        this.onContextUsageChanged(snapshot);
-      }));
+      this.disposables.push(
+        contextUsageState.onDidChange((snapshot) => {
+          this.onContextUsageChanged(snapshot);
+        }),
+      );
     }
 
     this.scheduleRefresh(1000);
@@ -141,10 +151,13 @@ export class PlanUsagePollingController implements vscode.Disposable {
     if (this.refreshTimer) {
       clearTimeout(this.refreshTimer);
     }
-    this.refreshTimer = setTimeout(() => {
-      this.refreshTimer = undefined;
-      void this.refreshNow();
-    }, Math.max(0, delayMs));
+    this.refreshTimer = setTimeout(
+      () => {
+        this.refreshTimer = undefined;
+        void this.refreshNow();
+      },
+      Math.max(0, delayMs),
+    );
   }
 
   private async refreshNow(): Promise<void> {
@@ -164,7 +177,7 @@ export class PlanUsagePollingController implements vscode.Disposable {
         if (!snapshot) {
           logger.warn('Plan usage response was ignored because no recognizable limits were found', {
             vendor: target.vendor.name,
-            usageUrl: target.vendor.usageUrl
+            usageUrl: target.vendor.usageUrl,
           });
           return;
         }
@@ -173,18 +186,18 @@ export class PlanUsagePollingController implements vscode.Disposable {
         logger.info('Plan usage refreshed', {
           vendor: snapshot.vendor,
           usageUrl: snapshot.usageUrl,
-          limits: snapshot.limits.map(limit => ({
+          limits: snapshot.limits.map((limit) => ({
             label: limit.label,
             percentage: limit.percentage,
             used: limit.used,
-            limit: limit.limit
-          }))
+            limit: limit.limit,
+          })),
         });
       } catch (error) {
         logger.warn('Failed to refresh plan usage', {
           vendor: target.vendor.name,
           usageUrl: target.vendor.usageUrl,
-          error: getCompactErrorMessage(error)
+          error: getCompactErrorMessage(error),
         });
       } finally {
         if (!this.disposed) {
@@ -205,13 +218,13 @@ export class PlanUsagePollingController implements vscode.Disposable {
 
   private async resolveTargetVendor(): Promise<{ vendor: VendorConfig; apiKey: string } | undefined> {
     const vendors = this.configStore.getVendors();
-    const candidates = vendors.filter(vendor => normalizeHttpBaseUrl(vendor.usageUrl) !== undefined);
+    const candidates = vendors.filter((vendor) => normalizeHttpBaseUrl(vendor.usageUrl) !== undefined);
     if (candidates.length === 0) {
       return undefined;
     }
 
     const preferred = this.preferredVendorName
-      ? candidates.find(vendor => vendor.name.toLowerCase() === this.preferredVendorName?.toLowerCase())
+      ? candidates.find((vendor) => vendor.name.toLowerCase() === this.preferredVendorName?.toLowerCase())
       : undefined;
     if (preferred) {
       const apiKey = (await this.configStore.getApiKey(preferred.name)).trim();
@@ -240,15 +253,17 @@ export class PlanUsagePollingController implements vscode.Disposable {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
-        'Authorization': `Bearer ${apiKey}`
-      }
+        'Authorization': `Bearer ${apiKey}`,
+      },
     });
     const payload = await readResponseData(response);
     if (!response.ok) {
-      const error: Error & { response?: { status: number; data: unknown } } = new Error(`Request failed with status ${response.status}`);
+      const error: Error & { response?: { status: number; data: unknown } } = new Error(
+        `Request failed with status ${response.status}`,
+      );
       error.response = {
         status: response.status,
-        data: payload
+        data: payload,
       };
       throw error;
     }
@@ -263,16 +278,12 @@ export function buildPlanUsageStatusText(snapshot: VendorPlanUsageSnapshot | und
     return 'CodingPlans Usage --';
   }
 
-  return `CodingPlans Usage ${limits.map(limit => `${limit.label} ${limit.percentage}%`).join(' | ')}`;
+  return `CodingPlans Usage ${limits.map((limit) => `${limit.label} ${limit.percentage}%`).join(' | ')}`;
 }
 
 export function buildPlanUsageStatusTooltip(snapshot: VendorPlanUsageSnapshot | undefined): string {
   if (!snapshot || snapshot.limits.length === 0) {
-    return [
-      '**CodingPlans Usage**',
-      '',
-      'No coding plan usage is available yet.'
-    ].join('\n');
+    return ['**CodingPlans Usage**', '', 'No coding plan usage is available yet.'].join('\n');
   }
 
   const lines = [
@@ -280,13 +291,17 @@ export function buildPlanUsageStatusTooltip(snapshot: VendorPlanUsageSnapshot | 
     '',
     `- Vendor: ${snapshot.vendor}`,
     ...(snapshot.productName ? [`- Plan: ${snapshot.productName}`] : []),
-    ...snapshot.limits.map(limit => {
-      const summary = `- ${limit.label}: ${limit.percentage}%${formatLimitPair(limit)}`;
-      const resetLine = limit.resetAt ? `- ${limit.label} Reset: ${new Date(limit.resetAt).toISOString()}` : undefined;
-      const detailLines = limit.details.map(detail => `- ${limit.label} Detail: ${detail}`);
-      return [summary, resetLine, ...detailLines].filter((line): line is string => !!line);
-    }).flat(),
-    `- Updated: ${new Date(snapshot.recordedAt).toISOString()}`
+    ...snapshot.limits
+      .map((limit) => {
+        const summary = `- ${limit.label}: ${limit.percentage}%${formatLimitPair(limit)}`;
+        const resetLine = limit.resetAt
+          ? `- ${limit.label} Reset: ${new Date(limit.resetAt).toISOString()}`
+          : undefined;
+        const detailLines = limit.details.map((detail) => `- ${limit.label} Detail: ${detail}`);
+        return [summary, resetLine, ...detailLines].filter((line): line is string => !!line);
+      })
+      .flat(),
+    `- Updated: ${new Date(snapshot.recordedAt).toISOString()}`,
   ];
 
   return lines.join('\n');
@@ -294,7 +309,7 @@ export function buildPlanUsageStatusTooltip(snapshot: VendorPlanUsageSnapshot | 
 
 export function buildCodingPlanStatusText(
   contextSnapshot: LastContextUsageSnapshot | undefined,
-  planUsageSnapshot: VendorPlanUsageSnapshot | undefined
+  planUsageSnapshot: VendorPlanUsageSnapshot | undefined,
 ): string {
   const parts: string[] = [];
   const planLimits = planUsageSnapshot?.limits.slice(0, STATUS_LIMIT_COUNT) ?? [];
@@ -307,14 +322,12 @@ export function buildCodingPlanStatusText(
     parts.push(`Ctx ${contextPercentage}%`);
   }
 
-  return parts.length > 0
-    ? `CodingPlans ${parts.join(' | ')}`
-    : 'CodingPlans --';
+  return parts.length > 0 ? `CodingPlans ${parts.join(' | ')}` : 'CodingPlans --';
 }
 
 export function buildCodingPlanStatusTooltip(
   contextSnapshot: LastContextUsageSnapshot | undefined,
-  planUsageSnapshot: VendorPlanUsageSnapshot | undefined
+  planUsageSnapshot: VendorPlanUsageSnapshot | undefined,
 ): string {
   const sections: string[] = ['**CodingPlans**'];
 
@@ -325,13 +338,17 @@ export function buildCodingPlanStatusTooltip(
       '',
       `- Vendor: ${planUsageSnapshot.vendor}`,
       ...(planUsageSnapshot.productName ? [`- Plan: ${planUsageSnapshot.productName}`] : []),
-      ...planUsageSnapshot.limits.map(limit => {
-        const summary = `- ${limit.label}: ${limit.percentage}%${formatLimitPair(limit)}`;
-        const resetLine = limit.resetAt ? `- ${limit.label} Reset: ${new Date(limit.resetAt).toISOString()}` : undefined;
-        const detailLines = limit.details.map(detail => `- ${limit.label} Detail: ${detail}`);
-        return [summary, resetLine, ...detailLines].filter((line): line is string => !!line);
-      }).flat(),
-      `- Updated: ${new Date(planUsageSnapshot.recordedAt).toISOString()}`
+      ...planUsageSnapshot.limits
+        .map((limit) => {
+          const summary = `- ${limit.label}: ${limit.percentage}%${formatLimitPair(limit)}`;
+          const resetLine = limit.resetAt
+            ? `- ${limit.label} Reset: ${new Date(limit.resetAt).toISOString()}`
+            : undefined;
+          const detailLines = limit.details.map((detail) => `- ${limit.label} Detail: ${detail}`);
+          return [summary, resetLine, ...detailLines].filter((line): line is string => !!line);
+        })
+        .flat(),
+      `- Updated: ${new Date(planUsageSnapshot.recordedAt).toISOString()}`,
     );
   }
 
@@ -349,7 +366,7 @@ export function buildCodingPlanStatusTooltip(
       `- Reserved Output: ${contextSnapshot.outputBuffer === undefined ? '--' : formatCompactTokens(contextSnapshot.outputBuffer)}`,
       `- Occupied Context: ${formatCompactTokens(occupiedContextTokens)}`,
       `- Model: ${contextSnapshot.modelName}`,
-      `- Updated: ${new Date(contextSnapshot.recordedAt).toISOString()}`
+      `- Updated: ${new Date(contextSnapshot.recordedAt).toISOString()}`,
     );
   }
 
@@ -362,7 +379,7 @@ export function buildCodingPlanStatusTooltip(
 
 export function showCodingPlanDetails(
   contextSnapshot: LastContextUsageSnapshot | undefined,
-  planUsageSnapshot: VendorPlanUsageSnapshot | undefined
+  planUsageSnapshot: VendorPlanUsageSnapshot | undefined,
 ): void {
   if (!statusDetailsPanel) {
     statusDetailsPanel = vscode.window.createWebviewPanel(
@@ -370,8 +387,8 @@ export function showCodingPlanDetails(
       'CodingPlans',
       vscode.ViewColumn.Beside,
       {
-        enableFindWidget: true
-      }
+        enableFindWidget: true,
+      },
     );
     statusDetailsPanel.onDidDispose(() => {
       statusDetailsPanel = undefined;
@@ -384,30 +401,25 @@ export function showCodingPlanDetails(
 
 export function buildCodingPlanDetailsHtml(
   contextSnapshot: LastContextUsageSnapshot | undefined,
-  planUsageSnapshot: VendorPlanUsageSnapshot | undefined
+  planUsageSnapshot: VendorPlanUsageSnapshot | undefined,
 ): string {
   const sections: string[] = [];
 
   if (planUsageSnapshot?.limits.length) {
     sections.push(
-      renderDetailsSection(
-        'Plan Usage',
-        [
-          renderDetailsItem('Vendor', planUsageSnapshot.vendor),
-          ...(planUsageSnapshot.productName ? [renderDetailsItem('Plan', planUsageSnapshot.productName)] : []),
-          ...planUsageSnapshot.limits.map(limit => {
-            const summary = [
-              `${limit.label}: ${limit.percentage}%${formatLimitPair(limit)}`
-            ];
-            if (limit.resetAt) {
-              summary.push(`Reset: ${new Date(limit.resetAt).toISOString()}`);
-            }
-            summary.push(...limit.details.map(detail => `Detail: ${detail}`));
-            return renderDetailsItem(limit.label, summary.join(' | '));
-          }),
-          renderDetailsItem('Updated', new Date(planUsageSnapshot.recordedAt).toISOString())
-        ]
-      )
+      renderDetailsSection('Plan Usage', [
+        renderDetailsItem('Vendor', planUsageSnapshot.vendor),
+        ...(planUsageSnapshot.productName ? [renderDetailsItem('Plan', planUsageSnapshot.productName)] : []),
+        ...planUsageSnapshot.limits.map((limit) => {
+          const summary = [`${limit.label}: ${limit.percentage}%${formatLimitPair(limit)}`];
+          if (limit.resetAt) {
+            summary.push(`Reset: ${new Date(limit.resetAt).toISOString()}`);
+          }
+          summary.push(...limit.details.map((detail) => `Detail: ${detail}`));
+          return renderDetailsItem(limit.label, summary.join(' | '));
+        }),
+        renderDetailsItem('Updated', new Date(planUsageSnapshot.recordedAt).toISOString()),
+      ]),
     );
   }
 
@@ -415,32 +427,33 @@ export function buildCodingPlanDetailsHtml(
     const occupiedContextTokens = readOccupiedContextTokens(contextSnapshot);
     const ratio = Number(((occupiedContextTokens / contextSnapshot.totalContextWindow) * 100).toFixed(1));
     sections.push(
-      renderDetailsSection(
-        'Context',
-        [
-          renderDetailsItem('Context', `${ratio}% of ${formatCompactTokens(contextSnapshot.totalContextWindow)}`),
-          renderDetailsItem('Prompt', formatCompactTokens(contextSnapshot.promptTokens)),
-          renderDetailsItem('Completion', formatCompactTokens(contextSnapshot.completionTokens)),
-          renderDetailsItem('Total', formatCompactTokens(contextSnapshot.totalTokens)),
-          renderDetailsItem('Reserved Output', contextSnapshot.outputBuffer === undefined ? '--' : formatCompactTokens(contextSnapshot.outputBuffer)),
-          renderDetailsItem('Occupied Context', formatCompactTokens(occupiedContextTokens)),
-          renderDetailsItem('Model', contextSnapshot.modelName),
-          renderDetailsItem('Updated', new Date(contextSnapshot.recordedAt).toISOString())
-        ]
-      )
+      renderDetailsSection('Context', [
+        renderDetailsItem('Context', `${ratio}% of ${formatCompactTokens(contextSnapshot.totalContextWindow)}`),
+        renderDetailsItem('Prompt', formatCompactTokens(contextSnapshot.promptTokens)),
+        renderDetailsItem('Completion', formatCompactTokens(contextSnapshot.completionTokens)),
+        renderDetailsItem('Total', formatCompactTokens(contextSnapshot.totalTokens)),
+        renderDetailsItem(
+          'Reserved Output',
+          contextSnapshot.outputBuffer === undefined ? '--' : formatCompactTokens(contextSnapshot.outputBuffer),
+        ),
+        renderDetailsItem('Occupied Context', formatCompactTokens(occupiedContextTokens)),
+        renderDetailsItem('Model', contextSnapshot.modelName),
+        renderDetailsItem('Updated', new Date(contextSnapshot.recordedAt).toISOString()),
+      ]),
     );
   }
 
-  const body = sections.length > 0
-    ? sections.join('\n')
-    : '<p class="empty">No coding plan usage or context data is available yet.</p>';
+  const body =
+    sections.length > 0
+      ? sections.join('\n')
+      : '<p class="empty">No coding plan usage or context data is available yet.</p>';
 
   return [
     '<!DOCTYPE html>',
     '<html lang="en">',
     '<head>',
     '  <meta charset="UTF-8" />',
-    "  <meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'unsafe-inline';\" />",
+    '  <meta http-equiv="Content-Security-Policy" content="default-src \'none\'; style-src \'unsafe-inline\';" />',
     '  <meta name="viewport" content="width=device-width, initial-scale=1.0" />',
     '  <title>CodingPlans</title>',
     '  <style>',
@@ -466,7 +479,7 @@ export function buildCodingPlanDetailsHtml(
     body,
     '  </main>',
     '</body>',
-    '</html>'
+    '</html>',
   ].join('\n');
 }
 
@@ -474,7 +487,7 @@ export function parseVendorPlanUsageSnapshot(
   vendorName: string,
   usageUrl: string,
   payload: unknown,
-  recordedAt: number
+  recordedAt: number,
 ): VendorPlanUsageSnapshot | undefined {
   const source = asRecord(payload);
   if (!source) {
@@ -485,7 +498,7 @@ export function parseVendorPlanUsageSnapshot(
   const productName = firstNonEmptyString(data.productName, source.productName);
   const rawLimits = readRawLimitEntries(data, source);
   const limits = rawLimits
-    .map(entry => normalizePlanUsageLimit(entry))
+    .map((entry) => normalizePlanUsageLimit(entry))
     .filter((limit): limit is PlanUsageLimitSnapshot => limit !== undefined)
     .sort((left, right) => {
       if (left.sortOrder !== right.sortOrder) {
@@ -506,7 +519,7 @@ export function parseVendorPlanUsageSnapshot(
     usageUrl,
     productName,
     recordedAt,
-    limits
+    limits,
   };
 }
 
@@ -532,7 +545,7 @@ function readRawLimitEntries(...sources: Record<string, unknown>[]): Record<stri
       }
 
       const entries = raw
-        .map(item => asRecord(item))
+        .map((item) => asRecord(item))
         .filter((item): item is Record<string, unknown> => item !== undefined);
       if (entries.some(isLikelyUsageLimitRecord)) {
         return entries;
@@ -544,9 +557,11 @@ function readRawLimitEntries(...sources: Record<string, unknown>[]): Record<stri
 }
 
 function isLikelyUsageLimitRecord(value: Record<string, unknown>): boolean {
-  return readPercentageValue(value) !== undefined
-    || (readMetric(value, ['currentValue', 'used', 'usedValue', 'consumed']) !== undefined
-      && readMetric(value, ['usage', 'limit', 'limitValue', 'quota', 'total']) !== undefined);
+  return (
+    readPercentageValue(value) !== undefined ||
+    (readMetric(value, ['currentValue', 'used', 'usedValue', 'consumed']) !== undefined &&
+      readMetric(value, ['usage', 'limit', 'limitValue', 'quota', 'total']) !== undefined)
+  );
 }
 
 function normalizePlanUsageLimit(source: Record<string, unknown>): PlanUsageLimitSnapshot | undefined {
@@ -568,15 +583,17 @@ function normalizePlanUsageLimit(source: Record<string, unknown>): PlanUsageLimi
     remaining,
     resetAt: readTimestamp(source, ['nextResetTime', 'nextRenewTime', 'resetAt', 'renewAt']),
     details: readUsageDetails(source),
-    sortOrder: label.sortOrder
+    sortOrder: label.sortOrder,
   };
 }
 
 function resolvePlanUsageLabel(source: Record<string, unknown>): { label: string; sortOrder: number } {
   const rawLabel = [
     firstNonEmptyString(source.label, source.title, source.name, source.type),
-    ...readUsageDetails(source)
-  ].join(' ').toLowerCase();
+    ...readUsageDetails(source),
+  ]
+    .join(' ')
+    .toLowerCase();
   const number = readPositiveInteger(source.number);
   const unit = readPositiveInteger(source.unit);
   const usageDetails = readUsageDetails(source);
@@ -624,7 +641,7 @@ function readUsageDetails(source: Record<string, unknown>): string[] {
   }
 
   return raw
-    .map(item => {
+    .map((item) => {
       const detail = asRecord(item);
       if (!detail) {
         return undefined;
@@ -697,9 +714,7 @@ function readPositiveInteger(value: unknown): number | undefined {
 }
 
 function asRecord(value: unknown): Record<string, unknown> | undefined {
-  return value && typeof value === 'object' && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : undefined;
+  return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : undefined;
 }
 
 function firstNonEmptyString(...values: unknown[]): string | undefined {
@@ -732,14 +747,14 @@ function readContextPercentage(snapshot: LastContextUsageSnapshot | undefined): 
   if (!snapshot || snapshot.totalContextWindow <= 0) {
     return undefined;
   }
-  return Math.min(100, Math.max(0, Math.round((readOccupiedContextTokens(snapshot) / snapshot.totalContextWindow) * 100)));
+  return Math.min(
+    100,
+    Math.max(0, Math.round((readOccupiedContextTokens(snapshot) / snapshot.totalContextWindow) * 100)),
+  );
 }
 
 function readOccupiedContextTokens(snapshot: LastContextUsageSnapshot): number {
-  return Math.min(
-    snapshot.totalContextWindow,
-    snapshot.totalTokens + Math.max(snapshot.outputBuffer ?? 0, 0)
-  );
+  return Math.min(snapshot.totalContextWindow, snapshot.totalTokens + Math.max(snapshot.outputBuffer ?? 0, 0));
 }
 
 function formatCompactTokens(value: number): string {
@@ -756,7 +771,7 @@ let statusDetailsPanel: vscode.WebviewPanel | undefined;
 
 function updateOpenCodingPlanDetailsPanel(
   contextSnapshot: LastContextUsageSnapshot | undefined,
-  planUsageSnapshot: VendorPlanUsageSnapshot | undefined
+  planUsageSnapshot: VendorPlanUsageSnapshot | undefined,
 ): void {
   if (!statusDetailsPanel) {
     return;
@@ -770,9 +785,9 @@ function renderDetailsSection(title: string, items: string[]): string {
     '<section>',
     `  <h2>${escapeHtml(title)}</h2>`,
     '  <ul>',
-    ...items.map(item => `    ${item}`),
+    ...items.map((item) => `    ${item}`),
     '  </ul>',
-    '</section>'
+    '</section>',
   ].join('\n');
 }
 

@@ -92,5 +92,9 @@
   "commitMessageValidationWarning": "Generated commit message may not meet all rules: {0}",
   "commitMessageDiffTooLarge": "Diff is too large ({0} lines), truncated to {1} lines.",
   "commitMessagePromptTooLarge": "Prompt is too large ({0} chars), truncated to {1} chars before sending to the model.",
-  "commitMessageNoGitRepo": "No Git repository found in current workspace."
+  "commitMessageNoGitRepo": "No Git repository found in current workspace.",
+  "vendorConfigError": "Vendor Configuration Error",
+  "vendorConfigMissingField": "Vendor \"{0}\" is missing required field \"{1}\"",
+  "vendorConfigFixInSettings": "Open settings to fix and retry",
+  "vendorConfigFixAction": "Open Settings"
 }

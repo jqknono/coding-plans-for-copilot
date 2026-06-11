@@ -16,7 +16,7 @@ import {
   RESPONSES_THINKING_EFFORT_VALUES,
   TEMPERATURE_MODEL_OPTION_KEY,
   THINKING_EFFORT_MODEL_OPTION_KEY,
-  PERSONALITY_MODEL_OPTION_KEY
+  PERSONALITY_MODEL_OPTION_KEY,
 } from '../constants';
 import { getMessage } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
@@ -81,7 +81,7 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
         description: getMessage('anthropicThinkingDescription'),
         enum: ['think', 'non-think'],
         default: 'think',
-        group: 'navigation'
+        group: 'navigation',
       };
       if (effortOptions.length > 0) {
         properties[EFFORT_MODEL_OPTION_KEY] = {
@@ -90,7 +90,7 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
           description: getMessage('anthropicEffortDescription'),
           enum: effortOptions,
           default: resolveReasoningEffortDefault(effortOptions, 'max'),
-          group: 'navigation'
+          group: 'navigation',
         };
       }
     } else if (model.apiStyle === 'openai-responses') {
@@ -102,7 +102,7 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
           description: getMessage('responsesThinkingEffortDescription'),
           enum: effortOptions,
           default: resolveReasoningEffortDefault(effortOptions, 'xhigh'),
-          group: 'navigation'
+          group: 'navigation',
         };
       }
     } else {
@@ -114,7 +114,7 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
           description: getMessage('thinkingEffortDescription'),
           enum: effortOptions,
           default: resolveReasoningEffortDefault(effortOptions, 'high'),
-          group: 'navigation'
+          group: 'navigation',
         };
       }
     }
@@ -126,7 +126,7 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
       title: getMessage('personalityTitle'),
       description: getMessage('personalityDescription'),
       enum: ['pragmatic', 'friendly'],
-      default: 'pragmatic'
+      default: 'pragmatic',
     };
   } else {
     properties[TEMPERATURE_MODEL_OPTION_KEY] = {
@@ -134,28 +134,25 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
       title: getMessage('temperatureTitle'),
       description: getMessage('temperatureDescription'),
       enum: ['inherit', 'none', '0.1', '0.4', '0.7', '1'],
-      default: 'none'
+      default: 'none',
     };
   }
 
   return {
-    properties
+    properties,
   };
 }
 
-function resolveReasoningEffortOptions(
-  model: BaseLanguageModel,
-  protocolValues: readonly string[]
-): string[] {
+function resolveReasoningEffortOptions(model: BaseLanguageModel, protocolValues: readonly string[]): string[] {
   const supported = model.supportsReasoningEffort;
   if (!supported || supported.length === 0) {
     return [...protocolValues];
   }
-  return protocolValues.filter(value => supported.includes(value as never));
+  return protocolValues.filter((value) => supported.includes(value as never));
 }
 
 function resolveReasoningEffortDefault(options: readonly string[], preferred: string): string {
-  return options.includes(preferred) ? preferred : options[0] ?? preferred;
+  return options.includes(preferred) ? preferred : (options[0] ?? preferred);
 }
 
 function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChatInformation {
@@ -179,44 +176,43 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
       supportsReasoningEffort: model.supportsReasoningEffort,
       reasoningEffortFormat: model.reasoningEffortFormat,
       thinking: model.thinking,
-      zeroDataRetentionEnabled: model.zeroDataRetentionEnabled
-    } as object)
+      zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
+    } as object),
   } as LanguageModelChatInformationWithHiddenFields;
 }
 
 export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, vscode.Disposable {
   private readonly onDidChangeLanguageModelChatInformationEmitter = new vscode.EventEmitter<void>();
-  public readonly onDidChangeLanguageModelChatInformation =
-    this.onDidChangeLanguageModelChatInformationEmitter.event;
+  public readonly onDidChangeLanguageModelChatInformation = this.onDidChangeLanguageModelChatInformationEmitter.event;
   private readonly disposables: vscode.Disposable[] = [];
 
   constructor(
     private readonly provider: BaseAIProvider,
     private readonly configStore?: ConfigStore,
-    private readonly contextUsageState?: ContextUsageState
+    private readonly contextUsageState?: ContextUsageState,
   ) {
     this.disposables.push(
       this.provider.onDidChangeModels(() => {
         this.logLanguageModelInformationDiagnostic('provider-models-changed', {
           providerVendor: this.provider.getVendor(),
-          availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels())
+          availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels()),
         });
         this.onDidChangeLanguageModelChatInformationEmitter.fire();
-      })
+      }),
     );
   }
 
   public notifyLanguageModelInformationChanged(): void {
     this.logLanguageModelInformationDiagnostic('notifyLanguageModelInformationChanged', {
       providerVendor: this.provider.getVendor(),
-      availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels())
+      availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels()),
     });
     this.onDidChangeLanguageModelChatInformationEmitter.fire();
   }
 
   async provideLanguageModelChatInformation(
     options: vscode.PrepareLanguageModelChatModelOptions,
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatInformation[]> {
     const pickerOptions = options as PrepareLanguageModelChatModelOptionsWithConfiguration;
     const pickerGroup = this.normalizePickerGroup(pickerOptions.group);
@@ -227,7 +223,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       configuration: this.summarizePickerConfiguration(normalizedConfiguration),
       resolvedVendorName,
       configuredVendors: this.summarizeConfiguredVendors(),
-      availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels())
+      availableModels: this.summarizeBaseLanguageModels(this.provider.getAvailableModels()),
     });
 
     // Hide the contributed provider root in "Manage Language Models".
@@ -236,7 +232,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     if (!resolvedVendorName) {
       this.logLanguageModelInformationRequest('skipped-unscoped-root', options, [], {
         group: pickerGroup,
-        resolvedVendorName
+        resolvedVendorName,
       });
       return [];
     }
@@ -251,7 +247,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       group: pickerGroup,
       resolvedVendorName,
       resultCount: result.length,
-      resultPreview: this.summarizeLanguageModelInfos(result)
+      resultPreview: this.summarizeLanguageModelInfos(result),
     });
     return result;
   }
@@ -261,7 +257,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       providerVendor: this.provider.getVendor(),
       optionsShape: 'vscode-1.120',
       vendorName,
-      configuredVendors: this.summarizeConfiguredVendors()
+      configuredVendors: this.summarizeConfiguredVendors(),
     });
     let models = this.provider.getAvailableModels();
     let scopedModels = this.scopeModels(models, vendorName);
@@ -269,19 +265,22 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       providerVendor: this.provider.getVendor(),
       vendorName,
       availableModels: this.summarizeBaseLanguageModels(models),
-      scopedModels: this.summarizeBaseLanguageModels(scopedModels)
+      scopedModels: this.summarizeBaseLanguageModels(scopedModels),
     });
 
     // Settings updates and model picker queries can race each other.
     // If we currently see nothing, refresh once and re-check before returning.
     if (scopedModels.length === 0) {
-      logger.info(`${LANGUAGE_MODELS_PICKER_LOG_PREFIX} filtered model set is empty before refresh; refreshing provider models once`, {
-        providerVendor: this.provider.getVendor(),
-        vendorName
-      });
+      logger.info(
+        `${LANGUAGE_MODELS_PICKER_LOG_PREFIX} filtered model set is empty before refresh; refreshing provider models once`,
+        {
+          providerVendor: this.provider.getVendor(),
+          vendorName,
+        },
+      );
       this.logLanguageModelInformationDiagnostic('build-model-information-trigger-refresh', {
         providerVendor: this.provider.getVendor(),
-        vendorName
+        vendorName,
       });
       await this.provider.refreshModels();
       models = this.provider.getAvailableModels();
@@ -290,28 +289,28 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         providerVendor: this.provider.getVendor(),
         vendorName,
         availableModels: this.summarizeBaseLanguageModels(models),
-        scopedModels: this.summarizeBaseLanguageModels(scopedModels)
+        scopedModels: this.summarizeBaseLanguageModels(scopedModels),
       });
     }
 
     if (scopedModels.length === 0) {
       logger.info(`${LANGUAGE_MODELS_PICKER_LOG_PREFIX} returning empty real-model list`, {
         providerVendor: this.provider.getVendor(),
-        vendorName
+        vendorName,
       });
       this.logLanguageModelInformationDiagnostic('build-model-information-empty', {
         providerVendor: this.provider.getVendor(),
-        vendorName
+        vendorName,
       });
       return [];
     }
 
-    const infos = scopedModels.map(model => toLanguageModelInfo(model));
+    const infos = scopedModels.map((model) => toLanguageModelInfo(model));
     this.logLanguageModelInformationDiagnostic('build-model-information-success', {
       providerVendor: this.provider.getVendor(),
       vendorName,
       models: this.summarizeBaseLanguageModels(scopedModels),
-      infos: this.summarizeLanguageModelInfos(infos)
+      infos: this.summarizeLanguageModelInfos(infos),
     });
     return infos;
   }
@@ -322,12 +321,12 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       return [...models];
     }
 
-    return models.filter(model => model.family.toLowerCase() === normalizedVendorName);
+    return models.filter((model) => model.family.toLowerCase() === normalizedVendorName);
   }
 
   private resolvePickerVendorName(
     group: string | undefined,
-    configuration?: { vendorName?: string; apiKey?: string }
+    configuration?: { vendorName?: string; apiKey?: string },
   ): string | undefined {
     if (configuration?.vendorName) {
       return configuration.vendorName;
@@ -344,14 +343,12 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
 
     const configuredVendor = this.configStore
       ?.getVendors()
-      .find(vendor => vendor.name.trim().toLowerCase() === normalizedGroup);
+      .find((vendor) => vendor.name.trim().toLowerCase() === normalizedGroup);
     if (configuredVendor) {
       return configuredVendor.name;
     }
 
-    return this.provider
-      .getAvailableModels()
-      .find(model => model.family.trim().toLowerCase() === normalizedGroup)
+    return this.provider.getAvailableModels().find((model) => model.family.trim().toLowerCase() === normalizedGroup)
       ?.family;
   }
 
@@ -360,7 +357,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     messages: readonly vscode.LanguageModelChatRequestMessage[],
     options: vscode.ProvideLanguageModelChatResponseOptions,
     progress: vscode.Progress<vscode.LanguageModelResponsePart>,
-    token: vscode.CancellationToken
+    token: vscode.CancellationToken,
   ): Promise<void> {
     const vendor = this.provider.getVendor();
     const targetModel = this.provider.getModel(model.id);
@@ -369,7 +366,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     }
 
     let traceId = this.generateTraceId('adapter');
-    const requestMessageSummaries = messages.map(message => this.summarizeRequestMessage(message));
+    const requestMessageSummaries = messages.map((message) => this.summarizeRequestMessage(message));
     logger.info('Adapter received language model chat request', {
       traceId,
       provider: vendor,
@@ -377,13 +374,13 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       modelName: model.name,
       messageCount: messages.length,
       toolCount: options?.tools?.length ?? 0,
-      toolMode: options?.toolMode
+      toolMode: options?.toolMode,
     });
     logger.debug('Adapter request message details', {
       traceId,
       provider: vendor,
       modelId: model.id,
-      messages: requestMessageSummaries
+      messages: requestMessageSummaries,
     });
 
     const forwardedOptions = this.toForwardedRequestOptions(options);
@@ -391,9 +388,9 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     try {
       for (let attempt = 0; ; attempt += 1) {
         const response = await targetModel.sendRequest(
-          messages.map(message => this.toChatMessage(message)),
+          messages.map((message) => this.toChatMessage(message)),
           forwardedOptions,
-          token
+          token,
         );
         const responseTraceId = (response as unknown as Record<string, unknown>)[RESPONSE_TRACE_ID_FIELD];
         if (typeof responseTraceId === 'string' && responseTraceId.trim().length > 0) {
@@ -405,7 +402,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
           modelId: model.id,
           hasStream: !!response.stream,
           hasText: !!response.text,
-          attempt: attempt + 1
+          attempt: attempt + 1,
         });
         this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
 
@@ -417,16 +414,17 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
               provider: vendor,
               modelId: model.id,
               index: reportedPartCount,
-              part: this.summarizeResponsePart(part)
+              part: this.summarizeResponsePart(part),
             });
             progress.report(part as vscode.LanguageModelResponsePart);
             reportedPartCount += 1;
           }
         } catch (error) {
-          const shouldRetry = reportedPartCount === 0
-            && isEmptyModelResponseError(error)
-            && attempt < MAX_EMPTY_MODEL_RESPONSE_RETRIES
-            && !token.isCancellationRequested;
+          const shouldRetry =
+            reportedPartCount === 0 &&
+            isEmptyModelResponseError(error) &&
+            attempt < MAX_EMPTY_MODEL_RESPONSE_RETRIES &&
+            !token.isCancellationRequested;
           logger.warn('Adapter response stream failed', {
             traceId,
             provider: vendor,
@@ -434,7 +432,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
             attempt: attempt + 1,
             reportedPartCount,
             shouldRetry,
-            error: this.summarizeError(error)
+            error: this.summarizeError(error),
           });
           if (shouldRetry) {
             continue;
@@ -447,7 +445,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
           provider: vendor,
           modelId: model.id,
           reportedPartCount,
-          attempt: attempt + 1
+          attempt: attempt + 1,
         });
         this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
         return;
@@ -457,7 +455,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         traceId,
         provider: vendor,
         modelId: model.id,
-        error: this.summarizeError(error)
+        error: this.summarizeError(error),
       });
       throw this.toCompactLanguageModelError(error);
     }
@@ -466,7 +464,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   provideTokenCount(
     _model: vscode.LanguageModelChatInformation,
     _text: string | vscode.LanguageModelChatRequestMessage,
-    _token: vscode.CancellationToken
+    _token: vscode.CancellationToken,
   ): Thenable<number> {
     return Promise.resolve(0);
   }
@@ -475,12 +473,12 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     return new vscode.LanguageModelChatMessage(
       message.role,
       [...message.content] as vscode.LanguageModelInputPart[],
-      message.name
+      message.name,
     );
   }
 
   private normalizePickerConfiguration(
-    configuration?: ProviderPickerConfiguration
+    configuration?: ProviderPickerConfiguration,
   ): { vendorName?: string; apiKey?: string } | undefined {
     if (!configuration || typeof configuration !== 'object') {
       return undefined;
@@ -497,9 +495,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     return Object.keys(normalized).length > 0 ? normalized : undefined;
   }
 
-  private async applyPickerConfiguration(
-    configuration?: { vendorName?: string; apiKey?: string }
-  ): Promise<void> {
+  private async applyPickerConfiguration(configuration?: { vendorName?: string; apiKey?: string }): Promise<void> {
     if (!configuration?.vendorName || !configuration.apiKey || !this.configStore) {
       return;
     }
@@ -516,7 +512,6 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
 
     await this.configStore.setApiKey(vendor.name, configuration.apiKey);
   }
-
 
   private toCompactLanguageModelError(error: unknown): vscode.LanguageModelError {
     const compactMessage = getCompactErrorMessage(error) || getMessage('unknownError');
@@ -537,7 +532,10 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     return this.compactLanguageModelError(wrapped, compactMessage);
   }
 
-  private compactLanguageModelError(error: vscode.LanguageModelError, compactMessage: string): vscode.LanguageModelError {
+  private compactLanguageModelError(
+    error: vscode.LanguageModelError,
+    compactMessage: string,
+  ): vscode.LanguageModelError {
     const sanitizedMessage = compactMessage || getMessage('unknownError');
     this.overwriteErrorMessage(error, sanitizedMessage);
     this.overwriteErrorStack(error, `${error.name}: ${sanitizedMessage}`);
@@ -550,7 +548,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       Object.defineProperty(error, 'message', {
         value: message,
         configurable: true,
-        writable: true
+        writable: true,
       });
     } catch {
       // ignore: keep original message when runtime prevents overriding.
@@ -562,7 +560,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       Object.defineProperty(error, 'stack', {
         value: stack,
         configurable: true,
-        writable: true
+        writable: true,
       });
     } catch {
       // ignore: keep original stack when runtime prevents overriding.
@@ -574,7 +572,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       Object.defineProperty(error, 'cause', {
         value: undefined,
         configurable: true,
-        writable: true
+        writable: true,
       });
     } catch {
       // ignore: some runtimes define cause as non-configurable.
@@ -582,7 +580,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   }
 
   dispose(): void {
-    this.disposables.forEach(disposable => disposable.dispose());
+    this.disposables.forEach((disposable) => disposable.dispose());
     this.disposables.length = 0;
     this.onDidChangeLanguageModelChatInformationEmitter.dispose();
   }
@@ -596,7 +594,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       role: message.role,
       name: message.name,
       partCount: message.content.length,
-      parts: [...message.content].map(part => this.summarizeInputPart(part as vscode.LanguageModelInputPart))
+      parts: [...message.content].map((part) => this.summarizeInputPart(part as vscode.LanguageModelInputPart)),
     };
   }
 
@@ -604,7 +602,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     if (part instanceof vscode.LanguageModelTextPart) {
       return {
         type: 'text',
-        length: part.value.length
+        length: part.value.length,
       };
     }
 
@@ -613,7 +611,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         type: 'tool_call',
         callId: part.callId,
         name: part.name,
-        inputKeys: part.input && typeof part.input === 'object' ? Object.keys(part.input as object) : []
+        inputKeys: part.input && typeof part.input === 'object' ? Object.keys(part.input as object) : [],
       };
     }
 
@@ -621,7 +619,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       return {
         type: 'tool_result',
         callId: part.callId,
-        partCount: part.content.length
+        partCount: part.content.length,
       };
     }
 
@@ -629,13 +627,13 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       return {
         type: 'data',
         mimeType: part.mimeType,
-        bytes: part.data.byteLength
+        bytes: part.data.byteLength,
       };
     }
 
     const unknownPart = part as unknown as { constructor?: { name?: string } };
     return {
-      type: unknownPart.constructor?.name ?? typeof part
+      type: unknownPart.constructor?.name ?? typeof part,
     };
   }
 
@@ -643,7 +641,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     if (part instanceof vscode.LanguageModelTextPart) {
       return {
         type: 'text',
-        length: part.value.length
+        length: part.value.length,
       };
     }
 
@@ -652,7 +650,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         type: 'tool_call',
         callId: part.callId,
         name: part.name,
-        inputKeys: part.input && typeof part.input === 'object' ? Object.keys(part.input as object) : []
+        inputKeys: part.input && typeof part.input === 'object' ? Object.keys(part.input as object) : [],
       };
     }
 
@@ -660,13 +658,13 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       return {
         type: 'data',
         mimeType: part.mimeType,
-        bytes: part.data.byteLength
+        bytes: part.data.byteLength,
       };
     }
 
     const unknownPart = part as unknown as { constructor?: { name?: string } };
     return {
-      type: unknownPart.constructor?.name ?? typeof part
+      type: unknownPart.constructor?.name ?? typeof part,
     };
   }
 
@@ -674,13 +672,13 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     if (error instanceof Error) {
       return {
         name: error.name,
-        message: getCompactErrorMessage(error)
+        message: getCompactErrorMessage(error),
       };
     }
 
     return {
       type: typeof error,
-      message: getCompactErrorMessage(error)
+      message: getCompactErrorMessage(error),
     };
   }
 
@@ -691,13 +689,13 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     vendor: string,
     model: vscode.LanguageModelChatInformation,
     totalContextWindow: number,
-    options?: vscode.ProvideLanguageModelChatResponseOptions
+    options?: vscode.ProvideLanguageModelChatResponseOptions,
   ): void {
     if (!this.shouldTrackContextUsage(options)) {
       logger.debug('Adapter skipped CodingPlans Context usage update for excluded request', {
         traceId,
         provider: vendor,
-        modelId: model.id
+        modelId: model.id,
       });
       return;
     }
@@ -715,7 +713,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     vendor: string,
     model: vscode.LanguageModelChatInformation,
     usage: NormalizedTokenUsage,
-    totalContextWindow: number
+    totalContextWindow: number,
   ): void {
     if (!this.contextUsageState) {
       return;
@@ -731,14 +729,14 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       promptTokens: usage.promptTokens,
       completionTokens: usage.completionTokens,
       totalTokens: usage.totalTokens,
-      outputBuffer: usage.outputBuffer
+      outputBuffer: usage.outputBuffer,
     };
     this.contextUsageState.update(snapshot);
     logger.info('Adapter cached last completed request usage for CodingPlans Context status bar', {
       traceId,
       provider: vendor,
       modelId: model.id,
-      snapshot: this.summarizeSnapshot(snapshot)
+      snapshot: this.summarizeSnapshot(snapshot),
     });
   }
 
@@ -753,7 +751,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       totalTokens: snapshot.totalTokens,
       outputBuffer: snapshot.outputBuffer,
       recordedAt: new Date(snapshot.recordedAt).toISOString(),
-      traceId: snapshot.traceId
+      traceId: snapshot.traceId,
     };
   }
 
@@ -768,7 +766,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   }
 
   private toForwardedRequestOptions(
-    options: vscode.ProvideLanguageModelChatResponseOptions
+    options: vscode.ProvideLanguageModelChatResponseOptions,
   ): vscode.LanguageModelChatRequestOptions {
     const responseOptions = options as ProvideLanguageModelChatResponseOptionsWithModelConfiguration;
     const modelConfiguration = this.readObjectRecord(responseOptions.modelConfiguration);
@@ -779,33 +777,31 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
 
     const forwardedModelOptions = {
       ...(modelConfiguration ?? {}),
-      ...(modelOptions ?? {})
+      ...(modelOptions ?? {}),
     };
     delete forwardedModelOptions[REQUEST_SOURCE_MODEL_OPTION_KEY];
 
     return {
       ...options,
-      modelOptions: Object.keys(forwardedModelOptions).length > 0 ? forwardedModelOptions : undefined
+      modelOptions: Object.keys(forwardedModelOptions).length > 0 ? forwardedModelOptions : undefined,
     } as unknown as vscode.LanguageModelChatRequestOptions;
   }
 
   private readObjectRecord(value: unknown): Record<string, unknown> | undefined {
-    return value && typeof value === 'object' && !Array.isArray(value)
-      ? value as Record<string, unknown>
-      : undefined;
+    return value && typeof value === 'object' && !Array.isArray(value) ? (value as Record<string, unknown>) : undefined;
   }
 
   private logLanguageModelInformationRequest(
     stage: string,
     options: vscode.PrepareLanguageModelChatModelOptions,
     result: vscode.LanguageModelChatInformation[] | undefined,
-    extra: Record<string, unknown> = {}
+    extra: Record<string, unknown> = {},
   ): void {
     this.logLanguageModelInformationDiagnostic(stage, {
       providerVendor: this.provider.getVendor(),
       options: this.summarizePickerOptions(options),
       result: this.summarizeLanguageModelInfos(result ?? []),
-      ...extra
+      ...extra,
     });
   }
 
@@ -813,7 +809,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     const entry = {
       at: new Date().toISOString(),
       stage,
-      ...payload
+      ...payload,
     };
     logger.debug(`${LANGUAGE_MODELS_PICKER_LOG_PREFIX} ${stage}`, entry);
     try {
@@ -824,14 +820,12 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     }
   }
 
-  private summarizePickerOptions(
-    options: vscode.PrepareLanguageModelChatModelOptions
-  ): Record<string, unknown> {
+  private summarizePickerOptions(options: vscode.PrepareLanguageModelChatModelOptions): Record<string, unknown> {
     const pickerOptions = options as PrepareLanguageModelChatModelOptionsWithConfiguration;
     return {
       silent: options.silent,
       group: this.normalizePickerGroup(pickerOptions.group),
-      configuration: this.summarizePickerConfiguration(this.normalizePickerConfiguration(pickerOptions.configuration))
+      configuration: this.summarizePickerConfiguration(this.normalizePickerConfiguration(pickerOptions.configuration)),
     };
   }
 
@@ -844,16 +838,17 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     return normalized.length > 0 ? normalized : undefined;
   }
 
-  private summarizePickerConfiguration(
-    configuration?: { vendorName?: string; apiKey?: string }
-  ): Record<string, unknown> | undefined {
+  private summarizePickerConfiguration(configuration?: {
+    vendorName?: string;
+    apiKey?: string;
+  }): Record<string, unknown> | undefined {
     if (!configuration) {
       return undefined;
     }
 
     return {
       vendorName: configuration.vendorName,
-      hasApiKey: typeof configuration.apiKey === 'string' && configuration.apiKey.length > 0
+      hasApiKey: typeof configuration.apiKey === 'string' && configuration.apiKey.length > 0,
     };
   }
 
@@ -861,19 +856,19 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     if (!this.configStore) {
       return [];
     }
-    return this.configStore.getVendors().map(vendor => ({
+    return this.configStore.getVendors().map((vendor) => ({
       name: vendor.name,
       baseUrl: vendor.baseUrl,
       defaultApiStyle: vendor.defaultApiStyle,
       useModelsEndpoint: vendor.useModelsEndpoint,
       defaultVision: vendor.defaultVision,
       modelCount: vendor.models.length,
-      modelNamesPreview: vendor.models.slice(0, 20).map(model => model.name)
+      modelNamesPreview: vendor.models.slice(0, 20).map((model) => model.name),
     }));
   }
 
   private summarizeBaseLanguageModels(models: readonly BaseLanguageModel[]): Array<Record<string, unknown>> {
-    return models.slice(0, 20).map(model => ({
+    return models.slice(0, 20).map((model) => ({
       id: model.id,
       vendor: model.vendor,
       family: model.family,
@@ -882,14 +877,14 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       version: model.version,
       maxInputTokens: model.maxInputTokens,
       maxOutputTokens: model.maxOutputTokens,
-      capabilities: model.capabilities
+      capabilities: model.capabilities,
     }));
   }
 
   private summarizeLanguageModelInfos(
-    models: readonly vscode.LanguageModelChatInformation[]
+    models: readonly vscode.LanguageModelChatInformation[],
   ): Array<Record<string, unknown>> {
-    return models.slice(0, 20).map(model => ({
+    return models.slice(0, 20).map((model) => ({
       id: model.id,
       name: model.name,
       family: model.family,
@@ -897,7 +892,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       version: model.version,
       maxInputTokens: model.maxInputTokens,
       maxOutputTokens: model.maxOutputTokens,
-      capabilities: model.capabilities
+      capabilities: model.capabilities,
     }));
   }
 }

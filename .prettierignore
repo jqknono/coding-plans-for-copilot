@@ -1,0 +1,17 @@
+# build output
+out/
+dist/
+*.vsix
+
+# generated assets
+assets/provider-pricing.json
+assets/openrouter-provider-metrics.json
+assets/openrouter-provider-plans.json
+
+# node
+node_modules/
+package-lock.json
+
+# misc
+*.log
+*.log.jsonl

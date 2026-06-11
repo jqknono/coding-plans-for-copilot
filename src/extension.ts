@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { ContextUsageState } from './contextUsageState';
 import { GenericAIProvider } from './providers/genericProvider';
 import { LMChatProviderAdapter } from './providers/lmChatProviderAdapter';
-import { ConfigStore } from './config/configStore';
+import { ConfigStore, VendorValidationError } from './config/configStore';
 import { CodingPlanStatusBarController, PlanUsagePollingController, PlanUsageState } from './planUsageStatus';
 import { initI18n, getMessage } from './i18n/i18n';
 import { getCompactErrorMessage } from './providers/baseProvider';
@@ -10,14 +10,14 @@ import {
   generateCommitMessage,
   invalidateCommitMessageModelSelectionCache,
   registerCommitMessageModelSource,
-  selectCommitMessageModel
+  selectCommitMessageModel,
 } from './commitMessageGenerator';
 import {
   CODING_PLANS_VENDOR,
   LANGUAGE_MODELS_REFRESH_LOG_PREFIX,
   PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS,
   REFRESH_MODELS_COMMAND,
-  UPDATE_MODELS_COMMAND
+  UPDATE_MODELS_COMMAND,
 } from './constants';
 import { logger } from './logging/outputChannelLogger';
 
@@ -34,23 +34,18 @@ type ManageVendorAction = 'apiKey' | 'refreshModels' | 'openSettings';
 
 function isLikelyLanguageModelsRefreshCommand(command: string): boolean {
   const lower = command.toLowerCase();
-  return lower.includes('refresh')
-    && (
-      lower.includes('languagemodel')
-      || lower.includes('language-model')
-      || lower.includes('languagemodels')
-    );
+  return (
+    lower.includes('refresh') &&
+    (lower.includes('languagemodel') || lower.includes('language-model') || lower.includes('languagemodels'))
+  );
 }
 
 function isPotentialLanguageModelsRefreshCommand(command: string): boolean {
   const lower = command.toLowerCase();
-  return lower.includes('refresh')
-    && (
-      lower.includes('language')
-      || lower.includes('model')
-      || lower.includes('chat')
-      || lower.includes('lm')
-    );
+  return (
+    lower.includes('refresh') &&
+    (lower.includes('language') || lower.includes('model') || lower.includes('chat') || lower.includes('lm'))
+  );
 }
 
 function isSafeWorkbenchRefreshCommand(command: string): boolean {
@@ -76,21 +71,21 @@ function uniqueCommands(commands: string[]): string[] {
 }
 
 function summarizeConfiguredVendorsForLog(configStore: ConfigStore): Array<Record<string, unknown>> {
-  return configStore.getVendors().map(vendor => ({
+  return configStore.getVendors().map((vendor) => ({
     name: vendor.name,
     baseUrl: vendor.baseUrl,
     defaultApiStyle: vendor.defaultApiStyle,
     useModelsEndpoint: vendor.useModelsEndpoint,
     defaultVision: vendor.defaultVision,
     modelCount: vendor.models.length,
-    modelNamesPreview: vendor.models.slice(0, 20).map(model => model.name)
+    modelNamesPreview: vendor.models.slice(0, 20).map((model) => model.name),
   }));
 }
 
 function summarizeInternalLanguageModelsForLog(
-  models: ReturnType<GenericAIProvider['getAvailableModels']>
+  models: ReturnType<GenericAIProvider['getAvailableModels']>,
 ): Array<Record<string, unknown>> {
-  return models.slice(0, 20).map(model => ({
+  return models.slice(0, 20).map((model) => ({
     id: model.id,
     vendor: model.vendor,
     family: model.family,
@@ -99,31 +94,31 @@ function summarizeInternalLanguageModelsForLog(
     apiStyle: model.apiStyle,
     maxInputTokens: model.maxInputTokens,
     maxOutputTokens: model.maxOutputTokens,
-    capabilities: model.capabilities
+    capabilities: model.capabilities,
   }));
 }
 
 function summarizeVSCodeLanguageModelsForLog(
-  models: readonly vscode.LanguageModelChat[]
+  models: readonly vscode.LanguageModelChat[],
 ): Array<Record<string, unknown>> {
-  return models.slice(0, 20).map(model => {
+  return models.slice(0, 20).map((model) => {
     const modelWithOutputLimit = model as vscode.LanguageModelChat & { maxOutputTokens?: number };
-    return ({
+    return {
       id: model.id,
       vendor: model.vendor,
       family: model.family,
       name: model.name,
       version: model.version,
       maxInputTokens: model.maxInputTokens,
-      maxOutputTokens: modelWithOutputLimit.maxOutputTokens
-    });
+      maxOutputTokens: modelWithOutputLimit.maxOutputTokens,
+    };
   });
 }
 
 async function logLanguageModelInventorySnapshot(
   reason: string,
   genericProvider: GenericAIProvider,
-  configStore: ConfigStore
+  configStore: ConfigStore,
 ): Promise<void> {
   const internalModels = genericProvider.getAvailableModels();
   const configuredVendors = summarizeConfiguredVendorsForLog(configStore);
@@ -131,13 +126,16 @@ async function logLanguageModelInventorySnapshot(
     reason,
     configuredVendors,
     internalModelCount: internalModels.length,
-    internalModels: summarizeInternalLanguageModelsForLog(internalModels)
+    internalModels: summarizeInternalLanguageModelsForLog(internalModels),
   });
 
   if (!vscode.lm || typeof vscode.lm.selectChatModels !== 'function') {
-    logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} inventory snapshot skipped because selectChatModels API is unavailable`, {
-      reason
-    });
+    logger.warn(
+      `${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} inventory snapshot skipped because selectChatModels API is unavailable`,
+      {
+        reason,
+      },
+    );
     return;
   }
 
@@ -147,17 +145,17 @@ async function logLanguageModelInventorySnapshot(
       reason,
       configuredVendorCount: configuredVendors.length,
       internalModelCount: internalModels.length,
-      internalModelIds: internalModels.map(model => model.id),
+      internalModelIds: internalModels.map((model) => model.id),
       selectChatModelsCount: models.length,
-      selectChatModelsModels: summarizeVSCodeLanguageModelsForLog(models)
+      selectChatModelsModels: summarizeVSCodeLanguageModelsForLog(models),
     });
   } catch (error) {
     logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} inventory snapshot failed`, {
       reason,
       configuredVendors,
       internalModelCount: internalModels.length,
-      internalModelIds: internalModels.map(model => model.id),
-      error: getCompactErrorMessage(error)
+      internalModelIds: internalModels.map((model) => model.id),
+      error: getCompactErrorMessage(error),
     });
   }
 }
@@ -166,24 +164,24 @@ async function refreshLanguageModelsWorkbenchView(): Promise<string | undefined>
   try {
     const allCommands = await vscode.commands.getCommands(true);
     const commandSet = new Set(allCommands);
-    const preferredAvailable = PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS
-      .filter(command => commandSet.has(command))
-      .filter(command => isSafeWorkbenchRefreshCommand(command));
+    const preferredAvailable = PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS.filter((command) =>
+      commandSet.has(command),
+    ).filter((command) => isSafeWorkbenchRefreshCommand(command));
     const discoveredStrict = allCommands
-      .filter(command => isLikelyLanguageModelsRefreshCommand(command))
-      .filter(command => isSafeWorkbenchRefreshCommand(command))
-      .filter(command => !PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS.includes(command))
+      .filter((command) => isLikelyLanguageModelsRefreshCommand(command))
+      .filter((command) => isSafeWorkbenchRefreshCommand(command))
+      .filter((command) => !PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS.includes(command))
       .sort();
     const discoveredLoose = allCommands
-      .filter(command => isPotentialLanguageModelsRefreshCommand(command))
-      .filter(command => isSafeWorkbenchRefreshCommand(command))
-      .filter(command => !PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS.includes(command))
+      .filter((command) => isPotentialLanguageModelsRefreshCommand(command))
+      .filter((command) => isSafeWorkbenchRefreshCommand(command))
+      .filter((command) => !PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS.includes(command))
       .sort();
 
     const refreshCommands = uniqueCommands([
       ...PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS,
       ...discoveredStrict,
-      ...discoveredLoose
+      ...discoveredLoose,
     ]);
 
     logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} candidates`, {
@@ -191,7 +189,7 @@ async function refreshLanguageModelsWorkbenchView(): Promise<string | undefined>
       discoveredStrictCount: discoveredStrict.length,
       discoveredStrictPreview: discoveredStrict.slice(0, 20),
       discoveredLooseCount: discoveredLoose.length,
-      discoveredLoosePreview: discoveredLoose.slice(0, 20)
+      discoveredLoosePreview: discoveredLoose.slice(0, 20),
     });
 
     const attempted: string[] = [];
@@ -252,7 +250,7 @@ async function synchronizeLanguageModelsUiOnce(
   reason: string,
   configStore: ConfigStore,
   genericProvider: GenericAIProvider,
-  adapter: LMChatProviderAdapter
+  adapter: LMChatProviderAdapter,
 ): Promise<void> {
   adapter.notifyLanguageModelInformationChanged();
   logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} provider change event emitted`, { reason });
@@ -269,7 +267,7 @@ async function synchronizeLanguageModelsUiOnce(
   logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} UI synchronization completed`, {
     reason,
     executedCommand,
-    reRegistered
+    reRegistered,
   });
 }
 
@@ -277,7 +275,7 @@ async function synchronizeLanguageModelsUi(
   reason: string,
   configStore: ConfigStore,
   genericProvider: GenericAIProvider,
-  adapter: LMChatProviderAdapter
+  adapter: LMChatProviderAdapter,
 ): Promise<void> {
   pendingLanguageModelsUiSyncReasons.add(reason);
 
@@ -285,7 +283,7 @@ async function synchronizeLanguageModelsUi(
     languageModelsUiSyncPending = true;
     logger.debug(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} queued UI synchronization`, {
       reason,
-      pendingReasons: Array.from(pendingLanguageModelsUiSyncReasons)
+      pendingReasons: Array.from(pendingLanguageModelsUiSyncReasons),
     });
     return languageModelsUiSyncInFlight;
   }
@@ -299,7 +297,7 @@ async function synchronizeLanguageModelsUi(
       logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} UI synchronization start`, {
         reason: mergedReason,
         internalModelCount: genericProvider.getAvailableModels().length,
-        internalModelIds: genericProvider.getAvailableModels().map(model => model.id)
+        internalModelIds: genericProvider.getAvailableModels().map((model) => model.id),
       });
       await synchronizeLanguageModelsUiOnce(mergedReason, configStore, genericProvider, adapter);
     } while (languageModelsUiSyncPending || pendingLanguageModelsUiSyncReasons.size > 0);
@@ -315,9 +313,7 @@ async function synchronizeLanguageModelsUi(
   }
 }
 
-async function withSuppressedProviderModelChangeUiSync<T>(
-  callback: () => Promise<T>
-): Promise<T> {
+async function withSuppressedProviderModelChangeUiSync<T>(callback: () => Promise<T>): Promise<T> {
   suppressProviderModelChangeUiSyncDepth += 1;
   try {
     return await callback();
@@ -326,31 +322,51 @@ async function withSuppressedProviderModelChangeUiSync<T>(
   }
 }
 
+/**
+ * Validates vendor configurations and shows error messages for any missing required fields.
+ * Returns true if there are errors (caller should abort), false if all configs are valid.
+ */
+async function validateAndReportConfig(configStore: ConfigStore): Promise<boolean> {
+  const errors = configStore.validateVendorConfigs();
+  if (errors.length === 0) {
+    return false;
+  }
+
+  const messages = errors.map((e) => getMessage('vendorConfigMissingField', e.vendorName, e.field));
+  const fullMessage = [getMessage('vendorConfigError'), ...messages].join('\n');
+
+  const action = getMessage('vendorConfigFixAction');
+  const result = await vscode.window.showErrorMessage(fullMessage, { modal: false }, action);
+  if (result === action) {
+    await vscode.commands.executeCommand('workbench.action.openSettings', 'coding-plans.vendors');
+  }
+
+  return true;
+}
+
 async function refreshCodingPlansModels(
   configStore: ConfigStore,
   genericProvider: GenericAIProvider,
-  adapter: LMChatProviderAdapter
+  adapter: LMChatProviderAdapter,
 ): Promise<void> {
-  const vendorSummary = configStore.getVendors().map(vendor => ({
+  const vendorSummary = configStore.getVendors().map((vendor) => ({
     name: vendor.name,
     useModelsEndpoint: vendor.useModelsEndpoint,
-    modelCount: vendor.models.length
+    modelCount: vendor.models.length,
   }));
   logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} effective vendors`, vendorSummary);
 
-  const beforeModels = genericProvider.getAvailableModels().map(model => model.id);
+  const beforeModels = genericProvider.getAvailableModels().map((model) => model.id);
   logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} command start`, {
     beforeCount: beforeModels.length,
-    beforePreview: beforeModels.slice(0, 20)
+    beforePreview: beforeModels.slice(0, 20),
   });
 
-  await withSuppressedProviderModelChangeUiSync(
-    () => genericProvider.refreshModels({ forceDiscoveryRetry: true })
-  );
-  const afterModels = genericProvider.getAvailableModels().map(model => model.id);
+  await withSuppressedProviderModelChangeUiSync(() => genericProvider.refreshModels({ forceDiscoveryRetry: true }));
+  const afterModels = genericProvider.getAvailableModels().map((model) => model.id);
   logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} provider refreshed`, {
     afterCount: afterModels.length,
-    afterPreview: afterModels.slice(0, 20)
+    afterPreview: afterModels.slice(0, 20),
   });
   await logLanguageModelInventorySnapshot('after-provider-refresh', genericProvider, configStore);
   await synchronizeLanguageModelsUi('refresh-command', configStore, genericProvider, adapter);
@@ -360,8 +376,12 @@ async function refreshCodingPlansModels(
 async function runModelsUpdateCommand(
   configStore: ConfigStore,
   genericProvider: GenericAIProvider,
-  adapter: LMChatProviderAdapter
+  adapter: LMChatProviderAdapter,
 ): Promise<void> {
+  if (await validateAndReportConfig(configStore)) {
+    return;
+  }
+
   if (refreshModelsCommandInProgress) {
     logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} skipped re-entrant refresh command`);
     return;
@@ -372,9 +392,7 @@ async function runModelsUpdateCommand(
     await refreshCodingPlansModels(configStore, genericProvider, adapter);
     vscode.window.showInformationMessage(getMessage('modelsRefreshed', 'Coding Plan'));
   } catch (error) {
-    vscode.window.showErrorMessage(
-      getMessage('refreshModelsFailed', getCompactErrorMessage(error))
-    );
+    vscode.window.showErrorMessage(getMessage('refreshModelsFailed', getCompactErrorMessage(error)));
   } finally {
     refreshModelsCommandInProgress = false;
   }
@@ -383,8 +401,12 @@ async function runModelsUpdateCommand(
 export async function manageVendorConfiguration(
   configStore: ConfigStore,
   genericProvider: GenericAIProvider,
-  adapter: LMChatProviderAdapter
+  adapter: LMChatProviderAdapter,
 ): Promise<void> {
+  if (await validateAndReportConfig(configStore)) {
+    return;
+  }
+
   const vendors = configStore.getVendors();
   if (vendors.length === 0) {
     const action = getMessage('manageActionOpenSettings');
@@ -396,16 +418,16 @@ export async function manageVendorConfiguration(
   }
 
   const pickedVendor = await vscode.window.showQuickPick(
-    vendors.map(vendor => ({
+    vendors.map((vendor) => ({
       label: vendor.name,
       description: vendor.defaultApiStyle,
       detail: vendor.baseUrl,
-      vendor
+      vendor,
     })),
     {
       placeHolder: getMessage('manageActionSelectVendor'),
-      ignoreFocusOut: true
-    }
+      ignoreFocusOut: true,
+    },
   );
   if (!pickedVendor) {
     return;
@@ -415,21 +437,21 @@ export async function manageVendorConfiguration(
     [
       {
         label: getMessage('manageActionApiKey'),
-        action: 'apiKey' as ManageVendorAction
+        action: 'apiKey' as ManageVendorAction,
       },
       {
         label: getMessage('manageActionRefreshModels'),
-        action: 'refreshModels' as ManageVendorAction
+        action: 'refreshModels' as ManageVendorAction,
       },
       {
         label: getMessage('manageActionOpenSettings'),
-        action: 'openSettings' as ManageVendorAction
-      }
+        action: 'openSettings' as ManageVendorAction,
+      },
     ],
     {
       placeHolder: getMessage('manageActionPlaceholder', pickedVendor.vendor.name),
-      ignoreFocusOut: true
-    }
+      ignoreFocusOut: true,
+    },
   );
   if (!pickedAction) {
     return;
@@ -450,7 +472,7 @@ export async function manageVendorConfiguration(
     prompt: getMessage('inputApiKey', pickedVendor.vendor.name),
     placeHolder: getMessage('inputPlaceholder'),
     password: true,
-    ignoreFocusOut: true
+    ignoreFocusOut: true,
   });
   if (apiKey === undefined) {
     return;
@@ -470,32 +492,30 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     hasLanguageModelsNamespace: !!vscode.lm,
     hasRegisterLanguageModelChatProvider: typeof vscode.lm?.registerLanguageModelChatProvider === 'function',
     hasSelectChatModels: typeof vscode.lm?.selectChatModels === 'function',
-    hasOnDidChangeChatModels: typeof vscode.lm?.onDidChangeChatModels === 'function'
+    hasOnDidChangeChatModels: typeof vscode.lm?.onDidChangeChatModels === 'function',
   });
 
   // Register commit-message commands first so they remain available
   // even if provider initialization fails.
   context.subscriptions.push(
-    vscode.commands.registerCommand('coding-plans.generateCommitMessage', generateCommitMessage)
+    vscode.commands.registerCommand('coding-plans.generateCommitMessage', generateCommitMessage),
   );
   context.subscriptions.push(
-    vscode.commands.registerCommand('coding-plans.selectCommitMessageModel', selectCommitMessageModel)
+    vscode.commands.registerCommand('coding-plans.selectCommitMessageModel', selectCommitMessageModel),
   );
   if (typeof vscode.lm?.onDidChangeChatModels === 'function') {
     context.subscriptions.push(
       vscode.lm.onDidChangeChatModels(() => {
         invalidateCommitMessageModelSelectionCache('vscode.lm.onDidChangeChatModels');
         logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} vscode.lm.onDidChangeChatModels fired`);
-        void logLanguageModelInventorySnapshot(
-          'vscode.lm.onDidChangeChatModels',
-          genericProvider,
-          configStore
-        ).catch(error => {
-          logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} failed to log inventory after onDidChangeChatModels`, {
-            error: getCompactErrorMessage(error)
-          });
-        });
-      })
+        void logLanguageModelInventorySnapshot('vscode.lm.onDidChangeChatModels', genericProvider, configStore).catch(
+          (error) => {
+            logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} failed to log inventory after onDidChangeChatModels`, {
+              error: getCompactErrorMessage(error),
+            });
+          },
+        );
+      }),
     );
   }
 
@@ -505,10 +525,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(contextUsageState);
   const planUsageState = new PlanUsageState();
   context.subscriptions.push(planUsageState);
-  const codingPlanStatusBarController = new CodingPlanStatusBarController(
-    contextUsageState,
-    planUsageState
-  );
+  const codingPlanStatusBarController = new CodingPlanStatusBarController(contextUsageState, planUsageState);
   context.subscriptions.push(codingPlanStatusBarController);
   const planUsagePollingController = new PlanUsagePollingController(configStore, planUsageState, contextUsageState);
   context.subscriptions.push(planUsagePollingController);
@@ -517,7 +534,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   providers.set('coding-plans', genericProvider);
   registerCommitMessageModelSource({
     getAvailableModels: () => genericProvider.getAvailableModels(),
-    refreshModels: () => genericProvider.refreshModels()
+    refreshModels: () => genericProvider.refreshModels(),
   });
 
   const adapter = new LMChatProviderAdapter(genericProvider, configStore, contextUsageState);
@@ -526,84 +543,82 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   context.subscriptions.push(
     genericProvider.onDidChangeModels(() => {
       if (suppressProviderModelChangeUiSyncDepth > 0) {
-        logger.debug(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} skipped automatic UI synchronization for managed provider refresh`, {
-          suppressionDepth: suppressProviderModelChangeUiSyncDepth
-        });
+        logger.debug(
+          `${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} skipped automatic UI synchronization for managed provider refresh`,
+          {
+            suppressionDepth: suppressProviderModelChangeUiSyncDepth,
+          },
+        );
         return;
       }
-      void synchronizeLanguageModelsUi(
-        'provider-models-changed',
-        configStore,
+      void synchronizeLanguageModelsUi('provider-models-changed', configStore, genericProvider, adapter).catch(
+        (error) => {
+          logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} failed to synchronize UI after provider model change`, {
+            error: getCompactErrorMessage(error),
+          });
+        },
+      );
+    }),
+  );
+  context.subscriptions.push(
+    new vscode.Disposable(() => {
+      languageModelProviderRegistration?.dispose();
+      languageModelProviderRegistration = undefined;
+    }),
+  );
+  void withSuppressedProviderModelChangeUiSync(() => genericProvider.initialize())
+    .then(async () => {
+      logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} generic provider initialization completed`, {
+        internalModelCount: genericProvider.getAvailableModels().length,
+        internalModelIds: genericProvider.getAvailableModels().map((model) => model.id),
+      });
+      if (!languageModelProviderRegistration) {
+        registerLanguageModelProvider(adapter);
+      }
+      void logLanguageModelInventorySnapshot(
+        'after-register-language-model-provider',
         genericProvider,
-        adapter
-      ).catch(error => {
-        logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} failed to synchronize UI after provider model change`, {
-          error: getCompactErrorMessage(error)
+        configStore,
+      ).catch((error) => {
+        logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} failed to log inventory after provider registration`, {
+          error: getCompactErrorMessage(error),
         });
       });
+      if (genericProvider.getAvailableModels().length > 0) {
+        await synchronizeLanguageModelsUi('after-generic-provider-initialize', configStore, genericProvider, adapter);
+      } else {
+        await logLanguageModelInventorySnapshot('after-generic-provider-initialize', genericProvider, configStore);
+      }
     })
-  );
-  context.subscriptions.push(new vscode.Disposable(() => {
-    languageModelProviderRegistration?.dispose();
-    languageModelProviderRegistration = undefined;
-  }));
-  void withSuppressedProviderModelChangeUiSync(
-    () => genericProvider.initialize()
-  ).then(async () => {
-    logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} generic provider initialization completed`, {
-      internalModelCount: genericProvider.getAvailableModels().length,
-      internalModelIds: genericProvider.getAvailableModels().map(model => model.id)
+    .catch((error) => {
+      logger.error('Failed to initialize generic provider models.', error);
+      if (!languageModelProviderRegistration) {
+        registerLanguageModelProvider(adapter);
+      }
     });
-    if (!languageModelProviderRegistration) {
-      registerLanguageModelProvider(adapter);
-    }
-    void logLanguageModelInventorySnapshot('after-register-language-model-provider', genericProvider, configStore).catch(error => {
-      logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} failed to log inventory after provider registration`, {
-        error: getCompactErrorMessage(error)
-      });
-    });
-    if (genericProvider.getAvailableModels().length > 0) {
-      await synchronizeLanguageModelsUi(
-        'after-generic-provider-initialize',
-        configStore,
-        genericProvider,
-        adapter
-      );
-    } else {
-      await logLanguageModelInventorySnapshot('after-generic-provider-initialize', genericProvider, configStore);
-    }
-  }).catch(error => {
-    logger.error('Failed to initialize generic provider models.', error);
-    if (!languageModelProviderRegistration) {
-      registerLanguageModelProvider(adapter);
-    }
-  });
 
   context.subscriptions.push(
     vscode.commands.registerCommand('coding-plans.manage', async () => {
       await manageVendorConfiguration(configStore, genericProvider, adapter);
-    })
+    }),
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(REFRESH_MODELS_COMMAND, async () => {
       await runModelsUpdateCommand(configStore, genericProvider, adapter);
-    })
+    }),
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(UPDATE_MODELS_COMMAND, async () => {
       await runModelsUpdateCommand(configStore, genericProvider, adapter);
-    })
+    }),
   );
-
 }
 
 export function deactivate(): void {
   logger.info(getMessage('extensionDeactivated'));
   registerCommitMessageModelSource(undefined);
-  providers.forEach(provider => provider.dispose());
+  providers.forEach((provider) => provider.dispose());
   providers.clear();
 }
-
-
