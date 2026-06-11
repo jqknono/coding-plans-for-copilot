@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.10.2",
+    "version": "0.11.0",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -287,15 +287,6 @@
                                 "maximum": 1,
                                 "description": "%configuration.coding-plans.vendors.defaultTopP.description%"
                             },
-                            "apiType": {
-                                "type": "string",
-                                "enum": [
-                                    "chat",
-                                    "responses",
-                                    "anthropic"
-                                ],
-                                "description": "Copilot-style API protocol alias for defaultApiStyle. Use responses for /responses, chat for /chat/completions, or anthropic for /messages."
-                            },
                             "models": {
                                 "type": "array",
                                 "items": {
@@ -393,15 +384,6 @@
                                                 "anthropic"
                                             ],
                                             "description": "Optional per-model API protocol style. When set, it overrides the vendor defaultApiStyle. For openai-responses models, request usage is read from the /responses result when available."
-                                        },
-                                        "apiType": {
-                                            "type": "string",
-                                            "enum": [
-                                                "chat",
-                                                "responses",
-                                                "anthropic"
-                                            ],
-                                            "description": "Copilot-style API protocol alias for apiStyle."
                                         },
                                         "streaming": {
                                             "type": "boolean",
