@@ -83,7 +83,7 @@ export const MIN_DYNAMIC_RESERVED_OUTPUT_TOKENS = 4096;
 export const DEFAULT_RESERVED_OUTPUT_RATIO = 0.2;
 export const DEFAULT_MODEL_CAPABILITIES_TOOLS = true;
 export const DEFAULT_MODEL_CAPABILITIES_VISION = false;
-export const DEFAULT_MODEL_EDIT_TOOLS = ['apply-patch'] as const;
+export const DEFAULT_MODEL_EDIT_TOOLS = ['apply-patch', 'multi-find-replace'] as const;
 
 export function resolveImplicitReservedOutputTokens(totalContextWindow: number): number {
   const normalizedTotalContextWindow = Math.max(2, Math.floor(totalContextWindow));

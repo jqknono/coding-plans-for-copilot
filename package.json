@@ -418,11 +418,13 @@
                                             "items": {
                                                 "type": "string",
                                                 "enum": [
-                                                    "apply-patch"
+                                                    "apply-patch",
+                                                    "multi-find-replace"
                                                 ]
                                             },
                                             "default": [
-                                                "apply-patch"
+                                                "apply-patch",
+                                                "multi-find-replace"
                                             ],
                                             "description": "Copilot-style edit tools supported by this model."
                                         },
@@ -544,6 +546,8 @@
         "compile": "npm run typecheck && npm run bundle",
         "pretest": "npm run compile && npm run lint",
         "lint": "eslint src --ext ts",
+        "format": "prettier --write \"**/*.{js,ts}\"",
+        "format:check": "prettier --check \"**/*.{js,ts}\"",
         "test": "npm run test:unit && npm run test:desktop",
         "test:unit": "node ./out/test/runTest.js",
         "test:desktop": "vscode-test --label desktop",

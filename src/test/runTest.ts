@@ -1590,8 +1590,8 @@ async function runGenericProviderContextSizeTests(
 
   try {
     await defaultEditToolProvider.refreshModels();
-    assert.deepEqual(defaultEditToolProvider.getAvailableModels()[0]?.editTools, ['apply-patch']);
-    console.log('PASS 运行时模型默认声明 apply-patch editTool');
+    assert.deepEqual(defaultEditToolProvider.getAvailableModels()[0]?.editTools, ['apply-patch', 'multi-find-replace']);
+    console.log('PASS 运行时模型默认声明 apply-patch 和 multi-find-replace editTools');
   } finally {
     defaultEditToolProvider.dispose();
     defaultEditToolConfigStore.dispose();
