@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.11.0",
+    "version": "0.11.1",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -351,16 +351,6 @@
                                                 "tools",
                                                 "vision"
                                             ]
-                                        },
-                                        "toolCalling": {
-                                            "type": "boolean",
-                                            "default": true,
-                                            "description": "Copilot-style alias for capabilities.tools."
-                                        },
-                                        "vision": {
-                                            "type": "boolean",
-                                            "default": false,
-                                            "description": "Copilot-style alias for capabilities.vision."
                                         },
                                         "contextSize": {
                                             "type": "number",

@@ -1076,8 +1076,6 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     assert.equal(model?.maxInputTokens, 400000);
     assert.equal(model?.maxOutputTokens, 128000);
     assert.deepEqual(model?.capabilities, { tools: true, vision: true });
-    assert.equal(model?.toolCalling, true);
-    assert.equal(model?.vision, true);
     assert.equal(model?.streaming, false);
     assert.equal(model?.thinking, true);
     assert.deepEqual(model?.editTools, ['apply-patch']);

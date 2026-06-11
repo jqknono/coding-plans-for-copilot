@@ -388,12 +388,6 @@ export class ConfigStore implements vscode.Disposable {
     ) {
       stored.apiStyle = normalized.apiStyle;
     }
-    if (normalized.toolCalling !== undefined) {
-      stored.toolCalling = normalized.toolCalling;
-    }
-    if (normalized.vision !== undefined) {
-      stored.vision = normalized.vision;
-    }
     if (normalized.streaming !== undefined) {
       stored.streaming = normalized.streaming;
     }
@@ -629,8 +623,6 @@ export class ConfigStore implements vscode.Disposable {
         temperature,
         topP,
         capabilities,
-        toolCalling,
-        vision,
         contextSize: contextSize === undefined ? undefined : Math.max(2, Math.floor(contextSize)),
         maxInputTokens: maxInputTokens === undefined ? undefined : Math.max(1, Math.floor(maxInputTokens)),
         maxOutputTokens: maxOutputTokens === undefined ? undefined : Math.max(1, Math.floor(maxOutputTokens)),
@@ -666,8 +658,6 @@ export class ConfigStore implements vscode.Disposable {
         tools: model.capabilities?.tools ?? DEFAULT_MODEL_CAPABILITIES_TOOLS,
         vision: model.capabilities?.vision ?? defaultVision,
       },
-      toolCalling: model.toolCalling,
-      vision: model.vision,
       streaming: model.streaming,
       thinking: model.thinking,
       editTools: model.editTools,
