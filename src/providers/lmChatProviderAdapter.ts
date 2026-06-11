@@ -56,6 +56,12 @@ type LanguageModelConfigurationSchema = {
 type LanguageModelChatInformationWithHiddenFields = vscode.LanguageModelChatInformation & {
   configurationSchema?: LanguageModelConfigurationSchema;
   isUserSelectable?: boolean;
+  apiType?: string;
+  editTools?: readonly string[];
+  supportsReasoningEffort?: readonly string[];
+  reasoningEffortFormat?: string;
+  thinking?: boolean;
+  zeroDataRetentionEnabled?: boolean;
 };
 
 type ProvideLanguageModelChatResponseOptionsWithModelConfiguration = vscode.ProvideLanguageModelChatResponseOptions & {
@@ -66,41 +72,52 @@ type ProvideLanguageModelChatResponseOptionsWithModelConfiguration = vscode.Prov
 function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModelConfigurationSchema {
   const properties: Record<string, LanguageModelConfigurationSchemaProperty> = {};
 
-  if (model.apiStyle === 'anthropic') {
-    properties[ANTHROPIC_THINKING_MODEL_OPTION_KEY] = {
-      type: 'string',
-      title: getMessage('anthropicThinkingTitle'),
-      description: getMessage('anthropicThinkingDescription'),
-      enum: ['think', 'non-think'],
-      default: 'think',
-      group: 'navigation'
-    };
-    properties[EFFORT_MODEL_OPTION_KEY] = {
-      type: 'string',
-      title: getMessage('effortTitle'),
-      description: getMessage('anthropicEffortDescription'),
-      enum: [...ANTHROPIC_EFFORT_VALUES],
-      default: 'max',
-      group: 'navigation'
-    };
-  } else if (model.apiStyle === 'openai-responses') {
-    properties[THINKING_EFFORT_MODEL_OPTION_KEY] = {
-      type: 'string',
-      title: getMessage('thinkingEffortTitle'),
-      description: getMessage('responsesThinkingEffortDescription'),
-      enum: [...RESPONSES_THINKING_EFFORT_VALUES],
-      default: 'xhigh',
-      group: 'navigation'
-    };
-  } else {
-    properties[THINKING_EFFORT_MODEL_OPTION_KEY] = {
-      type: 'string',
-      title: getMessage('thinkingEffortTitle'),
-      description: getMessage('thinkingEffortDescription'),
-      enum: [...CHAT_THINKING_EFFORT_VALUES],
-      default: 'high',
-      group: 'navigation'
-    };
+  if (model.thinking !== false) {
+    if (model.apiStyle === 'anthropic') {
+      const effortOptions = resolveReasoningEffortOptions(model, [...ANTHROPIC_EFFORT_VALUES]);
+      properties[ANTHROPIC_THINKING_MODEL_OPTION_KEY] = {
+        type: 'string',
+        title: getMessage('anthropicThinkingTitle'),
+        description: getMessage('anthropicThinkingDescription'),
+        enum: ['think', 'non-think'],
+        default: 'think',
+        group: 'navigation'
+      };
+      if (effortOptions.length > 0) {
+        properties[EFFORT_MODEL_OPTION_KEY] = {
+          type: 'string',
+          title: getMessage('effortTitle'),
+          description: getMessage('anthropicEffortDescription'),
+          enum: effortOptions,
+          default: resolveReasoningEffortDefault(effortOptions, 'max'),
+          group: 'navigation'
+        };
+      }
+    } else if (model.apiStyle === 'openai-responses') {
+      const effortOptions = resolveReasoningEffortOptions(model, [...RESPONSES_THINKING_EFFORT_VALUES]);
+      if (effortOptions.length > 0) {
+        properties[THINKING_EFFORT_MODEL_OPTION_KEY] = {
+          type: 'string',
+          title: getMessage('thinkingEffortTitle'),
+          description: getMessage('responsesThinkingEffortDescription'),
+          enum: effortOptions,
+          default: resolveReasoningEffortDefault(effortOptions, 'xhigh'),
+          group: 'navigation'
+        };
+      }
+    } else {
+      const effortOptions = resolveReasoningEffortOptions(model, [...CHAT_THINKING_EFFORT_VALUES]);
+      if (effortOptions.length > 0) {
+        properties[THINKING_EFFORT_MODEL_OPTION_KEY] = {
+          type: 'string',
+          title: getMessage('thinkingEffortTitle'),
+          description: getMessage('thinkingEffortDescription'),
+          enum: effortOptions,
+          default: resolveReasoningEffortDefault(effortOptions, 'high'),
+          group: 'navigation'
+        };
+      }
+    }
   }
 
   if (model.apiStyle === 'openai-responses') {
@@ -126,6 +143,21 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
   };
 }
 
+function resolveReasoningEffortOptions(
+  model: BaseLanguageModel,
+  protocolValues: readonly string[]
+): string[] {
+  const supported = model.supportsReasoningEffort;
+  if (!supported || supported.length === 0) {
+    return [...protocolValues];
+  }
+  return protocolValues.filter(value => supported.includes(value as never));
+}
+
+function resolveReasoningEffortDefault(options: readonly string[], preferred: string): string {
+  return options.includes(preferred) ? preferred : options[0] ?? preferred;
+}
+
 function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChatInformation {
   return {
     id: model.id,
@@ -140,7 +172,15 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
     configurationSchema: createModelConfigurationSchema(model),
     // isUserSelectable is an internal VS Code field not yet in public typings.
     // Without it the chat model picker filters the model out (AIo() filter).
-    ...({ isUserSelectable: true } as object)
+    ...({
+      isUserSelectable: true,
+      apiType: model.apiType,
+      editTools: model.editTools,
+      supportsReasoningEffort: model.supportsReasoningEffort,
+      reasoningEffortFormat: model.reasoningEffortFormat,
+      thinking: model.thinking,
+      zeroDataRetentionEnabled: model.zeroDataRetentionEnabled
+    } as object)
   } as LanguageModelChatInformationWithHiddenFields;
 }
 

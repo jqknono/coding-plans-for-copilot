@@ -105,10 +105,18 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
     enabled: true,
     description: model.description?.trim() || undefined,
     contextSize: readPositiveTokenInteger(model.maxTokens),
+    maxInputTokens: readPositiveTokenInteger(model.maxInputTokens),
+    maxOutputTokens: readPositiveTokenInteger(model.maxOutputTokens),
     capabilities: {
       tools,
       vision
-    }
+    },
+    streaming: model.streaming,
+    thinking: model.thinking,
+    editTools: model.editTools,
+    supportsReasoningEffort: model.supportsReasoningEffort,
+    reasoningEffortFormat: model.reasoningEffortFormat,
+    zeroDataRetentionEnabled: model.zeroDataRetentionEnabled
   };
 }
 

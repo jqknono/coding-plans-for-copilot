@@ -8,22 +8,36 @@ import {
 } from '../constants';
 
 export type VendorApiStyle = 'openai-chat' | 'openai-responses' | 'anthropic';
+export type VendorApiType = 'chat' | 'responses' | 'anthropic';
+export type ReasoningEffortValue = 'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
+export type ReasoningEffortFormat = 'chat' | 'responses' | 'anthropic';
 
 export interface VendorModelConfig {
   name: string;
   enabled?: boolean;
   description?: string;
   apiStyle?: VendorApiStyle;
+  apiType?: VendorApiType;
   temperature?: number;
   topP?: number;
   capabilities?: {
     tools?: boolean;
     vision?: boolean;
   };
+  toolCalling?: boolean | number;
+  vision?: boolean;
   /**
    * Total context window size in tokens.
    */
   contextSize?: number;
+  maxInputTokens?: number;
+  maxOutputTokens?: number;
+  streaming?: boolean;
+  thinking?: boolean;
+  editTools?: string[];
+  supportsReasoningEffort?: ReasoningEffortValue[];
+  reasoningEffortFormat?: ReasoningEffortFormat;
+  zeroDataRetentionEnabled?: boolean;
 }
 
 export interface VendorConfig {
@@ -31,6 +45,7 @@ export interface VendorConfig {
   baseUrl: string;
   apiKey?: string;
   usageUrl?: string;
+  apiType?: VendorApiType;
   defaultApiStyle: VendorApiStyle;
   defaultTemperature?: number;
   defaultTopP?: number;
@@ -152,7 +167,7 @@ export class ConfigStore implements vscode.Disposable {
       }
 
       const defaultVision = typeof vendorObj.defaultVision === 'boolean' ? vendorObj.defaultVision : false;
-      const defaultApiStyle = this.normalizeApiStyle(vendorObj.defaultApiStyle);
+      const defaultApiStyle = this.normalizeApiStyle(vendorObj.defaultApiStyle ?? vendorObj.apiType);
       const nextModels = this.buildUpdatedModelEntries(
         inputNames,
         models,
@@ -345,6 +360,10 @@ export class ConfigStore implements vscode.Disposable {
       if (rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'apiStyle')) {
         stored.apiStyle = this.normalizeApiStyle(rawObject.apiStyle, defaultApiStyle);
       }
+      if (rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'apiType')) {
+        stored.apiType = this.normalizeApiType(rawObject.apiType);
+        stored.apiStyle = this.normalizeApiStyle(rawObject.apiType, defaultApiStyle);
+      }
       return stored;
     }
 
@@ -352,14 +371,44 @@ export class ConfigStore implements vscode.Disposable {
       name,
       enabled: normalized.enabled,
       description: normalized.description,
+      apiType: normalized.apiType,
       temperature: normalized.temperature,
       topP: normalized.topP,
       contextSize: normalized.contextSize,
+      maxInputTokens: normalized.maxInputTokens,
+      maxOutputTokens: normalized.maxOutputTokens,
       capabilities: normalized.capabilities
     };
 
-    if (rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'apiStyle')) {
+    if (rawObject && (
+      Object.prototype.hasOwnProperty.call(rawObject, 'apiStyle')
+      || Object.prototype.hasOwnProperty.call(rawObject, 'apiType')
+    )) {
       stored.apiStyle = normalized.apiStyle;
+    }
+    if (normalized.toolCalling !== undefined) {
+      stored.toolCalling = normalized.toolCalling;
+    }
+    if (normalized.vision !== undefined) {
+      stored.vision = normalized.vision;
+    }
+    if (normalized.streaming !== undefined) {
+      stored.streaming = normalized.streaming;
+    }
+    if (normalized.thinking !== undefined) {
+      stored.thinking = normalized.thinking;
+    }
+    if (normalized.editTools !== undefined) {
+      stored.editTools = normalized.editTools;
+    }
+    if (normalized.supportsReasoningEffort !== undefined) {
+      stored.supportsReasoningEffort = normalized.supportsReasoningEffort;
+    }
+    if (normalized.reasoningEffortFormat !== undefined) {
+      stored.reasoningEffortFormat = normalized.reasoningEffortFormat;
+    }
+    if (normalized.zeroDataRetentionEnabled !== undefined) {
+      stored.zeroDataRetentionEnabled = normalized.zeroDataRetentionEnabled;
     }
     return stored;
   }
@@ -491,7 +540,8 @@ export class ConfigStore implements vscode.Disposable {
     const usageUrl = typeof obj.usageUrl === 'string' && obj.usageUrl.trim().length > 0
       ? obj.usageUrl.trim()
       : undefined;
-    const defaultApiStyle = this.normalizeApiStyle(obj.defaultApiStyle);
+    const apiType = this.normalizeApiType(obj.apiType);
+    const defaultApiStyle = this.normalizeApiStyle(obj.defaultApiStyle ?? obj.apiType);
     const defaultTemperature = this.readSamplingNumber(obj.defaultTemperature, 0, 2);
     const defaultTopP = this.readSamplingNumber(obj.defaultTopP, 0, 1);
     const useModelsEndpoint = typeof obj.useModelsEndpoint === 'boolean' ? obj.useModelsEndpoint : false;
@@ -501,7 +551,7 @@ export class ConfigStore implements vscode.Disposable {
           .map(m => this.normalizeModel(m, defaultVision, defaultApiStyle))
           .filter((m): m is VendorModelConfig => m !== undefined)
       : [];
-    return { name, baseUrl, apiKey, usageUrl, defaultApiStyle, defaultTemperature, defaultTopP, useModelsEndpoint, defaultVision, models };
+    return { name, baseUrl, apiKey, usageUrl, apiType, defaultApiStyle, defaultTemperature, defaultTopP, useModelsEndpoint, defaultVision, models };
   }
 
   private normalizeModel(
@@ -522,10 +572,21 @@ export class ConfigStore implements vscode.Disposable {
         ? obj.description.trim()
         : undefined;
     const contextSize = this.readPositiveNumber(obj.contextSize);
-    const apiStyle = this.normalizeApiStyle(obj.apiStyle, defaultApiStyle);
+    const maxInputTokens = this.readPositiveNumber(obj.maxInputTokens);
+    const maxOutputTokens = this.readPositiveNumber(obj.maxOutputTokens);
+    const apiType = this.normalizeApiType(obj.apiType);
+    const apiStyle = this.normalizeApiStyle(obj.apiStyle ?? obj.apiType, defaultApiStyle);
     const temperature = this.readSamplingNumber(obj.temperature, 0, 2);
     const topP = this.readSamplingNumber(obj.topP, 0, 1);
     const enabled = obj.enabled !== false;
+    const toolCalling = this.readToolCallingValue(obj.toolCalling);
+    const vision = this.readBooleanValue(obj.vision);
+    const streaming = this.readBooleanValue(obj.streaming);
+    const thinking = this.readBooleanValue(obj.thinking);
+    const editTools = this.readStringArray(obj.editTools);
+    const supportsReasoningEffort = this.readReasoningEffortArray(obj.supportsReasoningEffort);
+    const reasoningEffortFormat = this.normalizeReasoningEffortFormat(obj.reasoningEffortFormat);
+    const zeroDataRetentionEnabled = this.readBooleanValue(obj.zeroDataRetentionEnabled);
     let capabilities: VendorModelConfig['capabilities'];
     if (obj.capabilities && typeof obj.capabilities === 'object') {
       const cap = obj.capabilities as Record<string, unknown>;
@@ -534,16 +595,31 @@ export class ConfigStore implements vscode.Disposable {
         vision: typeof cap.vision === 'boolean' ? cap.vision : undefined,
       };
     }
+    capabilities = {
+      tools: typeof capabilities?.tools === 'boolean' ? capabilities.tools : (typeof toolCalling === 'boolean' ? toolCalling : undefined),
+      vision: typeof capabilities?.vision === 'boolean' ? capabilities.vision : vision
+    };
 
     return this.withModelDefaults({
       name,
       enabled,
       description,
       apiStyle,
+      apiType,
       temperature,
       topP,
       capabilities,
-      contextSize: contextSize === undefined ? undefined : Math.max(2, Math.floor(contextSize))
+      toolCalling,
+      vision,
+      contextSize: contextSize === undefined ? undefined : Math.max(2, Math.floor(contextSize)),
+      maxInputTokens: maxInputTokens === undefined ? undefined : Math.max(1, Math.floor(maxInputTokens)),
+      maxOutputTokens: maxOutputTokens === undefined ? undefined : Math.max(1, Math.floor(maxOutputTokens)),
+      streaming,
+      thinking,
+      editTools,
+      supportsReasoningEffort,
+      reasoningEffortFormat,
+      zeroDataRetentionEnabled
     }, defaultVision, defaultApiStyle);
   }
 
@@ -557,24 +633,49 @@ export class ConfigStore implements vscode.Disposable {
       enabled: model.enabled !== false,
       description: model.description,
       apiStyle: this.normalizeApiStyle(model.apiStyle, defaultApiStyle),
+      apiType: model.apiType,
       temperature: model.temperature,
       topP: model.topP,
       contextSize: model.contextSize,
+      maxInputTokens: model.maxInputTokens,
+      maxOutputTokens: model.maxOutputTokens,
       capabilities: {
         tools: model.capabilities?.tools ?? DEFAULT_MODEL_CAPABILITIES_TOOLS,
         vision: model.capabilities?.vision ?? defaultVision
-      }
+      },
+      toolCalling: model.toolCalling,
+      vision: model.vision,
+      streaming: model.streaming,
+      thinking: model.thinking,
+      editTools: model.editTools,
+      supportsReasoningEffort: model.supportsReasoningEffort,
+      reasoningEffortFormat: model.reasoningEffortFormat,
+      zeroDataRetentionEnabled: model.zeroDataRetentionEnabled
     };
   }
 
   private normalizeApiStyle(value: unknown, fallback: VendorApiStyle = 'openai-chat'): VendorApiStyle {
     return value === 'anthropic'
       ? 'anthropic'
-      : value === 'openai-responses'
+      : value === 'openai-responses' || value === 'responses'
         ? 'openai-responses'
-        : value === 'openai-chat'
+        : value === 'openai-chat' || value === 'chat'
           ? 'openai-chat'
           : fallback;
+  }
+
+  private normalizeApiType(value: unknown): VendorApiType | undefined {
+    return value === 'responses' || value === 'openai-responses'
+      ? 'responses'
+      : value === 'anthropic'
+        ? 'anthropic'
+        : value === 'chat' || value === 'openai-chat'
+          ? 'chat'
+          : undefined;
+  }
+
+  private normalizeReasoningEffortFormat(value: unknown): ReasoningEffortFormat | undefined {
+    return value === 'responses' || value === 'anthropic' || value === 'chat' ? value : undefined;
   }
 
   private resolveVendorsConfigTarget(): vscode.ConfigurationTarget {
@@ -603,6 +704,73 @@ export class ConfigStore implements vscode.Disposable {
       }
     }
     return undefined;
+  }
+
+  private readBooleanValue(value: unknown): boolean | undefined {
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value > 0;
+    }
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase();
+      if (normalized === 'true') {
+        return true;
+      }
+      if (normalized === 'false') {
+        return false;
+      }
+      const parsed = Number(normalized);
+      if (Number.isFinite(parsed)) {
+        return parsed > 0;
+      }
+    }
+    return undefined;
+  }
+
+  private readToolCallingValue(value: unknown): boolean | number | undefined {
+    if (typeof value === 'boolean') {
+      return value;
+    }
+    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
+      return value;
+    }
+    if (typeof value === 'string') {
+      const normalized = value.trim().toLowerCase();
+      if (normalized === 'true') {
+        return true;
+      }
+      if (normalized === 'false') {
+        return false;
+      }
+      const parsed = Number(normalized);
+      if (Number.isFinite(parsed) && parsed >= 0) {
+        return parsed;
+      }
+    }
+    return undefined;
+  }
+
+  private readStringArray(value: unknown): string[] | undefined {
+    if (!Array.isArray(value)) {
+      return undefined;
+    }
+    const normalized = value
+      .map(item => typeof item === 'string' ? item.trim() : '')
+      .filter(item => item.length > 0);
+    if (normalized.length === 0) {
+      return undefined;
+    }
+    return Array.from(new Set(normalized));
+  }
+
+  private readReasoningEffortArray(value: unknown): ReasoningEffortValue[] | undefined {
+    const allowed = new Set<ReasoningEffortValue>(['none', 'low', 'medium', 'high', 'xhigh', 'max']);
+    const values = this.readStringArray(value)
+      ?.map(item => item.toLowerCase())
+      .filter((item): item is ReasoningEffortValue => allowed.has(item as ReasoningEffortValue));
+    return values && values.length > 0 ? values : undefined;
   }
 
   private readNonNegativeInteger(value: unknown): number | undefined {

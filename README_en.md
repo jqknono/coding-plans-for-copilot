@@ -135,9 +135,18 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
       "models": [
         {
           "name": "gpt-5",
+          "apiType": "responses",
           "enabled": true,
-          "capabilities": { "tools": true, "vision": false },
-          "contextSize": 400000
+          "editTools": ["apply-patch"],
+          "maxInputTokens": 400000,
+          "maxOutputTokens": 128000,
+          "reasoningEffortFormat": "responses",
+          "streaming": true,
+          "supportsReasoningEffort": ["high", "xhigh"],
+          "thinking": true,
+          "toolCalling": true,
+          "vision": false,
+          "zeroDataRetentionEnabled": false
         }
       ]
     }
@@ -156,6 +165,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].apiKey` | `string` | Empty | Deprecated. Vendor API key. When non-empty, it takes precedence over the same vendor key stored in VS Code Secret Storage. |
 | `coding-plans.vendors[].usageUrl` | `string` | Empty | Plan usage API address; when configured, status bar displays quota percentage. |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Protocol style: `openai-chat` / `openai-responses` / `anthropic`. |
+| `coding-plans.vendors[].apiType` | `string` | Empty | Copilot-style protocol alias: `chat` / `responses` / `anthropic`; falls back to `defaultApiStyle` when omitted. |
 | `coding-plans.vendors[].defaultTemperature` | `number` / `null` | Empty | Deprecated. Vendor default temperature. When unset or `null`, runtime omits `temperature`. Runtime uses it only for `openai-chat` and `anthropic`. |
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | Vendor default topP. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | Whether to fetch model list from `/models`; running `Coding Plans: Update Coding Plans Models List` writes discovered models back to `models`. |
@@ -163,10 +173,21 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].models[].enabled` | `boolean` | `true` | Whether to show this model in Manage Language Models; set to `false` to keep it configured but hidden. |
 | `coding-plans.vendors[].models[].description` | `string` | Empty | Model description. |
 | `coding-plans.vendors[].models[].apiStyle` | `string` | Inherit from vendor | Model-level protocol style override. |
+| `coding-plans.vendors[].models[].apiType` | `string` | Empty | Copilot-style protocol alias; `responses` is equivalent to `apiStyle: "openai-responses"`. |
 | `coding-plans.vendors[].models[].temperature` | `number` / `"inherit"` | `"inherit"` | Deprecated. Model-level temperature override. `"inherit"` uses the vendor `defaultTemperature`. Runtime uses it only for `openai-chat` and `anthropic`. Use `Personality` from the model row for Responses API models. |
 | `coding-plans.vendors[].models[].topP` | `number` | Inherit from vendor | Model-level topP override. `0` means omit `top_p`. `anthropic` requests always ignore this value and do not send `top_p`. |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | Model capability declaration. |
+| `coding-plans.vendors[].models[].toolCalling` | `boolean` / `number` | `true` | Copilot-style tool-calling alias, equivalent to `capabilities.tools`. |
+| `coding-plans.vendors[].models[].vision` | `boolean` | Inherits `defaultVision` | Copilot-style vision alias, equivalent to `capabilities.vision`. |
 | `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | Model total context window. Defaults to 400k when omitted. Runtime derives the request budget from this total window. |
+| `coding-plans.vendors[].models[].maxInputTokens` | `number` | Derived from `contextSize` | Explicit input token limit, taking precedence over the derived `contextSize` value. |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | Derived from `contextSize` | Explicit output token limit, taking precedence over the derived `contextSize` value. |
+| `coding-plans.vendors[].models[].streaming` | `boolean` | `true` | Whether to prefer streaming requests; set to `false` to send non-streaming requests. |
+| `coding-plans.vendors[].models[].thinking` | `boolean` | `true` | Whether to expose and send reasoning/thinking parameters. |
+| `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | Protocol defaults | Restricts model-row effort options and blocks unsupported effort values from request payloads. |
+| `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch"]` | Copilot-style edit tool declaration; currently supports `apply-patch`. |
+| `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | Derived from protocol | Copilot-style reasoning effort wire-format metadata: `chat` / `responses` / `anthropic`. |
+| `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | Empty | Declarative metadata only; it does not change upstream provider retention behavior. |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Request-side default output token budget. It only overrides request budgeting and is still capped by the model output limit. |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show "Generate Commit Message" command. |
 | `coding-plans.commitMessage.language` | `string` | `en` | Commit message language: `en` / `zh-cn`. |

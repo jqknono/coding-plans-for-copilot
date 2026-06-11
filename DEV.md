@@ -182,8 +182,10 @@ npm run test:pages
   - `openai-chat`：请求 `baseUrl + /chat/completions`
   - `openai-responses`：请求 `baseUrl + /responses`
   - `anthropic`：请求 `baseUrl + /messages`
+- `coding-plans.vendors[].apiType` 与 `coding-plans.vendors[].models[].apiType` 是 Copilot 风格协议别名：`chat` -> `openai-chat`、`responses` -> `openai-responses`、`anthropic` -> `anthropic`。不在 `vendors[].models[]` 中维护 `id` 或 `url`；模型 `name` 仍是上游 `model` 字段，接口地址仍来自 vendor `baseUrl`。
 - `coding-plans.vendors[].usageUrl` 为可选套餐 usage 接口；当前默认按 `Authorization: Bearer <API Key>` 轮询，并将识别到的小时额度、周额度或次数额度以百分比显示在状态栏。
-- `coding-plans.vendors[].models[].contextSize` 现在是描述模型上下文的首选字段。
+- `coding-plans.vendors[].models[].contextSize` 是描述模型总上下文的首选字段；显式 `maxInputTokens` / `maxOutputTokens` 会优先用于 VS Code 模型信息和请求预算。
+- `coding-plans.vendors[].models[].toolCalling` / `vision` 是 Copilot 风格能力别名，会归一化到 `capabilities.tools` / `capabilities.vision`。
 - `coding-plans.vendors[].models[].enabled` 默认 `true`；设为 `false` 时模型保留在配置中，但不会进入最终 Language Model 暴露列表，因此不会显示在 VS Code `Manage Language Models` 中。
 - 未配置 `contextSize` 时，扩展默认按 `400000` tokens 的总上下文窗口构建模型。
 - 运行时会按总上下文动态推导隐式输出预留：`min(30000, max(4096, floor(totalContextWindow * 0.2)))`；极小上下文窗口会再按总窗口安全收敛。
@@ -200,7 +202,9 @@ npm run test:pages
   - 建议：编码场景默认保持 `topP 0`；仅当上游明确需要或你想显式控制 nucleus sampling 时再设置为正数
   - `anthropic` 请求仅发送 `temperature`，不发送 `top_p`，以兼容会拒绝同时指定两者的上游
 - 新增 thinking effort：
-  - 相关项均作为 API 调用方传入的请求级覆盖项；不提供 vendor/provider/model 级持久 thinking 配置，避免一个 provider 配置影响同组全部模型
+  - effort 具体值仍来自 API 调用方传入的请求级覆盖项；模型级 `thinking: false` 会隐藏并禁止发送 thinking/reasoning 参数，`supportsReasoningEffort` 会限制模型行可选项并阻止未声明值进入 payload。
+  - `editTools` 默认 `["apply-patch"]`，作为 Copilot 风格模型元数据透传；当前不扩展其他 edit tool。
+  - `reasoningEffortFormat` 与 `zeroDataRetentionEnabled` 作为 Copilot 风格元数据保留；后者不代表上游真实数据保留策略。
   - 继承顺序固定为 request modelOptions > 不发送
   - 协议映射：
     - `openai-chat`：使用 `request.modelOptions.thinkingEffort`，可选 `none` / `low` / `medium` / `high` / `xhigh` / `max`；模型行 `More Actions` 默认值为 `high`；`none` 发送 `thinking: { type: "disabled" }`，其余值发送 `thinking: { type: "enabled" }` 与对应 `reasoning_effort`
@@ -209,9 +213,9 @@ npm run test:pages
   - Moonshot/Kimi Anthropic-compatible 入口在 thinking + tool continuation 场景下可能要求上一条 assistant tool-call 历史消息携带非标准 `reasoning_content`，否则返回 `thinking is enabled but reasoning_content is missing in assistant tool call message`；当前不在 Anthropic 路径实现该字段的 tool continuation 回传，建议关闭 thinking 或改走 `openai-chat` 兼容 API。
 - 未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
-- 请求链路默认优先上游真实流式传输；若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志，不新增单独的 stream 配置开关。
-- `capabilities` 现在按必填语义处理；对旧配置要在归一化时自动补齐 `tools=true` 与 `vision=defaultVision`。
-- 当 `useModelsEndpoint: true` 时，刷新模型列表只按 `name` 同步增删；设置中已有模型项的 `description`、`temperature`、`topP`、`capabilities`、`contextSize` 等字段保持原样，新发现模型不自动写入采样参数。
+- 请求链路默认优先上游真实流式传输；若模型配置 `streaming: false`，直接发送非流式请求。若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志。
+- `capabilities` 可省略；归一化时自动补齐 `tools=true` 与 `vision=defaultVision`。
+- 当 `useModelsEndpoint: true` 时，刷新模型列表只按 `name` 同步增删；设置中已有模型项的 `description`、`temperature`、`topP`、`capabilities`、`contextSize`、`maxInputTokens`、`maxOutputTokens`、`apiType`、`streaming`、`thinking`、`editTools`、`supportsReasoningEffort` 等字段保持原样，新发现模型不自动写入采样参数。
 - 若修改协议相关行为，请同步检查：
   - `src/providers/genericProvider.ts`
   - `src/config/configStore.ts`

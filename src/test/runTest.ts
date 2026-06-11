@@ -13,15 +13,24 @@ type VendorModelRecord = {
   enabled?: boolean;
   description?: string;
   apiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
+  apiType?: 'chat' | 'responses' | 'anthropic';
   temperature?: number;
   topP?: number;
   capabilities?: {
     tools?: boolean;
     vision?: boolean;
   };
+  toolCalling?: boolean | number;
+  vision?: boolean;
   contextSize?: number;
   maxInputTokens?: number;
   maxOutputTokens?: number;
+  streaming?: boolean;
+  thinking?: boolean;
+  editTools?: string[];
+  supportsReasoningEffort?: Array<'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max'>;
+  reasoningEffortFormat?: 'chat' | 'responses' | 'anthropic';
+  zeroDataRetentionEnabled?: boolean;
 };
 
 type VendorRecord = {
@@ -29,6 +38,7 @@ type VendorRecord = {
   baseUrl: string;
   apiKey?: string;
   usageUrl?: string;
+  apiType?: 'chat' | 'responses' | 'anthropic';
   defaultApiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
   defaultTemperature?: number;
   defaultTopP?: number;
@@ -990,6 +1000,84 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
   } finally {
     configStore.dispose();
   }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    apiType: 'responses',
+    defaultVision: false,
+    models: [{
+      name: 'gpt-5.5',
+      apiType: 'responses',
+      maxInputTokens: 400000,
+      maxOutputTokens: 128000,
+      toolCalling: true,
+      vision: true,
+      streaming: false,
+      thinking: true,
+      editTools: ['apply-patch'],
+      supportsReasoningEffort: ['high', 'xhigh'],
+      reasoningEffortFormat: 'responses',
+      zeroDataRetentionEnabled: false
+    }]
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    const vendor = configStore.getVendors()[0];
+    const model = vendor?.models[0];
+    assert.equal(vendor?.apiType, 'responses');
+    assert.equal(vendor?.defaultApiStyle, 'openai-responses');
+    assert.equal(model?.apiType, 'responses');
+    assert.equal(model?.apiStyle, 'openai-responses');
+    assert.equal(model?.maxInputTokens, 400000);
+    assert.equal(model?.maxOutputTokens, 128000);
+    assert.deepEqual(model?.capabilities, { tools: true, vision: true });
+    assert.equal(model?.toolCalling, true);
+    assert.equal(model?.vision, true);
+    assert.equal(model?.streaming, false);
+    assert.equal(model?.thinking, true);
+    assert.deepEqual(model?.editTools, ['apply-patch']);
+    assert.deepEqual(model?.supportsReasoningEffort, ['high', 'xhigh']);
+    assert.equal(model?.reasoningEffortFormat, 'responses');
+    assert.equal(model?.zeroDataRetentionEnabled, false);
+    console.log('PASS Copilot 风格模型参数可归一化到现有 vendor/model 配置');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-responses',
+    defaultVision: false,
+    models: [{
+      name: 'gpt-5.5',
+      apiType: 'responses',
+      editTools: ['apply-patch'],
+      supportsReasoningEffort: ['high', 'xhigh'],
+      streaming: false,
+      zeroDataRetentionEnabled: false
+    }]
+  }]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    await configStore.updateVendorModels('Vendor', [
+      { name: 'gpt-5.5' } as VendorModelRecord,
+      { name: 'new-model' } as VendorModelRecord
+    ]);
+    const updatedVendor = getUpdatedVendor(activeState);
+    const preservedModel = updatedVendor.models.find(model => model.name === 'gpt-5.5');
+    assert.equal(preservedModel?.apiType, 'responses');
+    assert.deepEqual(preservedModel?.editTools, ['apply-patch']);
+    assert.deepEqual(preservedModel?.supportsReasoningEffort, ['high', 'xhigh']);
+    assert.equal(preservedModel?.streaming, false);
+    assert.equal(preservedModel?.zeroDataRetentionEnabled, false);
+    console.log('PASS updateVendorModels 写回时保留 Copilot 风格模型覆盖字段');
+  } finally {
+    configStore.dispose();
+  }
 }
 
 async function runConfigStoreVendorApiKeySecretStorageTests(configStoreCtor: ConfigStoreCtor): Promise<void> {
@@ -1210,10 +1298,10 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
   }
 }
 
-function runGenericProviderContextSizeTests(
+async function runGenericProviderContextSizeTests(
   configStoreCtor: ConfigStoreCtor,
   genericProviderModule: GenericProviderModule
-): void {
+): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
   activeState = createState([{
     name: 'Vendor',
@@ -1328,6 +1416,96 @@ function runGenericProviderContextSizeTests(
       zeroUnsetProvider.dispose();
       zeroUnsetConfigStore.dispose();
     }
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'copilot-runtime',
+      apiType: 'responses',
+      contextSize: 640000,
+      maxInputTokens: 400000,
+      maxOutputTokens: 128000,
+      toolCalling: true,
+      vision: true,
+      streaming: false,
+      thinking: true,
+      editTools: ['apply-patch'],
+      supportsReasoningEffort: ['high', 'xhigh'],
+      reasoningEffortFormat: 'responses',
+      zeroDataRetentionEnabled: false
+    }]
+  }]);
+
+  const copilotConfigStore = new configStoreCtor(createExtensionContext() as never);
+  const copilotProvider = new GenericAIProvider(createExtensionContext() as never, copilotConfigStore) as unknown as {
+    buildConfiguredModelsForVendor(vendor: VendorRecord): Array<{
+      apiStyle?: string;
+      apiType?: string;
+      maxTokens: number;
+      maxInputTokens: number;
+      maxOutputTokens: number;
+      capabilities?: { toolCalling?: boolean | number; imageInput?: boolean };
+      streaming?: boolean;
+      thinking?: boolean;
+      editTools?: string[];
+      supportsReasoningEffort?: string[];
+      reasoningEffortFormat?: string;
+      zeroDataRetentionEnabled?: boolean;
+    }>;
+    dispose(): void;
+  };
+
+  try {
+    const vendor = copilotConfigStore.getVendors()[0] as VendorRecord;
+    const models = copilotProvider.buildConfiguredModelsForVendor(vendor);
+    assert.equal(models[0]?.apiStyle, 'openai-responses');
+    assert.equal(models[0]?.apiType, 'responses');
+    assert.equal(models[0]?.maxTokens, 640000);
+    assert.equal(models[0]?.maxInputTokens, 400000);
+    assert.equal(models[0]?.maxOutputTokens, 128000);
+    assert.deepEqual(models[0]?.capabilities, { toolCalling: true, imageInput: true });
+    assert.equal(models[0]?.streaming, false);
+    assert.equal(models[0]?.thinking, true);
+    assert.deepEqual(models[0]?.editTools, ['apply-patch']);
+    assert.deepEqual(models[0]?.supportsReasoningEffort, ['high', 'xhigh']);
+    assert.equal(models[0]?.reasoningEffortFormat, 'responses');
+    assert.equal(models[0]?.zeroDataRetentionEnabled, false);
+    console.log('PASS GenericAIProvider 构建模型时应用 Copilot 风格参数');
+  } finally {
+    copilotProvider.dispose();
+    copilotConfigStore.dispose();
+  }
+
+  activeState = createState([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-chat',
+    defaultVision: false,
+    models: [{
+      name: 'default-edit-tool'
+    }]
+  }]);
+
+  const defaultEditToolConfigStore = new configStoreCtor(createExtensionContext() as never);
+  const defaultEditToolProvider = new GenericAIProvider(createExtensionContext() as never, defaultEditToolConfigStore) as unknown as {
+    refreshModels(): Promise<void>;
+    getAvailableModels(): Array<{
+      editTools: readonly string[];
+    }>;
+    dispose(): void;
+  };
+
+  try {
+    await defaultEditToolProvider.refreshModels();
+    assert.deepEqual(defaultEditToolProvider.getAvailableModels()[0]?.editTools, ['apply-patch']);
+    console.log('PASS 运行时模型默认声明 apply-patch editTool');
+  } finally {
+    defaultEditToolProvider.dispose();
+    defaultEditToolConfigStore.dispose();
   }
 }
 
@@ -2502,6 +2680,47 @@ async function runGenericProviderThinkingEffortTests(
   assert.equal('temperature' in openAIResponsesPayload, false);
   assert.equal(openAIResponsesPayload.instructions, 'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.');
   console.log('PASS openai-responses 会按请求级 thinkingEffort 发送 reasoning.effort');
+
+  const unsupportedOpenAIResponsesEffortPayload = await capturePayload([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-responses',
+    defaultVision: false,
+    models: [{
+      name: 'reasoner',
+      apiType: 'responses',
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000,
+      supportsReasoningEffort: ['xhigh'],
+      capabilities: { tools: false, vision: false }
+    }]
+  }], 'Vendor/reasoner', {
+    modelOptions: {
+      thinkingEffort: 'high'
+    }
+  });
+  assert.equal('reasoning' in unsupportedOpenAIResponsesEffortPayload, false);
+  console.log('PASS supportsReasoningEffort 会阻止未声明支持的 openai-responses effort 下发');
+
+  const nonStreamingOpenAIResponsesPayload = await capturePayload([{
+    name: 'Vendor',
+    baseUrl: 'https://example.test/v1',
+    defaultApiStyle: 'openai-responses',
+    defaultVision: false,
+    models: [{
+      name: 'reasoner',
+      maxInputTokens: 32000,
+      maxOutputTokens: 16000,
+      streaming: false,
+      capabilities: { tools: false, vision: false }
+    }]
+  }], 'Vendor/reasoner', {
+    modelOptions: {
+      thinkingEffort: 'xhigh'
+    }
+  });
+  assert.equal(nonStreamingOpenAIResponsesPayload.stream, false);
+  console.log('PASS streaming=false 会让 openai-responses 走非流式请求');
 
   const responsesReasoningFallbackPayloads = await captureOpenAIResponsesReasoningFallbackPayloads();
   assert.equal(responsesReasoningFallbackPayloads.length, 3);
@@ -4526,6 +4745,70 @@ async function runLMChatProviderAdapterModelFilteringTests(
       'none'
     );
 
+    availableModels = [{
+      ...models[0],
+      id: 'Vendor/limited',
+      name: 'limited',
+      apiType: 'responses',
+      editTools: ['apply-patch'],
+      supportsReasoningEffort: ['high', 'xhigh'],
+      reasoningEffortFormat: 'responses',
+      zeroDataRetentionEnabled: false
+    } as never];
+    const limitedVendorModels = await adapter.provideLanguageModelChatInformation({
+      silent: true,
+      group: 'Vendor'
+    } as never, {} as never);
+    assert.deepEqual(
+      (limitedVendorModels[0] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            enum?: unknown[];
+            default?: unknown;
+          }>;
+        };
+      }).configurationSchema?.properties?.thinkingEffort?.enum,
+      ['high', 'xhigh']
+    );
+    assert.equal(
+      (limitedVendorModels[0] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, {
+            default?: unknown;
+          }>;
+        };
+      }).configurationSchema?.properties?.thinkingEffort?.default,
+      'high'
+    );
+    assert.deepEqual(
+      (limitedVendorModels[0] as unknown as { editTools?: readonly string[] }).editTools,
+      ['apply-patch']
+    );
+    assert.equal(
+      (limitedVendorModels[0] as unknown as { zeroDataRetentionEnabled?: boolean }).zeroDataRetentionEnabled,
+      false
+    );
+
+    availableModels = [{
+      ...models[0],
+      id: 'Vendor/non-thinking',
+      name: 'non-thinking',
+      thinking: false
+    } as never];
+    const nonThinkingVendorModels = await adapter.provideLanguageModelChatInformation({
+      silent: true,
+      group: 'Vendor'
+    } as never, {} as never);
+    assert.equal(
+      (nonThinkingVendorModels[0] as unknown as {
+        configurationSchema?: {
+          properties?: Record<string, unknown>;
+        };
+      }).configurationSchema?.properties?.thinkingEffort,
+      undefined
+    );
+    availableModels = models;
+
     const otherGroupModels = await adapter.provideLanguageModelChatInformation({
       silent: true,
       group: 'Other'
@@ -4970,7 +5253,7 @@ async function main(): Promise<void> {
     await runConfigNormalizationTests(ConfigStore);
     await runConfigStoreVendorApiKeySecretStorageTests(ConfigStore);
     runTokenWindowResolutionTests(baseProviderModule);
-    runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
+    await runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
     await runGenericProviderModelEnabledTests(ConfigStore, genericProviderModule);
     await runGenericProviderDiscoveryDefaultVisionTests(ConfigStore, genericProviderModule);
     await runGenericProviderModelChangeEventStabilityTests(ConfigStore, genericProviderModule);
@@ -5005,7 +5288,3 @@ void main().catch((error: unknown) => {
   console.error(error);
   process.exitCode = 1;
 });
-
-
-
-

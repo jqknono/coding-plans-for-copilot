@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import {
   DEFAULT_CONFIGURED_MODELS,
   DEFAULT_CONTEXT_WINDOW_SIZE,
+  DEFAULT_MODEL_EDIT_TOOLS,
   DEFAULT_RESERVED_OUTPUT_TOKENS,
   DEFAULT_TOKEN_SIDE_LIMIT,
   MODEL_VERSION_LABEL,
@@ -16,12 +17,16 @@ export interface ModelCapabilities {
   imageInput?: boolean;
 }
 
+export type ReasoningEffortValue = 'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
+export type ReasoningEffortFormat = 'chat' | 'responses' | 'anthropic';
+
 export interface AIModelConfig {
   id: string;
   vendor: string;
   family: string;
   name: string;
   apiStyle?: string;
+  apiType?: string;
   version?: string;
   /**
    * Total context window size in tokens.
@@ -36,6 +41,12 @@ export interface AIModelConfig {
    */
   maxOutputTokens?: number;
   capabilities?: ModelCapabilities;
+  streaming?: boolean;
+  thinking?: boolean;
+  editTools?: string[];
+  supportsReasoningEffort?: ReasoningEffortValue[];
+  reasoningEffortFormat?: ReasoningEffortFormat;
+  zeroDataRetentionEnabled?: boolean;
   description: string;
 }
 
@@ -176,11 +187,18 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   public readonly family: string;
   public readonly name: string;
   public readonly apiStyle?: string;
+  public readonly apiType?: string;
   public readonly version: string;
   public readonly maxTokens: number;
   public readonly maxInputTokens: number;
   public readonly maxOutputTokens: number;
   public readonly capabilities: vscode.LanguageModelChatCapabilities;
+  public readonly streaming?: boolean;
+  public readonly thinking?: boolean;
+  public readonly editTools: readonly string[];
+  public readonly supportsReasoningEffort?: readonly ReasoningEffortValue[];
+  public readonly reasoningEffortFormat?: ReasoningEffortFormat;
+  public readonly zeroDataRetentionEnabled?: boolean;
   public readonly description: string;
 
   constructor(
@@ -192,6 +210,7 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
     this.family = modelInfo.family;
     this.name = modelInfo.name;
     this.apiStyle = typeof modelInfo.apiStyle === 'string' ? modelInfo.apiStyle : undefined;
+    this.apiType = typeof modelInfo.apiType === 'string' ? modelInfo.apiType : undefined;
     this.version = modelInfo.version || MODEL_VERSION_LABEL;
     this.maxTokens = Math.max(1, Math.floor(modelInfo.maxTokens));
     this.maxInputTokens = Math.max(1, Math.floor(modelInfo.maxInputTokens ?? DEFAULT_TOKEN_SIDE_LIMIT));
@@ -200,6 +219,14 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
       toolCalling: true,
       imageInput: true
     };
+    this.streaming = modelInfo.streaming;
+    this.thinking = modelInfo.thinking;
+    this.editTools = modelInfo.editTools && modelInfo.editTools.length > 0
+      ? [...modelInfo.editTools]
+      : [...DEFAULT_MODEL_EDIT_TOOLS];
+    this.supportsReasoningEffort = modelInfo.supportsReasoningEffort;
+    this.reasoningEffortFormat = modelInfo.reasoningEffortFormat;
+    this.zeroDataRetentionEnabled = modelInfo.zeroDataRetentionEnabled;
     this.description = modelInfo.description;
   }
 

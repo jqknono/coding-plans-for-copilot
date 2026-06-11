@@ -5,6 +5,7 @@ import {
   AIModelConfig,
   ChatMessage,
   ChatToolCall,
+  ReasoningEffortValue,
   getCompactErrorMessage,
   normalizeHttpBaseUrl
 } from './baseProvider';
@@ -620,8 +621,11 @@ export class GenericAIProvider extends BaseAIProvider {
   private buildChatThinkingOptions(
     request: GenericChatRequest
   ): ResolvedThinkingOptions<Exclude<ChatThinkingEffort, 'none'>> | undefined {
+    if (!this.isModelThinkingEnabled(request)) {
+      return undefined;
+    }
     const thinkingEffort = this.readChatThinkingEffortFromModelOptions(request.options?.modelOptions);
-    if (!thinkingEffort) {
+    if (!thinkingEffort || !this.isReasoningEffortSupported(request, thinkingEffort)) {
       return undefined;
     }
 
@@ -644,12 +648,15 @@ export class GenericAIProvider extends BaseAIProvider {
   private buildOpenAIResponsesReasoningOptions(
     request: GenericChatRequest
   ): ResolvedOpenAIResponsesReasoningOptions | undefined {
+    if (!this.isModelThinkingEnabled(request)) {
+      return undefined;
+    }
     if (this.disabledOpenAIResponsesReasoningModelIds.has(request.modelId)) {
       return undefined;
     }
 
     const effort = this.readOpenAIResponsesThinkingEffortFromModelOptions(request.options?.modelOptions);
-    if (!effort) {
+    if (!effort || !this.isReasoningEffortSupported(request, effort)) {
       return undefined;
     }
 
@@ -661,17 +668,33 @@ export class GenericAIProvider extends BaseAIProvider {
   }
 
   private buildAnthropicThinkingOptions(request: GenericChatRequest): ResolvedAnthropicThinkingOptions | undefined {
+    if (!this.isModelThinkingEnabled(request)) {
+      return undefined;
+    }
     const modelOptions = request.options?.modelOptions;
     const thinking = this.readAnthropicThinkingFromModelOptions(modelOptions);
     const effort = this.readAnthropicEffortFromModelOptions(modelOptions);
-    if (thinking === undefined && !effort) {
+    const supportedEffort = effort && this.isReasoningEffortSupported(request, effort) ? effort : undefined;
+    if (thinking === undefined && !supportedEffort) {
       return undefined;
     }
 
     return {
       ...(thinking === undefined ? {} : { thinking: { type: thinking ? 'adaptive' : 'disabled' } as const }),
-      ...(effort ? { effort } : {})
+      ...(supportedEffort ? { effort: supportedEffort } : {})
     };
+  }
+
+  private isModelThinkingEnabled(request: GenericChatRequest): boolean {
+    return this.getModel(request.modelId)?.thinking !== false;
+  }
+
+  private isReasoningEffortSupported(request: GenericChatRequest, effort: ReasoningEffortValue): boolean {
+    const supported = this.getModel(request.modelId)?.supportsReasoningEffort;
+    if (!supported || supported.length === 0) {
+      return true;
+    }
+    return supported.includes(effort);
   }
 
   private readChatThinkingEffortFromModelOptions(modelOptions: unknown): ChatThinkingEffort | undefined {
@@ -839,11 +862,12 @@ export class GenericAIProvider extends BaseAIProvider {
   ): AIModelConfig {
     const resolvedTokens = this.resolveTokenWindowLimits(
       model.contextSize ?? DEFAULT_CONTEXT_WINDOW_SIZE,
-      undefined,
-      undefined
+      model.maxInputTokens,
+      model.maxOutputTokens
     );
-    const toolCalling = model.capabilities?.tools ?? DEFAULT_MODEL_TOOLS;
-    const imageInput = model.capabilities?.vision ?? vendor.defaultVision;
+    const toolCalling = model.toolCalling ?? model.capabilities?.tools ?? DEFAULT_MODEL_TOOLS;
+    const imageInput = model.vision ?? model.capabilities?.vision ?? vendor.defaultVision;
+    const apiStyle = model.apiStyle ?? vendor.defaultApiStyle;
 
     return {
       id: compositeId,
@@ -855,9 +879,28 @@ export class GenericAIProvider extends BaseAIProvider {
       maxInputTokens: resolvedTokens.maxInputTokens,
       maxOutputTokens: resolvedTokens.maxOutputTokens,
       capabilities: { toolCalling, imageInput },
-      apiStyle: model.apiStyle ?? vendor.defaultApiStyle,
+      apiStyle,
+      apiType: model.apiType ?? this.apiStyleToApiType(apiStyle),
+      streaming: model.streaming,
+      thinking: model.thinking,
+      editTools: model.editTools,
+      supportsReasoningEffort: model.supportsReasoningEffort,
+      reasoningEffortFormat: model.reasoningEffortFormat ?? this.apiStyleToReasoningEffortFormat(apiStyle),
+      zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
       description: model.description || getMessage('genericDynamicModelDescription', vendor.name, model.name)
     };
+  }
+
+  private apiStyleToApiType(apiStyle: VendorApiStyle): 'chat' | 'responses' | 'anthropic' {
+    return apiStyle === 'openai-responses'
+      ? 'responses'
+      : apiStyle === 'anthropic'
+        ? 'anthropic'
+        : 'chat';
+  }
+
+  private apiStyleToReasoningEffortFormat(apiStyle: VendorApiStyle): 'chat' | 'responses' | 'anthropic' {
+    return this.apiStyleToApiType(apiStyle);
   }
 
   private buildConfiguredModelsForVendor(vendor: VendorConfig): AIModelConfig[] {
@@ -1148,6 +1191,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const thinkingOptions = this.buildChatThinkingOptions(request);
     const tools = supportsToolCalling ? this.buildToolDefinitions(request.options) : undefined;
     const toolChoice = supportsToolCalling ? this.buildToolChoice(request.options) : undefined;
+    const streamAllowed = this.isStreamingAllowed(request);
     const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName, 'openai-chat')
       ? this.resolveRequestedOutputLimit(request)
       : undefined;
@@ -1158,7 +1202,7 @@ export class GenericAIProvider extends BaseAIProvider {
       messages,
       tools,
       tool_choice: toolChoice,
-      stream: true,
+      stream: streamAllowed,
       ...(sampling.temperature === undefined ? {} : { temperature: sampling.temperature }),
       ...(sampling.topP > 0 ? { top_p: sampling.topP } : {}),
       ...(thinkingOptions?.thinking ? { thinking: thinkingOptions.thinking } : {}),
@@ -1372,6 +1416,7 @@ export class GenericAIProvider extends BaseAIProvider {
       : undefined;
     const toolChoice = request.capabilities.toolCalling ? this.buildToolChoice(request.options) : undefined;
     const responsesToolChoice = toolChoice === 'required' ? toolChoice : undefined;
+    const streamAllowed = this.isStreamingAllowed(request);
     const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName, 'openai-responses')
       ? this.resolveRequestedOutputLimit(request)
       : undefined;
@@ -1386,7 +1431,7 @@ export class GenericAIProvider extends BaseAIProvider {
       tool_choice: responsesToolChoice,
       ...(sampling.topP > 0 ? { top_p: sampling.topP } : {}),
       ...(reasoningOptions?.reasoning ? { reasoning: reasoningOptions.reasoning } : {}),
-      stream: true,
+      stream: streamAllowed,
       ...(maxOutputTokens === undefined ? {} : { max_output_tokens: maxOutputTokens })
     };
 
@@ -1582,7 +1627,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const thinkingOptions = this.buildAnthropicThinkingOptions(request);
     const { system, messages } = toAnthropicMessages(providerMessages, () => this.generateToolCallId());
     const tools = request.capabilities.toolCalling ? buildAnthropicToolDefinitions(this.buildToolDefinitions(request.options)) : undefined;
-    const streamAllowed = !this.isStreamingDisabledForSession(request.modelId);
+    const streamAllowed = this.isStreamingAllowed(request);
     const requestedOutputLimit = this.shouldSendOutputTokenLimit(vendor, modelName, 'anthropic')
       ? this.resolveRequestedOutputLimit(request)
       : undefined;
@@ -2470,6 +2515,10 @@ export class GenericAIProvider extends BaseAIProvider {
     return this.disabledStreamingModelIds.has(modelId);
   }
 
+  private isStreamingAllowed(request: GenericChatRequest): boolean {
+    return this.getModel(request.modelId)?.streaming !== false && !this.isStreamingDisabledForSession(request.modelId);
+  }
+
   private disableStreamingForSession(
     modelId: string,
     reason: string,
@@ -3140,9 +3189,6 @@ export class GenericAIProvider extends BaseAIProvider {
     }
   }
 }
-
-
-
 
 
 

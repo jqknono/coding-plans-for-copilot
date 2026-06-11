@@ -286,13 +286,21 @@
                                 "maximum": 1,
                                 "description": "%configuration.coding-plans.vendors.defaultTopP.description%"
                             },
+                            "apiType": {
+                                "type": "string",
+                                "enum": [
+                                    "chat",
+                                    "responses",
+                                    "anthropic"
+                                ],
+                                "description": "Copilot-style API protocol alias for defaultApiStyle. Use responses for /responses, chat for /chat/completions, or anthropic for /messages."
+                            },
                             "models": {
                                 "type": "array",
                                 "items": {
                                     "type": "object",
                                     "required": [
-                                        "name",
-                                        "capabilities"
+                                        "name"
                                     ],
                                     "properties": {
                                         "name": {
@@ -352,9 +360,29 @@
                                                 "vision"
                                             ]
                                         },
+                                        "toolCalling": {
+                                            "type": "boolean",
+                                            "default": true,
+                                            "description": "Copilot-style alias for capabilities.tools."
+                                        },
+                                        "vision": {
+                                            "type": "boolean",
+                                            "default": false,
+                                            "description": "Copilot-style alias for capabilities.vision."
+                                        },
                                         "contextSize": {
                                             "type": "number",
                                             "description": "Preferred total context window size for the model. When omitted, the extension defaults to 400000 tokens. Language model context display uses this value directly when provided, and runtime derives the output budget from this total window."
+                                        },
+                                        "maxInputTokens": {
+                                            "type": "number",
+                                            "minimum": 1,
+                                            "description": "Maximum input tokens exposed to VS Code for this model. Takes precedence over contextSize-derived input budget."
+                                        },
+                                        "maxOutputTokens": {
+                                            "type": "number",
+                                            "minimum": 1,
+                                            "description": "Maximum output tokens exposed to VS Code for this model. Takes precedence over contextSize-derived output budget."
                                         },
                                         "apiStyle": {
                                             "type": "string",
@@ -364,6 +392,66 @@
                                                 "anthropic"
                                             ],
                                             "description": "Optional per-model API protocol style. When set, it overrides the vendor defaultApiStyle. For openai-responses models, request usage is read from the /responses result when available."
+                                        },
+                                        "apiType": {
+                                            "type": "string",
+                                            "enum": [
+                                                "chat",
+                                                "responses",
+                                                "anthropic"
+                                            ],
+                                            "description": "Copilot-style API protocol alias for apiStyle."
+                                        },
+                                        "streaming": {
+                                            "type": "boolean",
+                                            "default": true,
+                                            "description": "Whether this model should use streaming requests when supported."
+                                        },
+                                        "thinking": {
+                                            "type": "boolean",
+                                            "default": true,
+                                            "description": "Whether to expose and send reasoning/thinking controls for this model."
+                                        },
+                                        "editTools": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "apply-patch"
+                                                ]
+                                            },
+                                            "default": [
+                                                "apply-patch"
+                                            ],
+                                            "description": "Copilot-style edit tools supported by this model."
+                                        },
+                                        "supportsReasoningEffort": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "none",
+                                                    "low",
+                                                    "medium",
+                                                    "high",
+                                                    "xhigh",
+                                                    "max"
+                                                ]
+                                            },
+                                            "description": "Allowed reasoning effort values for this model. When set, More Actions and request payloads are limited to these values."
+                                        },
+                                        "reasoningEffortFormat": {
+                                            "type": "string",
+                                            "enum": [
+                                                "chat",
+                                                "responses",
+                                                "anthropic"
+                                            ],
+                                            "description": "Copilot-style reasoning effort wire format metadata. Defaults to the selected API style."
+                                        },
+                                        "zeroDataRetentionEnabled": {
+                                            "type": "boolean",
+                                            "description": "Declarative Copilot-style metadata. This does not change upstream provider retention behavior."
                                         }
                                     }
                                 },

@@ -132,9 +132,18 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
       "models": [
         {
           "name": "gpt-5",
+          "apiType": "responses",
           "enabled": true,
-          "capabilities": { "tools": true, "vision": false },
-          "contextSize": 400000
+          "editTools": ["apply-patch"],
+          "maxInputTokens": 400000,
+          "maxOutputTokens": 128000,
+          "reasoningEffortFormat": "responses",
+          "streaming": true,
+          "supportsReasoningEffort": ["high", "xhigh"],
+          "thinking": true,
+          "toolCalling": true,
+          "vision": false,
+          "zeroDataRetentionEnabled": false
         }
       ]
     }
@@ -153,6 +162,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].apiKey` | `string` | 空 | 已废弃。供应商 API Key；非空时优先于 VS Code Secret Storage 中保存的同名供应商密钥。 |
 | `coding-plans.vendors[].usageUrl` | `string` | 空 | 套餐 usage 接口地址，配置后状态栏显示额度百分比。 |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | 协议风格：`openai-chat` / `openai-responses` / `anthropic`。 |
+| `coding-plans.vendors[].apiType` | `string` | 空 | Copilot 风格协议别名：`chat` / `responses` / `anthropic`；未配置时使用 `defaultApiStyle`。 |
 | `coding-plans.vendors[].defaultTemperature` | `number` / `null` | 空 | 已废弃。供应商默认 temperature；留空或 `null` 时运行时不发送 `temperature`。仅 `openai-chat` 与 `anthropic` 运行时使用该值。 |
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | 供应商默认 topP；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | 是否从 `/models` 拉取模型列表；执行 `Coding Plans: Update Coding Plans Models List` 后会将发现到的模型写回 `models`。 |
@@ -160,10 +170,21 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].enabled` | `boolean` | `true` | 是否在 Manage Language Models 中显示该模型；设为 `false` 时保留配置但隐藏。 |
 | `coding-plans.vendors[].models[].description` | `string` | 空 | 模型描述。 |
 | `coding-plans.vendors[].models[].apiStyle` | `string` | 继承供应商 | 模型级协议风格覆盖。 |
+| `coding-plans.vendors[].models[].apiType` | `string` | 空 | Copilot 风格协议别名；`responses` 等价于 `apiStyle: "openai-responses"`。 |
 | `coding-plans.vendors[].models[].temperature` | `number` / `"inherit"` | `"inherit"` | 已废弃。模型级 temperature 覆盖；`"inherit"` 表示使用供应商 `defaultTemperature`。仅 `openai-chat` 与 `anthropic` 运行时使用该值。Responses API 模型行请使用 `Personality`。 |
 | `coding-plans.vendors[].models[].topP` | `number` | 继承供应商 | 模型级 topP 覆盖；`0` 表示不发送 `top_p`。`anthropic` 风格请求始终忽略该值，不发送 `top_p`。 |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | 模型能力声明。 |
+| `coding-plans.vendors[].models[].toolCalling` | `boolean` / `number` | `true` | Copilot 风格工具调用能力别名；等价于 `capabilities.tools`。 |
+| `coding-plans.vendors[].models[].vision` | `boolean` | 继承 `defaultVision` | Copilot 风格视觉能力别名；等价于 `capabilities.vision`。 |
 | `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | 模型总上下文窗口；未配置时默认 400k，运行时会基于它推导输入/输出预算。 |
+| `coding-plans.vendors[].models[].maxInputTokens` | `number` | 由 `contextSize` 推导 | 显式输入 token 上限，优先于 `contextSize` 推导值。 |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | 由 `contextSize` 推导 | 显式输出 token 上限，优先于 `contextSize` 推导值。 |
+| `coding-plans.vendors[].models[].streaming` | `boolean` | `true` | 是否优先使用流式请求；设为 `false` 时发送非流式请求。 |
+| `coding-plans.vendors[].models[].thinking` | `boolean` | `true` | 是否展示并发送 reasoning/thinking 相关参数；设为 `false` 时不暴露对应模型行选项。 |
+| `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | 协议默认值 | 限制模型行 `Thinking Effort` / `Effort` 可选项，并阻止未声明值进入请求 payload。 |
+| `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch"]` | Copilot 风格编辑工具声明；当前支持 `apply-patch`。 |
+| `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | 由协议推导 | Copilot 风格 reasoning effort 格式元数据：`chat` / `responses` / `anthropic`。 |
+| `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | 空 | 声明性元数据，不代表上游真实数据保留策略。 |
 | `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | 请求侧默认输出 token 预算；仅作为发送请求时的预算覆盖值，最终仍会按模型输出上限收敛。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示"生成 Commit 消息"命令。 |
 | `coding-plans.commitMessage.language` | `string` | `en` | 提交消息语言：`en` / `zh-cn`。 |
