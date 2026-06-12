@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-06-11T09:37:28.603Z",
-  "generatedAtBeijing": "2026年6月11日 17:37:28",
-  "sourceGeneratedAt": "2026-06-11T09:37:14.122Z",
-  "sourceGeneratedAtBeijing": "2026年6月11日 17:37:14",
-  "sourceMetricsGeneratedAt": "2026-06-11T09:37:14.916Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年6月11日 17:37:14",
+  "generatedAt": "2026-06-12T09:31:53.247Z",
+  "generatedAtBeijing": "2026年6月12日 17:31:53",
+  "sourceGeneratedAt": "2026-06-12T09:31:37.982Z",
+  "sourceGeneratedAtBeijing": "2026年6月12日 17:31:37",
+  "sourceMetricsGeneratedAt": "2026-06-12T09:31:38.678Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年6月12日 17:31:38",
   "summary": {
     "openrouterProviderCount": 85,
-    "metricsProviderCount": 39,
-    "resolvedMetricsProviderCount": 39,
+    "metricsProviderCount": 37,
+    "resolvedMetricsProviderCount": 37,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 8,
     "providersWithPlans": 17,
-    "pendingCount": 22,
+    "pendingCount": 20,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -58,7 +58,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/996e4fbbea39bc41f361eca61e81461b.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/2ab2c5eb4f29e63c3e4eaf16060f351b.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -405,7 +405,10 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://mistral.ai/pricing/",
-          "serviceDetails": null
+          "serviceDetails": [
+            "More access and usage.",
+            "More messages and web searches."
+          ]
         }
       ],
       "sourceUrls": [
@@ -650,33 +653,33 @@
       "sourceUrls": [
         "https://www.morphllm.com",
         "https://www.morphllm.com/pricing",
-        "https://www.morphllm.com/_next/static/chunks/e71582e39e79ca75.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/09b4d3ed10a8680b.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/048634a2386705b3.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/d7a70bec9fab469e.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/turbopack-ff4db129f7427b03.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/fe89d246759eb546.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/a801ccbb12136f9b.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/3017aa24ae074ead.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/7e76dc85684e541f.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/5b6d1714a90c444e.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP",
-        "https://www.morphllm.com/_next/static/chunks/38ab0f46f4b79c9c.js?dpl=dpl_A7URWNn9X3iD9kZwVTEPT3T8AwcP"
+        "https://www.morphllm.com/_next/static/chunks/e71582e39e79ca75.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/40be02a47cf8fd06.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/048634a2386705b3.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/005d8720e6c51ea3.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/turbopack-cc60d601c8a1f980.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/a90a78e20a15801c.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/a801ccbb12136f9b.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/3017aa24ae074ead.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/aacb85fdca0b7903.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/8553b770d32ca936.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/7e8e9ef88bcf2fc3.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/5b6d1714a90c444e.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L",
+        "https://www.morphllm.com/_next/static/chunks/2a17c8214bb4864c.js?dpl=dpl_EVJAmfTHGj2VWpbUcgjZgXJu8h8L"
       ],
       "pricingPageUrl": "https://www.morphllm.com/pricing",
       "officialWebsiteUrl": "https://www.morphllm.com",
@@ -758,7 +761,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.302/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.306/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1077,7 +1080,7 @@
           "unit": "月",
           "notes": "$18 / month from 2nd month",
           "serviceDetails": [
-            "3x higher Claude Pro usage limits",
+            "Base usage allowance included",
             "Built for lightweight iteration on small repo",
             "Rolling access to the latest flagship models and features",
             "Supports 20+ coding tools, including Claude Code"
@@ -1176,15 +1179,6 @@
       "blocked": false
     },
     {
-      "slug": "decart",
-      "openrouterName": "Decart",
-      "providerId": null,
-      "officialWebsiteUrl": "https://cogito.decart.ai",
-      "pricingPageUrl": "https://cogito.decart.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 5 / $ 0.74 / $ 0.37）",
-      "blocked": false
-    },
-    {
       "slug": "deepinfra",
       "openrouterName": "DeepInfra",
       "providerId": null,
@@ -1272,15 +1266,6 @@
       "officialWebsiteUrl": "https://modelrun.org",
       "pricingPageUrl": "https://modelrun.org",
       "reason": "官网价格页探测失败：https://modelrun.org/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "nextbit",
-      "openrouterName": "NextBit",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.nextbit256.com",
-      "pricingPageUrl": "https://www.nextbit256.com",
-      "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
       "blocked": false
     },
     {
