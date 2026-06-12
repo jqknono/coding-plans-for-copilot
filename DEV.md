@@ -175,7 +175,7 @@ npm run test:pages
 ## 多协议供应商接入说明
 
 - 配置入口优先使用 `Coding Plans: Manage Vendor Configuration`。该命令从 `coding-plans.vendors` 动态生成供应商 QuickPick，选择供应商后可设置 API Key、刷新模型或打开供应商设置。
-- API Key 推荐通过 VS Code Secret Storage 保存；`coding-plans.vendors[].apiKey` 作为已废弃字段保留，非空时优先于 Secret Storage 生效。
+- API Key 推荐通过 VS Code Secret Storage 保存；`coding-plans.vendors[].apiKey` 作为已废弃字段保留，非空时优先于 Secret Storage 生效。若当前供应商没有密钥，会按相同 `baseUrl` 从其它 `vendors[].apiKey` 兜底读取。
 - VS Code 1.120 起按公开 `LanguageModelChatProvider` 接口直接枚举 provider 模型；当前实现通过 `languageModelChatProviders` contribution 声明 vendor，并在运行时注册 `registerLanguageModelChatProvider('coding-plans', adapter)`，不依赖 `managementCommand`。
 - 调试请求链路时，可通过 `coding-plans.logLevel` 控制输出面板日志级别；需要完整追踪时切到 `debug`，日常建议保持 `info`。
 - `coding-plans.vendors[].defaultApiStyle` 用于声明供应商默认协议风格，模型也可以通过 `coding-plans.vendors[].models[].apiStyle` 单独覆盖：
@@ -186,7 +186,7 @@ npm run test:pages
 - `coding-plans.vendors[].models[].contextSize` 是模型总上下文窗口主字段；自动刷新时取 models.dev 的 `limit.context`。同时存在时优先于 `maxInputTokens/maxOutputTokens`，运行时按 `maxInputTokens=80%` 与 `maxOutputTokens=20%` 拆分，避免 VS Code Language Models 把上下文窗口显示为超出总窗口。
 - `coding-plans.vendors[].models[].price.inputCost` / `cacheCost` / `outputCost` 是 VS Code Manage Language Models 成本列读取的 Copilot 风格元数据，单位为 credits / 1M tokens。
 - `coding-plans.vendors[].models[].toolCalling` / `vision` 是 Copilot 风格能力别名，会归一化到 `capabilities.tools` / `capabilities.vision`。
-- `/models` 刷新成功后会优先读取 `https://models.dev/catalog.json`，失败时回退 `https://models.dev/api.json`，只按模型 ID/名称匹配并为新发现模型补全 `description`、`capabilities`、`contextSize`、`price`；匹配时忽略模型名最后路径段中 `:` 后的标记（如 `:free`）；`description` 格式为 `id | Lab | Family | Weights | ReleaseDate`，其中 `Lab` 来自模型 ID 前缀而非 provider；`capabilities.thinking` 对应 models.dev 的 `reasoning`；价格优先取与当前供应商同名的 models.dev provider，若没有则按所有匹配 provider 的价格字段取中位数；获取失败或无法匹配时保持上游 `/models` 结果和本工程预置值。
+- `/models` 刷新成功后会优先读取 `https://models.dev/catalog.json`，失败时回退 `https://models.dev/api.json`，只按模型 ID/名称匹配并为新发现模型补全 `description`、`capabilities`、`contextSize`、`price`；匹配时忽略模型名最后路径段中 `:` 后的标记（如 `:free`）；`description` 格式为 `id | Lab | Family | Weights | ReleaseDate`，其中 `Lab` 来自模型 ID 前缀；`capabilities.thinking` 对应 models.dev 的 `reasoning`；价格按所有匹配模型来源取中位数，不使用本地供应商名匹配 models.dev provider；获取失败或无法匹配时保持上游 `/models` 结果和本工程预置值。
 - `coding-plans.vendors[].models[].enabled` 默认 `true`；设为 `false` 时模型保留在配置中，但不会进入最终 Language Model 暴露列表，因此不会显示在 VS Code `Manage Language Models` 中。
 - 未配置 `maxInputTokens` / `contextSize` 时，扩展默认按 `400000` tokens 输入上下文窗口构建模型。
 - 配置了 `contextSize` 时，扩展按 80%/20% 拆分模型声明的输入/输出窗口；未配置 `contextSize` 时，`maxOutputTokens` 缺省使用 `30000` tokens 默认输出上限。
@@ -213,11 +213,12 @@ npm run test:pages
     - `anthropic`：使用 `request.modelOptions.thinking` 作为开关，`true` 发送 `thinking: { type: "adaptive" }`，`false` 发送 `thinking: { type: "disabled" }`；使用 `request.modelOptions.effort` 发送 `output_config.effort`，可选 `low` / `medium` / `high` / `xhigh` / `max`
   - Moonshot/Kimi Anthropic-compatible 入口在 thinking + tool continuation 场景下可能要求上一条 assistant tool-call 历史消息携带非标准 `reasoning_content`，否则返回 `thinking is enabled but reasoning_content is missing in assistant tool call message`；当前不在 Anthropic 路径实现该字段的 tool continuation 回传，建议关闭 thinking 或改走 `openai-chat` 兼容 API。
 - 未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
-- `/models` 自动发现新增模型时会写入推导出的 `models[].apiStyle`：OpenAI 来源模型使用 `openai-responses`，Anthropic 来源模型使用 `anthropic`，其它模型使用 `openai-chat`；已有模型配置不被刷新覆盖。
+- `/models` 自动发现新增模型时会写入推导出的 `models[].apiStyle`：仅模型自身标识为 OpenAI 来源时使用 `openai-responses`，仅模型自身标识为 Anthropic 来源时使用 `anthropic`，其它模型使用 `openai-chat`；已有手工模型配置不被刷新覆盖，扩展自动生成的 fallback 描述（如 `供应商名 model: 模型名`）可升级为 models.dev 新结构。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
 - 请求链路默认优先上游真实流式传输；若模型配置 `streaming: false`，直接发送非流式请求。若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志。
 - `capabilities` 可省略；归一化时自动补齐 `tools=true` 与 `vision=defaultVision`。
-- 当 `useModelsEndpoint: true` 时，刷新模型列表按 `name` 同步增删；设置中已有模型项保持原样，不用 `/models` 或 `models.dev` 的结果覆盖。只有模型不存在于 settings 时，才新增并填充 `description`、`capabilities`、`contextSize`、`price` 等自动元数据。
+- 当 `useModelsEndpoint: true` 时，刷新模型列表按 `name` 同步增删；设置中已有手工模型项保持原样，不用 `/models` 或 `models.dev` 的结果覆盖。只有模型不存在于 settings 时，才新增并填充 `description`、`capabilities`、`contextSize`、`price` 等自动元数据；若已有项是扩展生成的旧 fallback 结构，则可被新的 models.dev 元数据替换。
+- 保存 settings 只刷新运行时已配置模型；禁止配置变更监听自动请求 `/models` 或写回 `coding-plans.vendors[].models`。只有手动命令 `Coding Plans: Update Coding Plans Models List` 允许动态发现和写回模型列表。
 - 若修改协议相关行为，请同步检查：
   - `src/providers/genericProvider.ts`
   - `src/config/configStore.ts`

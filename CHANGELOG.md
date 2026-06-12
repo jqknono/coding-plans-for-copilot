@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.11.3] - 2026-06-12
+- feat(provider): 优化模型协议适配与请求格式定义
+- feat(config): 集成 models.dev 自动补全模型元数据
+- feat(config): 支持模型成本元数据配置
+- refactor(config): 移除配置项中的 toolCalling 和 vision 属性
+- refactor(config): 更新 reasoningEffortFormat 枚举值与逻辑
+- refactor(config): 移除已废弃的 apiType 配置字段
+- feat(core): 支持 multi-find-replace 编辑工具
+- build(config): 配置 editorconfig 与 prettier 相关环境
+- feat(config): 支持 Copilot 风格协议配置与模型参数扩展
+
 ## [0.10.2] - 2026-06-09
 - fix(assets): 优化套餐配置信息的文本格式
 - feat(commands): 新增更新模型列表命令
@@ -46,6 +57,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.8.1] - 2026-05-13
 - feat(config): 新增供应商配置管理向导并优化模型加载逻辑
-
-## [0.7.19] - 2026-05-08
-- feat(config): 更新内置供应商配置并优化模型视觉能力管理

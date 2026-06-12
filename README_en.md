@@ -58,8 +58,8 @@ Click the **Install** button on the marketplace page, which will automatically o
 3. Select "Set API Key" and paste your API Key; the extension stores it and refreshes models
 4. Open Copilot Chat (`Ctrl+L`) and choose a model provided by `Coding Plans` in the model picker
 5. To configure `topP`, set model-level overrides in `coding-plans.vendors[].models[]`; set `temperature` and `Thinking Effort` per request from the model row `More Actions` menu, where OpenAI Chat-compatible models support `none` / `low` / `medium` / `high` / `xhigh` / `max`; Responses API models show `Personality` in `More Actions` and apply it through `instructions`
-6. When a vendor has `useModelsEndpoint` enabled, run `Coding Plans: Update Coding Plans Models List` to request `/models`, write the result back to `coding-plans.vendors[].models`, and refresh the VS Code model picker.
-   - During refresh, the extension prefers [models.dev](https://models.dev/) `catalog.json` and falls back to `api.json` to enrich newly discovered models by model ID/name with `description`, `capabilities`, `contextSize`, `apiStyle`, and `price`. Matching ignores tags after `:` in the final model path segment, such as `:free`. The `description` shows `id | Lab | Family | Weights | ReleaseDate`, where `Lab` comes from the model ID prefix, not the provider. `capabilities.thinking` maps to models.dev `reasoning`. New model `apiStyle` is inferred from the model source: OpenAI uses `openai-responses`, Anthropic uses `anthropic`, and all others default to `openai-chat`. Prices prefer a models.dev provider with the same name as the configured vendor; otherwise they use the median price across all matching providers. If the catalog cannot be fetched or matched, it keeps the upstream `/models` data and built-in defaults. Existing model entries are not overwritten.
+6. When a vendor has `useModelsEndpoint` enabled, run `Coding Plans: Update Coding Plans Models List` to request `/models`, write the result back to `coding-plans.vendors[].models`, and refresh the VS Code model picker. Saving settings only refreshes currently configured models; it does not automatically request `/models` or write back the model list.
+   - During refresh, the extension prefers [models.dev](https://models.dev/) `catalog.json` and falls back to `api.json` to enrich newly discovered models by model ID/name with `description`, `capabilities`, `contextSize`, `apiStyle`, and `price`. Matching ignores tags after `:` in the final model path segment, such as `:free`. The `description` shows `id | Lab | Family | Weights | ReleaseDate`, where `Lab` comes from the model ID prefix. `capabilities.thinking` maps to models.dev `reasoning`. New model `apiStyle` is inferred only from the model source: OpenAI uses `openai-responses`, Anthropic uses `anthropic`, and all others default to `openai-chat`. Prices use the median across all matching model sources and do not match the local vendor name to a models.dev provider. If the catalog cannot be fetched or matched, it keeps the upstream `/models` data and built-in defaults. Existing manual model entries are not overwritten; extension-generated fallback descriptions such as `vendor model: model` can be upgraded to the models.dev structure.
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 
 ### Built-in Vendor Endpoints
@@ -172,7 +172,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors` | `array` | Built-in vendor templates | Vendor configuration list. |
 | `coding-plans.vendors[].name` | `string` | Required | Vendor unique name. |
 | `coding-plans.vendors[].baseUrl` | `string` | Required | API base address. |
-| `coding-plans.vendors[].apiKey` | `string` | Empty | Deprecated. Vendor API key. When non-empty, it takes precedence over the same vendor key stored in VS Code Secret Storage. |
+| `coding-plans.vendors[].apiKey` | `string` | Empty | Deprecated. Vendor API key. When non-empty, it takes precedence over the same vendor key stored in VS Code Secret Storage. If the current vendor has no key, another `vendors[].apiKey` with the same `baseUrl` can be used as a fallback. |
 | `coding-plans.vendors[].usageUrl` | `string` | Empty | Plan usage API address; when configured, status bar displays quota percentage. |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Protocol style: `openai-chat` / `openai-responses` / `anthropic`. |
 | `coding-plans.vendors[].defaultTemperature` | `number` / `null` | Empty | Deprecated. Vendor default temperature. When unset or `null`, runtime omits `temperature`. Runtime uses it only for `openai-chat` and `anthropic`. |
@@ -214,7 +214,7 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.commitMessage.options.requireConventionalType` | `boolean` | `true` | Whether to enforce Conventional Commits type. |
 | `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | Whether to show warning on validation failure. |
 
-API keys should be stored through "Set API Key" in VS Code Secret Storage. `coding-plans.vendors[].apiKey` is kept only as a deprecated temporary entry; when non-empty, it takes precedence over Secret Storage.
+API keys should be stored through "Set API Key" in VS Code Secret Storage. `coding-plans.vendors[].apiKey` is kept only as a deprecated temporary entry; when non-empty, it takes precedence over Secret Storage. If the current vendor has no key, the extension falls back to another `vendors[].apiKey` with the same `baseUrl`.
 
 ### Context Window Display
 

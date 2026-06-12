@@ -112,12 +112,18 @@ export class ConfigStore implements vscode.Disposable {
   }
 
   async getApiKey(vendorName: string): Promise<string> {
-    const configuredApiKey = this.getVendor(vendorName)?.apiKey?.trim() || '';
+    const vendor = this.getVendor(vendorName);
+    const configuredApiKey = vendor?.apiKey?.trim() || '';
     if (configuredApiKey.length > 0) {
       return configuredApiKey;
     }
     const key = await this.context.secrets.get(VENDOR_API_KEY_PREFIX + vendorName);
-    return (key || '').trim();
+    const secretApiKey = (key || '').trim();
+    if (secretApiKey.length > 0) {
+      return secretApiKey;
+    }
+
+    return this.findConfiguredApiKeyFallback(vendorName, vendor?.baseUrl) ?? '';
   }
 
   async setApiKey(vendorName: string, apiKey: string): Promise<void> {
@@ -193,6 +199,7 @@ export class ConfigStore implements vscode.Disposable {
         existingNameByKey,
         defaultVision,
         defaultApiStyle,
+        normalizedVendorName,
       );
       const normalizedCurrentModels = this.buildUpdatedModelEntries(
         currentNames,
@@ -201,6 +208,7 @@ export class ConfigStore implements vscode.Disposable {
         existingNameByKey,
         defaultVision,
         defaultApiStyle,
+        normalizedVendorName,
       );
 
       const currentSignature = JSON.stringify(normalizedCurrentModels);
@@ -432,6 +440,7 @@ export class ConfigStore implements vscode.Disposable {
     existingNameByKey: Map<string, string>,
     defaultVision: boolean,
     defaultApiStyle: VendorApiStyle,
+    vendorName: string,
   ): VendorModelConfig[] {
     const existingModelByKey = new Map<string, VendorModelConfig>();
     for (const rawModel of rawModels) {
@@ -477,32 +486,20 @@ export class ConfigStore implements vscode.Disposable {
       }
       seen.add(key);
 
+      const canonical = existingNameByKey.get(key) ?? name;
+      const inputModel = inputModelByKey.get(key);
       const existingModel = existingModelByKey.get(key);
       if (existingModel) {
-        const canonical = existingNameByKey.get(key) ?? name;
+        if (inputModel && this.shouldReplaceGeneratedFallbackModel(existingModel, inputModel, vendorName)) {
+          normalized.push(this.buildInputModelEntry(inputModel, canonical, defaultVision, defaultApiStyle));
+          continue;
+        }
         normalized.push(this.cloneModelWithNormalizedName(existingModel, canonical, defaultVision, defaultApiStyle));
         continue;
       }
 
-      const canonical = existingNameByKey.get(key) ?? name;
-      const inputModel = inputModelByKey.get(key);
       if (inputModel) {
-        normalized.push(
-          this.buildStoredModelEntry(
-            {
-              ...inputModel,
-              temperature: undefined,
-              topP: undefined,
-              capabilities: {
-                ...inputModel.capabilities,
-                vision: inputModel.vision ?? defaultVision,
-              },
-            },
-            canonical,
-            defaultVision,
-            defaultApiStyle,
-          ),
-        );
+        normalized.push(this.buildInputModelEntry(inputModel, canonical, defaultVision, defaultApiStyle));
         continue;
       }
 
@@ -510,6 +507,84 @@ export class ConfigStore implements vscode.Disposable {
     }
 
     return this.sortRawModelsByName(normalized);
+  }
+
+  private buildInputModelEntry(
+    inputModel: VendorModelConfig,
+    canonical: string,
+    defaultVision: boolean,
+    defaultApiStyle: VendorApiStyle,
+  ): VendorModelConfig {
+    return this.buildStoredModelEntry(
+      {
+        ...inputModel,
+        temperature: undefined,
+        topP: undefined,
+        capabilities: {
+          ...inputModel.capabilities,
+          vision: inputModel.vision ?? defaultVision,
+        },
+      },
+      canonical,
+      defaultVision,
+      defaultApiStyle,
+    );
+  }
+
+  private shouldReplaceGeneratedFallbackModel(
+    existingModel: VendorModelConfig,
+    inputModel: VendorModelConfig,
+    vendorName: string,
+  ): boolean {
+    if (!this.isEnrichedInputModel(inputModel)) {
+      return false;
+    }
+    if (
+      existingModel.price !== undefined ||
+      existingModel.temperature !== undefined ||
+      existingModel.topP !== undefined ||
+      existingModel.streaming !== undefined ||
+      existingModel.editTools !== undefined ||
+      existingModel.supportsReasoningEffort !== undefined ||
+      existingModel.reasoningEffortFormat !== undefined ||
+      existingModel.zeroDataRetentionEnabled !== undefined
+    ) {
+      return false;
+    }
+
+    return this.isGeneratedFallbackDescription(existingModel.description, existingModel.name, vendorName);
+  }
+
+  private isEnrichedInputModel(model: VendorModelConfig): boolean {
+    return (
+      model.price !== undefined ||
+      model.apiStyle !== undefined ||
+      typeof model.capabilities?.thinking === 'boolean' ||
+      (model.description !== undefined && !this.isGeneratedFallbackDescription(model.description, model.name))
+    );
+  }
+
+  private isGeneratedFallbackDescription(
+    description: string | undefined,
+    modelName: string,
+    vendorName?: string,
+  ): boolean {
+    const normalizedDescription = description?.trim();
+    const normalizedModelName = modelName.trim();
+    if (!normalizedDescription || !normalizedModelName) {
+      return false;
+    }
+    const normalizedVendorName = vendorName?.trim();
+    if (normalizedVendorName) {
+      return (
+        normalizedDescription === `${normalizedVendorName} model: ${normalizedModelName}` ||
+        normalizedDescription === `${normalizedVendorName} 可用模型: ${normalizedModelName}`
+      );
+    }
+    return (
+      normalizedDescription.endsWith(` model: ${normalizedModelName}`) ||
+      normalizedDescription.endsWith(` 可用模型: ${normalizedModelName}`)
+    );
   }
 
   private sortRawModelsByName(models: VendorModelConfig[]): VendorModelConfig[] {
@@ -539,6 +614,39 @@ export class ConfigStore implements vscode.Disposable {
       return [];
     }
     return raw.map((v) => this.normalizeVendor(v)).filter((v): v is VendorConfig => v !== undefined);
+  }
+
+  private findConfiguredApiKeyFallback(vendorName: string, baseUrl: string | undefined): string | undefined {
+    const config = vscode.workspace.getConfiguration('coding-plans');
+    const inspected = config.inspect<unknown[]>('vendors');
+    const candidates = [
+      inspected?.workspaceFolderValue,
+      inspected?.workspaceValue,
+      inspected?.globalValue,
+      inspected?.defaultValue,
+    ];
+    const normalizedVendorName = vendorName.trim();
+    const normalizedBaseUrl = this.normalizeComparableBaseUrl(baseUrl);
+
+    const scopedVendors = candidates.flatMap((raw) => this.normalizeVendors(raw));
+    const sameNameKey = scopedVendors
+      .find((vendor) => vendor.name === normalizedVendorName && vendor.apiKey)
+      ?.apiKey?.trim();
+    if (sameNameKey) {
+      return sameNameKey;
+    }
+
+    if (!normalizedBaseUrl) {
+      return undefined;
+    }
+
+    return scopedVendors
+      .find((vendor) => this.normalizeComparableBaseUrl(vendor.baseUrl) === normalizedBaseUrl && vendor.apiKey)
+      ?.apiKey?.trim();
+  }
+
+  private normalizeComparableBaseUrl(baseUrl: string | undefined): string {
+    return (baseUrl ?? '').trim().replace(/\/+$/, '').toLowerCase();
   }
 
   private normalizeVendor(raw: unknown): VendorConfig | undefined {

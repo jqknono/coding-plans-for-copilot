@@ -94,6 +94,7 @@ interface GenericChatRequest {
 
 interface RefreshModelsOptions {
   forceDiscoveryRetry?: boolean;
+  discoverFromEndpoint?: boolean;
 }
 
 interface RetryWithV1PromptResult {
@@ -295,6 +296,7 @@ export class GenericAIProvider extends BaseAIProvider {
   private refreshModelsInFlight: Promise<void> | undefined;
   private refreshModelsPending = false;
   private forceDiscoveryRetryRequested = false;
+  private endpointDiscoveryRequested = false;
   private modelsSnapshot = '';
   private modelsDevCatalogPromise: Promise<ModelsDevCatalog | undefined> | undefined;
 
@@ -343,6 +345,9 @@ export class GenericAIProvider extends BaseAIProvider {
     if (options.forceDiscoveryRetry) {
       this.forceDiscoveryRetryRequested = true;
     }
+    if (options.discoverFromEndpoint) {
+      this.endpointDiscoveryRequested = true;
+    }
 
     if (this.refreshModelsInFlight) {
       this.refreshModelsPending = true;
@@ -352,10 +357,12 @@ export class GenericAIProvider extends BaseAIProvider {
     const running = (async () => {
       do {
         const forceDiscoveryRetry = this.forceDiscoveryRetryRequested;
+        const discoverFromEndpoint = this.endpointDiscoveryRequested;
         this.forceDiscoveryRetryRequested = false;
+        this.endpointDiscoveryRequested = false;
         this.refreshModelsPending = false;
-        await this.refreshModelsInternal({ forceDiscoveryRetry });
-      } while (this.refreshModelsPending || this.forceDiscoveryRetryRequested);
+        await this.refreshModelsInternal({ forceDiscoveryRetry, discoverFromEndpoint });
+      } while (this.refreshModelsPending || this.forceDiscoveryRetryRequested || this.endpointDiscoveryRequested);
     })();
 
     this.refreshModelsInFlight = running;
@@ -370,10 +377,12 @@ export class GenericAIProvider extends BaseAIProvider {
 
   private async refreshModelsInternal(options: RefreshModelsOptions = {}): Promise<void> {
     const forceDiscoveryRetry = options.forceDiscoveryRetry === true;
+    const discoverFromEndpoint = options.discoverFromEndpoint === true;
     const vendors = this.configStore.getVendors();
     logger.info('Refreshing Coding Plans vendor models', {
       vendorCount: vendors.length,
       forceDiscoveryRetry,
+      discoverFromEndpoint,
       vendors: vendors.map((vendor) => this.summarizeVendorForLog(vendor)),
     });
     logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} existing discovery state before refresh`, {
@@ -420,10 +429,11 @@ export class GenericAIProvider extends BaseAIProvider {
         forceDiscoveryRetry,
       });
 
-      if (!vendor.useModelsEndpoint) {
+      if (!vendor.useModelsEndpoint || !discoverFromEndpoint) {
         this.vendorDiscoveryState.delete(vendorKey);
         logger.info('Using settings models for vendor', {
           vendor: vendor.name,
+          discoveryEnabled: vendor.useModelsEndpoint && discoverFromEndpoint,
           modelCount: configuredModels.length,
         });
         this.appendResolvedModels(vendor, configuredModels, allModelConfigs);
@@ -490,16 +500,30 @@ export class GenericAIProvider extends BaseAIProvider {
         continue;
       }
 
+      const currentVendor = await this.getCurrentVendorIfDiscoverySnapshotIsCurrent(vendor, apiKey, signature);
+      if (!currentVendor) {
+        logger.info('Skip stale /models discovery write because vendor config changed during refresh', {
+          vendor: vendor.name,
+          signature,
+        });
+        this.refreshModelsPending = true;
+        if (discoverFromEndpoint) {
+          this.endpointDiscoveryRequested = true;
+        }
+        continue;
+      }
+
       // When useModelsEndpoint is enabled, discovered model names are the source of truth.
       // User-authored overrides are preserved while models.dev metadata refreshes automatic fields.
       const discoveredVendorModels = toVendorModelConfigs(discovered.models);
       const mergedVendorModels = mergeConfiguredModelOverrides(
-        vendor.models,
+        currentVendor.models,
         discoveredVendorModels,
-        vendor.defaultVision,
+        currentVendor.defaultVision,
+        currentVendor.name,
       );
-      const resolvedModels = this.buildConfiguredModelsFromVendorModels(vendor, mergedVendorModels);
-      const discoveredSignature = buildVendorDiscoverySignature({ ...vendor, models: mergedVendorModels }, apiKey);
+      const resolvedModels = this.buildConfiguredModelsFromVendorModels(currentVendor, mergedVendorModels);
+      const discoveredSignature = buildVendorDiscoverySignature({ ...currentVendor, models: mergedVendorModels }, apiKey);
       logger.info('Using /models discovery results for vendor', {
         vendor: vendor.name,
         discoveredCount: discovered.models.length,
@@ -516,7 +540,7 @@ export class GenericAIProvider extends BaseAIProvider {
       });
 
       try {
-        await this.configStore.updateVendorModels(vendor.name, mergedVendorModels);
+        await this.configStore.updateVendorModels(currentVendor.name, mergedVendorModels);
       } catch (error) {
         logger.warn(`Failed to update models config for ${vendor.name}.`, error);
       }
@@ -526,7 +550,7 @@ export class GenericAIProvider extends BaseAIProvider {
         suppressRetry: false,
         cachedModels: resolvedModels,
       });
-      this.appendResolvedModels(vendor, resolvedModels, allModelConfigs);
+      this.appendResolvedModels(currentVendor, resolvedModels, allModelConfigs);
     }
 
     const nextModelsSnapshot = this.buildModelsSnapshot(allModelConfigs);
@@ -559,6 +583,21 @@ export class GenericAIProvider extends BaseAIProvider {
     } else {
       logger.debug('Coding Plans model change event skipped because model information is unchanged');
     }
+  }
+
+  private async getCurrentVendorIfDiscoverySnapshotIsCurrent(
+    vendor: VendorConfig,
+    apiKey: string,
+    signature: string,
+  ): Promise<VendorConfig | undefined> {
+    const currentVendor = this.configStore.getVendor(vendor.name);
+    if (!currentVendor) {
+      return undefined;
+    }
+
+    const currentApiKey = await this.configStore.getApiKey(currentVendor.name);
+    const currentSignature = buildVendorDiscoverySignature(currentVendor, currentApiKey);
+    return currentSignature === signature ? currentVendor : undefined;
   }
 
   async sendRequest(
@@ -1075,10 +1114,16 @@ export class GenericAIProvider extends BaseAIProvider {
 
   private async getModelsDevCatalog(): Promise<ModelsDevCatalog | undefined> {
     if (!this.modelsDevCatalogPromise) {
-      this.modelsDevCatalogPromise = fetchModelsDevCatalog().catch((error) => {
+      this.modelsDevCatalogPromise = fetchModelsDevCatalog().then((catalog) => {
+        if (!catalog) {
+          this.modelsDevCatalogPromise = undefined;
+        }
+        return catalog;
+      }).catch((error) => {
         logger.debug(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} models.dev catalog unavailable`, {
           error: this.summarizeError(error),
         });
+        this.modelsDevCatalogPromise = undefined;
         return undefined;
       });
     }
@@ -1179,7 +1224,7 @@ export class GenericAIProvider extends BaseAIProvider {
         }
         seen.add(modelId.toLowerCase());
 
-        const modelsDevConfig = resolveModelsDevModelConfig(modelsDevCatalog, vendor, modelId);
+        const modelsDevConfig = resolveModelsDevModelConfig(modelsDevCatalog, modelId);
         const inferredApiStyle = modelsDevConfig?.apiStyle ?? inferDefaultApiStyleForModel(modelId);
         const runtime = this.readRuntimeFromGenericModelEntry(entry);
         const resolvedTokens = this.resolveTokenWindowLimits(

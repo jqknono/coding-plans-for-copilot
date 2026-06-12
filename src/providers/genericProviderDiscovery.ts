@@ -50,6 +50,7 @@ export function mergeConfiguredModelOverrides(
   currentModels: VendorModelConfig[],
   discoveredModels: VendorModelConfig[],
   defaultVisionForNewModels: boolean,
+  vendorName?: string,
 ): VendorModelConfig[] {
   const configuredByName = new Map<string, VendorModelConfig>();
   for (const model of currentModels) {
@@ -69,6 +70,13 @@ export function mergeConfiguredModelOverrides(
           ...discovered.capabilities,
           vision: discovered.capabilities?.vision ?? defaultVisionForNewModels,
         },
+      };
+    }
+
+    if (isGeneratedFallbackModelConfig(configured, discovered, vendorName)) {
+      return {
+        ...discovered,
+        enabled: configured.enabled,
       };
     }
 
@@ -120,6 +128,69 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
 
 function readVendorApiStyle(value: unknown): VendorApiStyle | undefined {
   return value === 'openai-responses' || value === 'anthropic' || value === 'openai-chat' ? value : undefined;
+}
+
+function isGeneratedFallbackModelConfig(
+  configured: VendorModelConfig,
+  discovered: VendorModelConfig,
+  vendorName: string | undefined,
+): boolean {
+  if (!isEnrichedDiscoveredModel(discovered)) {
+    return false;
+  }
+  if (configured.price !== undefined) {
+    return false;
+  }
+  if (
+    configured.temperature !== undefined ||
+    configured.topP !== undefined ||
+    configured.streaming !== undefined ||
+    configured.editTools !== undefined ||
+    configured.supportsReasoningEffort !== undefined ||
+    configured.reasoningEffortFormat !== undefined ||
+    configured.zeroDataRetentionEnabled !== undefined
+  ) {
+    return false;
+  }
+
+  return isGeneratedFallbackDescription(configured.description, configured.name, vendorName);
+}
+
+function isEnrichedDiscoveredModel(model: VendorModelConfig): boolean {
+  return (
+    model.price !== undefined ||
+    model.apiStyle !== undefined ||
+    typeof model.capabilities?.thinking === 'boolean' ||
+    isNonGeneratedDescription(model.description, model.name)
+  );
+}
+
+function isNonGeneratedDescription(description: string | undefined, modelName: string): boolean {
+  return description !== undefined && !isGeneratedFallbackDescription(description, modelName, undefined);
+}
+
+function isGeneratedFallbackDescription(
+  description: string | undefined,
+  modelName: string,
+  vendorName: string | undefined,
+): boolean {
+  const normalizedDescription = description?.trim();
+  const normalizedModelName = modelName.trim();
+  if (!normalizedDescription || !normalizedModelName) {
+    return false;
+  }
+
+  const candidates = [
+    `${vendorName ?? ''} model: ${normalizedModelName}`,
+    `${vendorName ?? ''} 可用模型: ${normalizedModelName}`,
+  ].filter((candidate) => !candidate.startsWith(' '));
+  if (vendorName !== undefined && vendorName.trim().length > 0) {
+    return candidates.includes(normalizedDescription);
+  }
+  return (
+    normalizedDescription.endsWith(` model: ${normalizedModelName}`) ||
+    normalizedDescription.endsWith(` 可用模型: ${normalizedModelName}`)
+  );
 }
 
 function buildPriceConfig(model: AIModelConfig): VendorModelConfig['price'] {

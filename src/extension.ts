@@ -362,7 +362,9 @@ async function refreshCodingPlansModels(
     beforePreview: beforeModels.slice(0, 20),
   });
 
-  await withSuppressedProviderModelChangeUiSync(() => genericProvider.refreshModels({ forceDiscoveryRetry: true }));
+  await withSuppressedProviderModelChangeUiSync(() =>
+    genericProvider.refreshModels({ forceDiscoveryRetry: true, discoverFromEndpoint: true }),
+  );
   const afterModels = genericProvider.getAvailableModels().map((model) => model.id);
   logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} provider refreshed`, {
     afterCount: afterModels.length,

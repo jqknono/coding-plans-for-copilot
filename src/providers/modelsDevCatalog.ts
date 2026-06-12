@@ -1,4 +1,4 @@
-import { VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
+import { VendorApiStyle, VendorModelConfig } from '../config/configStore';
 
 export const MODELS_DEV_CATALOG_URL = 'https://models.dev/catalog.json';
 export const MODELS_DEV_API_URL = 'https://models.dev/api.json';
@@ -128,11 +128,10 @@ export function normalizeModelsDevCatalog(payload: unknown): ModelsDevCatalog | 
 
 export function resolveModelsDevModelConfig(
   catalog: ModelsDevCatalog | undefined,
-  vendor: VendorConfig,
   modelName: string,
 ): Partial<VendorModelConfig> | undefined {
   const matches = resolveModelsDevModelMatches(catalog, modelName);
-  const bestMatch = pickBestModelsDevModelMatch(matches, modelName, vendor);
+  const bestMatch = pickBestModelsDevModelMatch(matches);
   const globalMatch = resolveModelsDevGlobalModel(catalog, modelName);
   const model = globalMatch?.model ?? bestMatch?.model;
   if (!model) {
@@ -140,7 +139,7 @@ export function resolveModelsDevModelConfig(
   }
 
   const limit = readModelsDevLimit(model);
-  const price = resolveModelsDevPrice(matches, vendor);
+  const price = resolveModelsDevPrice(matches);
   const modelKey = pickModelsDevDescriptionModelKey(globalMatch?.modelKey, readMatchedModelKey(bestMatch), modelName);
   const description = buildModelsDevDescription(
     model,
@@ -181,15 +180,6 @@ export function inferDefaultApiStyleForModel(
     return 'openai-responses';
   }
   if (normalizedLab === 'anthropic') {
-    return 'anthropic';
-  }
-
-  const modelKeyText = normalizeComparableText(readModelSuffix(modelKey ?? model?.id ?? modelName));
-  const preferredProviders = getCanonicalProviderOrder(modelKeyText);
-  if (preferredProviders.includes('openai')) {
-    return 'openai-responses';
-  }
-  if (preferredProviders.includes('anthropic')) {
     return 'anthropic';
   }
 
@@ -262,18 +252,10 @@ function resolveModelsDevGlobalModel(
   return resolveModelsDevModelFromRecord(catalog.models, modelName);
 }
 
-function pickBestModelsDevModelMatch(
-  matches: readonly ModelsDevModelMatch[],
-  modelName: string,
-  vendor: VendorConfig,
-): ModelsDevModelMatch | undefined {
+function pickBestModelsDevModelMatch(matches: readonly ModelsDevModelMatch[]): ModelsDevModelMatch | undefined {
   let best: { match: ModelsDevModelMatch; score: number } | undefined;
   for (const match of matches) {
-    const score =
-      match.score * 10 +
-      scoreModelPrefixProviderPreference(match.providerKey, match.provider, modelName) +
-      scoreVendorProviderPreference(match.providerKey, match.provider, vendor) +
-      scoreCanonicalProviderPreference(match.providerKey, match.provider, modelName);
+    const score = match.score;
     if (!best || score > best.score) {
       best = { match, score };
     }
@@ -333,84 +315,6 @@ function resolveModelsDevModelFromRecord(
   return best;
 }
 
-function scoreModelPrefixProviderPreference(
-  providerKey: string,
-  provider: ModelsDevProvider,
-  modelName: string,
-): number {
-  const modelProviderPrefix = readModelProviderPrefix(modelName);
-  const providerKeys = getProviderComparableKeys(providerKey, provider);
-  if (modelProviderPrefix && providerKeys.includes(modelProviderPrefix)) {
-    return 300;
-  }
-  if (modelProviderPrefix && providerKeys.some((key) => key.startsWith(modelProviderPrefix))) {
-    return 260;
-  }
-
-  return 0;
-}
-
-function scoreVendorProviderPreference(providerKey: string, provider: ModelsDevProvider, vendor: VendorConfig): number {
-  const vendorKey = normalizeComparableText(vendor.name);
-  if (vendorKey.length === 0) {
-    return 0;
-  }
-
-  const providerKeys = getProviderComparableKeys(providerKey, provider);
-  if (providerKeys.includes(vendorKey)) {
-    return 280;
-  }
-  if (providerKeys.some((key) => key.startsWith(vendorKey) || key.includes(vendorKey))) {
-    return 180;
-  }
-
-  return 0;
-}
-
-function scoreCanonicalProviderPreference(providerKey: string, provider: ModelsDevProvider, modelName: string): number {
-  const modelKey = normalizeComparableText(readModelSuffix(modelName));
-  const providerKeys = getProviderComparableKeys(providerKey, provider);
-  const preferredProviders = getCanonicalProviderOrder(modelKey);
-  const preferredIndex = preferredProviders.findIndex((preferred) => providerKeys.includes(preferred));
-  if (preferredIndex >= 0) {
-    return 220 - preferredIndex * 10;
-  }
-
-  return 0;
-}
-
-function getCanonicalProviderOrder(modelKey: string): string[] {
-  if (modelKey.startsWith('gemini')) {
-    return ['google', 'googlevertex'];
-  }
-  if (modelKey.startsWith('claude')) {
-    return ['anthropic'];
-  }
-  if (/^(gpt|o[134]|codex)/.test(modelKey)) {
-    return ['openai'];
-  }
-  if (modelKey.startsWith('grok')) {
-    return ['xai'];
-  }
-  if (modelKey.startsWith('mistral') || modelKey.startsWith('codestral') || modelKey.startsWith('magistral')) {
-    return ['mistral'];
-  }
-  if (modelKey.startsWith('command')) {
-    return ['cohere'];
-  }
-  if (modelKey.startsWith('deepseek')) {
-    return ['deepseek'];
-  }
-  if (modelKey.startsWith('qwen')) {
-    return ['qwen'];
-  }
-  if (modelKey.startsWith('glm') || modelKey.startsWith('chatglm')) {
-    return ['zai', 'zhipu'];
-  }
-
-  return [];
-}
-
 function readModelProviderPrefix(modelName: string): string | undefined {
   const normalized = normalizeModelLookupText(modelName);
   const slashIndex = normalized.indexOf('/');
@@ -420,12 +324,6 @@ function readModelProviderPrefix(modelName: string): string | undefined {
 
   const prefix = normalizeComparableText(normalized.slice(0, slashIndex));
   return prefix.length > 0 ? prefix : undefined;
-}
-
-function getProviderComparableKeys(providerKey: string, provider: ModelsDevProvider): string[] {
-  return [providerKey, provider.id, provider.name ?? '']
-    .map((entry) => normalizeComparableText(entry))
-    .filter((entry) => entry.length > 0);
 }
 
 function readModelsDevLimit(model: ModelsDevModel): {
@@ -559,25 +457,8 @@ function readModelsDevPrice(model: ModelsDevModel): VendorModelConfig['price'] {
   return Object.keys(price).length > 0 ? price : undefined;
 }
 
-function resolveModelsDevPrice(
-  matches: readonly ModelsDevModelMatch[],
-  vendor: VendorConfig,
-): VendorModelConfig['price'] {
-  const vendorKey = normalizeComparableText(vendor.name);
-  const sameProviderPrice = matches
-    .filter((match) => getProviderComparableKeys(match.providerKey, match.provider).includes(vendorKey))
-    .map((match) => readModelsDevPrice(match.model))
-    .find((price) => price !== undefined);
-
-  const medianPrice = readMedianModelsDevPrice(matches);
-  if (!sameProviderPrice) {
-    return medianPrice;
-  }
-  if (!medianPrice) {
-    return sameProviderPrice;
-  }
-
-  return mergePriceFallback(sameProviderPrice, medianPrice);
+function resolveModelsDevPrice(matches: readonly ModelsDevModelMatch[]): VendorModelConfig['price'] {
+  return readMedianModelsDevPrice(matches);
 }
 
 function readMedianModelsDevPrice(matches: readonly ModelsDevModelMatch[]): VendorModelConfig['price'] {
@@ -604,21 +485,6 @@ function readMedianModelsDevPrice(matches: readonly ModelsDevModelMatch[]): Vend
   }
 
   return Object.keys(medianPrice).length > 0 ? medianPrice : undefined;
-}
-
-function mergePriceFallback(
-  primary: NonNullable<VendorModelConfig['price']>,
-  fallback: NonNullable<VendorModelConfig['price']>,
-): VendorModelConfig['price'] {
-  const price: NonNullable<VendorModelConfig['price']> = {
-    inputCost: primary.inputCost ?? fallback.inputCost,
-    cacheCost: primary.cacheCost ?? fallback.cacheCost,
-    outputCost: primary.outputCost ?? fallback.outputCost,
-    longContextInputCost: primary.longContextInputCost ?? fallback.longContextInputCost,
-    longContextCacheCost: primary.longContextCacheCost ?? fallback.longContextCacheCost,
-    longContextOutputCost: primary.longContextOutputCost ?? fallback.longContextOutputCost,
-  };
-  return Object.fromEntries(Object.entries(price).filter(([, value]) => value !== undefined));
 }
 
 function readMedian(values: readonly number[]): number | undefined {

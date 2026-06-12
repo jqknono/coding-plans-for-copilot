@@ -52,6 +52,7 @@ type VendorRecord = {
   defaultTemperature?: number;
   defaultTopP?: number;
   defaultVision?: boolean;
+  useModelsEndpoint?: boolean;
   apiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
   models: VendorModelRecord[];
 };
@@ -123,6 +124,10 @@ function createState(vendors: unknown[]): MockState {
     updates: [],
     listeners: new Set<ConfigChangeListener>(),
   };
+}
+
+function createStaticVendorState(vendors: VendorRecord[]): MockState {
+  return createState(vendors.map((vendor) => ({ ...vendor, useModelsEndpoint: vendor.useModelsEndpoint ?? false })));
 }
 
 let activeState = createState([]);
@@ -322,6 +327,11 @@ function createVscodeMock() {
       enqueueInputBoxValue(value: string | undefined): void {
         nextInputBoxValues.push(value);
       },
+      clearQueuedInputs(): void {
+        nextQuickPickSelections.length = 0;
+        nextInputBoxValues.length = 0;
+        nextWarningMessageSelection = undefined;
+      },
     },
     commands: {
       registerCommand(command: string, callback: (...args: unknown[]) => unknown): FakeDisposable {
@@ -484,6 +494,22 @@ function createVendorWithSpacedModelName(): VendorRecord {
 
 function getUpdatedVendor(state: MockState): VendorRecord {
   return (state.vendors as VendorRecord[])[0];
+}
+
+async function waitForCondition(condition: () => boolean, timeoutMs = 1000): Promise<void> {
+  const startedAt = Date.now();
+  while (!condition()) {
+    if (Date.now() - startedAt > timeoutMs) {
+      throw new Error('Timed out waiting for test condition');
+    }
+    await new Promise((resolve) => setTimeout(resolve, 10));
+  }
+}
+
+async function refreshWithDiscovery(provider: {
+  refreshModels(options?: { forceDiscoveryRetry?: boolean; discoverFromEndpoint?: boolean }): Promise<void>;
+}): Promise<void> {
+  await provider.refreshModels({ discoverFromEndpoint: true });
 }
 
 function verifyNoWriteback(context: TestContext, message: string): void {
@@ -1162,6 +1188,7 @@ async function runConfigStoreVendorApiKeySecretStorageTests(configStoreCtor: Con
       name: 'Vendor',
       baseUrl: 'https://example.test/v1',
       defaultApiStyle: 'openai-chat',
+      useModelsEndpoint: false,
       models: [],
     },
   ]);
@@ -1198,9 +1225,37 @@ async function runConfigStoreVendorApiKeySecretStorageTests(configStoreCtor: Con
 
   activeState = createState([
     {
+      name: 'test',
+      baseUrl: 'http://100.64.0.14:34046/v1',
+      defaultApiStyle: 'openai-chat',
+      useModelsEndpoint: true,
+      models: [],
+    },
+    {
+      name: 'cliproxyapi',
+      baseUrl: 'http://100.64.0.14:34046/v1/',
+      apiKey: ' shared-endpoint-key ',
+      defaultApiStyle: 'openai-chat',
+      useModelsEndpoint: true,
+      models: [],
+    },
+  ]);
+
+  secretContext = createExtensionContextWithSecrets();
+  configStore = new configStoreCtor(secretContext.context as never);
+  try {
+    assert.equal(await configStore.getApiKey('test'), 'shared-endpoint-key');
+    console.log('PASS ConfigStore 可按相同 baseUrl 兜底读取 vendors[].apiKey');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([
+    {
       name: 'Vendor',
       baseUrl: 'https://example.test/v1',
       defaultApiStyle: 'openai-chat',
+      useModelsEndpoint: false,
       models: [],
     },
   ]);
@@ -2004,14 +2059,6 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
   assert.ok(catalog);
   const enriched = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'OpenRouter',
-      baseUrl: 'https://openrouter.ai/api',
-      defaultApiStyle: 'anthropic',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'z-ai/glm-4.6',
   );
 
@@ -2032,14 +2079,6 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
 
   const taggedVariant = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'OpenRouter',
-      baseUrl: 'https://openrouter.ai/api',
-      defaultApiStyle: 'anthropic',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'z-ai/glm-4.5-air:free',
   );
   assert.equal(taggedVariant?.contextSize, 128000);
@@ -2052,14 +2091,6 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
 
   const proxyGemini = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'Proxy Vendor',
-      baseUrl: 'https://proxy.example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'gemini-3-flash-preview',
   );
   assert.equal(proxyGemini?.contextSize, 1048576);
@@ -2080,20 +2111,12 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
 
   const labGemini = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'Lab',
-      baseUrl: 'https://lab.example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'gemini-3-flash-preview',
   );
   assert.deepEqual(labGemini?.price, {
-    inputCost: 0.9,
-    cacheCost: 0.09,
-    outputCost: 4,
+    inputCost: 0.6,
+    cacheCost: 0.06,
+    outputCost: 3.2,
   });
 
   const labCatalog = normalizeModelsDevCatalog({
@@ -2139,14 +2162,6 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
   });
   const moonshotKimi = resolveModelsDevModelConfig(
     labCatalog,
-    {
-      name: 'OpenRouter',
-      baseUrl: 'https://openrouter.ai/api/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'moonshotai/kimi-k2.6',
   );
   assert.equal(
@@ -2161,42 +2176,18 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
 
   const openAiGpt = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'Proxy Vendor',
-      baseUrl: 'https://proxy.example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'gpt-4.1',
   );
   assert.equal(openAiGpt?.apiStyle, 'openai-responses');
 
   const anthropicClaude = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'Proxy Vendor',
-      baseUrl: 'https://proxy.example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'claude-sonnet-4.5',
   );
   assert.equal(anthropicClaude?.apiStyle, 'anthropic');
 
   const proxyGeminiLite = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'Proxy Vendor',
-      baseUrl: 'https://proxy.example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'gemini-3.1-flash-lite-preview',
   );
   assert.equal(proxyGeminiLite?.contextSize, 1048576);
@@ -2216,14 +2207,6 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
 
   const alibabaQwen = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'Alibaba',
-      baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'qwen3.7-max',
   );
   assert.deepEqual(alibabaQwen?.capabilities, { tools: true, vision: false, thinking: true });
@@ -2232,14 +2215,6 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
 
   const prefixedAlibabaQwen = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'Proxy Vendor',
-      baseUrl: 'https://proxy.example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'alibaba/qwen3.7-max',
   );
   assert.deepEqual(prefixedAlibabaQwen?.capabilities, { tools: true, vision: false, thinking: true });
@@ -2247,30 +2222,14 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
 
   const prefixedTencentHy3 = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'Proxy Vendor',
-      baseUrl: 'https://proxy.example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'tencent/hy3-preview',
   );
   assert.deepEqual(prefixedTencentHy3?.capabilities, { tools: true, vision: false, thinking: true });
   assert.equal(prefixedTencentHy3?.thinking, undefined);
-  assert.equal(prefixedTencentHy3?.description, 'hy3-preview | tencent | Hy | Open | 2026-04-20');
+  assert.equal(prefixedTencentHy3?.description, 'tencent/hy3-preview | tencent | hy3 | Closed | 2026-04-23');
 
   const slashTencentHy3 = resolveModelsDevModelConfig(
     catalog,
-    {
-      name: 'Proxy Vendor',
-      baseUrl: 'https://proxy.example.test/v1',
-      defaultApiStyle: 'openai-chat',
-      defaultVision: false,
-      useModelsEndpoint: true,
-      models: [],
-    },
     'tencent/hy3-preview/',
   );
   assert.deepEqual(slashTencentHy3?.capabilities, { tools: true, vision: false, thinking: true });
@@ -2301,7 +2260,7 @@ async function runGenericProviderModelEnabledTests(
   const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
 
   try {
-    await provider.refreshModels();
+    await refreshWithDiscovery(provider);
     assert.deepEqual(
       provider.getAvailableModels().map((model) => model.id),
       ['Vendor/visible-model'],
@@ -2373,7 +2332,7 @@ async function runGenericProviderDiscoveryDefaultVisionTests(
       vendorName: string,
     ) => (vendorName === 'Vendor' ? 'configured' : '');
 
-    await provider.refreshModels();
+    await refreshWithDiscovery(provider);
 
     const updatedVendor = getUpdatedVendor(activeState);
     const refreshedModel = updatedVendor.models.find((model) => model.name === 'fresh-vision-model');
@@ -2479,7 +2438,7 @@ async function runGenericProviderModelsDevEnrichmentTests(
       vendorName: string,
     ) => (vendorName === 'OpenRouter' ? 'configured' : '');
 
-    await provider.refreshModels();
+    await refreshWithDiscovery(provider);
 
     const updatedVendor = getUpdatedVendor(activeState);
     const enrichedModel = updatedVendor.models.find((model) => model.name === 'z-ai/glm-4.6');
@@ -2653,7 +2612,7 @@ async function runGenericProviderModelsDevProxyFallbackTests(
       vendorName: string,
     ) => (vendorName === 'Proxy Vendor' ? 'configured' : '');
 
-    await provider.refreshModels();
+    await refreshWithDiscovery(provider);
 
     const updatedVendor = getUpdatedVendor(activeState);
     const geminiFlash = updatedVendor.models.find((model) => model.name === 'gemini-3-flash-preview');
@@ -2674,6 +2633,422 @@ async function runGenericProviderModelsDevProxyFallbackTests(
     assert.equal(geminiLite?.thinking, undefined);
     assert.equal(geminiLite?.price, undefined);
     console.log('PASS /models 刷新按模型名匹配 models.dev 但不覆盖已有模型配置');
+  } finally {
+    globalThis.fetch = originalFetch;
+    provider.dispose();
+    configStore.dispose();
+  }
+}
+
+async function runGenericProviderStaleDiscoveryWriteTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule,
+  modelsDevCatalogModule: ModelsDevCatalogModule,
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const { MODELS_DEV_CATALOG_URL } = modelsDevCatalogModule;
+  const originalFetch = globalThis.fetch;
+  let modelsFetchCount = 0;
+  let userDeletionApplied = false;
+
+  activeState = createState([
+    {
+      name: 'cliproxyapi',
+      baseUrl: 'https://proxy.example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      useModelsEndpoint: true,
+      models: [
+        {
+          name: 'gemini-3-flash-preview',
+          enabled: true,
+          description: 'cliproxyapi model: gemini-3-flash-preview',
+          contextSize: 400000,
+          maxInputTokens: 370000,
+          maxOutputTokens: 30000,
+          capabilities: {
+            tools: true,
+            vision: false,
+          },
+        },
+      ],
+    },
+  ]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
+
+  globalThis.fetch = (async (url: string | URL | Request): Promise<Response> => {
+    const href = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+    if (href === MODELS_DEV_CATALOG_URL) {
+      return new Response(
+        JSON.stringify({
+          models: {
+            'google/gemini-3-flash-preview': {
+              id: 'google/gemini-3-flash-preview',
+              name: 'Gemini 3 Flash Preview',
+              family: 'gemini-flash',
+              open_weights: false,
+              release_date: '2025-12-17',
+              last_updated: '2025-12-17',
+              knowledge: '2025-01',
+              reasoning: true,
+              tool_call: true,
+              modalities: {
+                input: ['text', 'image'],
+                output: ['text'],
+              },
+              limit: {
+                context: 1048576,
+                output: 65536,
+              },
+            },
+          },
+          providers: {
+            google: {
+              id: 'google',
+              name: 'Google',
+              models: {
+                'gemini-3-flash-preview': {
+                  id: 'gemini-3-flash-preview',
+                  name: 'Gemini 3 Flash Preview',
+                  family: 'gemini-flash',
+                  reasoning: true,
+                  tool_call: true,
+                  modalities: {
+                    input: ['text', 'image'],
+                    output: ['text'],
+                  },
+                  limit: {
+                    context: 1048576,
+                    output: 65536,
+                  },
+                  cost: {
+                    input: 0.5,
+                    output: 3,
+                    cache_read: 0.05,
+                  },
+                },
+              },
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        },
+      );
+    }
+
+    if (href === 'https://proxy.example.test/v1/models') {
+      modelsFetchCount += 1;
+      if (!userDeletionApplied) {
+        userDeletionApplied = true;
+        activeState.vendors = [
+          {
+            name: 'cliproxyapi',
+            baseUrl: 'https://proxy.example.test/v1',
+            defaultApiStyle: 'openai-chat',
+            defaultVision: false,
+            useModelsEndpoint: true,
+            models: [],
+          },
+        ];
+        for (const listener of [...activeState.listeners]) {
+          listener({
+            affectsConfiguration(changedSection: string): boolean {
+              return changedSection === 'coding-plans.vendors';
+            },
+          });
+        }
+      }
+
+      return new Response(
+        JSON.stringify({
+          data: [
+            {
+              id: 'gemini-3-flash-preview',
+              context_length: 400000,
+              capabilities: {
+                tool_calling: true,
+                image_input: false,
+              },
+            },
+          ],
+        }),
+        {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        },
+      );
+    }
+
+    return new Response(JSON.stringify({ data: [] }), {
+      status: 200,
+      headers: { 'content-type': 'application/json' },
+    });
+  }) as typeof globalThis.fetch;
+
+  try {
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+      vendorName: string,
+    ) => (vendorName === 'cliproxyapi' ? 'configured' : '');
+
+    await refreshWithDiscovery(provider);
+
+    assert.ok(modelsFetchCount >= 2, '配置变更期间应排队重新发现模型');
+    assert.equal(activeState.updates.length, 1, '旧快照不应先写回一次旧模型结构');
+
+    const updatedVendor = getUpdatedVendor(activeState);
+    const model = updatedVendor.models.find((entry) => entry.name === 'gemini-3-flash-preview');
+    assert.ok(model, '重新发现的模型应被写回');
+    assert.equal(model?.description, 'google/gemini-3-flash-preview | google | gemini-flash | Closed | 2025-12-17');
+    assert.equal(model?.contextSize, 1048576);
+    assert.equal(model?.maxInputTokens, undefined);
+    assert.equal(model?.maxOutputTokens, undefined);
+    assert.deepEqual(model?.capabilities, { tools: true, vision: true, thinking: true });
+    assert.deepEqual(model?.price, {
+      inputCost: 0.5,
+      cacheCost: 0.05,
+      outputCost: 3,
+    });
+    console.log('PASS /models 刷新期间配置变化时不会用旧快照写回旧模型结构');
+  } finally {
+    globalThis.fetch = originalFetch;
+    provider.dispose();
+    configStore.dispose();
+  }
+}
+
+async function runGenericProviderGeneratedFallbackUpgradeTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule,
+  modelsDevCatalogModule: ModelsDevCatalogModule,
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const { MODELS_DEV_CATALOG_URL } = modelsDevCatalogModule;
+  const originalFetch = globalThis.fetch;
+
+  activeState = createState([
+    {
+      name: 'cliproxyapi',
+      baseUrl: 'https://proxy.example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      useModelsEndpoint: true,
+      models: [
+        {
+          name: 'gemini-3-flash-preview',
+          enabled: true,
+          apiStyle: 'openai-chat',
+          description: 'cliproxyapi model: gemini-3-flash-preview',
+          contextSize: 400000,
+          capabilities: {
+            tools: true,
+            vision: false,
+          },
+        },
+      ],
+    },
+  ]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
+
+  globalThis.fetch = (async (url: string | URL | Request): Promise<Response> => {
+    const href = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+    if (href === MODELS_DEV_CATALOG_URL) {
+      return new Response(
+        JSON.stringify({
+          models: {
+            'google/gemini-3-flash-preview': {
+              id: 'google/gemini-3-flash-preview',
+              name: 'Gemini 3 Flash Preview',
+              family: 'gemini-flash',
+              open_weights: false,
+              release_date: '2025-12-17',
+              reasoning: true,
+              tool_call: true,
+              modalities: {
+                input: ['text', 'image'],
+                output: ['text'],
+              },
+              limit: {
+                context: 1048576,
+                output: 65536,
+              },
+            },
+          },
+          providers: {
+            google: {
+              id: 'google',
+              name: 'Google',
+              models: {
+                'gemini-3-flash-preview': {
+                  id: 'gemini-3-flash-preview',
+                  name: 'Gemini 3 Flash Preview',
+                  family: 'gemini-flash',
+                  reasoning: true,
+                  tool_call: true,
+                  modalities: {
+                    input: ['text', 'image'],
+                    output: ['text'],
+                  },
+                  limit: {
+                    context: 1048576,
+                    output: 65536,
+                  },
+                  cost: {
+                    input: 0.5,
+                    output: 3,
+                    cache_read: 0.05,
+                  },
+                },
+              },
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        },
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        data: [
+          {
+            id: 'gemini-3-flash-preview',
+            context_length: 400000,
+            capabilities: {
+              tool_calling: true,
+              image_input: false,
+            },
+          },
+        ],
+      }),
+      {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      },
+    );
+  }) as typeof globalThis.fetch;
+
+  try {
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+      vendorName: string,
+    ) => (vendorName === 'cliproxyapi' ? 'configured' : '');
+
+    await refreshWithDiscovery(provider);
+
+    assert.equal(activeState.updates.length, 1, '带 apiStyle 的自动 fallback 结构应被升级写回一次');
+    const updatedVendor = getUpdatedVendor(activeState);
+    const model = updatedVendor.models.find((entry) => entry.name === 'gemini-3-flash-preview');
+    assert.equal(model?.description, 'google/gemini-3-flash-preview | google | gemini-flash | Closed | 2025-12-17');
+    assert.equal(model?.contextSize, 1048576);
+    assert.equal(model?.maxInputTokens, undefined);
+    assert.equal(model?.maxOutputTokens, undefined);
+    assert.deepEqual(model?.capabilities, { tools: true, vision: true, thinking: true });
+    assert.deepEqual(model?.price, {
+      inputCost: 0.5,
+      cacheCost: 0.05,
+      outputCost: 3,
+    });
+    console.log('PASS 自动生成的 /models fallback 配置会升级为 models.dev 新结构');
+  } finally {
+    globalThis.fetch = originalFetch;
+    provider.dispose();
+    configStore.dispose();
+  }
+}
+
+async function runGenericProviderNoAutomaticDeletedModelRestoreTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule,
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const originalFetch = globalThis.fetch;
+  let fetchCount = 0;
+
+  activeState = createState([
+    {
+      name: 'cliproxyapi',
+      baseUrl: 'https://proxy.example.test/v1',
+      apiKey: 'configured',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      useModelsEndpoint: true,
+      models: [
+        {
+          name: 'gemini-3-flash-preview',
+          enabled: true,
+          description: 'cliproxyapi model: gemini-3-flash-preview',
+          contextSize: 400000,
+          capabilities: {
+            tools: true,
+            vision: false,
+          },
+        },
+      ],
+    },
+  ]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
+
+  globalThis.fetch = (async (): Promise<Response> => {
+    fetchCount += 1;
+    return new Response(
+      JSON.stringify({
+        data: [
+          {
+            id: 'gemini-3-flash-preview',
+            context_length: 400000,
+            capabilities: {
+              tool_calling: true,
+              image_input: false,
+            },
+          },
+        ],
+      }),
+      {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      },
+    );
+  }) as typeof globalThis.fetch;
+
+  try {
+    await provider.refreshModels();
+    activeState.updates.length = 0;
+
+    activeState.vendors = [
+      {
+        name: 'cliproxyapi',
+        baseUrl: 'https://proxy.example.test/v1',
+        apiKey: 'configured',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        useModelsEndpoint: true,
+        models: [],
+      },
+    ];
+    for (const listener of [...activeState.listeners]) {
+      listener({
+        affectsConfiguration(changedSection: string): boolean {
+          return changedSection === 'coding-plans.vendors';
+        },
+      });
+    }
+
+    await waitForCondition(() => provider.getAvailableModels().length === 0);
+
+    const updatedVendor = getUpdatedVendor(activeState);
+    assert.deepEqual(updatedVendor.models, [], '删除模型后配置监听不应自动补回 models[]');
+    assert.equal(activeState.updates.length, 0, '配置监听不应自动写回 settings models');
+    assert.equal(fetchCount, 0, '配置监听和默认刷新不应自动请求 /models');
+    console.log('PASS 删除模型后配置监听不会自动发现或写回 models[]');
   } finally {
     globalThis.fetch = originalFetch;
     provider.dispose();
@@ -2839,7 +3214,7 @@ async function runGenericProviderOutputLimitToggleTests(
     vendors: VendorRecord[],
     modelId: string,
   ): Promise<{ payload: Record<string, unknown>; response: unknown }> {
-    activeState = createState(vendors);
+    activeState = createStaticVendorState(vendors);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
@@ -2924,7 +3299,7 @@ async function runGenericProviderOutputLimitToggleTests(
     ],
     options: { modelOptions?: Record<string, unknown> } = {},
   ): Promise<Record<string, unknown>> {
-    activeState = createState(vendors);
+    activeState = createStaticVendorState(vendors);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
@@ -2994,7 +3369,7 @@ async function runGenericProviderOutputLimitToggleTests(
     vendors: VendorRecord[],
     modelId: string,
   ): Promise<{ payloads: Record<string, unknown>[]; response: unknown }> {
-    activeState = createState(vendors);
+    activeState = createStaticVendorState(vendors);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
@@ -3121,7 +3496,6 @@ async function runGenericProviderOutputLimitToggleTests(
         models: [
           {
             name: 'coder',
-            contextSize: 64000,
             capabilities: { tools: true, vision: false },
           },
         ],
@@ -3149,7 +3523,6 @@ async function runGenericProviderOutputLimitToggleTests(
         models: [
           {
             name: 'dynamic-coder',
-            contextSize: 64000,
             capabilities: { tools: true, vision: false },
           },
         ],
@@ -3375,7 +3748,7 @@ async function runGenericProviderMultimodalPayloadTests(
   async function capturePayload(
     apiStyle: 'openai-chat' | 'openai-responses' | 'anthropic',
   ): Promise<Record<string, unknown>> {
-    activeState = createState([
+    activeState = createStaticVendorState([
       {
         name: 'Vendor',
         baseUrl: 'https://example.test/v1',
@@ -3512,7 +3885,7 @@ async function runGenericProviderThinkingEffortTests(
     modelId: string,
     options?: { modelOptions?: Record<string, unknown> },
   ): Promise<Record<string, unknown>> {
-    activeState = createState(vendors);
+    activeState = createStaticVendorState(vendors);
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
@@ -3645,7 +4018,7 @@ async function runGenericProviderThinkingEffortTests(
   }
 
   async function captureOpenAIResponsesReasoningFallbackPayloads(): Promise<Record<string, unknown>[]> {
-    activeState = createState([
+    activeState = createStaticVendorState([
       {
         name: 'Vendor',
         baseUrl: 'https://example.test/v1',
@@ -4125,7 +4498,7 @@ async function runGenericProviderAnthropicSamplingCompatibilityTests(
   const { GenericAIProvider } = genericProviderModule;
   const originalFetch = globalThis.fetch;
 
-  activeState = createState([
+  activeState = createStaticVendorState([
     {
       name: 'Vendor',
       baseUrl: 'https://example.test/anthropic/v1',
@@ -4136,7 +4509,6 @@ async function runGenericProviderAnthropicSamplingCompatibilityTests(
       models: [
         {
           name: 'coder',
-          contextSize: 64000,
           temperature: 0.25,
           topP: 0.8,
           capabilities: { tools: false, vision: false },
@@ -4221,7 +4593,7 @@ async function runGenericProviderAnthropicStreamFallbackTests(
   const { GenericAIProvider } = genericProviderModule;
   const originalFetch = globalThis.fetch;
 
-  activeState = createState([
+  activeState = createStaticVendorState([
     {
       name: 'Vendor',
       baseUrl: 'https://example.test/anthropic/v1',
@@ -4406,7 +4778,7 @@ async function runGenericProviderAnthropicStreamErrorEventTests(
   const { GenericAIProvider } = genericProviderModule;
   const originalFetch = globalThis.fetch;
 
-  activeState = createState([
+  activeState = createStaticVendorState([
     {
       name: 'Vendor',
       baseUrl: 'https://example.test/anthropic/v1',
@@ -4542,7 +4914,7 @@ async function runGenericProviderOpenAIReasoningContinuationTests(
   const vscode = require('vscode') as typeof import('vscode');
   const originalFetch = globalThis.fetch;
 
-  activeState = createState([
+  activeState = createStaticVendorState([
     {
       name: 'Vendor',
       baseUrl: 'https://example.test/openai/v1',
@@ -6024,6 +6396,7 @@ async function runManageVendorConfigurationTests(
       executedCommands: Array<{ command: string; args: unknown[] }>;
       enqueueQuickPickSelection(selection: unknown): void;
       enqueueInputBoxValue(value: string | undefined): void;
+      clearQueuedInputs(): void;
     };
   };
 
@@ -6032,6 +6405,7 @@ async function runManageVendorConfigurationTests(
       name: 'Vendor',
       baseUrl: 'https://example.test/v1',
       defaultApiStyle: 'openai-chat',
+      useModelsEndpoint: false,
       models: [],
     },
   ]);
@@ -6040,8 +6414,9 @@ async function runManageVendorConfigurationTests(
   let refreshCount = 0;
   let notifyCount = 0;
   const fakeProvider = {
-    async refreshModels(options?: { forceDiscoveryRetry?: boolean }): Promise<void> {
+    async refreshModels(options?: { forceDiscoveryRetry?: boolean; discoverFromEndpoint?: boolean }): Promise<void> {
       assert.equal(options?.forceDiscoveryRetry, true);
+      assert.equal(options?.discoverFromEndpoint, true);
       refreshCount += 1;
     },
     getAvailableModels(): unknown[] {
@@ -6057,8 +6432,9 @@ async function runManageVendorConfigurationTests(
   vscodeMock.testState.shownInformationMessages.length = 0;
   vscodeMock.testState.shownQuickPicks.length = 0;
   vscodeMock.testState.executedCommands.length = 0;
+  vscodeMock.testState.clearQueuedInputs();
   vscodeMock.testState.enqueueQuickPickSelection('Vendor');
-  vscodeMock.testState.enqueueQuickPickSelection('manageActionApiKey');
+  vscodeMock.testState.enqueueQuickPickSelection({ label: '设置 API Key', action: 'apiKey' });
   vscodeMock.testState.enqueueInputBoxValue('secret-key');
 
   try {
@@ -6998,6 +7374,9 @@ async function main(): Promise<void> {
     await runGenericProviderDiscoveryDefaultVisionTests(ConfigStore, genericProviderModule);
     await runGenericProviderModelsDevEnrichmentTests(ConfigStore, genericProviderModule, modelsDevCatalogModule);
     await runGenericProviderModelsDevProxyFallbackTests(ConfigStore, genericProviderModule, modelsDevCatalogModule);
+    await runGenericProviderStaleDiscoveryWriteTests(ConfigStore, genericProviderModule, modelsDevCatalogModule);
+    await runGenericProviderGeneratedFallbackUpgradeTests(ConfigStore, genericProviderModule, modelsDevCatalogModule);
+    await runGenericProviderNoAutomaticDeletedModelRestoreTests(ConfigStore, genericProviderModule);
     await runGenericProviderModelChangeEventStabilityTests(ConfigStore, genericProviderModule);
     await runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
     await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule, tokenUsageModule);
