@@ -1,0 +1,67 @@
+{
+  "date": "2026-06-13",
+  "generatedAt": "2026-06-13T07:25:29.492Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 49,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "智谱 GLM": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1220146",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1220146",
+      "title": "致开发者： GLM-5.2 全量开放，前沿智能属于所有人",
+      "content": "在一些前沿模型突然变得不可用的时刻，我们选择相信另一条路：前沿智能不应只属于少数人，也不应被少数规则随时收回。它应该开放、可用、可构建，并服务于每一位开发者。 GLM-5.2 是智谱迄今能力最强的开源模型，支持真正可用的 1M 上下文，并在长程任务中继续保持领先。它也依旧是我们心中最强的国产 Coding 模型。 今晚 5:21，GLM-5.2 将面向 GLM Coding Plan 全量用户开放，覆盖 Lite / Pro / Max / 团队版。 GLM-5.2 API 将于下周上线，模型下周正式开源，遵循 MIT 协议。 A step closer to frontier intelligence for everyone. The future of AI is open, and it is for the people. ModelKey：GLM-5.2 https://mp.weixin.qq.com/s?__biz=MzkyMzI3NzQ0Mg==&amp;mid=2247493935&amp;idx=1&amp;sn=5bf94fa8e504e6c20957cca2e",
+      "author": "aes114514gcm",
+      "createdAt": "2026-06-13T06:35:06.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.98,
+        "supplier": "智谱 GLM",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.92,
+        "summary": "智谱宣布 GLM-5.2 面向 GLM Coding Plan 全量用户开放，覆盖 Lite / Pro / Max / 团队版，并称其为国产 Coding 模型中的强项。帖子还提到 API 下周上线、模型将开源并遵循 MIT 协议。",
+        "topics": [
+          "GLM-5.2",
+          "GLM Coding Plan",
+          "模型开放",
+          "订阅权益",
+          "Coding模型",
+          "API上线",
+          "开源",
+          "团队版"
+        ],
+        "planMentioned": "GLM Coding Plan（Lite / Pro / Max / 团队版）",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/152",
+      "analyzedAt": "2026-06-13T07:26:39.970Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
