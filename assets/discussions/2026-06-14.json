@@ -1,0 +1,97 @@
+{
+  "date": "2026-06-14",
+  "generatedAt": "2026-06-14T07:43:15.396Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 9,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "阿里百炼": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1220304",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1220304",
+      "title": "分享一下我试用过的几款 AI 套餐",
+      "content": "虽说 CodingPlan 是亏钱运营，但这吃相是不是太难看了点？作为真实用户，我来盘点一下我用过的几个平台： --- ## 1. 阿里百炼 **优点**：调用次数给得最实在，是实打实的次数。 **槽点**： - 除了自家模型，开源模型更新慢，不是最新版本 - 经常用几次就提示「超额」，实际才用了 5H 窗口的 5% - 客服说要等 1 小时恢复，而且这种情况太频繁了 - **体验**：后来实在受不了就不用了 --- ## 2. 火山方舟 **优点**：模型都是最新的，限制也比较少。 **槽点**： - **消耗倍率完全不透明**，是个黑盒 - 有人说倍率高达 60 倍（不确定真假） - 对比数据：阿里每个月用不到总额的 20%，换到火山方舟后，**一天能把一周的额度用掉一半** **总结**：这消耗速度，谁顶得住？ --- ## 3. 科大讯飞 ⚠️（最坑） **限制**：只能选定一个模型使用。 **槽点**： - **夹带私货的系统提示词**，模型行为明显被干预 - GLM5.1 资源紧张可以理解，毕竟热门 - 但 Kimi 2.6 页面显示「资源充足」，实际每次提问都卡死、无输出",
+      "author": "miaosl",
+      "createdAt": "2026-06-14T05:26:08.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "阿里百炼",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "作者对多款 AI 编码助手套餐进行了体验评测，指出阿里百炼、火山方舟、科大讯飞等平台的使用体验与费用消耗问题，整体评价偏负面。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "使用体验",
+          "消耗倍率",
+          "客服",
+          "功能限制"
+        ],
+        "planMentioned": "阿里百炼",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-14T07:46:20.618Z"
+    },
+    {
+      "id": "v2ex-1220276",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1220276",
+      "title": "自荐一个 Claude Code provider 切换小工具： MengMeng",
+      "content": "大家好，自荐一个最近写的小工具：MengMeng 。 项目地址： https://github.com/jiaqianjing/mengmeng 它是一个很小的 CLI ，用来管理 Claude Code 的 provider 配置。命令名是 mm 。 先放一张 mm list 的效果图： 主要场景 我自己经常在这些地方用 Claude Code： macOS 终端 Linux 服务器 SSH 远程机器 WSL 没有桌面界面的开发环境 这些环境里，切 Kimi Coding Plan 、Kimi API 、DeepSeek API 的时候，总要反复改 ~/.claude/settings.json ： ANTHROPIC_BASE_URL ANTHROPIC_AUTH_TOKEN main / opus / sonnet / haiku model 映射 一些 Claude Code 的 env 设置 改之前最好还要手动备份一下，防止写坏 单次看都不复杂，但多台机器、多套 provider 来回切，就很容易烦。 所以 MengMeng 的目标很简单：把 provider profile",
+      "author": "AvalonKing",
+      "createdAt": "2026-06-14T03:22:23.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": "tool",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "Introduces MengMeng, a CLI tool to manage Claude Code provider configurations for switching between Kimi and DeepSeek coding plans, focusing on terminal/server environments.",
+        "topics": [
+          "定价",
+          "Kimi",
+          "DeepSeek",
+          "配置管理",
+          "备份",
+          "CLI 工具"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-14T07:46:22.500Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
