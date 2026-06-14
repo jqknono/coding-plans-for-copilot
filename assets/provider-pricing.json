@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-13T09:10:29.802Z",
+  "generatedAt": "2026-06-14T03:13:50.743Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1125,7 +1125,7 @@
           "originalPrice": 199,
           "originalPriceText": "¥199/月",
           "unit": "月",
-          "notes": "限时优惠",
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
