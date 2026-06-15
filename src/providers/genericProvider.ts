@@ -13,7 +13,6 @@ import {
 import { ConfigStore, VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
 import {
   ANTHROPIC_EFFORT_VALUES,
-  ANTHROPIC_THINKING_MODEL_OPTION_KEY,
   AnthropicEffort,
   CHAT_THINKING_EFFORT_VALUES,
   ChatThinkingEffort,
@@ -30,6 +29,7 @@ import {
   ResponsesPersonality,
   TEMPERATURE_MODEL_OPTION_KEY,
   THINKING_EFFORT_MODEL_OPTION_KEY,
+  THINKING_TYPE_MODEL_OPTION_KEY,
 } from '../constants';
 import { getMessage, isChinese } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
@@ -121,12 +121,12 @@ interface RequestModelOptions {
   [TEMPERATURE_MODEL_OPTION_KEY]?: unknown;
   [THINKING_EFFORT_MODEL_OPTION_KEY]?: unknown;
   [EFFORT_MODEL_OPTION_KEY]?: unknown;
-  [ANTHROPIC_THINKING_MODEL_OPTION_KEY]?: unknown;
+  [THINKING_TYPE_MODEL_OPTION_KEY]?: unknown;
   [PERSONALITY_MODEL_OPTION_KEY]?: unknown;
 }
 
 interface ResolvedThinkingOptions<Effort extends string> {
-  thinking: {
+  thinking?: {
     type: 'enabled' | 'disabled';
   };
   effort?: Effort;
@@ -683,8 +683,28 @@ export class GenericAIProvider extends BaseAIProvider {
     if (!this.isModelThinkingEnabled(request)) {
       return undefined;
     }
+
+    const thinkingToggle = this.readChatThinkingFromModelOptions(request.options?.modelOptions);
+
+    // Explicitly disabled → force disable
+    if (thinkingToggle === 'disabled') {
+      return {
+        thinking: {
+          type: 'disabled',
+        },
+      };
+    }
+
     const thinkingEffort = this.readChatThinkingEffortFromModelOptions(request.options?.modelOptions);
     if (!thinkingEffort || !this.isReasoningEffortSupported(request, thinkingEffort)) {
+      // Explicitly enabled but no effort → enable without reasoning_effort
+      if (thinkingToggle === 'enabled') {
+        return {
+          thinking: {
+            type: 'enabled',
+          },
+        };
+      }
       return undefined;
     }
 
@@ -693,6 +713,12 @@ export class GenericAIProvider extends BaseAIProvider {
         thinking: {
           type: 'disabled',
         },
+      };
+    }
+
+    if (thinkingToggle === 'default') {
+      return {
+        effort: thinkingEffort,
       };
     }
 
@@ -745,7 +771,7 @@ export class GenericAIProvider extends BaseAIProvider {
   }
 
   private isModelThinkingEnabled(request: GenericChatRequest): boolean {
-    return this.getModel(request.modelId)?.thinking !== false;
+    return this.getModel(request.modelId)?.capabilities.thinking !== false;
   }
 
   private isReasoningEffortSupported(request: GenericChatRequest, effort: ReasoningEffortValue): boolean {
@@ -804,7 +830,7 @@ export class GenericAIProvider extends BaseAIProvider {
       return undefined;
     }
 
-    const raw = (modelOptions as RequestModelOptions)[ANTHROPIC_THINKING_MODEL_OPTION_KEY];
+    const raw = (modelOptions as RequestModelOptions)[THINKING_TYPE_MODEL_OPTION_KEY];
     if (typeof raw === 'boolean') {
       return raw;
     }
@@ -818,6 +844,29 @@ export class GenericAIProvider extends BaseAIProvider {
     }
     if (normalized === 'false' || normalized === 'disabled' || normalized === 'none' || normalized === 'non-think') {
       return false;
+    }
+    return undefined;
+  }
+
+  private readChatThinkingFromModelOptions(modelOptions: unknown): 'enabled' | 'disabled' | 'default' | undefined {
+    if (!modelOptions || typeof modelOptions !== 'object' || Array.isArray(modelOptions)) {
+      return undefined;
+    }
+
+    const raw = (modelOptions as RequestModelOptions)[THINKING_TYPE_MODEL_OPTION_KEY];
+    if (typeof raw !== 'string') {
+      return undefined;
+    }
+
+    const normalized = raw.trim().toLowerCase();
+    if (normalized === 'enabled') {
+      return 'enabled';
+    }
+    if (normalized === 'disabled') {
+      return 'disabled';
+    }
+    if (normalized === 'default') {
+      return 'default';
     }
     return undefined;
   }
@@ -919,6 +968,7 @@ export class GenericAIProvider extends BaseAIProvider {
     );
     const toolCalling = model.toolCalling ?? model.capabilities?.tools ?? DEFAULT_MODEL_TOOLS;
     const imageInput = model.vision ?? model.capabilities?.vision ?? vendor.defaultVision;
+    const thinking = model.capabilities?.thinking;
     const apiStyle = model.apiStyle ?? vendor.defaultApiStyle;
 
     return {
@@ -930,11 +980,10 @@ export class GenericAIProvider extends BaseAIProvider {
       maxTokens: resolvedTokens.maxTokens,
       maxInputTokens: resolvedTokens.maxInputTokens,
       maxOutputTokens: resolvedTokens.maxOutputTokens,
-      capabilities: { toolCalling, imageInput },
+      capabilities: { toolCalling, imageInput, ...(typeof thinking === 'boolean' ? { thinking } : {}) },
       apiStyle,
       apiType: model.apiType ?? this.apiStyleToApiType(apiStyle),
       streaming: model.streaming,
-      thinking: model.capabilities?.thinking ?? model.thinking,
       editTools: model.editTools,
       supportsReasoningEffort: model.supportsReasoningEffort,
       reasoningEffortFormat: model.reasoningEffortFormat ?? this.apiStyleToReasoningEffortFormat(apiStyle),
@@ -1248,9 +1297,9 @@ export class GenericAIProvider extends BaseAIProvider {
           capabilities: {
             toolCalling: modelsDevToolCalling ?? runtime.toolCalling ?? DEFAULT_MODEL_TOOLS,
             imageInput: modelsDevVision ?? vendor.defaultVision,
+            ...(typeof modelsDevThinking === 'boolean' ? { thinking: modelsDevThinking } : {}),
           },
           apiStyle: inferredApiStyle,
-          thinking: modelsDevThinking,
           inputCost: modelsDevConfig?.price?.inputCost,
           cacheCost: modelsDevConfig?.price?.cacheCost,
           outputCost: modelsDevConfig?.price?.outputCost,

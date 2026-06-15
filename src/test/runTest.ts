@@ -75,6 +75,7 @@ type LMChatProviderAdapterModule = typeof import('../providers/lmChatProviderAda
 type PlanUsageStatusModule = typeof import('../planUsageStatus');
 type CommitMessageGeneratorModule = typeof import('../commitMessageGenerator');
 type ExtensionModule = typeof import('../extension');
+type I18nModule = typeof import('../i18n/i18n');
 
 type TestContext = {
   state: MockState;
@@ -1034,6 +1035,41 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
       defaultVision: false,
       models: [
         {
+          name: 'legacy-disabled',
+          thinking: false,
+          capabilities: { tools: true, vision: false },
+        },
+        {
+          name: 'new-field-wins',
+          thinking: true,
+          capabilities: { tools: true, vision: false, thinking: false },
+        },
+      ],
+    },
+  ]);
+
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    await configStore.ready();
+    assert.equal(activeState.updates.length, 1, '旧 thinking 字段应在初始化时自动写回迁移');
+    const updatedVendor = getUpdatedVendor(activeState);
+    assert.deepEqual(updatedVendor.models[0]?.capabilities, { tools: true, vision: false, thinking: false });
+    assert.equal('thinking' in (updatedVendor.models[0] as Record<string, unknown>), false);
+    assert.deepEqual(updatedVendor.models[1]?.capabilities, { tools: true, vision: false, thinking: false });
+    assert.equal('thinking' in (updatedVendor.models[1] as Record<string, unknown>), false);
+    console.log('PASS ConfigStore 初始化时自动迁移 legacy models[].thinking 到 capabilities.thinking');
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [
+        {
           name: 'coder',
           capabilities: { tools: true, vision: false },
         },
@@ -1116,7 +1152,7 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
     assert.equal(model?.maxOutputTokens, 128000);
     assert.deepEqual(model?.capabilities, { tools: true, vision: true, thinking: true });
     assert.equal(model?.streaming, false);
-    assert.equal(model?.thinking, undefined);
+    assert.equal('thinking' in ((model ?? {}) as unknown as Record<string, unknown>), false);
     assert.deepEqual(model?.editTools, ['apply-patch']);
     assert.deepEqual(model?.supportsReasoningEffort, ['high', 'xhigh']);
     assert.equal(model?.reasoningEffortFormat, 'responses');
@@ -1628,9 +1664,8 @@ async function runGenericProviderContextSizeTests(
       maxTokens: number;
       maxInputTokens: number;
       maxOutputTokens: number;
-      capabilities?: { toolCalling?: boolean | number; imageInput?: boolean };
+      capabilities?: { toolCalling?: boolean | number; imageInput?: boolean; thinking?: boolean };
       streaming?: boolean;
-      thinking?: boolean;
       editTools?: string[];
       supportsReasoningEffort?: string[];
       reasoningEffortFormat?: string;
@@ -1653,9 +1688,9 @@ async function runGenericProviderContextSizeTests(
     assert.equal(models[0]?.maxTokens, 640000);
     assert.equal(models[0]?.maxInputTokens, 512000);
     assert.equal(models[0]?.maxOutputTokens, 128000);
-    assert.deepEqual(models[0]?.capabilities, { toolCalling: true, imageInput: true });
+    assert.deepEqual(models[0]?.capabilities, { toolCalling: true, imageInput: true, thinking: true });
     assert.equal(models[0]?.streaming, false);
-    assert.equal(models[0]?.thinking, true);
+    assert.equal('thinking' in ((models[0] ?? {}) as Record<string, unknown>), false);
     assert.deepEqual(models[0]?.editTools, ['apply-patch']);
     assert.deepEqual(models[0]?.supportsReasoningEffort, ['high', 'xhigh']);
     assert.equal(models[0]?.reasoningEffortFormat, 'responses');
@@ -2066,7 +2101,7 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
   assert.equal(enriched?.maxInputTokens, undefined);
   assert.equal(enriched?.maxOutputTokens, undefined);
   assert.deepEqual(enriched?.capabilities, { tools: true, vision: true, thinking: true });
-  assert.equal(enriched?.thinking, undefined);
+  assert.equal('thinking' in ((enriched ?? {}) as Record<string, unknown>), false);
   assert.equal(enriched?.description, 'z-ai/glm-4.6 | z-ai | glm | Closed | 2026-01-02');
   assert.deepEqual(enriched?.price, {
     inputCost: 0.43,
@@ -2097,7 +2132,7 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
   assert.equal(proxyGemini?.maxInputTokens, undefined);
   assert.equal(proxyGemini?.maxOutputTokens, undefined);
   assert.deepEqual(proxyGemini?.capabilities, { tools: true, vision: true, thinking: true });
-  assert.equal(proxyGemini?.thinking, undefined);
+  assert.equal('thinking' in ((proxyGemini ?? {}) as Record<string, unknown>), false);
   assert.equal(proxyGemini?.apiStyle, 'openai-chat');
   assert.equal(
     proxyGemini?.description,
@@ -2194,7 +2229,7 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
   assert.equal(proxyGeminiLite?.maxInputTokens, undefined);
   assert.equal(proxyGeminiLite?.maxOutputTokens, undefined);
   assert.deepEqual(proxyGeminiLite?.capabilities, { tools: true, vision: true, thinking: true });
-  assert.equal(proxyGeminiLite?.thinking, undefined);
+  assert.equal('thinking' in ((proxyGeminiLite ?? {}) as Record<string, unknown>), false);
   assert.equal(
     proxyGeminiLite?.description,
     'gemini-3.1-flash-lite-preview |  | gemini-flash-lite | Closed | 2026-03-03',
@@ -2210,7 +2245,7 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
     'qwen3.7-max',
   );
   assert.deepEqual(alibabaQwen?.capabilities, { tools: true, vision: false, thinking: true });
-  assert.equal(alibabaQwen?.thinking, undefined);
+  assert.equal('thinking' in ((alibabaQwen ?? {}) as Record<string, unknown>), false);
   assert.equal(alibabaQwen?.description, 'qwen3.7-max |  | qwen | Closed | 2026-05-21');
 
   const prefixedAlibabaQwen = resolveModelsDevModelConfig(
@@ -2218,14 +2253,14 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
     'alibaba/qwen3.7-max',
   );
   assert.deepEqual(prefixedAlibabaQwen?.capabilities, { tools: true, vision: false, thinking: true });
-  assert.equal(prefixedAlibabaQwen?.thinking, undefined);
+  assert.equal('thinking' in ((prefixedAlibabaQwen ?? {}) as Record<string, unknown>), false);
 
   const prefixedTencentHy3 = resolveModelsDevModelConfig(
     catalog,
     'tencent/hy3-preview',
   );
   assert.deepEqual(prefixedTencentHy3?.capabilities, { tools: true, vision: false, thinking: true });
-  assert.equal(prefixedTencentHy3?.thinking, undefined);
+  assert.equal('thinking' in ((prefixedTencentHy3 ?? {}) as Record<string, unknown>), false);
   assert.equal(prefixedTencentHy3?.description, 'tencent/hy3-preview | tencent | hy3 | Closed | 2026-04-23');
 
   const slashTencentHy3 = resolveModelsDevModelConfig(
@@ -2233,7 +2268,7 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
     'tencent/hy3-preview/',
   );
   assert.deepEqual(slashTencentHy3?.capabilities, { tools: true, vision: false, thinking: true });
-  assert.equal(slashTencentHy3?.thinking, undefined);
+  assert.equal('thinking' in ((slashTencentHy3 ?? {}) as Record<string, unknown>), false);
 
   console.log('PASS models.dev catalog 可按模型 ID/名称匹配并映射模型元数据');
 }
@@ -2446,7 +2481,7 @@ async function runGenericProviderModelsDevEnrichmentTests(
     assert.equal(enrichedModel?.maxInputTokens, undefined);
     assert.equal(enrichedModel?.maxOutputTokens, undefined);
     assert.deepEqual(enrichedModel?.capabilities, { tools: true, vision: true, thinking: true });
-    assert.equal(enrichedModel?.thinking, undefined);
+    assert.equal('thinking' in ((enrichedModel ?? {}) as Record<string, unknown>), false);
     assert.equal(
       enrichedModel?.description,
       'z-ai/glm-4.6 | z-ai | glm | Closed | 2026-01-02',
@@ -2621,7 +2656,7 @@ async function runGenericProviderModelsDevProxyFallbackTests(
     assert.equal(geminiFlash?.maxInputTokens, 370000);
     assert.equal(geminiFlash?.maxOutputTokens, 30000);
     assert.deepEqual(geminiFlash?.capabilities, { tools: true, vision: false });
-    assert.equal(geminiFlash?.thinking, undefined);
+    assert.equal('thinking' in ((geminiFlash ?? {}) as Record<string, unknown>), false);
     assert.equal(geminiFlash?.price, undefined);
 
     const geminiLite = updatedVendor.models.find((model) => model.name === 'gemini-3.1-flash-lite-preview');
@@ -2630,7 +2665,7 @@ async function runGenericProviderModelsDevProxyFallbackTests(
     assert.equal(geminiLite?.maxInputTokens, 370000);
     assert.equal(geminiLite?.maxOutputTokens, 30000);
     assert.deepEqual(geminiLite?.capabilities, { tools: true, vision: false });
-    assert.equal(geminiLite?.thinking, undefined);
+    assert.equal('thinking' in ((geminiLite ?? {}) as Record<string, unknown>), false);
     assert.equal(geminiLite?.price, undefined);
     console.log('PASS /models 刷新按模型名匹配 models.dev 但不覆盖已有模型配置');
   } finally {
@@ -4155,6 +4190,36 @@ async function runGenericProviderThinkingEffortTests(
   assert.equal('reasoning_effort' in openAIChatPayload, false);
   console.log('PASS openai-chat 在请求级 none 模式下会发送 thinking.disabled 且省略 reasoning_effort');
 
+  const defaultThinkingOpenAIChatPayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        thinkingType: 'default',
+        thinkingEffort: 'high',
+      },
+    },
+  );
+  assert.equal('thinking' in defaultThinkingOpenAIChatPayload, false);
+  assert.equal(defaultThinkingOpenAIChatPayload.reasoning_effort, 'high');
+  console.log('PASS openai-chat 在请求级 thinkingType=default 时不发送 thinking 参数');
+
   for (const thinkingEffort of ['low', 'medium', 'high', 'xhigh', 'max'] as const) {
     const overriddenOpenAIChatPayload = await capturePayload(
       [
@@ -4452,7 +4517,7 @@ async function runGenericProviderThinkingEffortTests(
     {
       modelOptions: {
         effort: 'xhigh',
-        thinking: true,
+        thinkingType: true,
       },
     },
   );
@@ -4482,7 +4547,7 @@ async function runGenericProviderThinkingEffortTests(
     {
       modelOptions: {
         effort: 'low',
-        thinking: false,
+        thinkingType: false,
       },
     },
   );
@@ -6581,6 +6646,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
       ['Vendor/coder'],
     );
     assert.equal((vendorGroupModels[0]?.capabilities as unknown as { agentMode?: boolean })?.agentMode, undefined);
+    assert.equal('thinking' in ((vendorGroupModels[0] ?? {}) as unknown as Record<string, unknown>), false);
     assert.equal(
       (
         vendorGroupModels[0] as unknown as {
@@ -6667,6 +6733,73 @@ async function runLMChatProviderAdapterModelFilteringTests(
         }
       ).configurationSchema?.properties?.thinkingEffort?.group,
       'navigation',
+    );
+    assert.deepEqual(
+      Object.keys(
+        (
+          vendorGroupModels[0] as unknown as {
+            configurationSchema?: {
+              properties?: Record<string, unknown>;
+            };
+          }
+        ).configurationSchema?.properties ?? {},
+      ),
+      ['thinkingEffort', 'thinkingType', 'temperature'],
+    );
+    assert.deepEqual(
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                enum?: unknown[];
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingType?.enum,
+      ['enabled', 'disabled', 'default'],
+    );
+    assert.equal(
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                title?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingType?.title,
+      'Thinking Type',
+    );
+    assert.equal(
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                default?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingType?.default,
+      'default',
+    );
+    assert.equal(
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<string, unknown>;
+          };
+        }
+      ).configurationSchema?.properties?.thinking,
+      undefined,
     );
     assert.equal(
       (
@@ -6799,7 +6932,10 @@ async function runLMChatProviderAdapterModelFilteringTests(
         ...models[0],
         id: 'Vendor/non-thinking',
         name: 'non-thinking',
-        thinking: false,
+        capabilities: {
+          ...models[0].capabilities,
+          thinking: false,
+        },
       } as never,
     ];
     const nonThinkingVendorModels = await adapter.provideLanguageModelChatInformation(
@@ -6945,8 +7081,23 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinking?.type,
+      ).configurationSchema?.properties?.thinkingType?.type,
       'string',
+    );
+    assert.equal(
+      (
+        anthropicGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                title?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.thinkingType?.title,
+      'Thinking Type',
     );
     assert.deepEqual(
       (
@@ -6960,7 +7111,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinking?.enum,
+      ).configurationSchema?.properties?.thinkingType?.enum,
       ['think', 'non-think'],
     );
     assert.equal(
@@ -6975,8 +7126,18 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinking?.default,
+      ).configurationSchema?.properties?.thinkingType?.default,
       'think',
+    );
+    assert.equal(
+      (
+        anthropicGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<string, unknown>;
+          };
+        }
+      ).configurationSchema?.properties?.thinking,
+      undefined,
     );
     assert.deepEqual(
       (
@@ -7362,6 +7523,7 @@ async function main(): Promise<void> {
     const planUsageStatusModule = require('../planUsageStatus') as PlanUsageStatusModule;
     const commitMessageGeneratorModule = require('../commitMessageGenerator') as CommitMessageGeneratorModule;
     const extensionModule = require('../extension') as ExtensionModule;
+    const i18nModule = require('../i18n/i18n') as I18nModule;
     for (const testCase of testCases) {
       await runTestCase(ConfigStore, testCase);
     }
@@ -7392,6 +7554,7 @@ async function main(): Promise<void> {
     runPlanUsageStatusTests(planUsageStatusModule, contextUsageStateModule);
     await runCommitMessageGeneratorTests(commitMessageGeneratorModule);
     await runManageVendorConfigurationTests(ConfigStore, extensionModule);
+    await i18nModule.initI18n();
     await runLMChatProviderAdapterModelFilteringTests(ConfigStore, lmChatProviderAdapterModule);
     await runLMChatProviderAdapterCliproxyapiPickerTests(ConfigStore, lmChatProviderAdapterModule);
     await runLMChatProviderAdapterModelOptionsForwardingTests(lmChatProviderAdapterModule);

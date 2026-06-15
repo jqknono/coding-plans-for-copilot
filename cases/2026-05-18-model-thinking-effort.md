@@ -12,6 +12,7 @@
 | A8 | `request.modelOptions.thinkingEffort = max` | 对该模型发起 `anthropic` 请求 | 上游 payload 包含 `thinking: { type: "enabled" }` 与 `output_config.effort: "max"` |
 | A9 | `LanguageModelChatInformation` 按 VS Code 1.120 公开接口返回 | 打开 Language Models picker | 模型信息只包含公开 API 定义的字段 |
 | A10 | `modelOptions` 同时带有内部 source 标记、`temperature` 与 `thinkingEffort` | adapter 转发请求 | 仅剥离内部 source 标记，保留请求级覆盖项 |
+| A11 | `request.modelOptions.thinkingType = default` 且 `thinkingEffort = high` | 对该模型发起 `openai-chat` 请求 | 上游 payload 不包含 `thinking` 字段，可继续包含 `reasoning_effort: "high"` |
 
 ```mermaid
 sequenceDiagram

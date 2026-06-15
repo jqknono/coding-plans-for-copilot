@@ -523,6 +523,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
   const configStore = new ConfigStore(context);
   context.subscriptions.push(configStore);
+  await configStore.ready();
   const contextUsageState = new ContextUsageState();
   context.subscriptions.push(contextUsageState);
   const planUsageState = new PlanUsageState();

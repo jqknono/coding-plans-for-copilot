@@ -15,6 +15,7 @@ export { MODEL_VERSION_LABEL, DEFAULT_CONFIGURED_MODELS };
 export interface ModelCapabilities {
   toolCalling?: boolean | number;
   imageInput?: boolean;
+  thinking?: boolean;
 }
 
 export type ReasoningEffortValue = 'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
@@ -42,7 +43,6 @@ export interface AIModelConfig {
   maxOutputTokens?: number;
   capabilities?: ModelCapabilities;
   streaming?: boolean;
-  thinking?: boolean;
   editTools?: string[];
   supportsReasoningEffort?: ReasoningEffortValue[];
   reasoningEffortFormat?: ReasoningEffortFormat;
@@ -199,9 +199,8 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   public readonly maxTokens: number;
   public readonly maxInputTokens: number;
   public readonly maxOutputTokens: number;
-  public readonly capabilities: vscode.LanguageModelChatCapabilities;
+  public readonly capabilities: vscode.LanguageModelChatCapabilities & { thinking?: boolean };
   public readonly streaming?: boolean;
-  public readonly thinking?: boolean;
   public readonly editTools: readonly string[];
   public readonly supportsReasoningEffort?: readonly ReasoningEffortValue[];
   public readonly reasoningEffortFormat?: ReasoningEffortFormat;
@@ -233,7 +232,6 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
       imageInput: true,
     };
     this.streaming = modelInfo.streaming;
-    this.thinking = modelInfo.thinking;
     this.editTools =
       modelInfo.editTools && modelInfo.editTools.length > 0 ? [...modelInfo.editTools] : [...DEFAULT_MODEL_EDIT_TOOLS];
     this.supportsReasoningEffort = modelInfo.supportsReasoningEffort;

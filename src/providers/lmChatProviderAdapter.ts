@@ -7,7 +7,6 @@ import { ConfigStore } from '../config/configStore';
 import { isEmptyModelResponseError } from './genericProvider';
 import {
   ANTHROPIC_EFFORT_VALUES,
-  ANTHROPIC_THINKING_MODEL_OPTION_KEY,
   CHAT_THINKING_EFFORT_VALUES,
   EFFORT_MODEL_OPTION_KEY,
   REQUEST_SOURCE_COMMIT_MESSAGE,
@@ -16,6 +15,7 @@ import {
   RESPONSES_THINKING_EFFORT_VALUES,
   TEMPERATURE_MODEL_OPTION_KEY,
   THINKING_EFFORT_MODEL_OPTION_KEY,
+  THINKING_TYPE_MODEL_OPTION_KEY,
   PERSONALITY_MODEL_OPTION_KEY,
 } from '../constants';
 import { getMessage } from '../i18n/i18n';
@@ -59,7 +59,6 @@ type LanguageModelChatInformationWithHiddenFields = vscode.LanguageModelChatInfo
   apiType?: string;
   supportsReasoningEffort?: readonly string[];
   reasoningEffortFormat?: string;
-  thinking?: boolean;
   zeroDataRetentionEnabled?: boolean;
   inputCost?: number;
   cacheCost?: number;
@@ -81,17 +80,9 @@ type ProvideLanguageModelChatResponseOptionsWithModelConfiguration = vscode.Prov
 function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModelConfigurationSchema {
   const properties: Record<string, LanguageModelConfigurationSchemaProperty> = {};
 
-  if (model.thinking !== false) {
+  if (model.capabilities.thinking !== false) {
     if (model.apiStyle === 'anthropic') {
       const effortOptions = resolveReasoningEffortOptions(model, [...ANTHROPIC_EFFORT_VALUES]);
-      properties[ANTHROPIC_THINKING_MODEL_OPTION_KEY] = {
-        type: 'string',
-        title: getMessage('anthropicThinkingTitle'),
-        description: getMessage('anthropicThinkingDescription'),
-        enum: ['think', 'non-think'],
-        default: 'think',
-        group: 'navigation',
-      };
       if (effortOptions.length > 0) {
         properties[EFFORT_MODEL_OPTION_KEY] = {
           type: 'string',
@@ -102,6 +93,14 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
           group: 'navigation',
         };
       }
+      properties[THINKING_TYPE_MODEL_OPTION_KEY] = {
+        type: 'string',
+        title: getMessage('anthropicThinkingTitle'),
+        description: getMessage('anthropicThinkingDescription'),
+        enum: ['think', 'non-think'],
+        default: 'think',
+        group: 'navigation',
+      };
     } else if (model.apiStyle === 'openai-responses') {
       const effortOptions = resolveReasoningEffortOptions(model, [...RESPONSES_THINKING_EFFORT_VALUES]);
       if (effortOptions.length > 0) {
@@ -123,6 +122,14 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
           description: getMessage('thinkingEffortDescription'),
           enum: effortOptions,
           default: resolveReasoningEffortDefault(effortOptions, 'high'),
+          group: 'navigation',
+        };
+        properties[THINKING_TYPE_MODEL_OPTION_KEY] = {
+          type: 'string',
+          title: getMessage('chatThinkingTitle'),
+          description: getMessage('chatThinkingDescription'),
+          enum: ['enabled', 'disabled', 'default'],
+          default: 'default',
           group: 'navigation',
         };
       }
@@ -186,7 +193,6 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
       apiType: model.apiType,
       supportsReasoningEffort: model.supportsReasoningEffort,
       reasoningEffortFormat: model.reasoningEffortFormat,
-      thinking: model.thinking,
       zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
       inputCost: model.inputCost,
       cacheCost: model.cacheCost,

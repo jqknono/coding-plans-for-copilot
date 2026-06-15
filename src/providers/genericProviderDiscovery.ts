@@ -114,7 +114,7 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
     capabilities: {
       tools,
       vision,
-      thinking: model.thinking,
+      thinking: model.capabilities?.thinking,
     },
     vision: model.modelsDevEnriched && typeof vision === 'boolean' ? vision : undefined,
     streaming: model.streaming,

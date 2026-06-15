@@ -43,7 +43,6 @@ export interface VendorModelConfig {
   maxInputTokens?: number;
   maxOutputTokens?: number;
   streaming?: boolean;
-  thinking?: boolean;
   editTools?: string[];
   supportsReasoningEffort?: ReasoningEffortValue[];
   reasoningEffortFormat?: ReasoningEffortFormat;
@@ -79,6 +78,7 @@ export class ConfigStore implements vscode.Disposable {
   private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
   public readonly onDidChange = this.onDidChangeEmitter.event;
   private readonly disposables: vscode.Disposable[] = [];
+  private readonly readyPromise: Promise<void>;
 
   constructor(private readonly context: vscode.ExtensionContext) {
     this.disposables.push(
@@ -88,6 +88,11 @@ export class ConfigStore implements vscode.Disposable {
         }
       }),
     );
+    this.readyPromise = this.migrateLegacyVendorModelThinkingConfig();
+  }
+
+  async ready(): Promise<void> {
+    await this.readyPromise;
   }
 
   getAdvancedOptions(): AdvancedOptions {
@@ -341,6 +346,89 @@ export class ConfigStore implements vscode.Disposable {
 
     await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
     return true;
+  }
+
+  private async migrateLegacyVendorModelThinkingConfig(): Promise<void> {
+    const config = vscode.workspace.getConfiguration('coding-plans');
+    const rawVendors = config.get<unknown[]>('vendors', []);
+    if (!Array.isArray(rawVendors)) {
+      return;
+    }
+
+    let changed = false;
+    const updatedVendors = rawVendors.map((rawVendor) => {
+      if (!rawVendor || typeof rawVendor !== 'object' || Array.isArray(rawVendor)) {
+        return rawVendor;
+      }
+
+      const vendorObj = rawVendor as Record<string, unknown>;
+      if (!Array.isArray(vendorObj.models)) {
+        return rawVendor;
+      }
+
+      let vendorChanged = false;
+      const updatedModels = vendorObj.models.map((rawModel) => {
+        const migrated = this.migrateLegacyModelThinkingConfig(rawModel);
+        if (migrated.changed) {
+          vendorChanged = true;
+        }
+        return migrated.model;
+      });
+
+      if (!vendorChanged) {
+        return rawVendor;
+      }
+
+      changed = true;
+      return {
+        ...vendorObj,
+        models: updatedModels,
+      };
+    });
+
+    if (!changed) {
+      return;
+    }
+
+    await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
+  }
+
+  private migrateLegacyModelThinkingConfig(rawModel: unknown): { model: unknown; changed: boolean } {
+    if (!rawModel || typeof rawModel !== 'object' || Array.isArray(rawModel)) {
+      return { model: rawModel, changed: false };
+    }
+
+    const modelObj = rawModel as Record<string, unknown>;
+    if (!Object.prototype.hasOwnProperty.call(modelObj, 'thinking')) {
+      return { model: rawModel, changed: false };
+    }
+
+    const legacyThinking = this.readBooleanValue(modelObj.thinking);
+    const migratedModel = Object.fromEntries(Object.entries(modelObj).filter(([key]) => key !== 'thinking'));
+    if (legacyThinking === undefined) {
+      return { model: migratedModel, changed: true };
+    }
+
+    const rawCapabilities = modelObj.capabilities;
+    const currentCapabilities =
+      rawCapabilities && typeof rawCapabilities === 'object' && !Array.isArray(rawCapabilities)
+        ? (rawCapabilities as Record<string, unknown>)
+        : undefined;
+    const capabilities =
+      currentCapabilities && Object.prototype.hasOwnProperty.call(currentCapabilities, 'thinking')
+        ? currentCapabilities
+        : {
+            ...currentCapabilities,
+            thinking: legacyThinking,
+          };
+
+    return {
+      model: {
+        ...migratedModel,
+        capabilities,
+      },
+      changed: true,
+    };
   }
 
   private readModelName(raw: unknown): string | undefined {

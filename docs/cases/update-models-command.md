@@ -14,6 +14,7 @@
 | 配置变更期间写回 | `/models` 刷新尚未完成时，用户删除或修改同一供应商的模型配置 | 刷新返回后准备自动写回 | 本轮旧快照写回应被跳过，并排队使用最新配置重新发现；不应先写入旧模型结构再写入新结构。 |
 | models.dev 元数据 | 本地供应商 `name` 与 models.dev provider 名不一致 | 自动发现新模型并匹配 models.dev | 本地供应商名不参与 provider 匹配；价格按所有匹配模型来源取中位数，模型协议仅按模型自身来源推导。 |
 | 旧 fallback 升级 | settings 中已有扩展自动生成的旧结构，如 `cliproxyapi model: gemini-3-flash-preview` | `/models` 返回同名模型且 models.dev 可匹配 | 该项应替换为 models.dev 新结构并保留 `enabled`，而不是继续保留旧 fallback 描述、旧上下文和缺失的 `price/thinking`。 |
+| thinking 字段迁移 | settings 中仍存在旧字段 `vendors[].models[].thinking=true/false` | 扩展初始化读取配置 | 自动写回为 `vendors[].models[].capabilities.thinking` 并移除顶层旧字段；若新旧字段同时存在，以 `capabilities.thinking` 为准；运行时模型与 VS Code 模型信息不再输出顶层 `thinking`。 |
 | `/v1/models` 地址 | 供应商模型接口实际位于 `/v1/models` | 将 `baseUrl` 配置为包含 `/v1` 的地址，或在 404 补 `/v1` 弹窗中确认 | 扩展请求 `/v1/models`；未配置 `/v1` 且未确认弹窗时，不应静默改写 baseUrl。 |
 | 同步模型选择器 | `/models` 返回的模型集发生变化 | 命令执行完成 | 扩展触发 provider 模型变化通知，并同步 VS Code Language Models UI。 |
 | 无动态端点 | 供应商 `useModelsEndpoint=false` | 执行命令 | 扩展仅使用当前配置模型刷新运行时列表，不引入隐式发现逻辑。 |
