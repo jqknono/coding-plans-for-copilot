@@ -1,0 +1,96 @@
+{
+  "date": "2026-06-15",
+  "generatedAt": "2026-06-15T08:11:15.852Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 50,
+    "postsAfterKeywordFilter": 2,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "Codex": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1220413",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1220413",
+      "title": "怎么通俗地和老板解释：国外的旗舰模型到底强在哪里？",
+      "content": "你是研发团队的组长，你想做一笔财务预算采购国外厂商的模型加速研发。 CTO 和 CFO 都过来问了：“国内模型和国外模型编程上有多少差别？买国内的 Coding Plan 可以吗？” 你的回答：",
+      "author": "fiht",
+      "createdAt": "2026-06-15T00:51:15.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.72,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.86,
+        "summary": "帖子讨论如何向老板解释国内外模型在编程能力上的差异，并提到是否采购国内 Coding Plan 来加速研发。",
+        "topics": [
+          "编码套餐",
+          "模型对比",
+          "编程能力",
+          "采购预算",
+          "研发效率"
+        ],
+        "planMentioned": "Coding Plan",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-15T08:11:54.304Z"
+    },
+    {
+      "id": "v2ex-1220512",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1220512",
+      "title": "vibe-coding-template：一次 Codex 对话文件丢失后，我整理了一套 Agent 长期协作模板，把 AGENTS.md、任务 prompt、code review 、知识讲解和 web-search 工作流快速沉淀到项目",
+      "content": "最近论坛里有很多关于 vibe coding 的讨论。我自己平时深度用 Codex 或者 GPT 开发项目，前阵子遇到了一个非常让人崩溃的意外情况。当时我登录了 Codex 的 Windows 客户端，之后回头重新登录 VSCode 的 Codex 插件，结果发现本地所有的历史对话文件瞬间全部丢失了。 我平时的开发极其依赖这些积攒下来的历史记录。我以前写 prompt 的方式比较原始，但是确实好用。之前的习惯是先去翻一下以前写得比较好、逻辑完备的提示词，把它们复制出来，再用 Codex 的 medium 推理模式结合当前代码需求生成一份个性化 prompt ，然后再切换到 high 或 xhigh 推理模式真正干活。当本地对话记录文件彻底蒸发之后，我以前很多常用的提示词也随着荡然无存了。 这次惨痛的教训让我意识到，把协作工作流只留在对话历史里是非常不安全的。这直接促使我加快开发了一套 vibe coding 模板 ，不管以后是遇到 Codex 对话文件离奇丢失、GPT 账号突然被封号、重新开启一个完全陌生的小项目、还是入职新公司面对新的代码环境，通过复用这套 Agent 协作模板，就能",
+      "author": "liujan611",
+      "createdAt": "2026-06-15T04:19:59.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "用户因Codex对话文件丢失问题开发了一套Agent协作模板，解决长期协作中的提示词管理、项目规则沉淀和代码审查问题，强调模板的可调整性和工程判断结合。",
+        "topics": [
+          "代码协作",
+          "Codex",
+          "模板",
+          "提示词",
+          "对话文件丢失",
+          "Agent 协作"
+        ],
+        "planMentioned": "vibe-coding-template",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-15T08:11:56.562Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
