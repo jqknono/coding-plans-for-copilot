@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.11.10] - 2026-06-15
+- feat(config): 迁移 thinking 配置至 capabilities 并重命名为 thinkingType
+
 ## [0.11.3] - 2026-06-12
 - feat(provider): 优化模型协议适配与请求格式定义
 - feat(config): 集成 models.dev 自动补全模型元数据
@@ -53,7 +56,4 @@ All notable changes to this project will be documented in this file.
 
 ## [0.8.4] - 2026-05-14
 - feat(config): 废弃 settings.json 中的 API Key 配置
-- feat(config): 新增供应商配置管理向导并优化模型加载逻辑
-
-## [0.8.1] - 2026-05-13
 - feat(config): 新增供应商配置管理向导并优化模型加载逻辑
