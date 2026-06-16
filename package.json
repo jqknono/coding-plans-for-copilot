@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.11.10",
+    "version": "0.11.11",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -230,6 +230,12 @@
                     },
                     "description": "%configuration.coding-plans.advanced.description%",
                     "order": 100
+                },
+                "coding-plans.autoRefreshModels": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "%configuration.coding-plans.autoRefreshModels.description%",
+                    "order": 7
                 },
                 "coding-plans.vendors": {
                     "type": "array",

@@ -293,7 +293,8 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
 
     // Settings updates and model picker queries can race each other.
     // If we currently see nothing, refresh once and re-check before returning.
-    if (scopedModels.length === 0) {
+    const canAutoRefreshModels = this.configStore?.isAutoRefreshModelsEnabled() ?? true;
+    if (scopedModels.length === 0 && canAutoRefreshModels) {
       logger.info(
         `${LANGUAGE_MODELS_PICKER_LOG_PREFIX} filtered model set is empty before refresh; refreshing provider models once`,
         {
@@ -313,6 +314,18 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         vendorName,
         availableModels: this.summarizeBaseLanguageModels(models),
         scopedModels: this.summarizeBaseLanguageModels(scopedModels),
+      });
+    } else if (scopedModels.length === 0) {
+      logger.info(
+        `${LANGUAGE_MODELS_PICKER_LOG_PREFIX} filtered model set is empty and automatic refresh is disabled`,
+        {
+          providerVendor: this.provider.getVendor(),
+          vendorName,
+        },
+      );
+      this.logLanguageModelInformationDiagnostic('build-model-information-refresh-skipped', {
+        providerVendor: this.provider.getVendor(),
+        vendorName,
       });
     }
 

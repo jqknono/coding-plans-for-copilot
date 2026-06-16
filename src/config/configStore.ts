@@ -1,7 +1,9 @@
 import * as vscode from 'vscode';
 import {
   ADVANCED_OPTIONS_SETTING_KEY,
+  AUTO_REFRESH_MODELS_SETTING_KEY,
   DEFAULT_ADVANCED_RESERVED_OUTPUT,
+  DEFAULT_AUTO_REFRESH_MODELS,
   DEFAULT_MODEL_CAPABILITIES_TOOLS,
   DEFAULT_MODEL_CAPABILITIES_VISION,
   VENDOR_API_KEY_PREFIX,
@@ -93,6 +95,11 @@ export class ConfigStore implements vscode.Disposable {
 
   async ready(): Promise<void> {
     await this.readyPromise;
+  }
+
+  isAutoRefreshModelsEnabled(): boolean {
+    const config = vscode.workspace.getConfiguration('coding-plans');
+    return config.get<boolean>(AUTO_REFRESH_MODELS_SETTING_KEY, DEFAULT_AUTO_REFRESH_MODELS) !== false;
   }
 
   getAdvancedOptions(): AdvancedOptions {

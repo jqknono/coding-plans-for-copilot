@@ -30,5 +30,6 @@
   "configuration.coding-plans.commitMessage.modelVendor.description": "生成提交消息时优先使用的供应商名称（例如 Zhipu）。留空则每次弹窗选择。",
   "configuration.coding-plans.commitMessage.modelId.description": "生成提交消息时优先使用的模型名称（例如 glm-4-flash）。需与 modelVendor 配合使用。",
   "configuration.coding-plans.commitMessage.options.description": "提交消息的高级参数（JSON 对象）：包括 prompt、maxDiffLines、pipelineMode、summary 相关阈值、最大 bullet 数、标题长度、校验开关，以及 llmMaxPromptLength 输入预算。",
+  "configuration.coding-plans.autoRefreshModels.description": "控制 settings/API Key 变化和空模型选择器查询时，是否自动刷新运行时模型及 VS Code 模型选择器。手动刷新命令始终可用。",
   "configuration.coding-plans.advanced.description": "高级设置（JSON 对象）：包括 defaultReservedOutput 等。"
 }

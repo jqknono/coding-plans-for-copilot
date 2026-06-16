@@ -553,6 +553,12 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         );
         return;
       }
+      if (!configStore.isAutoRefreshModelsEnabled()) {
+        logger.debug(
+          `${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} skipped automatic UI synchronization because coding-plans.autoRefreshModels is disabled`,
+        );
+        return;
+      }
       void synchronizeLanguageModelsUi('provider-models-changed', configStore, genericProvider, adapter).catch(
         (error) => {
           logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} failed to synchronize UI after provider model change`, {
@@ -587,7 +593,14 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         });
       });
       if (genericProvider.getAvailableModels().length > 0) {
-        await synchronizeLanguageModelsUi('after-generic-provider-initialize', configStore, genericProvider, adapter);
+        if (configStore.isAutoRefreshModelsEnabled()) {
+          await synchronizeLanguageModelsUi('after-generic-provider-initialize', configStore, genericProvider, adapter);
+        } else {
+          logger.debug(
+            `${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} skipped initialization UI synchronization because coding-plans.autoRefreshModels is disabled`,
+          );
+          await logLanguageModelInventorySnapshot('after-generic-provider-initialize', genericProvider, configStore);
+        }
       } else {
         await logLanguageModelInventorySnapshot('after-generic-provider-initialize', genericProvider, configStore);
       }

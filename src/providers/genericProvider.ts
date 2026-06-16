@@ -305,7 +305,17 @@ export class GenericAIProvider extends BaseAIProvider {
     private readonly configStore: ConfigStore,
   ) {
     super(context);
-    this.disposables.push(this.configStore.onDidChange(() => void this.refreshModels()));
+    this.disposables.push(
+      this.configStore.onDidChange(() => {
+        if (!this.configStore.isAutoRefreshModelsEnabled()) {
+          logger.info(
+            `${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} automatic provider refresh skipped because coding-plans.autoRefreshModels is disabled`,
+          );
+          return;
+        }
+        void this.refreshModels();
+      }),
+    );
   }
 
   async initialize(): Promise<void> {
@@ -500,7 +510,7 @@ export class GenericAIProvider extends BaseAIProvider {
         continue;
       }
 
-      const currentVendor = await this.getCurrentVendorIfDiscoverySnapshotIsCurrent(vendor, apiKey, signature);
+      const currentVendor = await this.getCurrentVendorIfDiscoverySnapshotIsCurrent(vendor, signature);
       if (!currentVendor) {
         logger.info('Skip stale /models discovery write because vendor config changed during refresh', {
           vendor: vendor.name,
@@ -587,7 +597,6 @@ export class GenericAIProvider extends BaseAIProvider {
 
   private async getCurrentVendorIfDiscoverySnapshotIsCurrent(
     vendor: VendorConfig,
-    apiKey: string,
     signature: string,
   ): Promise<VendorConfig | undefined> {
     const currentVendor = this.configStore.getVendor(vendor.name);

@@ -59,6 +59,7 @@ type VendorRecord = {
 
 type MockState = {
   vendors: unknown[];
+  settings: Record<string, unknown>;
   updates: UpdateCall[];
   listeners: Set<ConfigChangeListener>;
 };
@@ -119,9 +120,10 @@ class FakeEventEmitter<T> {
   }
 }
 
-function createState(vendors: unknown[]): MockState {
+function createState(vendors: unknown[], settings: Record<string, unknown> = {}): MockState {
   return {
     vendors,
+    settings,
     updates: [],
     listeners: new Set<ConfigChangeListener>(),
   };
@@ -372,23 +374,32 @@ function createVscodeMock() {
         assert.equal(section, 'coding-plans');
         return {
           get<T>(key: string, defaultValue: T): T {
-            return key === 'vendors' ? (activeState.vendors as T) : defaultValue;
+            if (key === 'vendors') {
+              return activeState.vendors as T;
+            }
+            return Object.prototype.hasOwnProperty.call(activeState.settings, key)
+              ? (activeState.settings[key] as T)
+              : defaultValue;
           },
           inspect<T>(key: string): { globalValue: T } {
-            assert.equal(key, 'vendors');
-            return { globalValue: activeState.vendors as T };
+            if (key === 'vendors') {
+              return { globalValue: activeState.vendors as T };
+            }
+            return { globalValue: activeState.settings[key] as T };
           },
           async update(key: string, value: unknown, target: unknown): Promise<void> {
             activeState.updates.push({ key, value, target });
             if (key === 'vendors') {
               activeState.vendors = value as unknown[];
-              for (const listener of [...activeState.listeners]) {
-                listener({
-                  affectsConfiguration(changedSection: string): boolean {
-                    return changedSection === 'coding-plans.vendors';
-                  },
-                });
-              }
+            } else {
+              activeState.settings[key] = value;
+            }
+            for (const listener of [...activeState.listeners]) {
+              listener({
+                affectsConfiguration(changedSection: string): boolean {
+                  return changedSection === `coding-plans.${key}`;
+                },
+              });
             }
           },
         };
@@ -3134,6 +3145,104 @@ async function runGenericProviderModelChangeEventStabilityTests(
     subscription.dispose();
     provider.dispose();
     configStore.dispose();
+  }
+}
+
+async function runGenericProviderAutoRefreshModelsSettingTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule,
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+
+  activeState = createState([
+    {
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      models: [{ name: 'initial-model' }],
+    },
+  ]);
+
+  const enabledConfigStore = new configStoreCtor(createExtensionContext() as never);
+  const enabledProvider = new GenericAIProvider(createExtensionContext() as never, enabledConfigStore);
+  try {
+    await enabledProvider.refreshModels();
+    activeState.vendors = [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [{ name: 'initial-model' }, { name: 'auto-model' }],
+      },
+    ];
+    for (const listener of [...activeState.listeners]) {
+      listener({
+        affectsConfiguration(changedSection: string): boolean {
+          return changedSection === 'coding-plans.vendors';
+        },
+      });
+    }
+    await waitForCondition(() => enabledProvider.getAvailableModels().some((model) => model.name === 'auto-model'));
+    assert.ok(
+      enabledProvider.getAvailableModels().some((model) => model.name === 'auto-model'),
+      '默认应允许 settings 变更自动刷新运行时模型',
+    );
+  } finally {
+    enabledProvider.dispose();
+    enabledConfigStore.dispose();
+  }
+
+  activeState = createState(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [{ name: 'initial-model' }],
+      },
+    ],
+    { autoRefreshModels: false },
+  );
+
+  const disabledConfigStore = new configStoreCtor(createExtensionContext() as never);
+  const disabledProvider = new GenericAIProvider(createExtensionContext() as never, disabledConfigStore);
+  try {
+    await disabledProvider.refreshModels();
+    activeState.vendors = [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [{ name: 'initial-model' }, { name: 'blocked-auto-model' }],
+      },
+    ];
+    for (const listener of [...activeState.listeners]) {
+      listener({
+        affectsConfiguration(changedSection: string): boolean {
+          return changedSection === 'coding-plans.vendors';
+        },
+      });
+    }
+
+    assert.deepEqual(
+      disabledProvider.getAvailableModels().map((model) => model.name),
+      ['initial-model'],
+      '关闭 autoRefreshModels 后 settings 变更不应自动刷新运行时模型',
+    );
+
+    await disabledProvider.refreshModels();
+    assert.ok(
+      disabledProvider.getAvailableModels().some((model) => model.name === 'blocked-auto-model'),
+      '关闭 autoRefreshModels 后手动刷新仍应生效',
+    );
+    console.log('PASS autoRefreshModels 控制 settings 变更自动刷新且不影响手动刷新');
+  } finally {
+    disabledProvider.dispose();
+    disabledConfigStore.dispose();
   }
 }
 
@@ -7540,6 +7649,7 @@ async function main(): Promise<void> {
     await runGenericProviderGeneratedFallbackUpgradeTests(ConfigStore, genericProviderModule, modelsDevCatalogModule);
     await runGenericProviderNoAutomaticDeletedModelRestoreTests(ConfigStore, genericProviderModule);
     await runGenericProviderModelChangeEventStabilityTests(ConfigStore, genericProviderModule);
+    await runGenericProviderAutoRefreshModelsSettingTests(ConfigStore, genericProviderModule);
     await runGenericProviderEmptyResponseTests(ConfigStore, genericProviderModule);
     await runGenericProviderOutputLimitToggleTests(ConfigStore, genericProviderModule, tokenUsageModule);
     await runGenericProviderMultimodalPayloadTests(ConfigStore, genericProviderModule);

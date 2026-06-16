@@ -218,7 +218,7 @@ npm run test:pages
 - 请求链路默认优先上游真实流式传输；若模型配置 `streaming: false`，直接发送非流式请求。若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志。
 - `capabilities` 可省略；归一化时自动补齐 `tools=true` 与 `vision=defaultVision`。
 - 当 `useModelsEndpoint: true` 时，刷新模型列表按 `name` 同步增删；设置中已有手工模型项保持原样，不用 `/models` 或 `models.dev` 的结果覆盖。只有模型不存在于 settings 时，才新增并填充 `description`、`capabilities`、`contextSize`、`price` 等自动元数据；若已有项是扩展生成的旧 fallback 结构，则可被新的 models.dev 元数据替换。
-- 保存 settings 只刷新运行时已配置模型；禁止配置变更监听自动请求 `/models` 或写回 `coding-plans.vendors[].models`。只有手动命令 `Coding Plans: Update Coding Plans Models List` 允许动态发现和写回模型列表。
+- 保存 settings 默认只刷新运行时已配置模型；禁止配置变更监听自动请求 `/models` 或写回 `coding-plans.vendors[].models`。只有手动命令 `Coding Plans: Update Coding Plans Models List` 允许动态发现和写回模型列表。`coding-plans.autoRefreshModels: false` 会进一步禁止 settings/API Key 变化和空模型选择器查询触发自动运行时刷新，但手动刷新命令仍可用。
 - 若修改协议相关行为，请同步检查：
   - `src/providers/genericProvider.ts`
   - `src/config/configStore.ts`
