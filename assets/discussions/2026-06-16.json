@@ -1,0 +1,96 @@
+{
+  "date": "2026-06-16",
+  "generatedAt": "2026-06-16T08:06:36.181Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 8,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "Zhipu (GLM)": 1,
+      "智谱": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1220846",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1220846",
+      "title": "GLM-5.2 还是不可用的状态",
+      "content": "一开始以为国产模型量大管饱，买了 lite 版本，对话 5 分钟就触发了 5 hour limit 。 今天升级到了月费 65 刀的 pro 版，用了半个小时触发了 5 hour limit 。 同样的 5x plan ，100 刀的 codox/claude 足以支持日常开发，而 GLM 连测试它的效果的 demo 都无法完成。",
+      "author": "ixcode",
+      "createdAt": "2026-06-16T07:53:48.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Zhipu (GLM)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户抱怨GLM-5.2的5小时使用限制即使在付费pro版本下仍存在，认为其定价（65美元/月）不如codox/claude等国际服务物有所值，影响实际开发体验。",
+        "topics": [
+          "定价",
+          "GLM",
+          "5小时限制",
+          "订阅",
+          "套餐对比"
+        ],
+        "planMentioned": "GLM-5.2 Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-16T08:09:14.893Z"
+    },
+    {
+      "id": "v2ex-1220758",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1220758",
+      "title": "智谱真的一言难尽",
+      "content": "下载了 ZCode 想体验下新模型，结果 Request Many 。那我充钱行了吧。 GLM Coding Plan 居然全部售罄，还要等补货的吗。 告辞",
+      "author": "CHTuring",
+      "createdAt": "2026-06-16T03:09:45.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.96,
+        "supplier": "智谱",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.94,
+        "summary": "下载 ZCode 体验新模型时被限流，想充值却发现 GLM Coding Plan 已全部售罄，作者对智谱的套餐供应感到失望。",
+        "topics": [
+          "定价",
+          "套餐售罄",
+          "体验卡",
+          "充钱",
+          "限流"
+        ],
+        "planMentioned": "GLM Coding Plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-16T08:09:18.867Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
