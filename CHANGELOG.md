@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.11.11] - 2026-06-16
+- feat(config): 新增 coding-plans.autoRefreshModels 配置项
+
 ## [0.11.10] - 2026-06-15
 - feat(config): 迁移 thinking 配置至 capabilities 并重命名为 thinkingType
 
@@ -53,7 +56,3 @@ All notable changes to this project will be documented in this file.
 - feat(provider): 限制未显式添加 group 的模型暴露
 - fix(extension): 延迟注册语言模型提供程序并修复模型可见性
 - feat(test): 添加扩展测试配置与文档
-
-## [0.8.4] - 2026-05-14
-- feat(config): 废弃 settings.json 中的 API Key 配置
-- feat(config): 新增供应商配置管理向导并优化模型加载逻辑
