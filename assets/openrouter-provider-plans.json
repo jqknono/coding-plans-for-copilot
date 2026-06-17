@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-06-16T09:53:24.415Z",
-  "generatedAtBeijing": "2026年6月16日 17:53:24",
-  "sourceGeneratedAt": "2026-06-16T09:53:10.552Z",
-  "sourceGeneratedAtBeijing": "2026年6月16日 17:53:10",
-  "sourceMetricsGeneratedAt": "2026-06-16T09:53:11.195Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年6月16日 17:53:11",
+  "generatedAt": "2026-06-17T09:45:15.442Z",
+  "generatedAtBeijing": "2026年6月17日 17:45:15",
+  "sourceGeneratedAt": "2026-06-17T09:44:57.453Z",
+  "sourceGeneratedAtBeijing": "2026年6月17日 17:44:57",
+  "sourceMetricsGeneratedAt": "2026-06-17T09:44:58.309Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年6月17日 17:44:58",
   "summary": {
     "openrouterProviderCount": 85,
-    "metricsProviderCount": 40,
-    "resolvedMetricsProviderCount": 40,
+    "metricsProviderCount": 38,
+    "resolvedMetricsProviderCount": 38,
     "unresolvedMetricsProviderCount": 0,
-    "structuredProviderCount": 9,
+    "structuredProviderCount": 8,
     "heuristicProviderCount": 8,
-    "providersWithPlans": 17,
-    "pendingCount": 23,
+    "providersWithPlans": 16,
+    "pendingCount": 22,
     "blockedPendingCount": 0,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -114,56 +114,6 @@
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/Plr0fi68q-intl-en",
       "termsOfServiceUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/bmesahnjh-intl-en",
-      "statusPageUrl": null,
-      "parseMode": "provider-pricing-structured"
-    },
-    {
-      "slug": "cerebras",
-      "openrouterName": "Cerebras",
-      "providerId": "cerebras-code",
-      "plans": [
-        {
-          "name": "Cerebras Code Pro",
-          "currentPrice": 50,
-          "currentPriceText": "$50/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "速率限制可能调整",
-          "serviceDetails": [
-            "Qwen3-Coder access with fast, high-context completions",
-            "最高 24 million tokens/day",
-            "适合 indie devs、simple agentic workflows、weekend projects",
-            "OpenAI-compatible inference endpoint",
-            "131k-token context window"
-          ]
-        },
-        {
-          "name": "Cerebras Code Max",
-          "currentPrice": 200,
-          "currentPriceText": "$200/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "速率限制可能调整",
-          "serviceDetails": [
-            "Qwen3-Coder access for heavy coding workflows",
-            "最高 120 million tokens/day",
-            "适合 full-time development、IDE integrations、code refactoring、multi-agent systems",
-            "OpenAI-compatible inference endpoint",
-            "131k-token context window"
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://www.cerebras.ai/blog/introducing-cerebras-code",
-        "https://www.cerebras.ai"
-      ],
-      "pricingPageUrl": "https://www.cerebras.ai/blog/introducing-cerebras-code",
-      "officialWebsiteUrl": "https://www.cerebras.ai",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://www.cerebras.ai/privacy-policy",
-      "termsOfServiceUrl": "https://www.cerebras.ai/terms-of-service",
       "statusPageUrl": null,
       "parseMode": "provider-pricing-structured"
     },
@@ -650,34 +600,34 @@
       "sourceUrls": [
         "https://www.morphllm.com",
         "https://www.morphllm.com/pricing",
-        "https://www.morphllm.com/_next/static/chunks/e71582e39e79ca75.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/0fe64fdaabacfc43.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/048634a2386705b3.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/5e4885d030a9a455.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/turbopack-e71dee7b76edf5e8.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/f6be7cd9df09c1e4.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/095be308ed4596b3.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/dfb7a15dd26e3c16.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/a801ccbb12136f9b.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/767d103ee2e3b923.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/4ff136dcbb469103.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/1e13d50e23e4b1f3.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/d074621cc0dfcd9d.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7",
-        "https://www.morphllm.com/_next/static/chunks/4febd007ed4b74f8.js?dpl=dpl_8P3bnE3F1qY7cPNZcA4pc2QRw6Y7"
+        "https://www.morphllm.com/_next/static/chunks/9e20c2e843cf0fac.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/de11a3c107592369.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/d0300bffb79131f2.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/048634a2386705b3.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/6482d47709b765ff.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/turbopack-bb6d054638b6dfc0.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/f6be7cd9df09c1e4.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/ac0386dbf0b7895a.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/e8984e3b6dc4e00d.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/9a8fdbb9257bf809.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/d322759f31bed8b4.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/a3dd2bb6b77ca038.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/0171aed604d2fa6e.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/a801ccbb12136f9b.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/67d147f770c5d878.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/4ff136dcbb469103.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/1e13d50e23e4b1f3.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/77dc3ae96e730616.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/49b5c7be6c48af62.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/3f4e733aecc42c14.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/4599f5ef5a1359e0.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/e4bf9d057d94b167.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/7ece4b160a5a9f07.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/d7f4b01c61d210c3.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/6611f4ac18929202.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/d96012bcfc98706a.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/d80b3790a119a285.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT",
+        "https://www.morphllm.com/_next/static/chunks/4febd007ed4b74f8.js?dpl=dpl_BrDzDnzRiEx6ziDwBhVG4VyhokRT"
       ],
       "pricingPageUrl": "https://www.morphllm.com/pricing",
       "officialWebsiteUrl": "https://www.morphllm.com",
@@ -759,7 +709,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.306/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.308/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1173,7 +1123,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.60 / $0.12）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $1.50 / $0.30）",
       "blocked": false
     },
     {
@@ -1228,15 +1178,6 @@
       "officialWebsiteUrl": "https://www.gmicloud.ai",
       "pricingPageUrl": "https://www.gmicloud.ai",
       "reason": "仅提供 GPU 云计算按时计费（$/GPU-hour），无套餐订阅",
-      "blocked": false
-    },
-    {
-      "slug": "google-vertex",
-      "openrouterName": "Google",
-      "providerId": null,
-      "officialWebsiteUrl": "https://cloud.google.com",
-      "pricingPageUrl": "https://cloud.google.com",
-      "reason": "云平台按量计费 + $300 免费试用额度，无套餐订阅",
       "blocked": false
     },
     {
@@ -1326,7 +1267,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.together.ai",
       "pricingPageUrl": "https://www.together.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.40 / $0.26 / $4.40）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.74 / $0.20 / $3.48）",
       "blocked": false
     },
     {
