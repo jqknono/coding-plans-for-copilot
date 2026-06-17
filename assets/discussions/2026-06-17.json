@@ -1,0 +1,64 @@
+{
+  "date": "2026-06-17",
+  "generatedAt": "2026-06-17T07:59:49.109Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 56,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Kimi": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1221065",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1221065",
+      "title": "kimi code plan 在 claude code 中 Explore agent 使用的模型会降智吗",
+      "content": "如题，按照官方文档配置的，没有修改各 agent 的模型配置，经常在 Explore 中遇到死循环，main agent 倒是没遇到，难道是因为 Explore 用的模型不一样，大家有没有类似情况？",
+      "author": "hihanley",
+      "createdAt": "2026-06-17T06:46:12.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Kimi",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户在使用Kimi Code Plan的Explore功能时遇到死循环问题，怀疑是由于Explore使用的模型与主Agent模型不同导致的性能问题，询问他人是否有类似经历。",
+        "topics": [
+          "模型配置",
+          "死循环",
+          "Explore agent",
+          "kimi code plan"
+        ],
+        "planMentioned": "Kimi Code Plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-17T08:03:16.406Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1221069: The operation was aborted due to timeout"
+  ]
+}
