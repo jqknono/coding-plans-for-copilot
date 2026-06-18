@@ -1,0 +1,61 @@
+{
+  "date": "2026-06-18",
+  "generatedAt": "2026-06-18T07:49:29.137Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 53,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {}
+  },
+  "posts": [
+    {
+      "id": "v2ex-1221273",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1221273",
+      "title": "你们 vibe coding 是喜欢写在一个工程文件 还是拆分的很细？",
+      "content": "假设说一个安卓原生 app 已经有 5w 行代码，此时要做 ios 原生端，怎么利用 ai 提效呢。 我试过直接让他做，上下文直接爆炸然后产出就是一坨。 我还试过把零碎工程文件整合成一个，然后让 ai 拿着这一个文件直接逐行翻译成别的平台 你们是怎么做的呢 请教一下",
+      "author": "budingkaka2013",
+      "createdAt": "2026-06-18T02:54:30.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.8,
+        "supplier": null,
+        "supplierCategory": "other",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户询问如何利用AI工具（如Vibe Coding）将Android原生应用的代码迁移到iOS原生端，讨论了将代码整合为单文件还是拆分为多个文件的问题。",
+        "topics": [
+          "AI代码迁移",
+          "代码整合",
+          "Vibe Coding",
+          "跨平台开发"
+        ],
+        "planMentioned": "Vibe Coding",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-18T07:52:09.530Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
