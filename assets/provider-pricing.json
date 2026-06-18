@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-18T03:13:22.355Z",
+  "generatedAt": "2026-06-18T09:36:58.373Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/24b2b846c80767e9addf7cec860b9d19.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/14bc8b6c0d6a8a90c127fe20ba383ff0.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -1296,7 +1296,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.308/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.311/index.js"
       ],
       "plans": [
         {
@@ -1388,9 +1388,7 @@
             "使用 LingClaw 构建个人助理"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "x-aio: Request failed: https://code.x-aio.com/assets/index-C_dhngbD.js -> 522; Playwright fallback failed: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-linux64/chrome-headless-shell ╔═════════════════════════════════════════════════════════════════════════╗ ║ Looks like Playwright Test or Playwright was just installed or updated. ║ ║ Please run the following command to download new browsers: ║ ║ ║ ║ npx playwright install ║ ║ ║ ║ <3 Playwright Team ║ ╚═════════════════════════════════════════════════════════════════════════╝"
+      ]
     },
     {
       "provider": "xfyun-ai",
@@ -1576,7 +1574,6 @@
     }
   ],
   "failures": [
-    "x-aio: Request failed: https://code.x-aio.com/assets/index-C_dhngbD.js -> 522; Playwright fallback failed: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/chromium_headless_shell-1208/chrome-headless-shell-linux64/chrome-headless-shell\n╔═════════════════════════════════════════════════════════════════════════╗\n║ Looks like Playwright Test or Playwright was just installed or updated. ║\n║ Please run the following command to download new browsers:              ║\n║                                                                         ║\n║     npx playwright install                                              ║\n║                                                                         ║\n║ <3 Playwright Team                                                      ║\n╚═════════════════════════════════════════════════════════════════════════╝",
     "stepfun-step-plan: page.waitForFunction: Timeout 12000ms exceeded."
   ]
 }
