@@ -102,6 +102,23 @@ test('大陆套餐展示阿里云 Token Plan', async ({ page }) => {
   );
 });
 
+test('大陆套餐展示华为云 Token Plan', async ({ page }) => {
+  await page.goto('/#domestic');
+  await waitForDomesticCards(page);
+
+  const card = page.locator('#provider-card-huawei-token-plan');
+  await expect(card).toBeVisible();
+  await expect(card.getByRole('heading', { name: '华为云 Token Plan' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan Lite' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan Standard' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan Pro' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan Max' })).toBeVisible();
+  await expect(card.getByRole('link', { name: '前往了解' })).toHaveAttribute(
+    'href',
+    'https://console.huaweicloud.com/modelarts/?region=cn-southwest-2#/model-studio/resourcePlanManagement',
+  );
+});
+
 test('抓取失败的 provider 不渲染套餐卡片', async ({ page }) => {
   await page.route('**/provider-pricing.json', async (route) => {
     await route.fulfill({

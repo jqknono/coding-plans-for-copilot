@@ -30,6 +30,7 @@ const PROVIDER_IDS = {
   OPENCODE: 'opencode',
   ROOCODE: 'roocode',
   GITHUB_COPILOT: 'github-copilot',
+  HUAWEI_TOKEN: 'huawei-token-plan',
   MTHREADS: 'mthreads-coding-plan',
   STEPFUN: 'stepfun-step-plan',
   CUCLOUD: 'cucloud-coding-plan',
@@ -3471,6 +3472,61 @@ async function parseTencentTokenPlans() {
   };
 }
 
+async function parseHuaweiTokenPlans() {
+  const pageUrl = 'https://www.huaweicloud.com/agentorchard/tokenplan.html';
+  const consoleUrl =
+    'https://console.huaweicloud.com/modelarts/?region=cn-southwest-2#/model-studio/resourcePlanManagement';
+
+  // Huawei Cloud 智果园 (AgentOrchard / ModelArts) Token Plan pricing from official documentation
+  // Source: https://www.huaweicloud.com/agentorchard/tokenplan.html
+  // Page renders client-side via JS obfuscation; data hardcoded from official published table.
+  const sharedModels = '支持模型: GLM 全系、Kimi 全系、DeepSeek 全系';
+  const sharedTools = '适配工具: OpenClaw、Claude Code、Cline、Cursor';
+  const sharedRestrictions = '购买限制: 个人版，限购 1 套，不支持退订';
+
+  const plans = [
+    asPlan({
+      name: 'Token Plan Lite',
+      currentPriceText: '¥59/月',
+      currentPrice: 59,
+      unit: '月',
+      notes: '新手尝鲜，入门首选',
+      serviceDetails: ['用量限制: 每订阅月 5,000 万 Tokens', sharedModels, sharedTools, sharedRestrictions],
+    }),
+    asPlan({
+      name: 'Token Plan Standard',
+      currentPriceText: '¥149/月',
+      currentPrice: 149,
+      unit: '月',
+      notes: '日常使用，高性价比（官方标注"最受欢迎"）',
+      serviceDetails: ['用量限制: 每订阅月 1.3 亿 Tokens', sharedModels, sharedTools, sharedRestrictions],
+    }),
+    asPlan({
+      name: 'Token Plan Pro',
+      currentPriceText: '¥399/月',
+      currentPrice: 399,
+      unit: '月',
+      notes: '高频 AI 开发，Token 配额大幅提升',
+      serviceDetails: ['用量限制: 每订阅月 3.8 亿 Tokens', sharedModels, sharedTools, sharedRestrictions],
+    }),
+    asPlan({
+      name: 'Token Plan Max',
+      currentPriceText: '¥799/月',
+      currentPrice: 799,
+      unit: '月',
+      notes: '更多额度加持，重度 AI 开发首选',
+      serviceDetails: ['用量限制: 每订阅月 8.8 亿 Tokens', sharedModels, sharedTools, sharedRestrictions],
+    }),
+  ];
+
+  return {
+    provider: PROVIDER_IDS.HUAWEI_TOKEN,
+    sourceUrls: unique([pageUrl, consoleUrl]),
+    fetchedAt: new Date().toISOString(),
+    plans: dedupePlans(plans),
+  };
+}
+
 async function parseXiaomiMimoTokenPlans() {
   const pageUrl = 'https://mimo.xiaomi.com';
   const newsUrl = 'https://www.ithome.com/0/935/666.htm';
@@ -4146,6 +4202,7 @@ async function main() {
     { provider: PROVIDER_IDS.XIAOMI, fn: parseXiaomiMimoTokenPlans },
     { provider: PROVIDER_IDS.OPENCODE, fn: parseOpenCodePlans },
     { provider: PROVIDER_IDS.GITHUB_COPILOT, fn: parseGithubCopilotPlans },
+    { provider: PROVIDER_IDS.HUAWEI_TOKEN, fn: parseHuaweiTokenPlans },
     { provider: PROVIDER_IDS.MTHREADS, fn: parseMthreadsCodingPlans },
     { provider: PROVIDER_IDS.STEPFUN, fn: parseStepfunStepPlans },
     { provider: PROVIDER_IDS.CUCLOUD, fn: parseCucloudCodingPlans },
@@ -4237,6 +4294,7 @@ module.exports = {
   parseInfiniCodingPlansFromDocsText,
   parseInfiniServiceDetailsByTier,
   parseAliyunTokenPlansFromDocsHtml,
+  parseHuaweiTokenPlans,
   parseCompshareCodingPlansFromHtml,
   parseKimiDomesticMembershipPlansFromText,
   parseJdCloudCodingPlansFromDocsText,
