@@ -1,6 +1,6 @@
 {
   "date": "2026-06-18",
-  "generatedAt": "2026-06-18T07:49:29.137Z",
+  "generatedAt": "2026-06-19T08:00:12.445Z",
   "config": {
     "sources": [
       "v2ex",
@@ -15,12 +15,17 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 53,
+    "totalPostsFetched": 48,
     "postsAfterKeywordFilter": 6,
-    "relevantPosts": 1,
-    "discussionsCreated": 0,
-    "discussionsSkipped": 1,
-    "supplierMentions": {}
+    "relevantPosts": 3,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "Zhipu (Z.ai)": 1,
+      "GitHub": 1,
+      "Zhipu": 1,
+      "智谱 (GLM)": 1
+    }
   },
   "posts": [
     {
@@ -52,6 +57,66 @@
       },
       "discussionUrl": null,
       "analyzedAt": "2026-06-18T07:52:09.530Z"
+    },
+    {
+      "id": "v2ex-1221398",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1221398",
+      "title": "目前 glm 的 coding plan 抢不到，还有哪些大厂的含有 glm5.2 的套餐值得买的？",
+      "content": "主要是在乎快不快，因为好像就 max 版本的才比较快",
+      "author": "yuan321",
+      "createdAt": "2026-06-18T09:40:56.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Zhipu",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户询问当前无法购买的GLM coding plan替代方案，特别关注包含GLM5.2的套餐，强调速度优先。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "GLM5.2",
+          "订阅"
+        ],
+        "planMentioned": "GLM coding plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-19T08:04:56.725Z"
+    },
+    {
+      "id": "v2ex-1221415",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1221415",
+      "title": "glm 的 max 套餐今天慢吗？",
+      "content": "使用 opencode 的 go 套餐，使用 glm5.2 感觉很慢，不晓得正版 max 套餐快不快",
+      "author": "yuan321",
+      "createdAt": "2026-06-18T10:32:11.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.96,
+        "supplier": "智谱 (GLM)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户使用 opencode 的 Go 套餐，觉得 glm5.2 很慢，想了解正版 max 套餐是否更快。",
+        "topics": [
+          "速度",
+          "套餐对比",
+          "体验卡",
+          "定价"
+        ],
+        "planMentioned": "GLM Max 套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/166",
+      "analyzedAt": "2026-06-19T08:05:01.034Z"
     }
   ],
   "failures": [

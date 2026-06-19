@@ -1,0 +1,99 @@
+{
+  "date": "2026-06-19",
+  "generatedAt": "2026-06-19T08:00:12.445Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 48,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "Zhipu (Z.ai)": 1,
+      "GitHub": 1,
+      "Zhipu": 1,
+      "智谱 (GLM)": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1221519",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1221519",
+      "title": "GLM5.2 个人感觉有点被吹大了",
+      "content": "前几周用了几天 Claude-fable-5 模型，确实很明显的感觉准确率非常高，理解能力也非常高，基本一遍过。在这个之前我大部分使用 Opus4.8 以及 Sonnet4.6, 理论上我用 sonnet 4.6 更多。 这段时间看 GLM 这么火，我也凑热闹去抢了下，一直没抢到，干脆购买了国外版本的 z.ai 的套餐。这几天重度使用了一下，说说我的感受： 前提：我都是用的 claude code cli GLM5.2 有点话痨，有的时候说一堆话，甚至大段重复，不够言简意赅 GLM5.2 对整个项目的把控不如 claude code ，要 GLM 做一个功能，他有时不先去看程序是不是有什么已经做了的，或者是否影响别的地方，就是感觉整个考虑不周到，要我来指正。 我明白很多时候需要描述更清晰需求，但是有的需求应该是显而易见的。 这点我感觉全局上，fable &gt; opus &gt; sonnet &gt; glm 慢，卡，经常一个小问题，要搞好几分钟，明显提赶上 claude 效率要更高。 所以总结起来说：相对目前所谓可用模型第一来说，我觉得 GLM5.2 过誉了，理解能力欠缺，整体把",
+      "author": "hihihihihi",
+      "createdAt": "2026-06-19T05:42:06.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Zhipu (Z.ai)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户对GLM5.2的评价较负面，认为其理解能力和项目控制能力不足，效率低于Claude，尽管尝试了Z.ai的国外版本套餐。",
+        "topics": [
+          "GLM5.2",
+          "Claude",
+          "模型对比",
+          "定价",
+          "效率",
+          "理解能力"
+        ],
+        "planMentioned": "GLM5.2, Z.ai国外版本",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-19T08:04:51.622Z"
+    },
+    {
+      "id": "v2ex-1221510",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1221510",
+      "title": "GitHub copilot 重新恢复订阅了",
+      "content": "之前 4 月份下旬似乎不再接受新订阅了。今天试了下，发现能恢复了。虽然性价比比以前差了很多，但是我感觉 vs code 用起来还是最顺的，修改也最精准。准备先用个 $10 套餐试试。",
+      "author": "Julaoshi",
+      "createdAt": "2026-06-19T04:39:50.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "GitHub",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "用户报告 GitHub Copilot 订阅服务已恢复，尽管价格性价比下降，但仍推荐因 VS Code 集成流畅且修改精准。计划尝试 $10 套餐。",
+        "topics": [
+          "订阅",
+          "定价",
+          "GitHub Copilot",
+          "价格上涨",
+          "体验"
+        ],
+        "planMentioned": "$10 套餐",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-19T08:04:53.821Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
