@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-19T09:40:53.822Z",
+  "generatedAt": "2026-06-20T03:11:25.558Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -191,7 +191,9 @@
             "131k-token context window"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "cerebras-code: Task timed out after 30000ms"
     },
     {
       "provider": "chutes-ai",
@@ -228,7 +230,9 @@
             "PAYG requests beyond limit"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "chutes-ai: Task timed out after 30000ms"
     },
     {
       "provider": "compshare-ai",
@@ -386,7 +390,9 @@
             "Lite 与 Pro 共计 12000 个专属免费名额"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "cucloud-coding-plan: Task timed out after 30000ms"
     },
     {
       "provider": "github-copilot",
@@ -519,7 +525,9 @@
             "当前状态: 暂不可购买"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "infini-ai: Task timed out after 30000ms"
     },
     {
       "provider": "jdcloud-ai",
@@ -558,7 +566,9 @@
             "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: Task timed out after 30000ms"
     },
     {
       "provider": "kilo-pass",
@@ -614,7 +624,9 @@
             "Access to 500+ AI models"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "kilo-pass: Task timed out after 30000ms"
     },
     {
       "provider": "kimi-ai",
@@ -791,7 +803,9 @@
             "Kimi Code 月度订阅权益"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "kimi-ai: Task timed out after 30000ms"
     },
     {
       "provider": "kwaikat-ai",
@@ -998,7 +1012,9 @@
             "抢先体验新功能"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "mthreads-coding-plan: Task timed out after 30000ms"
     },
     {
       "provider": "opencode",
@@ -1158,7 +1174,7 @@
         }
       ],
       "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "stepfun-step-plan: page.waitForFunction: Timeout 12000ms exceeded."
+      "staleFailure": "stepfun-step-plan: Task timed out after 30000ms"
     },
     {
       "provider": "synthetic-ai",
@@ -1184,7 +1200,9 @@
             "Included models: DeepSeek、MiniMax M2.5、Kimi K2.5、Qwen3 Coder、GLM 等"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "synthetic-ai: Task timed out after 30000ms"
     },
     {
       "provider": "tencent-cloud-ai",
@@ -1570,10 +1588,22 @@
             "高峰期专属资源优先保障"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "zhipu-ai: Task timed out after 30000ms"
     }
   ],
   "failures": [
-    "stepfun-step-plan: page.waitForFunction: Timeout 12000ms exceeded."
+    "zhipu-ai: Task timed out after 30000ms",
+    "kimi-ai: Task timed out after 30000ms",
+    "jdcloud-ai: Task timed out after 30000ms",
+    "infini-ai: Task timed out after 30000ms",
+    "mthreads-coding-plan: Task timed out after 30000ms",
+    "stepfun-step-plan: Task timed out after 30000ms",
+    "cucloud-coding-plan: Task timed out after 30000ms",
+    "cerebras-code: Task timed out after 30000ms",
+    "synthetic-ai: Task timed out after 30000ms",
+    "chutes-ai: Task timed out after 30000ms",
+    "kilo-pass: Task timed out after 30000ms"
   ]
 }
