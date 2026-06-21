@@ -1,0 +1,64 @@
+{
+  "date": "2026-06-20",
+  "generatedAt": "2026-06-21T07:45:48.771Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 45,
+    "postsAfterKeywordFilter": 5,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Vibe Coding": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1221657",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1221657",
+      "title": "Vibe Coding 了两年，分享一下我对于 Vibe 的感想。",
+      "content": "以下为个人观点，基本上全是暴论，不喜勿喷，给孩子留点面子吧😭 我是从 2024 年读高二的时候了解到 Vibe Coding 的（当时大家还没有叫它 Vibe Coding ），当时 DeepSeek 刚出 R1 ，除了 OpenAI 的 GPT-o1 之外，大家还没来得及用上思维链，也没有那么强的性能，参数量最大的模型的话好像是 R1 的 671B 。 当时 Token 还没有现在那么便宜，而我又是穷鬼高中生，听说这玩意儿可以辅助编程，便心心念念日思夜想，看着 GPT-o1 馋到流口水，根本买不起订阅。 所幸，我一位玩得好的远房表哥在 AWS 悉尼工作，平时喜欢折腾新奇技术，跟他聊天的时候了解到他 GPT Pro 总是用不完，每次都差那么一点，于是我就来补这个缺口了😋 刚开始用的时候完全抓瞎，总是给 GPT 一大堆表述不清的需求，GPT：😅。它也没给我什么好脸色，总是给我甩一大堆垃圾，我和 GPT 就这样你一口我一口地互相喂💩，我们吃得不亦乐乎。 但是过了几个月，到了 2025 年伊始，大家口中开始出现了 Vibe Coding 这种说法，然后我又通过 Vibe Coding",
+      "author": "SoraStar",
+      "createdAt": "2026-06-20T09:41:43.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "Vibe Coding",
+        "supplierCategory": "other",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.75,
+        "summary": "用户分享了自己使用Vibe Coding的两年体验，讨论了AI编程助手的使用心得、Prompt Engineering的重要性，以及圈内不同类型用户的现状。",
+        "topics": [
+          "Vibe Coding",
+          "Prompt Engineering",
+          "AI编程",
+          "用户体验",
+          "圈内现状"
+        ],
+        "planMentioned": "Vibe Coding",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-21T07:47:04.696Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
