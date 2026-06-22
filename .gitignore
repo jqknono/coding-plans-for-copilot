@@ -14,3 +14,13 @@ output/playwright/
 output/tmp/
 temp/
 .playwright-mcp/
+
+# Tooling / agent workspace (not part of source)
+.claude/commands/
+.claude/skills/
+.codegraph/
+.gitnexus/
+.opencode/
+.roo/
+.translation-cache/
+openspec/

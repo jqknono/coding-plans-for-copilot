@@ -2,6 +2,9 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+- feat(pricing): 新增华为云 Token Plan（智果园）到大陆套餐看板，4 个档位 ¥59 / ¥149 / ¥399 / ¥799
+
 ## [0.11.11] - 2026-06-16
 - feat(config): 新增 coding-plans.autoRefreshModels 配置项
 

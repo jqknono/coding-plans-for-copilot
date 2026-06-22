@@ -13,6 +13,7 @@ const PROVIDER_LABELS = {
   'baidu-qianfan-ai': '百度智能云千帆',
   'tencent-cloud-ai': '腾讯云 Coding Plan',
   'tencent-cloud-token-plan': '腾讯云 Token Plan',
+  'huawei-token-plan': '华为云 Token Plan',
   'jdcloud-ai': '京东云 Coding Plan',
   'kwaikat-ai': '快手 KwaiKAT',
   'x-aio': 'X-AIO',
@@ -56,6 +57,8 @@ const PROVIDER_BUY_URLS = {
   'baidu-qianfan-ai': 'https://cloud.baidu.com/product/codingplan.html',
   'tencent-cloud-ai': 'https://buy.cloud.tencent.com/hunyuan',
   'tencent-cloud-token-plan': 'https://cloud.tencent.com/act/pro/tokenplan',
+  'huawei-token-plan':
+    'https://console.huaweicloud.com/modelarts/?region=cn-southwest-2#/model-studio/resourcePlanManagement',
   'jdcloud-ai': 'https://www.jdcloud.com/cn/pages/codingplan',
   'kwaikat-ai': 'https://www.streamlake.com/marketing/coding-plan',
   'x-aio': 'https://code.x-aio.com/',

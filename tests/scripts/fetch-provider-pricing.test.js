@@ -13,6 +13,7 @@ const {
   parseInfiniPlanFromBundle,
   parseInfiniServiceDetailsByTier,
   parseAliyunTokenPlansFromDocsHtml,
+  parseHuaweiTokenPlans,
   parseCompshareCodingPlansFromHtml,
   parseKimiDomesticMembershipPlansFromText,
   parseJdCloudCodingPlansFromDocsText,
@@ -540,4 +541,33 @@ test('parseAliyunTokenPlansFromDocsHtml reads team seat and shared credit packag
   assert.match(result.plans[0].serviceDetails.join('\n'), /25,000 Credits\/坐席\/月/);
   assert.match(result.plans[0].serviceDetails.join('\n'), /qwen3\.6-plus/);
   assert.match(result.plans[3].serviceDetails.join('\n'), /625,000 Credits\/个/);
+});
+
+test('parseHuaweiTokenPlans returns the four 华为云 Token Plan tiers', async () => {
+  const result = await parseHuaweiTokenPlans();
+
+  assert.equal(result.provider, 'huawei-token-plan');
+  assert.deepEqual(
+    result.sourceUrls,
+    [
+      'https://www.huaweicloud.com/agentorchard/tokenplan.html',
+      'https://console.huaweicloud.com/modelarts/?region=cn-southwest-2#/model-studio/resourcePlanManagement',
+    ],
+  );
+  assert.deepEqual(
+    result.plans.map((plan) => ({ name: plan.name, currentPrice: plan.currentPrice, unit: plan.unit })),
+    [
+      { name: 'Token Plan Lite', currentPrice: 59, unit: '月' },
+      { name: 'Token Plan Standard', currentPrice: 149, unit: '月' },
+      { name: 'Token Plan Pro', currentPrice: 399, unit: '月' },
+      { name: 'Token Plan Max', currentPrice: 799, unit: '月' },
+    ],
+  );
+  const allDetails = result.plans.map((p) => p.serviceDetails.join('\n')).join('\n');
+  assert.match(allDetails, /GLM 全系/);
+  assert.match(allDetails, /Kimi 全系/);
+  assert.match(allDetails, /DeepSeek 全系/);
+  assert.match(allDetails, /OpenClaw、Claude Code、Cline、Cursor/);
+  assert.match(allDetails, /限购 1 套/);
+  assert.match(result.plans[3].serviceDetails.join('\n'), /8\.8 亿 Tokens/);
 });

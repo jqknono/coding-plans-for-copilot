@@ -481,6 +481,75 @@
       ]
     },
     {
+      "provider": "huawei-token-plan",
+      "sourceUrls": [
+        "https://www.huaweicloud.com/agentorchard/tokenplan.html",
+        "https://console.huaweicloud.com/modelarts/?region=cn-southwest-2#/model-studio/resourcePlanManagement"
+      ],
+      "plans": [
+        {
+          "name": "Token Plan Lite",
+          "currentPrice": 59,
+          "currentPriceText": "¥59/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "新手尝鲜，入门首选",
+          "serviceDetails": [
+            "用量限制: 每订阅月 5,000 万 Tokens",
+            "支持模型: GLM 全系、Kimi 全系、DeepSeek 全系",
+            "适配工具: OpenClaw、Claude Code、Cline、Cursor",
+            "购买限制: 个人版，限购 1 套，不支持退订"
+          ]
+        },
+        {
+          "name": "Token Plan Standard",
+          "currentPrice": 149,
+          "currentPriceText": "¥149/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "日常使用，高性价比（官方标注\"最受欢迎\"）",
+          "serviceDetails": [
+            "用量限制: 每订阅月 1.3 亿 Tokens",
+            "支持模型: GLM 全系、Kimi 全系、DeepSeek 全系",
+            "适配工具: OpenClaw、Claude Code、Cline、Cursor",
+            "购买限制: 个人版，限购 1 套，不支持退订"
+          ]
+        },
+        {
+          "name": "Token Plan Pro",
+          "currentPrice": 399,
+          "currentPriceText": "¥399/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "高频 AI 开发，Token 配额大幅提升",
+          "serviceDetails": [
+            "用量限制: 每订阅月 3.8 亿 Tokens",
+            "支持模型: GLM 全系、Kimi 全系、DeepSeek 全系",
+            "适配工具: OpenClaw、Claude Code、Cline、Cursor",
+            "购买限制: 个人版，限购 1 套，不支持退订"
+          ]
+        },
+        {
+          "name": "Token Plan Max",
+          "currentPrice": 799,
+          "currentPriceText": "¥799/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "更多额度加持，重度 AI 开发首选",
+          "serviceDetails": [
+            "用量限制: 每订阅月 8.8 亿 Tokens",
+            "支持模型: GLM 全系、Kimi 全系、DeepSeek 全系",
+            "适配工具: OpenClaw、Claude Code、Cline、Cursor",
+            "购买限制: 个人版，限购 1 套，不支持退订"
+          ]
+        }
+      ]
+    },
+    {
       "provider": "infini-ai",
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
@@ -1573,7 +1642,5 @@
       ]
     }
   ],
-  "failures": [
-    "stepfun-step-plan: page.waitForFunction: Timeout 12000ms exceeded."
-  ]
+  "failures": []
 }
