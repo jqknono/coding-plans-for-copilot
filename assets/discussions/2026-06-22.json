@@ -1,0 +1,65 @@
+{
+  "date": "2026-06-22",
+  "generatedAt": "2026-06-22T08:12:37.315Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 53,
+    "postsAfterKeywordFilter": 3,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1222010",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1222010",
+      "title": "这个月用 deepseek-4-pro 到 22 号,已经消费 100rmb 了,有没有合适的 coding plan 可以降低成本?",
+      "content": "devops 工作,通过 claude code 使用.试过其他国产模型:Qwen3.7-max 感觉复杂问题处理能力强于 deepseek-v4-pro 一些但是贵太多了,glm5.2 也很强但是抢不到.海外的太贵了不考虑",
+      "author": "yyttrr",
+      "createdAt": "2026-06-22T07:48:31.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户正在使用DeepSeek-4-Pro但因高成本（已消费100rmb），寻找更经济的AI编码助手套餐，同时比较了Qwen3.7-max和GLM5.2的性能与价格。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "成本",
+          "DeepSeek",
+          "Qwen",
+          "GLM"
+        ],
+        "planMentioned": "DeepSeek-4-Pro",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-22T08:14:24.992Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
