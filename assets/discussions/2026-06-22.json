@@ -1,6 +1,6 @@
 {
   "date": "2026-06-22",
-  "generatedAt": "2026-06-22T08:12:37.315Z",
+  "generatedAt": "2026-06-23T07:22:39.008Z",
   "config": {
     "sources": [
       "v2ex",
@@ -15,12 +15,13 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 53,
-    "postsAfterKeywordFilter": 3,
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 7,
     "relevantPosts": 1,
     "discussionsCreated": 0,
     "discussionsSkipped": 1,
     "supplierMentions": {
+      "Claude, Codex": 1,
       "DeepSeek": 1
     }
   },

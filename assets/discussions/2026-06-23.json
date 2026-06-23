@@ -1,0 +1,65 @@
+{
+  "date": "2026-06-23",
+  "generatedAt": "2026-06-23T07:22:39.008Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Claude, Codex": 1,
+      "DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1222256",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1222256",
+      "title": "100 刀的 claude code 和 codex 如何选择？",
+      "content": "一直用的是 codex plus 套餐，最近想再开一个 100 刀的套餐，不知道选 codex 还是 claude 。双持过得给点建议。 1 、我的项目之前都是 codex 做的，如果再开一个 100 刀的号，可以在 codex 中共享会话上下文，是不是更有优势？ 2 、codex 和 claude 能力差距是否明显？ 3 、之前没用过 claude code ，我知道有 cli 和桌面版的应用，你们平时说的 claude code 是命令行还是桌面版？",
+      "author": "greyfreedom",
+      "createdAt": "2026-06-23T06:39:15.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude, Codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户在比较100元预算下选择Claude Code和Codex订阅计划，询问两者能力差异、会话上下文共享优势以及Claude Code的具体应用形式。",
+        "topics": [
+          "定价",
+          "Claude Code",
+          "Codex",
+          "套餐对比",
+          "选择建议"
+        ],
+        "planMentioned": "Claude Code, Codex",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-23T07:25:25.655Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
