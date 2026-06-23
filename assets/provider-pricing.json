@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-22T10:07:52.033Z",
+  "generatedAt": "2026-06-23T03:10:47.687Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -554,7 +554,7 @@
       "sourceUrls": [
         "https://cloud.infini-ai.com/platform/ai",
         "https://docs.infini-ai.com/gen-studio/coding-plan/",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.337cf38a.js",
+        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.3126efe5.js",
         "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
       ],
       "plans": [
@@ -1272,7 +1272,7 @@
           "notes": null,
           "serviceDetails": [
             "用量限制: 每 5 小时：最多约 1,200 次请求 每周：最多约 9,000 次请求 每订阅月：最多约 18,000 次请求",
-            "支持模型: 选用 Tencent HY 2.0 Instruct、GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个模型",
+            "支持模型: 选用 GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个模型",
             "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具"
           ]
         },
@@ -1286,7 +1286,7 @@
           "notes": null,
           "serviceDetails": [
             "用量限制: 每 5 小时：最多约 6,000 次请求 每周：最多约 45,000 次请求 每订阅月：最多约 90,000 次请求",
-            "支持模型: 选用 Tencent HY 2.0 Instruct、GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个模型",
+            "支持模型: 选用 GLM-5、Kimi-K2.5、MiniMax-M2.5 等多个模型",
             "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具"
           ]
         }
@@ -1365,7 +1365,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.311/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.312/index.js"
       ],
       "plans": [
         {
