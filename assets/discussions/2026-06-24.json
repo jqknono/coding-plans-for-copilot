@@ -1,0 +1,95 @@
+{
+  "date": "2026-06-24",
+  "generatedAt": "2026-06-24T07:19:02.918Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 62,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 2,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "OpenCode": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1222531",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1222531",
+      "title": "模型降智能找 12315 吗?",
+      "content": "国内那些大厂的 coding plan 如果出现降智,换模型 是否算一种欺诈行为,能告他吗?",
+      "author": "mingoing428",
+      "createdAt": "2026-06-24T06:44:47.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": null,
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户询问国内大厂的 AI 编码助手套餐若出现模型降智或更换模型是否构成欺诈，以及是否可以通过 12315 投诉。",
+        "topics": [
+          "降智",
+          "欺诈",
+          "12315",
+          "coding plan",
+          "国内大厂",
+          "模型更换"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-24T07:21:20.596Z"
+    },
+    {
+      "id": "v2ex-1222520",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1222520",
+      "title": "OpenCode Go Plan 使用起来如何？",
+      "content": "首月$5 续费$10 ，这个额度是按照请求次数吗？ https://opencode.ai/zh/go",
+      "author": "DejavuMoe",
+      "createdAt": "2026-06-24T06:27:12.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.92,
+        "supplier": "OpenCode",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户询问 OpenCode Go 方案的使用体验、价格（首月5美元续费10美元）以及额度计算方式。",
+        "topics": [
+          "定价",
+          "套餐",
+          "使用体验",
+          "额度计算"
+        ],
+        "planMentioned": "OpenCode Go Plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/172",
+      "analyzedAt": "2026-06-24T07:21:23.862Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
