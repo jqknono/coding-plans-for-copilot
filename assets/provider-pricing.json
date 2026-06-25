@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-25T03:11:11.219Z",
+  "generatedAt": "2026-06-25T09:13:05.369Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ee4a5e6e1a55426d1e8a9bca2ac06a2a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3a24d1d87dfaf088298b53a1d70c96d8.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -569,7 +569,6 @@
           "serviceDetails": [
             "适用场景：轻量日常改 Bug、写脚本、补单测、文档生成",
             "用量限制：5 小时：1,000 次，7 天：6,000 次，月度：12,000 次",
-            "适配工具：Claude Code、Cursor、Roo Code (Cline)",
             "当前状态: 暂不可购买"
           ]
         },
@@ -584,7 +583,6 @@
           "serviceDetails": [
             "适用场景：高频生产力复杂排障、架构重构、连续迭代、多人协作",
             "用量限制：5 小时：5,000 次，7 天：30,000 次，月度：60,000 次",
-            "适配工具：Claude Code、Cursor、Roo Code (Cline)",
             "当前状态: 暂不可购买"
           ]
         }
@@ -743,6 +741,7 @@
             "套餐定位: 效率升级",
             "Agent 用量约 60 个",
             "Agent 任务并行 2 个",
+            "Agent 集群可用 25 次（2 个子任务并行）",
             "Kimi Code 4 倍额度",
             "专业数据库 2000 次调用"
           ]
