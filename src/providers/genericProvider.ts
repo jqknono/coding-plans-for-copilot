@@ -156,6 +156,7 @@ interface ParsedSseEvent {
 interface StreamingCompletionResult {
   content: string;
   reasoningContent?: string;
+  reasoningContentStreamed?: boolean;
   toolCalls: ChatToolCall[];
   usage?: Record<string, unknown>;
   responseId?: string;
@@ -1444,6 +1445,12 @@ export class GenericAIProvider extends BaseAIProvider {
               if (update.textDelta.length > 0) {
                 queue.push(new vscode.LanguageModelTextPart(update.textDelta));
               }
+              if (update.reasoningDelta.length > 0) {
+                const reasoningPart = this.createReasoningStreamResponsePart(update.reasoningDelta);
+                if (reasoningPart) {
+                  queue.push(reasoningPart);
+                }
+              }
             }
             const finalized = finalizeOpenAIChatStreamState(state, () => this.generateToolCallId());
             if (wrappingEnabled) {
@@ -1459,6 +1466,7 @@ export class GenericAIProvider extends BaseAIProvider {
             return {
               content: finalized.content,
               reasoningContent: finalized.reasoningContent,
+              reasoningContentStreamed: (finalized.reasoningContent?.length ?? 0) > 0,
               toolCalls: finalized.toolCalls,
               usage: finalized.usage as Record<string, unknown> | undefined,
               responseId: state.responseId,
@@ -3036,7 +3044,10 @@ export class GenericAIProvider extends BaseAIProvider {
       try {
         const finalized = await execute(queue);
         provider.ensureNonEmptyCompletion(protocol, trace, vendor, modelName, finalized.content, finalized.toolCalls);
-        for (const part of provider.buildResponseParts('', finalized.toolCalls, finalized.reasoningContent)) {
+        const trailingReasoningContent = finalized.reasoningContentStreamed
+          ? undefined
+          : finalized.reasoningContent;
+        for (const part of provider.buildResponseParts('', finalized.toolCalls, trailingReasoningContent)) {
           queue.push(part);
         }
 

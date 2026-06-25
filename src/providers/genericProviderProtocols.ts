@@ -475,8 +475,9 @@ export function applyOpenAIChatStreamChunk(
   state: OpenAIChatStreamState,
   chunk: OpenAIChatStreamChunk,
   generateToolCallId: GenerateToolCallId,
-): { textDelta: string } {
+): { textDelta: string; reasoningDelta: string } {
   let textDelta = '';
+  let reasoningDelta = '';
   if (typeof chunk.id === 'string' && chunk.id.trim().length > 0) {
     state.responseId = chunk.id;
   }
@@ -502,6 +503,7 @@ export function applyOpenAIChatStreamChunk(
       readOpenAICompatibleText(choice.message?.reasoning);
     if (fallbackText.length > 0) {
       state.fallbackContent += fallbackText;
+      reasoningDelta += fallbackText;
     }
 
     const toolCalls =
@@ -546,7 +548,7 @@ export function applyOpenAIChatStreamChunk(
     }
   }
 
-  return { textDelta };
+  return { textDelta, reasoningDelta };
 }
 
 export function finalizeOpenAIChatStreamState(

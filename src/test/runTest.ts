@@ -5642,6 +5642,14 @@ async function runGenericProviderOpenAIReasoningContinuationTests(
     for await (const part of firstResponse.stream) {
       firstResponseParts.push(part);
     }
+    const streamedThinkingParts = firstResponseParts.filter(
+      (part) =>
+        ((part as { constructor?: { name?: string } } | undefined)?.constructor?.name ?? '').includes('ThinkingPart'),
+    );
+    assert.equal(streamedThinkingParts.length, 1);
+    assert.equal((streamedThinkingParts[0] as { value?: unknown }).value, 'Need the get_date tool first.');
+
+
     const firstResponseText: string[] = [];
     for await (const chunk of firstResponse.text) {
       firstResponseText.push(chunk);
@@ -6018,6 +6026,7 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   );
   const finalizedReasoningOnlyChat = finalizeOpenAIChatStreamState(reasoningOnlyChatState, () => 'generated_call');
   assert.equal(reasoningOnlyChatDelta.textDelta, '');
+  assert.equal(reasoningOnlyChatDelta.reasoningDelta, 'fallback ');
   assert.equal(finalizedReasoningOnlyChat.content, 'fallback text');
   assert.equal(finalizedReasoningOnlyChat.reasoningContent, 'fallback text');
 

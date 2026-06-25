@@ -1171,6 +1171,14 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return this.createReasoningDataPart(reasoningContent);
   }
 
+  public createReasoningStreamResponsePart(reasoningDelta: string): vscode.LanguageModelDataPart | unknown | undefined {
+    const trimmed = reasoningDelta.trim();
+    if (trimmed.length === 0) {
+      return undefined;
+    }
+    return this.createReasoningResponsePart(reasoningDelta);
+  }
+
   private readReasoningContentPart(part: vscode.LanguageModelDataPart): string | undefined {
     if (part.mimeType !== INTERNAL_REASONING_CONTENT_MIME_TYPE) {
       return undefined;

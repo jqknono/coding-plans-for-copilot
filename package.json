@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.12.0",
+    "version": "0.12.1",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -613,5 +613,8 @@
     },
     "dependencies": {
         "axios": "^1.7.2"
-    }
+    },
+    "enabledApiProposals": [
+        "languageModelThinkingPart"
+    ]
 }
