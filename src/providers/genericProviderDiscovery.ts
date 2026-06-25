@@ -1,6 +1,7 @@
 import { AIModelConfig, normalizeHttpBaseUrl } from './baseProvider';
 import { VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
 import { DEFAULT_MODEL_TOOLS, NON_RETRYABLE_DISCOVERY_STATUS_CODES } from '../constants';
+import { isGrokModel } from './modelsDevCatalog';
 
 export interface ModelVendorMapping {
   vendor: VendorConfig;
@@ -80,6 +81,13 @@ export function mergeConfiguredModelOverrides(
       };
     }
 
+    if (shouldAdoptDiscoveredApiStyle(configured, discovered)) {
+      return {
+        ...configured,
+        apiStyle: discovered.apiStyle,
+      };
+    }
+
     return configured;
   });
 }
@@ -128,6 +136,17 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
 
 function readVendorApiStyle(value: unknown): VendorApiStyle | undefined {
   return value === 'openai-responses' || value === 'anthropic' || value === 'openai-chat' ? value : undefined;
+}
+
+function shouldAdoptDiscoveredApiStyle(
+  configured: VendorModelConfig,
+  discovered: VendorModelConfig,
+): boolean {
+  return (
+    discovered.apiStyle === 'openai-responses' &&
+    configured.apiStyle === 'openai-chat' &&
+    isGrokModel(configured.name)
+  );
 }
 
 function isGeneratedFallbackModelConfig(

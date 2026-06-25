@@ -164,7 +164,7 @@ npm run test:pages
 - `System Instructions`：指 system prompt、模式说明、策略提示、插件额外注入说明等 System 类输入，占用 prompt tokens。
 - `Tool Definitions`：指工具定义本身的 schema 占用，占用 prompt tokens。
 - `Reserved Output`：指预留给模型输出的 token 预算，对应 `outputBuffer`，在 UI 中单独显示。
-- `Context Window X / Y tokens`：配置了 `contextSize` 时，运行时按总窗口拆分为 80% 输入窗口与 20% 输出窗口，供 VS Code Language Models 汇总显示；未配置 `contextSize` 时使用显式 `maxInputTokens/maxOutputTokens`。当前公开 API 只要求扩展实现 `provideTokenCount`，没有提供把上游 usage 明细写回原生 Context Window 的公开接口，因此本仓库不再维护 `X`。
+- `Context Window X / Y tokens`：配置了 `contextSize` 时，运行时按总窗口拆分为 80% 输入窗口与 20% 输出窗口，供 VS Code Language Models 汇总显示；未配置 `contextSize` 时使用显式 `maxInputTokens/maxOutputTokens`，且 `Y` 按两者求和对齐原生 custom endpoint 的 Context Window 口径。当前公开 API 只要求扩展实现 `provideTokenCount`，没有提供把上游 usage 明细写回原生 Context Window 的公开接口，因此本仓库不再维护 `X`。
 - VS Code 官方文档说明：hover 到上下文窗口控件时，会显示”精确 token 数 / 总上下文”和按类别拆分；上下文满时会触发 compaction。
 - 当前实现中，`provideTokenCount()` 固定返回 `0`；不再复用上一轮真实 usage 作为当前请求 token 计数，避免工具续调时过早触发 conversation compaction。
 - 若后续 VS Code / Copilot Chat 调整上下文展示结构，应以其内置行为为准同步更新文档描述。
@@ -182,13 +182,14 @@ npm run test:pages
   - `openai-chat`：请求 `baseUrl + /chat/completions`
   - `openai-responses`：请求 `baseUrl + /responses`
   - `anthropic`：请求 `baseUrl + /messages`
+- `coding-plans.vendors[].enableExtraRequestWrapping` 默认 `true`；为 `false` 时仍保留 thinking 参数与 thinking 结果展示，但不再发送 temperature/topP/personality 等插件增强字段，不再做 reasoning/tool continuation round-trip，也不再触发 `/v1`、non-stream、missing max_tokens、unsupported reasoning` 等兼容性自动回退。
 - `coding-plans.vendors[].usageUrl` 为可选套餐 usage 接口；当前默认按 `Authorization: Bearer <API Key>` 轮询，并将识别到的小时额度、周额度或次数额度以百分比显示在状态栏。
 - `coding-plans.vendors[].models[].contextSize` 是模型总上下文窗口主字段；自动刷新时取 models.dev 的 `limit.context`。同时存在时优先于 `maxInputTokens/maxOutputTokens`，运行时按 `maxInputTokens=80%` 与 `maxOutputTokens=20%` 拆分，避免 VS Code Language Models 把上下文窗口显示为超出总窗口。
 - `coding-plans.vendors[].models[].price.inputCost` / `cacheCost` / `outputCost` 是 VS Code Manage Language Models 成本列读取的 Copilot 风格元数据，单位为 credits / 1M tokens。
 - `coding-plans.vendors[].models[].toolCalling` / `vision` 是 Copilot 风格能力别名，会归一化到 `capabilities.tools` / `capabilities.vision`。
 - `/models` 刷新成功后会优先读取 `https://models.dev/catalog.json`，失败时回退 `https://models.dev/api.json`，只按模型 ID/名称匹配并为新发现模型补全 `description`、`capabilities`、`contextSize`、`price`；匹配时忽略模型名最后路径段中 `:` 后的标记（如 `:free`）；`description` 格式为 `id | Lab | Family | Weights | ReleaseDate`，其中 `Lab` 来自模型 ID 前缀；`capabilities.thinking` 对应 models.dev 的 `reasoning`；价格按所有匹配模型来源取中位数，不使用本地供应商名匹配 models.dev provider；获取失败或无法匹配时保持上游 `/models` 结果和本工程预置值。
 - `coding-plans.vendors[].models[].enabled` 默认 `true`；设为 `false` 时模型保留在配置中，但不会进入最终 Language Model 暴露列表，因此不会显示在 VS Code `Manage Language Models` 中。
-- 未配置 `maxInputTokens` / `contextSize` 时，扩展默认按 `400000` tokens 输入上下文窗口构建模型。
+- 未配置 `maxInputTokens` / `contextSize` 时，扩展默认按 `400000` tokens 输入窗口与 `30000` tokens 输出窗口构建模型，总上下文窗口按两者求和。
 - 配置了 `contextSize` 时，扩展按 80%/20% 拆分模型声明的输入/输出窗口；未配置 `contextSize` 时，`maxOutputTokens` 缺省使用 `30000` tokens 默认输出上限。
 - `coding-plans.advanced.defaultReservedOutput` 的默认值为 `60000`，用于请求侧输出预算覆盖；发送请求时会自动按模型输出上限收敛，不改变模型声明的 `maxOutputTokens`。
 - 新增采样参数：
@@ -213,7 +214,7 @@ npm run test:pages
     - `anthropic`：使用 `request.modelOptions.thinkingType` 作为开关，`true` 发送 `thinking: { type: "adaptive" }`，`false` 发送 `thinking: { type: "disabled" }`；使用 `request.modelOptions.effort` 发送 `output_config.effort`，可选 `low` / `medium` / `high` / `xhigh` / `max`
   - Moonshot/Kimi Anthropic-compatible 入口在 thinking + tool continuation 场景下可能要求上一条 assistant tool-call 历史消息携带非标准 `reasoning_content`，否则返回 `thinking is enabled but reasoning_content is missing in assistant tool call message`；当前不在 Anthropic 路径实现该字段的 tool continuation 回传，建议关闭 thinking 或改走 `openai-chat` 兼容 API。
 - 未配置 `defaultApiStyle`/模型 `apiStyle` 时默认按 `openai-chat` 处理。
-- `/models` 自动发现新增模型时会写入推导出的 `models[].apiStyle`：仅模型自身标识为 OpenAI 来源时使用 `openai-responses`，仅模型自身标识为 Anthropic 来源时使用 `anthropic`，其它模型使用 `openai-chat`；已有手工模型配置不被刷新覆盖，扩展自动生成的 fallback 描述（如 `供应商名 model: 模型名`）可升级为 models.dev 新结构。
+- `/models` 自动发现新增模型时会写入推导出的 `models[].apiStyle`：模型自身标识为 OpenAI 或 Grok/xAI 来源时使用 `openai-responses`，仅模型自身标识为 Anthropic 来源时使用 `anthropic`，其它模型使用 `openai-chat`；已有手工模型配置不被刷新覆盖，但 Grok 模型若仍保留旧的 `openai-chat` 会在刷新时自动升级为 `openai-responses`；扩展自动生成的 fallback 描述（如 `供应商名 model: 模型名`）可升级为 models.dev 新结构。
 - `anthropic` 与 `openai-responses` 目前重点覆盖聊天与工具调用；模型发现仍建议使用 `useModelsEndpoint: false` 并手动维护 `models`。
 - 请求链路默认优先上游真实流式传输；若模型配置 `streaming: false`，直接发送非流式请求。若兼容供应商明确不支持流式，应自动回退到非流式请求并记录告警日志。
 - `capabilities` 可省略；归一化时自动补齐 `tools=true` 与 `vision=defaultVision`。

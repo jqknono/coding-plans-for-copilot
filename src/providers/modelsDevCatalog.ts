@@ -169,6 +169,21 @@ export function resolveModelsDevModelConfig(
   return Object.keys(normalized).length > 0 ? normalized : undefined;
 }
 
+export function isGrokModel(modelName: string, model?: ModelsDevModel, modelKey?: string): boolean {
+  const suffix = normalizeComparableText(readModelSuffix(modelName));
+  if (suffix.startsWith('grok')) {
+    return true;
+  }
+
+  const lab = model ? readModelsDevLab(model, modelKey) : readModelProviderPrefix(modelName);
+  if (normalizeComparableText(lab ?? '') === 'xai') {
+    return true;
+  }
+
+  const family = readNonEmptyString(model?.family);
+  return family !== undefined && normalizeComparableText(family).startsWith('grok');
+}
+
 export function inferDefaultApiStyleForModel(
   modelName: string,
   model?: ModelsDevModel,
@@ -181,6 +196,9 @@ export function inferDefaultApiStyleForModel(
   }
   if (normalizedLab === 'anthropic') {
     return 'anthropic';
+  }
+  if (isGrokModel(modelName, model, modelKey)) {
+    return 'openai-responses';
   }
 
   return 'openai-chat';

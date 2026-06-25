@@ -29,6 +29,7 @@ export interface AIModelConfig {
   apiStyle?: string;
   apiType?: string;
   version?: string;
+  enableExtraRequestWrapping?: boolean;
   /**
    * Maximum input context window size in tokens.
    */
@@ -196,6 +197,7 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   public readonly apiStyle?: string;
   public readonly apiType?: string;
   public readonly version: string;
+  public readonly enableExtraRequestWrapping: boolean;
   public readonly maxTokens: number;
   public readonly maxInputTokens: number;
   public readonly maxOutputTokens: number;
@@ -224,6 +226,7 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
     this.apiStyle = typeof modelInfo.apiStyle === 'string' ? modelInfo.apiStyle : undefined;
     this.apiType = typeof modelInfo.apiType === 'string' ? modelInfo.apiType : undefined;
     this.version = modelInfo.version || MODEL_VERSION_LABEL;
+    this.enableExtraRequestWrapping = modelInfo.enableExtraRequestWrapping !== false;
     this.maxTokens = Math.max(1, Math.floor(modelInfo.maxTokens));
     this.maxInputTokens = Math.max(1, Math.floor(modelInfo.maxInputTokens ?? DEFAULT_TOKEN_SIDE_LIMIT));
     this.maxOutputTokens = Math.max(1, Math.floor(modelInfo.maxOutputTokens ?? DEFAULT_TOKEN_SIDE_LIMIT));
@@ -252,9 +255,71 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
     token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse>;
 
-  countTokens(_text: string | vscode.LanguageModelChatMessage, _token?: vscode.CancellationToken): Promise<number> {
-    // Local token counting is intentionally disabled. Usage is sourced only from upstream API responses.
-    return Promise.resolve(0);
+  countTokens(text: string | vscode.LanguageModelChatMessage, _token?: vscode.CancellationToken): Promise<number> {
+    return Promise.resolve(this.estimateTokenCount(text));
+  }
+
+  private estimateTokenCount(text: string | vscode.LanguageModelChatMessage): number {
+    const content = typeof text === 'string' ? text : this.readChatMessageTokenEstimateSource(text);
+    if (content.length === 0) {
+      return 0;
+    }
+    // Match custom-endpoint style approximate local counting instead of reusing the previous response usage.
+    return Math.max(1, Math.ceil(content.length / 4));
+  }
+
+  private readChatMessageTokenEstimateSource(message: vscode.LanguageModelChatMessage): string {
+    const parts: string[] = [];
+    for (const part of message.content) {
+      if (part instanceof vscode.LanguageModelTextPart) {
+        parts.push(part.value);
+        continue;
+      }
+      if (part instanceof vscode.LanguageModelToolCallPart) {
+        parts.push(part.name, JSON.stringify(part.input ?? {}));
+        continue;
+      }
+      if (part instanceof vscode.LanguageModelToolResultPart) {
+        parts.push(this.estimateToolResultContent(part.content));
+        continue;
+      }
+      if (part instanceof vscode.LanguageModelDataPart) {
+        parts.push(this.readTokenEstimateFromDataPart(part));
+      }
+    }
+    return parts.join('\n');
+  }
+
+  private readTokenEstimateFromDataPart(part: vscode.LanguageModelDataPart): string {
+    if (part.mimeType.startsWith('text/') || part.mimeType.includes('json')) {
+      try {
+        return new TextDecoder().decode(part.data);
+      } catch {
+        return '';
+      }
+    }
+    if (part.mimeType.startsWith('image/')) {
+      return '[image]';
+    }
+    return '';
+  }
+
+  private estimateToolResultContent(content: unknown[]): string {
+    return content
+      .map((part) => {
+        if (part instanceof vscode.LanguageModelTextPart) {
+          return part.value;
+        }
+        if (part instanceof vscode.LanguageModelDataPart) {
+          return this.readTokenEstimateFromDataPart(part);
+        }
+        if (part && typeof part === 'object' && 'value' in (part as Record<string, unknown>)) {
+          const value = (part as { value?: unknown }).value;
+          return typeof value === 'string' ? value : '';
+        }
+        return '';
+      })
+      .join('');
   }
 }
 
@@ -267,6 +332,7 @@ export interface ChatMessage {
 }
 
 export const INTERNAL_REASONING_CONTENT_MIME_TYPE = 'application/vnd.coding-plans.reasoning-content+json';
+export const NATIVE_USAGE_MIME_TYPE = 'usage';
 
 interface GenericModelListEntry {
   id?: unknown;
@@ -559,7 +625,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     const maxInputTokens = normalizeTokenValue(explicitMaxInputTokens) ?? DEFAULT_CONTEXT_WINDOW_SIZE;
     const maxOutputTokens = normalizeTokenValue(explicitMaxOutputTokens) ?? DEFAULT_RESERVED_OUTPUT_TOKENS;
     return {
-      maxTokens: maxInputTokens,
+      maxTokens: Math.max(1, maxInputTokens + maxOutputTokens),
       maxInputTokens,
       maxOutputTokens,
     };
@@ -877,6 +943,11 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       for (const part of message.content) {
         if (part instanceof vscode.LanguageModelTextPart) {
           contentParts.push({ type: 'text', text: part.value });
+        } else if (this.isThinkingPart(part)) {
+          const thinkingText = this.readThinkingPartContent(part);
+          if (thinkingText) {
+            reasoningContent = thinkingText;
+          }
         } else if (part instanceof vscode.LanguageModelToolCallPart) {
           toolCalls.push(part);
         } else if (part instanceof vscode.LanguageModelToolResultPart) {
@@ -987,8 +1058,8 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     content: string,
     toolCalls?: ChatToolCall[],
     reasoningContent?: string,
-  ): vscode.LanguageModelResponsePart[] {
-    const parts: vscode.LanguageModelResponsePart[] = [];
+  ): Array<vscode.LanguageModelResponsePart | unknown> {
+    const parts: Array<vscode.LanguageModelResponsePart | unknown> = [];
 
     if (content.trim().length > 0) {
       parts.push(new vscode.LanguageModelTextPart(content));
@@ -996,7 +1067,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
 
     const trimmedReasoningContent = reasoningContent?.trim();
     if (trimmedReasoningContent) {
-      parts.push(this.createReasoningDataPart(trimmedReasoningContent));
+      parts.push(this.createReasoningResponsePart(trimmedReasoningContent));
     }
 
     for (const toolCall of toolCalls ?? []) {
@@ -1017,9 +1088,31 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return parts;
   }
 
+  public createUsageResponsePart(usage: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+    outputBuffer?: number;
+  }): vscode.LanguageModelDataPart {
+    return new vscode.LanguageModelDataPart(
+      new TextEncoder().encode(
+        JSON.stringify({
+          prompt_tokens: usage.promptTokens,
+          completion_tokens: usage.completionTokens,
+          total_tokens: usage.totalTokens,
+          ...(usage.outputBuffer === undefined ? {} : { output_buffer: usage.outputBuffer }),
+        }),
+      ),
+      NATIVE_USAGE_MIME_TYPE,
+    );
+  }
+
   private readDataPartContent(part: vscode.LanguageModelDataPart): ChatContentPart | undefined {
     try {
       const decoder = new TextDecoder();
+      if (part.mimeType === NATIVE_USAGE_MIME_TYPE) {
+        return undefined;
+      }
       if (part.mimeType.startsWith('text/') || part.mimeType.includes('json')) {
         return { type: 'text', text: decoder.decode(part.data) };
       }
@@ -1069,6 +1162,15 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     );
   }
 
+  private createReasoningResponsePart(reasoningContent: string): vscode.LanguageModelDataPart | unknown {
+    const thinkingCtor = (vscode as unknown as { LanguageModelThinkingPart?: new (...args: any[]) => unknown })
+      .LanguageModelThinkingPart;
+    if (thinkingCtor) {
+      return new thinkingCtor(reasoningContent);
+    }
+    return this.createReasoningDataPart(reasoningContent);
+  }
+
   private readReasoningContentPart(part: vscode.LanguageModelDataPart): string | undefined {
     if (part.mimeType !== INTERNAL_REASONING_CONTENT_MIME_TYPE) {
       return undefined;
@@ -1083,6 +1185,34 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     } catch {
       return undefined;
     }
+  }
+
+  private isThinkingPart(part: unknown): boolean {
+    const thinkingCtor = (vscode as unknown as { LanguageModelThinkingPart?: new (...args: any[]) => unknown })
+      .LanguageModelThinkingPart;
+    if (thinkingCtor && part instanceof thinkingCtor) {
+      return true;
+    }
+    return (
+      !!part &&
+      typeof part === 'object' &&
+      (part as { constructor?: { name?: string } }).constructor?.name === 'FakeLanguageModelThinkingPart'
+    );
+  }
+
+  private readThinkingPartContent(part: unknown): string | undefined {
+    if (!part || typeof part !== 'object') {
+      return undefined;
+    }
+    const value = (part as { value?: unknown }).value;
+    if (typeof value === 'string' && value.trim().length > 0) {
+      return value;
+    }
+    if (Array.isArray(value)) {
+      const joined = value.filter((entry): entry is string => typeof entry === 'string').join('');
+      return joined.trim().length > 0 ? joined : undefined;
+    }
+    return undefined;
   }
 
   private stringifyToolResultContent(

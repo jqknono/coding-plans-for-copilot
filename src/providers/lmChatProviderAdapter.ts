@@ -79,6 +79,7 @@ type ProvideLanguageModelChatResponseOptionsWithModelConfiguration = vscode.Prov
 
 function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModelConfigurationSchema {
   const properties: Record<string, LanguageModelConfigurationSchemaProperty> = {};
+  const wrappingEnabled = model.enableExtraRequestWrapping !== false;
 
   if (model.capabilities.thinking !== false) {
     if (model.apiStyle === 'anthropic') {
@@ -134,6 +135,12 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
         };
       }
     }
+  }
+
+  if (!wrappingEnabled) {
+    return {
+      properties,
+    };
   }
 
   if (model.apiStyle === 'openai-responses') {
@@ -498,11 +505,18 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   }
 
   provideTokenCount(
-    _model: vscode.LanguageModelChatInformation,
-    _text: string | vscode.LanguageModelChatRequestMessage,
-    _token: vscode.CancellationToken,
+    model: vscode.LanguageModelChatInformation,
+    text: string | vscode.LanguageModelChatRequestMessage,
+    token: vscode.CancellationToken,
   ): Thenable<number> {
-    return Promise.resolve(0);
+    const targetModel = this.provider.getModel(model.id);
+    if (!targetModel) {
+      return Promise.resolve(0);
+    }
+    return targetModel.countTokens(
+      typeof text === 'string' ? text : this.toChatMessage(text),
+      token,
+    );
   }
 
   private toChatMessage(message: vscode.LanguageModelChatRequestMessage): vscode.LanguageModelChatMessage {
@@ -673,7 +687,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     };
   }
 
-  private summarizeResponsePart(part: vscode.LanguageModelResponsePart): Record<string, unknown> {
+  private summarizeResponsePart(part: vscode.LanguageModelResponsePart | unknown): Record<string, unknown> {
     if (part instanceof vscode.LanguageModelTextPart) {
       return {
         type: 'text',
@@ -695,6 +709,17 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         type: 'data',
         mimeType: part.mimeType,
         bytes: part.data.byteLength,
+      };
+    }
+
+    if (
+      part &&
+      typeof part === 'object' &&
+      (part as { constructor?: { name?: string } }).constructor?.name?.includes('ThinkingPart')
+    ) {
+      return {
+        type: 'thinking',
+        length: typeof (part as { value?: unknown }).value === 'string' ? (part as { value: string }).value.length : 0,
       };
     }
 

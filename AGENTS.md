@@ -55,15 +55,23 @@
 - 进行扩展联调或手工接口测试时，可优先复用 `.env` 中的 `BASE_URL`、`APIKEY`、`MODEL`；默认视为本地测试参数，不写入仓库配置。
 - 严禁在文档、日志、提交信息中暴露任何密钥。
 
+## 代码地图（扩展）
+
+- 入口：`src/extension.ts`（注册 `LanguageModelChatProvider`、命令与 SCM 菜单）。
+- 配置：`src/config/configStore.ts`（`coding-plans.vendors` 归一化；新配置用 `defaultApiStyle` / `models[].apiStyle`，`apiType` 仅作迁移读取）。
+- 协议与请求：`src/providers/genericProvider.ts`、`genericProviderProtocols.ts`；适配 VS Code API：`lmChatProviderAdapter.ts`。
+- 行为与回归说明见 [DEV.md](DEV.md)、[docs/testing.md](docs/testing.md)；可验收场景见 [cases/](cases/)（非自动化用例，改行为前应对照或补充）。
+
 ## 开发与校验
 
-- 常用命令：
-  - `npm run typecheck`
-  - `npm run lint`
-  - `npm run compile`
-  - `npm run package:vsix`
-- 涉及 `scripts/` 或 `pages/` 的改动，至少执行一次相关抓取脚本 + `npm run serve:page` 做可用性验证。
-- 涉及扩展逻辑（`src/`）的改动，至少执行 `npm run typecheck` 与 `npm run lint`。
+| 改动范围 | 至少执行 |
+| --- | --- |
+| `src/` | `npm run typecheck`、`npm run lint`；行为变更时 `npm test`（含 `pretest` 的 compile+lint） |
+| `scripts/`、`pages/`、`assets/` 契约 | 相关 `npm run pricing:fetch` / `metrics:fetch` / `openrouter:plans:fetch` + `npm run serve:page`；可选 `npm run test:pages` |
+| 发布扩展 | `npm run package:vsix`；见 [DEV.md](DEV.md) 发布与预发布版本约定 |
+
+- 常用命令：`compile`（typecheck+bundle）、`package:vsix`、`test:unit`、`test:desktop`、`test:pages`。
+- VSIX 仅打包 `out/extension.js` 等清单内文件（见 `.vscodeignore`）；新增运行时资源须同步打包/esbuild 配置。
 
 ## 文档一致性
 

@@ -918,6 +918,53 @@ export function toOpenAIResponsesInput(
   return toOpenAIResponsesPayloadParts(messages, generateToolCallId).input;
 }
 
+export function toOpenAIResponsesInputWithoutInstructions(
+  messages: ChatMessage[],
+  generateToolCallId: GenerateToolCallId,
+): OpenAIResponsesInputItem[] {
+  const input: OpenAIResponsesInputItem[] = [];
+
+  for (const message of messages) {
+    if (message.role === 'tool') {
+      input.push({
+        type: 'function_call_output',
+        call_id: message.tool_call_id || generateToolCallId(),
+        output: getTextContent(message.content),
+      });
+      continue;
+    }
+
+    if (message.role === 'assistant' && message.tool_calls && message.tool_calls.length > 0) {
+      const textContent = getTextContent(message.content);
+      if (textContent.trim().length > 0) {
+        input.push({
+          type: 'message',
+          role: 'assistant',
+          content: textContent,
+        });
+      }
+
+      for (const toolCall of message.tool_calls) {
+        input.push({
+          type: 'function_call',
+          call_id: toolCall.id || generateToolCallId(),
+          name: toolCall.function.name,
+          arguments: toolCall.function.arguments,
+        });
+      }
+      continue;
+    }
+
+    input.push({
+      type: 'message',
+      role: message.role,
+      content: toOpenAIResponsesContent(message.content),
+    });
+  }
+
+  return input;
+}
+
 export function toOpenAIResponsesPayloadParts(
   messages: ChatMessage[],
   generateToolCallId: GenerateToolCallId,

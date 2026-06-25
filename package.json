@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.11.11",
+    "version": "0.12.0",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -271,6 +271,11 @@
                                 "type": "boolean",
                                 "default": false,
                                 "description": "Whether newly discovered models for this vendor should have vision capabilities by default."
+                            },
+                            "enableExtraRequestWrapping": {
+                                "type": "boolean",
+                                "default": true,
+                                "description": "%configuration.coding-plans.vendors.enableExtraRequestWrapping.description%"
                             },
                             "defaultTemperature": {
                                 "oneOf": [
