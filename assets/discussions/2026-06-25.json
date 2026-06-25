@@ -1,0 +1,95 @@
+{
+  "date": "2026-06-25",
+  "generatedAt": "2026-06-25T07:19:40.462Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 57,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "Mimo": 1,
+      "小米 MiMo": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1222773",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1222773",
+      "title": "分享一下 mimo 的额度",
+      "content": "https://token-plan-cn.xiaomimimo.com/v1 https://token-plan-cn.xiaomimimo.com/anthropic tp-cyo3gri7wei02lvw0emvumj4gmeycm71a9jra1v9oqa0v6em",
+      "author": "WMGray",
+      "createdAt": "2026-06-25T06:17:35.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Mimo",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户分享了 Mimo（mimo）的额度/计划链接，可能涉及其 AI 编码助手的订阅或积分计划。",
+        "topics": [
+          "套餐对比",
+          "定价",
+          "Mimo",
+          "额度"
+        ],
+        "planMentioned": "Mimo 计划",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-25T07:21:13.766Z"
+    },
+    {
+      "id": "v2ex-1222751",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1222751",
+      "title": "小米 MiMo 140 亿， 27 号到期，速登",
+      "content": "API Key tp-csjrhgemj5sn4f6iacmm8eptenb0e54agfb8j15cvnjee8po 兼容 OpenAI 接口协议： https://token-plan-cn.xiaomimimo.com/v1 兼容 Anthropic 接口协议： https://token-plan-cn.xiaomimimo.com/anthropic",
+      "author": "oyjt",
+      "createdAt": "2026-06-25T04:29:59.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "小米 MiMo",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户分享了小米 MiMo 提供的 API Key，兼容 OpenAI 和 Anthropic 接口，用于访问 AI 编码助手服务。",
+        "topics": [
+          "API Key",
+          "定价",
+          "套餐对比",
+          "OpenAI",
+          "Anthropic"
+        ],
+        "planMentioned": "MiMo 140 亿",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-25T07:21:17.118Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
