@@ -252,6 +252,74 @@ test('官网启发式价格卡片也展示服务说明兜底', async ({ page }) 
   await expect(mistralCard.getByText('官网价格页参考，具体权益以官网说明为准').first()).toBeVisible();
 });
 
+test('官网启发式价格旧数据缺少 serviceDetails 时页面兜底展示服务说明', async ({ page }) => {
+  await page.route('**/provider-pricing.json', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        generatedAt: '2026-06-26T00:00:00.000Z',
+        providers: [],
+        failures: [],
+      }),
+    });
+  });
+  await page.route('**/openrouter-provider-plans.json', async (route) => {
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        generatedAt: '2026-06-26T00:00:00.000Z',
+        generatedAtBeijing: '2026年6月26日 08:00:00',
+        providers: [
+          {
+            slug: 'digitalocean',
+            openrouterName: 'DigitalOcean',
+            providerId: null,
+            pricingPageUrl: 'https://www.digitalocean.com/pricing',
+            officialWebsiteUrl: 'https://www.digitalocean.com',
+            parseMode: 'official-website-heuristic',
+            plans: [
+              {
+                name: '官网价格参考',
+                currentPriceText: '$4/mo',
+                serviceDetails: null,
+                notes: '来源: https://www.digitalocean.com/pricing',
+              },
+              {
+                name: '官网价格参考 2',
+                currentPriceText: '$12/mo',
+                serviceDetails: null,
+              },
+            ],
+          },
+          {
+            slug: 'mistral',
+            openrouterName: 'Mistral',
+            providerId: null,
+            pricingPageUrl: 'https://mistral.ai/pricing/',
+            officialWebsiteUrl: 'https://mistral.ai',
+            parseMode: 'official-website-heuristic',
+            plans: [
+              {
+                name: 'Pro',
+                currentPriceText: '$5.99/month',
+                serviceDetails: null,
+                notes: '来源: https://mistral.ai/pricing/',
+              },
+            ],
+          },
+        ],
+        pending: [],
+      }),
+    });
+  });
+
+  await page.goto('/#overseas');
+  await waitForOverseasCards(page);
+
+  await expect(page.locator('#provider-card-digitalocean').getByText('官网价格页参考，具体权益以官网说明为准')).toHaveCount(2);
+  await expect(page.locator('#provider-card-mistral').getByText('官网价格页参考，具体权益以官网说明为准')).toBeVisible();
+});
+
 test('指标页支持厂商多选与全部恢复', async ({ page }) => {
   await page.goto('/#metrics');
   await waitForMetricsRows(page);

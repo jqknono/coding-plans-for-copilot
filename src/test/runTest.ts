@@ -1843,6 +1843,25 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
   const { normalizeModelsDevCatalog, resolveModelsDevModelConfig, inferDefaultApiStyleForModel } =
     modelsDevCatalogModule;
   const catalog = normalizeModelsDevCatalog({
+    models: {
+      'zhipuai/glm-5.2': {
+        id: 'zhipuai/glm-5.2',
+        name: 'GLM-5.2',
+        family: 'glm',
+        open_weights: true,
+        release_date: '2026-06-13',
+        reasoning: true,
+        tool_call: true,
+        modalities: {
+          input: ['text'],
+          output: ['text'],
+        },
+        limit: {
+          context: 1000000,
+          output: 131072,
+        },
+      },
+    },
     google: {
       id: 'google',
       name: 'Google',
@@ -2181,6 +2200,57 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
         },
       },
     },
+    opencode: {
+      id: 'opencode',
+      name: 'OpenCode',
+      models: {
+        'glm-5.2': {
+          id: 'glm-5.2',
+          name: 'GLM-5.2',
+          family: 'glm',
+          open_weights: false,
+          release_date: '2026-06-13',
+          reasoning: true,
+          tool_call: true,
+          modalities: {
+            input: ['text'],
+            output: ['text'],
+          },
+          limit: {
+            context: 1000000,
+            output: 131072,
+          },
+          cost: {
+            input: 1.4,
+            output: 4.4,
+            cache_read: 0.26,
+          },
+        },
+      },
+    },
+    'umans-ai': {
+      id: 'umans-ai',
+      name: 'Umans AI',
+      models: {
+        'umans-glm-5.2': {
+          id: 'umans-glm-5.2',
+          name: 'GLM-5.2',
+          family: 'glm',
+          open_weights: false,
+          release_date: '2026-06-13',
+          reasoning: true,
+          tool_call: true,
+          modalities: {
+            input: ['text', 'image'],
+            output: ['text'],
+          },
+          limit: {
+            context: 1000000,
+            output: 131072,
+          },
+        },
+      },
+    },
   });
 
   assert.ok(catalog);
@@ -2365,6 +2435,13 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
   );
   assert.deepEqual(slashTencentHy3?.capabilities, { tools: true, vision: false, thinking: true });
   assert.equal('thinking' in ((slashTencentHy3 ?? {}) as Record<string, unknown>), false);
+
+  const opencodeGlm52 = resolveModelsDevModelConfig(
+    catalog,
+    'opencode/glm-5.2',
+  );
+  assert.deepEqual(opencodeGlm52?.capabilities, { tools: true, vision: false, thinking: true });
+  assert.equal(opencodeGlm52?.description, 'zhipuai/glm-5.2 | zhipuai | glm | Open | 2026-06-13');
 
   console.log('PASS models.dev catalog 可按模型 ID/名称匹配并映射模型元数据');
 }

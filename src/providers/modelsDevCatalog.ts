@@ -421,8 +421,12 @@ function readModelsDevBooleanCapability(
 }
 
 function readsImageInputFromModels(model: ModelsDevModel, matches: readonly ModelsDevModelMatch[]): boolean | undefined {
+  const modelImageInput = readsImageInput(model);
+  if (modelImageInput !== undefined) {
+    return modelImageInput;
+  }
+
   const values = [
-    readsImageInput(model),
     ...matches.map((match) => readsImageInput(match.model)),
   ].filter((value): value is boolean => typeof value === 'boolean');
   if (values.some((value) => value)) {

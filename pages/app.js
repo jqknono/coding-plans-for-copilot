@@ -474,7 +474,13 @@ function getPlanServicePriority(serviceText) {
 function getDisplayPlanServices(plan) {
   const summarized = [];
   const seen = new Set();
-  for (const serviceText of getPlanServices(plan)) {
+  const rawServices = getPlanServices(plan);
+  const fallbackServices =
+    rawServices.length === 0 && (/^官网(?:价格|套餐)参考/.test(String(plan?.name || '')) || /来源[:：]\s*https?:\/\//i.test(String(plan?.notes || '')))
+      ? ['官网价格页参考，具体权益以官网说明为准']
+      : [];
+
+  for (const serviceText of [...rawServices, ...fallbackServices]) {
     const summary = summarizePlanServiceText(serviceText);
     const key = getPlanServiceDisplayKey(summary);
     if (!summary || seen.has(key)) {
