@@ -231,7 +231,9 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://www.digitalocean.com/pricing",
-          "serviceDetails": null
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
         },
         {
           "name": "官网价格参考 2",
@@ -241,7 +243,9 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
-          "serviceDetails": null
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
         },
         {
           "name": "官网价格参考 3",
@@ -251,7 +255,9 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
-          "serviceDetails": null
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
         }
       ],
       "sourceUrls": [
@@ -355,7 +361,9 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://mistral.ai/pricing/",
-          "serviceDetails": null
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
         }
       ],
       "sourceUrls": [

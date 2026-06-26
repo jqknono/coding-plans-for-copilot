@@ -1002,6 +1002,7 @@ function normalizePlanServiceDetails(plans) {
   const list = Array.isArray(plans) ? plans : [];
   const sharedDetails =
     list.find((plan) => Array.isArray(plan?.serviceDetails) && plan.serviceDetails.length > 0)?.serviceDetails || null;
+  const fallbackDetails = ['官网价格页参考，具体权益以官网说明为准'];
   return list.map((plan) => {
     const current = Array.isArray(plan?.serviceDetails) ? plan.serviceDetails.filter(Boolean) : [];
     if (current.length > 0) {
@@ -1018,7 +1019,7 @@ function normalizePlanServiceDetails(plans) {
     }
     return {
       ...plan,
-      serviceDetails: null,
+      serviceDetails: fallbackDetails,
     };
   });
 }
@@ -2337,7 +2338,13 @@ async function main() {
   );
 }
 
-main().catch((error) => {
-  console.error('[openrouter-plans] fatal:', error && error.message ? error.message : error);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch((error) => {
+    console.error('[openrouter-plans] fatal:', error && error.message ? error.message : error);
+    process.exit(1);
+  });
+}
+
+module.exports = {
+  normalizePlanServiceDetails,
+};

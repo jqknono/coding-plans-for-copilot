@@ -102,6 +102,18 @@ test('大陆套餐展示阿里云 Token Plan', async ({ page }) => {
   );
 });
 
+test('大陆套餐服务详情展示为摘要，避免长模型清单撑高卡片', async ({ page }) => {
+  await page.goto('/#domestic');
+  await waitForDomesticCards(page);
+
+  const card = page.locator('#provider-card-alibaba');
+  await expect(card).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Coding Plan Pro' })).toBeVisible();
+  await expect(card.getByText('支持模型: qwen3.7-plus、qwen3.6-plus、kimi-k2.5、glm-5、MiniMax-M2.5 等')).toBeVisible();
+  await expect(card.getByText('支持的模型判断说明')).toHaveCount(0);
+  await expect(card.getByText('已停止新购/续费升级，仅已购用户可用至到期')).toBeVisible();
+});
+
 test('大陆套餐展示华为云 Token Plan', async ({ page }) => {
   await page.goto('/#domestic');
   await waitForDomesticCards(page);
@@ -225,6 +237,19 @@ test('海外套餐展示 Venice WandB 与 Cloudflare 的服务详情', async ({ 
   await expect(cloudflareCard).toBeVisible();
   await expect(cloudflareCard.getByRole('heading', { name: 'Workers AI Paid usage' })).toBeVisible();
   await expect(cloudflareCard.getByText('@cf/meta/llama-3.2-1b-instruct')).toBeVisible();
+});
+
+test('官网启发式价格卡片也展示服务说明兜底', async ({ page }) => {
+  await page.goto('/#overseas');
+  await waitForOverseasCards(page);
+
+  const digitalOceanCard = page.locator('#provider-card-digitalocean');
+  await expect(digitalOceanCard).toBeVisible();
+  await expect(digitalOceanCard.getByText('官网价格页参考，具体权益以官网说明为准').first()).toBeVisible();
+
+  const mistralCard = page.locator('#provider-card-mistral');
+  await expect(mistralCard).toBeVisible();
+  await expect(mistralCard.getByText('官网价格页参考，具体权益以官网说明为准').first()).toBeVisible();
 });
 
 test('指标页支持厂商多选与全部恢复', async ({ page }) => {

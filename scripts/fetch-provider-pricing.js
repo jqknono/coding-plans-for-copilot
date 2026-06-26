@@ -327,6 +327,38 @@ async function fetchJson(url, options = {}) {
   }
 }
 
+function isRetryableFetchError(error) {
+  const message = error?.message || String(error || 'unknown error');
+  return /(?:\b5\d{2}\b)|fetch failed|timeout|timed out|ECONNRESET|ETIMEDOUT|EAI_AGAIN|ENOTFOUND|socket hang up|UND_ERR/i.test(
+    message,
+  );
+}
+
+async function fetchTextWithRetry(url, options = {}, attempts = 3) {
+  let lastError;
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await fetchText(url, options);
+    } catch (error) {
+      lastError = error;
+      if (!isRetryableFetchError(error) || attempt >= attempts) {
+        break;
+      }
+      await waitForMs(400 * attempt);
+    }
+  }
+  throw lastError;
+}
+
+async function fetchJsonWithRetry(url, options = {}, attempts = 3) {
+  const text = await fetchTextWithRetry(url, options, attempts);
+  try {
+    return JSON.parse(text);
+  } catch (error) {
+    throw new Error(`Invalid JSON from ${url}: ${error.message}`);
+  }
+}
+
 function extractRows(html) {
   const rows = [];
   const matches = html.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi);
@@ -2393,14 +2425,8 @@ async function fetchXAioTextWithRetry(url, options = {}, attempts = 2) {
 }
 
 async function parseXAioCodingPlansWithPlaywright(pageUrl) {
-  let chromium;
-  try {
-    ({ chromium } = require('@playwright/test'));
-  } catch {
-    throw new Error('Playwright is unavailable for X-AIO fallback');
-  }
-
-  const browser = await chromium.launch({ headless: true });
+  const chromium = await loadPlaywrightChromium('X-AIO fallback');
+  const browser = await chromium.launch(getPlaywrightLaunchOptions());
   try {
     const page = await browser.newPage();
     await page.goto(pageUrl, {
@@ -2444,13 +2470,13 @@ async function parseXAioCodingPlans() {
   let resolvedAppUrl = null;
   let bundleError = null;
   try {
-    const html = await fetchXAioTextWithRetry(pageUrl, { timeoutMs: 4_000 }, 2);
+    const html = await fetchXAioTextWithRetry(pageUrl, { timeoutMs: 12_000 }, 2);
     const appPath = html.match(/\/assets\/index-[^"'\s]+\.js/i)?.[0];
     if (!appPath) {
       throw new Error('Unable to locate X-AIO app script');
     }
     resolvedAppUrl = absoluteUrl(appPath, pageUrl);
-    const appJs = await fetchXAioTextWithRetry(resolvedAppUrl, { timeoutMs: 6_000 }, 2);
+    const appJs = await fetchXAioTextWithRetry(resolvedAppUrl, { timeoutMs: 45_000 }, 2);
     plans = buildXAioPlansFromBundle(appJs);
   } catch (error) {
     bundleError = error;
@@ -2854,6 +2880,7 @@ function parseAliyunServiceDetailsFromPageHtml(html) {
 function parseAliyunServiceDetailsFromDocsHtml(html) {
   const detailsByTier = new Map();
   const rows = extractRows(html);
+  const docsText = normalizeText(stripTags(html));
   const cleanupDocsValue = (value) =>
     normalizeText(
       String(value || '')
@@ -2883,11 +2910,32 @@ function parseAliyunServiceDetailsFromDocsHtml(html) {
     }
   }
 
-  const liteDiscontinuedMatch = html.match(
-    /Lite\s*基础套餐将停止接受新购订单[\s\S]*?已购买用户的使用、续费及套餐升级权益保持不变/,
-  );
-  if (liteDiscontinuedMatch) {
-    detailsByTier.set('Lite', normalizeServiceDetails([`状态: ${normalizeText(stripTags(liteDiscontinuedMatch[0]))}`]));
+  const liteDiscontinuedMatch =
+    docsText.match(
+      /Lite\s*套餐自\s*2026\s*年\s*3\s*月\s*20\s*日[\s\S]*?停止新购[\s\S]*?4\s*月\s*13\s*日[\s\S]*?停止续费与升级/,
+    ) ||
+    docsText.match(
+      /Coding Plan Lite\s*基础版本已于\s*2026\s*年\s*3\s*月\s*20\s*日起停止新购[\s\S]*?4\s*月\s*13\s*日起停止续费与升级[\s\S]*?已购买的用户可继续使用至服务到期/,
+    ) ||
+    docsText.match(/Lite\s*基础套餐将停止接受新购订单[\s\S]*?已购买用户的使用、续费及套餐升级权益保持不变/);
+  const liteExistingUserMatch =
+    docsText.match(/已购买\s*Coding Plan Lite\s*基础套餐的用户可继续使用至服务到期/) ||
+    docsText.match(/已购买的用户可继续使用至服务到期/);
+  if (liteDiscontinuedMatch || liteExistingUserMatch) {
+    const liteDiscontinuedText = normalizeText(liteDiscontinuedMatch?.[0] || '');
+    detailsByTier.set(
+      'Lite',
+      normalizeServiceDetails([
+        '状态: 已停止新购，已停止续费与升级',
+        /2026\s*年\s*3\s*月\s*20\s*日/.test(liteDiscontinuedText)
+          ? '新购停止时间: 2026 年 3 月 20 日 00:00:00（UTC+08:00）'
+          : null,
+        /4\s*月\s*13\s*日/.test(liteDiscontinuedText)
+          ? '续费升级停止时间: 2026 年 4 月 13 日 18:00:00（UTC+08:00）'
+          : null,
+        liteExistingUserMatch ? `已购权益: ${normalizeText(liteExistingUserMatch[0])}` : null,
+      ]),
+    );
   }
 
   return detailsByTier;
@@ -2939,10 +2987,10 @@ function parseInfiniCodingPlansFromDocsText(pageText) {
 async function parseAliyunCodingPlans() {
   const pageUrl = 'https://www.aliyun.com/benefit/scene/codingplan';
   const docsUrl = 'https://help.aliyun.com/zh/model-studio/coding-plan';
-  const html = await fetchText(pageUrl);
+  const html = await fetchTextWithRetry(pageUrl, {}, 3);
   const serviceDetailsByTier = parseAliyunServiceDetailsFromPageHtml(html);
   try {
-    const docsHtml = await fetchText(docsUrl);
+    const docsHtml = await fetchTextWithRetry(docsUrl, {}, 3);
     const docsDetailsByTier = parseAliyunServiceDetailsFromDocsHtml(docsHtml);
     for (const [tier, details] of docsDetailsByTier.entries()) {
       const merged = normalizeServiceDetails([...(serviceDetailsByTier.get(tier) || []), ...(details || [])]);
@@ -3023,17 +3071,21 @@ async function parseAliyunCodingPlans() {
 
   const plans = [];
   for (const planDef of planDefs) {
-    const payload = await fetchJson(queryPriceUrl, {
-      method: 'POST',
-      headers: {
-        ...COMMON_HEADERS,
-        accept: 'application/json, text/plain, */*',
-        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        origin: 'https://www.aliyun.com',
-        referer: pageUrl,
+    const payload = await fetchJsonWithRetry(
+      queryPriceUrl,
+      {
+        method: 'POST',
+        headers: {
+          ...COMMON_HEADERS,
+          accept: 'application/json, text/plain, */*',
+          'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+          origin: 'https://www.aliyun.com',
+          referer: pageUrl,
+        },
+        body: `param=${encodeURIComponent(JSON.stringify(buildAliyunPriceParam(planDef)))}`,
       },
-      body: `param=${encodeURIComponent(JSON.stringify(buildAliyunPriceParam(planDef)))}`,
-    });
+      3,
+    );
     if (!payload || payload.success !== true || String(payload.code) !== '200') {
       continue;
     }
@@ -3076,7 +3128,10 @@ async function parseAliyunCodingPlans() {
             : null,
         originalPrice: Number.isFinite(originalAmount) ? originalAmount : null,
         unit: '月',
-        notes: promoLabel || null,
+        notes:
+          planDef.tier === 'Lite' && (serviceDetailsByTier.get(planDef.tier) || []).some((detail) => /停止新购/.test(detail))
+            ? '已停止新购/续费升级，仅已购用户可用至到期'
+            : promoLabel || null,
         serviceDetails: serviceDetailsByTier.get(planDef.tier) || (activityName ? [activityName] : null),
       }),
     );
@@ -3815,47 +3870,60 @@ async function parseMthreadsCodingPlans() {
   };
 }
 
-async function parseStepfunStepPlans() {
-  const pageUrl = 'https://platform.stepfun.com/step-plan?channel=step-dev';
-  const { text } = await fetchRenderedPageText(pageUrl, 'StepFun Step Plan parser', {
-    waitForText: /Flash\s+Mini[\s\S]*¥\s*25[\s\S]*Flash\s+Max[\s\S]*¥\s*349/,
-  });
+function parseStepfunPlansFromRenderedText(pageText) {
+  const text = normalizeText(pageText);
   if (!/Step\s*Plan/i.test(text) || !/Flash\s+Mini/i.test(text)) {
-    throw new Error('Unable to locate StepFun Step Plan pricing text');
+    return [];
   }
 
   const tierSpecs = [
-    ['Flash Mini', ['Flash Plus', 'Flash Pro', 'Flash Max']],
-    ['Flash Plus', ['Flash Pro', 'Flash Max']],
-    ['Flash Pro', ['Flash Max']],
-    ['Flash Max', ['Prompt 是', '开发者评价']],
+    ['Flash Mini', ['Flash Plus', '统一 Credit', '开发者评价']],
+    ['Flash Plus', ['Flash Pro', '统一 Credit', '开发者评价']],
+    ['Flash Pro', ['Flash Max', '统一 Credit', '开发者评价']],
+    ['Flash Max', ['统一 Credit', '开发者评价', '如需企业']],
   ];
   const plans = [];
   for (const [tier, nextLabels] of tierSpecs) {
     const segment = extractPlanSegment(text, tier, nextLabels);
-    const priceMatch = segment.match(/¥\s*([0-9]+(?:\.[0-9]+)?)\s*¥\s*([0-9]+(?:\.[0-9]+)?)/);
-    if (!priceMatch) {
+    if (!segment) {
       continue;
     }
-    const currentPrice = Number(priceMatch[1]);
-    const originalPrice = Number(priceMatch[2]);
+    const dualPriceMatch = segment.match(/¥\s*([0-9]+(?:\.[0-9]+)?)\s*¥\s*([0-9]+(?:\.[0-9]+)?)/);
+    const singlePriceMatch = segment.match(/¥\s*([0-9]+(?:\.[0-9]+)?)/);
+    if (!dualPriceMatch && !singlePriceMatch) {
+      continue;
+    }
+    const currentPrice = Number(dualPriceMatch ? dualPriceMatch[1] : singlePriceMatch[1]);
+    const originalPrice = dualPriceMatch ? Number(dualPriceMatch[2]) : null;
     const promptMatch = segment.match(/每\s*5\s*小时\s*([0-9,]+)\s*次\s*Prompt/i);
     const callMatch = segment.match(/[（(]\s*[～~]?\s*([0-9,]+)\s*次模型调用\s*[）)]/);
+    const creditsMatch = segment.match(/([0-9]+M)\s*Credits\s*月使用量/i);
+    const notes = [
+      /已售罄/.test(segment) ? '当前页面显示已售罄' : null,
+      /新用户\s*15\s*天内免费体验/.test(segment) ? '新用户 15 天内免费体验' : null,
+      /首三月专享/.test(segment) ? '首三月专享' : null,
+      !/已售罄|免费体验|首三月/.test(segment) && dualPriceMatch ? '限时优惠' : null,
+    ]
+      .filter(Boolean)
+      .join('；');
+
     plans.push(
       asPlan({
         name: tier,
         currentPriceText: `¥${formatAmount(currentPrice)}/月`,
         currentPrice,
-        originalPriceText: `¥${formatAmount(originalPrice)}/月`,
-        originalPrice,
+        originalPriceText: Number.isFinite(originalPrice) ? `¥${formatAmount(originalPrice)}/月` : null,
+        originalPrice: Number.isFinite(originalPrice) ? originalPrice : null,
         unit: '月',
-        notes: /已售罄/.test(segment) ? '当前页面显示已售罄' : '限时优惠',
+        notes: notes || null,
         serviceDetails: [
           '支持所有旗舰模型',
           '支持智能路由',
+          creditsMatch ? `月使用量: ${creditsMatch[1]} Credits` : null,
           promptMatch ? `每 5 小时 ${promptMatch[1]} 次 Prompt` : null,
           callMatch ? `约 ${callMatch[1]} 次模型调用` : null,
           '覆盖多款 MCP 工具',
+          /2\s*倍\s*OpenAI\s*Go/.test(segment) ? '2 倍 OpenAI Go 套餐用量' : null,
           /优先 API 速率/.test(segment) ? '优先 API 速率' : null,
           /优先技术支持/.test(segment) ? '优先技术支持' : null,
           /多设备登录/.test(segment) ? '多设备登录' : null,
@@ -3863,6 +3931,17 @@ async function parseStepfunStepPlans() {
       }),
     );
   }
+  return dedupePlans(plans);
+}
+
+async function parseStepfunStepPlans() {
+  const pageUrl = 'https://platform.stepfun.com/step-plan?channel=step-dev';
+  const { text } = await fetchRenderedPageText(pageUrl, 'StepFun Step Plan parser', {
+    waitForText: /Flash\s+Mini[\s\S]*¥\s*[0-9]+[\s\S]*Flash\s+Max[\s\S]*¥\s*[0-9]+/,
+    waitForTimeoutMs: 25_000,
+    timeoutMs: 30_000,
+  });
+  const plans = parseStepfunPlansFromRenderedText(text);
   if (plans.length === 0) {
     throw new Error('Unable to parse StepFun monthly plan cards');
   }
@@ -3871,7 +3950,7 @@ async function parseStepfunStepPlans() {
     provider: PROVIDER_IDS.STEPFUN,
     sourceUrls: unique([pageUrl]),
     fetchedAt: new Date().toISOString(),
-    plans: dedupePlans(plans),
+    plans,
   };
 }
 
@@ -4286,13 +4365,16 @@ if (require.main === module) {
 module.exports = {
   STALE_PROVIDER_NOTICE,
   buildStaleProviderFallback,
+  buildXAioPlansFromBundle,
   extractProviderIdFromFailure,
   extractInfiniRouteChunkUrls,
+  isRetryableFetchError,
   buildKimiCodePlansFromGoodsPayload,
   parseChutesPlansFromText,
   parseInfiniPlanFromBundle,
   parseInfiniCodingPlansFromDocsText,
   parseInfiniServiceDetailsByTier,
+  parseAliyunServiceDetailsFromDocsHtml,
   parseAliyunTokenPlansFromDocsHtml,
   parseHuaweiTokenPlans,
   parseCompshareCodingPlansFromHtml,
@@ -4300,5 +4382,6 @@ module.exports = {
   parseJdCloudCodingPlansFromDocsText,
   parseJdCloudCodingPlansFromPageHtml,
   parseJdCloudCodingPlansFromText,
+  parseStepfunPlansFromRenderedText,
   restoreFailedProvidersFromSnapshot,
 };

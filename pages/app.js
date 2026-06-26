@@ -410,6 +410,96 @@ function getPlanServices(plan) {
   return [...new Set(rawList.map((item) => String(item || '').trim()).filter(Boolean))];
 }
 
+const PLAN_SERVICE_DISPLAY_LIMIT = 5;
+
+function summarizePlanServiceText(serviceText) {
+  const text = String(serviceText || '').trim();
+  if (!text) {
+    return '';
+  }
+  if (/支持的模型/.test(text) && text.length > 120) {
+    const recommendedModels = [
+      'qwen3.7-plus',
+      'qwen3.6-plus',
+      'kimi-k2.5',
+      'glm-5',
+      'MiniMax-M2.5',
+    ].filter((model) => new RegExp(model.replace(/[.+?^${}()|[\]\\]/g, '\\$&'), 'i').test(text));
+    return recommendedModels.length > 0 ? `支持模型: ${recommendedModels.join('、')} 等` : '支持模型: 以官方白名单为准';
+  }
+  if (/^能力[:：]/.test(text) && text.length > 90) {
+    return '能力: 支持千问、GLM、Kimi、MiniMax 等编码模型';
+  }
+  if (/^工具[:：]/.test(text) && text.length > 90) {
+    return '工具: 支持 Qwen Code、Claude Code、Codex、Cursor、Cline 等';
+  }
+  if (/^已购权益[:：]/.test(text) && text.length > 42) {
+    return '已购权益: 可继续使用至服务到期';
+  }
+  if (text.length <= 120) {
+    return text;
+  }
+  return `${text.slice(0, 116).trim()}...`;
+}
+
+function getPlanServiceDisplayKey(serviceText) {
+  const text = String(serviceText || '').toLowerCase();
+  if (/支持模型|支持的模型/.test(text)) {
+    return 'supported-models';
+  }
+  if (/用量限制|请求|tokens|credits|额度/.test(text)) {
+    return text.replace(/[0-9,.\s]/g, '');
+  }
+  const label = text.match(/^([^:：]{1,12})[:：]/)?.[1];
+  return label || text;
+}
+
+function getPlanServicePriority(serviceText) {
+  const text = String(serviceText || '');
+  if (/状态|停止新购|停止续费|停止时间|已购权益/.test(text)) {
+    return 0;
+  }
+  if (/计价币种|适用区域/.test(text)) {
+    return 1;
+  }
+  if (/用量限制|月使用量|tokens|credits|额度|请求/.test(text)) {
+    return 2;
+  }
+  if (/支持模型|支持的模型|能力|工具|权益/.test(text)) {
+    return 3;
+  }
+  return 4;
+}
+
+function getDisplayPlanServices(plan) {
+  const summarized = [];
+  const seen = new Set();
+  for (const serviceText of getPlanServices(plan)) {
+    const summary = summarizePlanServiceText(serviceText);
+    const key = getPlanServiceDisplayKey(summary);
+    if (!summary || seen.has(key)) {
+      continue;
+    }
+    seen.add(key);
+    summarized.push({
+      text: summary,
+      priority: getPlanServicePriority(summary),
+      index: summarized.length,
+    });
+  }
+
+  if (summarized.length <= PLAN_SERVICE_DISPLAY_LIMIT) {
+    return summarized.map((item) => item.text);
+  }
+
+  return summarized
+    .slice()
+    .sort((left, right) => left.priority - right.priority || left.index - right.index)
+    .slice(0, PLAN_SERVICE_DISPLAY_LIMIT)
+    .sort((left, right) => left.index - right.index)
+    .map((item) => item.text);
+}
+
 function formatOfferPriceText(rawValue, fallbackSymbol = '$') {
   const rawText = String(rawValue || '').trim();
   if (!rawText) {
@@ -519,6 +609,29 @@ function isFailedPricingProvider(provider, failedProviderIds) {
   return Boolean((providerId && failedProviderIds.has(providerId)) || provider?.staleReason || provider?.staleFailure);
 }
 
+function mergePlanData(existingPlan, incomingPlan) {
+  const merged = { ...(existingPlan || {}) };
+  for (const [key, value] of Object.entries(incomingPlan || {})) {
+    if (key === 'serviceDetails') {
+      merged.serviceDetails = [
+        ...new Set([
+          ...getPlanServices(merged),
+          ...(Array.isArray(value) ? value : value ? [value] : []).map((item) => String(item || '').trim()),
+        ]),
+      ].filter(Boolean);
+      continue;
+    }
+    if (key === 'notes') {
+      merged.notes = String(value || '').trim() || merged.notes || null;
+      continue;
+    }
+    if (value !== null && value !== undefined && String(value).trim?.() !== '') {
+      merged[key] = value;
+    }
+  }
+  return merged;
+}
+
 function getPricingFailureBuyUrl(failureItem) {
   const providerId = getPricingFailureProviderId(failureItem);
   return PROVIDER_BUY_URLS[providerId] || null;
@@ -561,9 +674,11 @@ function mergeAllProviderData(pricingData, openrouterData) {
 
     if (refMap.has(p.provider)) {
       const existing = refMap.get(p.provider);
-      const existingNames = new Set(existing.plans.map((pl) => pl.name));
       for (const plan of p.plans || []) {
-        if (!existingNames.has(plan.name)) {
+        const existingIndex = existing.plans.findIndex((pl) => pl.name === plan.name);
+        if (existingIndex >= 0) {
+          existing.plans[existingIndex] = mergePlanData(existing.plans[existingIndex], plan);
+        } else {
           existing.plans.push(plan);
         }
       }
@@ -707,7 +822,7 @@ function buildPlanList(plans, options = {}) {
       item.append(offerCard);
     }
 
-    const serviceItems = getPlanServices(plan);
+    const serviceItems = getDisplayPlanServices(plan);
     if (serviceItems.length > 0) {
       const serviceBlock = createElement('section', 'plan-services');
       serviceBlock.append(createElement('p', 'plan-services-title', '服务内容'));

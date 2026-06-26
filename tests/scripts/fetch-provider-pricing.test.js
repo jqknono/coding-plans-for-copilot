@@ -12,6 +12,7 @@ const {
   parseInfiniCodingPlansFromDocsText,
   parseInfiniPlanFromBundle,
   parseInfiniServiceDetailsByTier,
+  parseAliyunServiceDetailsFromDocsHtml,
   parseAliyunTokenPlansFromDocsHtml,
   parseHuaweiTokenPlans,
   parseCompshareCodingPlansFromHtml,
@@ -19,6 +20,9 @@ const {
   parseJdCloudCodingPlansFromDocsText,
   parseJdCloudCodingPlansFromPageHtml,
   parseJdCloudCodingPlansFromText,
+  parseStepfunPlansFromRenderedText,
+  buildXAioPlansFromBundle,
+  isRetryableFetchError,
   restoreFailedProvidersFromSnapshot,
 } = require('../../scripts/fetch-provider-pricing.js');
 
@@ -59,6 +63,13 @@ test('restoreFailedProvidersFromSnapshot keeps previous plans and marks them sta
 test('restoreFailedProvidersFromSnapshot skips providers without snapshot data', () => {
   const restored = restoreFailedProvidersFromSnapshot([], ['jdcloud-ai: parse failed'], []);
   assert.deepEqual(restored, []);
+});
+
+test('isRetryableFetchError identifies transient network failures', () => {
+  assert.equal(isRetryableFetchError(new Error('fetch failed')), true);
+  assert.equal(isRetryableFetchError(new Error('Request timed out after 15000ms: https://example.com')), true);
+  assert.equal(isRetryableFetchError(new Error('Request failed: https://example.com -> 502')), true);
+  assert.equal(isRetryableFetchError(new Error('Unable to locate Aliyun entry script')), false);
 });
 
 test('parseJdCloudCodingPlansFromPageHtml reads SSR pricing models', () => {
@@ -481,6 +492,24 @@ test('parseChutesPlansFromText tolerates home page plans without Base tier', () 
   );
 });
 
+test('parseAliyunServiceDetailsFromDocsHtml marks Lite as discontinued', () => {
+  const html = `
+    <p>套餐详情</p>
+    <p>说明 Lite 套餐自 2026 年 3 月 20 日 00:00:00（UTC+08:00）起停止新购（详见公告）；4 月 13 日 18:00:00（UTC+08:00）起停止续费与升级（详见公告）。Lite 套餐支持所有套餐模型。</p>
+    <h3>Lite 版为什么停止新购？</h3>
+    <p>因产品升级需要，Coding Plan Lite 基础版本已于 2026 年 3 月 20 日起停止新购，并于 4 月 13 日起停止续费与升级。已购买的用户可继续使用至服务到期。</p>
+    <h3>已购买 Lite 版的用户权益是否受影响？</h3>
+    <p>已购买 Coding Plan Lite 基础套餐的用户可继续使用至服务到期。</p>
+  `;
+
+  const detailsByTier = parseAliyunServiceDetailsFromDocsHtml(html);
+  const liteDetails = detailsByTier.get('Lite') || [];
+
+  assert.match(liteDetails.join('\n'), /停止新购/);
+  assert.match(liteDetails.join('\n'), /停止续费与升级/);
+  assert.match(liteDetails.join('\n'), /继续使用至服务到期/);
+});
+
 test('parseAliyunTokenPlansFromDocsHtml reads team seat and shared credit package pricing', () => {
   const html = `
     <table>
@@ -570,4 +599,53 @@ test('parseHuaweiTokenPlans returns the four 华为云 Token Plan tiers', async 
   assert.match(allDetails, /OpenClaw、Claude Code、Cline、Cursor/);
   assert.match(allDetails, /限购 1 套/);
   assert.match(result.plans[3].serviceDetails.join('\n'), /8\.8 亿 Tokens/);
+});
+
+test('buildXAioPlansFromBundle reads monthly plan prices from app chunk', () => {
+  const snippet = String.raw`{id:"lite",name:"Lite",nameCN:"入门版",price:{monthly:72,firstOrder:{monthly:36},description:"适合个人开发者的轻量级使用",features:["主流开源 AI 模型访问权限"]}{id:"pro",name:"Pro",nameCN:"专业版",price:{monthly:360,firstOrder:{monthly:180},description:"适合专业团队",features:["稳定的响应速度"]}`;
+  const plans = buildXAioPlansFromBundle(snippet);
+  assert.equal(plans.length, 2);
+  assert.deepEqual(
+    plans.map((plan) => ({ name: plan.name, currentPriceText: plan.currentPriceText, notes: plan.notes })),
+    [
+      { name: 'Lite（入门版）', currentPriceText: '¥72/月', notes: '首购优惠：¥36/月' },
+      { name: 'Pro（专业版）', currentPriceText: '¥360/月', notes: '首购优惠：¥180/月' },
+    ],
+  );
+});
+
+test('parseStepfunPlansFromRenderedText reads single-price Credit tiers', () => {
+  const pageText = `
+    Step Plan 套餐方案 月付 Flash Mini ¥49 适合刚开始体验 AI 的入门用户 新用户 15 天内免费体验 400M Credits月使用量
+    Flash Plus ¥99 适合日常使用 AI 提效的用户 首三月专享 1600M Credits月使用量 优先 API 速率
+    Flash Pro ¥199 适合高频使用 AI 的深度用户 8000M Credits月使用量
+    Flash Max ¥699 适合高强度使用 AI 的专业用户 40000M Credits月使用量 统一 Credit 额度体系
+  `;
+  const plans = parseStepfunPlansFromRenderedText(pageText);
+  assert.equal(plans.length, 4);
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      originalPriceText: plan.originalPriceText,
+    })),
+    [
+      { name: 'Flash Mini', currentPriceText: '¥49/月', originalPriceText: null },
+      { name: 'Flash Plus', currentPriceText: '¥99/月', originalPriceText: null },
+      { name: 'Flash Pro', currentPriceText: '¥199/月', originalPriceText: null },
+      { name: 'Flash Max', currentPriceText: '¥699/月', originalPriceText: null },
+    ],
+  );
+  assert.match(plans[0].notes, /15 天内免费体验/);
+  assert.match(plans[0].serviceDetails.join('\n'), /400M Credits/);
+  assert.match(plans[1].notes, /首三月专享/);
+});
+
+test('parseStepfunPlansFromRenderedText still reads legacy dual-price layout', () => {
+  const pageText =
+    'Step Plan Flash Mini ¥25 ¥49 每 5 小时 100 次 Prompt Flash Plus ¥49 ¥99 Flash Pro ¥99 ¥199 Flash Max ¥349 ¥699 开发者评价';
+  const plans = parseStepfunPlansFromRenderedText(pageText);
+  assert.equal(plans.length, 4);
+  assert.equal(plans[0].currentPrice, 25);
+  assert.equal(plans[0].originalPrice, 49);
 });
