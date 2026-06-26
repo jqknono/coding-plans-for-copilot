@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.12.2] - 2026-06-26
+- feat(app): 完善模型目录与服务兜底逻辑
+- feat(pricing): 更新服务商套餐数据与前端展示逻辑
+- feat(provider): 支持关闭额外请求封装并优化 Grok 协议与 Token 计数
+
+## [0.12.1] - 2026-06-26
+- feat(app): 完善模型目录与服务兜底逻辑
+- feat(pricing): 更新服务商套餐数据与前端展示逻辑
+
 ## [0.12.0] - 2026-06-25
 - feat(provider): 支持关闭额外请求封装并优化 Grok 协议与 Token 计数
 - feat(pricing): add 华为云 Token Plan (智果园) — closes #160
@@ -39,7 +48,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.9.15] - 2026-06-02
 - Maintenance updates
-
-## [0.9.14] - 2026-06-02
-- feat(config): 将 API Key 字段标记为废弃并支持临时回退配置
-- feat(pricing): 更新 AI 供应商套餐信息与解析脚本
