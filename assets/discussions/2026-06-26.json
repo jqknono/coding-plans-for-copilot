@@ -1,0 +1,98 @@
+{
+  "date": "2026-06-26",
+  "generatedAt": "2026-06-26T07:25:34.798Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "DDS Hub": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1223076",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1223076",
+      "title": "[DDS Hub] CodeX Claude GLM 折扣站",
+      "content": "Coding 模型全系折扣 GLM 5.2 8 折 Codex 最低 1 折 Claude 低至 2 折 www.ddshub.cc 欢迎老板尝试 按需充值/按需调用",
+      "author": "ddshub",
+      "createdAt": "2026-06-26T06:05:05.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "DDS Hub",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "DDS Hub 提供 GLM、Codex、Claude 等编码模型的折扣，按需充值调用，欢迎尝试。",
+        "topics": [
+          "折扣",
+          "GLM",
+          "Codex",
+          "Claude",
+          "按需充值",
+          "AI 编码模型"
+        ],
+        "language": "zh",
+        "category": "Announcements",
+        "planMentioned": null
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-26T07:28:04.012Z"
+    },
+    {
+      "id": "v2ex-1222967",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1222967",
+      "title": "这种情况该跑路吗？",
+      "content": "5 月拿大礼包，面了十几家，6 月 8 号降薪入职了某厂，拿着 35 * 14 的微薄薪资，工作量大的惊人，每天都是紧急需求，入职第一天就干到了 10 点，后续每天都要 11 点才下班。 祖传屎山项目，用的 SpringBoot 1.5 跟内部自研微服务框架，源码 220w 行，微服务拆了 46 个，库用的还是同一个...... 用的 Codebuddy ，每个月 2000 额度，根本就不够用，向上反馈后，领导让我去借其他同事的号来用...... 听起来很不靠谱的样子，我就自己掏钱买了 GLM Coding Plan 跟 DeepSeek ，每天付费上班。 领导是从爱国厂出来的，特别喜欢开会，屁大的事要拉几十个人去开会，每天白天的时间都陪领导开会去了，只有晚上才有时间干活；他思想觉悟也高，经常跟我们讲：如果哪天觉得自己没法胜任这份工作了，就会自动离职，不给公司找麻烦...... 但是他思想觉悟都这么高了，还搞了一些亲戚朋友进来混日子，有点讽刺。 现在每天精神都极度紧绷，工作压力也大，领导事儿还多，就快坚持不下去了。 个人情况：深圳定居，有车有房，已婚未育，夫妻收入每个月 5w ，存款有",
+      "author": "midsolo",
+      "createdAt": "2026-06-26T01:41:44.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.6,
+        "summary": "用户描述在高压工作环境中，因 Codebuddy 额度不足而自费购买了 GLM Coding Plan 和 DeepSeek，并询问是否应该辞职。",
+        "topics": [
+          "定价",
+          "额度不足",
+          "自费",
+          "GLM Coding Plan",
+          "DeepSeek",
+          "工作压力",
+          "考虑离职"
+        ],
+        "planMentioned": "GLM Coding Plan",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-26T07:28:06.524Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
