@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-27T09:01:14.418Z",
+  "generatedAt": "2026-06-27T03:10:21.551Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -552,47 +552,6 @@
           ]
         }
       ]
-    },
-    {
-      "provider": "infini-ai",
-      "sourceUrls": [
-        "https://cloud.infini-ai.com/platform/ai",
-        "https://docs.infini-ai.com/gen-studio/coding-plan/",
-        "https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.3126efe5.js",
-        "https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase"
-      ],
-      "plans": [
-        {
-          "name": "Infini Coding Lite",
-          "currentPrice": 40,
-          "currentPriceText": "¥40/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "暂不可购买",
-          "serviceDetails": [
-            "适用场景：轻量日常改 Bug、写脚本、补单测、文档生成",
-            "用量限制：5 小时：1,000 次，7 天：6,000 次，月度：12,000 次",
-            "当前状态: 暂不可购买"
-          ]
-        },
-        {
-          "name": "Infini Coding Pro",
-          "currentPrice": 200,
-          "currentPriceText": "¥200/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "暂不可购买",
-          "serviceDetails": [
-            "适用场景：高频生产力复杂排障、架构重构、连续迭代、多人协作",
-            "用量限制：5 小时：5,000 次，7 天：30,000 次，月度：60,000 次",
-            "当前状态: 暂不可购买"
-          ]
-        }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "infini-ai: Task timed out after 30000ms"
     },
     {
       "provider": "jdcloud-ai",
@@ -1642,7 +1601,5 @@
       ]
     }
   ],
-  "failures": [
-    "infini-ai: Task timed out after 30000ms"
-  ]
+  "failures": []
 }

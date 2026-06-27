@@ -25,7 +25,6 @@ const PROVIDER_IDS = {
   KWAIKAT: 'kwaikat-ai',
   XAIO: 'x-aio',
   COMPSHARE: 'compshare-ai',
-  INFINI: 'infini-ai',
   XIAOMI: 'xiaomi-mimo',
   OPENCODE: 'opencode',
   ROOCODE: 'roocode',
@@ -2601,238 +2600,6 @@ async function parseCompshareCodingPlans() {
   };
 }
 
-function parseInfiniPlanFromBundle(bundleText, tier) {
-  const marker = `Infini Coding ${tier}`;
-  const markerIndex = bundleText.indexOf(marker);
-  if (markerIndex < 0) {
-    return null;
-  }
-  const snippet = bundleText.slice(markerIndex, markerIndex + 3600);
-  const currentMatch = snippet.match(/class:"amount"\}\s*,\s*"([0-9]+(?:\.[0-9]+)?)"/i);
-  if (!currentMatch) {
-    return null;
-  }
-  const originalMatch = snippet.match(/class:"strike"\}\s*,\s*"¥\s*([0-9]+(?:\.[0-9]+)?)\/月"/i);
-  const currentAmount = Number(currentMatch[1]);
-  const originalAmount = originalMatch ? Number(originalMatch[1]) : null;
-  if (!Number.isFinite(currentAmount)) {
-    return null;
-  }
-  return asPlan({
-    name: `Infini Coding ${tier}`,
-    currentPriceText: `¥${formatAmount(currentAmount)}/月`,
-    currentPrice: currentAmount,
-    originalPriceText: Number.isFinite(originalAmount) ? `¥${formatAmount(originalAmount)}/月` : null,
-    originalPrice: Number.isFinite(originalAmount) ? originalAmount : null,
-    unit: '月',
-  });
-}
-
-function extractInfiniRouteChunkUrls(mainScriptText, mainScriptUrl) {
-  const resolveChunkUrl = (chunkPath) => {
-    if (/^assets\//i.test(chunkPath)) {
-      return new URL(`../../${chunkPath}`, mainScriptUrl).toString();
-    }
-    return absoluteUrl(chunkPath, mainScriptUrl);
-  };
-  const routeMatch = String(mainScriptText || '').match(
-    /path:"platform\/ai",name:"platformAi",component:\(\)=>[A-Za-z_$][\w$]*\(\(\(\)=>import\("\.\/([^"]+)"\)\),\[([^\]]+)\]\)/,
-  );
-  if (!routeMatch) {
-    return [];
-  }
-
-  const primaryChunkUrl = resolveChunkUrl(routeMatch[1]);
-  const preloadChunkUrls = [...routeMatch[2].matchAll(/"([^"]+\.js)"/g)].map((match) => resolveChunkUrl(match[1]));
-
-  return unique([primaryChunkUrl, ...preloadChunkUrls]);
-}
-
-function parseInfiniServiceDetailsByTier(bundleText) {
-  const detailsByTier = new Map();
-  const liteMarker = bundleText.indexOf('Infini Coding Lite');
-  const proMarker = bundleText.indexOf('Infini Coding Pro');
-  if (liteMarker < 0 && proMarker < 0) {
-    return detailsByTier;
-  }
-  const regionStart = Math.max(0, Math.min(...[liteMarker, proMarker].filter((value) => value >= 0)) - 1200);
-  const regionEnd = Math.min(bundleText.length, Math.max(liteMarker, proMarker) + 12000);
-  const section = decodeUnicodeLiteral(bundleText.slice(regionStart, regionEnd));
-
-  const titleMatches = [...section.matchAll(/class:"feature-title"}\s*,\s*"([^"]+)"/g)];
-  const blocks = [];
-  for (let index = 0; index < titleMatches.length; index += 1) {
-    const match = titleMatches[index];
-    const blockStart = match.index ?? 0;
-    const blockEnd = titleMatches[index + 1]?.index ?? section.length;
-    const blockText = section.slice(blockStart, blockEnd);
-    const title = normalizeText(match[1]);
-    const items = [...blockText.matchAll(/class:"feature-item[^"]*"}[\s\S]{0,260}?[A-Z]\("span",null,"([^"]+)"\)/g)]
-      .map((item) => normalizeText(item[1]))
-      .filter(Boolean);
-    const details = normalizeServiceDetails([title, ...items]);
-    if (details && details.length > 0) {
-      blocks.push(details);
-    }
-  }
-
-  for (const details of blocks) {
-    const text = details.join(' ');
-    if (/5,?000次(?:请求)?(?:\/|每)5小时|30,?000次\/7天|60,?000次\/1个月|5倍Lite套餐用量/.test(text)) {
-      detailsByTier.set('Pro', details);
-      continue;
-    }
-    if (/1,?000次(?:请求)?(?:\/|每)5小时|6,?000次\/7天|12,?000次\/1个月/.test(text)) {
-      detailsByTier.set('Lite', details);
-    }
-  }
-  if (!detailsByTier.get('Lite') && blocks[0]) {
-    detailsByTier.set('Lite', blocks[0]);
-  }
-  if (!detailsByTier.get('Pro') && blocks[1]) {
-    detailsByTier.set('Pro', blocks[1]);
-  }
-  return detailsByTier;
-}
-
-function buildInfiniStaticFallbackPlans() {
-  return [
-    asPlan({
-      name: 'Infini Coding Lite',
-      currentPriceText: '¥40/月',
-      currentPrice: 40,
-      unit: '月',
-      notes: '暂不可购买；价格来自上次成功抓取，当前页面仍保留 Infini Coding Plan 入口',
-      serviceDetails: [
-        '1000次请求每5小时',
-        '支持Minimax、GLM、DeepSeek、Kimi等热门模型，持续上新',
-        '适配Claude Code、Cline等主流编程工具，持续更新...',
-        '当前状态: 暂不可购买',
-      ],
-    }),
-    asPlan({
-      name: 'Infini Coding Pro',
-      currentPriceText: '¥200/月',
-      currentPrice: 200,
-      unit: '月',
-      notes: '暂不可购买；价格来自上次成功抓取，当前页面仍保留 Infini Coding Plan 入口',
-      serviceDetails: [
-        '5000次请求每5小时',
-        '5倍Lite套餐用量',
-        '支持Minimax、GLM、DeepSeek、Kimi等热门模型，持续上新',
-        '适配Claude Code、Cline等主流编程工具，持续更新...',
-        '当前状态: 暂不可购买',
-      ],
-    }),
-  ];
-}
-
-async function parseInfiniCodingPlans() {
-  const pageUrl = 'https://cloud.infini-ai.com/platform/ai';
-  const docsUrl = 'https://docs.infini-ai.com/gen-studio/coding-plan/';
-  const canPurchaseUrl = 'https://cloud.infini-ai.com/api/maas/system/coding_plan/can_purchase';
-  const html = await fetchText(pageUrl);
-  const mainScriptUrl =
-    html.match(/https:\/\/content\.cloud\.infini-ai\.com\/platform-web-prod\/assets\/js\/main\.[^"'\s]+\.js/i)?.[0] ||
-    null;
-  if (!mainScriptUrl) {
-    throw new Error('Unable to locate Infini main script');
-  }
-  const mainScriptText = await fetchText(mainScriptUrl);
-  const candidateChunkUrls = extractInfiniRouteChunkUrls(mainScriptText, mainScriptUrl);
-
-  let selectedChunkUrl = null;
-  let selectedPlans = [];
-  for (const chunkUrl of candidateChunkUrls) {
-    let chunkText;
-    try {
-      chunkText = await fetchText(chunkUrl);
-    } catch {
-      continue;
-    }
-    if (!/Infini Coding (Lite|Pro)/i.test(chunkText)) {
-      continue;
-    }
-    const serviceDetailsByTier = parseInfiniServiceDetailsByTier(chunkText);
-    const liteBase = parseInfiniPlanFromBundle(chunkText, 'Lite');
-    const proBase = parseInfiniPlanFromBundle(chunkText, 'Pro');
-    const litePlan = liteBase ? { ...liteBase, serviceDetails: serviceDetailsByTier.get('Lite') || null } : null;
-    const proPlan = proBase ? { ...proBase, serviceDetails: serviceDetailsByTier.get('Pro') || null } : null;
-    const plans = [litePlan, proPlan].filter(Boolean);
-    if (plans.length === 0) {
-      continue;
-    }
-    selectedChunkUrl = chunkUrl;
-    selectedPlans = plans;
-    if (plans.some((plan) => plan.originalPriceText)) {
-      break;
-    }
-  }
-  if (selectedPlans.length === 0) {
-    const rendered = await fetchRenderedPageText(docsUrl, 'Infini docs parser', {
-      waitForText: /Infini\s+Coding\s+Plan|Lite\s+与\s+Pro\s+包月套餐|40\s*元\/月/,
-      timeoutMs: 20_000,
-      waitForTimeoutMs: 12_000,
-    }).catch(() => null);
-    selectedPlans = parseInfiniCodingPlansFromDocsText(rendered?.text || '');
-    if (selectedPlans.length === 0) {
-      throw new Error('Infini page does not expose standard monthly coding plan prices');
-    }
-  }
-
-  let canPurchaseItems = [];
-  try {
-    const payload = await fetchJson(canPurchaseUrl, {
-      method: 'POST',
-      headers: {
-        ...COMMON_HEADERS,
-        accept: 'application/json, text/plain, */*',
-        'content-type': 'application/json',
-        origin: 'https://cloud.infini-ai.com',
-        referer: pageUrl,
-      },
-      body: '{}',
-    });
-    if (Array.isArray(payload)) {
-      canPurchaseItems = payload;
-    }
-  } catch {
-    canPurchaseItems = [];
-  }
-  const canBuyByTier = new Map();
-  for (const item of canPurchaseItems) {
-    const name = normalizeText(item?.name || '');
-    if (!name) {
-      continue;
-    }
-    if (/lite/i.test(name)) {
-      canBuyByTier.set('Lite', Boolean(item?.can_buy));
-    } else if (/pro/i.test(name)) {
-      canBuyByTier.set('Pro', Boolean(item?.can_buy));
-    }
-  }
-  const plans = selectedPlans.map((plan) => {
-    const tier = /lite/i.test(plan.name) ? 'Lite' : /pro/i.test(plan.name) ? 'Pro' : null;
-    const canBuy = tier ? canBuyByTier.get(tier) : null;
-    const notes = canBuy === false ? '暂不可购买' : null;
-    const serviceDetails = normalizeServiceDetails([
-      ...(plan.serviceDetails || []),
-      canBuy === false ? '当前状态: 暂不可购买' : null,
-    ]);
-    return {
-      ...plan,
-      notes: notes || plan.notes || null,
-      serviceDetails: serviceDetails || null,
-    };
-  });
-
-  return {
-    provider: PROVIDER_IDS.INFINI,
-    sourceUrls: unique([pageUrl, docsUrl, mainScriptUrl, selectedChunkUrl, canPurchaseUrl]),
-    fetchedAt: new Date().toISOString(),
-    plans: dedupePlans(plans),
-  };
-}
 
 function parseAliyunServiceDetailsFromPageHtml(html) {
   const featureMatches = [
@@ -2941,48 +2708,6 @@ function parseAliyunServiceDetailsFromDocsHtml(html) {
   return detailsByTier;
 }
 
-function parseInfiniCodingPlansFromDocsText(pageText) {
-  const rawText = decodeUnicodeLiteral(String(pageText || ''));
-  const text = /<[^>]+>/.test(rawText) ? normalizeText(stripTags(rawText)) : normalizeText(rawText);
-  if (!/Infini\s+编码套餐|Infini\s+Coding\s+Plan|Coding Plan/i.test(text)) {
-    return [];
-  }
-
-  const toolsText = /支持\s+Claude Code、Cursor、Roo Code \(Cline\)\s+等主流编程辅助工具/.test(text)
-    ? 'Claude Code、Cursor、Roo Code (Cline)'
-    : null;
-  const planMatches = text.matchAll(
-    /Infini\s+Coding\s+(Lite|Pro)\s+(.+?)\s+([0-9,]+)\s*次\s+([0-9,]+)\s*次\s+([0-9,]+)\s*次\s+([0-9]+(?:\.[0-9]+)?)\s*元\s*\/\s*月/gi,
-  );
-  const plans = [];
-
-  for (const match of planMatches) {
-    const tier = normalizeText(match[1]);
-    const scenario = normalizeText(match[2]);
-    const quota5Hour = normalizeText(match[3]);
-    const quota7Day = normalizeText(match[4]);
-    const quotaMonth = normalizeText(match[5]);
-    const currentAmount = Number.parseFloat(match[6]);
-
-    plans.push(
-      asPlan({
-        name: `Infini Coding ${tier}`,
-        currentPriceText: Number.isFinite(currentAmount) ? `¥${formatAmount(currentAmount)}/月` : null,
-        currentPrice: Number.isFinite(currentAmount) ? currentAmount : null,
-        unit: '月',
-        serviceDetails: [
-          scenario ? `适用场景：${scenario}` : null,
-          quota5Hour && quota7Day && quotaMonth
-            ? `用量限制：5 小时：${quota5Hour} 次，7 天：${quota7Day} 次，月度：${quotaMonth} 次`
-            : null,
-          toolsText ? `适配工具：${toolsText}` : null,
-        ],
-      }),
-    );
-  }
-
-  return dedupePlans(plans);
-}
 
 async function parseAliyunCodingPlans() {
   const pageUrl = 'https://www.aliyun.com/benefit/scene/codingplan';
@@ -4277,7 +4002,6 @@ async function main() {
     { provider: PROVIDER_IDS.COMPSHARE, fn: parseCompshareCodingPlans },
     { provider: PROVIDER_IDS.ALIYUN, fn: parseAliyunCodingPlans },
     { provider: PROVIDER_IDS.ALIYUN_TOKEN, fn: parseAliyunTokenPlans },
-    { provider: PROVIDER_IDS.INFINI, fn: parseInfiniCodingPlans },
     { provider: PROVIDER_IDS.XIAOMI, fn: parseXiaomiMimoTokenPlans },
     { provider: PROVIDER_IDS.OPENCODE, fn: parseOpenCodePlans },
     { provider: PROVIDER_IDS.GITHUB_COPILOT, fn: parseGithubCopilotPlans },
@@ -4367,13 +4091,9 @@ module.exports = {
   buildStaleProviderFallback,
   buildXAioPlansFromBundle,
   extractProviderIdFromFailure,
-  extractInfiniRouteChunkUrls,
   isRetryableFetchError,
   buildKimiCodePlansFromGoodsPayload,
   parseChutesPlansFromText,
-  parseInfiniPlanFromBundle,
-  parseInfiniCodingPlansFromDocsText,
-  parseInfiniServiceDetailsByTier,
   parseAliyunServiceDetailsFromDocsHtml,
   parseAliyunTokenPlansFromDocsHtml,
   parseHuaweiTokenPlans,

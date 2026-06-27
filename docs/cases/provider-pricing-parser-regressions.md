@@ -5,7 +5,6 @@
 2026-06-01 供应商页面结构发生变化，导致 `npm run pricing:fetch` 中以下供应商解析失败：
 
 - `jdcloud-ai`
-- `infini-ai`
 - `chutes-ai`
 
 ## 解析路径
@@ -30,16 +29,7 @@ flowchart TD
   - `currentPriceText` 分别为 `¥19.9/月`、`¥99.9/月`
   - `originalPriceText` 分别为 `¥40/月`、`¥200/月`
 
-### 用例 2：Infini 文档页套餐解析
-
-- 前置条件：访问 `https://docs.infini-ai.com/gen-studio/coding-plan/`
-- 当：文档中包含 `Infini Coding Lite`、`Infini Coding Pro`、`40 元/月`、`200 元/月`
-- 则：
-  - 解析结果输出两个月费套餐
-  - Lite/Pro 用量分别包含 `1,000/6,000/12,000` 与 `5,000/30,000/60,000`
-  - 可购买状态接口返回 `can_buy=false` 时，结果中标记 `暂不可购买`
-
-### 用例 3：Chutes 首页订阅档位解析
+### 用例 2：Chutes 首页订阅档位解析
 
 - 前置条件：访问 `https://chutes.ai/`
 - 当：首页订阅区仅保留 `Plus`、`Pro` 两个按月套餐，且不再出现 `Base`

@@ -6,12 +6,8 @@ const assert = require('node:assert/strict');
 const {
   STALE_PROVIDER_NOTICE,
   buildKimiCodePlansFromGoodsPayload,
-  extractInfiniRouteChunkUrls,
   extractProviderIdFromFailure,
   parseChutesPlansFromText,
-  parseInfiniCodingPlansFromDocsText,
-  parseInfiniPlanFromBundle,
-  parseInfiniServiceDetailsByTier,
   parseAliyunServiceDetailsFromDocsHtml,
   parseAliyunTokenPlansFromDocsHtml,
   parseHuaweiTokenPlans,
@@ -343,101 +339,6 @@ test('Kimi parsers keep mainland RMB plans and overseas USD plans separate', () 
   assert.equal(overseasPlans[0].name, 'Moderato（海外）');
   assert.equal(overseasPlans[0].currentPriceText, '$19/月');
   assert.match(overseasPlans[0].serviceDetails.join('\n'), /计价币种: 美元（USD）/);
-});
-
-test('extractInfiniRouteChunkUrls narrows candidates to platform/ai route chunks', () => {
-  const mainScriptText = String.raw`path:"platform/ai",name:"platformAi",component:()=>mt((()=>import("./Index.64f0ba2f.js")),["assets/js/Index.64f0ba2f.js","assets/js/Index.060fd627.js","assets/js/index.fef4e24a.js","assets/js/agent.08363d33.js"])`;
-
-  const urls = extractInfiniRouteChunkUrls(
-    mainScriptText,
-    'https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.294f0a65.js',
-  );
-
-  assert.deepEqual(urls, [
-    'https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.64f0ba2f.js',
-    'https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.060fd627.js',
-    'https://content.cloud.infini-ai.com/platform-web-prod/assets/js/index.fef4e24a.js',
-    'https://content.cloud.infini-ai.com/platform-web-prod/assets/js/agent.08363d33.js',
-  ]);
-});
-
-test('Infini bundle parsers handle current request-limit wording', () => {
-  const bundleText = String.raw`Q("div",{class:"package-name"},"Infini Coding Lite"),Q("div",{class:"price"},[Q("span",{class:"currency"},"¥"),Q("span",{class:"amount"},"40"),Q("span",{class:"unit"},"/月")]),Q("div",{class:"features"},[Q("div",{class:"feature-title"},"1000次请求每5小时"),Q("div",{class:"feature-item"},[Q("span",null,"支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新")]),Q("div",{class:"feature-item"},[Q("span",null,"适配Claude Code、Cline等主流编程工具，持续更新...")])]) Q("div",{class:"package-name"},"Infini Coding Pro"),Q("div",{class:"price"},[Q("span",{class:"currency"},"¥"),Q("span",{class:"amount"},"200"),Q("span",{class:"unit"},"/月")]),Q("div",{class:"features"},[Q("div",{class:"feature-title"},"5000次请求每5小时"),Q("div",{class:"feature-item highlight"},[Q("span",null,"5倍Lite套餐用量")]),Q("div",{class:"feature-item"},[Q("span",null,"支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新")]),Q("div",{class:"feature-item"},[Q("span",null,"适配Claude Code、Cline等主流编程工具，持续更新...")])])`;
-
-  const litePlan = parseInfiniPlanFromBundle(bundleText, 'Lite');
-  const proPlan = parseInfiniPlanFromBundle(bundleText, 'Pro');
-  const detailsByTier = parseInfiniServiceDetailsByTier(bundleText);
-
-  assert.equal(litePlan.currentPriceText, '¥40/月');
-  assert.equal(proPlan.currentPriceText, '¥200/月');
-  assert.deepEqual(detailsByTier.get('Lite'), [
-    '1000次请求每5小时',
-    '支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新',
-    '适配Claude Code、Cline等主流编程工具，持续更新...',
-  ]);
-  assert.deepEqual(detailsByTier.get('Pro'), [
-    '5000次请求每5小时',
-    '5倍Lite套餐用量',
-    '支持Minimax、GLM、DeepSeek、Kimi等最新模型，Day0上新',
-    '适配Claude Code、Cline等主流编程工具，持续更新...',
-  ]);
-});
-
-test('extractInfiniRouteChunkUrls accepts current async chunk loader helper', () => {
-  const mainScriptText = String.raw`path:"platform/ai",name:"platformAi",component:()=>tr((()=>import("./Index.c75df2cd.js")),["assets/js/Index.c75df2cd.js","assets/js/request.3e4c8420.js","assets/js/index.6f3221fe.js"])`;
-
-  const urls = extractInfiniRouteChunkUrls(
-    mainScriptText,
-    'https://content.cloud.infini-ai.com/platform-web-prod/assets/js/main.b7091830.js',
-  );
-
-  assert.deepEqual(urls, [
-    'https://content.cloud.infini-ai.com/platform-web-prod/assets/js/Index.c75df2cd.js',
-    'https://content.cloud.infini-ai.com/platform-web-prod/assets/js/request.3e4c8420.js',
-    'https://content.cloud.infini-ai.com/platform-web-prod/assets/js/index.6f3221fe.js',
-  ]);
-});
-
-test('parseInfiniCodingPlansFromDocsText reads current docs pricing table', () => {
-  const pageText = `
-    GenStudio Infini 编码套餐（Coding Plan）是面向开发者的 AI 编程订阅服务。
-    清晰的预算管理：告别按 Token 计费的焦虑。Lite 与 Pro 包月套餐提供充足请求额度，实现可预期的成本控制。
-    Lite 与 Pro 套餐均支持上述所有厂商的模型，核心区别在于请求用量额度。
-    套餐 适用场景 5 小时配额 7 天配额 1 个月配额 价格 (刊例价)
-    Infini Coding Lite 轻量日常改 Bug、写脚本、补单测、文档生成 1,000 次 6,000 次 12,000 次 40 元/月
-    Infini Coding Pro 高频生产力复杂排障、架构重构、连续迭代、多人协作 5,000 次 30,000 次 60,000 次 200 元/月
-    Coding Plan 提供兼容 Anthropic 和 OpenAI 协议的接口，支持 Claude Code、Cursor、Roo Code (Cline) 等主流编程辅助工具。
-  `;
-
-  const plans = parseInfiniCodingPlansFromDocsText(pageText);
-
-  assert.deepEqual(
-    plans.map((plan) => ({
-      name: plan.name,
-      currentPriceText: plan.currentPriceText,
-      serviceDetails: plan.serviceDetails,
-    })),
-    [
-      {
-        name: 'Infini Coding Lite',
-        currentPriceText: '¥40/月',
-        serviceDetails: [
-          '适用场景：轻量日常改 Bug、写脚本、补单测、文档生成',
-          '用量限制：5 小时：1,000 次，7 天：6,000 次，月度：12,000 次',
-          '适配工具：Claude Code、Cursor、Roo Code (Cline)',
-        ],
-      },
-      {
-        name: 'Infini Coding Pro',
-        currentPriceText: '¥200/月',
-        serviceDetails: [
-          '适用场景：高频生产力复杂排障、架构重构、连续迭代、多人协作',
-          '用量限制：5 小时：5,000 次，7 天：30,000 次，月度：60,000 次',
-          '适配工具：Claude Code、Cursor、Roo Code (Cline)',
-        ],
-      },
-    ],
-  );
 });
 
 test('parseChutesPlansFromText tolerates home page plans without Base tier', () => {
