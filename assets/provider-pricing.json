@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T09:13:30.456Z",
+  "generatedAt": "2026-06-27T03:10:21.551Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -590,7 +590,9 @@
             "当前状态: 暂不可购买"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "infini-ai: Task timed out after 30000ms"
     },
     {
       "provider": "jdcloud-ai",
@@ -1640,5 +1642,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "infini-ai: Task timed out after 30000ms"
+  ]
 }
