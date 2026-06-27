@@ -1436,7 +1436,14 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
       maxInputTokens: number;
       maxOutputTokens: number;
     };
-    buildToolDefinitions(options?: { tools?: Array<{ name: string; description?: string; inputSchema?: object }> }):
+    buildToolDefinitions(options?: {
+      tools?: Array<{
+        name?: string;
+        description?: string;
+        inputSchema?: object;
+        function?: { name?: string; description?: string; parameters?: object };
+      }>;
+    }):
       | Array<{
           type: 'function';
           function: {
@@ -1526,6 +1533,56 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
       },
     ]);
     console.log('PASS 工具定义转发前会清洗未替换占位符并移除 VS Code 扩展 schema 字段');
+
+    const openAIShapeTools = provider.buildToolDefinitions({
+      tools: [
+        {
+          function: {
+            name: 'read_file',
+            description: 'Read a file',
+            parameters: {
+              type: 'object',
+              properties: {
+                path: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      ],
+    });
+    assert.deepEqual(openAIShapeTools, [
+      {
+        type: 'function',
+        function: {
+          name: 'read_file',
+          description: 'Read a file',
+          parameters: {
+            type: 'object',
+            properties: {
+              path: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+    ]);
+    console.log('PASS 工具定义可接受运行时 OpenAI function 形态并保留 function.name');
+
+    assert.throws(
+      () =>
+        provider.buildToolDefinitions({
+          tools: [
+            {
+              description: 'Missing name',
+            },
+          ],
+        }),
+      /missing tool name/,
+    );
+    console.log('PASS 工具定义缺少 name 时会在扩展侧拒绝无效 payload');
 
     const providerMessages = provider.toProviderMessages([
       vscode.LanguageModelChatMessage.User([

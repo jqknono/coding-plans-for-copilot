@@ -189,6 +189,41 @@ function sanitizeToolMetadataValue(value: unknown): unknown {
 
   return value;
 }
+
+function readRuntimeToolFunction(tool: vscode.LanguageModelChatTool): Record<string, unknown> | undefined {
+  const runtimeFunction = (tool as unknown as { function?: unknown }).function;
+  if (!runtimeFunction || typeof runtimeFunction !== 'object') {
+    return undefined;
+  }
+  return runtimeFunction as Record<string, unknown>;
+}
+
+function readRuntimeToolName(tool: vscode.LanguageModelChatTool): string | undefined {
+  if (typeof tool.name === 'string') {
+    return tool.name;
+  }
+
+  const runtimeFunction = readRuntimeToolFunction(tool);
+  return typeof runtimeFunction?.name === 'string' ? runtimeFunction.name : undefined;
+}
+
+function readRuntimeToolDescription(tool: vscode.LanguageModelChatTool): string | undefined {
+  if (typeof tool.description === 'string') {
+    return tool.description;
+  }
+
+  const runtimeFunction = readRuntimeToolFunction(tool);
+  return typeof runtimeFunction?.description === 'string' ? runtimeFunction.description : undefined;
+}
+
+function readRuntimeToolInputSchema(tool: vscode.LanguageModelChatTool): unknown {
+  if (tool.inputSchema) {
+    return tool.inputSchema;
+  }
+
+  return readRuntimeToolFunction(tool)?.parameters;
+}
+
 export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   public readonly id: string;
   public readonly vendor: string;
@@ -1023,23 +1058,27 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       return undefined;
     }
 
-    return options.tools.map((tool) => ({
-      type: 'function',
-      function: {
-        name: tool.name,
-        description:
-          typeof sanitizeToolMetadataValue(tool.description) === 'string'
-            ? (sanitizeToolMetadataValue(tool.description) as string)
-            : undefined,
-        parameters: sanitizeToolMetadataValue(
-          tool.inputSchema || {
-            type: 'object',
-            properties: {},
-            additionalProperties: true,
-          },
-        ) as object,
-      },
-    }));
+    return options.tools.map((tool) => {
+      const name = readRuntimeToolName(tool);
+      if (!name || name.trim().length === 0) {
+        throw new Error('Invalid language model tool definition: missing tool name');
+      }
+      const sanitizedDescription = sanitizeToolMetadataValue(readRuntimeToolDescription(tool));
+      const inputSchema = readRuntimeToolInputSchema(tool) ?? {
+        type: 'object',
+        properties: {},
+        additionalProperties: true,
+      };
+
+      return {
+        type: 'function',
+        function: {
+          name,
+          description: typeof sanitizedDescription === 'string' ? sanitizedDescription : undefined,
+          parameters: sanitizeToolMetadataValue(inputSchema) as object,
+        },
+      };
+    });
   }
 
   public buildToolChoice(options?: vscode.LanguageModelChatRequestOptions): 'auto' | 'required' | undefined {

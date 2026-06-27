@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.12.3] - 2026-06-27
+- fix(provider): 兼容 OpenAI function 形态工具定义并保留 function.name
+- build(deps): 升级项目版本并添加 eslint-config-prettier
+- feat(provider): 将 Responses API 的 Personality 默认值改为 none
+
 ## [0.12.2] - 2026-06-26
 - feat(app): 完善模型目录与服务兜底逻辑
 - feat(pricing): 更新服务商套餐数据与前端展示逻辑
@@ -45,6 +50,3 @@ All notable changes to this project will be documented in this file.
 
 ## [0.10.0] - 2026-06-04
 - feat(providers): 支持多模态消息内容并更新版本至 0.10.0
-
-## [0.9.15] - 2026-06-02
-- Maintenance updates
