@@ -199,7 +199,7 @@ npm run test:pages
   - 继承顺序固定为 `request.modelOptions.temperature` > `models[].temperature` > `vendors[].defaultTemperature` > 不发送
   - `vendors[].defaultTemperature = null` / 留空表示 vendor 级不设置；`models[].temperature = inherit` 表示使用 vendor 级设置
   - `request.modelOptions.temperature = inherit` 表示继承上级配置，`none` 表示请求中省略 `temperature`；模型行 `More Actions` 不提供 `0`，默认值为 `none`
-  - `openai-responses` 请求不发送 `temperature`；模型行 `More Actions` 改为显示 `Personality`，并将 `pragmatic` / `friendly` 写入 `instructions`
+  - `openai-responses` 请求不发送 `temperature`；模型行 `More Actions` 改为显示 `Personality`，默认 `none` 不注入，选择 `pragmatic` / `friendly` 时写入 `instructions`
   - `topP = 0` 表示请求中省略 `top_p`；模型行 `More Actions` 不提供 `topP` 配置，默认保持留空
   - 建议：编码场景默认保持 `topP 0`；仅当上游明确需要或你想显式控制 nucleus sampling 时再设置为正数
   - `anthropic` 请求仅发送 `temperature`，不发送 `top_p`，以兼容会拒绝同时指定两者的上游

@@ -4049,12 +4049,9 @@ async function runGenericProviderOutputLimitToggleTests(
     'Vendor/coder',
   );
   assert.equal('temperature' in responsesDefaultTopPResult, false);
-  assert.equal(
-    responsesDefaultTopPResult.instructions,
-    'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.',
-  );
+  assert.equal('instructions' in responsesDefaultTopPResult, false);
   assert.equal('top_p' in responsesDefaultTopPResult, false);
-  console.log('PASS openai-responses 默认不发送 temperature，且在未配置 topP 时不发送 top_p');
+  console.log('PASS openai-responses 默认不发送 temperature/instructions，且在未配置 topP 时不发送 top_p');
 
   const responsesPositiveTopPResult = await captureOpenAIResponsesPayload(
     [
@@ -4109,7 +4106,7 @@ async function runGenericProviderOutputLimitToggleTests(
   );
   assert.equal(
     responsesSystemPromptResult.instructions,
-    'system policy\n\nPersonality: pragmatic. Be concise, direct, practical, and focused on actionable results.',
+    'system policy',
   );
   assert.deepEqual(
     (responsesSystemPromptResult.input as Array<{ role?: string }>).map((item) => item.role),
@@ -4858,11 +4855,8 @@ async function runGenericProviderThinkingEffortTests(
   assert.equal('thinking' in openAIResponsesPayload, false);
   assert.equal('reasoning_effort' in openAIResponsesPayload, false);
   assert.equal('temperature' in openAIResponsesPayload, false);
-  assert.equal(
-    openAIResponsesPayload.instructions,
-    'Personality: pragmatic. Be concise, direct, practical, and focused on actionable results.',
-  );
-  console.log('PASS openai-responses 会按请求级 thinkingEffort 发送 reasoning.effort');
+  assert.equal('instructions' in openAIResponsesPayload, false);
+  console.log('PASS openai-responses 会按请求级 thinkingEffort 发送 reasoning.effort，默认不注入 Personality');
 
   const unsupportedOpenAIResponsesEffortPayload = await capturePayload(
     [
@@ -7837,7 +7831,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
           };
         }
       ).configurationSchema?.properties?.personality?.enum,
-      ['pragmatic', 'friendly'],
+      ['none', 'pragmatic', 'friendly'],
     );
     assert.equal(
       (
@@ -7852,7 +7846,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
           };
         }
       ).configurationSchema?.properties?.personality?.default,
-      'pragmatic',
+      'none',
     );
 
     const anthropicGroupModels = await adapter.provideLanguageModelChatInformation(

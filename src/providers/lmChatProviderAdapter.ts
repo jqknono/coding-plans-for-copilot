@@ -148,8 +148,8 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
       type: 'string',
       title: getMessage('personalityTitle'),
       description: getMessage('personalityDescription'),
-      enum: ['pragmatic', 'friendly'],
-      default: 'pragmatic',
+      enum: ['none', 'pragmatic', 'friendly'],
+      default: 'none',
     };
   } else {
     properties[TEMPERATURE_MODEL_OPTION_KEY] = {

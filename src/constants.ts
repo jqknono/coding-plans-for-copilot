@@ -109,7 +109,6 @@ export const THINKING_EFFORT_VALUES = CHAT_THINKING_EFFORT_VALUES;
 export type ThinkingEffort = ChatThinkingEffort;
 export const PERSONALITY_VALUES = ['pragmatic', 'friendly'] as const;
 export type ResponsesPersonality = (typeof PERSONALITY_VALUES)[number];
-export const DEFAULT_RESPONSES_PERSONALITY: ResponsesPersonality = 'pragmatic';
 export const TEMPERATURE_MODEL_OPTION_KEY = 'temperature';
 export const THINKING_EFFORT_MODEL_OPTION_KEY = 'thinkingEffort';
 export const EFFORT_MODEL_OPTION_KEY = 'effort';

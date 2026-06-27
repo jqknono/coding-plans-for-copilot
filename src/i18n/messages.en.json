@@ -53,7 +53,7 @@
   "temperatureTitle": "Temperature",
   "temperatureDescription": "Shown in the model row More Actions menu. Supported values: `inherit`, `none`, `0.1`, `0.4`, `0.7`, `1`. The default is `none`; `inherit` uses the higher-level configuration, and `none` means the request omits the temperature parameter. Top-p stays unset by default.",
   "personalityTitle": "Personality",
-  "personalityDescription": "Request style for Responses API models. Supported values: `pragmatic`, `friendly`. The value is written into instructions and is not sent as an upstream parameter.",
+  "personalityDescription": "Request style for Responses API models. Supported values: `none` (default, injects nothing), `pragmatic`, `friendly`. The selected style is written into instructions and is not sent as an upstream parameter.",
   "thinkingEffortTitle": "Thinking Effort",
   "thinkingEffortDescription": "Shown in the model row More Actions menu. Supported values: `none`, `low`, `medium`, `high`, `xhigh`, `max`; the default is `high`. Saved values are passed by VS Code with model requests.",
   "responsesThinkingEffortDescription": "More Actions configuration for Responses API models. Supported values: `low`, `medium`, `high`, `xhigh`. Saved values are passed by VS Code with model requests.",

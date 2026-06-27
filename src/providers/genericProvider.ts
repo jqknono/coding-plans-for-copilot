@@ -18,7 +18,6 @@ import {
   ChatThinkingEffort,
   DEFAULT_MODEL_TOOLS,
   DEFAULT_REQUEST_MAX_TOKENS,
-  DEFAULT_RESPONSES_PERSONALITY,
   DEFAULT_TOP_P,
   EFFORT_MODEL_OPTION_KEY,
   PERSONALITY_MODEL_OPTION_KEY,
@@ -683,8 +682,8 @@ export class GenericAIProvider extends BaseAIProvider {
     };
   }
 
-  private resolveResponsesPersonality(request: GenericChatRequest): ResponsesPersonality {
-    return this.readPersonalityFromModelOptions(request.options?.modelOptions) ?? DEFAULT_RESPONSES_PERSONALITY;
+  private resolveResponsesPersonality(request: GenericChatRequest): ResponsesPersonality | undefined {
+    return this.readPersonalityFromModelOptions(request.options?.modelOptions);
   }
 
   private buildChatThinkingOptions(
@@ -943,9 +942,9 @@ export class GenericAIProvider extends BaseAIProvider {
 
   private buildOpenAIResponsesInstructions(
     baseInstructions: string | undefined,
-    personality: ResponsesPersonality,
+    personality: ResponsesPersonality | undefined,
   ): string {
-    return [baseInstructions?.trim(), RESPONSES_PERSONALITY_INSTRUCTIONS[personality]]
+    return [baseInstructions?.trim(), personality ? RESPONSES_PERSONALITY_INSTRUCTIONS[personality] : undefined]
       .filter((part): part is string => typeof part === 'string' && part.length > 0)
       .join('\n\n');
   }
@@ -1614,7 +1613,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const sampling = this.resolveSamplingOptions(request, vendor, modelName);
     const wrappingEnabled = this.isExtraRequestWrappingEnabled(vendor);
     const reasoningOptions = this.buildOpenAIResponsesReasoningOptions(request);
-    const personality = wrappingEnabled ? this.resolveResponsesPersonality(request) : DEFAULT_RESPONSES_PERSONALITY;
+    const personality = wrappingEnabled ? this.resolveResponsesPersonality(request) : undefined;
     const tools = request.capabilities.toolCalling
       ? buildOpenAIResponsesToolDefinitions(this.buildToolDefinitions(request.options))
       : undefined;
