@@ -609,6 +609,7 @@
         "@vscode/test-electron": "^2.5.2",
         "esbuild": "^0.25.10",
         "eslint": "^8.57.0",
+        "eslint-config-prettier": "^10.1.8",
         "typescript": "^5.4.5"
     },
     "dependencies": {
