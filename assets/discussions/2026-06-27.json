@@ -1,0 +1,62 @@
+{
+  "date": "2026-06-27",
+  "generatedAt": "2026-06-28T07:28:00.896Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 49,
+    "postsAfterKeywordFilter": 8,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "智谱, 阿里, 火山方舟": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1223371",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1223371",
+      "title": "怎么办，我已经习惯了每天几亿 token 了。。。。",
+      "content": "玩营销还得雷老板啊，我已经习惯了每日几亿 token 了，马上到期了，怎么办？落差实在太大了，有没有同温层替代啊，文本模型就行啊，刚看看其他的 plan 单价，肉疼！",
+      "author": "Jensond",
+      "createdAt": "2026-06-27T15:54:20.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": null,
+        "supplierCategory": "other",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户抱怨当前AI文本模型计划即将到期，价格差异过大，寻求替代方案（如同温层模型），并对其他供应商的定价感到困扰。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "体验卡"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/180",
+      "analyzedAt": "2026-06-28T07:30:01.723Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}

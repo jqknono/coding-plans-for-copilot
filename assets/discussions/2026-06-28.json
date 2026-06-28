@@ -1,0 +1,66 @@
+{
+  "date": "2026-06-28",
+  "generatedAt": "2026-06-28T07:28:00.896Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 49,
+    "postsAfterKeywordFilter": 8,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "智谱, 阿里, 火山方舟": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1223434",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1223434",
+      "title": "拒绝“赛博溜猴”：国内大厂 AI Coding Plan 抢购恶心到极点",
+      "content": "最近，国内各大 AI 厂商推出的 Coding Plan 套餐真的是“一票难求”啊，打着买来试试的想法，打开了多家平台，结果大失所望。智谱（ GLM ）、阿里、火山方舟等大厂的套餐清一色售罄，并齐刷刷开启了每天定点的“抢购模式”。我记得这个抢购，老早之前就有了，这不禁让人灵魂发问：国内真的有这么多人在写代码吗？需求量真的大到每天都有海量新增用户去抢购吗？ Coding Plan 套餐是按月计费的订阅制。正常逻辑下，一个人购买后，在当月根本不需要重复购买。即便国内程序员基数庞大，也不至于每天都呈指数级激增，更不可能每天都有这么多人排队等着按月续费。 但现实是，每天到点抢购的页面永远是“卡死”和“刷新重试”，连支付的入口都点不进去。这种体验说明什么？说明各大厂商每天放出来的账号名额极有可能连十个都不到，甚至干脆就是“0 库存”的空挂页面。系统压根没打算让你买进去，它只是需要你每天在那个时间点去点一下，去碰个壁。 点开抢购页面，不是直接卡死，就是无休止地叫你“刷新重试”，连个支付入口都进不去。每天放出来的号大概率连 10 个都没有，甚至干脆就是 0 库存挂在那演戏。没货你直说“算力紧张，暂停",
+      "author": "uselesswater",
+      "createdAt": "2026-06-28T06:36:20.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.96,
+        "supplier": "智谱, 阿里, 火山方舟",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.98,
+        "summary": "作者抱怨国内各大 AI 厂商的 Coding Plan 套餐长期售罄，每日定点抢购页面卡死或无法支付，疑似虚假库存，浪费用户时间，表达强烈不满。",
+        "topics": [
+          "定价",
+          "抢购",
+          "套餐",
+          "售罄",
+          "用户体验",
+          "虚假库存",
+          "AI Coding Plan"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-28T07:30:00.150Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
