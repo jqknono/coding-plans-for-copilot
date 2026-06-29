@@ -1,0 +1,97 @@
+{
+  "date": "2026-06-29",
+  "generatedAt": "2026-06-29T07:52:57.932Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 5,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "DeepSeek": 1,
+      "HappyCode": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1223687",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1223687",
+      "title": "DeepSeek V4 Pro/Flash 免费无限畅用 无限制 牛了",
+      "content": "不嫖白不嫖，无敌了 万来 Code 可以免费使用 DeepSeek V4 Pro/Flash 了，随便买个便宜套餐，无限用啊。他们模型大部分都有，key 还是通用的。不需要先考虑 token 成本的问题。如果最近在做代码生成、项目辅助、脚本改写、接口调试之类的事情，可以直接拿来跑一些真实场景。 我简单看了一下，万来 Code 主要还是偏向代码相关场景，比如根据需求生成代码、解释已有项目、辅助排查报错、整理函数逻辑，这个东西比较适合先当成备用接口放着，不一定非要马上接到正式项目里。平时有些临时的小需求，比如改一段代码、补个注释、整理一下接口返回，或者验证某个想法能不能跑通，都可以拿它试试。具体效果还是要看自己的使用场景，最好用真实代码测几次再自行判断。 直达链接： https://wanlai.ai",
+      "author": "uppppppp1",
+      "createdAt": "2026-06-29T07:33:10.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享DeepSeek V4 Pro/Flash的免费无限使用计划，强调其在代码生成、项目辅助等场景的适用性，推荐作为备用接口使用。",
+        "topics": [
+          "定价",
+          "DeepSeek",
+          "套餐",
+          "代码生成",
+          "项目辅助",
+          "免费额度"
+        ],
+        "planMentioned": "DeepSeek V4 Pro/Flash",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-29T07:54:39.655Z"
+    },
+    {
+      "id": "v2ex-1223526",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1223526",
+      "title": "[HappyCode] 稳定高性价比 API 中转站， V 站拉新送福利**总计$200 **连送 7 日免费体验额度**",
+      "content": "HappyCode： https://happycode.vip HappyCode 是一个面向大众用户的 API 中转服务，拥有自建账号池，提供多种稳定的模型分组。站点已持续稳定运营 2 个多月，欢迎个人、企业和工作室用户对接使用。 模型分组 分组 说明 倍率 GPT 标准 Plus / Team 账号池为主，Pro 兜底 0.12 GPT 优享 Pro 正规订阅账号池，稳定性更高 0.2 Claude Kiro Kiro 号池，支持 opus 4.8 0.15 Claude Max Max 正规订阅账号池 1.0 GPT Image2 不限制分辨率 0.04 / 张 V 站专属活动 参与方式： 在评论区留言 加入 QQ 群： 367746547 完成以上两步后，在 QQ 群内联系群主或管理员，并附上 V 站评论截图和注册邮箱领取活动套餐 活动内容： 连续 7 日专属活动订阅套餐 每日可使用 $25 GPT 标准分组模型额度 套餐按领取时间计算，实际有效期约为 8 个自然日 领取后累计最高可使用约 $200 GPT 标准分组模型额度 长期邀请返利 邀请朋友、同事注册并使用 Happy",
+      "author": "qili36585009",
+      "createdAt": "2026-06-29T00:43:21.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "HappyCode",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.98,
+        "summary": "HappyCode提供API中转服务，包含GPT、Claude等AI模型分组，推出7日免费体验额度和$200总额度活动，支持邀请返利和长期使用优惠。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "体验卡",
+          "邀请返利",
+          "稳定性"
+        ],
+        "planMentioned": "7日免费体验额度, $200总额度",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-06-29T07:54:42.769Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
