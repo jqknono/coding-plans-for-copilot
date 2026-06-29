@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-06-29T03:13:31.673Z",
+  "generatedAt": "2026-06-29T09:43:03.822Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/c9c13474ebc756e1e10316b521a5275a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/ab533d06020c037d8307c6358c0bcba9.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -590,7 +590,9 @@
             "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "jdcloud-ai: Task timed out after 30000ms"
     },
     {
       "provider": "kilo-pass",
@@ -1416,9 +1418,7 @@
             "使用 LingClaw 构建个人助理"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "x-aio: Task timed out after 30000ms"
+      ]
     },
     {
       "provider": "xfyun-ai",
@@ -1604,6 +1604,6 @@
     }
   ],
   "failures": [
-    "x-aio: Task timed out after 30000ms"
+    "jdcloud-ai: Task timed out after 30000ms"
   ]
 }
