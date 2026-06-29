@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-28T09:08:48.060Z",
+  "generatedAt": "2026-06-29T03:13:31.673Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1416,7 +1416,9 @@
             "使用 LingClaw 构建个人助理"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "x-aio: Task timed out after 30000ms"
     },
     {
       "provider": "xfyun-ai",
@@ -1601,5 +1603,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "x-aio: Task timed out after 30000ms"
+  ]
 }
