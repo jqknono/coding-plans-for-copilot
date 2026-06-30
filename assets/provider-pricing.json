@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-29T09:43:03.822Z",
+  "generatedAt": "2026-06-30T03:11:14.230Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -590,9 +590,7 @@
             "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "jdcloud-ai: Task timed out after 30000ms"
+      ]
     },
     {
       "provider": "kilo-pass",
@@ -1326,7 +1324,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.312/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.317/index.js"
       ],
       "plans": [
         {
@@ -1603,7 +1601,5 @@
       ]
     }
   ],
-  "failures": [
-    "jdcloud-ai: Task timed out after 30000ms"
-  ]
+  "failures": []
 }
