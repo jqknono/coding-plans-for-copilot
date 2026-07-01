@@ -1,0 +1,66 @@
+{
+  "date": "2026-07-01",
+  "generatedAt": "2026-07-01T07:37:43.757Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "trae": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1224211",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1224211",
+      "title": "trae 用户现在想转 codex 了有以下问题",
+      "content": "现在注册要手机验证码了，求接码平台。 还有，trae 现在的问题就是按月定量用完就必须升级下一个套餐了，现在已经在用$30 的套餐了还是不够用，感觉现在很奢靡，毕竟只是在做自己用的小工具而已。 看论坛说 codex 会不定时刷新，感觉很友好，所以想问代码能力两个对比如何，还有靠谱的中转站和成品号有推荐的吗",
+      "author": "qwer666df",
+      "createdAt": "2026-07-01T06:10:42.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "trae",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "用户在使用trae的$30/月套餐时觉得费用过高，想了解升级后是否更合适，并询问是否可以转到codex以及相关接码平台和成品号。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "升级",
+          "接码平台",
+          "codex",
+          "trae",
+          "使用体验"
+        ],
+        "planMentioned": "$30 套餐",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-07-01T07:40:32.351Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
