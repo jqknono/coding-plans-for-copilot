@@ -1,0 +1,63 @@
+{
+  "date": "2026-07-02",
+  "generatedAt": "2026-07-02T07:14:12.998Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 4,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Zhipu": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1224466",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1224466",
+      "title": "有没有抢到 glm coding plan 的家人啊",
+      "content": "",
+      "author": "dn19911123",
+      "createdAt": "2026-07-02T04:34:23.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Zhipu",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.6,
+        "summary": "用户询问是否有家人成功购买了 Zhipu 的 GLM 编码套餐。",
+        "topics": [
+          "GLM",
+          "coding plan",
+          "抢购",
+          "家人"
+        ],
+        "planMentioned": "GLM coding plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-07-02T07:16:17.578Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
