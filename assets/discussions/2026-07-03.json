@@ -1,0 +1,64 @@
+{
+  "date": "2026-07-03",
+  "generatedAt": "2026-07-03T09:20:07.928Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 45,
+    "postsAfterKeywordFilter": 8,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "GeminiPro, ChatGPT": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1224778",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1224778",
+      "title": "我预判，第一波 AI 洪峰已过！",
+      "content": "AI coding 趋势终于拐点了！ 我预判，第一波 AI 洪峰已过。 据我观察 4 个方面 : 1 、第三方价格数据(暴跌，需求减少)： GeminiPro 一年会员自动开通 CDK 包绑卡订阅 ¥12 ChatGPT [带 RT ] [ Plus 成品号] ¥15 2 、v 站数据（话题占比下降）： 据观察 V 站上月 AI 话题占比趋近 100%，当前占比也有下降趋势 3 、个人数据： 短期使用量，也明显下跌。不可能永远有新项目，只有初版稳定之后就不会再有暴力 token 需求。 4 、小红书数据： 前段时间-&gt;vibe coding 帖子热度极高。 很多 不懂代码的人 。 偶然有一个/多个想法-&gt;开通 ai 会员(短期)-&gt;生成 app （养猫\\遛狗\\逗娃..） 后面在于推广维护，短期很难再有一个新想法。 看懂趋势比埋头苦干更有价值！ 真的需要， 说说大家的感觉 ，比如公司使用，个人观察，中转站数据？",
+      "author": "123128xyz",
+      "createdAt": "2026-07-03T07:54:25.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "GeminiPro, ChatGPT",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "讨论AI编码服务价格下跌趋势，分析GeminiPro（¥12/年）和ChatGPT Plus（¥15/年）订阅价格，并指出用户使用量下降，可能与AI洪峰过后有关。",
+        "topics": [
+          "定价",
+          "订阅",
+          "使用趋势",
+          "AI编码"
+        ],
+        "planMentioned": "GeminiPro 年会员、ChatGPT Plus 成品号",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-07-03T09:24:37.909Z"
+    }
+  ],
+  "failures": [
+    "v2ex: https://www.v2ex.com/api/topics/hot.json The operation was aborted due to timeout",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
