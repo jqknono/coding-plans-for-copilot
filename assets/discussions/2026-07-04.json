@@ -1,0 +1,62 @@
+{
+  "date": "2026-07-04",
+  "generatedAt": "2026-07-04T08:38:45.417Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "智谱 (Zhipu)": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1224887",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1224887",
+      "title": "智普 coding plan 抢不到，有没有什么方法啊...",
+      "content": "",
+      "author": "gordon96",
+      "createdAt": "2026-07-04T02:14:10.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "智谱 (Zhipu)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户无法获取智谱的 coding plan，正在寻求替代方法或解决方案。",
+        "topics": [
+          "定价",
+          "抢不到",
+          "解决方案"
+        ],
+        "planMentioned": "智谱 coding plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-07-04T08:40:34.176Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
