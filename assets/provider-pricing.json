@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-04T05:44:53.506Z",
+  "generatedAt": "2026-07-04T10:12:21.669Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1600,10 +1600,13 @@
             "高峰期专属资源优先保障"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "zhipu-ai: Task timed out after 30000ms"
     }
   ],
   "failures": [
+    "zhipu-ai: Task timed out after 30000ms",
     "tencent-cloud-ai: page.goto: Timeout 8000ms exceeded.\nCall log:\n  - navigating to \"https://cloud.tencent.com/document/product/1772/128947\", waiting until \"domcontentloaded\"\n"
   ]
 }
