@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-06T06:27:40.906Z",
+  "generatedAt": "2026-07-06T12:06:24.226Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/4b84bae2beb29b61a93d4704791d48a1.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/43f454dce23ead9424255315750a75cb.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
