@@ -1,0 +1,65 @@
+{
+  "date": "2026-07-06",
+  "generatedAt": "2026-07-06T10:25:11.476Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 60,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "火山引擎": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1225303",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1225303",
+      "title": "关于火山引擎 coding plan 里的 ds 和 glm5.2 模型 为什么不支持上传图片",
+      "content": "",
+      "author": "1Tiger",
+      "createdAt": "2026-07-06T06:36:42.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "火山引擎",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户询问火山引擎 coding plan 中的 ds 和 glm5.2 模型为何不支持图片上传功能。",
+        "topics": [
+          "火山引擎",
+          "coding plan",
+          "ds",
+          "glm5.2",
+          "图片上传",
+          "功能支持"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-07-06T10:27:55.106Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
