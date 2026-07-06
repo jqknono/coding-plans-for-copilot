@@ -7,6 +7,10 @@
 - `jdcloud-ai`
 - `chutes-ai`
 
+2026-07-04 腾讯云 Coding Plan 文档页迁移并触发 Playwright fallback 导航超时，导致 `tencent-cloud-ai` 进入旧快照回填。
+
+- `tencent-cloud-ai`
+
 ## 解析路径
 
 ```mermaid
@@ -38,6 +42,17 @@ flowchart TD
   - 解析结果包含 `Plus:$10/月`
   - 解析结果包含 `Pro:$20/月`
   - `Best Value` 仅挂到 `Pro`
+
+### 用例 3：腾讯云 Coding Plan 文档页 fallback 导航
+
+- 前置条件：访问 `https://cloud.tencent.com/document/product/1823/130092`
+- 当：旧文档地址已跳转，且 Playwright 等待 `domcontentloaded` 可能超过 8 秒
+- 则：
+  - fallback 导航不依赖 `domcontentloaded`
+  - 解析等待包含 `Lite 套餐` 与 `Pro 套餐` 的套餐表格
+  - 解析结果包含 `Coding Plan Lite`
+  - 解析结果包含 `Coding Plan Pro`
+  - `provider-pricing.json.failures` 不包含 `tencent-cloud-ai`
 
 ## 验证命令
 

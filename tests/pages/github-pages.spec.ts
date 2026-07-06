@@ -239,7 +239,7 @@ test('海外套餐展示 Venice WandB 与 Cloudflare 的服务详情', async ({ 
   await expect(cloudflareCard.getByText('@cf/meta/llama-3.2-1b-instruct')).toBeVisible();
 });
 
-test('官网启发式价格卡片也展示服务说明兜底', async ({ page }) => {
+test('官网启发式价格卡片展示解析服务说明或兜底', async ({ page }) => {
   await page.goto('/#overseas');
   await waitForOverseasCards(page);
 
@@ -249,7 +249,8 @@ test('官网启发式价格卡片也展示服务说明兜底', async ({ page }) 
 
   const mistralCard = page.locator('#provider-card-mistral');
   await expect(mistralCard).toBeVisible();
-  await expect(mistralCard.getByText('官网价格页参考，具体权益以官网说明为准').first()).toBeVisible();
+  await expect(mistralCard.getByText('More access and usage.')).toBeVisible();
+  await expect(mistralCard.getByText('More messages and web searches.')).toBeVisible();
 });
 
 test('官网启发式价格旧数据缺少 serviceDetails 时页面兜底展示服务说明', async ({ page }) => {

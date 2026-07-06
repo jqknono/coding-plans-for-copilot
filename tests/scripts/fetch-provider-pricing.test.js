@@ -19,6 +19,7 @@ const {
   parseStepfunPlansFromRenderedText,
   buildXAioPlansFromBundle,
   isRetryableFetchError,
+  navigateTencentCodingPlanPage,
   restoreFailedProvidersFromSnapshot,
 } = require('../../scripts/fetch-provider-pricing.js');
 
@@ -66,6 +67,30 @@ test('isRetryableFetchError identifies transient network failures', () => {
   assert.equal(isRetryableFetchError(new Error('Request timed out after 15000ms: https://example.com')), true);
   assert.equal(isRetryableFetchError(new Error('Request failed: https://example.com -> 502')), true);
   assert.equal(isRetryableFetchError(new Error('Unable to locate Aliyun entry script')), false);
+});
+
+test('Tencent Coding Plan fallback navigation avoids domcontentloaded timeout regression', async () => {
+  const calls = [];
+  const page = {
+    async goto(url, options) {
+      calls.push({ url, options });
+      if (options.waitUntil === 'domcontentloaded' && options.timeout <= 8_000) {
+        throw new Error('page.goto: Timeout 8000ms exceeded');
+      }
+    },
+  };
+
+  await navigateTencentCodingPlanPage(page, 'https://cloud.tencent.com/document/product/1823/130092');
+
+  assert.deepEqual(calls, [
+    {
+      url: 'https://cloud.tencent.com/document/product/1823/130092',
+      options: {
+        waitUntil: 'commit',
+        timeout: 12_000,
+      },
+    },
+  ]);
 });
 
 test('parseJdCloudCodingPlansFromPageHtml reads SSR pricing models', () => {

@@ -52,6 +52,11 @@ const KIMI_DOMESTIC_MEMBERSHIP_URL = 'https://www.kimi.com/zh-cn/help/membership
 const KIMI_OVERSEAS_CODE_URL = 'https://www.kimi.com/code';
 const KIMI_GOODS_API_URL = 'https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods';
 const KIMI_DOMESTIC_PLAN_NAMES = ['Adagio', 'Andante', 'Moderato', 'Allegretto', 'Allegro'];
+const TENCENT_CODING_PLAN_DOC_URL = 'https://cloud.tencent.com/document/product/1823/130092';
+const TENCENT_CODING_PLAN_NAVIGATION_OPTIONS = {
+  waitUntil: 'commit',
+  timeout: 12_000,
+};
 const KIMI_REGION_LABELS = {
   REGION_MAINLAND: '大陆',
   REGION_OVERSEA: '海外',
@@ -1264,11 +1269,17 @@ async function parseTencentCodingPlansWithPlaywright(pageUrl) {
   const browser = await chromium.launch(getPlaywrightLaunchOptions());
   try {
     const page = await browser.newPage();
-    await page.goto(pageUrl, {
-      waitUntil: 'domcontentloaded',
-      timeout: 8_000,
-    });
-    await page.waitForSelector('table', { timeout: 5_000 });
+    await blockNonEssentialPlaywrightRequests(page);
+    await navigateTencentCodingPlanPage(page, pageUrl);
+    await page.waitForFunction(
+      () =>
+        Array.from(document.querySelectorAll('table')).some((table) => {
+          const text = String(table.textContent || '');
+          return /Lite\s*套餐/i.test(text) && /Pro\s*套餐/i.test(text);
+        }),
+      undefined,
+      { timeout: 8_000 },
+    );
 
     const tableData = await page.evaluate(() => {
       const normalize = (value) =>
@@ -1306,10 +1317,15 @@ async function parseTencentCodingPlansWithPlaywright(pageUrl) {
       rows: tableData,
       plainText: pageText,
       buyUrl: buyHref || null,
+      url: page.url(),
     };
   } finally {
     await browser.close();
   }
+}
+
+async function navigateTencentCodingPlanPage(page, pageUrl) {
+  await page.goto(pageUrl, TENCENT_CODING_PLAN_NAVIGATION_OPTIONS);
 }
 
 async function parseZhipuCodingPlansWithPlaywright() {
@@ -1972,15 +1988,16 @@ async function parseBaiduCodingPlans() {
 }
 
 async function parseTencentCodingPlans() {
-  const pageUrl = 'https://cloud.tencent.com/document/product/1772/128947';
+  const pageUrl = TENCENT_CODING_PLAN_DOC_URL;
   let html = '';
   let rows = [];
   let plainText = '';
   let buyUrlFromPage = null;
+  let resolvedDocUrl = null;
   let primaryError = null;
 
   try {
-    html = await fetchText(pageUrl);
+    html = await fetchText(pageUrl, { timeoutMs: 8_000 });
     rows = extractRows(html);
     plainText = stripTags(html);
   } catch (error) {
@@ -1997,6 +2014,7 @@ async function parseTencentCodingPlans() {
     rows = fallback.rows;
     plainText = fallback.plainText || plainText;
     buyUrlFromPage = fallback.buyUrl || buyUrlFromPage;
+    resolvedDocUrl = fallback.url || resolvedDocUrl;
   };
 
   if (rows.length === 0) {
@@ -2143,7 +2161,7 @@ async function parseTencentCodingPlans() {
 
   return {
     provider: PROVIDER_IDS.TENCENT,
-    sourceUrls: unique([pageUrl, buyUrl]),
+    sourceUrls: unique([pageUrl, resolvedDocUrl, buyUrl]),
     fetchedAt: new Date().toISOString(),
     plans: dedupePlans(plans),
   };
@@ -4097,6 +4115,7 @@ module.exports = {
   parseAliyunServiceDetailsFromDocsHtml,
   parseAliyunTokenPlansFromDocsHtml,
   parseHuaweiTokenPlans,
+  navigateTencentCodingPlanPage,
   parseCompshareCodingPlansFromHtml,
   parseKimiDomesticMembershipPlansFromText,
   parseJdCloudCodingPlansFromDocsText,
