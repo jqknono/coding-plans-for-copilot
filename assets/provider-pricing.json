@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-06T12:06:24.226Z",
+  "generatedAt": "2026-07-07T06:07:13.367Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1324,7 +1324,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.317/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.319/index.js"
       ],
       "plans": [
         {
@@ -1598,8 +1598,12 @@
             "高峰期专属资源优先保障"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "zhipu-ai: Task timed out after 30000ms"
     }
   ],
-  "failures": []
+  "failures": [
+    "zhipu-ai: Task timed out after 30000ms"
+  ]
 }
