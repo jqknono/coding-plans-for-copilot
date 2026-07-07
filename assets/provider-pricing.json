@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-07T06:07:13.367Z",
+  "generatedAt": "2026-07-07T11:08:57.390Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/43f454dce23ead9424255315750a75cb.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1d883090591257861e3211c9c3e1755a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -1598,12 +1598,8 @@
             "高峰期专属资源优先保障"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "zhipu-ai: Task timed out after 30000ms"
+      ]
     }
   ],
-  "failures": [
-    "zhipu-ai: Task timed out after 30000ms"
-  ]
+  "failures": []
 }

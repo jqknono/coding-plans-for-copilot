@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-07-06T12:06:48.250Z",
-  "generatedAtBeijing": "2026年7月6日 20:06:48",
-  "sourceGeneratedAt": "2026-07-06T12:06:24.226Z",
-  "sourceGeneratedAtBeijing": "2026年7月6日 20:06:24",
-  "sourceMetricsGeneratedAt": "2026-07-06T12:06:24.871Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月6日 20:06:24",
+  "generatedAt": "2026-07-07T11:09:17.591Z",
+  "generatedAtBeijing": "2026年7月7日 19:09:17",
+  "sourceGeneratedAt": "2026-07-07T11:08:57.390Z",
+  "sourceGeneratedAtBeijing": "2026年7月7日 19:08:57",
+  "sourceMetricsGeneratedAt": "2026-07-07T11:08:58.152Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月7日 19:08:58",
   "summary": {
     "openrouterProviderCount": 90,
-    "metricsProviderCount": 39,
-    "resolvedMetricsProviderCount": 39,
+    "metricsProviderCount": 40,
+    "resolvedMetricsProviderCount": 40,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 7,
     "providersWithPlans": 15,
-    "pendingCount": 24,
+    "pendingCount": 25,
     "blockedPendingCount": 1,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -62,7 +62,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/43f454dce23ead9424255315750a75cb.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1d883090591257861e3211c9c3e1755a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -641,7 +641,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.317/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.319/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1171,6 +1171,15 @@
       "pricingPageUrl": "https://www.morphllm.com",
       "reason": "官网价格页探测失败：homepage: HTTP 429",
       "blocked": true
+    },
+    {
+      "slug": "nebius",
+      "openrouterName": "Nebius",
+      "providerId": null,
+      "officialWebsiteUrl": "https://docs.nebius.com",
+      "pricingPageUrl": "https://docs.nebius.com",
+      "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
+      "blocked": false
     },
     {
       "slug": "novita",
