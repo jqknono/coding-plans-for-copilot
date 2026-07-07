@@ -1,0 +1,63 @@
+{
+  "date": "2026-07-07",
+  "generatedAt": "2026-07-07T09:43:25.106Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 53,
+    "postsAfterKeywordFilter": 3,
+    "relevantPosts": 1,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "百度千帆": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1225562",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1225562",
+      "title": "百度千帆的 coding plan 下架了，又少了个次数计费的 plan",
+      "content": "",
+      "author": "lynn1su",
+      "createdAt": "2026-07-07T06:10:25.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "百度千帆",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户报告称百度千帆的 coding plan 已下架，并指出其计费模式已改为次数计费（per-number billing）",
+        "topics": [
+          "定价",
+          "下架",
+          "次数计费",
+          "套餐变更"
+        ],
+        "planMentioned": "百度千帆 coding plan",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-07-07T09:45:07.503Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
