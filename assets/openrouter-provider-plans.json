@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-07-07T11:09:17.591Z",
-  "generatedAtBeijing": "2026年7月7日 19:09:17",
-  "sourceGeneratedAt": "2026-07-07T11:08:57.390Z",
-  "sourceGeneratedAtBeijing": "2026年7月7日 19:08:57",
-  "sourceMetricsGeneratedAt": "2026-07-07T11:08:58.152Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月7日 19:08:58",
+  "generatedAt": "2026-07-08T10:20:47.924Z",
+  "generatedAtBeijing": "2026年7月8日 18:20:47",
+  "sourceGeneratedAt": "2026-07-08T10:20:28.390Z",
+  "sourceGeneratedAtBeijing": "2026年7月8日 18:20:28",
+  "sourceMetricsGeneratedAt": "2026-07-08T10:20:29.106Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月8日 18:20:29",
   "summary": {
     "openrouterProviderCount": 90,
-    "metricsProviderCount": 40,
-    "resolvedMetricsProviderCount": 40,
+    "metricsProviderCount": 39,
+    "resolvedMetricsProviderCount": 39,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
-    "heuristicProviderCount": 7,
-    "providersWithPlans": 15,
-    "pendingCount": 25,
+    "heuristicProviderCount": 8,
+    "providersWithPlans": 16,
+    "pendingCount": 23,
     "blockedPendingCount": 1,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -62,7 +62,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1d883090591257861e3211c9c3e1755a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7a929037cd0a8084efc7a885321ff812.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -821,6 +821,48 @@
       "parseMode": "provider-pricing-structured"
     },
     {
+      "slug": "together",
+      "openrouterName": "Together",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "Base",
+          "currentPrice": 10,
+          "currentPriceText": "$10.00",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.together.ai/pricing",
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        },
+        {
+          "name": "Base",
+          "currentPrice": 15,
+          "currentPriceText": "$15.00",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.together.ai",
+        "https://www.together.ai/pricing"
+      ],
+      "pricingPageUrl": "https://www.together.ai/pricing",
+      "officialWebsiteUrl": "https://www.together.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.together.ai/privacy",
+      "termsOfServiceUrl": "https://www.together.ai/terms-of-service",
+      "statusPageUrl": "https://status.together.ai/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
       "slug": "venice",
       "openrouterName": "Venice",
       "providerId": null,
@@ -1083,15 +1125,6 @@
       "blocked": false
     },
     {
-      "slug": "dekallm",
-      "openrouterName": "DekaLLM",
-      "providerId": null,
-      "officialWebsiteUrl": "https://docs.cloudeka.ai",
-      "pricingPageUrl": "https://docs.cloudeka.ai",
-      "reason": "官网价格页探测失败：https://docs.cloudeka.ai/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
       "slug": "fireworks",
       "openrouterName": "Fireworks",
       "providerId": null,
@@ -1215,15 +1248,6 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "together",
-      "openrouterName": "Together",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.together.ai",
-      "pricingPageUrl": "https://www.together.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.74 / $0.20 / $3.48）",
       "blocked": false
     },
     {
