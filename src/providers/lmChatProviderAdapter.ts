@@ -110,7 +110,7 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
           title: getMessage('thinkingEffortTitle'),
           description: getMessage('responsesThinkingEffortDescription'),
           enum: effortOptions,
-          default: resolveReasoningEffortDefault(effortOptions, 'xhigh'),
+          default: resolveReasoningEffortDefault(effortOptions, 'max'),
           group: 'navigation',
         };
       }

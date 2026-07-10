@@ -5009,6 +5009,34 @@ async function runGenericProviderThinkingEffortTests(
   assert.equal('reasoning_effort' in openAIResponsesXhighPayload, false);
   console.log('PASS openai-responses 会按请求级 thinkingEffort=xhigh 发送 reasoning.effort=xhigh');
 
+  const openAIResponsesMaxPayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-responses',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        thinkingEffort: 'max',
+      },
+    },
+  );
+  assert.deepEqual(openAIResponsesMaxPayload.reasoning, { effort: 'max' });
+  console.log('PASS openai-responses 会按请求级 thinkingEffort=max 发送 reasoning.effort=max');
+
   const unwrappedOpenAIResponsesPayload = await capturePayload(
     [
       {
@@ -7842,7 +7870,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
           };
         }
       ).configurationSchema?.properties?.thinkingEffort?.enum,
-      ['low', 'medium', 'high', 'xhigh'],
+      ['low', 'medium', 'high', 'xhigh', 'max'],
     );
     assert.equal(
       (
@@ -7857,7 +7885,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
           };
         }
       ).configurationSchema?.properties?.thinkingEffort?.default,
-      'xhigh',
+      'max',
     );
     assert.equal(
       (

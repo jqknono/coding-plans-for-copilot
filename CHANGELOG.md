@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.12.4] - 2026-07-10
+- fix(scripts)#188: 修复腾讯云 Coding Plan 页面解析超时问题
+- build(ci): 升级 GitHub Pages 部署工作流的 Action 版本
+
 ## [0.12.3] - 2026-06-27
 - fix(provider): 兼容 OpenAI function 形态工具定义并保留 function.name
 - build(deps): 升级项目版本并添加 eslint-config-prettier
@@ -47,6 +51,3 @@ All notable changes to this project will be documented in this file.
 - feat(pricing): 更新 AI 供应商套餐信息与解析脚本
 - feat(config): 扩展 openai-chat 模型 Thinking Effort 配置项
 - feat(model): 将 thinkingEffort 默认值调整为 high 并优化 Anthropic 使用量统计
-
-## [0.10.0] - 2026-06-04
-- feat(providers): 支持多模态消息内容并更新版本至 0.10.0

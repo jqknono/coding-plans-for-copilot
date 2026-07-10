@@ -57,7 +57,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
 3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
 4. 打开 Copilot Chat（`Ctrl+L`），在模型选择器中选择 `Coding Plans` 提供的模型
-5. 如需设置 `topP`，在 `coding-plans.vendors[].models[]` 中配置模型级覆盖项；`temperature` 与 `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型的 `Thinking Effort` 支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`；Responses API 模型会在 `More Actions` 中显示 `Personality`（默认 `none` 不注入，选择 `pragmatic` / `friendly` 后通过 `instructions` 生效）
+5. 如需设置 `topP`，在 `coding-plans.vendors[].models[]` 中配置模型级覆盖项；`temperature` 与 `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`，OpenAI Responses 模型支持 `low` / `medium` / `high` / `xhigh` / `max`（默认 `max`）；Responses API 模型还会显示 `Personality`（默认 `none` 不注入，选择 `pragmatic` / `friendly` 后通过 `instructions` 生效）
 6. 当供应商启用 `useModelsEndpoint` 时，可执行 `Coding Plans: Update Coding Plans Models List`，扩展会重新请求 `/models`，写回 `coding-plans.vendors[].models` 并刷新 VS Code 模型选择器。保存 settings 默认只刷新当前已配置模型，不会自动请求 `/models` 或写回模型列表；如需禁止 settings/API Key 变化自动刷新运行时模型和 VS Code 模型选择器，可将 `coding-plans.autoRefreshModels` 设为 `false`，手动刷新命令不受影响。
    - 刷新过程中会优先使用 [models.dev](https://models.dev/) 的 `catalog.json`，失败时回退 `api.json`，按模型 ID/名称为新发现模型补全 `description`、`capabilities`、`contextSize`、`apiStyle` 和 `price`；匹配时会忽略模型名最后路径段中 `:` 后的标记（如 `:free`）；`description` 会显示 `id | Lab | Family | Weights | ReleaseDate`，其中 `Lab` 来自模型 ID 前缀；`capabilities.thinking` 对应 models.dev 的 `reasoning`；新模型 `apiStyle` 仅按模型自身来源推导：OpenAI 与 Grok/xAI 使用 `openai-responses`，Anthropic 使用 `anthropic`，其它默认 `openai-chat`；Grok 模型若仍保留旧的 `openai-chat` 会在刷新时自动升级为 `openai-responses`；价格按所有匹配模型来源取中位数，不使用本地供应商名匹配 models.dev provider；如果无法获取或无法匹配，则保留上游 `/models` 与内置默认值。已有手工模型配置不会被刷新覆盖；扩展自动生成的 fallback 描述（如 `供应商名 model: 模型名`）可被升级为 models.dev 新结构。
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
@@ -149,7 +149,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
           "maxOutputTokens": 128000,
           "reasoningEffortFormat": "responses",
           "streaming": true,
-          "supportsReasoningEffort": ["high", "xhigh"],
+          "supportsReasoningEffort": ["high", "xhigh", "max"],
           "capabilities": { "tools": true, "vision": false, "thinking": true },
           "toolCalling": true,
           "vision": false,

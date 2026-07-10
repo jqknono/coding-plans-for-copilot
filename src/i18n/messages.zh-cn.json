@@ -56,7 +56,7 @@
   "personalityDescription": "Responses API 模型的单次请求风格，支持 `none`（默认，不注入）、`pragmatic`、`friendly`。所选风格会写入 instructions，不会作为上游参数发送。",
   "thinkingEffortTitle": "Thinking Effort",
   "thinkingEffortDescription": "显示在模型行 More Actions 菜单中的模型配置项，支持 `none`、`low`、`medium`、`high`、`xhigh`、`max`，默认值为 `high`。保存后会由 VS Code 随请求传入。",
-  "responsesThinkingEffortDescription": "Responses API 模型的 More Actions 配置项，支持 `low`、`medium`、`high`、`xhigh`。保存后会由 VS Code 随请求传入。",
+  "responsesThinkingEffortDescription": "Responses API 模型的 More Actions 配置项，支持 `low`、`medium`、`high`、`xhigh`、`max`，默认值为 `max`。保存后会由 VS Code 随请求传入。",
   "effortTitle": "Effort",
   "anthropicEffortDescription": "Anthropic API 模型的 More Actions effort 配置项，支持 `low`、`medium`、`high`、`xhigh`、`max`。保存后会由 VS Code 随请求传入。",
   "anthropicThinkingTitle": "Thinking Type",

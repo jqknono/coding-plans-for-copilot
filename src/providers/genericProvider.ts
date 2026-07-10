@@ -811,9 +811,6 @@ export class GenericAIProvider extends BaseAIProvider {
     if (!normalized) {
       return undefined;
     }
-    if (normalized === 'max') {
-      return 'xhigh';
-    }
     return RESPONSES_THINKING_EFFORT_VALUES.includes(normalized as ResponsesThinkingEffort)
       ? (normalized as ResponsesThinkingEffort)
       : undefined;
