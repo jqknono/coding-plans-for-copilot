@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-10T06:02:54.284Z",
+  "generatedAt": "2026-07-10T10:56:25.392Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1470,7 +1470,9 @@
             "支持升级与同档位叠加购买"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "xfyun-ai: Unable to parse XFYun coding plan pricing rows"
     },
     {
       "provider": "xiaomi-mimo",
@@ -1601,5 +1603,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "xfyun-ai: Unable to parse XFYun coding plan pricing rows"
+  ]
 }
