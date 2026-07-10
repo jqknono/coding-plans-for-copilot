@@ -1,0 +1,100 @@
+{
+  "date": "2026-07-10",
+  "generatedAt": "2026-07-10T09:37:12.910Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 60,
+    "postsAfterKeywordFilter": 6,
+    "relevantPosts": 2,
+    "discussionsCreated": 0,
+    "discussionsSkipped": 2,
+    "supplierMentions": {
+      "GitHub": 1,
+      "CodePass": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1226428",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1226428",
+      "title": "从 23 年 Copilot 到 26 年 Orca（GTP 5.6），记录一下这两三年是怎么用 AI 写代码的",
+      "content": "最近回头想了一下，做独立开发差不多一年半了，开发方式已经和以前完全不一样。现在我基本不会手敲代码了。 以前写代码，会先在脑子里过一遍实现，再坐在编辑器前一个字符一个字符敲出来。现在更多是在聊需求、看方案、拆任务、验收结果，不对的地方再继续调整。 这篇不算教程，也不是工具横评，主要记录一下这一年半用过的工具，以及自己的开发方式是怎么变化的。 最早用的是 GitHub Copilot 大概是 2023 到 2024 年，当时 GitHub Copilot 好像是每个月 10 美元。主要就是 Tab 补全，帮忙写一些简单方法和重复代码。整体还是自己在编程，Copilot 只是猜接下来要写什么。 中间大概 Gap 了半年。到 2025 年三四月份开始用 Cursor ，才算真的进入现在大家说的 Vibe Coding 。 用 Cursor 做了「字节篝火」 我用 Cursor 做的第一个完整项目，是一个叫「字节篝火」的自动化科技播客。 大概流程是： n8n 获取 GitHub Trending 、Hacker News 等内容 Gemini 2.5 负责翻译、筛选和整理 海螺，也就是现在的 M",
+      "author": "yekk",
+      "createdAt": "2026-07-10T08:55:54.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "GitHub",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户分享了从GitHub Copilot到Cursor再到Claude Code的AI辅助开发经历，强调订阅计划（如Copilot的$10/month）如何改变了开发流程，并详细描述了使用Cursor构建多个项目的过程。",
+        "topics": [
+          "定价",
+          "Copilot",
+          "Cursor",
+          "Claude Code",
+          "订阅",
+          "开发流程",
+          "Vibe Coding"
+        ],
+        "planMentioned": "GitHub Copilot ($10/month), Cursor, Claude Code",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-07-10T09:39:27.410Z"
+    },
+    {
+      "id": "v2ex-1226370",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1226370",
+      "title": "[吐槽] CodePass 最近是不是彻底不行了？",
+      "content": "之前看论坛一堆人推荐 CodePass ，说什么 Composer / Auto 无限用，想着开发需求大，一个月也能吃 2 到 3 个亿 token ，就上车试了一下。 结果最近体验真的有点离谱。 先是疯狂掉线： 写代码写到一半，突然提示错误信息，任务超时，一套流程下来人都麻了。 然后现在更狠： 直接提示 “任务繁忙，号池额度不足” 。 或者一直卡住 Planing next moves 几个小时都不动了 ？？？ 不是宣传无限用吗？ 怎么现在感觉像开盲盒，用不用得上全看当天服务器心情。 限制其实可以理解，毕竟 AI 成本摆在那里。 但问题是： 一开始宣传得像生产力神器，结果用起来各种限制，这落差真的有点大。 去论坛看了一圈，好像不少人都遇到了类似问题。 不知道是用户太多撑不住了，还是上游限制了，反正现在稳定性是真的拉胯。 便宜没问题，但开发用的东西最重要就是稳定。 有没有大佬推荐个靠谱的 AI Coding 服务？ 需求： 每月大概 2-3 亿 token 主要写代码 不求无限，只求稳定 能长期用 现在真的不想每天和 AI 服务斗智斗勇了",
+      "author": "anviod",
+      "createdAt": "2026-07-10T05:56:15.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "CodePass",
+        "supplierCategory": "other",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.98,
+        "summary": "用户投诉CodePass AI编码服务的稳定性问题，包括频繁掉线、任务超时和额度限制，导致实际使用体验与宣传存在巨大差距，寻求替代方案。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "体验",
+          "限制",
+          "稳定性",
+          "推荐"
+        ],
+        "planMentioned": "CodePass",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-07-10T09:39:29.996Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1226437: LLM output schema validation failed: isRelevant: expected boolean, got undefined; isCodingPlan: expected boolean, got undefined; relevance: expected number 0-1, got undefined; category: expected non-empty string, got undefined"
+  ]
+}
