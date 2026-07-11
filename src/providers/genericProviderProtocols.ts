@@ -147,7 +147,15 @@ interface OpenAIResponsesMessageItem {
   }>;
 }
 
-type OpenAIResponsesOutputItem = OpenAIResponsesFunctionCallItem | OpenAIResponsesMessageItem;
+interface OpenAIResponsesReasoningItem {
+  type: 'reasoning';
+  summary?: Array<{
+    type?: string;
+    text?: string;
+  }>;
+}
+
+type OpenAIResponsesOutputItem = OpenAIResponsesFunctionCallItem | OpenAIResponsesMessageItem | OpenAIResponsesReasoningItem;
 
 export interface OpenAIResponsesResponse {
   id: string;
@@ -230,6 +238,11 @@ interface AnthropicResponseTextContentBlock {
   text?: string;
 }
 
+interface AnthropicResponseThinkingContentBlock {
+  type: 'thinking';
+  thinking: string;
+}
+
 interface AnthropicResponseToolUseContentBlock {
   type: string;
   id?: string;
@@ -237,7 +250,10 @@ interface AnthropicResponseToolUseContentBlock {
   input?: unknown;
 }
 
-type AnthropicResponseContentBlock = AnthropicResponseTextContentBlock | AnthropicResponseToolUseContentBlock;
+type AnthropicResponseContentBlock =
+  | AnthropicResponseTextContentBlock
+  | AnthropicResponseThinkingContentBlock
+  | AnthropicResponseToolUseContentBlock;
 
 export interface AnthropicChatResponse {
   id: string;
@@ -317,12 +333,14 @@ export interface AnthropicStreamEvent {
   delta?: {
     type?: string;
     text?: string;
+    thinking?: string;
     partial_json?: string;
     stop_reason?: string | null;
   };
   content_block?: {
     type?: string;
     text?: string;
+    thinking?: string;
     id?: string;
     name?: string;
     input?: unknown;
@@ -347,6 +365,7 @@ export interface OpenAIChatStreamState {
 
 export interface OpenAIResponsesStreamState {
   content: string;
+  reasoningContent: string;
   responseId?: string;
   usage?: OpenAIResponsesResponse['usage'];
   finalResponse?: OpenAIResponsesResponse;
@@ -362,6 +381,7 @@ export interface OpenAIResponsesStreamState {
 
 export interface AnthropicStreamState {
   content: string;
+  reasoningContent: string;
   responseId?: string;
   usage?: AnthropicChatResponse['usage'];
   stopReason?: string;
@@ -369,7 +389,7 @@ export interface AnthropicStreamState {
   blocks: Map<
     number,
     {
-      type: 'text' | 'tool_use';
+      type: 'text' | 'thinking' | 'tool_use';
       text: string;
       id?: string;
       name?: string;
@@ -575,6 +595,7 @@ export function finalizeOpenAIChatStreamState(
 export function createOpenAIResponsesStreamState(): OpenAIResponsesStreamState {
   return {
     content: '',
+    reasoningContent: '',
     toolCalls: new Map(),
   };
 }
@@ -611,6 +632,17 @@ export function applyOpenAIResponsesStreamEvent(
     if (deltaText.length > 0) {
       state.content += deltaText;
       textDelta = deltaText;
+    }
+    return { textDelta };
+  }
+
+  if (resolvedEventType === 'response.reasoning_text.delta') {
+    const reasoningDelta =
+      typeof payload.delta === 'string'
+        ? payload.delta
+        : '';
+    if (reasoningDelta.length > 0) {
+      state.reasoningContent += reasoningDelta;
     }
     return { textDelta };
   }
@@ -669,7 +701,7 @@ export function applyOpenAIResponsesStreamEvent(
 export function finalizeOpenAIResponsesStreamState(
   state: OpenAIResponsesStreamState,
   generateToolCallId: GenerateToolCallId,
-): { content: string; toolCalls: ChatToolCall[]; usage?: OpenAIResponsesResponse['usage'] } {
+): { content: string; reasoningContent?: string; toolCalls: ChatToolCall[]; usage?: OpenAIResponsesResponse['usage'] } {
   const mergedToolCalls = new Map<string, ChatToolCall>();
   for (const toolCall of state.toolCalls.values()) {
     mergedToolCalls.set(toolCall.id, {
@@ -692,10 +724,16 @@ export function finalizeOpenAIResponsesStreamState(
         mergedToolCalls.set(toolCall.id, toolCall);
       }
     }
+    if (!state.reasoningContent && parsed.reasoningContent) {
+      state.reasoningContent = parsed.reasoningContent;
+    }
   }
+
+  const reasoningContent = state.reasoningContent || undefined;
 
   return {
     content: state.content,
+    ...(reasoningContent ? { reasoningContent } : {}),
     toolCalls: [...mergedToolCalls.values()],
     usage: state.usage,
   };
@@ -704,6 +742,7 @@ export function finalizeOpenAIResponsesStreamState(
 export function createAnthropicStreamState(): AnthropicStreamState {
   return {
     content: '',
+    reasoningContent: '',
     blocks: new Map(),
   };
 }
@@ -739,18 +778,27 @@ export function applyAnthropicStreamEvent(
       return { textDelta };
     }
 
+    const isThinkingBlock = payload.content_block.type === 'thinking';
     const initialText =
-      typeof (payload.content_block as { text?: unknown }).text === 'string'
-        ? (payload.content_block as { text: string }).text
-        : '';
+      typeof payload.content_block.thinking === 'string'
+        ? payload.content_block.thinking
+        : typeof (payload.content_block as { text?: unknown }).text === 'string'
+          ? (payload.content_block as { text: string }).text
+          : '';
+
     state.blocks.set(payload.index, {
-      type: 'text',
+      type: isThinkingBlock ? 'thinking' : 'text',
       text: initialText,
       inputJson: '',
     });
+
     if (initialText.length > 0) {
-      state.content += initialText;
-      textDelta = initialText;
+      if (isThinkingBlock) {
+        state.reasoningContent += initialText;
+      } else {
+        state.content += initialText;
+        textDelta = initialText;
+      }
     }
     return { textDelta };
   }
@@ -766,6 +814,18 @@ export function applyAnthropicStreamEvent(
       block.text += deltaText;
       state.content += deltaText;
       textDelta = deltaText;
+      return { textDelta };
+    }
+
+    const deltaThinking =
+      typeof payload.delta?.thinking === 'string'
+        ? payload.delta.thinking
+        : payload.delta?.type === 'thinking_delta' && typeof payload.delta?.text === 'string'
+          ? payload.delta.text
+          : '';
+    if (block.type === 'thinking' && deltaThinking.length > 0) {
+      block.text += deltaThinking;
+      state.reasoningContent += deltaThinking;
       return { textDelta };
     }
 
@@ -807,9 +867,12 @@ function mergeAnthropicUsage(
 export function finalizeAnthropicStreamState(
   state: AnthropicStreamState,
   generateToolCallId: GenerateToolCallId,
-): { content: string; toolCalls: ChatToolCall[]; usage?: AnthropicChatResponse['usage'] } {
+): { content: string; reasoningContent?: string; toolCalls: ChatToolCall[]; usage?: AnthropicChatResponse['usage'] } {
   const toolCalls: ChatToolCall[] = [];
   for (const [, block] of [...state.blocks.entries()].sort((left, right) => left[0] - right[0])) {
+    if (block.type === 'thinking') {
+      continue;
+    }
     if (block.type !== 'tool_use' || !block.name) {
       continue;
     }
@@ -832,10 +895,16 @@ export function finalizeAnthropicStreamState(
     if (toolCalls.length === 0 && parsed.toolCalls.length > 0) {
       toolCalls.push(...parsed.toolCalls);
     }
+    if (!state.reasoningContent && parsed.reasoningContent) {
+      state.reasoningContent = parsed.reasoningContent;
+    }
   }
+
+  const reasoningContent = state.reasoningContent || undefined;
 
   return {
     content: state.content,
+    ...(reasoningContent ? { reasoningContent } : {}),
     toolCalls,
     usage: state.usage,
   };
@@ -1048,8 +1117,9 @@ function toOpenAIResponsesContent(content: ChatMessageContent): string | OpenAIR
 export function parseOpenAIResponsesResponse(
   response: OpenAIResponsesResponse,
   generateToolCallId: GenerateToolCallId,
-): { content: string; toolCalls: ChatToolCall[] } {
+): { content: string; reasoningContent?: string; toolCalls: ChatToolCall[] } {
   const textParts: string[] = [];
+  const reasoningParts: string[] = [];
   const toolCalls: ChatToolCall[] = [];
 
   for (const item of response.output ?? []) {
@@ -1062,6 +1132,16 @@ export function parseOpenAIResponsesResponse(
           arguments: typeof item.arguments === 'string' ? item.arguments : '{}',
         },
       });
+      continue;
+    }
+
+    if (item.type === 'reasoning') {
+      const reasoningItem = item as { type: 'reasoning'; summary?: Array<{ type?: string; text?: string }> };
+      for (const summaryPart of reasoningItem.summary ?? []) {
+        if (summaryPart.type === 'summary_text' && typeof summaryPart.text === 'string') {
+          reasoningParts.push(summaryPart.text);
+        }
+      }
       continue;
     }
 
@@ -1082,8 +1162,11 @@ export function parseOpenAIResponsesResponse(
     textParts.push(response.output_text);
   }
 
+  const reasoningContent = reasoningParts.join('') || undefined;
+
   return {
     content: textParts.join(''),
+    ...(reasoningContent ? { reasoningContent } : {}),
     toolCalls,
   };
 }
@@ -1203,11 +1286,20 @@ export function toAnthropicMessages(
 export function parseAnthropicResponse(
   response: AnthropicChatResponse,
   generateToolCallId: GenerateToolCallId,
-): { content: string; toolCalls: ChatToolCall[] } {
+): { content: string; reasoningContent?: string; toolCalls: ChatToolCall[] } {
   const textParts: string[] = [];
+  const thinkingParts: string[] = [];
   const toolCalls: ChatToolCall[] = [];
 
   for (const block of response.content ?? []) {
+    if (block.type === 'thinking' && typeof (block as AnthropicResponseThinkingContentBlock).thinking === 'string') {
+      const thinkingText = (block as AnthropicResponseThinkingContentBlock).thinking;
+      if (thinkingText.trim().length > 0) {
+        thinkingParts.push(thinkingText);
+      }
+      continue;
+    }
+
     if (isAnthropicTextBlock(block)) {
       if (typeof block.text === 'string' && block.text.trim().length > 0) {
         textParts.push(block.text);
@@ -1215,20 +1307,29 @@ export function parseAnthropicResponse(
       continue;
     }
 
-    if (isAnthropicToolUseBlock(block) && typeof block.name === 'string' && block.name.trim().length > 0) {
-      toolCalls.push({
-        id: typeof block.id === 'string' && block.id.trim().length > 0 ? block.id : generateToolCallId(),
-        type: 'function',
-        function: {
-          name: block.name,
-          arguments: JSON.stringify(block.input ?? {}),
-        },
-      });
+    if (isAnthropicToolUseBlock(block)) {
+      const toolUseBlock = block as AnthropicResponseToolUseContentBlock;
+      if (typeof toolUseBlock.name === 'string' && toolUseBlock.name.trim().length > 0) {
+        toolCalls.push({
+          id:
+            typeof toolUseBlock.id === 'string' && toolUseBlock.id.trim().length > 0
+              ? toolUseBlock.id
+              : generateToolCallId(),
+          type: 'function',
+          function: {
+            name: toolUseBlock.name,
+            arguments: JSON.stringify(toolUseBlock.input ?? {}),
+          },
+        });
+      }
     }
   }
 
+  const reasoningContent = thinkingParts.join('') || undefined;
+
   return {
     content: textParts.join(''),
+    ...(reasoningContent ? { reasoningContent } : {}),
     toolCalls,
   };
 }

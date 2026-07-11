@@ -1698,6 +1698,7 @@ export class GenericAIProvider extends BaseAIProvider {
             });
             return {
               content: finalized.content,
+              reasoningContent: finalized.reasoningContent,
               toolCalls: finalized.toolCalls,
               usage: finalized.usage as Record<string, unknown> | undefined,
               responseId: state.responseId,
@@ -1805,6 +1806,7 @@ export class GenericAIProvider extends BaseAIProvider {
       outputTextLength: typeof response.output_text === 'string' ? response.output_text.length : 0,
       parsedContent: parsed.content,
       parsedContentLength: parsed.content.length,
+      parsedReasoningContentLength: parsed.reasoningContent?.length ?? 0,
       parsedToolCallCount: parsed.toolCalls.length,
       parsedToolCalls: parsed.toolCalls.map((toolCall) => ({
         id: toolCall.id,
@@ -1818,7 +1820,7 @@ export class GenericAIProvider extends BaseAIProvider {
       response.usage as Record<string, unknown> | undefined,
       maxOutputTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxOutputTokens),
     );
-    const responseParts = this.buildResponseParts(parsed.content, parsed.toolCalls);
+    const responseParts = this.buildResponseParts(parsed.content, parsed.toolCalls, parsed.reasoningContent);
     if (normalizedUsage) {
       responseParts.push(this.createUsageResponsePart(normalizedUsage));
     }
@@ -1964,6 +1966,7 @@ export class GenericAIProvider extends BaseAIProvider {
             });
             return {
               content: finalized.content,
+              reasoningContent: finalized.reasoningContent,
               toolCalls: finalized.toolCalls,
               usage: finalized.usage as Record<string, unknown> | undefined,
               responseId: state.responseId,
@@ -2074,7 +2077,7 @@ export class GenericAIProvider extends BaseAIProvider {
       finalized.usage,
       maxTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxTokens),
     );
-    const responseParts = this.buildResponseParts(finalized.content, finalized.toolCalls);
+    const responseParts = this.buildResponseParts(finalized.content, finalized.toolCalls, finalized.reasoningContent);
     if (normalizedUsage) {
       responseParts.push(this.createUsageResponsePart(normalizedUsage));
     }
@@ -2103,11 +2106,13 @@ export class GenericAIProvider extends BaseAIProvider {
       responseId: response.id,
       parsedContent: parsed.content,
       parsedContentLength: parsed.content.length,
+      parsedReasoningContentLength: parsed.reasoningContent?.length ?? 0,
       parsedToolCallCount: parsed.toolCalls.length,
       usage: response.usage,
     });
     return {
       content: parsed.content,
+      reasoningContent: parsed.reasoningContent,
       toolCalls: parsed.toolCalls,
       usage: response.usage as Record<string, unknown> | undefined,
       responseId: response.id,
