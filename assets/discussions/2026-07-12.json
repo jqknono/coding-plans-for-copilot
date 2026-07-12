@@ -1,0 +1,93 @@
+{
+  "date": "2026-07-12",
+  "generatedAt": "2026-07-12T08:19:57.309Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 7,
+    "relevantPosts": 2,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "OMO": 1,
+      "火山引擎": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1226720",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1226720",
+      "title": "有使用 opencode+omo 的吗？",
+      "content": "昨晚刚刚开通的新的 opencode 。 使用的是 omo 官方推荐的配置,一个简单的项目都没完成就把周限额给干完了，月限额直接 50% 了 ，是我用的姿势不对么 { \"$schema\": \"https://raw.githubusercontent.com/code-yeongyu/oh-my-openagent/dev/assets/oh-my-opencode.schema.json\", \"agents\": { // Sisyphus: Kimi K2.7 is the top alternative to Claude for orchestration \"sisyphus\": { \"model\": \"opencode-go/kimi-k2.7-code\", \"ultrawork\": { \"model\": \"opencode-go/kimi-k2.7-code\" }, }, // Hephaestus: needs GPT. ChatGPT Plus gets you here. \"hephaestus\": { \"model\": \"openai/gpt-5.6-sol\", \"v",
+      "author": "hiboshi",
+      "createdAt": "2026-07-12T08:03:08.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "OMO",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户分享了使用opencode+omo的体验，指出在简单项目中快速消耗了周限额和50%的月限额，质疑是否使用配置错误。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "体验卡",
+          "限额消耗"
+        ],
+        "planMentioned": "opencode+omo",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/196",
+      "analyzedAt": "2026-07-12T08:22:23.177Z"
+    },
+    {
+      "id": "v2ex-1226705",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1226705",
+      "title": "火山 agent plan 送的 arkclaw,怎么穿透出来？",
+      "content": "火山 agent plan 送的 arkclaw,怎么穿透出来？ 整个 web 跑也行",
+      "author": "xinyana",
+      "createdAt": "2026-07-12T06:38:18.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "火山引擎",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户在询问如何穿透使用火山引擎 Agent Plan 赠送的 arkclaw。",
+        "topics": [
+          "使用体验",
+          "网络穿透",
+          "火山引擎"
+        ],
+        "planMentioned": "agent plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-07-12T08:22:24.427Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
