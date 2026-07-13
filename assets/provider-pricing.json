@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-12T09:52:02.134Z",
+  "generatedAt": "2026-07-13T05:36:15.858Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -155,7 +155,9 @@
             "适配工具: Claude Code等AI开发工具"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "baidu-qianfan-ai: Unable to locate Baidu coding plan table"
     },
     {
       "provider": "cerebras-code",
@@ -1604,6 +1606,7 @@
     }
   ],
   "failures": [
-    "xfyun-ai: Unable to parse XFYun coding plan pricing rows"
+    "xfyun-ai: Unable to parse XFYun coding plan pricing rows",
+    "baidu-qianfan-ai: Unable to locate Baidu coding plan table"
   ]
 }
