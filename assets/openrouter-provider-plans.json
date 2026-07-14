@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-13T11:13:43.789Z",
-  "generatedAtBeijing": "2026年7月13日 19:13:43",
-  "sourceGeneratedAt": "2026-07-13T11:13:28.044Z",
-  "sourceGeneratedAtBeijing": "2026年7月13日 19:13:28",
-  "sourceMetricsGeneratedAt": "2026-07-13T11:13:28.858Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月13日 19:13:28",
+  "generatedAt": "2026-07-14T10:00:13.417Z",
+  "generatedAtBeijing": "2026年7月14日 18:00:13",
+  "sourceGeneratedAt": "2026-07-14T09:59:55.224Z",
+  "sourceGeneratedAtBeijing": "2026年7月14日 17:59:55",
+  "sourceMetricsGeneratedAt": "2026-07-14T09:59:56.102Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月14日 17:59:56",
   "summary": {
     "openrouterProviderCount": 91,
     "metricsProviderCount": 40,
@@ -62,7 +62,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7a929037cd0a8084efc7a885321ff812.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/fc7b464d83d8680ab8d86e76d30dff51.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -752,10 +752,10 @@
           "originalPrice": 29,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V2；覆盖日常编码场景；¥40 Prompts/5小时",
+          "notes": "适合初次体验者的轻量化选择；最低成本体验 KAT-Coder-Pro V2.5；覆盖日常编码场景；¥40 Prompts/5小时",
           "serviceDetails": [
             "适合初次体验者的轻量化选择",
-            "最低成本体验 KAT-Coder-Pro V2",
+            "最低成本体验 KAT-Coder-Pro V2.5",
             "覆盖日常编码场景",
             "40 Prompts / 5小时"
           ]
@@ -767,10 +767,10 @@
           "originalPrice": 70,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V2 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
+          "notes": "适配日常核心开发场景的高效搭档；由最新旗舰模型 KAT-Coder-Pro V2.5 驱动；适配Claude Code等主流编程工具；¥100 Prompts/5小时",
           "serviceDetails": [
             "适配日常核心开发场景的高效搭档",
-            "由最新旗舰模型 KAT-Coder-Pro V2 驱动",
+            "由最新旗舰模型 KAT-Coder-Pro V2.5 驱动",
             "适配Claude Code等主流编程工具",
             "100 Prompts / 5小时"
           ]
