@@ -6,7 +6,7 @@ const fs = require('node:fs/promises');
 const path = require('node:path');
 
 const { loadEnvFileIfPresent } = require('./env');
-const { matchesKeywords } = require('./keywords');
+const { KEYWORDS, matchesKeywords } = require('./keywords');
 const { fetchV2exPosts, fetchRepliesForPosts } = require('./sources/v2ex');
 const { fetchLinuxDoPosts } = require('./sources/linuxdo');
 const { analyzePosts, setAvailableCategories } = require('./analyzer');
@@ -323,7 +323,7 @@ async function writeOutput(
       generatedAt,
       config: {
         sources,
-        keywords: ['套餐', 'coding', 'plan'],
+        keywords: [...KEYWORDS],
         llmModel: process.env.MODEL || 'openrouter/free',
         relevanceThreshold: RELEVANCE_THRESHOLD,
       },

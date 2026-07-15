@@ -124,16 +124,20 @@ function labelColor(name) {
   return 'ededed'; // gray
 }
 
-async function ensureLabel(labelCache, tagName) {
-  if (labelCache.has(tagName)) return labelCache.get(tagName);
+async function loadAllLabelsIntoCache(labelCache) {
+  let cursor = null;
+  let hasNextPage = true;
 
-  // Fetch existing labels on first miss
-  if (labelCache.size === 0) {
+  while (hasNextPage) {
     const data = await graphql(
       `
-        query ($owner: String!, $name: String!) {
+        query ($owner: String!, $name: String!, $cursor: String) {
           repository(owner: $owner, name: $name) {
-            labels(first: 100) {
+            labels(first: 100, after: $cursor) {
+              pageInfo {
+                hasNextPage
+                endCursor
+              }
               nodes {
                 id
                 name
@@ -142,11 +146,41 @@ async function ensureLabel(labelCache, tagName) {
           }
         }
       `,
-      { owner: REPO_OWNER, name: REPO_NAME },
+      { owner: REPO_OWNER, name: REPO_NAME, cursor },
     );
-    for (const l of data.repository.labels.nodes) {
-      labelCache.set(l.name, l.id);
+
+    const labels = data.repository.labels;
+    for (const label of labels.nodes) {
+      labelCache.set(label.name, label.id);
     }
+    hasNextPage = Boolean(labels.pageInfo?.hasNextPage);
+    cursor = labels.pageInfo?.endCursor || null;
+  }
+}
+
+async function findLabelIdByName(tagName) {
+  const data = await graphql(
+    `
+      query ($owner: String!, $name: String!, $labelName: String!) {
+        repository(owner: $owner, name: $name) {
+          label(name: $labelName) {
+            id
+            name
+          }
+        }
+      }
+    `,
+    { owner: REPO_OWNER, name: REPO_NAME, labelName: tagName },
+  );
+  return data.repository.label?.id || null;
+}
+
+async function ensureLabel(labelCache, tagName) {
+  if (labelCache.has(tagName)) return labelCache.get(tagName);
+
+  // Fetch all existing labels on first miss (repo may have >100 labels).
+  if (labelCache.size === 0) {
+    await loadAllLabelsIntoCache(labelCache);
     if (labelCache.has(tagName)) return labelCache.get(tagName);
   }
 
@@ -169,6 +203,21 @@ async function ensureLabel(labelCache, tagName) {
     labelCache.set(tagName, label.id);
     return label.id;
   } catch (error) {
+    // Concurrent create or incomplete cache: recover by resolving the existing label.
+    if (/already been taken|already exists/i.test(error.message || '')) {
+      try {
+        const existingId = await findLabelIdByName(tagName);
+        if (existingId) {
+          labelCache.set(tagName, existingId);
+          console.log(`[github] reused existing label "${tagName}"`);
+          return existingId;
+        }
+      } catch (lookupError) {
+        console.warn(
+          `\x1b[33m⚠️ [github] label "${tagName}" exists but lookup failed: ${lookupError.message}\x1b[0m`,
+        );
+      }
+    }
     console.warn(`\x1b[33m⚠️ [github] cannot create label "${tagName}": ${error.message}\x1b[0m`);
     return null;
   }
@@ -345,21 +394,30 @@ async function createDiscussionForPost(post, analysis, generatedAt, categories) 
     const discussion = await createDiscussion(repoId, category.id, title, body);
     console.log(`[github] created discussion #${discussion.number}: ${discussion.url}`);
 
-    // Add labels
+    // Add labels (best-effort: discussion should still be kept if a label fails)
     const tags = buildCanonicalLabels(analysis);
     if (tags.length > 0) {
       const labelCache = new Map();
       const labelIds = [];
+      const ensuredTags = [];
+      const failedTags = [];
       for (const tagName of tags) {
         const labelId = await ensureLabel(labelCache, tagName);
         if (!labelId) {
-          throw new Error(`Failed to ensure label "${tagName}" — aborting discussion creation`);
+          failedTags.push(tagName);
+          continue;
         }
         labelIds.push(labelId);
+        ensuredTags.push(tagName);
       }
       if (labelIds.length > 0) {
         await addLabelsToDiscussion(discussion.id, labelIds);
-        console.log(`[github] added ${labelIds.length} labels: ${tags.join(', ')}`);
+        console.log(`[github] added ${labelIds.length} labels: ${ensuredTags.join(', ')}`);
+      }
+      if (failedTags.length > 0) {
+        console.warn(
+          `\x1b[33m⚠️ [github] skipped ${failedTags.length} labels for #${discussion.number}: ${failedTags.join(', ')}\x1b[0m`,
+        );
       }
     }
 
@@ -375,9 +433,10 @@ async function createDiscussionForPost(post, analysis, generatedAt, categories) 
       const actualLabelNames = new Set(verified.labels.map((l) => l.name));
       const missingLabels = tags.filter((t) => !actualLabelNames.has(t));
       if (missingLabels.length > 0) {
-        throw new Error(
-          `Post-creation verification failed for #${discussion.number}: ` +
-            `missing labels: ${missingLabels.join(', ')}`,
+        // Labels are best-effort; do not drop a successfully created discussion.
+        console.warn(
+          `\x1b[33m⚠️ [github] post-creation verification warning for #${discussion.number}: ` +
+            `missing labels: ${missingLabels.join(', ')}\x1b[0m`,
         );
       }
       if (verified.body.includes('**标签**')) {

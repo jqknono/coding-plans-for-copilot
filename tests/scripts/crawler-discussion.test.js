@@ -9,6 +9,7 @@ const {
   buildCanonicalLabels,
   normalizeLabelSegment,
   buildDiscussionBody,
+  ensureLabel,
 } = require('../../scripts/crawler/github-discussion');
 
 const { removeTagLineFromBody } = require('../../scripts/discussions/migrate-discussion-labels');
@@ -21,6 +22,7 @@ const {
 } = require('../../scripts/crawler/analyzer');
 
 const { summarizeAnalysisOutcomes } = require('../../scripts/crawler/index');
+const { KEYWORDS, matchesKeywords } = require('../../scripts/crawler/keywords');
 
 function withEnv(name, value, fn) {
   const previous = process.env[name];
@@ -50,6 +52,34 @@ function loadWorkflowText() {
 function loadPackageJson() {
   return JSON.parse(fs.readFileSync(path.resolve(__dirname, '..', '..', 'package.json'), 'utf8'));
 }
+
+// ─── keywords ───
+
+test('keywords include legacy filters and vendor names', () => {
+  for (const keyword of [
+    '套餐',
+    'coding',
+    'plan',
+    'claude',
+    'gpt',
+    'openai',
+    'kimi',
+    'zhipu',
+    'moonshot',
+    'qwen',
+    'glm',
+    'deepseek',
+  ]) {
+    assert.ok(KEYWORDS.includes(keyword), `missing keyword: ${keyword}`);
+  }
+});
+
+test('matchesKeywords is case-insensitive for vendor names', () => {
+  assert.equal(matchesKeywords('Claude Code 体验'), true);
+  assert.equal(matchesKeywords('OpenAI GPT-5.6'), true);
+  assert.equal(matchesKeywords('DeepSeek coding plan'), true);
+  assert.equal(matchesKeywords('今天天气不错'), false);
+});
 
 // ─── normalizeLabelSegment ───
 
@@ -340,7 +370,141 @@ test('buildExpectedState preserves analysis category instead of hard-coding Gene
 
 // ─── Linux.do fallback regression ───
 
-test('fetchLinuxDoPosts retries the same page after switching to Playwright', async () => {
+function makePlaywrightMock(handler) {
+  return async () => ({
+    newContext: async () => ({
+      newPage: async () => ({
+        goto: async (url) => {
+          const result = await handler(url);
+          return {
+            status: () => result.status || 200,
+            text: async () => result.text || '',
+          };
+        },
+        evaluate: async () => '',
+        close: async () => {},
+      }),
+      close: async () => {},
+    }),
+    close: async () => {},
+  });
+}
+
+function loadLinuxDoModule() {
+  const modulePath = require.resolve('../../scripts/crawler/sources/linuxdo');
+  delete require.cache[modulePath];
+  return require('../../scripts/crawler/sources/linuxdo');
+}
+
+test('parseRssItems extracts topic metadata from Discourse RSS', () => {
+  const { parseRssItems, parseTopicIdFromUrl } = loadLinuxDoModule();
+  const xml = `<?xml version="1.0" encoding="UTF-8" ?>
+  <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+      <item>
+        <title><![CDATA[LinuxDo coding plan 体验]]></title>
+        <link>https://linux.do/t/topic/2587604</link>
+        <description><![CDATA[<p>coding plan details</p>]]></description>
+        <dc:creator><![CDATA[tester]]></dc:creator>
+        <category>前沿快讯</category>
+        <guid>linux.do-topic-2587604</guid>
+        <pubDate>Wed, 15 Jul 2026 04:48:43 +0000</pubDate>
+      </item>
+    </channel>
+  </rss>`;
+
+  assert.equal(parseTopicIdFromUrl('https://linux.do/t/topic/2587604'), 2587604);
+  const items = parseRssItems(xml);
+  assert.equal(items.length, 1);
+  assert.equal(items[0].id, 2587604);
+  assert.equal(items[0].title, 'LinuxDo coding plan 体验');
+  assert.equal(items[0].author, 'tester');
+  assert.match(items[0].excerpt, /coding plan details/);
+  assert.equal(items[0].created_at, '2026-07-15T04:48:43.000Z');
+});
+
+test('fetchLinuxDoPosts prefers RSS list then fetches JSON detail via Playwright', async () => {
+  const originalFetch = global.fetch;
+  const playwright = require('playwright');
+  const originalLaunch = playwright.chromium.launch;
+
+  let fetchCalls = 0;
+  let gotoUrls = [];
+
+  global.fetch = async (url) => {
+    fetchCalls += 1;
+    if (String(url).includes('/latest.rss')) {
+      return {
+        ok: false,
+        status: 403,
+        text: async () => '<html><title>Just a moment...</title></html>',
+      };
+    }
+    throw new Error(`unexpected direct fetch: ${url}`);
+  };
+
+  playwright.chromium.launch = makePlaywrightMock(async (url) => {
+    gotoUrls.push(url);
+    if (url.includes('/latest.rss')) {
+      return {
+        status: 200,
+        text: `<?xml version="1.0" encoding="UTF-8" ?>
+        <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <channel>
+            <item>
+              <title>LinuxDo coding plan post</title>
+              <link>https://linux.do/t/topic/123</link>
+              <description><![CDATA[<p>coding plan summary</p>]]></description>
+              <dc:creator>rss-author</dc:creator>
+              <guid>linux.do-topic-123</guid>
+              <pubDate>Sun, 05 Apr 2026 00:00:00 +0000</pubDate>
+            </item>
+          </channel>
+        </rss>`,
+      };
+    }
+    if (url.includes('/t/123.json')) {
+      return {
+        status: 200,
+        text: JSON.stringify({
+          post_stream: {
+            posts: [
+              {
+                cooked: '<p>coding plan details</p>',
+                username: 'tester',
+                created_at: '2026-04-05T00:00:00.000Z',
+              },
+            ],
+          },
+        }),
+      };
+    }
+    return { status: 404, text: 'not found' };
+  });
+
+  try {
+    const posts = await withEnv('CRAWLER_LINUXDO_PAGES', '1', async () =>
+      withEnv('CRAWLER_LINUXDO_DELAY_MS', '0', async () => {
+        const { fetchLinuxDoPosts } = loadLinuxDoModule();
+        return fetchLinuxDoPosts({ failures: [] });
+      }),
+    );
+
+    assert.equal(fetchCalls, 1);
+    assert.ok(gotoUrls.some((url) => url.includes('/latest.rss')));
+    assert.ok(gotoUrls.some((url) => url.includes('/t/123.json')));
+    assert.equal(posts.length, 1);
+    assert.equal(posts[0].id, 'linuxdo-123');
+    assert.equal(posts[0].author, 'tester');
+    assert.match(posts[0].content, /coding plan details/);
+  } finally {
+    playwright.chromium.launch = originalLaunch;
+    global.fetch = originalFetch;
+    delete require.cache[require.resolve('../../scripts/crawler/sources/linuxdo')];
+  }
+});
+
+test('fetchLinuxDoPosts falls back to JSON list when RSS fails', async () => {
   const originalFetch = global.fetch;
   const playwright = require('playwright');
   const originalLaunch = playwright.chromium.launch;
@@ -348,61 +512,145 @@ test('fetchLinuxDoPosts retries the same page after switching to Playwright', as
   let fetchCalls = 0;
   global.fetch = async () => {
     fetchCalls += 1;
-    throw new Error('timeout');
+    return {
+      ok: false,
+      status: 403,
+      text: async () => '<html><title>Just a moment...</title></html>',
+    };
   };
 
-  playwright.chromium.launch = async () => ({
-    newContext: async () => ({
-      newPage: async () => ({
-        goto: async (url) => ({
-          status: () => 200,
-          text: async () => {
-            if (url.includes('/latest.json')) {
-              return JSON.stringify({
-                topic_list: {
-                  topics: [
-                    {
-                      id: 123,
-                      title: 'LinuxDo coding plan post',
-                      excerpt: 'coding plan',
-                      slug: 'linuxdo-coding-plan-post',
-                      created_at: '2026-04-05T00:00:00.000Z',
-                    },
-                  ],
-                },
-              });
-            }
-
-            return JSON.stringify({
-              post_stream: {
-                posts: [
-                  {
-                    cooked: '<p>coding plan details</p>',
-                    username: 'tester',
-                    created_at: '2026-04-05T00:00:00.000Z',
-                  },
-                ],
+  playwright.chromium.launch = makePlaywrightMock(async (url) => {
+    if (url.includes('/latest.rss')) {
+      return { status: 429, text: 'Too Many Requests' };
+    }
+    if (url.includes('/latest.json')) {
+      return {
+        status: 200,
+        text: JSON.stringify({
+          topic_list: {
+            topics: [
+              {
+                id: 456,
+                title: 'LinuxDo coding plan post',
+                excerpt: 'coding plan',
+                slug: 'linuxdo-coding-plan-post',
+                created_at: '2026-04-05T00:00:00.000Z',
               },
-            });
+            ],
           },
         }),
-      }),
-      close: async () => {},
-    }),
-    close: async () => {},
+      };
+    }
+    if (url.includes('/t/456.json')) {
+      return {
+        status: 200,
+        text: JSON.stringify({
+          post_stream: {
+            posts: [
+              {
+                cooked: '<p>coding plan details</p>',
+                username: 'tester',
+                created_at: '2026-04-05T00:00:00.000Z',
+              },
+            ],
+          },
+        }),
+      };
+    }
+    return { status: 404, text: 'not found' };
   });
 
   try {
-    const posts = await withEnv('CRAWLER_LINUXDO_PAGES', '1', async () => {
-      const modulePath = require.resolve('../../scripts/crawler/sources/linuxdo');
-      delete require.cache[modulePath];
-      const { fetchLinuxDoPosts } = require('../../scripts/crawler/sources/linuxdo');
-      return fetchLinuxDoPosts({ failures: [] });
-    });
+    const posts = await withEnv('CRAWLER_LINUXDO_PAGES', '1', async () =>
+      withEnv('CRAWLER_LINUXDO_DELAY_MS', '0', async () =>
+        withEnv('CRAWLER_LINUXDO_MAX_RETRIES', '1', async () =>
+          withEnv('CRAWLER_LINUXDO_RETRY_BASE_MS', '1', async () => {
+            const { fetchLinuxDoPosts } = loadLinuxDoModule();
+            return fetchLinuxDoPosts({ failures: [] });
+          }),
+        ),
+      ),
+    );
 
-    assert.equal(fetchCalls, 1);
+    assert.ok(fetchCalls >= 1);
     assert.equal(posts.length, 1);
-    assert.equal(posts[0].id, 'linuxdo-123');
+    assert.equal(posts[0].id, 'linuxdo-456');
+  } finally {
+    playwright.chromium.launch = originalLaunch;
+    global.fetch = originalFetch;
+    delete require.cache[require.resolve('../../scripts/crawler/sources/linuxdo')];
+  }
+});
+
+test('fetchLinuxDoPosts retries Playwright 429 with backoff before succeeding', async () => {
+  const originalFetch = global.fetch;
+  const playwright = require('playwright');
+  const originalLaunch = playwright.chromium.launch;
+
+  let rssAttempts = 0;
+  global.fetch = async () => ({
+    ok: false,
+    status: 403,
+    text: async () => '<html><title>Just a moment...</title></html>',
+  });
+
+  playwright.chromium.launch = makePlaywrightMock(async (url) => {
+    if (url.includes('/latest.rss')) {
+      rssAttempts += 1;
+      if (rssAttempts < 3) {
+        return { status: 429, text: 'Too Many Requests' };
+      }
+      return {
+        status: 200,
+        text: `<?xml version="1.0" encoding="UTF-8" ?>
+        <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+          <channel>
+            <item>
+              <title>LinuxDo coding plan post</title>
+              <link>https://linux.do/t/topic/789</link>
+              <description><![CDATA[<p>coding plan summary</p>]]></description>
+              <dc:creator>rss-author</dc:creator>
+              <guid>linux.do-topic-789</guid>
+              <pubDate>Sun, 05 Apr 2026 00:00:00 +0000</pubDate>
+            </item>
+          </channel>
+        </rss>`,
+      };
+    }
+    if (url.includes('/t/789.json')) {
+      return {
+        status: 200,
+        text: JSON.stringify({
+          post_stream: {
+            posts: [
+              {
+                cooked: '<p>coding plan details</p>',
+                username: 'tester',
+                created_at: '2026-04-05T00:00:00.000Z',
+              },
+            ],
+          },
+        }),
+      };
+    }
+    return { status: 404, text: 'not found' };
+  });
+
+  try {
+    const posts = await withEnv('CRAWLER_LINUXDO_PAGES', '1', async () =>
+      withEnv('CRAWLER_LINUXDO_DELAY_MS', '0', async () =>
+        withEnv('CRAWLER_LINUXDO_MAX_RETRIES', '3', async () =>
+          withEnv('CRAWLER_LINUXDO_RETRY_BASE_MS', '1', async () => {
+            const { fetchLinuxDoPosts } = loadLinuxDoModule();
+            return fetchLinuxDoPosts({ failures: [] });
+          }),
+        ),
+      ),
+    );
+
+    assert.equal(rssAttempts, 3);
+    assert.equal(posts.length, 1);
+    assert.equal(posts[0].id, 'linuxdo-789');
   } finally {
     playwright.chromium.launch = originalLaunch;
     global.fetch = originalFetch;
@@ -446,3 +694,141 @@ test('summarizeAnalysisOutcomes groups selected and skipped posts', () => {
     belowThreshold: 1,
   });
 });
+
+// ─── ensureLabel pagination / conflict recovery ───
+
+test('ensureLabel pages through more than 100 existing labels', async () => {
+  const originalFetch = global.fetch;
+  let labelListCalls = 0;
+
+  global.fetch = async (_url, options = {}) => {
+    const body = JSON.parse(options.body || '{}');
+    const query = body.query || '';
+
+    if (query.includes('labels(first: 100')) {
+      labelListCalls += 1;
+      if (labelListCalls === 1) {
+        return {
+          ok: true,
+          json: async () => ({
+            data: {
+              repository: {
+                labels: {
+                  pageInfo: { hasNextPage: true, endCursor: 'cursor-1' },
+                  nodes: Array.from({ length: 100 }, (_, i) => ({
+                    id: `L${i}`,
+                    name: `topic:page1-${i}`,
+                  })),
+                },
+              },
+            },
+          }),
+        };
+      }
+
+      return {
+        ok: true,
+        json: async () => ({
+          data: {
+            repository: {
+              labels: {
+                pageInfo: { hasNextPage: false, endCursor: null },
+                nodes: [{ id: 'L-huoshan', name: 'supplier:火山引擎' }],
+              },
+            },
+          },
+        }),
+      };
+    }
+
+    throw new Error(`unexpected GraphQL query: ${query.slice(0, 80)}`);
+  };
+
+  try {
+    process.env.COMMUNITY_CRAWLER_TOKEN = process.env.COMMUNITY_CRAWLER_TOKEN || 'test-token';
+    const cache = new Map();
+    const labelId = await ensureLabel(cache, 'supplier:火山引擎');
+    assert.equal(labelId, 'L-huoshan');
+    assert.equal(labelListCalls, 2);
+    assert.equal(cache.get('supplier:火山引擎'), 'L-huoshan');
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
+test('ensureLabel reuses existing label when create returns already taken', async () => {
+  const originalFetch = global.fetch;
+  let createCalls = 0;
+  let lookupCalls = 0;
+
+  global.fetch = async (_url, options = {}) => {
+    const body = JSON.parse(options.body || '{}');
+    const query = body.query || '';
+
+    if (query.includes('labels(first: 100')) {
+      return {
+        ok: true,
+        json: async () => ({
+          data: {
+            repository: {
+              labels: {
+                pageInfo: { hasNextPage: false, endCursor: null },
+                nodes: [],
+              },
+            },
+          },
+        }),
+      };
+    }
+
+    if (query.includes('mutation CreateLabel') || query.includes('createLabel')) {
+      createCalls += 1;
+      return {
+        ok: true,
+        json: async () => ({
+          errors: [{ message: 'Name has already been taken' }],
+        }),
+      };
+    }
+
+    if (query.includes('label(name:') || query.includes('$labelName')) {
+      lookupCalls += 1;
+      return {
+        ok: true,
+        json: async () => ({
+          data: {
+            repository: {
+              label: { id: 'L-existing', name: 'supplier:火山引擎' },
+            },
+          },
+        }),
+      };
+    }
+
+    if (query.includes('repository(owner:') && query.includes('id')) {
+      return {
+        ok: true,
+        json: async () => ({
+          data: {
+            repository: { id: 'R_repo' },
+          },
+        }),
+      };
+    }
+
+    throw new Error(`unexpected GraphQL query: ${query.slice(0, 120)}`);
+  };
+
+  try {
+    process.env.COMMUNITY_CRAWLER_TOKEN = process.env.COMMUNITY_CRAWLER_TOKEN || 'test-token';
+    const cache = new Map();
+    const labelId = await ensureLabel(cache, 'supplier:火山引擎');
+    assert.equal(labelId, 'L-existing');
+    assert.equal(createCalls, 1);
+    assert.equal(lookupCalls, 1);
+    assert.equal(cache.get('supplier:火山引擎'), 'L-existing');
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
