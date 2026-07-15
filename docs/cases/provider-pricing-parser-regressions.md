@@ -11,6 +11,11 @@
 
 - `tencent-cloud-ai`
 
+2026-07-14 中文套餐页面结构变化导致以下供应商解析失败：
+
+- `xfyun-ai`：月套餐表包含「无忧版（已下线）」，在售档位名不再满足旧 `版$` 规则，且用量改为请求次数
+- `baidu-qianfan-ai`：`codingplan.html` 从 Coding Plan 表格切换为 Token Plan 个人版四档卡片
+
 ## 解析路径
 
 ```mermaid
@@ -53,6 +58,28 @@ flowchart TD
   - 解析结果包含 `Coding Plan Lite`
   - 解析结果包含 `Coding Plan Pro`
   - `provider-pricing.json.failures` 不包含 `tencent-cloud-ai`
+
+### 用例 4：讯飞星辰 Coding Plan 月套餐解析
+
+- 前置条件：访问 `https://www.xfyun.cn/doc/spark/CodingPlan.html`
+- 当：文档同时存在月套餐表、季套餐表，且包含「无忧版（已下线）」
+- 则：
+  - 仅解析月套餐在售档位
+  - 解析结果包含 `Astron Coding Plan 专业版` / `¥39/月`
+  - 解析结果包含 `Astron Coding Plan 高效版` / `¥199/月`
+  - 不包含已下线档位与季套餐价格
+  - `provider-pricing.json.failures` 不包含 `xfyun-ai`
+
+### 用例 5：百度千帆 Token Plan 个人版卡片解析
+
+- 前置条件：访问 `https://cloud.baidu.com/product/codingplan.html`
+- 当：页面展示 Mini/Lite/Pro/Max 四档 Token Plan 卡片，现价分别为 `4.9/19.9/99.9/299.9`
+- 则：
+  - 解析结果包含 `Token Plan Mini` / `¥4.9/月`（原价 `¥9.9/月`）
+  - 解析结果包含 `Token Plan Lite` / `¥19.9/月`（原价 `¥40/月`）
+  - 解析结果包含 `Token Plan Pro` / `¥99.9/月`（原价 `¥200/月`）
+  - 解析结果包含 `Token Plan Max` / `¥299.9/月`（原价 `¥600/月`）
+  - `provider-pricing.json.failures` 不包含 `baidu-qianfan-ai`
 
 ## 验证命令
 

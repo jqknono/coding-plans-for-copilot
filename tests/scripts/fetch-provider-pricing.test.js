@@ -17,6 +17,8 @@ const {
   parseJdCloudCodingPlansFromPageHtml,
   parseJdCloudCodingPlansFromText,
   parseStepfunPlansFromRenderedText,
+  parseXfyunCodingPlansFromHtml,
+  parseBaiduCodingPlansFromHtml,
   buildXAioPlansFromBundle,
   isRetryableFetchError,
   navigateTencentCodingPlanPage,
@@ -434,6 +436,163 @@ test('parseAliyunServiceDetailsFromDocsHtml marks Lite as discontinued', () => {
   assert.match(liteDetails.join('\n'), /停止新购/);
   assert.match(liteDetails.join('\n'), /停止续费与升级/);
   assert.match(liteDetails.join('\n'), /继续使用至服务到期/);
+});
+
+test('parseXfyunCodingPlansFromHtml reads monthly plans and skips offline/quarterly rows', () => {
+  const html = `
+    <table>
+      <tr><th>套餐类型</th><th>价格</th><th>支持模型</th><th>用量限制</th></tr>
+      <tr>
+        <td>无忧版 （已下线）</td>
+        <td>¥19 / 月</td>
+        <td>讯飞星辰 MaaS 平台套餐订阅页面展示为准</td>
+        <td>请求次数不限</td>
+      </tr>
+      <tr>
+        <td>专业版</td>
+        <td>¥39 / 月</td>
+        <td>讯飞星辰 MaaS 平台套餐订阅页面展示为准</td>
+        <td>每 5 小时：最多约 1,200 次请求；每周：最多约 9,000 次请求；每订阅月：最多约 18,000 次请求</td>
+      </tr>
+      <tr>
+        <td>高效版</td>
+        <td>¥199 / 月</td>
+        <td>讯飞星辰 MaaS 平台套餐订阅页面展示为准</td>
+        <td>每 5 小时：最多约 6,000 次请求；每周：最多约 45,000 次请求；每订阅月：最多约 90,000 次请求</td>
+      </tr>
+    </table>
+    <p>按季订购</p>
+    <table>
+      <tr><th>套餐类型</th><th>价格</th><th>支持模型</th><th>用量限制</th></tr>
+      <tr><td>专业版</td><td>¥111 / 季（日常折扣95折）</td><td>展示为准</td><td>每订阅月：最多约 18,000 次请求</td></tr>
+    </table>
+    <p>流控方式调整为 请求次数 维度：</p>
+    <table>
+      <tr><th>流控维度</th><th>说明</th></tr>
+      <tr><td>5 小时流控</td><td>周期为5小时</td></tr>
+      <tr><td>周流控</td><td>周期为7日</td></tr>
+      <tr><td>月流控</td><td>31天后为套餐失效时间</td></tr>
+    </table>
+    <p>选择专业版 / 高效版，完成首购或叠加购买</p>
+  `;
+
+  const plans = parseXfyunCodingPlansFromHtml(html);
+
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      currentPrice: plan.currentPrice,
+      unit: plan.unit,
+    })),
+    [
+      {
+        name: 'Astron Coding Plan 专业版',
+        currentPriceText: '¥39/月',
+        currentPrice: 39,
+        unit: '月',
+      },
+      {
+        name: 'Astron Coding Plan 高效版',
+        currentPriceText: '¥199/月',
+        currentPrice: 199,
+        unit: '月',
+      },
+    ],
+  );
+  assert.match(plans[0].notes || '', /流控按 5 小时\/周\/月请求次数计量/);
+  assert.match(plans[0].serviceDetails.join('\n'), /用量限制: 每 5 小时：最多约 1,200 次请求/);
+  assert.match(plans[0].serviceDetails.join('\n'), /支持升级与同档位叠加购买/);
+  assert.ok(!plans.some((plan) => /无忧版|季/.test(plan.name + plan.currentPriceText)));
+});
+
+test('parseBaiduCodingPlansFromHtml reads Token Plan personal cards', () => {
+  const html = `
+    <h2>选择适合你的套餐</h2>
+    <p>适配 Cursor、Windsurf、Cline 等主流 AI Coding 工具及 Agent 框架，兼容 OpenAI 与 Anthropic 协议</p>
+    <p>支持 GLM、DeepSeek、Kimi 等主流顶尖模型一键无缝切换</p>
+    <p>完全取消 Coding Plan 原有的三层限流体系</p>
+    <ul>
+      <li>
+        <h3>Mini 尝鲜版</h3>
+        <p>新用户、轻度尝鲜、低门槛体验</p>
+        <div>限时5折</div>
+        <p>商品类型 Token Plan 个人版</p>
+        <p>额度规格 1000万 Token</p>
+        <p>使用期限 1个月</p>
+        <div><i>￥</i><span>4.9</span><i>/月</i></div>
+        <div>￥<!-- -->9.9<!-- -->/月</div>
+      </li>
+      <li>
+        <h3>Lite 标准版</h3>
+        <p>日常编码、稳定使用的个人开发者</p>
+        <div>限时5折</div>
+        <p>额度规格 4200万 Token</p>
+        <p>使用期限 1个月</p>
+        <div><i>￥</i><span>19.9</span><i>/月</i></div>
+        <div>￥<!-- -->40<!-- -->/月</div>
+      </li>
+      <li>
+        <h3>Pro 进阶版</h3>
+        <p>高频 Coding 用户、进阶开发者</p>
+        <div>限时5折</div>
+        <p>额度规格 2.3亿 Token</p>
+        <p>使用期限 1个月</p>
+        <div><i>￥</i><span>99.9</span><i>/月</i></div>
+        <div>￥<!-- -->200<!-- -->/月</div>
+      </li>
+      <li>
+        <h3>Max 专业版</h3>
+        <p>重度开发用户、Agent 深度使用者</p>
+        <div>限时5折</div>
+        <p>额度规格 7亿 Token</p>
+        <p>使用期限 1个月</p>
+        <div><i>￥</i><span>299.9</span><i>/月</i></div>
+        <div>￥<!-- -->600<!-- -->/月</div>
+      </li>
+    </ul>
+    <h2>应用场景</h2>
+  `;
+
+  const plans = parseBaiduCodingPlansFromHtml(html);
+
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      originalPriceText: plan.originalPriceText,
+    })),
+    [
+      {
+        name: 'Token Plan Mini',
+        currentPriceText: '¥4.9/月',
+        originalPriceText: '¥9.9/月',
+      },
+      {
+        name: 'Token Plan Lite',
+        currentPriceText: '¥19.9/月',
+        originalPriceText: '¥40/月',
+      },
+      {
+        name: 'Token Plan Pro',
+        currentPriceText: '¥99.9/月',
+        originalPriceText: '¥200/月',
+      },
+      {
+        name: 'Token Plan Max',
+        currentPriceText: '¥299.9/月',
+        originalPriceText: '¥600/月',
+      },
+    ],
+  );
+  assert.match(plans[0].serviceDetails.join('\n'), /额度规格: 1000万 Token/);
+  assert.match(plans[0].serviceDetails.join('\n'), /使用期限: 1个月/);
+  assert.match(plans[0].serviceDetails.join('\n'), /适配工具: Cursor、Windsurf、Cline/);
+  assert.match(plans[0].serviceDetails.join('\n'), /支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型/);
+  assert.match(plans[0].notes || '', /限时5折/);
+  assert.match(plans[0].notes || '', /新用户、轻度尝鲜、低门槛体验/);
+  assert.ok(!/立即购买|额度规$/.test(plans[0].notes || ''));
+  assert.ok(!plans[0].serviceDetails.some((item) => /立即购买|￥/.test(item)));
 });
 
 test('parseAliyunTokenPlansFromDocsHtml reads team seat and shared credit package pricing', () => {

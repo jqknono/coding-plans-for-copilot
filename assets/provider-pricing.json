@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-15T04:51:00.487Z",
+  "generatedAt": "2026-07-15T03:43:06.103Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -128,31 +128,71 @@
       ],
       "plans": [
         {
-          "name": "Coding Plan Lite",
-          "currentPrice": 40,
-          "currentPriceText": "¥40/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "name": "Token Plan Mini",
+          "currentPrice": 4.9,
+          "currentPriceText": "¥4.9/月",
+          "originalPrice": 9.9,
+          "originalPriceText": "¥9.9/月",
           "unit": "月",
-          "notes": null,
+          "notes": "限时5折；适用: 新用户、轻度尝鲜、低门槛体验",
           "serviceDetails": [
-            "用量限制: 最多18000次请求",
-            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
-            "适配工具: Claude Code等AI开发工具"
+            "额度规格: 1000万 Token",
+            "使用期限: 1个月",
+            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
+            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
+            "套餐额度内取消 Coding Plan 三层限流",
+            "商品类型: Token Plan 个人版"
           ]
         },
         {
-          "name": "Coding Plan Pro",
-          "currentPrice": 200,
-          "currentPriceText": "¥200/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "name": "Token Plan Lite",
+          "currentPrice": 19.9,
+          "currentPriceText": "¥19.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月",
           "unit": "月",
-          "notes": null,
+          "notes": "限时5折；适用: 日常编码、稳定使用的个人开发者",
           "serviceDetails": [
-            "用量限制: 最多90000次请求",
-            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
-            "适配工具: Claude Code等AI开发工具"
+            "额度规格: 4200万 Token",
+            "使用期限: 1个月",
+            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
+            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
+            "套餐额度内取消 Coding Plan 三层限流",
+            "商品类型: Token Plan 个人版"
+          ]
+        },
+        {
+          "name": "Token Plan Pro",
+          "currentPrice": 99.9,
+          "currentPriceText": "¥99.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
+          "unit": "月",
+          "notes": "限时5折；适用: 高频 Coding 用户、进阶开发者",
+          "serviceDetails": [
+            "额度规格: 2.3亿 Token",
+            "使用期限: 1个月",
+            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
+            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
+            "套餐额度内取消 Coding Plan 三层限流",
+            "商品类型: Token Plan 个人版"
+          ]
+        },
+        {
+          "name": "Token Plan Max",
+          "currentPrice": 299.9,
+          "currentPriceText": "¥299.9/月",
+          "originalPrice": 600,
+          "originalPriceText": "¥600/月",
+          "unit": "月",
+          "notes": "限时5折；适用: 重度开发用户、Agent 深度使用者",
+          "serviceDetails": [
+            "额度规格: 7亿 Token",
+            "使用期限: 1个月",
+            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
+            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
+            "套餐额度内取消 Coding Plan 三层限流",
+            "商品类型: Token Plan 个人版"
           ]
         }
       ],
@@ -752,77 +792,77 @@
           ]
         },
         {
-          "name": "Adagio（海外）",
+          "name": "Adagio（REGION_CN）",
           "currentPrice": 0,
-          "currentPriceText": "$0/月",
+          "currentPriceText": "¥0/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": "试用计划",
           "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
+            "计价币种: 人民币（CNY）",
+            "适用区域: REGION_CN",
             "会员等级: 免费试用",
             "Kimi Code 试用套餐权益"
           ]
         },
         {
-          "name": "Moderato（海外）",
-          "currentPrice": 19,
-          "currentPriceText": "$19/月",
+          "name": "Andante（REGION_CN）",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
+            "计价币种: 人民币（CNY）",
+            "适用区域: REGION_CN",
+            "会员等级: LEVEL_TRIAL",
+            "Kimi Code 月度订阅权益"
+          ]
+        },
+        {
+          "name": "Moderato（REGION_CN）",
+          "currentPrice": 99,
+          "currentPriceText": "¥99/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 人民币（CNY）",
+            "适用区域: REGION_CN",
             "会员等级: 基础会员",
             "Kimi Code 月度订阅权益"
           ]
         },
         {
-          "name": "Allegretto（海外）",
-          "currentPrice": 39,
-          "currentPriceText": "$39/月",
+          "name": "Allegretto（REGION_CN）",
+          "currentPrice": 199,
+          "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
+            "计价币种: 人民币（CNY）",
+            "适用区域: REGION_CN",
             "会员等级: 进阶会员",
             "Kimi Code 月度订阅权益"
           ]
         },
         {
-          "name": "Allegro（海外）",
-          "currentPrice": 99,
-          "currentPriceText": "$99/月",
+          "name": "Allegro（REGION_CN）",
+          "currentPrice": 699,
+          "currentPriceText": "¥699/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
+            "计价币种: 人民币（CNY）",
+            "适用区域: REGION_CN",
             "会员等级: 高级会员",
-            "Kimi Code 月度订阅权益"
-          ]
-        },
-        {
-          "name": "Vivace（海外）",
-          "currentPrice": 199,
-          "currentPriceText": "$199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
-            "会员等级: 旗舰会员",
             "Kimi Code 月度订阅权益"
           ]
         }
@@ -1428,32 +1468,20 @@
       ],
       "plans": [
         {
-          "name": "Astron Coding Plan 入门版",
-          "currentPrice": 19,
-          "currentPriceText": "¥19/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "首购优惠：¥3.9/月",
-          "serviceDetails": [
-            "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash",
-            "日 Tokens 上限: 2,000 万 tokens/日",
-            "QPS: 20",
-            "支持升级与同档位叠加购买"
-          ]
-        },
-        {
           "name": "Astron Coding Plan 专业版",
           "currentPrice": 39,
           "currentPriceText": "¥39/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥7.9/月",
+          "notes": "流控按 5 小时/周/月请求次数计量",
           "serviceDetails": [
-            "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash、GLM-5、MiniMax-M2.5、Kimi-K2.5",
-            "日 Tokens 上限: 1,000 万 tokens/日",
-            "QPS: 5",
+            "用量限制: 每 5 小时：最多约 1,200 次请求",
+            "每周：最多约 9,000 次请求",
+            "每订阅月：最多约 18,000 次请求",
+            "流控说明: 5 小时流控: 按套餐订单完成支付的时间为流控开始时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间，周期为5小时，滑动步长1小时，每个整点刷新。",
+            "周流控: 按套餐订单完成支付的时间为流控开始时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间，周期为7日，滑动步长1日，每次日 08:00:00（UTC+8）重置。",
+            "月流控: 按套餐订单完成支付的时间为开始时间，31天后为套餐失效时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间。",
             "支持升级与同档位叠加购买"
           ]
         },
@@ -1464,17 +1492,18 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首购优惠：¥39.9/月",
+          "notes": "流控按 5 小时/周/月请求次数计量",
           "serviceDetails": [
-            "支持模型: Qwen3.5-35B-A3B、DeepSeek-V3.2、GLM-4.7-Flash、GLM-5、MiniMax-M2.5、Kimi-K2.5",
-            "日 Tokens 上限: 5,000 万 tokens/日",
-            "QPS: 20",
+            "用量限制: 每 5 小时：最多约 6,000 次请求",
+            "每周：最多约 45,000 次请求",
+            "每订阅月：最多约 90,000 次请求",
+            "流控说明: 5 小时流控: 按套餐订单完成支付的时间为流控开始时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间，周期为5小时，滑动步长1小时，每个整点刷新。",
+            "周流控: 按套餐订单完成支付的时间为流控开始时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间，周期为7日，滑动步长1日，每次日 08:00:00（UTC+8）重置。",
+            "月流控: 按套餐订单完成支付的时间为开始时间，31天后为套餐失效时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间。",
             "支持升级与同档位叠加购买"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "xfyun-ai: Unable to parse XFYun coding plan pricing rows"
+      ]
     },
     {
       "provider": "xiaomi-mimo",
@@ -1605,8 +1634,5 @@
       ]
     }
   ],
-  "failures": [
-    "xfyun-ai: Unable to parse XFYun coding plan pricing rows",
-    "baidu-qianfan-ai: Unable to locate Baidu coding plan table"
-  ]
+  "failures": []
 }

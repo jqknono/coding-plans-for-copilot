@@ -1178,25 +1178,72 @@ async function parseKimiCodingPlans() {
   };
 }
 
-async function parseXfyunCodingPlans() {
-  const pageUrl = 'https://maas.xfyun.cn/modelSquare';
-  const docUrl = 'https://www.xfyun.cn/doc/spark/CodingPlan.html';
-  const html = await fetchText(docUrl);
-  const rows = extractRows(html);
+function isXfyunPricingHeaderRow(row) {
+  return normalizeText(row?.[0] || '') === '套餐类型' && normalizeText(row?.[1] || '') === '价格';
+}
 
-  const pricingHeaderIndex = rows.findIndex(
-    (row) => normalizeText(row?.[0] || '') === '套餐类型' && normalizeText(row?.[1] || '') === '价格',
-  );
-  if (pricingHeaderIndex < 0) {
+function isXfyunActivePlanName(name) {
+  const value = normalizeText(name);
+  if (!value) {
+    return false;
+  }
+  if (/(已下线|停止新购|停售)/i.test(value)) {
+    return false;
+  }
+  // Accept both "专业版" and legacy "入门版" labels; ignore non-plan rows.
+  return /(版$|版\s*[（(])/.test(value) && !/套餐类型|流控维度|错误码|按季订购/i.test(value);
+}
+
+function parseXfyunPlanPrice(rawValue) {
+  const text = normalizeText(rawValue);
+  if (!text) {
+    return {
+      text: null,
+      amount: null,
+      unit: null,
+      firstPurchaseAmount: null,
+      addonAmount: null,
+    };
+  }
+
+  const firstPurchaseInfo = parseFirstPurchaseAndAddonPrices(text);
+  const monthlyMatch = text.match(/([0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?)\s*(?:元)?\s*\/\s*月/i);
+  const amountFromMonthly = monthlyMatch ? Number(monthlyMatch[1].replace(/,/g, '')) : null;
+  const amount =
+    firstPurchaseInfo.addonAmount ??
+    firstPurchaseInfo.firstPurchaseAmount ??
+    (Number.isFinite(amountFromMonthly) ? amountFromMonthly : parseAmountFromPriceText(text));
+  const unit = /\/\s*季/i.test(text) ? '季' : /\/\s*月/i.test(text) ? '月' : null;
+
+  return {
+    text,
+    amount: Number.isFinite(amount) ? amount : null,
+    unit,
+    firstPurchaseAmount: firstPurchaseInfo.firstPurchaseAmount,
+    addonAmount: firstPurchaseInfo.addonAmount,
+  };
+}
+
+function parseXfyunCodingPlansFromHtml(html) {
+  const rows = extractRows(html);
+  const monthlyHeaderIndex = rows.findIndex((row) => isXfyunPricingHeaderRow(row));
+  if (monthlyHeaderIndex < 0) {
     throw new Error('Unable to locate XFYun coding plan pricing table');
   }
 
   const pricingRows = [];
-  for (let index = pricingHeaderIndex + 1; index < rows.length; index += 1) {
+  for (let index = monthlyHeaderIndex + 1; index < rows.length; index += 1) {
     const row = rows[index] || [];
-    const name = normalizeText(row?.[0] || '');
-    if (!name || !/版$/.test(name)) {
+    if (isXfyunPricingHeaderRow(row)) {
+      // Second table is usually quarterly pricing; keep monthly only.
       break;
+    }
+    const name = normalizeText(row?.[0] || '');
+    if (!name || !isXfyunActivePlanName(name)) {
+      if (pricingRows.length > 0) {
+        break;
+      }
+      continue;
     }
     pricingRows.push(row);
   }
@@ -1214,47 +1261,68 @@ async function parseXfyunCodingPlans() {
       const row = rows[index] || [];
       const label = normalizeText(row?.[0] || '');
       const value = normalizeText(row?.[1] || '');
-      if (!label || !value || /^版本$/.test(label)) {
+      if (!label || !value || /^版本$|^错误码$/.test(label)) {
         break;
       }
       flowDetails.push(`${label}: ${value}`);
     }
   }
 
-  const hasIteratedVersion = /价格与支持模型[^。；]*保持一致[\s\S]*?流控方式将调整为[^。；]*请求次数/i.test(html);
+  const hasRequestQuotaControl = /流控方式[^。；]*请求次数|流控方式调整为\s*请求次数/i.test(html);
+  const supportsUpgradeOrAddon = /支持升级|叠加购买/i.test(html);
   const plans = pricingRows.map((row) => {
-    const name = normalizeText(row?.[0] || '');
-    const priceInfo = parseFirstPurchaseAndAddonPrices(row?.[1] || '');
-    const currentAmount = priceInfo.addonAmount ?? priceInfo.firstPurchaseAmount;
+    const rawName = normalizeText(row?.[0] || '');
+    const name = rawName.replace(/[（(][^）)]*(?:已下线|停止新购|停售)[^）)]*[）)]/g, '').trim() || rawName;
+    const priceInfo = parseXfyunPlanPrice(row?.[1] || '');
+    const modelsText = normalizeText(row?.[2] || '');
+    const usageText = normalizeText(row?.[3] || '');
+    const qpsText = normalizeText(row?.[4] || '');
+    const modelIsPageLink = /套餐订阅页面|展示为准/i.test(modelsText);
     const notes = [
       Number.isFinite(priceInfo.firstPurchaseAmount) && Number.isFinite(priceInfo.addonAmount)
         ? `首购优惠：¥${formatAmount(priceInfo.firstPurchaseAmount)}/月`
         : null,
-      hasIteratedVersion ? '次月迭代版价格与支持模型不变，流控将改为 5 小时/周/月请求次数' : null,
+      hasRequestQuotaControl ? '流控按 5 小时/周/月请求次数计量' : null,
     ]
       .filter(Boolean)
       .join('；');
 
     return asPlan({
       name: `Astron Coding Plan ${name}`,
-      currentPriceText: Number.isFinite(currentAmount) ? `¥${formatAmount(currentAmount)}/月` : priceInfo.text,
-      currentPrice: Number.isFinite(currentAmount) ? currentAmount : null,
-      unit: '月',
-      notes,
-      serviceDetails: [
-        normalizeText(row?.[2] || '') ? `支持模型: ${normalizeText(row[2])}` : null,
-        normalizeText(row?.[3] || '') ? `日 Tokens 上限: ${normalizeText(row[3])}` : null,
-        normalizeText(row?.[4] || '') ? `QPS: ${normalizeText(row[4])}` : null,
-        /支持升级|叠加购买/i.test(html) ? '支持升级与同档位叠加购买' : null,
-      ],
+      currentPriceText: Number.isFinite(priceInfo.amount)
+        ? `¥${formatAmount(priceInfo.amount)}/${priceInfo.unit || '月'}`
+        : priceInfo.text,
+      currentPrice: Number.isFinite(priceInfo.amount) ? priceInfo.amount : null,
+      unit: priceInfo.unit || '月',
+      notes: notes || null,
+      serviceDetails: normalizeServiceDetails([
+        modelIsPageLink ? null : modelsText ? `支持模型: ${modelsText}` : null,
+        usageText
+          ? /tokens?/i.test(usageText) && !/请求/i.test(usageText)
+            ? `日 Tokens 上限: ${usageText}`
+            : `用量限制: ${usageText}`
+          : null,
+        qpsText ? `QPS: ${qpsText}` : null,
+        flowDetails.length > 0 ? `流控说明: ${flowDetails.join('；')}` : null,
+        supportsUpgradeOrAddon ? '支持升级与同档位叠加购买' : null,
+      ]),
     });
   });
+
+  return dedupePlans(plans);
+}
+
+async function parseXfyunCodingPlans() {
+  const pageUrl = 'https://maas.xfyun.cn/modelSquare';
+  const docUrl = 'https://www.xfyun.cn/doc/spark/CodingPlan.html';
+  const html = await fetchText(docUrl);
+  const plans = parseXfyunCodingPlansFromHtml(html);
 
   return {
     provider: PROVIDER_IDS.XFYUN,
     sourceUrls: [pageUrl, docUrl],
     fetchedAt: new Date().toISOString(),
-    plans: dedupePlans(plans),
+    plans,
   };
 }
 
@@ -1861,16 +1929,128 @@ async function parseMinimaxCodingPlans() {
   };
 }
 
-async function parseBaiduCodingPlans() {
-  const pageUrl = 'https://cloud.baidu.com/product/codingplan.html';
-  const html = await fetchText(pageUrl);
+function parseBaiduTokenPlanTierLabel(rawName) {
+  const value = normalizeText(rawName);
+  if (!value) {
+    return null;
+  }
+  const match = value.match(/\b(Mini|Lite|Pro|Max)\b/i);
+  if (!match) {
+    return null;
+  }
+  return match[1].replace(/^./, (char) => char.toUpperCase());
+}
 
+function readBaiduCardField(cardHtml, label) {
+  const html = String(cardHtml || '');
+  const structured = html.match(
+    new RegExp(
+      `${label}\\s*</p>\\s*<p[^>]*>\\s*([^<]+)\\s*</p>|<p[^>]*>\\s*${label}\\s*</p>\\s*<p[^>]*>\\s*([^<]+)\\s*</p>`,
+      'i',
+    ),
+  );
+  if (structured) {
+    return normalizeText(structured[1] || structured[2] || '');
+  }
+
+  const plain = stripTags(html);
+  const plainMatch = plain.match(new RegExp(`${label}\\s+([^\\n]+?)(?=\\s*(?:商品类型|额度规格|使用期限|限时|￥|¥|立即购买|$))`, 'i'));
+  return normalizeText(plainMatch?.[1] || '');
+}
+
+function parseBaiduTokenPlansFromHtml(html) {
+  const cardRegex =
+    /<h3[^>]*>\s*((?:Mini|Lite|Pro|Max)[^<]*)<\/h3>([\s\S]*?)(?=<h3[^>]*>\s*(?:Mini|Lite|Pro|Max)|应用场景|套餐使用说明|$)/gi;
+  const cards = [...html.matchAll(cardRegex)];
+  if (cards.length === 0) {
+    return null;
+  }
+
+  const plainText = stripTags(html);
+  const toolIntro = normalizeText(
+    plainText.match(/适配\s*((?:Cursor|Claude\s*Code|Windsurf|Cline)(?:\s*[、,，]\s*[^等。；\n]+){0,5}等主流\s*AI\s*Coding\s*工具)/i)?.[1] ||
+      plainText.match(/适配\s*((?:Cursor|Claude\s*Code|Windsurf|Cline)[^。；\n]{0,40})/i)?.[1] ||
+      '',
+  );
+  const modelIntro = normalizeText(
+    plainText.match(/支持\s*((?:GLM|DeepSeek|Kimi)(?:\s*[、,，]\s*[^等。；\n]+){0,5}等主流顶尖模型)/i)?.[1] ||
+      plainText.match(/支持\s*((?:GLM|DeepSeek|Kimi)[^。；\n]{0,40})/i)?.[1] ||
+      '',
+  );
+  const noRateLimitNote = /完全取消\s*Coding\s*Plan\s*原有的三层限流|告别高峰时段限流/i.test(plainText)
+    ? '套餐额度内取消 Coding Plan 三层限流'
+    : null;
+
+  const plans = [];
+  for (const card of cards) {
+    const rawName = normalizeText(card[1] || '');
+    const tier = parseBaiduTokenPlanTierLabel(rawName);
+    const body = card[2] || '';
+    if (!tier) {
+      continue;
+    }
+
+    const currentMatch = body.match(
+      /<i[^>]*>\s*[￥¥]\s*<\/i>\s*<span[^>]*>\s*([0-9]+(?:\.[0-9]+)?)\s*<\/span>\s*<i[^>]*>\s*\/\s*月/i,
+    );
+    const originalMatch =
+      body.match(/[￥¥]\s*(?:<!--\s*-->\s*)?([0-9]+(?:\.[0-9]+)?)\s*(?:<!--\s*-->\s*)?\/\s*月/gi) || [];
+    const currentAmount = currentMatch ? Number(currentMatch[1]) : null;
+    const originalCandidates = originalMatch
+      .map((item) => {
+        const amountMatch = item.match(/([0-9]+(?:\.[0-9]+)?)/);
+        return amountMatch ? Number(amountMatch[1]) : null;
+      })
+      .filter((amount) => Number.isFinite(amount));
+    const originalAmount =
+      originalCandidates.find((amount) => Number.isFinite(currentAmount) && amount > currentAmount) ??
+      (originalCandidates.length > 1 ? originalCandidates[originalCandidates.length - 1] : null);
+
+    if (!Number.isFinite(currentAmount)) {
+      continue;
+    }
+
+    const productType = readBaiduCardField(body, '商品类型') || 'Token Plan 个人版';
+    const quotaText = readBaiduCardField(body, '额度规格');
+    const periodText = readBaiduCardField(body, '使用期限');
+    const audienceText = normalizeText(body.match(/<p[^>]*>\s*([^<]{4,40})\s*<\/p>/i)?.[1] || '');
+    const promoLabel = /限时\s*5\s*折|限时五折|首购半价/i.test(body) ? '限时5折' : null;
+
+    plans.push(
+      asPlan({
+        name: `Token Plan ${tier}`,
+        currentPriceText: `¥${formatAmount(currentAmount)}/月`,
+        currentPrice: currentAmount,
+        originalPriceText:
+          Number.isFinite(originalAmount) && originalAmount > currentAmount
+            ? `¥${formatAmount(originalAmount)}/月`
+            : null,
+        originalPrice:
+          Number.isFinite(originalAmount) && originalAmount > currentAmount ? originalAmount : null,
+        unit: '月',
+        notes: [promoLabel, audienceText ? `适用: ${audienceText}` : null].filter(Boolean).join('；') || null,
+        serviceDetails: normalizeServiceDetails([
+          quotaText ? `额度规格: ${quotaText}` : null,
+          periodText ? `使用期限: ${periodText}` : null,
+          modelIntro ? `支持模型: ${modelIntro}` : null,
+          toolIntro ? `适配工具: ${toolIntro}` : null,
+          noRateLimitNote,
+          productType ? `商品类型: ${productType}` : null,
+        ]),
+      }),
+    );
+  }
+
+  return plans.length > 0 ? dedupePlans(plans) : null;
+}
+
+function parseBaiduLegacyCodingPlansFromHtml(html) {
   const rows = extractRows(html);
   const planHeaderIndex = rows.findIndex(
     (row) => /coding\s*plan\s*lite/i.test(row.join(' ')) && /coding\s*plan\s*pro/i.test(row.join(' ')),
   );
   if (planHeaderIndex < 0) {
-    throw new Error('Unable to locate Baidu coding plan table');
+    return null;
   }
   const planHeaderRow = rows[planHeaderIndex];
   const tierColumns = new Map();
@@ -1895,7 +2075,7 @@ async function parseBaiduCodingPlans() {
     return label === '套餐价格' || label === '价格';
   });
   if (!priceRow) {
-    throw new Error('Unable to locate Baidu coding plan price row');
+    return null;
   }
   const promoPriceRow = serviceRows.find((row) =>
     /(?:限时)?特惠价格|优惠价格|活动价格/i.test(normalizeText(row?.[0] || '')),
@@ -1909,21 +2089,6 @@ async function parseBaiduCodingPlans() {
       '',
   );
   const promoDetailsByTier = parseTencentPromoDetails(plainText);
-
-  const firstMonthByTier = new Map();
-  const firstMonthRegex =
-    /Coding\s*Plan\s*(Lite|Pro)[\s\S]{0,500}?<span[^>]*>\s*([0-9]+(?:\.[0-9]+)?)\s*<\/span>[\s\S]{0,120}?\/首月/gi;
-  let firstMonthMatch;
-  while ((firstMonthMatch = firstMonthRegex.exec(html)) !== null) {
-    firstMonthByTier.set(firstMonthMatch[1], Number(firstMonthMatch[2]));
-  }
-  const renewalByFirstMonth = new Map();
-  const renewalRegex =
-    /新客\s*([0-9]+(?:\.[0-9]+)?)\s*元\s*\/\s*首月\s*[，,]\s*续费\s*([0-9]+(?:\.[0-9]+)?)\s*元\s*\/\s*月/gi;
-  let renewalMatch;
-  while ((renewalMatch = renewalRegex.exec(html)) !== null) {
-    renewalByFirstMonth.set(Number(renewalMatch[1]), Number(renewalMatch[2]));
-  }
 
   const plans = [];
   for (const tier of ['Lite', 'Pro']) {
@@ -1975,15 +2140,31 @@ async function parseBaiduCodingPlans() {
     );
   }
 
-  if (plans.length === 0) {
-    throw new Error('Unable to parse Baidu coding plan standard monthly prices');
+  return plans.length > 0 ? dedupePlans(plans) : null;
+}
+
+function parseBaiduCodingPlansFromHtml(html) {
+  const tokenPlans = parseBaiduTokenPlansFromHtml(html);
+  if (tokenPlans?.length) {
+    return tokenPlans;
   }
+  const legacyPlans = parseBaiduLegacyCodingPlansFromHtml(html);
+  if (legacyPlans?.length) {
+    return legacyPlans;
+  }
+  throw new Error('Unable to locate Baidu coding plan table');
+}
+
+async function parseBaiduCodingPlans() {
+  const pageUrl = 'https://cloud.baidu.com/product/codingplan.html';
+  const html = await fetchText(pageUrl);
+  const plans = parseBaiduCodingPlansFromHtml(html);
 
   return {
     provider: PROVIDER_IDS.BAIDU,
     sourceUrls: [pageUrl],
     fetchedAt: new Date().toISOString(),
-    plans: dedupePlans(plans),
+    plans,
   };
 }
 
@@ -4122,5 +4303,8 @@ module.exports = {
   parseJdCloudCodingPlansFromPageHtml,
   parseJdCloudCodingPlansFromText,
   parseStepfunPlansFromRenderedText,
+  parseXfyunCodingPlansFromHtml,
+  parseBaiduCodingPlansFromHtml,
+  parseBaiduTokenPlansFromHtml,
   restoreFailedProvidersFromSnapshot,
 };
