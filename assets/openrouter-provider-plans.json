@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-07-14T10:00:13.417Z",
-  "generatedAtBeijing": "2026年7月14日 18:00:13",
-  "sourceGeneratedAt": "2026-07-14T09:59:55.224Z",
-  "sourceGeneratedAtBeijing": "2026年7月14日 17:59:55",
-  "sourceMetricsGeneratedAt": "2026-07-14T09:59:56.102Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月14日 17:59:56",
+  "generatedAt": "2026-07-15T10:04:39.657Z",
+  "generatedAtBeijing": "2026年7月15日 18:04:39",
+  "sourceGeneratedAt": "2026-07-15T10:04:17.989Z",
+  "sourceGeneratedAtBeijing": "2026年7月15日 18:04:17",
+  "sourceMetricsGeneratedAt": "2026-07-15T10:04:18.907Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月15日 18:04:18",
   "summary": {
-    "openrouterProviderCount": 91,
-    "metricsProviderCount": 40,
-    "resolvedMetricsProviderCount": 40,
+    "openrouterProviderCount": 93,
+    "metricsProviderCount": 41,
+    "resolvedMetricsProviderCount": 41,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 8,
     "providersWithPlans": 16,
-    "pendingCount": 24,
+    "pendingCount": 25,
     "blockedPendingCount": 1,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -62,7 +62,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/fc7b464d83d8680ab8d86e76d30dff51.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/d434b0e3d46d98ae06837de7ed79be7c.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -81,31 +81,71 @@
       "providerId": "baidu-qianfan-ai",
       "plans": [
         {
-          "name": "Coding Plan Lite",
-          "currentPrice": 40,
-          "currentPriceText": "¥40/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "name": "Token Plan Mini",
+          "currentPrice": 4.9,
+          "currentPriceText": "¥4.9/月",
+          "originalPrice": 9.9,
+          "originalPriceText": "¥9.9/月",
           "unit": "月",
-          "notes": null,
+          "notes": "限时5折；适用: 新用户、轻度尝鲜、低门槛体验",
           "serviceDetails": [
-            "用量限制: 最多18000次请求",
-            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
-            "适配工具: Claude Code等AI开发工具"
+            "额度规格: 1000万 Token",
+            "使用期限: 1个月",
+            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
+            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
+            "套餐额度内取消 Coding Plan 三层限流",
+            "商品类型: Token Plan 个人版"
           ]
         },
         {
-          "name": "Coding Plan Pro",
-          "currentPrice": 200,
-          "currentPriceText": "¥200/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "name": "Token Plan Lite",
+          "currentPrice": 19.9,
+          "currentPriceText": "¥19.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月",
           "unit": "月",
-          "notes": null,
+          "notes": "限时5折；适用: 日常编码、稳定使用的个人开发者",
           "serviceDetails": [
-            "用量限制: 最多90000次请求",
-            "支持模型: GLM-5、Kimi-K2.5、MiniMax-M2.5、DeepSeek-V3.2等",
-            "适配工具: Claude Code等AI开发工具"
+            "额度规格: 4200万 Token",
+            "使用期限: 1个月",
+            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
+            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
+            "套餐额度内取消 Coding Plan 三层限流",
+            "商品类型: Token Plan 个人版"
+          ]
+        },
+        {
+          "name": "Token Plan Pro",
+          "currentPrice": 99.9,
+          "currentPriceText": "¥99.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
+          "unit": "月",
+          "notes": "限时5折；适用: 高频 Coding 用户、进阶开发者",
+          "serviceDetails": [
+            "额度规格: 2.3亿 Token",
+            "使用期限: 1个月",
+            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
+            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
+            "套餐额度内取消 Coding Plan 三层限流",
+            "商品类型: Token Plan 个人版"
+          ]
+        },
+        {
+          "name": "Token Plan Max",
+          "currentPrice": 299.9,
+          "currentPriceText": "¥299.9/月",
+          "originalPrice": 600,
+          "originalPriceText": "¥600/月",
+          "unit": "月",
+          "notes": "限时5折；适用: 重度开发用户、Agent 深度使用者",
+          "serviceDetails": [
+            "额度规格: 7亿 Token",
+            "使用期限: 1个月",
+            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
+            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
+            "套餐额度内取消 Coding Plan 三层限流",
+            "商品类型: Token Plan 个人版"
           ]
         }
       ],
@@ -641,7 +681,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.319/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.320/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1122,6 +1162,15 @@
       "officialWebsiteUrl": "https://chat.deepseek.com",
       "pricingPageUrl": "https://chat.deepseek.com/pricing",
       "reason": "官网未发现可解析的套餐价格页",
+      "blocked": false
+    },
+    {
+      "slug": "dekallm",
+      "openrouterName": "DekaLLM",
+      "providerId": null,
+      "officialWebsiteUrl": "https://docs.cloudeka.ai",
+      "pricingPageUrl": "https://docs.cloudeka.ai",
+      "reason": "官网价格页探测失败：https://docs.cloudeka.ai/pricing: HTTP 404",
       "blocked": false
     },
     {

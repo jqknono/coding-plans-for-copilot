@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-15T03:43:06.103Z",
+  "generatedAt": "2026-07-15T10:04:17.989Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -119,7 +119,9 @@
             "跨坐席共享的弹性用量包，当个别坐席用量超出套餐额度时，可从共享用量包中抵扣。每个共享用量包有效期为 1 个月，到期未使用的额度自动清零。持有多个共享用量包时，优先抵扣最近到期的用量包。"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "aliyun-token-plan: fetch failed"
     },
     {
       "provider": "baidu-qianfan-ai",
@@ -195,9 +197,7 @@
             "商品类型: Token Plan 个人版"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "baidu-qianfan-ai: Unable to locate Baidu coding plan table"
+      ]
     },
     {
       "provider": "cerebras-code",
@@ -792,77 +792,77 @@
           ]
         },
         {
-          "name": "Adagio（REGION_CN）",
+          "name": "Adagio（海外）",
           "currentPrice": 0,
-          "currentPriceText": "¥0/月",
+          "currentPriceText": "$0/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": "试用计划",
           "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: REGION_CN",
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
             "会员等级: 免费试用",
             "Kimi Code 试用套餐权益"
           ]
         },
         {
-          "name": "Andante（REGION_CN）",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
+          "name": "Moderato（海外）",
+          "currentPrice": 19,
+          "currentPriceText": "$19/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: REGION_CN",
-            "会员等级: LEVEL_TRIAL",
-            "Kimi Code 月度订阅权益"
-          ]
-        },
-        {
-          "name": "Moderato（REGION_CN）",
-          "currentPrice": 99,
-          "currentPriceText": "¥99/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: REGION_CN",
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
             "会员等级: 基础会员",
             "Kimi Code 月度订阅权益"
           ]
         },
         {
-          "name": "Allegretto（REGION_CN）",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
+          "name": "Allegretto（海外）",
+          "currentPrice": 39,
+          "currentPriceText": "$39/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: REGION_CN",
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
             "会员等级: 进阶会员",
             "Kimi Code 月度订阅权益"
           ]
         },
         {
-          "name": "Allegro（REGION_CN）",
-          "currentPrice": 699,
-          "currentPriceText": "¥699/月",
+          "name": "Allegro（海外）",
+          "currentPrice": 99,
+          "currentPriceText": "$99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: REGION_CN",
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
             "会员等级: 高级会员",
+            "Kimi Code 月度订阅权益"
+          ]
+        },
+        {
+          "name": "Vivace（海外）",
+          "currentPrice": 199,
+          "currentPriceText": "$199/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "计价币种: 美元（USD）",
+            "适用区域: 海外",
+            "会员等级: 旗舰会员",
             "Kimi Code 月度订阅权益"
           ]
         }
@@ -1366,7 +1366,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.319/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.320/index.js"
       ],
       "plans": [
         {
@@ -1634,5 +1634,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "aliyun-token-plan: fetch failed"
+  ]
 }
