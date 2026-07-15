@@ -1,0 +1,77 @@
+{
+  "date": "2026-07-14",
+  "generatedAt": "2026-07-15T08:12:27.221Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 16,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "DeepSeek": 1,
+      "OpenAI": 1,
+      "芒果 ai": 1,
+      "Windsurf": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1227327",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1227327",
+      "title": "Windsurf++ | 极为渴望和顺滑的 BYOK Server 集成",
+      "content": "Windsurf++ | 极为渴望和顺滑的 BYOK Server 集成 前文： https://linux.do/t/topic/2565152 24 年的时候 在用 cursor 疯狂 coding 很开心，一开始用无限续杯到变成忠实付费用户，后来有一个改了价格计算方式，500 次数 改成按量付费，一天就干完了用量。愣着干嘛 跑路呀！然后跑到了 windsurf 很快乐 依旧原始的计算方式，一开始感觉不如 cursor ，用了一段时间，感觉还行 逐渐变强了，也可能用习惯了。后来持续付费，结果又改了日/周额度限制，虽然现在还在付费使用，但是不够用了。 紧接着自己买了 Kimi 和 GPT 还有国产的 GLM ，感觉很割裂，没有用武之地，Codex/Claude code 咯 但是过了一会 又要回头用一下 我重写刷新的 windsurf ，用完之后 跑回 codex 继续战斗，搞得跟做任务一样。顶不住了，彻底顶不住了，后来看到了哈雷的 Cursor++，Cursor++ | 极为顺滑的 BYOK Server 集成 。所以就有了 Windsurf++。 好了 下面直接开始用吧 http",
+      "author": "Priders",
+      "createdAt": "2026-07-14T16:32:58.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Windsurf",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户分享了从 Cursor 转向 Windsurf 的使用体验，并讨论了不同 AI 编码助手（Cursor, Windsurf, Kimi, GLM）的计费方式及额度限制问题，最后介绍了自己开发的 Windsurf++ 工具以实现 BYOK 集成。",
+        "topics": [
+          "使用体验",
+          "计费方式",
+          "额度限制",
+          "工具推荐",
+          "订阅"
+        ],
+        "planMentioned": "Windsurf subscription",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/202",
+      "analyzedAt": "2026-07-15T08:18:54.736Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}

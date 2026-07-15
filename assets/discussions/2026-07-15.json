@@ -1,0 +1,137 @@
+{
+  "date": "2026-07-15",
+  "generatedAt": "2026-07-15T08:12:27.221Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 16,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "DeepSeek": 1,
+      "OpenAI": 1,
+      "芒果 ai": 1,
+      "Windsurf": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1227459",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1227459",
+      "title": "@rejelly/core — 用 React 的方式写 Agent（TypeScript）",
+      "content": "仓库： https://github.com/waht41/rejelly Agent 是函数，Prompt 用 Hooks 组织，输出用 Zod 定契约。 正在找共建者 —— 希望或愿意做 Agent 开发的人。 1. 跑起来 npm create rejelly@latest # 问项目名 / 模板 / 模型适配器，生成项目 cd &lt;project&gt; &amp;&amp; pnpm install # 编辑 .env ，填入模型 API key pnpm start 脚手架会生成一个可运行的 Agent 项目； 填好 .env 里的 API key 后 pnpm start 即可跑起来 。 2. 往下开发 开发时用 codex / cc 即可，或者用本项目自己的 dogfooding 工具 evil-jelly （见下）。 生成的项目里自带一份 AGENTS.md ，照着它写就行。 想要个实感——一个能跑的 coding agent ，大概 500 行 就能搭完： 真实样例： https://github.com/waht41/rejelly/tree/main/exa",
+      "author": "wha582",
+      "createdAt": "2026-07-15T06:36:57.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.9,
+        "summary": "讨论了一个名为rejelly的开源框架，用于构建AI coding agent（代码助手），并提供了使用DeepSeek模型的成本参考（约7-8M token审计费用3元以内）。",
+        "topics": [
+          "Agent",
+          "定价",
+          "代码生成",
+          "DeepSeek",
+          "开源框架"
+        ],
+        "planMentioned": "DeepSeek coding plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/199",
+      "analyzedAt": "2026-07-15T08:18:42.817Z"
+    },
+    {
+      "id": "v2ex-1227446",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1227446",
+      "title": "codex 怎么买比较好， 200 刀还是 100 刀，还是自己搭建 sub2key",
+      "content": "codex 怎么买比较好，200 刀还是 100 刀，还是自己搭建 sub2key 大家帮忙看下 AI 使用方案： 目前 3 人使用： A/B：重度开发，主要用 Codex C：轻度使用，做课件资料 之前都是 Plus ，额度不太够，考虑升级。 方案 1：1 个 ChatGPT Pro $200 （ 20X ） 三人共用 或自己搭 sub2api 做额度管理 优点： ✅ 额度池共享，利用率最高 ✅ 成本低 ✅ 可统计、分配使用量 缺点： ❌ 账号共享风险 ❌ 同时高强度使用可能互相影响 方案 2：独立账号 A Pro B Pro C Plus 优点： ✅ 最稳定 ✅ 各用各的，不冲突 缺点： ❌ 成本高 ❌ 额度无法共享 方案 3：Team 3 个成员 优点： ✅ 官方团队方案 缺点： ❌ 我们不太需要 Workspace ❌ 主要需求是 Codex 额度，不确定性价比 目前倾向： 1 个 $200 Pro + 自建 sub2api ，做内部额度池。 想听大家意见： 这种方案是否靠谱？有没有更好的 Codex 团队使用方式？",
+      "author": "helloboy9527",
+      "createdAt": "2026-07-15T06:04:49.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.9,
+        "summary": "用户在讨论如何为3人团队选择最合适的 Codex/ChatGPT 使用方案，对比了共享账号、独立账号和 Team 方案的成本与稳定性。",
+        "topics": [
+          "定价",
+          "方案对比",
+          "订阅",
+          "使用体验"
+        ],
+        "planMentioned": "ChatGPT Pro / Team",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/200",
+      "analyzedAt": "2026-07-15T08:18:46.012Z"
+    },
+    {
+      "id": "v2ex-1227439",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1227439",
+      "title": "为了感谢大伙儿的支持，芒果 ai 推出 80 元包月 800 刀套餐，最低 0.04 倍率",
+      "content": "之前也发过几次帖子 也收获了不少朋友的认可 口号：为了大家用上便宜的中转 芒果 ai 现在 gpt codex 最低 0.04 倍率，相当于 1 块钱几十刀美元额度 并且推出超值包月套餐 80 元 ，一个月 800 刀额度，相当于 0.1 倍率的包月 芒果 ai 也推出了企业站点，有需要的朋友可以联系 地址： ai.mggoo.com 订阅获取需要联系群主，q 群：205264116",
+      "author": "superhreo123",
+      "createdAt": "2026-07-15T05:19:01.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "芒果 ai",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "芒果 ai 推出 80 元包月 800 刀的超值套餐，提供极低倍率的中转服务，并推出了企业站点。",
+        "topics": [
+          "定价",
+          "套餐",
+          "订阅",
+          "中转服务"
+        ],
+        "planMentioned": "80元包月800刀套餐",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/201",
+      "analyzedAt": "2026-07-15T08:18:49.701Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
