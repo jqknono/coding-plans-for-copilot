@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-15T10:04:39.657Z",
-  "generatedAtBeijing": "2026年7月15日 18:04:39",
-  "sourceGeneratedAt": "2026-07-15T10:04:17.989Z",
-  "sourceGeneratedAtBeijing": "2026年7月15日 18:04:17",
-  "sourceMetricsGeneratedAt": "2026-07-15T10:04:18.907Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月15日 18:04:18",
+  "generatedAt": "2026-07-16T10:10:36.226Z",
+  "generatedAtBeijing": "2026年7月16日 18:10:36",
+  "sourceGeneratedAt": "2026-07-16T10:10:04.367Z",
+  "sourceGeneratedAtBeijing": "2026年7月16日 18:10:04",
+  "sourceMetricsGeneratedAt": "2026-07-16T10:10:05.444Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月16日 18:10:05",
   "summary": {
     "openrouterProviderCount": 93,
     "metricsProviderCount": 41,
@@ -62,7 +62,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/d434b0e3d46d98ae06837de7ed79be7c.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/c9a46d07c4124d19f1c6ea40d6aa101a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -1134,7 +1134,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $1.40 / $0.26）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $1.00 / $0.17）",
       "blocked": false
     },
     {
