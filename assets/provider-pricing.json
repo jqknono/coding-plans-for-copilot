@@ -1,11 +1,11 @@
 {
-  "generatedAt": "2026-07-15T10:04:17.989Z",
+  "generatedAt": "2026-07-16T04:59:02.208Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/d434b0e3d46d98ae06837de7ed79be7c.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/c9a46d07c4124d19f1c6ea40d6aa101a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -119,9 +119,7 @@
             "跨坐席共享的弹性用量包，当个别坐席用量超出套餐额度时，可从共享用量包中抵扣。每个共享用量包有效期为 1 个月，到期未使用的额度自动清零。持有多个共享用量包时，优先抵扣最近到期的用量包。"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "aliyun-token-plan: fetch failed"
+      ]
     },
     {
       "provider": "baidu-qianfan-ai",
@@ -1634,7 +1632,5 @@
       ]
     }
   ],
-  "failures": [
-    "aliyun-token-plan: fetch failed"
-  ]
+  "failures": []
 }
