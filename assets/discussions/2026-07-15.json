@@ -1,6 +1,6 @@
 {
   "date": "2026-07-15",
-  "generatedAt": "2026-07-15T08:12:27.221Z",
+  "generatedAt": "2026-07-16T08:15:19.743Z",
   "config": {
     "sources": [
       "v2ex",
@@ -24,16 +24,13 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 54,
-    "postsAfterKeywordFilter": 16,
-    "relevantPosts": 3,
-    "discussionsCreated": 3,
+    "totalPostsFetched": 64,
+    "postsAfterKeywordFilter": 20,
+    "relevantPosts": 4,
+    "discussionsCreated": 4,
     "discussionsSkipped": 0,
     "supplierMentions": {
-      "DeepSeek": 1,
-      "OpenAI": 1,
-      "芒果 ai": 1,
-      "Windsurf": 1
+      "Codex": 1
     }
   },
   "posts": [
@@ -127,6 +124,37 @@
       },
       "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/201",
       "analyzedAt": "2026-07-15T08:18:49.701Z"
+    },
+    {
+      "id": "v2ex-1227502",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1227502",
+      "title": "中转稳定运行第 3 个月，专注稳定 coding， Codex api 免费送 30 刀！",
+      "content": "以前累计做了 3 次推广，记录可查 🌈 5 月 19 日第一次推广 🌈 5 月 27 日第二次推广 🌈 6 月 8 日第三次推广 站点介绍(自夸版) 永久 x1 倍率，不论市场价如何波动，已购买的用户绝对不会受影响； 主力提供 GPT 满血模型，致力于服务好 Codex ，不掺水，不映射； 尽力维持 SLA ，曾创造过拉闸日亏损 400r ，用高价 pro 池来兜底运行的案例。 最新价格表 1️⃣ Pro 月卡，约 0.24 元/刀 --- [ 超稳定首选，SLA99.9%以上 ] 原先 pro 号池是自购正价 pro20x ，前后被封了 5 个 1360 元的 apple 订阅，现在号池是某黑 pro 。 2️⃣ Plus 周卡，约 0.15 元/刀 --- [ 主力 Coding plan ，合 0.15 元/刀] 3️⃣ 余额/按量/充值/不限时，约 0.17 元/刀 --- [ 1 元起充，随用随冲 ] 4️⃣ 半价分组，约 0.008 元/刀 --- [ 充值 1 元=5.88 刀，选 0.5x = 11.7 刀] 半价号池模型满血，但响应稍慢，主力为 k12 和号商福",
+      "author": "bingoso",
+      "createdAt": "2026-07-15T08:37:29.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享了一个提供 AI coding 服务的中转站，详细说明了不同定价计划（Pro、Plus、余额等）的费用和特点，并宣布免费赠送 30 刀的 Codex API 积分。",
+        "topics": [
+          "定价",
+          "Codex",
+          "套餐",
+          "免费积分",
+          "中转站"
+        ],
+        "planMentioned": "Pro、Plus、余额/按量/充值",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/204",
+      "analyzedAt": "2026-07-16T08:25:17.936Z"
     }
   ],
   "failures": [

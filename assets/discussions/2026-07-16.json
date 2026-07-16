@@ -1,0 +1,72 @@
+{
+  "date": "2026-07-16",
+  "generatedAt": "2026-07-16T08:15:19.743Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 64,
+    "postsAfterKeywordFilter": 20,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Codex": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1227756",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1227756",
+      "title": "codex 刚刚送了一百美金额度， tibo 真神！",
+      "content": "codex 刚刚送了一百美金额度，tibo 真神！ 吹爆 gpt 。 参加那个活动送的！ 不能不吹",
+      "author": "canyue7897",
+      "createdAt": "2026-07-16T07:23:54.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.95,
+        "summary": "codex 刚刚送了一百美金额度，tibo 真神！ 吹爆 gpt 。 参加那个活动送的！ 不能不吹",
+        "topics": [
+          "免费额度",
+          "活动",
+          "使用体验"
+        ],
+        "planMentioned": "一百美金额度",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/203",
+      "analyzedAt": "2026-07-16T08:25:13.765Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
