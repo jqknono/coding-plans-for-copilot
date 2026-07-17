@@ -1,6 +1,6 @@
 {
   "date": "2026-07-16",
-  "generatedAt": "2026-07-16T08:15:19.743Z",
+  "generatedAt": "2026-07-17T08:11:17.885Z",
   "config": {
     "sources": [
       "v2ex",
@@ -24,13 +24,15 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 64,
-    "postsAfterKeywordFilter": 20,
-    "relevantPosts": 1,
-    "discussionsCreated": 1,
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 21,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
     "discussionsSkipped": 0,
     "supplierMentions": {
-      "Codex": 1
+      "Kimi": 3,
+      "尔信中转站": 1,
+      "DeepSeek": 1
     }
   },
   "posts": [
@@ -62,6 +64,38 @@
       },
       "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/203",
       "analyzedAt": "2026-07-16T08:25:13.765Z"
+    },
+    {
+      "id": "v2ex-1227856",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1227856",
+      "title": "KIMI 的 K3 上线了，但开会员你也用不了满血的",
+      "content": "KIMI 刚刚上线了最新旗舰模型 K3 ，1M 上下文，作为老会员，本来是值得高兴的事情，但官方非要搞小动作，恶心你一下，KIMI 会员分 4 档： 49 每月（ Andante ） 99 每月（ Moderato ） 199 每月（ Allegretto ） 699 每月（ Allegro ） 改动点： 对于 Kimi Code ，K3 的 1M 上下文是 199 每月及以上才可以使用，49 无法使用，99 每月是 256k （图 1 ） 对于 Kimi 客户端，只有 699 每月才能使用 K3 的 1M 上下文（图 2 ） 截图如下：",
+      "author": "SiWXie",
+      "createdAt": "2026-07-16T13:51:58.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Kimi",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "Kimi 刚上线旗舰模型 K3，但不同会员等级对 K3 的 1M 上下文和 Kimi Code 的使用权限有所限制，只有高价套餐才能解锁完整功能，引发老会员不满。",
+        "topics": [
+          "定价",
+          "会员",
+          "Kimi Code",
+          "K3",
+          "上下文",
+          "套餐"
+        ],
+        "planMentioned": "Allegro (699元/月)",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/208",
+      "analyzedAt": "2026-07-17T08:20:19.856Z"
     }
   ],
   "failures": [

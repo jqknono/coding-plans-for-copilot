@@ -1,0 +1,169 @@
+{
+  "date": "2026-07-17",
+  "generatedAt": "2026-07-17T08:11:17.885Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 21,
+    "relevantPosts": 4,
+    "discussionsCreated": 4,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Kimi": 3,
+      "尔信中转站": 1,
+      "DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1228031",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1228031",
+      "title": "kimi k3 买的 199 会员，终于有随便用的感觉了",
+      "content": "怎么用都用不完那种感觉，是 codex 和 claude 给不了的。",
+      "author": "ujujzhaos",
+      "createdAt": "2026-07-17T07:20:56.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Kimi",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "Kimi K3 199元会员体验，感觉随便用不完，优于Codex和Claude。",
+        "topics": [
+          "订阅",
+          "体验",
+          "定价",
+          "功能对比",
+          "使用感受"
+        ],
+        "planMentioned": "Kimi K3",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/205",
+      "analyzedAt": "2026-07-17T08:20:06.723Z"
+    },
+    {
+      "id": "v2ex-1228028",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1228028",
+      "title": "🔥尔信中转站正式运营！🎊 开业专属福利来袭，充多少送多少，开业期间每天大额福利免费 key 🔑",
+      "content": "💎 售后一流，稳定靠谱，价格良心 💎 🔥自建 GPT- 混合 号池 0.08 倍率 🤖 自建 GPT-pro 号池 0.25 倍率 🧠 自建 claude-max 号池 1.2 倍率 🌐 站点链接： aierxin.cc 👥 QQ 群号：726533341 ⚡ 快速入群：点击链接加入群聊 [ Erxin_AI ] ： https://qm.qq.com/q/iaBZNqeh4k ✅ 入群注册 🎉 开业福利，限时抢！ 💰 充多少・送多多 💰 充$10 → 得$20 🎁｜充$20 → 得$40 🎁｜充$50 → 得$100 🎁 ⏰ 先到先得，发完为止！ 📩 充值后，在 QQ 群内联系客服领取赠送额度。 🎰 QQ 群定时发放大额福利 gptkey 。",
+      "author": "beishuihan",
+      "createdAt": "2026-07-17T07:06:25.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "尔信中转站",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.95,
+        "summary": "尔信中转站推出开业福利，提供自建GPT、Claude-max等AI模型节点服务，充值可获赠额度，价格优惠且售后良好。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "福利",
+          "开业",
+          "AI模型"
+        ],
+        "planMentioned": "自建GPT、Claude-max节点服务",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/206",
+      "analyzedAt": "2026-07-17T08:20:11.603Z"
+    },
+    {
+      "id": "v2ex-1228020",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1228020",
+      "title": "做了一个创意画布，可免费比较 fable 5 和 kimi k3",
+      "content": "这两天在打磨一个 AI 创意画布工具，核心想法很简单：一句话需求，交给多个顶级模型同时出方案，结果挂在一张树状画布上，看中哪份就从哪份继续改。🌳 昨天 Kimi K3 发布，好家伙，前端竟然大幅度超越了 Fable 5 ？真的假的？🤯 所以今天赶紧加了一个对比功能，让大家可以免费测试效果： 👉 https://ramify.chatnext.ai/zh-cn/tools/kimi-k3-vs-claude-fable-5/ 我自己先跑了一局，让两边各出三套落地页，结果在这， 不用注册直接看 ： 👀 https://ramify.chatnext.ai/share/project/f5aKzRoidv8qD11eyzS-UNKl 看完我的感受是：K3 没有刷榜，真的超越了 Fable 5 ！⚡ 但是最大的问题就是，它太慢了——一个落地页写了十多分钟 🐢，不过效果确实好，感觉是用时间换质量。 最后再简单说下 ramify 。做这个的原因是，我在 vibe coding 做新产品或者优化老产品的 UI 交互的时候，经常需要让模型自己发散多出几个版本，我从里面挑，然后迭代打磨。但是对",
+      "author": "valuetransfer",
+      "createdAt": "2026-07-17T06:56:58.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.8,
+        "supplier": "Kimi",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "作者开发了一个AI创意画布工具，用于对比Kimi K3和Fable 5的模型效果，并提到Kimi K3效果好但生成速度较慢。",
+        "topics": [
+          "模型对比",
+          "使用体验",
+          "功能介绍",
+          "免费额度"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/207",
+      "analyzedAt": "2026-07-17T08:20:14.870Z"
+    },
+    {
+      "id": "v2ex-1228000",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1228000",
+      "title": "做 DeepSeek Agent 近一个月，同步下 Orca 的进展",
+      "content": "上个月发帖说要做一个 DeepSeek-Native 的 Agent （ Orca ） https://www.v2ex.com/t/1222331 。 差不多块一个月了，来给 V 友们同步下进展： 这一个月 880 多个提交，Rust 从 3.9 万行涨到 18 万行，代码全部是 codex 、claude code 和 orca 自己写的。我的工作只有两件：提需求和定质量门禁。 先说门禁： 2300+ 个测试，其中 20 个契约测试套件，把 agent loop 、审批、provider 、shell 会话、子代理、workflow 这些边界锁死 需求先落 spec 再落 plan 才准动手，目前攒了 25 篇设计、60 篇实施计划 223 篇 release note ，204 篇带可复现的验证命令，有的直接附 TDD 红绿证据 发布链路：fmt / clippy -D warnings / 全量测试 → 四平台构建 → npm staging 冒烟 → 发布 → 发布后从 npm 和 GitHub 拉真实产物装上再跑一遍 → 真实 DeepSeek API 的端到端 gate ",
+      "author": "echoVic",
+      "createdAt": "2026-07-17T06:10:53.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.98,
+        "summary": "开发者分享了使用DeepSeek和Orca构建AI Agent的进展，包括代码增长（18万行）、自动化测试流程、多agent协同基座开发，并强调模型负责代码生成而harness负责验证。",
+        "topics": [
+          "DeepSeek",
+          "Orca",
+          "代码开发",
+          "测试",
+          "自动化",
+          "AI Agent"
+        ],
+        "planMentioned": "Orca",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/209",
+      "analyzedAt": "2026-07-17T08:20:24.845Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
