@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-16T10:10:36.226Z",
-  "generatedAtBeijing": "2026年7月16日 18:10:36",
-  "sourceGeneratedAt": "2026-07-16T10:10:04.367Z",
-  "sourceGeneratedAtBeijing": "2026年7月16日 18:10:04",
-  "sourceMetricsGeneratedAt": "2026-07-16T10:10:05.444Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月16日 18:10:05",
+  "generatedAt": "2026-07-17T09:59:48.277Z",
+  "generatedAtBeijing": "2026年7月17日 17:59:48",
+  "sourceGeneratedAt": "2026-07-17T09:59:17.793Z",
+  "sourceGeneratedAtBeijing": "2026年7月17日 17:59:17",
+  "sourceMetricsGeneratedAt": "2026-07-17T09:59:18.810Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月17日 17:59:18",
   "summary": {
     "openrouterProviderCount": 93,
     "metricsProviderCount": 41,
@@ -62,7 +62,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/c9a46d07c4124d19f1c6ea40d6aa101a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3a1781279ed739b816e1c25f67044455.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-17T05:12:50.481Z",
+  "generatedAt": "2026-07-17T09:59:17.793Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1071,7 +1071,9 @@
             "抢先体验新功能"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "mthreads-coding-plan: page.goto: Timeout 15000ms exceeded. Call log: - navigating to \"https://code.mthreads.com/\", waiting until \"domcontentloaded\""
     },
     {
       "provider": "opencode",
@@ -1632,5 +1634,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "mthreads-coding-plan: page.goto: Timeout 15000ms exceeded.\nCall log:\n  - navigating to \"https://code.mthreads.com/\", waiting until \"domcontentloaded\"\n"
+  ]
 }
