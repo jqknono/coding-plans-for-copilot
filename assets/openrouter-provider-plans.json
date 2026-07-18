@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-17T09:59:48.277Z",
-  "generatedAtBeijing": "2026年7月17日 17:59:48",
-  "sourceGeneratedAt": "2026-07-17T09:59:17.793Z",
-  "sourceGeneratedAtBeijing": "2026年7月17日 17:59:17",
-  "sourceMetricsGeneratedAt": "2026-07-17T09:59:18.810Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月17日 17:59:18",
+  "generatedAt": "2026-07-18T09:27:42.037Z",
+  "generatedAtBeijing": "2026年7月18日 17:27:42",
+  "sourceGeneratedAt": "2026-07-18T09:27:19.176Z",
+  "sourceGeneratedAtBeijing": "2026年7月18日 17:27:19",
+  "sourceMetricsGeneratedAt": "2026-07-18T09:27:20.069Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月18日 17:27:20",
   "summary": {
-    "openrouterProviderCount": 93,
+    "openrouterProviderCount": 94,
     "metricsProviderCount": 41,
     "resolvedMetricsProviderCount": 41,
     "unresolvedMetricsProviderCount": 0,
@@ -1228,6 +1228,15 @@
       "blocked": false
     },
     {
+      "slug": "ionstream",
+      "openrouterName": "Ionstream",
+      "providerId": null,
+      "officialWebsiteUrl": "https://ionstream.ai",
+      "pricingPageUrl": "https://ionstream.ai",
+      "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "mara",
       "openrouterName": "Mara",
       "providerId": null,
@@ -1261,15 +1270,6 @@
       "officialWebsiteUrl": "https://docs.nebius.com",
       "pricingPageUrl": "https://docs.nebius.com",
       "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "nextbit",
-      "openrouterName": "NextBit",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.nextbit256.com",
-      "pricingPageUrl": "https://www.nextbit256.com",
-      "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
       "blocked": false
     },
     {
