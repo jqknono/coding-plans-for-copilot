@@ -1,67 +1,113 @@
 import * as vscode from 'vscode';
-import { LOG_LEVEL_PRIORITY } from '../constants';
 
-type LogLevel = 'INFO' | 'WARN' | 'ERROR' | 'DEBUG';
-type ConfiguredLogLevel = 'debug' | 'info' | 'warn' | 'error';
+type LogLevel = 'trace' | 'debug' | 'info' | 'warn' | 'error';
+type ConfiguredLogLevel = LogLevel | 'off';
 
-class OutputChannelLogger implements vscode.Disposable {
-  private channel: vscode.OutputChannel | undefined;
+const LOG_LEVEL_SETTING = 'coding-plans.logLevel';
+const SET_DEFAULT_LOG_LEVEL_COMMAND = 'workbench.action.setDefaultLogLevel';
+
+const LOG_LEVEL_VALUES: Record<LogLevel, vscode.LogLevel> = {
+  trace: vscode.LogLevel.Trace,
+  debug: vscode.LogLevel.Debug,
+  info: vscode.LogLevel.Info,
+  warn: vscode.LogLevel.Warning,
+  error: vscode.LogLevel.Error,
+};
+
+class LogOutputChannelLogger implements vscode.Disposable {
+  private channel: vscode.LogOutputChannel | undefined;
+  private configurationListener: vscode.Disposable | undefined;
+  private extensionId: string | undefined;
 
   constructor(private readonly channelName: string) {}
 
+  async configureNativeLogLevel(extensionId: string): Promise<void> {
+    this.extensionId = extensionId;
+    this.getChannel();
+    if (!this.configurationListener) {
+      this.configurationListener = vscode.workspace.onDidChangeConfiguration((event) => {
+        if (event.affectsConfiguration(LOG_LEVEL_SETTING)) {
+          void this.applyConfiguredNativeLogLevel();
+        }
+      });
+    }
+    await this.applyConfiguredNativeLogLevel();
+  }
+
+  trace(message: string, data?: unknown): void {
+    this.write('trace', message, data);
+  }
+
   info(message: string, data?: unknown): void {
-    this.write('INFO', message, data);
+    this.write('info', message, data);
   }
 
   warn(message: string, data?: unknown): void {
-    this.write('WARN', message, data);
+    this.write('warn', message, data);
   }
 
   error(message: string, data?: unknown): void {
-    this.write('ERROR', message, data);
+    this.write('error', message, data);
   }
 
   debug(message: string, data?: unknown): void {
-    this.write('DEBUG', message, data);
+    this.write('debug', message, data);
+  }
+
+  isTraceEnabled(): boolean {
+    return this.isLevelEnabled('trace');
   }
 
   dispose(): void {
+    this.configurationListener?.dispose();
+    this.configurationListener = undefined;
+    this.extensionId = undefined;
     this.channel?.dispose();
     this.channel = undefined;
   }
 
-  private getChannel(): vscode.OutputChannel {
+  private getChannel(): vscode.LogOutputChannel {
     if (!this.channel) {
-      this.channel = vscode.window.createOutputChannel(this.channelName);
+      this.channel = vscode.window.createOutputChannel(this.channelName, { log: true });
     }
     return this.channel;
   }
 
   private write(level: LogLevel, message: string, data?: unknown): void {
-    if (!this.shouldWrite(level)) {
+    if (!this.isLevelEnabled(level)) {
       return;
     }
 
-    const timestamp = new Date().toISOString();
     const suffix = data === undefined ? '' : ` ${this.stringify(data)}`;
-    this.getChannel().appendLine(`${timestamp} [${level}] ${message}${suffix}`);
+    this.getChannel()[level](`${message}${suffix}`);
   }
 
-  private shouldWrite(level: LogLevel): boolean {
-    return LOG_LEVEL_PRIORITY[level] >= LOG_LEVEL_PRIORITY[this.getConfiguredLogLevel().toUpperCase() as LogLevel];
+  private isLevelEnabled(level: LogLevel): boolean {
+    const channelLogLevel = this.getChannel().logLevel;
+    return channelLogLevel !== vscode.LogLevel.Off && channelLogLevel <= LOG_LEVEL_VALUES[level];
   }
 
-  private getConfiguredLogLevel(): ConfiguredLogLevel {
-    const configured = vscode.workspace.getConfiguration('coding-plans').get<string>('logLevel', 'info');
-    switch (configured) {
-      case 'debug':
-      case 'info':
-      case 'warn':
-      case 'error':
-        return configured;
-      default:
-        return 'info';
+  private async applyConfiguredNativeLogLevel(): Promise<void> {
+    if (!this.extensionId) {
+      return;
     }
+
+    const configured = vscode.workspace
+      .getConfiguration('coding-plans')
+      .get<ConfiguredLogLevel>('logLevel', 'info');
+    const logLevel = this.toNativeLogLevel(configured);
+    try {
+      await vscode.commands.executeCommand(SET_DEFAULT_LOG_LEVEL_COMMAND, logLevel, this.extensionId);
+    } catch (error) {
+      this.getChannel().warn(`Failed to apply configured native log level: ${this.stringify(error)}`);
+    }
+  }
+
+  private toNativeLogLevel(level: ConfiguredLogLevel): vscode.LogLevel {
+    if (level === 'off') {
+      return vscode.LogLevel.Off;
+    }
+    return LOG_LEVEL_VALUES[level] ?? vscode.LogLevel.Info;
   }
 
   private stringify(data: unknown): string {
@@ -86,4 +132,4 @@ class OutputChannelLogger implements vscode.Disposable {
   }
 }
 
-export const logger = new OutputChannelLogger('Coding Plans');
+export const logger = new LogOutputChannelLogger('Coding Plans');

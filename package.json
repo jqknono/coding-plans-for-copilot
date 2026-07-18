@@ -200,18 +200,23 @@
                 },
                 "coding-plans.logLevel": {
                     "type": "string",
+                    "scope": "application",
                     "default": "info",
                     "enum": [
+                        "trace",
                         "debug",
                         "info",
                         "warn",
-                        "error"
+                        "error",
+                        "off"
                     ],
                     "enumDescriptions": [
-                        "Show all logs, including request tracing details.",
+                        "Show all logs, including request message content previews.",
+                        "Show detailed diagnostics without request message content previews.",
                         "Show informational logs, warnings, and errors.",
                         "Show only warnings and errors.",
-                        "Show only errors."
+                        "Show only errors.",
+                        "Disable Coding Plans logs."
                     ],
                     "description": "%configuration.coding-plans.logLevel.description%",
                     "order": 6

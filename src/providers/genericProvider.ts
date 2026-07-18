@@ -256,6 +256,7 @@ class AsyncIterableQueue<T> implements AsyncIterable<T> {
 }
 
 const LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX = '[coding-plans][language-models-discovery]';
+const REQUEST_MESSAGE_CONTENT_LOG_LIMIT = 1000;
 
 export class GenericLanguageModel extends BaseLanguageModel {
   constructor(provider: BaseAIProvider, modelInfo: AIModelConfig) {
@@ -1371,6 +1372,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const providerMessages = wrappingEnabled
       ? this.hydrateOpenAIChatReasoningContent(this.convertMessages(request.messages))
       : this.convertMessages(request.messages);
+    this.logRequestMessageContentPreviews(trace, providerMessages);
     const messages = toOpenAIChatMessages(providerMessages);
     const supportsToolCalling = !!request.capabilities.toolCalling;
     const sampling = this.resolveSamplingOptions(request, vendor, modelName);
@@ -1607,6 +1609,7 @@ export class GenericAIProvider extends BaseAIProvider {
     token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
+    this.logRequestMessageContentPreviews(trace, providerMessages);
     const sampling = this.resolveSamplingOptions(request, vendor, modelName);
     const wrappingEnabled = this.isExtraRequestWrappingEnabled(vendor);
     const reasoningOptions = this.buildOpenAIResponsesReasoningOptions(request);
@@ -1844,6 +1847,7 @@ export class GenericAIProvider extends BaseAIProvider {
     token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
+    this.logRequestMessageContentPreviews(trace, providerMessages);
     const sampling = this.resolveSamplingOptions(request, vendor, modelName);
     const wrappingEnabled = this.isExtraRequestWrappingEnabled(vendor);
     const thinkingOptions = this.buildAnthropicThinkingOptions(request);
@@ -2664,6 +2668,45 @@ export class GenericAIProvider extends BaseAIProvider {
       })),
       toolCallId: message.tool_call_id,
     }));
+  }
+
+  private logRequestMessageContentPreviews(trace: RequestTraceContext, messages: ChatMessage[]): void {
+    if (!logger.isTraceEnabled()) {
+      return;
+    }
+
+    const previews: Array<Record<string, unknown>> = [];
+    for (const [index, message] of messages.entries()) {
+      if (message.role !== 'system' && message.role !== 'user' && message.role !== 'assistant') {
+        continue;
+      }
+
+      const content = this.readProviderMessageTextContent(message.content);
+      previews.push({
+        index,
+        role: message.role,
+        contentLength: content.length,
+        contentPreview: content.slice(0, REQUEST_MESSAGE_CONTENT_LOG_LIMIT),
+        truncated: content.length > REQUEST_MESSAGE_CONTENT_LOG_LIMIT,
+      });
+    }
+
+    logger.trace('Language model request message content previews', {
+      ...trace,
+      contentLimit: REQUEST_MESSAGE_CONTENT_LOG_LIMIT,
+      messages: previews,
+    });
+  }
+
+  private readProviderMessageTextContent(content: ChatMessage['content']): string {
+    if (typeof content === 'string') {
+      return content;
+    }
+
+    return content
+      .filter((part) => part.type === 'text')
+      .map((part) => part.text)
+      .join('');
   }
 
   private summarizeOpenAIResponsesInput(input: OpenAIResponsesInputItem[]): Array<Record<string, unknown>> {

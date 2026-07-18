@@ -154,9 +154,11 @@ function createVscodeMock() {
   const shownInputBoxes: unknown[] = [];
   const executedCommands: Array<{ command: string; args: unknown[] }> = [];
   const registeredCommands = new Map<string, (...args: unknown[]) => unknown>();
+  const outputTraceMessages: string[] = [];
   const nextQuickPickSelections: unknown[] = [];
   const nextInputBoxValues: Array<string | undefined> = [];
   let nextWarningMessageSelection: unknown;
+  let outputChannelLogLevel = 3;
 
   class FakeLanguageModelTextPart {
     constructor(public readonly value: string) {}
@@ -248,6 +250,14 @@ function createVscodeMock() {
       User: 1,
       Assistant: 2,
     },
+    LogLevel: {
+      Off: 0,
+      Trace: 1,
+      Debug: 2,
+      Info: 3,
+      Warning: 4,
+      Error: 5,
+    },
     ChatRequestTurn: FakeChatRequestTurn,
     ChatResponseTurn: FakeChatResponseTurn,
     ChatResponseMarkdownPart: FakeChatResponseMarkdownPart,
@@ -258,9 +268,25 @@ function createVscodeMock() {
       },
     },
     window: {
-      createOutputChannel() {
+      createOutputChannel(_name: string, options?: { log?: boolean }) {
+        assert.equal(options?.log, true);
         return {
-          appendLine(): void {
+          get logLevel(): number {
+            return outputChannelLogLevel;
+          },
+          trace(message: string): void {
+            outputTraceMessages.push(message);
+          },
+          debug(): void {
+            return undefined;
+          },
+          info(): void {
+            return undefined;
+          },
+          warn(): void {
+            return undefined;
+          },
+          error(): void {
             return undefined;
           },
           dispose(): void {
@@ -327,6 +353,10 @@ function createVscodeMock() {
       shownInputBoxes,
       executedCommands,
       registeredCommands,
+      outputTraceMessages,
+      setOutputChannelLogLevel(logLevel: number): void {
+        outputChannelLogLevel = logLevel;
+      },
       setNextWarningMessageSelection(selection: unknown): void {
         nextWarningMessageSelection = selection;
       },
@@ -1894,6 +1924,126 @@ async function runGenericProviderContextSizeTests(
     defaultEditToolProvider.dispose();
     defaultEditToolConfigStore.dispose();
   }
+}
+
+function runGenericProviderRequestContentLoggingTests(genericProviderModule: GenericProviderModule): void {
+  const vscodeMock = require('vscode') as {
+    LogLevel: { Trace: number; Debug: number; Info: number };
+    testState: {
+      outputTraceMessages: string[];
+      setOutputChannelLogLevel(logLevel: number): void;
+    };
+  };
+  const { GenericAIProvider } = genericProviderModule;
+  const provider = new GenericAIProvider(createExtensionContext() as never, {
+    getVendors(): VendorRecord[] {
+      return [];
+    },
+    onDidChange(): FakeDisposable {
+      return new FakeDisposable();
+    },
+  } as never) as unknown as {
+    logRequestMessageContentPreviews(
+      trace: {
+        traceId: string;
+        vendorName: string;
+        modelId: string;
+        modelName: string;
+        protocol: 'openai-chat';
+      },
+      messages: Array<{ role: 'system' | 'user' | 'assistant' | 'tool'; content: string }>,
+    ): void;
+    dispose(): void;
+  };
+  const logPrefix = 'Language model request message content previews ';
+  const longSystemContent = 's'.repeat(1200);
+  const trace = {
+    traceId: 'trace_content_preview',
+    vendorName: 'Vendor',
+    modelId: 'Vendor/coder',
+    modelName: 'coder',
+    protocol: 'openai-chat' as const,
+  };
+  const messages = [
+    { role: 'system' as const, content: longSystemContent },
+    { role: 'user' as const, content: 'user prompt' },
+    { role: 'assistant' as const, content: 'assistant reply' },
+    { role: 'tool' as const, content: 'tool output must not be logged' },
+  ];
+
+  try {
+    vscodeMock.testState.outputTraceMessages.length = 0;
+    vscodeMock.testState.setOutputChannelLogLevel(vscodeMock.LogLevel.Debug);
+    provider.logRequestMessageContentPreviews(trace, messages);
+    assert.equal(vscodeMock.testState.outputTraceMessages.length, 0);
+
+    vscodeMock.testState.setOutputChannelLogLevel(vscodeMock.LogLevel.Trace);
+    provider.logRequestMessageContentPreviews(trace, messages);
+    assert.equal(vscodeMock.testState.outputTraceMessages.length, 1);
+    const logMessage = vscodeMock.testState.outputTraceMessages[0] ?? '';
+    assert.ok(logMessage.startsWith(logPrefix));
+    const payload = JSON.parse(logMessage.slice(logPrefix.length)) as {
+      contentLimit: number;
+      messages: Array<{
+        role: string;
+        contentLength: number;
+        contentPreview: string;
+        truncated: boolean;
+      }>;
+    };
+    assert.equal(payload.contentLimit, 1000);
+    assert.deepEqual(
+      payload.messages.map((message) => message.role),
+      ['system', 'user', 'assistant'],
+    );
+    assert.equal(payload.messages[0]?.contentLength, 1200);
+    assert.equal(payload.messages[0]?.contentPreview, 's'.repeat(1000));
+    assert.equal(payload.messages[0]?.truncated, true);
+    assert.equal(payload.messages[1]?.contentPreview, 'user prompt');
+    assert.equal(payload.messages[1]?.truncated, false);
+    assert.equal(payload.messages[2]?.contentPreview, 'assistant reply');
+    assert.ok(!logMessage.includes('tool output must not be logged'));
+    console.log('PASS 仅 Trace 日志记录 system/user/assistant content 前 1000 个字符并排除 tool content');
+  } finally {
+    vscodeMock.testState.setOutputChannelLogLevel(vscodeMock.LogLevel.Info);
+    provider.dispose();
+  }
+}
+
+async function runNativeLogLevelConfigurationTests(): Promise<void> {
+  const vscodeMock = require('vscode') as {
+    ConfigurationTarget: { Global: number };
+    LogLevel: { Trace: number; Off: number };
+    workspace: {
+      getConfiguration(section: string): {
+        update(key: string, value: unknown, target: unknown): Promise<void>;
+      };
+    };
+    testState: {
+      executedCommands: Array<{ command: string; args: unknown[] }>;
+    };
+  };
+  const { logger: outputLogger } = require('../logging/outputChannelLogger') as typeof import('../logging/outputChannelLogger');
+  const extensionId = 'techfetch-dev.coding-plans-for-copilot';
+  activeState = createState([], { logLevel: 'trace' });
+  vscodeMock.testState.executedCommands.length = 0;
+
+  await outputLogger.configureNativeLogLevel(extensionId);
+  assert.deepEqual(vscodeMock.testState.executedCommands.at(-1), {
+    command: 'workbench.action.setDefaultLogLevel',
+    args: [vscodeMock.LogLevel.Trace, extensionId],
+  });
+
+  await vscodeMock.workspace
+    .getConfiguration('coding-plans')
+    .update('logLevel', 'off', vscodeMock.ConfigurationTarget.Global);
+  await new Promise((resolve) => setImmediate(resolve));
+  assert.deepEqual(vscodeMock.testState.executedCommands.at(-1), {
+    command: 'workbench.action.setDefaultLogLevel',
+    args: [vscodeMock.LogLevel.Off, extensionId],
+  });
+  activeState = createState([]);
+  console.log('PASS coding-plans.logLevel 会同步到 VS Code 原生扩展日志等级');
 }
 
 async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalogModule): Promise<void> {
@@ -6284,26 +6434,63 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   console.log('PASS openai-chat 响应中的 cache_control 非文本块不会泄漏到最终文本');
 
   const responsesState = createOpenAIResponsesStreamState();
+  let generatedResponsesToolCallIds = 0;
+  const generateResponsesToolCallId = () => {
+    generatedResponsesToolCallIds += 1;
+    return `generated_response_call_${generatedResponsesToolCallIds}`;
+  };
   const responsesDelta = applyOpenAIResponsesStreamEvent(
     responsesState,
     'response.output_text.delta',
     {
       delta: 'partial ',
     },
-    () => 'resp_call',
+    generateResponsesToolCallId,
+  );
+  applyOpenAIResponsesStreamEvent(
+    responsesState,
+    'response.output_item.added',
+    {
+      output_index: 0,
+      item: {
+        id: 'item_1',
+        type: 'function_call',
+        call_id: 'resp_call',
+        name: 'lookup',
+        arguments: '',
+      },
+    },
+    generateResponsesToolCallId,
   );
   applyOpenAIResponsesStreamEvent(
     responsesState,
     'response.function_call_arguments.delta',
     {
-      item: {
-        id: 'item_1',
-        call_id: 'resp_call',
-        name: 'lookup',
-      },
+      item_id: 'item_1',
+      output_index: 0,
       delta: '{"id":',
     },
-    () => 'resp_call',
+    generateResponsesToolCallId,
+  );
+  applyOpenAIResponsesStreamEvent(
+    responsesState,
+    'response.function_call_arguments.delta',
+    {
+      item_id: 'item_1',
+      output_index: 0,
+      delta: '42}',
+    },
+    generateResponsesToolCallId,
+  );
+  applyOpenAIResponsesStreamEvent(
+    responsesState,
+    'response.function_call_arguments.done',
+    {
+      item_id: 'item_1',
+      output_index: 0,
+      arguments: '{"id":42}',
+    },
+    generateResponsesToolCallId,
   );
   applyOpenAIResponsesStreamEvent(
     responsesState,
@@ -6317,7 +6504,7 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
         arguments: '{"id":42}',
       },
     },
-    () => 'resp_call',
+    generateResponsesToolCallId,
   );
   applyOpenAIResponsesStreamEvent(
     responsesState,
@@ -6326,6 +6513,15 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
       response: {
         id: 'resp_1',
         output_text: 'partial done',
+        output: [
+          {
+            id: 'item_1',
+            type: 'function_call',
+            call_id: 'resp_call',
+            name: 'lookup',
+            arguments: '{"id":42}',
+          },
+        ],
         usage: {
           input_tokens: 12,
           output_tokens: 5,
@@ -6333,11 +6529,12 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
         },
       },
     },
-    () => 'resp_call',
+    generateResponsesToolCallId,
   );
-  const finalizedResponses = finalizeOpenAIResponsesStreamState(responsesState, () => 'resp_call');
+  const finalizedResponses = finalizeOpenAIResponsesStreamState(responsesState, generateResponsesToolCallId);
   assert.equal(responsesDelta.textDelta, 'partial ');
   assert.equal(finalizedResponses.content, 'partial ');
+  assert.equal(generatedResponsesToolCallIds, 0);
   assert.deepEqual(finalizedResponses.toolCalls, [
     {
       id: 'resp_call',
@@ -6353,6 +6550,163 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
     output_tokens: 5,
     total_tokens: 17,
   });
+  console.log('PASS openai-responses 标准 item_id 参数增量会合并为单个具名工具调用');
+
+  const interleavedResponsesState = createOpenAIResponsesStreamState();
+  let generatedInterleavedToolCallIds = 0;
+  const generateInterleavedToolCallId = () => {
+    generatedInterleavedToolCallIds += 1;
+    return `generated_interleaved_call_${generatedInterleavedToolCallIds}`;
+  };
+  for (const event of [
+    {
+      eventType: 'response.output_item.added',
+      payload: {
+        output_index: 0,
+        item: {
+          id: 'item_a',
+          type: 'function_call',
+          call_id: 'call_a',
+          name: 'read_file',
+          arguments: '',
+        },
+      },
+    },
+    {
+      eventType: 'response.output_item.added',
+      payload: {
+        output_index: 1,
+        item: {
+          id: 'item_b',
+          type: 'function_call',
+          call_id: 'call_b',
+          name: 'search',
+          arguments: '',
+        },
+      },
+    },
+    {
+      eventType: 'response.function_call_arguments.delta',
+      payload: { item_id: 'item_a', output_index: 0, delta: '{"path":"' },
+    },
+    {
+      eventType: 'response.function_call_arguments.delta',
+      payload: { item_id: 'item_b', output_index: 1, delta: '{"query":"' },
+    },
+    {
+      eventType: 'response.function_call_arguments.delta',
+      payload: { item_id: 'item_a', output_index: 0, delta: 'README.md"}' },
+    },
+    {
+      eventType: 'response.function_call_arguments.delta',
+      payload: { item_id: 'item_b', output_index: 1, delta: 'unknown_tool"}' },
+    },
+  ] as const) {
+    applyOpenAIResponsesStreamEvent(
+      interleavedResponsesState,
+      event.eventType,
+      event.payload,
+      generateInterleavedToolCallId,
+    );
+  }
+  const finalizedInterleavedResponses = finalizeOpenAIResponsesStreamState(
+    interleavedResponsesState,
+    generateInterleavedToolCallId,
+  );
+  assert.equal(generatedInterleavedToolCallIds, 0);
+  assert.deepEqual(finalizedInterleavedResponses.toolCalls, [
+    {
+      id: 'call_a',
+      type: 'function',
+      function: {
+        name: 'read_file',
+        arguments: '{"path":"README.md"}',
+      },
+    },
+    {
+      id: 'call_b',
+      type: 'function',
+      function: {
+        name: 'search',
+        arguments: '{"query":"unknown_tool"}',
+      },
+    },
+  ]);
+  console.log('PASS openai-responses 交错到达的多工具参数增量不会串流或拆分');
+
+  const lateMetadataResponsesState = createOpenAIResponsesStreamState();
+  let generatedLateMetadataToolCallIds = 0;
+  const generateLateMetadataToolCallId = () => {
+    generatedLateMetadataToolCallIds += 1;
+    return `generated_late_metadata_call_${generatedLateMetadataToolCallIds}`;
+  };
+  applyOpenAIResponsesStreamEvent(
+    lateMetadataResponsesState,
+    'response.function_call_arguments.delta',
+    {
+      item_id: 'item_late',
+      output_index: 2,
+      delta: '{"path":',
+    },
+    generateLateMetadataToolCallId,
+  );
+  applyOpenAIResponsesStreamEvent(
+    lateMetadataResponsesState,
+    'response.output_item.added',
+    {
+      output_index: 2,
+      item: {
+        id: 'item_late',
+        type: 'function_call',
+        call_id: 'call_late',
+        name: 'open_file',
+        arguments: '',
+      },
+    },
+    generateLateMetadataToolCallId,
+  );
+  applyOpenAIResponsesStreamEvent(
+    lateMetadataResponsesState,
+    'response.function_call_arguments.delta',
+    {
+      item_id: 'item_late',
+      output_index: 2,
+      delta: '"DEV.md"}',
+    },
+    generateLateMetadataToolCallId,
+  );
+  applyOpenAIResponsesStreamEvent(
+    lateMetadataResponsesState,
+    'response.output_item.done',
+    {
+      output_index: 2,
+      item: {
+        id: 'item_late',
+        type: 'function_call',
+        call_id: 'call_late',
+        name: 'open_file',
+        arguments: '',
+      },
+    },
+    generateLateMetadataToolCallId,
+  );
+  const finalizedLateMetadataResponses = finalizeOpenAIResponsesStreamState(
+    lateMetadataResponsesState,
+    generateLateMetadataToolCallId,
+  );
+  assert.equal(generatedLateMetadataToolCallIds, 0);
+  assert.equal(lateMetadataResponsesState.toolCalls.size, 1);
+  assert.deepEqual(finalizedLateMetadataResponses.toolCalls, [
+    {
+      id: 'call_late',
+      type: 'function',
+      function: {
+        name: 'open_file',
+        arguments: '{"path":"DEV.md"}',
+      },
+    },
+  ]);
+  console.log('PASS openai-responses 工具元数据晚于参数增量到达时仍会合并并采用 call_id');
   console.log('PASS openai-responses 流式事件可正确累积文本与工具调用');
 
   const anthropicNormalized = toAnthropicMessages(
@@ -8432,6 +8786,7 @@ async function main(): Promise<void> {
     const commitMessageGeneratorModule = require('../commitMessageGenerator') as CommitMessageGeneratorModule;
     const extensionModule = require('../extension') as ExtensionModule;
     const i18nModule = require('../i18n/i18n') as I18nModule;
+    await runNativeLogLevelConfigurationTests();
     for (const testCase of testCases) {
       await runTestCase(ConfigStore, testCase);
     }
@@ -8439,6 +8794,7 @@ async function main(): Promise<void> {
     await runConfigStoreVendorApiKeySecretStorageTests(ConfigStore);
     runTokenWindowResolutionTests(baseProviderModule);
     await runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
+    runGenericProviderRequestContentLoggingTests(genericProviderModule);
     await runModelsDevCatalogTests(modelsDevCatalogModule);
     runGenericProviderDiscoveryMergeTests();
     await runGenericProviderModelEnabledTests(ConfigStore, genericProviderModule);

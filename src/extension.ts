@@ -488,6 +488,7 @@ export async function manageVendorConfiguration(
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
   await initI18n();
   context.subscriptions.push(logger);
+  await logger.configureNativeLogLevel(context.extension.id);
   logger.info(getMessage('extensionActivated'));
   logger.info(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} activation environment`, {
     vscodeVersion: vscode.version,

@@ -177,7 +177,7 @@ npm run test:pages
 - 配置入口优先使用 `Coding Plans: Manage Vendor Configuration`。该命令从 `coding-plans.vendors` 动态生成供应商 QuickPick，选择供应商后可设置 API Key、刷新模型或打开供应商设置。
 - API Key 推荐通过 VS Code Secret Storage 保存；`coding-plans.vendors[].apiKey` 作为已废弃字段保留，非空时优先于 Secret Storage 生效。若当前供应商没有密钥，会按相同 `baseUrl` 从其它 `vendors[].apiKey` 兜底读取。
 - VS Code 1.120 起按公开 `LanguageModelChatProvider` 接口直接枚举 provider 模型；当前实现通过 `languageModelChatProviders` contribution 声明 vendor，并在运行时注册 `registerLanguageModelChatProvider('coding-plans', adapter)`，不依赖 `managementCommand`。
-- 调试请求链路时，可通过 `coding-plans.logLevel` 控制输出面板日志级别；需要完整追踪时切到 `debug`，日常建议保持 `info`。
+- 调试请求链路时，通过 `coding-plans.logLevel` 设置 `Coding Plans` 原生输出通道等级，也可在输出面板使用 Set Log Level 临时调整。日常建议保持 `Info`，详细诊断使用 `Debug`；只有 `Trace` 才会按消息记录 system/user/assistant 文本的前 1000 个字符（不记录 tool 内容和图片数据），日志可能包含敏感上下文。
 - `coding-plans.vendors[].defaultApiStyle` 用于声明供应商默认协议风格，模型也可以通过 `coding-plans.vendors[].models[].apiStyle` 单独覆盖：
   - `openai-chat`：请求 `baseUrl + /chat/completions`
   - `openai-responses`：请求 `baseUrl + /responses`

@@ -132,6 +132,7 @@ export interface OpenAIResponsesRequest {
 }
 
 interface OpenAIResponsesFunctionCallItem {
+  id?: string;
   type: 'function_call';
   call_id?: string;
   name?: string;
@@ -308,6 +309,11 @@ export interface OpenAIChatStreamChunk {
 export interface OpenAIResponsesStreamEvent {
   type?: string;
   response?: OpenAIResponsesResponse;
+  item_id?: string;
+  output_index?: number;
+  call_id?: string;
+  name?: string;
+  arguments?: string;
   item?: {
     id?: string;
     type?: string;
@@ -363,20 +369,26 @@ export interface OpenAIChatStreamState {
   >;
 }
 
+interface OpenAIResponsesStreamToolCall {
+  id: string;
+  callId?: string;
+  itemId?: string;
+  name?: string;
+  arguments: string;
+  argumentsComplete: boolean;
+  order: number;
+}
+
 export interface OpenAIResponsesStreamState {
   content: string;
   reasoningContent: string;
   responseId?: string;
   usage?: OpenAIResponsesResponse['usage'];
   finalResponse?: OpenAIResponsesResponse;
-  toolCalls: Map<
-    string,
-    {
-      id: string;
-      name?: string;
-      arguments: string;
-    }
-  >;
+  toolCalls: Map<string, OpenAIResponsesStreamToolCall>;
+  toolCallAliases: Map<string, string>;
+  nextToolCallOrder: number;
+  lastToolCallKey?: string;
 }
 
 export interface AnthropicStreamState {
@@ -597,7 +609,136 @@ export function createOpenAIResponsesStreamState(): OpenAIResponsesStreamState {
     content: '',
     reasoningContent: '',
     toolCalls: new Map(),
+    toolCallAliases: new Map(),
+    nextToolCallOrder: 0,
   };
+}
+
+function readNonEmptyStreamIdentifier(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+}
+
+function buildOpenAIResponsesToolCallAliases(
+  callId: string | undefined,
+  itemId: string | undefined,
+  outputIndex: number | undefined,
+): string[] {
+  return [
+    callId ? `call:${callId}` : undefined,
+    itemId ? `item:${itemId}` : undefined,
+    outputIndex !== undefined ? `output:${outputIndex}` : undefined,
+  ].filter((alias): alias is string => alias !== undefined);
+}
+
+function mergeOpenAIResponsesToolCalls(
+  state: OpenAIResponsesStreamState,
+  primaryKey: string,
+  secondaryKey: string,
+): void {
+  if (primaryKey === secondaryKey) {
+    return;
+  }
+
+  const primary = state.toolCalls.get(primaryKey);
+  const secondary = state.toolCalls.get(secondaryKey);
+  if (!primary || !secondary) {
+    return;
+  }
+
+  primary.callId ??= secondary.callId;
+  primary.itemId ??= secondary.itemId;
+  primary.name ??= secondary.name;
+  if (secondary.argumentsComplete && (!primary.argumentsComplete || secondary.arguments.length >= primary.arguments.length)) {
+    primary.arguments = secondary.arguments;
+    primary.argumentsComplete = true;
+  } else if (!primary.argumentsComplete && !secondary.argumentsComplete && secondary.arguments.length > 0) {
+    primary.arguments += secondary.arguments;
+  }
+  primary.order = Math.min(primary.order, secondary.order);
+
+  state.toolCalls.delete(secondaryKey);
+  for (const [alias, key] of state.toolCallAliases) {
+    if (key === secondaryKey) {
+      state.toolCallAliases.set(alias, primaryKey);
+    }
+  }
+  if (state.lastToolCallKey === secondaryKey) {
+    state.lastToolCallKey = primaryKey;
+  }
+}
+
+function resolveOpenAIResponsesToolCall(
+  state: OpenAIResponsesStreamState,
+  payload: OpenAIResponsesStreamEvent,
+  generateToolCallId: GenerateToolCallId,
+  fallbackOutputIndex?: number,
+): OpenAIResponsesStreamToolCall {
+  const callId = readNonEmptyStreamIdentifier(payload.call_id) ?? readNonEmptyStreamIdentifier(payload.item?.call_id);
+  const itemId = readNonEmptyStreamIdentifier(payload.item_id) ?? readNonEmptyStreamIdentifier(payload.item?.id);
+  const outputIndex =
+    typeof payload.output_index === 'number' && Number.isInteger(payload.output_index)
+      ? payload.output_index
+      : fallbackOutputIndex;
+  const aliases = buildOpenAIResponsesToolCallAliases(callId, itemId, outputIndex);
+  const matchingKeys = [...new Set(aliases.map((alias) => state.toolCallAliases.get(alias)).filter(Boolean))] as string[];
+  matchingKeys.sort(
+    (left, right) =>
+      (state.toolCalls.get(left)?.order ?? Number.MAX_SAFE_INTEGER) -
+      (state.toolCalls.get(right)?.order ?? Number.MAX_SAFE_INTEGER),
+  );
+
+  let toolCallKey = matchingKeys[0];
+  if (!toolCallKey && aliases.length === 0 && state.lastToolCallKey && state.toolCalls.has(state.lastToolCallKey)) {
+    toolCallKey = state.lastToolCallKey;
+  }
+
+  if (!toolCallKey) {
+    const toolCallId = callId ?? itemId ?? generateToolCallId();
+    toolCallKey = aliases[0] ?? `generated:${toolCallId}`;
+    state.toolCalls.set(toolCallKey, {
+      id: toolCallId,
+      callId,
+      itemId,
+      arguments: '',
+      argumentsComplete: false,
+      order: state.nextToolCallOrder,
+    });
+    state.nextToolCallOrder += 1;
+  }
+
+  for (const secondaryKey of matchingKeys.slice(1)) {
+    mergeOpenAIResponsesToolCalls(state, toolCallKey, secondaryKey);
+  }
+
+  const toolCall = state.toolCalls.get(toolCallKey);
+  if (!toolCall) {
+    throw new Error('Failed to resolve OpenAI Responses tool call stream state.');
+  }
+
+  toolCall.callId = callId ?? toolCall.callId;
+  toolCall.itemId = itemId ?? toolCall.itemId;
+  for (const alias of aliases) {
+    state.toolCallAliases.set(alias, toolCallKey);
+  }
+  state.lastToolCallKey = toolCallKey;
+  return toolCall;
+}
+
+function applyCompletedOpenAIResponsesToolCall(
+  toolCall: OpenAIResponsesStreamToolCall,
+  name: unknown,
+  rawArguments: unknown,
+): void {
+  const resolvedName = readNonEmptyStreamIdentifier(name);
+  if (resolvedName) {
+    toolCall.name = resolvedName;
+  }
+  if (typeof rawArguments === 'string') {
+    if (rawArguments.length > 0 || toolCall.arguments.length === 0) {
+      toolCall.arguments = rawArguments;
+    }
+    toolCall.argumentsComplete = true;
+  }
 }
 
 export function applyOpenAIResponsesStreamEvent(
@@ -616,6 +757,29 @@ export function applyOpenAIResponsesStreamEvent(
     }
     if (payload.response.usage) {
       state.usage = payload.response.usage;
+    }
+    for (const [outputIndex, item] of (payload.response.output ?? []).entries()) {
+      if (item.type !== 'function_call') {
+        continue;
+      }
+      const toolCall = resolveOpenAIResponsesToolCall(
+        state,
+        {
+          item_id: item.id,
+          call_id: item.call_id,
+          output_index: outputIndex,
+        },
+        generateToolCallId,
+      );
+      const name = readNonEmptyStreamIdentifier(item.name);
+      if (name) {
+        toolCall.name = name;
+      }
+      if (resolvedEventType === 'response.completed') {
+        applyCompletedOpenAIResponsesToolCall(toolCall, item.name, item.arguments);
+      } else if (typeof item.arguments === 'string' && item.arguments.length > 0 && toolCall.arguments.length === 0) {
+        toolCall.arguments = item.arguments;
+      }
     }
   }
   if (payload.usage) {
@@ -648,29 +812,39 @@ export function applyOpenAIResponsesStreamEvent(
   }
 
   if (resolvedEventType === 'response.function_call_arguments.delta') {
-    const toolId = payload.item?.call_id || payload.item?.id || generateToolCallId();
-    const existing = state.toolCalls.get(toolId) ?? { id: toolId, arguments: '' };
-    if (typeof payload.item?.name === 'string' && payload.item.name.trim().length > 0) {
-      existing.name = payload.item.name;
+    const toolCall = resolveOpenAIResponsesToolCall(state, payload, generateToolCallId);
+    const name = readNonEmptyStreamIdentifier(payload.name) ?? readNonEmptyStreamIdentifier(payload.item?.name);
+    if (name) {
+      toolCall.name = name;
     }
     if (typeof payload.delta === 'string' && payload.delta.length > 0) {
-      existing.arguments += payload.delta;
+      toolCall.arguments += payload.delta;
     }
-    state.toolCalls.set(toolId, existing);
+    return { textDelta };
+  }
+
+  if (resolvedEventType === 'response.function_call_arguments.done') {
+    const toolCall = resolveOpenAIResponsesToolCall(state, payload, generateToolCallId);
+    applyCompletedOpenAIResponsesToolCall(
+      toolCall,
+      payload.name ?? payload.item?.name,
+      payload.arguments ?? payload.item?.arguments,
+    );
     return { textDelta };
   }
 
   if (resolvedEventType === 'response.output_item.done' || resolvedEventType === 'response.output_item.added') {
     if (payload.item?.type === 'function_call') {
-      const toolId = payload.item.call_id || payload.item.id || generateToolCallId();
-      const existing = state.toolCalls.get(toolId) ?? { id: toolId, arguments: '' };
-      if (typeof payload.item.name === 'string' && payload.item.name.trim().length > 0) {
-        existing.name = payload.item.name;
+      const toolCall = resolveOpenAIResponsesToolCall(state, payload, generateToolCallId);
+      const name = readNonEmptyStreamIdentifier(payload.item.name);
+      if (name) {
+        toolCall.name = name;
       }
-      if (typeof payload.item.arguments === 'string' && payload.item.arguments.length > 0) {
-        existing.arguments = payload.item.arguments;
+      if (resolvedEventType === 'response.output_item.done') {
+        applyCompletedOpenAIResponsesToolCall(toolCall, payload.item.name, payload.item.arguments);
+      } else if (typeof payload.item.arguments === 'string' && payload.item.arguments.length > 0) {
+        toolCall.arguments = payload.item.arguments;
       }
-      state.toolCalls.set(toolId, existing);
       return { textDelta };
     }
 
@@ -703,9 +877,10 @@ export function finalizeOpenAIResponsesStreamState(
   generateToolCallId: GenerateToolCallId,
 ): { content: string; reasoningContent?: string; toolCalls: ChatToolCall[]; usage?: OpenAIResponsesResponse['usage'] } {
   const mergedToolCalls = new Map<string, ChatToolCall>();
-  for (const toolCall of state.toolCalls.values()) {
-    mergedToolCalls.set(toolCall.id, {
-      id: toolCall.id,
+  for (const toolCall of [...state.toolCalls.values()].sort((left, right) => left.order - right.order)) {
+    const toolCallId = toolCall.callId ?? toolCall.itemId ?? toolCall.id;
+    mergedToolCalls.set(toolCallId, {
+      id: toolCallId,
       type: 'function',
       function: {
         name: toolCall.name || 'unknown_tool',
@@ -1125,7 +1300,12 @@ export function parseOpenAIResponsesResponse(
   for (const item of response.output ?? []) {
     if (item.type === 'function_call' && typeof item.name === 'string' && item.name.trim().length > 0) {
       toolCalls.push({
-        id: typeof item.call_id === 'string' && item.call_id.trim().length > 0 ? item.call_id : generateToolCallId(),
+        id:
+          typeof item.call_id === 'string' && item.call_id.trim().length > 0
+            ? item.call_id
+            : typeof item.id === 'string' && item.id.trim().length > 0
+              ? item.id
+              : generateToolCallId(),
         type: 'function',
         function: {
           name: item.name,

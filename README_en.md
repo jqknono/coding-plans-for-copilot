@@ -166,9 +166,11 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 
 ### Configurable Items
 
+`Coding Plans` uses VS Code's native log channel. `coding-plans.logLevel` synchronizes the channel's native level, and Set Log Level in the Output panel can temporarily override it. At `Trace`, the first 1,000 characters of each system/user/assistant message are logged and may contain sensitive context; tool content and image data are excluded from this preview.
+
 | Config Key | Type | Default Value | Description |
 | --- | --- | --- | --- |
-| `coding-plans.logLevel` | `string` | `info` | Log level: `debug` / `info` / `warn` / `error`. |
+| `coding-plans.logLevel` | `string` | `info` | Sets the native channel level: `trace` / `debug` / `info` / `warn` / `error` / `off`; only `trace` logs request message content previews. |
 | `coding-plans.autoRefreshModels` | `boolean` | `true` | Whether settings/API-key changes and empty model-picker queries automatically refresh runtime models and the VS Code model picker. Set to `false` to disable automatic refresh; manual refresh commands still work. |
 | `coding-plans.vendors` | `array` | Built-in vendor templates | Vendor configuration list. |
 | `coding-plans.vendors[].name` | `string` | Required | Vendor unique name. |

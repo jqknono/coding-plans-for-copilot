@@ -163,9 +163,11 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 ### 可配置项
 
+`Coding Plans` 输出使用 VS Code 原生日志通道；`coding-plans.logLevel` 会同步设置该通道的原生日志等级，也可通过输出面板中的 Set Log Level 临时调整。设为 `Trace` 时，请求中的 system/user/assistant 文本会分别记录前 1000 个字符，可能包含敏感上下文；tool 内容和图片数据不会写入该预览。
+
 | 配置键 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `coding-plans.logLevel` | `string` | `info` | 日志级别：`debug` / `info` / `warn` / `error`。 |
+| `coding-plans.logLevel` | `string` | `info` | 设置原生通道等级：`trace` / `debug` / `info` / `warn` / `error` / `off`；只有 `trace` 记录请求消息内容预览。 |
 | `coding-plans.autoRefreshModels` | `boolean` | `true` | 是否允许 settings/API Key 变化和空模型选择器查询自动刷新运行时模型及 VS Code 模型选择器；设为 `false` 时，手动刷新命令仍可用。 |
 | `coding-plans.vendors` | `array` | 内置供应商模板 | 供应商配置列表。 |
 | `coding-plans.vendors[].name` | `string` | 必填 | 供应商唯一名称。 |
