@@ -7,6 +7,7 @@ const path = require('node:path');
 
 const {
   buildCanonicalLabels,
+  splitLabelValues,
   normalizeLabelSegment,
   buildDiscussionBody,
   ensureLabel,
@@ -141,6 +142,45 @@ test('buildCanonicalLabels: handles partial analysis', () => {
   const analysis = { sentiment: 'neutral', language: 'zh' };
   const labels = buildCanonicalLabels(analysis);
   assert.deepEqual(labels.sort(), ['lang:zh', 'sentiment:neutral']);
+});
+
+test('splitLabelValues: splits comma-separated suppliers and Chinese separators', () => {
+  assert.deepEqual(splitLabelValues('Hermes, CodeX, DeepSeekV4'), ['Hermes', 'CodeX', 'DeepSeekV4']);
+  assert.deepEqual(splitLabelValues('智谱，Kimi、DeepSeek'), ['智谱', 'Kimi', 'DeepSeek']);
+  assert.deepEqual(splitLabelValues(['OpenAI', ' Cursor ']), ['OpenAI', 'Cursor']);
+  assert.deepEqual(splitLabelValues(null), []);
+});
+
+test('buildCanonicalLabels: splits multi-supplier strings into separate labels', () => {
+  const labels = buildCanonicalLabels({
+    supplier: 'Hermes, CodeX, DeepSeekV4',
+    sentiment: 'negative',
+    language: 'zh',
+    topics: ['账号管理', 'token 使用'],
+  });
+  assert.deepEqual(labels.sort(), [
+    'lang:zh',
+    'sentiment:negative',
+    'supplier:CodeX',
+    'supplier:DeepSeekV4',
+    'supplier:Hermes',
+    'topic:token-使用',
+    'topic:账号管理',
+  ]);
+  assert.ok(!labels.some((label) => label.includes(',')));
+});
+
+test('buildCanonicalLabels: accepts supplier arrays and slash-separated topics', () => {
+  const labels = buildCanonicalLabels({
+    supplier: ['OpenAI', 'Anthropic'],
+    topics: 'pricing / comparison',
+  });
+  assert.deepEqual(labels.sort(), [
+    'supplier:Anthropic',
+    'supplier:OpenAI',
+    'topic:comparison',
+    'topic:pricing',
+  ]);
 });
 
 // ─── buildDiscussionBody ───

@@ -79,6 +79,7 @@ Rules:
 - Do NOT be fooled by the word "套餐" or "plan" alone — verify the product is an AI coding assistant.
 - relevance is your confidence that this post is about AI coding plans.
 - If no specific supplier is mentioned, set supplier to null.
+- If multiple suppliers are mentioned, put them in one comma-separated string (e.g., "Hermes, CodeX, DeepSeek"). Do not invent a single combined brand name.
 - Be conservative: when in doubt, set isCodingPlan to false and isRelevant to false.
 - topics MUST be in Chinese (e.g., "定价", "套餐对比", "抽奖", "体验卡", "故障排查", "订阅", "激活", "免费额度").
 - summary should be written in the post's original language (Chinese for zh posts, English for en posts).`;

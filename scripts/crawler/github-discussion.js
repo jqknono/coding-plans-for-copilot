@@ -79,6 +79,7 @@ async function findExistingDiscussion(sourceUrl) {
             discussions(first: 5, searchQuery: $query, orderBy: { field: CREATED_AT, direction: DESC }) {
               nodes {
                 id
+                number
                 title
                 url
               }
@@ -244,28 +245,78 @@ async function addLabelsToDiscussion(discussionId, labelIds) {
 // ─── Canonical label helpers ───
 
 /**
- * Normalize a label segment: trim, collapse internal whitespace to single `-`, lowercase.
+ * Normalize a label segment: trim, collapse internal whitespace to single `-`.
  * e.g. "coding plan" → "coding-plan", "GPT Plus" → "GPT-Plus"
  */
 function normalizeLabelSegment(segment) {
-  return segment.trim().replace(/\s+/g, '-');
+  return String(segment || '')
+    .trim()
+    .replace(/\s+/g, '-');
+}
+
+/**
+ * Split multi-value analysis fields into individual segments.
+ * Accepts arrays or comma / Chinese-comma / slash / pipe separated strings.
+ */
+function splitLabelValues(value) {
+  if (value == null) return [];
+  const parts = Array.isArray(value) ? value : String(value).split(/[,，、/|]/);
+  return parts
+    .map((item) => String(item || '').trim())
+    .filter(Boolean);
 }
 
 /**
  * Build canonical label list from analysis.
- * Rules: trim, collapse whitespace to `-`, deduplicate.
+ * Rules: split multi-value supplier/topics, trim, collapse whitespace to `-`, deduplicate.
  */
 function buildCanonicalLabels(analysis) {
   const labels = new Set();
-  if (analysis.supplier) labels.add(`supplier:${normalizeLabelSegment(analysis.supplier)}`);
-  if (analysis.sentiment) labels.add(`sentiment:${analysis.sentiment}`);
-  if (analysis.language) labels.add(`lang:${analysis.language}`);
-  if (Array.isArray(analysis.topics)) {
-    for (const topic of analysis.topics) {
-      labels.add(`topic:${normalizeLabelSegment(topic)}`);
-    }
+  for (const supplier of splitLabelValues(analysis?.supplier)) {
+    labels.add(`supplier:${normalizeLabelSegment(supplier)}`);
+  }
+  if (analysis?.sentiment) labels.add(`sentiment:${analysis.sentiment}`);
+  if (analysis?.language) labels.add(`lang:${analysis.language}`);
+  for (const topic of splitLabelValues(analysis?.topics)) {
+    labels.add(`topic:${normalizeLabelSegment(topic)}`);
   }
   return [...labels];
+}
+
+/**
+ * Ensure labels exist and attach them to a discussion (best-effort).
+ */
+async function ensureAndAddLabels(discussionId, discussionNumber, tags, labelCache = new Map()) {
+  if (!Array.isArray(tags) || tags.length === 0) {
+    return { ensuredTags: [], failedTags: [] };
+  }
+
+  const labelIds = [];
+  const ensuredTags = [];
+  const failedTags = [];
+  for (const tagName of tags) {
+    const labelId = await ensureLabel(labelCache, tagName);
+    if (!labelId) {
+      failedTags.push(tagName);
+      continue;
+    }
+    labelIds.push(labelId);
+    ensuredTags.push(tagName);
+  }
+
+  if (labelIds.length > 0) {
+    await addLabelsToDiscussion(discussionId, labelIds);
+    const target = discussionNumber != null ? `#${discussionNumber}` : discussionId;
+    console.log(`[github] added ${labelIds.length} labels to ${target}: ${ensuredTags.join(', ')}`);
+  }
+  if (failedTags.length > 0) {
+    const target = discussionNumber != null ? `#${discussionNumber}` : discussionId;
+    console.warn(
+      `\x1b[33m⚠️ [github] skipped ${failedTags.length} labels for ${target}: ${failedTags.join(', ')}\x1b[0m`,
+    );
+  }
+
+  return { ensuredTags, failedTags };
 }
 
 // ─── Read-back verification ───
@@ -361,6 +412,16 @@ async function createDiscussionForPost(post, analysis, generatedAt, categories) 
   const existing = await findExistingDiscussion(post.url);
   if (existing) {
     console.log(`[github] discussion already exists for ${post.id}: ${existing.url}`);
+    // Re-apply labels on existing discussions so multi-supplier splits and earlier
+    // best-effort failures can self-heal on subsequent crawls.
+    try {
+      const tags = buildCanonicalLabels(analysis);
+      await ensureAndAddLabels(existing.id, existing.number, tags);
+    } catch (error) {
+      console.warn(
+        `\x1b[33m⚠️ [github] failed to sync labels for existing discussion #${existing.number}: ${error.message}\x1b[0m`,
+      );
+    }
     return existing.url;
   }
 
@@ -396,30 +457,7 @@ async function createDiscussionForPost(post, analysis, generatedAt, categories) 
 
     // Add labels (best-effort: discussion should still be kept if a label fails)
     const tags = buildCanonicalLabels(analysis);
-    if (tags.length > 0) {
-      const labelCache = new Map();
-      const labelIds = [];
-      const ensuredTags = [];
-      const failedTags = [];
-      for (const tagName of tags) {
-        const labelId = await ensureLabel(labelCache, tagName);
-        if (!labelId) {
-          failedTags.push(tagName);
-          continue;
-        }
-        labelIds.push(labelId);
-        ensuredTags.push(tagName);
-      }
-      if (labelIds.length > 0) {
-        await addLabelsToDiscussion(discussion.id, labelIds);
-        console.log(`[github] added ${labelIds.length} labels: ${ensuredTags.join(', ')}`);
-      }
-      if (failedTags.length > 0) {
-        console.warn(
-          `\x1b[33m⚠️ [github] skipped ${failedTags.length} labels for #${discussion.number}: ${failedTags.join(', ')}\x1b[0m`,
-        );
-      }
-    }
+    await ensureAndAddLabels(discussion.id, discussion.number, tags);
 
     // Post-creation read-back verification
     const verified = await verifyDiscussion(discussion.number);
@@ -457,6 +495,7 @@ async function createDiscussionForPost(post, analysis, generatedAt, categories) 
 module.exports = {
   createDiscussionForPost,
   buildCanonicalLabels,
+  splitLabelValues,
   normalizeLabelSegment,
   buildDiscussionBody,
   verifyDiscussion,
@@ -464,6 +503,7 @@ module.exports = {
   getRepoId,
   getDiscussionCategories,
   ensureLabel,
+  ensureAndAddLabels,
   addLabelsToDiscussion,
   labelColor,
   REPO_OWNER,
