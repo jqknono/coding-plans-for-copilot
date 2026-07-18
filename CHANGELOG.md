@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.13.1] - 2026-07-18
+- feat(logging): 优化 Coding Plans 日志系统
+- refactor(crawler): 优化 GitHub 标签缓存与 LinuxDo 数据获取
+- feat(parser): 更新供应商定价解析逻辑
+
 ## [0.13.0] - 2026-07-11
 - Maintenance updates
 
@@ -43,7 +48,3 @@ All notable changes to this project will be documented in this file.
 - feat(core): 支持 multi-find-replace 编辑工具
 - build(config): 配置 editorconfig 与 prettier 相关环境
 - feat(config): 支持 Copilot 风格协议配置与模型参数扩展
-
-## [0.10.2] - 2026-06-09
-- fix(assets): 优化套餐配置信息的文本格式
-- feat(commands): 新增更新模型列表命令
