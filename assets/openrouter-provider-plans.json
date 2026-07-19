@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-07-18T09:27:42.037Z",
-  "generatedAtBeijing": "2026年7月18日 17:27:42",
-  "sourceGeneratedAt": "2026-07-18T09:27:19.176Z",
-  "sourceGeneratedAtBeijing": "2026年7月18日 17:27:19",
-  "sourceMetricsGeneratedAt": "2026-07-18T09:27:20.069Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月18日 17:27:20",
+  "generatedAt": "2026-07-19T09:53:22.696Z",
+  "generatedAtBeijing": "2026年7月19日 17:53:22",
+  "sourceGeneratedAt": "2026-07-19T09:53:04.040Z",
+  "sourceGeneratedAtBeijing": "2026年7月19日 17:53:04",
+  "sourceMetricsGeneratedAt": "2026-07-19T09:53:05.283Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月19日 17:53:05",
   "summary": {
     "openrouterProviderCount": 94,
     "metricsProviderCount": 41,
@@ -975,47 +975,45 @@
       "providerId": null,
       "plans": [
         {
-          "name": "Pro",
+          "name": "官网价格参考",
           "currentPrice": 60,
-          "currentPriceText": "$60/month",
+          "currentPriceText": "$60/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://site.wandb.ai/pricing/",
           "serviceDetails": [
-            "Professionals working to optimize AI applications and models",
-            "All features from Free +",
-            "Unlimited teams for collaboration",
-            "Team-based access controls",
-            "Service Accounts",
-            "Priority email & chat support",
-            "Model seats: up to 10",
-            "Storage: 100 GB/mo",
-            "Weave data ingestion: 1.5 GB/mo"
+            "官网价格页参考，具体权益以官网说明为准"
           ]
         },
         {
-          "name": "Inference add-on",
+          "name": "官网价格参考 2",
           "currentPrice": 5,
           "currentPriceText": "$5/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "W&B pricing comparison table",
+          "notes": null,
           "serviceDetails": [
-            "Run open source AI models. View per model pricing.",
-            "Free credit for a limited time",
-            "Additional inference billed monthly",
-            "Develop GenAI applications",
-            "Monitor and analyze the performance of your GenAI models during development and in production, capturing inputs, outputs, and metadata for each inference.",
-            "Compare different recipes including fine-tuning, RAG, LLMs, and datasets, side-by-side for accuracy, latency, and token usage.",
-            "Monitor the Performance, Cost, and Health of Your LLM Applications."
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        },
+        {
+          "name": "官网价格参考 3",
+          "currentPrice": 10,
+          "currentPriceText": "$10/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
           ]
         }
       ],
       "sourceUrls": [
-        "https://site.wandb.ai/pricing/",
-        "https://site.wandb.ai"
+        "https://site.wandb.ai",
+        "https://site.wandb.ai/pricing/"
       ],
       "pricingPageUrl": "https://site.wandb.ai/pricing/",
       "officialWebsiteUrl": "https://site.wandb.ai",

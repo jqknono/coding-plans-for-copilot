@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-19T05:20:54.610Z",
+  "generatedAt": "2026-07-19T09:53:04.040Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -119,7 +119,9 @@
             "跨坐席共享的弹性用量包，当个别坐席用量超出套餐额度时，可从共享用量包中抵扣。每个共享用量包有效期为 1 个月，到期未使用的额度自动清零。持有多个共享用量包时，优先抵扣最近到期的用量包。"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "aliyun-token-plan: Aliyun Token Plan docs do not expose plan prices"
     },
     {
       "provider": "baidu-qianfan-ai",
@@ -1632,5 +1634,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "aliyun-token-plan: Aliyun Token Plan docs do not expose plan prices"
+  ]
 }
