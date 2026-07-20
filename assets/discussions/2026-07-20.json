@@ -1,0 +1,74 @@
+{
+  "date": "2026-07-20",
+  "generatedAt": "2026-07-20T03:19:09.557Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 60,
+    "postsAfterKeywordFilter": 16,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Euzhi": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1228454",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1228454",
+      "title": "Euzhi API 稳定运行两个多月，新老用户回复 ID 领取 $15 额度",
+      "content": "Euzhi API 中转从开站到现在已经稳定运行两个多月了。 这段时间我们没有做太多宣传，主要精力都放在服务维护和用户体验上。现在站里的用户，很多都是从开站后一直用到现在的老用户，感谢大家长期以来的支持和信任。 这次准备在 V2EX 做一轮新老用户回馈活动。 活动规则 新用户、老用户均可领取 $15 Euzhi 站内额度。 领取方式： 打开 Euzhi API 注册或登录； 在控制台查看自己的用户 ID ； 在本帖回复你的 Euzhi 用户 ID ； 核对后， $15 额度会发放至对应账号。 关于 Euzhi 我们主要做好三件事： 稳定可用 ：自建线路和号池，持续维护服务稳定性； 首字够快 ：针对长上下文场景持续优化； 及时解决问题 ：配置、接入或使用中遇到问题，可以直接反馈处理。 某个工作日 24 小时模型性能探测 目前已支持 GPT 、Codex 系列模型，同时也已接入 Grok 4.5 ，可以通过 OpenAI 兼容格式调用。 API Base URL： https://api.euzhi.com/v1 接入文档： https://api.euzhi.com/docs 分组倍率说",
+      "author": "cxzweb",
+      "createdAt": "2026-07-20T01:09:57.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Euzhi",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "Euzhi API 中转站推出新老用户回馈活动，通过回复 ID 即可领取 $15 额度，并介绍了其提供的不同倍率分组及模型支持情况。",
+        "topics": [
+          "抽奖",
+          "额度领取",
+          "定价",
+          "API中转",
+          "使用体验"
+        ],
+        "planMentioned": "$15 额度",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/218",
+      "analyzedAt": "2026-07-20T03:24:14.979Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
