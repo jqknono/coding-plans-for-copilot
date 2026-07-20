@@ -11,10 +11,16 @@ const {
   normalizeLabelSegment,
   buildDiscussionBody,
   ensureLabel,
+  labelCacheKey,
 } = require('../../scripts/crawler/github-discussion');
 
 const { removeTagLineFromBody } = require('../../scripts/discussions/migrate-discussion-labels');
-const { buildExpectedState } = require('../../scripts/discussions/verify-discussion-labels');
+const {
+  buildExpectedState,
+  escapeWorkflowCommand,
+  verifySingle,
+  writeFailureSummary,
+} = require('../../scripts/discussions/verify-discussion-labels');
 
 const {
   validateAnalysis,
@@ -373,6 +379,12 @@ test('workflow uses publish crawler command', () => {
   assert.match(workflow, /npm run crawler:run:publish/);
 });
 
+test('workflow preserves crawler exit status while teeing logs', () => {
+  const workflow = loadWorkflowText();
+  assert.match(workflow, /Run community crawler[\s\S]*set -o pipefail/);
+  assert.doesNotMatch(workflow, /Run community crawler[\s\S]*set \+e[\s\S]*exit 0/);
+});
+
 test('workflow verifies discussion labels without migration step', () => {
   const workflow = loadWorkflowText();
   assert.doesNotMatch(workflow, /npm run crawler:migrate-discussion-labels/);
@@ -406,6 +418,67 @@ test('buildExpectedState preserves analysis category instead of hard-coding Gene
 
   assert.equal(expected.expectedCategory, '社区资讯');
   assert.deepEqual(expected.labels.sort(), ['lang:zh', 'sentiment:neutral', 'supplier:OpenAI', 'topic:pricing']);
+});
+
+test('workflow command escaping preserves a single safe annotation line', () => {
+  assert.equal(escapeWorkflowCommand('missing: a,b\nnext%'), 'missing%3A a%2Cb%0Anext%25');
+});
+
+test('writeFailureSummary lists discussion links and exact reasons', async () => {
+  const summaryPath = path.join(process.cwd(), `verify-summary-${process.pid}.md`);
+  const previousSummaryPath = process.env.GITHUB_STEP_SUMMARY;
+  try {
+    process.env.GITHUB_STEP_SUMMARY = summaryPath;
+    await writeFailureSummary([{ discussionNumber: 213, reason: 'missing labels: supplier:opencode' }]);
+    const summary = fs.readFileSync(summaryPath, 'utf8');
+    assert.match(summary, /discussions\/213/);
+    assert.match(summary, /missing labels: supplier:opencode/);
+  } finally {
+    if (previousSummaryPath === undefined) {
+      delete process.env.GITHUB_STEP_SUMMARY;
+    } else {
+      process.env.GITHUB_STEP_SUMMARY = previousSummaryPath;
+    }
+    fs.rmSync(summaryPath, { force: true });
+  }
+});
+
+test('verifySingle accepts category slugs and case-insensitive GitHub labels', async () => {
+  const originalFetch = global.fetch;
+  const previousToken = process.env.COMMUNITY_CRAWLER_TOKEN;
+  global.fetch = async () => ({
+    ok: true,
+    json: async () => ({
+      data: {
+        repository: {
+          discussion: {
+            category: { name: 'Announcements', slug: 'announcements' },
+            body: 'Current crawler body',
+            labels: { nodes: [{ name: 'supplier:OpenCode' }] },
+          },
+        },
+      },
+    }),
+  });
+
+  try {
+    process.env.COMMUNITY_CRAWLER_TOKEN = 'test-token';
+    const failures = [];
+    const ok = await verifySingle(
+      213,
+      { expectedCategory: 'announcements', labels: ['supplier:opencode'] },
+      failures,
+    );
+    assert.equal(ok, true);
+    assert.deepEqual(failures, []);
+  } finally {
+    global.fetch = originalFetch;
+    if (previousToken === undefined) {
+      delete process.env.COMMUNITY_CRAWLER_TOKEN;
+    } else {
+      process.env.COMMUNITY_CRAWLER_TOKEN = previousToken;
+    }
+  }
 });
 
 // ─── Linux.do fallback regression ───
@@ -791,6 +864,44 @@ test('ensureLabel pages through more than 100 existing labels', async () => {
     assert.equal(labelId, 'L-huoshan');
     assert.equal(labelListCalls, 2);
     assert.equal(cache.get('supplier:火山引擎'), 'L-huoshan');
+  } finally {
+    global.fetch = originalFetch;
+  }
+});
+
+test('ensureLabel reuses existing labels case-insensitively', async () => {
+  const originalFetch = global.fetch;
+  let createCalls = 0;
+
+  global.fetch = async (_url, options = {}) => {
+    const body = JSON.parse(options.body || '{}');
+    const query = body.query || '';
+    if (query.includes('labels(first: 100')) {
+      return {
+        ok: true,
+        json: async () => ({
+          data: {
+            repository: {
+              labels: {
+                pageInfo: { hasNextPage: false, endCursor: null },
+                nodes: [{ id: 'L-opencode', name: 'supplier:OpenCode' }],
+              },
+            },
+          },
+        }),
+      };
+    }
+    if (query.includes('createLabel')) createCalls += 1;
+    throw new Error(`unexpected GraphQL query: ${query.slice(0, 80)}`);
+  };
+
+  try {
+    process.env.COMMUNITY_CRAWLER_TOKEN = process.env.COMMUNITY_CRAWLER_TOKEN || 'test-token';
+    const cache = new Map();
+    const labelId = await ensureLabel(cache, 'supplier:opencode');
+    assert.equal(labelId, 'L-opencode');
+    assert.equal(createCalls, 0);
+    assert.equal(cache.get(labelCacheKey('supplier:OpenCode')), 'L-opencode');
   } finally {
     global.fetch = originalFetch;
   }

@@ -28,6 +28,43 @@ const {
 
 const DISCUSSIONS_DIR = path.resolve(__dirname, '..', '..', 'assets', 'discussions');
 
+function escapeWorkflowCommand(value) {
+  return String(value || '')
+    .replace(/%/g, '%25')
+    .replace(/\r/g, '%0D')
+    .replace(/\n/g, '%0A')
+    .replace(/:/g, '%3A')
+    .replace(/,/g, '%2C');
+}
+
+function reportFailure(discussionNumber, reason, failures) {
+  failures.push({ discussionNumber, reason });
+  console.error(`[verify] #${discussionNumber}: FAILED — ${reason}`);
+  if (process.env.GITHUB_ACTIONS === 'true') {
+    console.error(
+      `::error title=${escapeWorkflowCommand(`Discussion #${discussionNumber} verification failed`)}::` +
+        escapeWorkflowCommand(reason),
+    );
+  }
+}
+
+async function writeFailureSummary(failures) {
+  const summaryPath = process.env.GITHUB_STEP_SUMMARY;
+  if (!summaryPath || failures.length === 0) return;
+
+  const rows = failures
+    .map(
+      ({ discussionNumber, reason }) =>
+        `| [#${discussionNumber}](https://github.com/${REPO_OWNER}/${REPO_NAME}/discussions/${discussionNumber}) | ${String(reason).replace(/\|/g, '\\|').replace(/\r?\n/g, ' ')} |`,
+    )
+    .join('\n');
+  await fs.appendFile(
+    summaryPath,
+    `## Discussion verification failures\n\n| Discussion | Reason |\n| --- | --- |\n${rows}\n`,
+    'utf8',
+  );
+}
+
 function parseArgs() {
   const args = process.argv.slice(2);
   const discussionArg = args.find((a) => a.startsWith('--discussion='));
@@ -99,24 +136,35 @@ async function fetchAllCrawlerDiscussions() {
   return discussions;
 }
 
-async function verifySingle(discussionNumber, expectedState = null) {
-  const result = await verifyDiscussion(discussionNumber);
-  if (!result) {
-    console.error(`[verify] #${discussionNumber}: FAILED — could not fetch discussion`);
+async function verifySingle(discussionNumber, expectedState = null, failures = []) {
+  let result;
+  try {
+    result = await verifyDiscussion(discussionNumber, { throwOnError: true });
+  } catch (error) {
+    reportFailure(discussionNumber, `could not fetch discussion: ${error.message}`, failures);
     return false;
   }
 
   const errors = [];
 
   // Check category only when we know which category the crawler intended.
-  if (expectedState?.expectedCategory && result.category !== expectedState.expectedCategory) {
-    errors.push(`category: expected "${expectedState.expectedCategory}", got "${result.category}"`);
+  if (
+    expectedState?.expectedCategory &&
+    result.category !== expectedState.expectedCategory &&
+    result.categorySlug !== expectedState.expectedCategory
+  ) {
+    errors.push(
+      `category: expected name or slug "${expectedState.expectedCategory}", ` +
+        `got name "${result.category}" and slug "${result.categorySlug}"`,
+    );
   }
 
   // Check labels
   if (Array.isArray(expectedState?.labels)) {
-    const actualLabelNames = new Set(result.labels.map((l) => l.name));
-    const missing = expectedState.labels.filter((l) => !actualLabelNames.has(l));
+    // GitHub label names are case-insensitive for uniqueness. Match the same way
+    // so an existing supplier:OpenCode label satisfies supplier:opencode.
+    const actualLabelNames = new Set(result.labels.map((l) => l.name.toLocaleLowerCase('en-US')));
+    const missing = expectedState.labels.filter((l) => !actualLabelNames.has(l.toLocaleLowerCase('en-US')));
     if (missing.length > 0) {
       errors.push(`missing labels: ${missing.join(', ')}`);
     }
@@ -134,7 +182,7 @@ async function verifySingle(discussionNumber, expectedState = null) {
     );
     return true;
   } else {
-    console.error(`[verify] #${discussionNumber}: FAILED — ${errors.join('; ')}`);
+    reportFailure(discussionNumber, errors.join('; '), failures);
     return false;
   }
 }
@@ -149,6 +197,7 @@ async function main() {
   }
 
   const { discussionNumber, all: allFlag } = parseArgs();
+  const verificationFailures = [];
 
   // Single discussion mode
   if (discussionNumber) {
@@ -173,7 +222,8 @@ async function main() {
       console.log(`[verify] expected labels for #${discussionNumber}: [${expectedState.labels.join(', ')}]`);
     }
 
-    const ok = await verifySingle(discussionNumber, expectedState);
+    const ok = await verifySingle(discussionNumber, expectedState, verificationFailures);
+    await writeFailureSummary(verificationFailures);
     process.exit(ok ? 0 : 1);
   }
 
@@ -213,7 +263,7 @@ async function main() {
 
   for (const d of discussions) {
     const expected = expectedByNumber.get(d.number) || null;
-    const ok = await verifySingle(d.number, expected);
+    const ok = await verifySingle(d.number, expected, verificationFailures);
     if (ok) {
       passed++;
     } else {
@@ -224,6 +274,7 @@ async function main() {
   console.log(`\n[verify] results: ${passed} passed, ${failed} failed`);
 
   if (failed > 0) {
+    await writeFailureSummary(verificationFailures);
     process.exit(1);
   }
 }
@@ -235,7 +286,15 @@ if (require.main === module) {
   });
 }
 
-module.exports = { verifySingle, parseDiscussionNumber, loadAllDiscussions, buildExpectedState };
+module.exports = {
+  verifySingle,
+  parseDiscussionNumber,
+  loadAllDiscussions,
+  buildExpectedState,
+  escapeWorkflowCommand,
+  reportFailure,
+  writeFailureSummary,
+};
 
 async function loadAllDiscussions() {
   const allPosts = [];

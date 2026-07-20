@@ -7,6 +7,10 @@ const REQUEST_TIMEOUT_MS = 15_000;
 const REPO_OWNER = 'jqknono';
 const REPO_NAME = 'coding-plans-for-copilot';
 
+function labelCacheKey(name) {
+  return String(name || '').toLocaleLowerCase('en-US');
+}
+
 async function graphql(query, variables = {}) {
   const token = process.env.COMMUNITY_CRAWLER_TOKEN;
   if (!token) {
@@ -152,7 +156,7 @@ async function loadAllLabelsIntoCache(labelCache) {
 
     const labels = data.repository.labels;
     for (const label of labels.nodes) {
-      labelCache.set(label.name, label.id);
+      labelCache.set(labelCacheKey(label.name), label.id);
     }
     hasNextPage = Boolean(labels.pageInfo?.hasNextPage);
     cursor = labels.pageInfo?.endCursor || null;
@@ -177,12 +181,13 @@ async function findLabelIdByName(tagName) {
 }
 
 async function ensureLabel(labelCache, tagName) {
-  if (labelCache.has(tagName)) return labelCache.get(tagName);
+  const cacheKey = labelCacheKey(tagName);
+  if (labelCache.has(cacheKey)) return labelCache.get(cacheKey);
 
   // Fetch all existing labels on first miss (repo may have >100 labels).
   if (labelCache.size === 0) {
     await loadAllLabelsIntoCache(labelCache);
-    if (labelCache.has(tagName)) return labelCache.get(tagName);
+    if (labelCache.has(cacheKey)) return labelCache.get(cacheKey);
   }
 
   try {
@@ -201,7 +206,7 @@ async function ensureLabel(labelCache, tagName) {
       { input: { repositoryId: repoId, name: tagName, color: labelColor(tagName) } },
     );
     const label = data.createLabel.label;
-    labelCache.set(tagName, label.id);
+    labelCache.set(labelCacheKey(label.name), label.id);
     return label.id;
   } catch (error) {
     // Concurrent create or incomplete cache: recover by resolving the existing label.
@@ -209,7 +214,7 @@ async function ensureLabel(labelCache, tagName) {
       try {
         const existingId = await findLabelIdByName(tagName);
         if (existingId) {
-          labelCache.set(tagName, existingId);
+          labelCache.set(cacheKey, existingId);
           console.log(`[github] reused existing label "${tagName}"`);
           return existingId;
         }
@@ -321,7 +326,7 @@ async function ensureAndAddLabels(discussionId, discussionNumber, tags, labelCac
 
 // ─── Read-back verification ───
 
-async function verifyDiscussion(discussionNumber) {
+async function verifyDiscussion(discussionNumber, options = {}) {
   try {
     const data = await graphql(
       `
@@ -330,6 +335,7 @@ async function verifyDiscussion(discussionNumber) {
             discussion(number: $number) {
               category {
                 name
+                slug
               }
               body
               labels(first: 20) {
@@ -346,10 +352,14 @@ async function verifyDiscussion(discussionNumber) {
     const d = data.repository.discussion;
     return {
       category: d.category?.name ?? '',
+      categorySlug: d.category?.slug ?? '',
       body: d.body ?? '',
       labels: d.labels.nodes,
     };
   } catch (error) {
+    if (options.throwOnError) {
+      throw error;
+    }
     console.warn(`\x1b[33m⚠️ [github] verification query failed for #${discussionNumber}: ${error.message}\x1b[0m`);
     return null;
   }
@@ -506,6 +516,7 @@ module.exports = {
   ensureAndAddLabels,
   addLabelsToDiscussion,
   labelColor,
+  labelCacheKey,
   REPO_OWNER,
   REPO_NAME,
 };

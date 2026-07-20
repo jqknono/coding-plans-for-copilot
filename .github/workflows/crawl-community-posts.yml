@@ -84,9 +84,8 @@ jobs:
       - name: Run community crawler
         id: crawler
         run: |
-          set +e
+          set -o pipefail
           npm run crawler:run:publish 2>&1 | tee crawler-fetch.log
-          exit 0
         env:
           APIKEY: ${{ secrets.APIKEY }}
           BASE_URL: ${{ secrets.BASE_URL }}
