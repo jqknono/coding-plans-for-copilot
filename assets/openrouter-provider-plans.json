@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-07-19T09:53:22.696Z",
-  "generatedAtBeijing": "2026年7月19日 17:53:22",
-  "sourceGeneratedAt": "2026-07-19T09:53:04.040Z",
-  "sourceGeneratedAtBeijing": "2026年7月19日 17:53:04",
-  "sourceMetricsGeneratedAt": "2026-07-19T09:53:05.283Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月19日 17:53:05",
+  "generatedAt": "2026-07-20T10:54:25.944Z",
+  "generatedAtBeijing": "2026年7月20日 18:54:25",
+  "sourceGeneratedAt": "2026-07-20T10:53:58.282Z",
+  "sourceGeneratedAtBeijing": "2026年7月20日 18:53:58",
+  "sourceMetricsGeneratedAt": "2026-07-20T10:54:04.769Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月20日 18:54:04",
   "summary": {
     "openrouterProviderCount": 94,
-    "metricsProviderCount": 41,
-    "resolvedMetricsProviderCount": 41,
+    "metricsProviderCount": 42,
+    "resolvedMetricsProviderCount": 42,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 8,
     "providersWithPlans": 16,
-    "pendingCount": 25,
+    "pendingCount": 26,
     "blockedPendingCount": 1,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -975,45 +975,47 @@
       "providerId": null,
       "plans": [
         {
-          "name": "官网价格参考",
+          "name": "Pro",
           "currentPrice": 60,
-          "currentPriceText": "$60/mo",
+          "currentPriceText": "$60/month",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://site.wandb.ai/pricing/",
           "serviceDetails": [
-            "官网价格页参考，具体权益以官网说明为准"
+            "Professionals working to optimize AI applications and models",
+            "All features from Free +",
+            "Unlimited teams for collaboration",
+            "Team-based access controls",
+            "Service Accounts",
+            "Priority email & chat support",
+            "Model seats: up to 10",
+            "Storage: 100 GB/mo",
+            "Weave data ingestion: 1.5 GB/mo"
           ]
         },
         {
-          "name": "官网价格参考 2",
+          "name": "Inference add-on",
           "currentPrice": 5,
           "currentPriceText": "$5/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "W&B pricing comparison table",
           "serviceDetails": [
-            "官网价格页参考，具体权益以官网说明为准"
-          ]
-        },
-        {
-          "name": "官网价格参考 3",
-          "currentPrice": 10,
-          "currentPriceText": "$10/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "官网价格页参考，具体权益以官网说明为准"
+            "Run open source AI models. View per model pricing.",
+            "Free credit for a limited time",
+            "Additional inference billed monthly",
+            "Develop GenAI applications",
+            "Monitor and analyze the performance of your GenAI models during development and in production, capturing inputs, outputs, and metadata for each inference.",
+            "Compare different recipes including fine-tuning, RAG, LLMs, and datasets, side-by-side for accuracy, latency, and token usage.",
+            "Monitor the Performance, Cost, and Health of Your LLM Applications."
           ]
         }
       ],
       "sourceUrls": [
-        "https://site.wandb.ai",
-        "https://site.wandb.ai/pricing/"
+        "https://site.wandb.ai/pricing/",
+        "https://site.wandb.ai"
       ],
       "pricingPageUrl": "https://site.wandb.ai/pricing/",
       "officialWebsiteUrl": "https://site.wandb.ai",
@@ -1268,6 +1270,15 @@
       "officialWebsiteUrl": "https://docs.nebius.com",
       "pricingPageUrl": "https://docs.nebius.com",
       "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "nextbit",
+      "openrouterName": "NextBit",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.nextbit256.com",
+      "pricingPageUrl": "https://www.nextbit256.com",
+      "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
       "blocked": false
     },
     {

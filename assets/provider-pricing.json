@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-20T05:38:46.391Z",
+  "generatedAt": "2026-07-20T10:53:58.282Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -432,7 +432,9 @@
             "Lite 与 Pro 共计 12000 个专属免费名额"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "cucloud-coding-plan: page.goto: Timeout 15000ms exceeded. Call log: - navigating to \"https://www.cucloud.cn/activity/kickoffseason.html\", waiting until \"domcontentloaded\""
     },
     {
       "provider": "github-copilot",
@@ -604,12 +606,12 @@
       "plans": [
         {
           "name": "Coding Plan Lite",
-          "currentPrice": 19.9,
-          "currentPriceText": "¥19.9/月",
-          "originalPrice": 40,
-          "originalPriceText": "¥40/月",
+          "currentPrice": null,
+          "currentPriceText": null,
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "价格未在套餐概览页公开；计价币种: 人民币（CNY）",
           "serviceDetails": [
             "适用人群：中等强度的开发者，适合大多数开发者。",
             "用量限制：每5小时：最多约 1,200 次请求。 每周：最多约 9,000 次请求。 每订阅月：最多约 18,000 次请求。",
@@ -619,12 +621,12 @@
         },
         {
           "name": "Coding Plan Pro",
-          "currentPrice": 99.9,
-          "currentPriceText": "¥99.9/月",
-          "originalPrice": 200,
-          "originalPriceText": "¥200/月",
+          "currentPrice": null,
+          "currentPriceText": null,
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "价格未在套餐概览页公开；计价币种: 人民币（CNY）",
           "serviceDetails": [
             "适用人群：复杂项目开发，适合高强度工作的开发者。",
             "用量限制：Lite套餐的5倍用量。 每5小时：最多约 6,000 次请求。 每周：最多约 45,000 次请求。 每订阅月：最多约 90,000 次请求。",
@@ -1073,7 +1075,9 @@
             "抢先体验新功能"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "mthreads-coding-plan: page.goto: Timeout 15000ms exceeded. Call log: - navigating to \"https://code.mthreads.com/\", waiting until \"domcontentloaded\""
     },
     {
       "provider": "opencode",
@@ -1228,7 +1232,9 @@
             "多设备登录"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "stepfun-step-plan: Task timed out after 30000ms"
     },
     {
       "provider": "synthetic-ai",
@@ -1291,7 +1297,9 @@
             "适配工具: 支持使用 OpenClaw、CodeBuddy、Claude Code、Cline、Cursor 等主流编程工具"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "tencent-cloud-ai: fetch failed; Playwright fallback failed: page.goto: Timeout 12000ms exceeded. Call log: - navigating to \"https://cloud.tencent.com/document/product/1823/130092\", waiting until \"commit\""
     },
     {
       "provider": "tencent-cloud-token-plan",
@@ -1635,6 +1643,10 @@
     }
   ],
   "failures": [
-    "aliyun-token-plan: Aliyun Token Plan docs do not expose plan prices"
+    "tencent-cloud-ai: fetch failed; Playwright fallback failed: page.goto: Timeout 12000ms exceeded.\nCall log:\n  - navigating to \"https://cloud.tencent.com/document/product/1823/130092\", waiting until \"commit\"\n",
+    "aliyun-token-plan: Aliyun Token Plan docs do not expose plan prices",
+    "mthreads-coding-plan: page.goto: Timeout 15000ms exceeded.\nCall log:\n  - navigating to \"https://code.mthreads.com/\", waiting until \"domcontentloaded\"\n",
+    "stepfun-step-plan: Task timed out after 30000ms",
+    "cucloud-coding-plan: page.goto: Timeout 15000ms exceeded.\nCall log:\n  - navigating to \"https://www.cucloud.cn/activity/kickoffseason.html\", waiting until \"domcontentloaded\"\n"
   ]
 }
