@@ -1,0 +1,75 @@
+{
+  "date": "2026-07-21",
+  "generatedAt": "2026-07-21T08:30:44.204Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 58,
+    "postsAfterKeywordFilter": 17,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Kimi": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1228841",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1228841",
+      "title": "Kimi k3 让我贷款上班",
+      "content": "5 小时限额了，想着还差一点功能，冲了 25 ，结果写了 452 行的文件，思考完测试（还没写），用完了！！！",
+      "author": "xiejay97",
+      "createdAt": "2026-07-21T07:42:10.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Kimi",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "用户表示在使用 Kimi k3 方案时，充值 25 元后仅用了 5 小时额度便写了 452 行代码后额度耗尽，感到费用过高。",
+        "topics": [
+          "定价",
+          "配额",
+          "使用体验",
+          "Kimi",
+          "套餐"
+        ],
+        "planMentioned": "Kimi k3",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/220",
+      "analyzedAt": "2026-07-21T08:37:53.124Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1228832: LLM output schema validation failed: category: expected one of available categories, got \"其他\""
+  ]
+}
