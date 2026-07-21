@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-07-20T10:54:25.944Z",
-  "generatedAtBeijing": "2026年7月20日 18:54:25",
-  "sourceGeneratedAt": "2026-07-20T10:53:58.282Z",
-  "sourceGeneratedAtBeijing": "2026年7月20日 18:53:58",
-  "sourceMetricsGeneratedAt": "2026-07-20T10:54:04.769Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月20日 18:54:04",
+  "generatedAt": "2026-07-21T10:26:42.279Z",
+  "generatedAtBeijing": "2026年7月21日 18:26:42",
+  "sourceGeneratedAt": "2026-07-21T10:26:18.886Z",
+  "sourceGeneratedAtBeijing": "2026年7月21日 18:26:18",
+  "sourceMetricsGeneratedAt": "2026-07-21T10:26:19.910Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月21日 18:26:19",
   "summary": {
-    "openrouterProviderCount": 94,
-    "metricsProviderCount": 42,
-    "resolvedMetricsProviderCount": 42,
+    "openrouterProviderCount": 95,
+    "metricsProviderCount": 43,
+    "resolvedMetricsProviderCount": 43,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 8,
     "providersWithPlans": 16,
-    "pendingCount": 26,
-    "blockedPendingCount": 1,
+    "pendingCount": 27,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -62,7 +62,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3a1781279ed739b816e1c25f67044455.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/cfb6a475731937041c7fca3a7ec7fa2b.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -1136,6 +1136,15 @@
       "pricingPageUrl": "https://www.baseten.co/pricing/",
       "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $1.00 / $0.17）",
       "blocked": false
+    },
+    {
+      "slug": "crusoe",
+      "openrouterName": "Crusoe",
+      "providerId": null,
+      "officialWebsiteUrl": "https://legal.crusoe.ai",
+      "pricingPageUrl": "https://legal.crusoe.ai",
+      "reason": "官网价格页探测失败：https://legal.crusoe.ai/pricing: HTTP 403",
+      "blocked": true
     },
     {
       "slug": "decart",
