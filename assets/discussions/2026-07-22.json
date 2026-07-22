@@ -1,0 +1,140 @@
+{
+  "date": "2026-07-22",
+  "generatedAt": "2026-07-22T08:30:40.940Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 17,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "GitHub Copilot, Cursor, Claude Code": 1,
+      "DeepSeek, OpenAI (GPT Plus)": 1,
+      "qoder, Kimi, Qwen": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1229092",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1229092",
+      "title": "一篇 AI Coding 生态发展的自省记述",
+      "content": "前奏 2023 年初 ChatGPT 刚出来，给我的感觉，是一个震撼的新玩具。朦胧感觉能带来新的生产力提升，帮我建立新的认知和工作流，于是毫不犹豫地自费每月 20$订阅。（为此折腾美区 apple ID + 礼品卡充值） 平时会用来问问不熟悉领域的知识，还有尝试用其文一些 coding 相关问题，准确性或者实际解决问题的能力还是较弱，但这不影响我脑海中感觉到这是一种新旧人类的交替，随着日积月累，在 AI 能力加成下我能慢慢变成新人类。 跟 ChatGPT 不温不火的沟通到了 2024 年，中间并没有花费太多的时间日常放在 AI 及开发上，有很多很多 IDEA ，但困于精力和精神状态，毫无规划及执行力，数字人、生图都有尝试，但并没有落地什么。 慢慢到了 24 年下旬，手头上有一个私活，需要接触我不熟悉的技术栈，订阅了 10$ 的 github coplit 还是粗浅的使用，记得在 github 的 coplit 用 chat 的形式让其帮我写一个 Android demo App ，我通过复制粘贴竟真的在本地把完整的 App 运行起来，那感觉属于第一次闪光点在我眼前亮起来，本地基于 Ta",
+      "author": "mirror",
+      "createdAt": "2026-07-22T08:27:45.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "GitHub Copilot, Cursor, Claude Code",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "作者回顾了从2023年到2026年使用不同AI编程工具（ChatGPT, GitHub Copilot, Cursor, Claude Code）的心路历程，分享了从初识AI到利用AI高效完成私活的经验。",
+        "topics": [
+          "使用体验",
+          "订阅",
+          "工具对比",
+          "生产力提升"
+        ],
+        "planMentioned": "GitHub Copilot, Cursor, Claude Code Pro, Claude Code Max",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/221",
+      "analyzedAt": "2026-07-22T08:38:15.496Z"
+    },
+    {
+      "id": "v2ex-1229076",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1229076",
+      "title": "到现在没有正经用 agent+harness+知识库做过正经的项目，有没有老哥可以给一些顶层设计指导？",
+      "content": "如题，接触 AI 编程倒是很早，22 年 copilot 试用用户。我个人的舒适区是行级补全 + vscode 插件聊天，目前顶多用一用 codex + gpt plus 通过纯聊天做一些小项目，但是据我所知整个对话中的流程控制似乎并不是本地的 harness 完成的，更像是 gpt 在一次对话中后台对流程的控制。 感觉需要接触一下 AI 时代的新东西了，所以想问一下方案做的比较成熟的各位老哥能否给些指导。我尝试问 AI 但是感觉它还是说得不太清楚，更别提抓要点抓的准。 主要两个问题： 想要用领先模型（框架设计决策起码 deepseek v4pro 能力之上的模型）与现代工具链（有 agent ，有 harness ，有知识库），老哥们推荐什么工具组合。能上这个论坛的虽然都能翻墙，但外网付费感觉还是麻烦一些，最好是有国模和开原模型方案可以用，实在不行最多能接受 gpt plus ，A/实在是用不了一点点。我之前上网看似乎现在应该学习的方案是 workbuddy+obsdian ？ 如果要认真做一个项目的话，标准的开发流程是什么，开发前要准备哪些文件，我知道有 agent.md ，还有其",
+      "author": "LeeReamond",
+      "createdAt": "2026-07-22T07:15:29.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "DeepSeek, OpenAI (GPT Plus)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.75,
+        "summary": "用户询问如何构建使用先进AI模型（如DeepSeek v4pro）和工具链（agent/harness/知识库）的项目，偏好国内模型方案但接受GPT Plus，并询问开发流程和文档要求。",
+        "topics": [
+          "agent",
+          "harness",
+          "知识库",
+          "模型方案",
+          "项目开发",
+          "工具组合"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/222",
+      "analyzedAt": "2026-07-22T08:38:23.408Z"
+    },
+    {
+      "id": "v2ex-1229025",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1229025",
+      "title": "严重怀疑 qoder 看账户余额 credit 下菜",
+      "content": "起因： 发起了一个改接口出入参的需求，古法编程大概是十几分钟的工作量。然而用 qoder 。这样一个需求反复返工。 用的 kimi2.7-code 还是 3 折的用量。这样的消耗，相当于我一个修改接口出入参的需求就干掉一个 Lite 的用量。 今天我用 Qwen-3.8-Max-Pre 的模型去实现功能。也是一个简单修改（古法大概几分钟）的需求能消耗 50 的 credit 。 那他现在的折扣是 0.5 折，相当于一个简单修改可以用掉 1000 的 credit ，阿里真是牛逼坏了",
+      "author": "mg52033",
+      "createdAt": "2026-07-22T03:42:26.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "qoder, Kimi, Qwen",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户怀疑 Qoder 在扣除信用时不合理，说明使用 Kimi2.7-code 和 Qwen-3.8-Max-Pre 模型进行简单接口修改时消耗大量信用，甚至抵消了 Lite 套餐的折扣优势。",
+        "topics": [
+          "定价",
+          "信用消耗",
+          "折扣",
+          "qoder",
+          "Kimi",
+          "Qwen",
+          "套餐"
+        ],
+        "planMentioned": "Lite",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/223",
+      "analyzedAt": "2026-07-22T08:38:29.851Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
