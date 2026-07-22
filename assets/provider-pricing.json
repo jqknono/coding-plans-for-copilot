@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T05:18:36.025Z",
+  "generatedAt": "2026-07-22T10:26:17.041Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1468,24 +1468,6 @@
       ],
       "plans": [
         {
-          "name": "Astron Coding Plan 专业版",
-          "currentPrice": 39,
-          "currentPriceText": "¥39/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "流控按 5 小时/周/月请求次数计量",
-          "serviceDetails": [
-            "用量限制: 每 5 小时：最多约 1,200 次请求",
-            "每周：最多约 9,000 次请求",
-            "每订阅月：最多约 18,000 次请求",
-            "流控说明: 5 小时流控: 按套餐订单完成支付的时间为流控开始时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间，周期为5小时，滑动步长1小时，每个整点刷新。",
-            "周流控: 按套餐订单完成支付的时间为流控开始时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间，周期为7日，滑动步长1日，每次日 08:00:00（UTC+8）重置。",
-            "月流控: 按套餐订单完成支付的时间为开始时间，31天后为套餐失效时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间。",
-            "支持升级与同档位叠加购买"
-          ]
-        },
-        {
           "name": "Astron Coding Plan 高效版",
           "currentPrice": 199,
           "currentPriceText": "¥199/月",
@@ -1500,6 +1482,62 @@
             "流控说明: 5 小时流控: 按套餐订单完成支付的时间为流控开始时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间，周期为5小时，滑动步长1小时，每个整点刷新。",
             "周流控: 按套餐订单完成支付的时间为流控开始时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间，周期为7日，滑动步长1日，每次日 08:00:00（UTC+8）重置。",
             "月流控: 按套餐订单完成支付的时间为开始时间，31天后为套餐失效时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间。",
+            "模型名称: modelId",
+            "Spark X2 Agent: xsparkx2agent",
+            "Spark X2: xsparkx2",
+            "Spark-X2-Flash: xsparkx2flash",
+            "Auto: auto",
+            "GLM-5.2: xopglm52",
+            "GLM-5.1: xopglm51",
+            "GLM-5: xopglm5",
+            "DeepSeek-V4-Pro: xopdeepseekv4pro",
+            "DeepSeek-V4-Flash: xopdeepseekv4flash",
+            "DeepSeek-V3.2: xopdeepseekv32",
+            "Kimi-K2.6: xopkimik26",
+            "KiMi-K2.5: xopkimik25",
+            "MiniMax-M2.5: xminimaxm25",
+            "Qwen3.5-397B-A17B: xopqwen35397b",
+            "Qwen3.6-35B-A3B: xopqwen36v35b",
+            "Qwen3.5-35B-A3B: xopqwen35v35b",
+            "Qwen3-Coder-Next-FP8: xop3qwencodernext",
+            "GLM-4.7-Flash: xopglmv47flash",
+            "Kimi-K2.7-Code: xopkimi27code",
+            "支持升级与同档位叠加购买"
+          ]
+        },
+        {
+          "name": "Astron Coding Plan 速通版",
+          "currentPrice": 999,
+          "currentPriceText": "¥999/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "流控按 5 小时/周/月请求次数计量",
+          "serviceDetails": [
+            "用量限制: 每订阅月：最多约 30,000 次请求",
+            "流控说明: 5 小时流控: 按套餐订单完成支付的时间为流控开始时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间，周期为5小时，滑动步长1小时，每个整点刷新。",
+            "周流控: 按套餐订单完成支付的时间为流控开始时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间，周期为7日，滑动步长1日，每次日 08:00:00（UTC+8）重置。",
+            "月流控: 按套餐订单完成支付的时间为开始时间，31天后为套餐失效时间， 讯飞星辰 MaaS 平台套餐订阅页面 (opens new window) 可查看时间。",
+            "模型名称: modelId",
+            "Spark X2 Agent: xsparkx2agent",
+            "Spark X2: xsparkx2",
+            "Spark-X2-Flash: xsparkx2flash",
+            "Auto: auto",
+            "GLM-5.2: xopglm52",
+            "GLM-5.1: xopglm51",
+            "GLM-5: xopglm5",
+            "DeepSeek-V4-Pro: xopdeepseekv4pro",
+            "DeepSeek-V4-Flash: xopdeepseekv4flash",
+            "DeepSeek-V3.2: xopdeepseekv32",
+            "Kimi-K2.6: xopkimik26",
+            "KiMi-K2.5: xopkimik25",
+            "MiniMax-M2.5: xminimaxm25",
+            "Qwen3.5-397B-A17B: xopqwen35397b",
+            "Qwen3.6-35B-A3B: xopqwen36v35b",
+            "Qwen3.5-35B-A3B: xopqwen35v35b",
+            "Qwen3-Coder-Next-FP8: xop3qwencodernext",
+            "GLM-4.7-Flash: xopglmv47flash",
+            "Kimi-K2.7-Code: xopkimi27code",
             "支持升级与同档位叠加购买"
           ]
         }
