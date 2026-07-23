@@ -1,0 +1,107 @@
+{
+  "date": "2026-07-23",
+  "generatedAt": "2026-07-23T08:31:55.434Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 62,
+    "postsAfterKeywordFilter": 18,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Kimi": 1,
+      "Vibe Coding": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1229287",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1229287",
+      "title": "分享两个辅助 AI 编程工具的小工具，完善大家的 AI coding 体验",
+      "content": "Tibo 送了太多 reset 了，用用不完的额度搞了两个小工具，我自用了一个月了，觉得挺好用的，也逐渐完善了。 1 、MuxLM 类似 ccswitch 的功能，但是是使用纯 cli 实现的，且只支持 claude code 、codex 与 opencode 的 CLI 。我平时基本不用 IDE 与 app 。 用法非常简单，比如你要在 claude code 中使用 glm5.2 ，那你直接在终端输入 cld glm 就可以啦，或者在 codex 中使用 kimi 的 coding plan ，就输入 cdx kimic ，直接就能唤起配置了国产模型的 tool 。 https://github.com/Neo-Isshin/MuxLM 上手也很简单，比如你直接 cld glm ，如果监测到没有 key ，就会提示你输入 key 。这个项目不存储你的 key ，用 keychain 的。 我是觉得这个方式更好啦，因为我习惯用 tmux ，觉得 ccswitch 这种 GUI 界面反而很没效率，还得用鼠标点来点去的。就不放截图啦，CLI 工具没啥截图可放的。 2 、TokenClo",
+      "author": "nxc8335",
+      "createdAt": "2026-07-23T06:52:26.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Kimi",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享了两个辅助 AI 编程工具：MuxLM（CLI 工具集成多个 AI 模型）和 TokenClock（token 消耗追踪器），强调其提升 AI coding 体验的实用性。",
+        "topics": [
+          "辅助 AI 编程",
+          "CLI 工具",
+          "token 消耗",
+          "模型集成",
+          "Kimi 套餐"
+        ],
+        "planMentioned": "Kimi 套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/225",
+      "analyzedAt": "2026-07-23T08:41:21.547Z"
+    },
+    {
+      "id": "v2ex-1229278",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1229278",
+      "title": "做了一个只提供官方来源的软件下载导航：官网下",
+      "content": "最近 Vibe Coding 做了一个软件下载导航： 官网下： https://guanwangxia.com 看这个名字就知道是干嘛的，就不做过多解释了。 欢迎大家提建议/意见。",
+      "author": "ipengxh",
+      "createdAt": "2026-07-23T06:17:30.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Vibe Coding",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户分享了 Vibe Coding 提供的官方软件下载导航网站，邀请社区成员提供建议。",
+        "topics": [
+          "Vibe Coding",
+          "软件下载",
+          "官网",
+          "导航"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/226",
+      "analyzedAt": "2026-07-23T08:41:25.901Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1229279: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1229234: LLM output schema validation failed: supplierCategory: invalid value \"Chinese-provider, international-provider\""
+  ]
+}
