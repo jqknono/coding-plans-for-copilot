@@ -3075,25 +3075,66 @@ async function parseAliyunCodingPlans() {
 
 function parseAliyunTokenPlansFromDocsHtml(html) {
   const docsUrl = 'https://help.aliyun.com/zh/model-studio/token-plan-overview';
+  // Token Plan team pricing is presented as columns in the current docs page.
   const cleanupDocsCell = (value) => normalizeText(value).replace(/\\n/g, ' ').replace(/\s+/g, ' ').trim();
-  const compactDocsCell = (value) => cleanupDocsCell(value).replace(/\s+/g, '');
-  const rows = extractRows(html).map((row) => row.map((cell) => cleanupDocsCell(cell)));
-  const bodyText = normalizeText(stripTags(html));
-  const textModels = rows.find((row) => row[0] === '文本生成')?.[1] || null;
-  const imageModels = rows.find((row) => row[0] === '图像生成')?.[1] || null;
-  const supportedModels = normalizeServiceDetails([
-    textModels ? `文本生成模型: ${textModels}` : null,
-    imageModels ? `图像生成模型: ${imageModels}` : null,
-  ]);
+  const teamTableMatch = String(html || '').match(
+    /<table\b[^>]*\bid=(["'])tp-ov-tbl-team\1[^>]*>[\s\S]*?<\/table>/i,
+  );
+  const teamRows = teamTableMatch
+    ? extractRows(teamTableMatch[0]).map((row) => row.map((cell) => cleanupDocsCell(cell)))
+    : [];
+  const findTeamRow = (label) => teamRows.find((row) => label.test(row[0] || ''));
+  const headerRow = teamRows.find((row) => row.some((cell) => /标准(?:座|坐)席/.test(cell)));
+  const priceRow = findTeamRow(/^定价$/);
+  const quotaRow = findTeamRow(/^每月总额度$/);
+  const fiveHourLimitRow = findTeamRow(/^5\s*小时限额$/);
+  const sevenDayLimitRow = findTeamRow(/^7\s*天限额$/);
+  const modelRow = findTeamRow(/^模型$/);
+
+  const parsePriceCell = (value) => {
+    const prices = [...cleanupDocsCell(value).matchAll(
+      /(?:¥|￥)?\s*([0-9]+(?:,[0-9]{3})*(?:\.\d+)?)\s*(?:元)?\s*\/\s*((?:座席|坐席|个)(?:\s*\/\s*月)?|月)/gi,
+    )].map((match) => ({
+      amount: Number(match[1].replace(/,/g, '')),
+      text: `¥${match[1]}/${match[2].replace(/\s+/g, '').replace(/坐席/g, '座席')}`,
+    }));
+    const current = prices.at(-1);
+    const original = /原价/.test(value) && prices.length > 1 ? prices[0] : null;
+    return {
+      currentPriceText: current?.text || null,
+      originalPriceText: original?.text || null,
+    };
+  };
+  const normalizeSeatType = (header) => {
+    if (/标准(?:座|坐)席/.test(header)) {
+      return '标准座席';
+    }
+    if (/高级(?:座|坐)席/.test(header)) {
+      return '高级座席';
+    }
+    if (/尊享(?:座|坐)席/.test(header)) {
+      return '尊享座席';
+    }
+    return null;
+  };
   const commonDetails = normalizeServiceDetails([
     '计费方式: 按 Token 消耗抵扣 Credits',
-    '使用频次: 无每 5 小时/每周限额',
-    '数据安全: 不使用对话数据训练模型',
-    '服务地域: 华北2（北京）',
-    ...(supportedModels || []),
+    fiveHourLimitRow?.[1] ? `5 小时限额: ${fiveHourLimitRow[1]}` : null,
+    sevenDayLimitRow?.[1] ? `7 天限额: ${sevenDayLimitRow[1]}` : null,
+    modelRow?.[1] ? `支持模型: ${modelRow[1]}` : null,
   ]);
 
-  const tierRows = rows.filter((row) => /^(标准|高级|尊享)坐席$/.test(row[0] || ''));
+  const tierRows = (headerRow || [])
+    .slice(1)
+    .map((header, index) => {
+      const seatType = normalizeSeatType(header);
+      const price = parsePriceCell(priceRow?.[index + 1] || '');
+      if (!seatType || !price.currentPriceText) {
+        return null;
+      }
+      return [seatType, price.currentPriceText, quotaRow?.[index + 1] || null, null, price.originalPriceText];
+    })
+    .filter(Boolean);
   const plans = tierRows.map((row) => {
     const seatType = row[0];
     const priceText = row[1];
@@ -3103,9 +3144,10 @@ function parseAliyunTokenPlansFromDocsHtml(html) {
     const price = priceMatch ? Number(priceMatch[1].replace(/,/g, '')) : null;
     return asPlan({
       name: `Token Plan ${seatType}`,
-      currentPriceText: compactDocsCell(priceText),
+      currentPriceText: priceText,
       currentPrice: Number.isFinite(price) ? price : null,
-      unit: '坐席/月',
+      originalPriceText: row[4] || null,
+      unit: '座席/月',
       notes: scenario || null,
       serviceDetails: normalizeServiceDetails([
         credits ? `额度: ${credits}` : null,
@@ -3115,23 +3157,33 @@ function parseAliyunTokenPlansFromDocsHtml(html) {
     });
   });
 
-  const sharedPackageRow = rows.find((row) => /Token\s*Plan\s*团队版\s*-\s*共享用量包/i.test(row[0] || ''));
+  const sharedPackageIndex = (headerRow || []).findIndex((header) => /共享用量包/.test(header));
+  const sharedPackagePrice = parsePriceCell(priceRow?.[sharedPackageIndex] || '');
+  const sharedPackageRow =
+    sharedPackageIndex > 0 && sharedPackagePrice.currentPriceText
+      ? [
+          'Token Plan 团队版 - 共享用量包',
+          sharedPackagePrice.currentPriceText,
+          quotaRow?.[sharedPackageIndex] || null,
+          sharedPackagePrice.originalPriceText,
+        ]
+      : null;
   if (sharedPackageRow) {
     const priceText = sharedPackageRow[1];
     const credits = sharedPackageRow[2];
     const priceMatch = priceText.match(/¥\s*([0-9]+(?:,[0-9]{3})*(?:\.\d+)?)/);
     const price = priceMatch ? Number(priceMatch[1].replace(/,/g, '')) : null;
-    const packageRuleMatch = bodyText.match(/跨坐席共享的弹性用量包[\s\S]{0,120}?优先抵扣最近到期的用量包。/);
     plans.push(
       asPlan({
         name: 'Token Plan 共享用量包',
-        currentPriceText: compactDocsCell(priceText),
+        currentPriceText: priceText,
         currentPrice: Number.isFinite(price) ? price : null,
-        unit: '月',
-        notes: '有效期 1 个月，到期未使用额度自动清零',
+        originalPriceText: sharedPackageRow[3] || null,
+        unit: null,
+        notes: null,
         serviceDetails: normalizeServiceDetails([
           credits ? `额度: ${credits}` : null,
-          packageRuleMatch ? normalizeText(packageRuleMatch[0]) : '跨坐席共享的弹性用量包',
+          '跨座席共享的弹性用量包',
         ]),
       }),
     );

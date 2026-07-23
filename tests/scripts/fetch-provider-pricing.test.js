@@ -595,23 +595,15 @@ test('parseBaiduCodingPlansFromHtml reads Token Plan personal cards', () => {
   assert.ok(!plans[0].serviceDetails.some((item) => /立即购买|￥/.test(item)));
 });
 
-test('parseAliyunTokenPlansFromDocsHtml reads team seat and shared credit package pricing', () => {
+test('parseAliyunTokenPlansFromDocsHtml reads the current column-oriented team pricing table', () => {
   const html = `
-    <table>
-      <tr><th>模态</th><th>模型</th></tr>
-      <tr><td>文本生成</td><td>qwen3.6-plus、glm-5、MiniMax-M2.5、deepseek-v3.2</td></tr>
-      <tr><td>图像生成</td><td>qwen-image-2.0、wan2.7-image-pro</td></tr>
-    </table>
-    <table>
-      <tr><th>坐席类型</th><th>价格</th><th>额度</th><th>适用场景</th></tr>
-      <tr><td>标准坐席</td><td>¥198/坐席/月</td><td>25,000 Credits/坐席/月</td><td>轻度使用 AI 辅助的团队成员</td></tr>
-      <tr><td>高级坐席</td><td>¥698/坐席/月</td><td>100,000 Credits/坐席/月</td><td>日常高频使用 AI 编码的团队成员</td></tr>
-      <tr><td>尊享坐席</td><td>¥1,398/坐席/月</td><td>250,000 Credits/坐席/月</td><td>重度依赖 AI 编码的核心开发者</td></tr>
-    </table>
-    <p>跨坐席共享的弹性用量包，当个别坐席用量超出套餐额度时，可从共享用量包中抵扣。每个共享用量包有效期为 1 个月，到期未使用的额度自动清零。持有多个共享用量包时，优先抵扣最近到期的用量包。</p>
-    <table>
-      <tr><th>档位</th><th>价格</th><th>额度</th></tr>
-      <tr><td>Token Plan 团队版 - 共享用量包</td><td>¥5,000/个</td><td>625,000 Credits/个</td></tr>
+    <table id="tp-ov-tbl-team">
+      <tr><td></td><td>标准座席 Standard</td><td>高级座席 Pro</td><td>尊享座席 Max</td><td>共享用量包 Extra Bundle</td></tr>
+      <tr><td>定价</td><td>原价 198 元/座席/月 限时 150 元/座席/月</td><td>原价 698 元/座席/月 限时 550 元/座席/月</td><td>1,398 元/座席/月</td><td>5,000 元/个/月</td></tr>
+      <tr><td>每月总额度</td><td>25,000 Credits/座席/月</td><td>100,000 Credits/座席/月</td><td>250,000 Credits/座席/月</td><td>625,000 Credits/个</td></tr>
+      <tr><td>5 小时限额</td><td colspan="4">无限制</td></tr>
+      <tr><td>7 天限额</td><td colspan="4">无限制</td></tr>
+      <tr><td>模型</td><td colspan="4">qwen3.8-max-preview、qwen3.7-max、deepseek-v4-pro、wan2.7-image 等</td></tr>
     </table>
   `;
 
@@ -627,33 +619,37 @@ test('parseAliyunTokenPlansFromDocsHtml reads team seat and shared credit packag
     })),
     [
       {
-        name: 'Token Plan 标准坐席',
-        currentPriceText: '¥198/坐席/月',
-        currentPrice: 198,
-        unit: '坐席/月',
+        name: 'Token Plan 标准座席',
+        currentPriceText: '¥150/座席/月',
+        currentPrice: 150,
+        unit: '座席/月',
       },
       {
-        name: 'Token Plan 高级坐席',
-        currentPriceText: '¥698/坐席/月',
-        currentPrice: 698,
-        unit: '坐席/月',
+        name: 'Token Plan 高级座席',
+        currentPriceText: '¥550/座席/月',
+        currentPrice: 550,
+        unit: '座席/月',
       },
       {
-        name: 'Token Plan 尊享坐席',
-        currentPriceText: '¥1,398/坐席/月',
+        name: 'Token Plan 尊享座席',
+        currentPriceText: '¥1,398/座席/月',
         currentPrice: 1398,
-        unit: '坐席/月',
+        unit: '座席/月',
       },
       {
         name: 'Token Plan 共享用量包',
-        currentPriceText: '¥5,000/个',
+        currentPriceText: '¥5,000/个/月',
         currentPrice: 5000,
-        unit: '月',
+        unit: '个/月',
       },
     ],
   );
-  assert.match(result.plans[0].serviceDetails.join('\n'), /25,000 Credits\/坐席\/月/);
-  assert.match(result.plans[0].serviceDetails.join('\n'), /qwen3\.6-plus/);
+  assert.equal(result.plans[0].originalPriceText, '¥198/座席/月');
+  assert.equal(result.plans[0].originalPrice, 198);
+  assert.equal(result.plans[1].originalPriceText, '¥698/座席/月');
+  assert.equal(result.plans[1].originalPrice, 698);
+  assert.match(result.plans[0].serviceDetails.join('\n'), /25,000 Credits\/座席\/月/);
+  assert.match(result.plans[0].serviceDetails.join('\n'), /qwen3\.8-max-preview/);
   assert.match(result.plans[3].serviceDetails.join('\n'), /625,000 Credits\/个/);
 });
 

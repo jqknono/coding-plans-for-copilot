@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-23T05:24:20.727Z",
+  "generatedAt": "2026-07-23T07:41:04.771Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -56,72 +56,67 @@
       ],
       "plans": [
         {
-          "name": "Token Plan 标准坐席",
-          "currentPrice": 198,
-          "currentPriceText": "¥198/坐席/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "坐席/月",
-          "notes": "轻度使用 AI 辅助的团队成员",
+          "name": "Token Plan 标准座席",
+          "currentPrice": 150,
+          "currentPriceText": "¥150/座席/月",
+          "originalPrice": 198,
+          "originalPriceText": "¥198/座席/月",
+          "unit": "座席/月",
+          "notes": null,
           "serviceDetails": [
-            "额度: 25,000 Credits/坐席/月",
-            "适用场景: 轻度使用 AI 辅助的团队成员",
+            "额度: 25,000 Credits/座席/月",
             "计费方式: 按 Token 消耗抵扣 Credits",
-            "使用频次: 无每 5 小时/每周限额",
-            "数据安全: 不使用对话数据训练模型",
-            "服务地域: 华北2（北京）"
+            "5 小时限额: 无限制",
+            "7 天限额: 无限制",
+            "支持模型: 支持文本生成、图像生成、视频生成等多种模型（ 查看完整列表 ）"
           ]
         },
         {
-          "name": "Token Plan 高级坐席",
-          "currentPrice": 698,
-          "currentPriceText": "¥698/坐席/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "坐席/月",
-          "notes": "日常高频使用 AI 编程或办公的团队成员",
+          "name": "Token Plan 高级座席",
+          "currentPrice": 550,
+          "currentPriceText": "¥550/座席/月",
+          "originalPrice": 698,
+          "originalPriceText": "¥698/座席/月",
+          "unit": "座席/月",
+          "notes": null,
           "serviceDetails": [
-            "额度: 100,000 Credits/坐席/月",
-            "适用场景: 日常高频使用 AI 编程或办公的团队成员",
+            "额度: 100,000 Credits/座席/月",
             "计费方式: 按 Token 消耗抵扣 Credits",
-            "使用频次: 无每 5 小时/每周限额",
-            "数据安全: 不使用对话数据训练模型",
-            "服务地域: 华北2（北京）"
+            "5 小时限额: 无限制",
+            "7 天限额: 无限制",
+            "支持模型: 支持文本生成、图像生成、视频生成等多种模型（ 查看完整列表 ）"
           ]
         },
         {
-          "name": "Token Plan 尊享坐席",
+          "name": "Token Plan 尊享座席",
           "currentPrice": 1398,
-          "currentPriceText": "¥1,398/坐席/月",
+          "currentPriceText": "¥1,398/座席/月",
           "originalPrice": null,
           "originalPriceText": null,
-          "unit": "坐席/月",
-          "notes": "重度依赖 AI 的核心开发者或高强度使用者",
+          "unit": "座席/月",
+          "notes": null,
           "serviceDetails": [
-            "额度: 250,000 Credits/坐席/月",
-            "适用场景: 重度依赖 AI 的核心开发者或高强度使用者",
+            "额度: 250,000 Credits/座席/月",
             "计费方式: 按 Token 消耗抵扣 Credits",
-            "使用频次: 无每 5 小时/每周限额",
-            "数据安全: 不使用对话数据训练模型",
-            "服务地域: 华北2（北京）"
+            "5 小时限额: 无限制",
+            "7 天限额: 无限制",
+            "支持模型: 支持文本生成、图像生成、视频生成等多种模型（ 查看完整列表 ）"
           ]
         },
         {
           "name": "Token Plan 共享用量包",
           "currentPrice": 5000,
-          "currentPriceText": "¥5,000/个",
+          "currentPriceText": "¥5,000/个/月",
           "originalPrice": null,
           "originalPriceText": null,
-          "unit": "月",
-          "notes": "有效期 1 个月，到期未使用额度自动清零",
+          "unit": "个/月",
+          "notes": null,
           "serviceDetails": [
             "额度: 625,000 Credits/个",
-            "跨坐席共享的弹性用量包，当个别坐席用量超出套餐额度时，可从共享用量包中抵扣。每个共享用量包有效期为 1 个月，到期未使用的额度自动清零。持有多个共享用量包时，优先抵扣最近到期的用量包。"
+            "跨座席共享的弹性用量包"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "aliyun-token-plan: Aliyun Token Plan docs do not expose plan prices"
+      ]
     },
     {
       "provider": "baidu-qianfan-ai",
@@ -1655,7 +1650,5 @@
       ]
     }
   ],
-  "failures": [
-    "aliyun-token-plan: Aliyun Token Plan docs do not expose plan prices"
-  ]
+  "failures": []
 }

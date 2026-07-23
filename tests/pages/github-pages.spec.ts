@@ -92,9 +92,9 @@ test('大陆套餐展示阿里云 Token Plan', async ({ page }) => {
   const card = page.locator('#provider-card-aliyun-token-plan');
   await expect(card).toBeVisible();
   await expect(card.getByRole('heading', { name: '阿里云 Token Plan' })).toBeVisible();
-  await expect(card.getByRole('heading', { name: 'Token Plan 标准坐席' })).toBeVisible();
-  await expect(card.getByRole('heading', { name: 'Token Plan 高级坐席' })).toBeVisible();
-  await expect(card.getByRole('heading', { name: 'Token Plan 尊享坐席' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan 标准座席' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan 高级座席' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan 尊享座席' })).toBeVisible();
   await expect(card.getByRole('heading', { name: 'Token Plan 共享用量包' })).toBeVisible();
   await expect(card.getByRole('link', { name: '前往了解' })).toHaveAttribute(
     'href',
