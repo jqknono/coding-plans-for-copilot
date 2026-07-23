@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T10:26:17.041Z",
+  "generatedAt": "2026-07-23T05:24:20.727Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -698,23 +698,6 @@
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods"
       ],
       "plans": [
-        {
-          "name": "Adagio（大陆）",
-          "currentPrice": 0,
-          "currentPriceText": "¥0/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "免费体验",
-          "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: 大陆",
-            "套餐定位: 免费体验",
-            "Agent 用量约 6 个",
-            "Agent 任务并行 1 个",
-            "专业数据库 200 次调用"
-          ]
-        },
         {
           "name": "Andante（大陆）",
           "currentPrice": 49,
@@ -1493,6 +1476,7 @@
             "DeepSeek-V4-Pro: xopdeepseekv4pro",
             "DeepSeek-V4-Flash: xopdeepseekv4flash",
             "DeepSeek-V3.2: xopdeepseekv32",
+            "Kimi-K2.7-Code: xopkimi27code",
             "Kimi-K2.6: xopkimik26",
             "KiMi-K2.5: xopkimik25",
             "MiniMax-M2.5: xminimaxm25",
@@ -1501,7 +1485,6 @@
             "Qwen3.5-35B-A3B: xopqwen35v35b",
             "Qwen3-Coder-Next-FP8: xop3qwencodernext",
             "GLM-4.7-Flash: xopglmv47flash",
-            "Kimi-K2.7-Code: xopkimi27code",
             "支持升级与同档位叠加购买"
           ]
         },
@@ -1529,6 +1512,7 @@
             "DeepSeek-V4-Pro: xopdeepseekv4pro",
             "DeepSeek-V4-Flash: xopdeepseekv4flash",
             "DeepSeek-V3.2: xopdeepseekv32",
+            "Kimi-K2.7-Code: xopkimi27code",
             "Kimi-K2.6: xopkimik26",
             "KiMi-K2.5: xopkimik25",
             "MiniMax-M2.5: xminimaxm25",
@@ -1537,7 +1521,6 @@
             "Qwen3.5-35B-A3B: xopqwen35v35b",
             "Qwen3-Coder-Next-FP8: xop3qwencodernext",
             "GLM-4.7-Flash: xopglmv47flash",
-            "Kimi-K2.7-Code: xopkimi27code",
             "支持升级与同档位叠加购买"
           ]
         }
