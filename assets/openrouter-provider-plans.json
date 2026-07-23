@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-07-22T10:26:48.719Z",
-  "generatedAtBeijing": "2026年7月22日 18:26:48",
-  "sourceGeneratedAt": "2026-07-22T10:26:17.041Z",
-  "sourceGeneratedAtBeijing": "2026年7月22日 18:26:17",
-  "sourceMetricsGeneratedAt": "2026-07-22T10:26:18.014Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月22日 18:26:18",
+  "generatedAt": "2026-07-23T10:25:09.382Z",
+  "generatedAtBeijing": "2026年7月23日 18:25:09",
+  "sourceGeneratedAt": "2026-07-23T10:24:38.513Z",
+  "sourceGeneratedAtBeijing": "2026年7月23日 18:24:38",
+  "sourceMetricsGeneratedAt": "2026-07-23T10:24:39.756Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月23日 18:24:39",
   "summary": {
-    "openrouterProviderCount": 95,
+    "openrouterProviderCount": 97,
     "metricsProviderCount": 42,
     "resolvedMetricsProviderCount": 42,
     "unresolvedMetricsProviderCount": 0,
@@ -62,7 +62,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/cfb6a475731937041c7fca3a7ec7fa2b.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/784eb173b9d5ec7a989df5141fe2dd16.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -239,12 +239,12 @@
           "serviceDetails": [
             "10,000 Neurons per day included before overage",
             "Price in Tokens is equivalent to Price in Neurons for comparison",
-            "@cf/meta/llama-3.2-1b-instruct: 0.027 per M input tokens 0.201 per M output tokens",
-            "@cf/meta/llama-3.2-3b-instruct: 0.051 per M input tokens 0.335 per M output tokens",
-            "@cf/meta/llama-3.1-8b-instruct-fp8-fast: 0.045 per M input tokens 0.384 per M output tokens",
-            "@cf/meta/llama-3.2-11b-vision-instruct: 0.049 per M input tokens 0.676 per M output tokens",
-            "@cf/meta/llama-3.1-70b-instruct-fp8-fast: 0.293 per M input tokens 2.253 per M output tokens",
-            "@cf/meta/llama-3.3-70b-instruct-fp8-fast: 0.293 per M input tokens 2.253 per M output tokens"
+            "@cf/meta/llama-3.2-1b-instruct: $0.027 per M input tokens $0.201 per M output tokens",
+            "@cf/meta/llama-3.2-3b-instruct: $0.051 per M input tokens $0.335 per M output tokens",
+            "@cf/meta/llama-3.1-8b-instruct-fp8-fast: $0.045 per M input tokens $0.384 per M output tokens",
+            "@cf/meta/llama-3.2-11b-vision-instruct: $0.049 per M input tokens $0.676 per M output tokens",
+            "@cf/meta/llama-3.1-70b-instruct-fp8-fast: $0.293 per M input tokens $2.253 per M output tokens",
+            "@cf/meta/llama-3.3-70b-instruct-fp8-fast: $0.293 per M input tokens $2.253 per M output tokens"
           ]
         }
       ],
@@ -428,23 +428,6 @@
       "openrouterName": "Moonshot AI",
       "providerId": "kimi-ai",
       "plans": [
-        {
-          "name": "Adagio（大陆）",
-          "currentPrice": 0,
-          "currentPriceText": "¥0/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "免费体验",
-          "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: 大陆",
-            "套餐定位: 免费体验",
-            "Agent 用量约 6 个",
-            "Agent 任务并行 1 个",
-            "专业数据库 200 次调用"
-          ]
-        },
         {
           "name": "Andante（大陆）",
           "currentPrice": 49,
