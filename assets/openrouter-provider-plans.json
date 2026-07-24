@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-07-23T10:25:09.382Z",
-  "generatedAtBeijing": "2026年7月23日 18:25:09",
-  "sourceGeneratedAt": "2026-07-23T10:24:38.513Z",
-  "sourceGeneratedAtBeijing": "2026年7月23日 18:24:38",
-  "sourceMetricsGeneratedAt": "2026-07-23T10:24:39.756Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年7月23日 18:24:39",
+  "generatedAt": "2026-07-24T10:20:46.154Z",
+  "generatedAtBeijing": "2026年7月24日 18:20:46",
+  "sourceGeneratedAt": "2026-07-24T10:20:12.949Z",
+  "sourceGeneratedAtBeijing": "2026年7月24日 18:20:12",
+  "sourceMetricsGeneratedAt": "2026-07-24T10:20:13.841Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年7月24日 18:20:13",
   "summary": {
-    "openrouterProviderCount": 97,
-    "metricsProviderCount": 42,
-    "resolvedMetricsProviderCount": 42,
+    "openrouterProviderCount": 96,
+    "metricsProviderCount": 43,
+    "resolvedMetricsProviderCount": 43,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
-    "heuristicProviderCount": 8,
-    "providersWithPlans": 16,
-    "pendingCount": 26,
+    "heuristicProviderCount": 7,
+    "providersWithPlans": 15,
+    "pendingCount": 28,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -62,7 +62,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/784eb173b9d5ec7a989df5141fe2dd16.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/5fdca24cc39e9832ef7506ee1e84ba2b.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -953,62 +953,6 @@
       "parseMode": "official-website-heuristic"
     },
     {
-      "slug": "wandb",
-      "openrouterName": "WandB",
-      "providerId": null,
-      "plans": [
-        {
-          "name": "Pro",
-          "currentPrice": 60,
-          "currentPriceText": "$60/month",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "来源: https://site.wandb.ai/pricing/",
-          "serviceDetails": [
-            "Professionals working to optimize AI applications and models",
-            "All features from Free +",
-            "Unlimited teams for collaboration",
-            "Team-based access controls",
-            "Service Accounts",
-            "Priority email & chat support",
-            "Model seats: up to 10",
-            "Storage: 100 GB/mo",
-            "Weave data ingestion: 1.5 GB/mo"
-          ]
-        },
-        {
-          "name": "Inference add-on",
-          "currentPrice": 5,
-          "currentPriceText": "$5/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "W&B pricing comparison table",
-          "serviceDetails": [
-            "Run open source AI models. View per model pricing.",
-            "Free credit for a limited time",
-            "Additional inference billed monthly",
-            "Develop GenAI applications",
-            "Monitor and analyze the performance of your GenAI models during development and in production, capturing inputs, outputs, and metadata for each inference.",
-            "Compare different recipes including fine-tuning, RAG, LLMs, and datasets, side-by-side for accuracy, latency, and token usage.",
-            "Monitor the Performance, Cost, and Health of Your LLM Applications."
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://site.wandb.ai/pricing/",
-        "https://site.wandb.ai"
-      ],
-      "pricingPageUrl": "https://site.wandb.ai/pricing/",
-      "officialWebsiteUrl": "https://site.wandb.ai",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://wandb.ai/site/privacy/",
-      "termsOfServiceUrl": "https://site.wandb.ai/terms/",
-      "statusPageUrl": null,
-      "parseMode": "official-website-heuristic"
-    },
-    {
       "slug": "z-ai",
       "openrouterName": "Z.AI",
       "providerId": null,
@@ -1117,7 +1061,16 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $1.00 / $0.17）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $2.10 / $0.21）",
+      "blocked": false
+    },
+    {
+      "slug": "coreweave",
+      "openrouterName": "CoreWeave",
+      "providerId": null,
+      "officialWebsiteUrl": "https://docs.coreweave.com",
+      "pricingPageUrl": "https://docs.coreweave.com/login?redirect=%2Fpricing",
+      "reason": "官网未发现可解析的套餐价格页",
       "blocked": false
     },
     {
@@ -1280,6 +1233,15 @@
       "officialWebsiteUrl": "https://parasail.io",
       "pricingPageUrl": "https://www.parasail.io/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.40 / $4.40 / $0.26）",
+      "blocked": false
+    },
+    {
+      "slug": "sail-research",
+      "openrouterName": "Sail Research",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.sailresearch.com",
+      "pricingPageUrl": "https://www.sailresearch.com",
+      "reason": "官网价格页探测失败：https://www.sailresearch.com/pricing: HTTP 404",
       "blocked": false
     },
     {
