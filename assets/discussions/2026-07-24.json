@@ -1,0 +1,136 @@
+{
+  "date": "2026-07-24",
+  "generatedAt": "2026-07-24T08:29:01.439Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 17,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "尔信中转站": 1,
+      "Claude Code, V2EX": 1,
+      "Kiro, Amazon, Cursor, GitHub Copilot": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1229565",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1229565",
+      "title": "🔈Token 中转站涨声一片？尔信坚持不涨价..并且充多少送多少，免费抽奖。。进群就送免费体验额度！",
+      "content": "尔信中转站 · [ aierxin.cc ]( http://aierxin.cc ) 🌐 GPT 混合号池 · 0.08 倍率 · 全网都在涨价！ 💡 GPT-pro 自建号池 · 0.25 倍率 🚀 Claude-max 自建号池 · 1.2 倍率 ↓往下看↓ 卷完倍率，卷价格！ 充多少送多少，没上限 👇 💰 充 $10 → 得 $20 💰 充 $20 → 得 $40 💰 充 $50 → 得 $100 😲😲倍率直接减半！！😲😲 🔑 每天限量免费 key ，进群领 🎁 群内大额 key 不定时掉落 进群先领免费体验额度 👥 QQ 群 726533341 点击链接加入群聊 [ Erxin_AI ] ： https://qm.qq.com/q/Dkq3loDAeA 进群注册，联系客服核销福利。",
+      "author": "beishuihan",
+      "createdAt": "2026-07-24T07:10:38.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "尔信中转站",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.95,
+        "summary": "尔信中转站通过充值赠送活动和降低倍率来应对市场涨价潮，并提供免费体验额度。",
+        "topics": [
+          "定价",
+          "充值优惠",
+          "免费额度",
+          "中转站",
+          "倍率"
+        ],
+        "planMentioned": "GPT-pro, Claude-max",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/227",
+      "analyzedAt": "2026-07-24T08:34:06.653Z"
+    },
+    {
+      "id": "v2ex-1229556",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1229556",
+      "title": "最近完善 V2EX AI Persona API 对 Claude Code 支持过程中的一些发现",
+      "content": "最近调通了在 OpenCode 和 Claude Code 里使用 V2EX AI Persona 模型。不过我确实没有做太复杂的测试，只测试了一些基本的工具调用能够返回结果。然后就部署了。然后在回复区看到了大家反馈的错误信息。 我非常希望 V2EX 提供的这种可能性能够在一些真实场景里被每天用起来，所以为了修复大家反馈的这些错误信息，我需要用 Claude Code 结合 V2EX AI Persona 的模型，来完成一个真实的需求，然后看在这个过程中会遇到什么报错。 正好最近经常都会用到这个 Elden Ring 的进度查看工具，也是开源的： https://elden-ring-progression-tracker.github.io/ 这个工具可以在网页上打开一个 Elden Ring 的存档文件，然后看存档的完成度。我特别希望的一个功能就是这个工具可以一键列出我现在还没拿到的武器或者护符。 于是我用 Claude Code + V2EX AI Persona 来试着实现这个需求，然后果然在本地的 CLIProxyAPI 日志里看到了部分请求触发的 400 和 429 错误。",
+      "author": "Livid",
+      "createdAt": "2026-07-24T06:35:10.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.8,
+        "supplier": "Claude Code, V2EX",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "作者分享了在 Claude Code 中使用 V2EX AI Persona 模型进行开发的经验，并讨论了 token 消耗与成本估算的问题。",
+        "topics": [
+          "使用体验",
+          "工具调用",
+          "成本估算",
+          "API兼容性"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/228",
+      "analyzedAt": "2026-07-24T08:34:12.909Z"
+    },
+    {
+      "id": "v2ex-1229531",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1229531",
+      "title": "怎么会有 Kiro 这么难用的 Agent 啊？",
+      "content": "Kiro 是我用过的最难用的 AI Agent ，我遇到了包括但不限于以下好几十种让人抓狂的情况，亚马逊真的想把 kiro 好好搞下去吗？ plan mode 根本无法正常使用，每次从 plan mode 切换成 default 模式执行，模型总会说“我现在还处于计划模式，无法执行”，明明我已经切了，不得不疯狂地撤回重试，直到模型反应过来（模型为 opus 4.8 ） 根本没有交互式询问，指定计划时只能用手动“1a,2b,3c\"这种文本手动回答，今昔是何年？ 几乎为 0 的权限策略，模型执行命令改个参数也要等你手动确认，没有任何权限策略可言，上个厕所以为该弄好了吧，回来一看一堆权限确认弹窗，活一点没干。 kiro cli 简直重磅，关闭中断再次打开，想要切回上一次会话直接报错打不开，气得我直接卸载换成 IDE ，结果更是一坨，文件 @不了，没法拖动到 chat 窗口，代码片段更别说了，全都得手动粘贴路径，抄 cursor 不会就算了，vscode 自己的 copilot 交互也比 kiro 高到不知道哪里去了。 我亲自品尝了 kiro cli 和 kiro IDE 这两坨大份，要不是包",
+      "author": "wheelg",
+      "createdAt": "2026-07-24T04:40:09.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 1,
+        "supplier": "Kiro, Amazon, Cursor, GitHub Copilot",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 1,
+        "summary": "用户强烈吐槽亚马逊的 Kiro Agent 非常难用，包括 Plan mode 切换故障、交互体验差、权限确认过多以及 CLI 和 IDE 功能缺失等问题，并表示后悔订阅了其包月服务。",
+        "topics": [
+          "使用体验",
+          "订阅",
+          "功能缺陷",
+          "竞品对比"
+        ],
+        "planMentioned": "包月订阅",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/229",
+      "analyzedAt": "2026-07-24T08:34:18.658Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
