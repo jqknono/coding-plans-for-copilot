@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-07T14:04:19.238Z",
-  "generatedAtBeijing": "2026年9月7日 22:04:19",
-  "sourceGeneratedAt": "2026-09-07T14:03:15.784Z",
-  "sourceGeneratedAtBeijing": "2026年9月7日 22:03:15",
-  "sourceMetricsGeneratedAt": "2026-09-07T14:03:27.695Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月7日 22:03:27",
+  "generatedAt": "2026-09-08T12:42:09.148Z",
+  "generatedAtBeijing": "2026年9月8日 20:42:09",
+  "sourceGeneratedAt": "2026-09-08T12:41:07.430Z",
+  "sourceGeneratedAtBeijing": "2026年9月8日 20:41:07",
+  "sourceMetricsGeneratedAt": "2026-09-08T12:41:14.125Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月8日 20:41:14",
   "summary": {
     "openrouterProviderCount": 106,
     "metricsProviderCount": 49,
@@ -724,9 +724,9 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "能力: Doubao-Seed-Code 与 DeepSeek-V3.2 驱动",
-            "适配: 适配Claude Code等主流编程工具",
-            "用量: 用量达 Claude Pro 的 3 倍"
+            "能力: 支持 Doubao、GLM、DeepSeek、Kimi等模型",
+            "适配: 支持自由切换模型，或开启Auto模式",
+            "工具: 支持 Claude Code、Cursor等主流编程工具"
           ]
         },
         {
@@ -746,7 +746,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.337/index.js",
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.156/index.js",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1213,7 +1213,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://novita.ai",
       "pricingPageUrl": "https://novita.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.32 / $0.132 / $3.96）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.32 / $0.044 / $3.96）",
       "blocked": false
     },
     {
