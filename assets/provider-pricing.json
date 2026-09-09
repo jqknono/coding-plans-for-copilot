@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-08T12:41:07.430Z",
+  "updatedAt": "2026-09-09T07:04:34.534Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -686,7 +686,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DNC53c-c.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-kEMeKbC6.js"
       ],
       "plans": [
         {
@@ -1347,7 +1347,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.156/index.js"
+        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.337/index.js"
       ],
       "plans": [
         {
@@ -1359,9 +1359,9 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "能力: 支持 Doubao、GLM、DeepSeek、Kimi等模型",
-            "适配: 支持自由切换模型，或开启Auto模式",
-            "工具: 支持 Claude Code、Cursor等主流编程工具"
+            "能力: Doubao-Seed-Code 与 DeepSeek-V3.2 驱动",
+            "适配: 适配Claude Code等主流编程工具",
+            "用量: 用量达 Claude Pro 的 3 倍"
           ]
         },
         {
