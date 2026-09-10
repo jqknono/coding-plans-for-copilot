@@ -8,7 +8,8 @@ const path = require('node:path');
 
 const OUTPUT_FILE = path.resolve(__dirname, '..', 'assets', 'provider-pricing.json');
 const REQUEST_TIMEOUT_MS = 15_000;
-const TASK_TIMEOUT_MS = 30_000;
+const TASK_TIMEOUT_MS = 120_000;
+const TASK_CONCURRENCY = 3;
 
 const PROVIDER_IDS = {
   ZHIPU: 'zhipu-ai',
@@ -56,7 +57,7 @@ const KIMI_DOMESTIC_PLAN_NAMES = ['Adagio', 'Andante', 'Moderato', 'Allegretto',
 const TENCENT_CODING_PLAN_DOC_URL = 'https://cloud.tencent.com/document/product/1823/130092';
 const TENCENT_CODING_PLAN_NAVIGATION_OPTIONS = {
   waitUntil: 'commit',
-  timeout: 12_000,
+  timeout: 30_000,
 };
 const KIMI_REGION_LABELS = {
   REGION_CN: '大陆',
@@ -758,6 +759,19 @@ function getPlaywrightLaunchOptions() {
   return channel ? { channel, headless: true } : { headless: true };
 }
 
+async function launchPricingBrowser(chromium) {
+  const context = REQUEST_CONTEXT.getStore();
+  context?.signal.throwIfAborted();
+  const browser = await chromium.launch(getPlaywrightLaunchOptions());
+  // Launch can complete after the enclosing task has already timed out.
+  if (context?.signal.aborted) {
+    await browser.close();
+    context.signal.throwIfAborted();
+  }
+  context?.browsers.add(browser);
+  return browser;
+}
+
 async function blockNonEssentialPlaywrightRequests(page) {
   await page.route('**/*', (route) => {
     const request = route.request();
@@ -775,13 +789,13 @@ async function blockNonEssentialPlaywrightRequests(page) {
 
 async function fetchRenderedPageText(pageUrl, label, options = {}) {
   const chromium = await loadPlaywrightChromium(label);
-  const browser = await chromium.launch(getPlaywrightLaunchOptions());
+  const browser = await launchPricingBrowser(chromium);
   try {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);
     await page.goto(pageUrl, {
-      waitUntil: options.waitUntil || 'domcontentloaded',
-      timeout: options.timeoutMs || 15_000,
+      waitUntil: options.waitUntil || (options.waitForText ? 'commit' : 'domcontentloaded'),
+      timeout: options.timeoutMs || 30_000,
     });
     if (options.waitForText) {
       await page.waitForFunction(
@@ -808,13 +822,13 @@ async function fetchRenderedPageText(pageUrl, label, options = {}) {
 
 async function fetchRenderedPageHtml(pageUrl, label, options = {}) {
   const chromium = await loadPlaywrightChromium(label);
-  const browser = await chromium.launch(getPlaywrightLaunchOptions());
+  const browser = await launchPricingBrowser(chromium);
   try {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);
     await page.goto(pageUrl, {
-      waitUntil: options.waitUntil || 'domcontentloaded',
-      timeout: options.timeoutMs || 15_000,
+      waitUntil: options.waitUntil || (options.waitForText ? 'commit' : 'domcontentloaded'),
+      timeout: options.timeoutMs || 30_000,
     });
     if (options.waitForText) {
       await page.waitForFunction(
@@ -1445,7 +1459,7 @@ async function parseTencentCodingPlansWithPlaywright(pageUrl) {
     throw new Error('Playwright is unavailable for Tencent fallback');
   }
 
-  const browser = await chromium.launch(getPlaywrightLaunchOptions());
+  const browser = await launchPricingBrowser(chromium);
   try {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);
@@ -1511,7 +1525,7 @@ async function parseZhipuCodingPlansWithPlaywright() {
   const pageUrl = 'https://bigmodel.cn/glm-coding';
   const docsUrl = 'https://docs.bigmodel.cn/cn/coding-plan/overview';
   const chromium = await loadPlaywrightChromium('Zhipu parser');
-  const browser = await chromium.launch(getPlaywrightLaunchOptions());
+  const browser = await launchPricingBrowser(chromium);
   try {
     const page = await browser.newPage();
     await blockNonEssentialPlaywrightRequests(page);
@@ -1522,10 +1536,13 @@ async function parseZhipuCodingPlansWithPlaywright() {
     await page.waitForFunction(
       () => {
         const text = String(document.body?.innerText || '');
+        const cards = Array.from(document.querySelectorAll('.cp-card'));
         return (
-          /即刻与\s*GLM\s*一起\s*Coding/.test(text) && /连续包[月季年]/.test(text) && /每周\s*[0-9,]+\s*积分/.test(text)
+          /连续包月/.test(text) && cards.length >= 3 &&
+          cards.every((card) => /[0-9]/.test(card.querySelector('.cp-card__price-current')?.textContent || ''))
         );
       },
+      undefined,
       { timeout: 20_000 },
     );
     await page.evaluate(() => {
@@ -1548,6 +1565,7 @@ async function parseZhipuCodingPlansWithPlaywright() {
         const cards = Array.from(document.querySelectorAll('.cp-card'));
         return /连续包月/.test(activeTabText) && cards.length >= 3;
       },
+      undefined,
       { timeout: 10_000 },
     );
 
@@ -2740,7 +2758,7 @@ async function fetchXAioTextWithRetry(url, options = {}, attempts = 2) {
 
 async function parseXAioCodingPlansWithPlaywright(pageUrl) {
   const chromium = await loadPlaywrightChromium('X-AIO fallback');
-  const browser = await chromium.launch(getPlaywrightLaunchOptions());
+  const browser = await launchPricingBrowser(chromium);
   try {
     const page = await browser.newPage();
     await page.goto(pageUrl, {
@@ -3538,14 +3556,28 @@ async function parseVolcengineCodingPlans() {
   };
 }
 
-async function runTaskWithTimeout(task) {
+async function runPricingTasks(tasks, concurrency = TASK_CONCURRENCY) {
+  const results = new Array(tasks.length);
+  let nextIndex = 0;
+  await Promise.all(Array.from({ length: Math.min(concurrency, tasks.length) }, async () => {
+    while (nextIndex < tasks.length) {
+      const index = nextIndex++;
+      // Start the timeout only when a worker takes the task, not while queued.
+      [results[index]] = await Promise.allSettled([runTaskWithTimeout(tasks[index].fn)]);
+    }
+  }));
+  return results;
+}
+
+async function runTaskWithTimeout(task, timeoutMs = TASK_TIMEOUT_MS) {
+  const browsers = new Set();
   const controller = new AbortController();
   let timeoutHandle;
   const timeoutPromise = new Promise((_, reject) => {
     timeoutHandle = setTimeout(() => {
       controller.abort();
-      reject(new Error(`Task timed out after ${TASK_TIMEOUT_MS}ms`));
-    }, TASK_TIMEOUT_MS);
+      reject(new Error(`Task timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
   });
 
   try {
@@ -3554,6 +3586,7 @@ async function runTaskWithTimeout(task) {
         {
           timeoutMs: REQUEST_TIMEOUT_MS,
           signal: controller.signal,
+          browsers,
         },
         () => task(),
       ),
@@ -3561,6 +3594,7 @@ async function runTaskWithTimeout(task) {
     ]);
   } finally {
     clearTimeout(timeoutHandle);
+    await Promise.all([...browsers].map((browser) => browser.close()));
   }
 }
 
@@ -4070,11 +4104,15 @@ async function parseCucloudCodingPlans() {
       waitForTimeoutMs: 15_000,
     });
     text = rendered.text;
-  } catch {
+  } catch (browserError) {
     // The activity content is embedded in the server-rendered HTML, so the activity
     // can still be validated from the raw markup when the browser render is slow or
     // blocked (e.g. on CI runners far from the CDN).
-    text = normalizeText(stripTags(await fetchTextWithRetry(pageUrl)));
+    try {
+      text = normalizeText(stripTags(await fetchTextWithRetry(pageUrl)));
+    } catch (fetchError) {
+      throw new Error(`Playwright activity fetch failed: ${browserError.message}; HTML fetch failed: ${fetchError.message}`);
+    }
   }
   if (!activityPattern.test(text)) {
     throw new Error('Unable to locate CUCloud coding plan activity text');
@@ -4408,7 +4446,7 @@ async function main() {
     { provider: PROVIDER_IDS.KILO_PASS, fn: parseKiloPassPlans },
   ];
 
-  const results = await Promise.allSettled(tasks.map((task) => runTaskWithTimeout(task.fn)));
+  const results = await runPricingTasks(tasks);
   for (let index = 0; index < tasks.length; index += 1) {
     const task = tasks[index];
     const result = results[index];

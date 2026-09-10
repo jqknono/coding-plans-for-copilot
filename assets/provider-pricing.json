@@ -771,81 +771,6 @@
             "Kimi Code 可调用",
             "专业数据库 12000 次调用"
           ]
-        },
-        {
-          "name": "Adagio（海外）",
-          "currentPrice": 0,
-          "currentPriceText": "$0/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "试用计划",
-          "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
-            "会员等级: 免费试用",
-            "Kimi Code 试用套餐权益"
-          ]
-        },
-        {
-          "name": "Moderato（海外）",
-          "currentPrice": 19,
-          "currentPriceText": "$19/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
-            "会员等级: 基础会员",
-            "Kimi Code 月度订阅权益"
-          ]
-        },
-        {
-          "name": "Allegretto（海外）",
-          "currentPrice": 39,
-          "currentPriceText": "$39/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
-            "会员等级: 进阶会员",
-            "Kimi Code 月度订阅权益"
-          ]
-        },
-        {
-          "name": "Allegro（海外）",
-          "currentPrice": 99,
-          "currentPriceText": "$99/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
-            "会员等级: 高级会员",
-            "Kimi Code 月度订阅权益"
-          ]
-        },
-        {
-          "name": "Vivace（海外）",
-          "currentPrice": 199,
-          "currentPriceText": "$199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 美元（USD）",
-            "适用区域: 海外",
-            "会员等级: 旗舰会员",
-            "Kimi Code 月度订阅权益"
-          ]
         }
       ]
     },
@@ -1605,7 +1530,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "适合小型 Repo 轻量级迭代",
+            "日常使用",
             "每周 10,000 积分",
             "逐步开放最新旗舰模型及功能",
             "支持 ZCode、Claude Code 等 20+ 编程工具"
@@ -1620,7 +1545,7 @@
           "unit": "月",
           "notes": "最受欢迎",
           "serviceDetails": [
-            "适合中型 Repo 日常开发",
+            "高频使用",
             "6倍 Lite 用量额度",
             "Lite 全部权益",
             "优先体验最新旗舰模型及功能",
@@ -1637,19 +1562,15 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "适合高阶用户中大型 Repo 深度开发",
+            "深度使用",
             "14倍 Lite 用量额度",
             "Pro 全部权益",
             "首发接入最新旗舰模型及功能",
             "高峰期专属资源优先保障"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "zhipu-ai: Task timed out after 30000ms"
+      ]
     }
   ],
-  "failures": [
-    "zhipu-ai: Task timed out after 30000ms"
-  ]
+  "failures": []
 }

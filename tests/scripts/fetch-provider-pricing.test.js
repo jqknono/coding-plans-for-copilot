@@ -180,7 +180,7 @@ test('Tencent Coding Plan fallback navigation avoids domcontentloaded timeout re
       url: 'https://cloud.tencent.com/document/product/1823/130092',
       options: {
         waitUntil: 'commit',
-        timeout: 12_000,
+        timeout: 30_000,
       },
     },
   ]);

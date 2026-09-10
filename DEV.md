@@ -121,6 +121,10 @@ Run `npm run pricing:fetch` to fetch coding plan prices; results are written to:
 
 On GitHub Pages deployment, `assets/provider-pricing.json` is synced to `pages/provider-pricing.json` as a site build artifact (not committed).
 
+Pricing fetches run with three provider workers. Each provider has a 120-second budget starting when its worker begins; queued providers do not consume that budget. HTTP requests retain their 15-second default. Rendered-page helpers allow 30 seconds for navigation by default and, when a content predicate is supplied, wait for navigation commit followed by the required pricing content. Provider-specific limits still apply. Timed-out tasks abort HTTP requests and close their browsers; subsequent browser launches are rejected. CUCloud failures retain both browser and HTTP error details.
+
+Zhipu readiness depends on populated price cards, not marketing copy. The parser switches to the monthly tab before extracting prices. Run `node --test tests/scripts/pricing-execution.test.js tests/scripts/fetch-provider-pricing.test.js` for execution and parser regressions; acceptance scenarios are in `docs/cases/provider-pricing-parser-regressions.md`.
+
 ## OpenRouter Data Fetching
 
 When fetching performance data, use the environment variable `APIKEY` as the OpenRouter API Key:

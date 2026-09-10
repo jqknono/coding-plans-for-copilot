@@ -389,6 +389,8 @@ npm run test:desktop
 
 ### Data File Structure
 
+`pricing:fetch` runs up to three providers concurrently, with a 120-second timeout per active provider. Rendered pricing pages wait for the required content after navigation commit; the default navigation timeout is 30 seconds. Timed-out tasks abort requests and close their browsers. Provider-specific navigation limits may override the default.
+
 The dashboard uses the following core data files (located in the `assets/` directory):
 
 ```json

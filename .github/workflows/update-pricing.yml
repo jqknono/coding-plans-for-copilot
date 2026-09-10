@@ -37,6 +37,9 @@ jobs:
           command -v google-chrome
           google-chrome --version
 
+      - name: Test pricing parsers and task execution
+        run: node --test tests/scripts/fetch-provider-pricing.test.js tests/scripts/pricing-execution.test.js
+
       - name: Fetch latest provider pricing
         run: npm run pricing:fetch
 
