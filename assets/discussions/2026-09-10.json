@@ -1,0 +1,203 @@
+{
+  "date": "2026-09-10",
+  "generatedAt": "2026-09-10T10:49:13.435Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 57,
+    "postsAfterKeywordFilter": 19,
+    "relevantPosts": 5,
+    "discussionsCreated": 5,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Cursor, Codex, ClaudeCode, CodeBuddy": 1,
+      "b.ai, 商汤": 1,
+      "智谱": 1,
+      "GLM": 1,
+      "codex, claude, deepseek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1241125",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1241125",
+      "title": "一直有个疑问，感觉用 cursor 的人很少",
+      "content": "身边人大多都是 codex ，少量 ClaudeCode ，cursor 除了我自己以外我就只知道 1 个人在用，论 v2 上讨论热度，cursor 也是几乎查无此人，好像只有我一个人用的非常爽。 我自己是 60 美刀订阅，公司报销正好覆盖（公司内部主要是 codebuddy ，不爱用的人有 500 块钱报销额度），我给我老婆也搞了个 cursor20 美刀的订阅日常办公用（非程序员）。 我现在用量大概是这样的，opus5 做 plan ，grok4.6 extrahigh 做执行，工作量大概是一天忙到没空摸鱼的程度，先不论 cursor 的 other model 的消耗，就 cursor model 的消耗我 1 天才 1%，几乎等于用不完，就 cursor grok4.6 extra high 的能力来说，我觉得是非常好用的，配合 skill 和 agent.md ，工作上的东西基本都是一次过。 然后我在想，这是不是幸存者偏差，因为充值能支付宝，用起来也没有说不够用的情况，智商也还可以，并且也没有重置这么个套路，所以就没人来讨论，导致显得没人用呢？",
+      "author": "StoneHuLu",
+      "createdAt": "2026-09-10T10:44:52.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.99,
+        "supplier": "Cursor, Codex, ClaudeCode, CodeBuddy",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.98,
+        "summary": "发帖人主要分享 Cursor 订阅的使用体验，称其模型能力、额度和支付宝充值都很满意，并对比了身边使用 Codex、ClaudeCode 的情况。",
+        "topics": [
+          "Cursor",
+          "订阅价格",
+          "使用体验",
+          "模型额度",
+          "支付宝充值",
+          "AI编码助手对比"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/377",
+      "analyzedAt": "2026-09-10T10:57:15.762Z"
+    },
+    {
+      "id": "v2ex-1241121",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1241121",
+      "title": "还能用的两根羊毛， b.ai 很稳很慢，商汤反复 429",
+      "content": "一直给 Deepseek 官方充值。最近活干的没动力了。弄点免费的，凑合着用。测试了一下目前还能薅到的羊毛。 b.ai ，用的是 glm-5.3-flash 和 qwen3.8-flash 。从来不中断，跟蜗牛一样干活。随便一个任务，就得几十分钟。稍微大一点的，干到过两个小时。 商汤用的是 GLM-5.2 和 sensenova-6.8-flash-lite 。速度倒是挺快。就得碰运气，基本上每个任务都得反复 429 好几回。 大家还有别的好用的推荐没？我英文不行，整不明白国外的东西，也没国外手机号、银行卡。要是有靠谱的教程，给哥们儿分享一个链接呗。还有你们说日均 10 块钱的订阅，说的都是啥呀？ 羡慕你们 token 流量用不完的。哈哈。",
+      "author": "muyangquan",
+      "createdAt": "2026-09-10T10:21:48.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "b.ai, 商汤",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户分享使用 b.ai（GLM-5.3-flash、qwen3.8-flash）和商汤（GLM-5.2、sensenova-6.8-flash-lite）免费额度进行编码任务的体验，前者稳定但极慢，后者速度快但频繁遇到 429 错误，并询问其他可用的免费或低价订阅推荐，以及“日均 10 元订阅”的具体含义。",
+        "topics": [
+          "免费额度",
+          "订阅",
+          "定价",
+          "套餐对比",
+          "故障排查",
+          "推荐",
+          "GLM",
+          "商汤"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/378",
+      "analyzedAt": "2026-09-10T10:57:22.293Z"
+    },
+    {
+      "id": "v2ex-1241098",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1241098",
+      "title": "智谱·杭州全城 Coding 计划，至高补贴 51%",
+      "content": "https://docs.bigmodel.cn/cn/coding-plan/hangzhou-rules",
+      "author": "lchkid",
+      "createdAt": "2026-09-10T09:11:37.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "智谱",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.95,
+        "summary": "智谱发布杭州全城 Coding 计划，提供至高 51% 补贴。",
+        "topics": [
+          "定价",
+          "补贴",
+          "Coding计划",
+          "智谱"
+        ],
+        "planMentioned": "智谱·杭州全城 Coding 计划",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/379",
+      "analyzedAt": "2026-09-10T10:57:28.153Z"
+    },
+    {
+      "id": "v2ex-1241093",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1241093",
+      "title": "杭州用户现在买 GLM 半价优惠了",
+      "content": "",
+      "author": "lanyi96",
+      "createdAt": "2026-09-10T08:59:47.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.8,
+        "supplier": "GLM",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "杭州用户现在可以半价购买 GLM 了",
+        "topics": [
+          "定价",
+          "折扣",
+          "GLM",
+          "套餐"
+        ],
+        "planMentioned": "GLM",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/380",
+      "analyzedAt": "2026-09-10T10:57:32.674Z"
+    },
+    {
+      "id": "v2ex-1241082",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1241082",
+      "title": "SOS 目前 ai 套餐各位 v 友选哪家",
+      "content": "codex 目前 plus 套餐已到期 claude 最近没怎么用，之前使用的是中转站，月消费也有 1k deepseek 日常消耗也不小，最近统计大概月消耗 700 平时根据不同的开发会选择不同智商的模型 所以最近有老大哥推荐比较优惠实在的不？（钱包沉不住了）",
+      "author": "a451697920",
+      "createdAt": "2026-09-10T08:16:12.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "codex, claude, deepseek",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "用户询问目前AI套餐选择哪家好，提到codex plus套餐已到期，claude使用不多，之前使用中转站月消费1k，deepseek日常消耗也不小，月消耗约700元，根据不同开发选择不同智商模型，担心钱包承受不了。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "体验",
+          "故障排查"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/381",
+      "analyzedAt": "2026-09-10T10:57:37.434Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
