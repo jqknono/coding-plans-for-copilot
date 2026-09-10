@@ -48,6 +48,7 @@ type VendorRecord = {
   name: string;
   baseUrl: string;
   apiKey?: string;
+  authType?: 'bearer' | 'x-api-key';
   usageUrl?: string;
   apiType?: 'chat' | 'responses' | 'anthropic';
   defaultApiStyle?: 'openai-chat' | 'openai-responses' | 'anthropic';
@@ -2708,6 +2709,213 @@ function runChatLanguageModelsConfigTests(): void {
   assert.equal(config.contextWindow, 128000);
 
   console.log('PASS chatLanguageModels.json 导出 url 为完整 endpoint 且与运行时一致');
+}
+
+async function runVendorAuthAndVolcengineTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule,
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule,
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const { LMChatProviderAdapter } = lmChatProviderAdapterModule;
+  const { buildVendorDiscoverySignature } = require('../providers/genericProviderDiscovery') as
+    typeof import('../providers/genericProviderDiscovery');
+  const originalFetch = globalThis.fetch;
+  const apiStyles = ['openai-chat', 'openai-responses', 'anthropic'] as const;
+  const authTypes = [undefined, 'bearer', 'x-api-key'] as const;
+  const baseUrls = {
+    'openai-chat': 'https://ark.cn-beijing.volces.com/api/coding/v3',
+    'openai-responses': 'https://ark.cn-beijing.volces.com/api/coding/v3',
+    anthropic: 'https://ark.cn-beijing.volces.com/api/coding/v1',
+  };
+  const paths = { 'openai-chat': '/chat/completions', 'openai-responses': '/responses', anthropic: '/messages' };
+
+  for (const apiStyle of apiStyles) {
+    for (const rawAuthType of [...authTypes, '', 'Bearer', ' bearer ', 'basic', null, false, 1, {}, []]) {
+      activeState = createState([{
+        name: 'Vendor', baseUrl: baseUrls[apiStyle], defaultApiStyle: apiStyle,
+        authType: rawAuthType, models: [{ name: 'coder' }],
+      }]);
+      const configStore = new configStoreCtor(createExtensionContext() as never);
+      try {
+        const vendor = configStore.getVendors()[0];
+        assert.ok(vendor, '非法认证值不应删除整个供应商');
+        const expected = rawAuthType === 'bearer' || rawAuthType === 'x-api-key' ? rawAuthType : undefined;
+        assert.equal(Reflect.get(vendor, 'authType'), expected, '仅接受明确的认证枚举，其余保留协议默认行为');
+        assert.equal(vendor.defaultApiStyle, apiStyle);
+      } finally {
+        configStore.dispose();
+      }
+    }
+  }
+  console.log('PASS authType 缺省、合法及非法配置归一化，不改变协议或丢弃供应商');
+
+  function assertAuthHeaders(init: RequestInit | undefined, apiStyle: typeof apiStyles[number], authType: unknown): void {
+    const headers = new Headers(init?.headers);
+    const effectiveAuth = authType ?? (apiStyle === 'anthropic' ? 'x-api-key' : 'bearer');
+    assert.equal(headers.get('authorization'), effectiveAuth === 'bearer' ? 'Bearer configured' : null);
+    assert.equal(headers.get('x-api-key'), effectiveAuth === 'x-api-key' ? 'configured' : null);
+    assert.equal(headers.get('anthropic-version'), apiStyle === 'anthropic' ? '2023-06-01' : null);
+    assert.equal(headers.get('content-type'), 'application/json');
+  }
+
+  for (const apiStyle of apiStyles) {
+    for (const authType of authTypes) {
+      // 模型级协议必须优先；默认认证也必须按实际请求协议选择。
+      activeState = createStaticVendorState([{
+        name: 'Vendor', baseUrl: `${baseUrls[apiStyle]}/`, authType,
+        defaultApiStyle: apiStyle === 'anthropic' ? 'openai-chat' : 'anthropic',
+        models: [{ name: 'coder', apiStyle, streaming: false }],
+      }]);
+      const configStore = new configStoreCtor(createExtensionContext() as never);
+      configStore.getApiKey = async () => 'configured';
+      const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
+      const calls: Array<{ url: string; init?: RequestInit }> = [];
+      let responseStatus = 200;
+      globalThis.fetch = (async (url, init) => {
+        calls.push({ url: String(url), init });
+        const body = responseStatus !== 200 ? { error: { message: 'mock upstream failure' } }
+          : apiStyle === 'anthropic' ? { id: 'msg_auth', content: [{ type: 'text', text: 'ok' }] }
+          : apiStyle === 'openai-responses' ? { id: 'resp_auth', output_text: 'ok' }
+          : { id: 'chat_auth', choices: [{ message: { role: 'assistant', content: 'ok' } }] };
+        return new Response(JSON.stringify(body), {
+          status: responseStatus, headers: { 'content-type': 'application/json' },
+        });
+      }) as typeof globalThis.fetch;
+      try {
+        await provider.refreshModels();
+        const request = {
+          modelId: 'Vendor/coder', messages: [], capabilities: { toolCalling: false, imageInput: false },
+        };
+        let cancel: (() => void) | undefined;
+        const token = {
+          isCancellationRequested: false,
+          onCancellationRequested: (listener: () => void) => {
+            cancel = listener;
+            return new FakeDisposable();
+          },
+        };
+        await provider.sendRequest(request, token as never);
+        assert.equal(calls.length, 1, '静态配置和一次聊天只能产生一次请求');
+        assert.equal(calls[0].url, `${baseUrls[apiStyle]}${paths[apiStyle]}`);
+        assert.equal(calls[0].init?.method, 'POST');
+        assertAuthHeaders(calls[0].init, apiStyle, authType);
+        assert.equal(calls[0].init?.signal?.aborted, false);
+        cancel?.();
+        assert.equal(calls[0].init?.signal?.aborted, true, '新增认证参数不得破坏取消信号');
+
+        for (const status of [401, 403, 404]) {
+          responseStatus = status;
+          calls.length = 0;
+          await assert.rejects(provider.sendRequest(request));
+          assert.equal(calls.length, 1, '认证或路径失败不应隐式切换认证、补 /v1 或重试');
+          assert.equal(calls[0].url, `${baseUrls[apiStyle]}${paths[apiStyle]}`);
+          assertAuthHeaders(calls[0].init, apiStyle, authType);
+        }
+      } finally {
+        globalThis.fetch = originalFetch;
+        provider.dispose();
+        configStore.dispose();
+      }
+    }
+  }
+  console.log('PASS 三聊天协议默认/显式认证、互斥头、版本头、完整 coding URL、模型协议优先、取消及无隐式重试');
+
+  for (const apiStyle of apiStyles) {
+    const rawVendor: VendorRecord = {
+      name: 'Vendor', baseUrl: `${baseUrls[apiStyle]}/`, defaultApiStyle: apiStyle,
+      useModelsEndpoint: true, models: [{ name: 'configured-model' }],
+    };
+    activeState = createState([rawVendor]);
+    const configStore = new configStoreCtor(createExtensionContext() as never);
+    configStore.getApiKey = async () => 'configured';
+    const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
+    let discoveryCount = 0;
+    const signatures = new Set<string>();
+    globalThis.fetch = (async (url, init) => {
+      discoveryCount += 1;
+      assert.equal(String(url), `${baseUrls[apiStyle]}/models`);
+      assert.equal(init?.method, 'GET');
+      assertAuthHeaders(init, apiStyle, rawVendor.authType);
+      return new Response(JSON.stringify({ error: { message: 'mock discovery denial' } }), {
+        status: 401, headers: { 'content-type': 'application/json' },
+      });
+    }) as typeof globalThis.fetch;
+    try {
+      for (const authType of authTypes) {
+        rawVendor.authType = authType;
+        const signature = buildVendorDiscoverySignature(configStore.getVendors()[0], 'configured');
+        assert.equal(signature.includes('configured'), false, '发现签名不能含明文密钥');
+        signatures.add(signature);
+        const previousCount = discoveryCount;
+        await refreshWithDiscovery(provider);
+        assert.equal(discoveryCount, previousCount + 1, 'authType 改变必须解除旧发现失败的重试抑制');
+        await refreshWithDiscovery(provider);
+        assert.equal(discoveryCount, previousCount + 1, '相同签名的 401 发现失败仍抑制重试');
+        assert.deepEqual(provider.getAvailableModels().map((model) => model.id), ['Vendor/configured-model']);
+        assert.equal(activeState.updates.length, 0, '发现失败应回退静态配置而非清空或写回');
+      }
+      assert.equal(signatures.size, 3, '缺省与两种显式 authType 都参与发现签名');
+    } finally {
+      globalThis.fetch = originalFetch;
+      provider.dispose();
+      configStore.dispose();
+    }
+  }
+  console.log('PASS 三协议发现认证头、authType 签名变化解除失败缓存、发现失败回退配置');
+
+  const manifest = require('../../package.json');
+  const vendorSchema = manifest.contributes.configuration.properties['coding-plans.vendors'];
+  assert.deepEqual(vendorSchema.items.properties.authType.enum, ['bearer', 'x-api-key']);
+  assert.equal('default' in vendorSchema.items.properties.authType, false, 'Schema 不能覆盖协议默认认证');
+  assert.equal(vendorSchema.items.required.includes('authType'), false);
+  const volcengine = (vendorSchema.default as VendorRecord[]).find((vendor) => vendor.name === '火山引擎');
+  assert.ok(volcengine);
+  assert.equal(volcengine.baseUrl, baseUrls['openai-responses']);
+  assert.equal(volcengine.defaultApiStyle, 'openai-responses');
+  assert.equal(volcengine.useModelsEndpoint, false);
+  const expectedNames = [
+    'doubao-seed-evolving', 'doubao-seed-2.1-turbo', 'doubao-seed-2.0-lite', 'minimax-m3',
+    'glm-5.3', 'glm-5.3-flash', 'deepseek-v4-flash', 'deepseek-v4-pro', 'kimi-k2.7-code', 'kimi-k3',
+  ];
+  assert.deepEqual(volcengine.models, expectedNames.map((name) => ({ name })), '仅声明已确认 ID，不预设模型能力');
+  activeState = createState([structuredClone(volcengine)]);
+  const secretContext = createExtensionContextWithSecrets();
+  secretContext.secrets.set('coding-plans.vendor.apiKey.火山引擎', 'configured');
+  const configStore = new configStoreCtor(secretContext.context as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
+  const adapter = new LMChatProviderAdapter(provider, configStore);
+  let fetchCount = 0;
+  globalThis.fetch = (async () => {
+    fetchCount += 1;
+    throw new Error('静态火山模板不允许发起发现请求');
+  }) as typeof globalThis.fetch;
+  try {
+    await provider.initialize();
+    await provider.refreshModels({ discoverFromEndpoint: true, forceDiscoveryRetry: true });
+    const expectedIds = expectedNames.map((name) => `火山引擎/${name}`);
+    assert.deepEqual(provider.getAvailableModels().map((model) => model.id), expectedIds);
+    assert.ok(provider.getAvailableModels().every((model) => model.apiStyle === 'openai-responses'));
+    for (const options of [
+      { silent: true, group: '火山引擎' },
+      { silent: false, group: 'Custom group', configuration: { vendorName: '火山引擎' } },
+    ]) {
+      const models = await adapter.provideLanguageModelChatInformation(options as never, {} as never);
+      assert.deepEqual(models.map((model) => model.id), expectedIds);
+    }
+    for (const options of [{ silent: true }, { silent: true, group: 'Coding Plans' }]) {
+      assert.deepEqual(await adapter.provideLanguageModelChatInformation(options as never, {} as never), []);
+    }
+    assert.equal(fetchCount, 0, '初始化、强制发现刷新及显式 group 查询均不请求 /models 或 models.dev');
+    assert.equal(activeState.updates.length, 0);
+    assert.equal(secretContext.secrets.get('coding-plans.vendor.apiKey.火山引擎'), 'configured');
+  } finally {
+    globalThis.fetch = originalFetch;
+    adapter.dispose();
+    provider.dispose();
+    configStore.dispose();
+  }
+  console.log('PASS 火山默认模板静态 ID、显式 group 可见、根隐藏、强制刷新零网络请求');
 }
 
 async function runGenericProviderModelEnabledTests(
@@ -9312,6 +9520,7 @@ async function main(): Promise<void> {
       await runTestCase(ConfigStore, testCase);
     }
     await runConfigNormalizationTests(ConfigStore);
+    await runVendorAuthAndVolcengineTests(ConfigStore, genericProviderModule, lmChatProviderAdapterModule);
     await runConfigStoreVendorApiKeySecretStorageTests(ConfigStore);
     runChatLanguageModelsConfigTests();
     runTokenWindowResolutionTests(baseProviderModule);

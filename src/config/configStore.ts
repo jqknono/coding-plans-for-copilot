@@ -11,6 +11,7 @@ import {
 
 export type VendorApiStyle = 'openai-chat' | 'openai-responses' | 'anthropic';
 export type VendorApiType = 'chat' | 'responses' | 'anthropic';
+export type VendorAuthType = 'bearer' | 'x-api-key';
 export type ReasoningEffortValue = 'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
 export type ReasoningEffortFormat = 'chat-completions' | 'responses';
 
@@ -56,6 +57,7 @@ export interface VendorConfig {
   name: string;
   baseUrl: string;
   apiKey?: string;
+  authType?: VendorAuthType;
   usageUrl?: string;
   apiType?: VendorApiType;
   defaultApiStyle: VendorApiStyle;
@@ -755,6 +757,7 @@ export class ConfigStore implements vscode.Disposable {
     }
     const baseUrl = typeof obj.baseUrl === 'string' ? obj.baseUrl.trim() : '';
     const apiKey = typeof obj.apiKey === 'string' && obj.apiKey.trim().length > 0 ? obj.apiKey.trim() : undefined;
+    const authType = obj.authType === 'bearer' || obj.authType === 'x-api-key' ? obj.authType : undefined;
     const usageUrl =
       typeof obj.usageUrl === 'string' && obj.usageUrl.trim().length > 0 ? obj.usageUrl.trim() : undefined;
     const apiType = this.normalizeApiType(obj.apiType);
@@ -772,6 +775,7 @@ export class ConfigStore implements vscode.Disposable {
       name,
       baseUrl,
       apiKey,
+      authType,
       usageUrl,
       apiType,
       defaultApiStyle,

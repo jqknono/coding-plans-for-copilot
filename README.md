@@ -83,7 +83,7 @@ The following vendors come with built-in default configurations and are ready to
 | --- | --- | --- |
 | Zhipu (zhipu) | `https://open.bigmodel.cn/api/coding/paas/v4` | `https://open.bigmodel.cn/api/anthropic` (Claude Code) / `https://open.bigmodel.cn/api/paas/v4` (general) |
 | z.ai | `https://api.z.ai/api/anthropic` | `https://api.z.ai/api/coding/paas/v4` |
-| Volcano Engine | `https://ark.cn-beijing.volces.com/api/coding` | `https://ark.cn-beijing.volces.com/api/coding/v3` |
+| Volcano Engine (火山引擎) | `https://ark.cn-beijing.volces.com/api/coding/v3` (Responses) | `https://ark.cn-beijing.volces.com/api/coding/v1` (Anthropic; `authType: "bearer"`) |
 | Volcengine Overseas | `https://ark.ap-southeast.bytepluses.com/api/coding` | `https://ark.ap-southeast.bytepluses.com/api/coding/v3` |
 | Kimi | `https://api.kimi.com/coding/v1` | `https://api.kimi.com/coding/v1` |
 | Alibaba Cloud (Aliyun) | `https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic` | `https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1` |
@@ -95,6 +95,18 @@ The following vendors come with built-in default configurations and are ready to
 To switch to OpenAI-compatible endpoints, modify the vendor's `baseUrl` and `defaultApiStyle`.
 The built-in Zhipu default uses the dedicated GLM Coding Plan endpoint `https://open.bigmodel.cn/api/coding/paas/v4`. If you want the Claude Code-compatible entrypoint instead, switch `baseUrl` to `https://open.bigmodel.cn/api/anthropic` and set `defaultApiStyle` to `anthropic`.
 The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-as-you-go API access instead, switch `baseUrl` to `https://api.xiaomimimo.com/anthropic` (`https://api.xiaomimimo.com/v1` for OpenAI compatibility) and use the matching API key.
+
+#### Volcano Engine Coding Plan
+
+The built-in vendor keeps the name `火山引擎` (including its Secret Storage key association). It uses `defaultApiStyle: "openai-responses"`, `baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v3"`, and `useModelsEndpoint: false`. The resulting request URL is `https://ark.cn-beijing.volces.com/api/coding/v3/responses`. Chat Completions is also supported at `/api/coding/v3/chat/completions`; Responses is the recommended default, not the only supported protocol.
+
+The static model IDs are `doubao-seed-evolving`, `doubao-seed-2.1-turbo`, `doubao-seed-2.0-lite`, `minimax-m3`, `glm-5.3`, `glm-5.3-flash`, `deepseek-v4-flash`, `deepseek-v4-pro`, `kimi-k2.7-code`, and `kimi-k3`. No unverified per-model vision, context-window, or thinking settings are preset. Keep `models` populated and discovery disabled: even a forced refresh then uses the static list without requesting `/models`. Add the `火山引擎` provider group in Manage Language Models to see these models; the unscoped `Coding Plans` root remains hidden.
+
+For the Anthropic-compatible alternative, set vendor `defaultApiStyle: "anthropic"`, `authType: "bearer"`, and `baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v1"`, keeping `useModelsEndpoint: false` and the static models. This extension only appends `/messages`, producing `https://ark.cn-beijing.volces.com/api/coding/v1/messages`; do **not** copy Claude Code's `/api/coding` base URL directly. The official Claude Code setup uses `ANTHROPIC_AUTH_TOKEN`, hence Bearer authentication; this extension uses the key stored through Manage Vendor Configuration, not that environment variable. Anthropic Bearer requests still include `anthropic-version: 2023-06-01` and omit `x-api-key`.
+
+**Existing explicit settings are not automatically replaced.** Manually update the existing `火山引擎` entry in `coding-plans.vendors` with the new endpoint, protocol, static models and `useModelsEndpoint: false`. An explicit `models[].apiStyle` takes precedence over `defaultApiStyle`; remove or update old model-level overrides too. Do not use the general `/api/v3` endpoint as a fallback: it is outside this Coding Plan route and may incur additional usage charges. A failed `/models` request falls back to configured/cached models; it does not necessarily clear the list.
+
+References: [Claude Code authentication](https://docs.volcengine.com/docs/82379/1928262), [Codex Responses configuration](https://docs.volcengine.com/docs/82379/2556056), [Coding Plan API support](https://docs.volcengine.com/docs/82379/2188958). Upstream availability and account access still require verification with your own Coding Plan key.
 
 ### Configuration Examples
 
@@ -189,11 +201,12 @@ The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-a
 | `coding-plans.vendors[].name` | `string` | Required | Vendor unique name. |
 | `coding-plans.vendors[].baseUrl` | `string` | Required | API base address. |
 | `coding-plans.vendors[].apiKey` | `string` | Empty | Deprecated. Vendor API key. When non-empty, it takes precedence over the same vendor key stored in VS Code Secret Storage. If the current vendor has no key, another `vendors[].apiKey` with the same `baseUrl` can be used as a fallback. |
+| `coding-plans.vendors[].authType` | `"bearer"` / `"x-api-key"` | Protocol-dependent | Optional override for chat and `/models`: omitted uses `x-api-key` for Anthropic and Bearer for OpenAI. Explicit values send only the selected auth header; Anthropic always keeps `anthropic-version`. Does not change `usageUrl` authentication. |
 | `coding-plans.vendors[].usageUrl` | `string` | Empty | Plan usage API address; when configured, status bar displays quota percentage. |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Protocol style: `openai-chat` / `openai-responses` / `anthropic`. |
 | `coding-plans.vendors[].defaultTemperature` | `number` / `null` | Empty | Deprecated. Vendor default temperature. Kept in configuration but not sent. |
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | Vendor default topP. Kept in configuration but not sent. |
-| `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | Whether to fetch model list from `/models`; running `Coding Plans: Update Coding Plans Models List` writes discovered models back to `models`. |
+| `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `true` (Volcano Engine template: `false`) | Whether to fetch model list from `/models`; running `Coding Plans: Update Coding Plans Models List` writes discovered models back to `models`. When false, even forced refresh uses only configured models. |
 | `coding-plans.vendors[].models[].name` | `string` | Required | Model name. |
 | `coding-plans.vendors[].models[].enabled` | `boolean` | `true` | Whether to show this model in Manage Language Models; set to `false` to keep it configured but hidden. |
 | `coding-plans.vendors[].models[].description` | `string` | Empty | Model description. |

@@ -100,7 +100,7 @@ export function buildVendorDiscoverySignature(vendor: VendorConfig, apiKey: stri
   const normalizedBaseUrl = normalizeHttpBaseUrl(vendor.baseUrl) || vendor.baseUrl.trim();
   const modelsSignature = hashText(JSON.stringify(vendor.models));
   const endpointFlag = vendor.useModelsEndpoint ? '1' : '0';
-  return `${toVendorStateKey(vendor.name)}|${normalizedBaseUrl.toLowerCase()}|${vendor.defaultApiStyle}|${endpointFlag}|${modelsSignature}|${hashText(apiKey.trim())}`;
+  return `${toVendorStateKey(vendor.name)}|${normalizedBaseUrl.toLowerCase()}|${vendor.defaultApiStyle}|${vendor.authType ?? ''}|${endpointFlag}|${modelsSignature}|${hashText(apiKey.trim())}`;
 }
 
 function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefined {

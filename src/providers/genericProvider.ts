@@ -10,7 +10,7 @@ import {
   getCompactErrorMessage,
   normalizeHttpBaseUrl,
 } from './baseProvider';
-import { ConfigStore, VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
+import { ConfigStore, VendorApiStyle, VendorAuthType, VendorConfig, VendorModelConfig } from '../config/configStore';
 import {
   ANTHROPIC_EFFORT_VALUES,
   AnthropicEffort,
@@ -1096,7 +1096,7 @@ export class GenericAIProvider extends BaseAIProvider {
       const resolved = await this.withOptionalV1Retry(vendor, baseUrl, async (retryBaseUrl) => {
         const response = await this.fetchJson<any>(`${retryBaseUrl}/models`, {
           method: 'GET',
-          ...this.buildRequestInit(apiKey, vendor.defaultApiStyle),
+          ...this.buildRequestInit(apiKey, vendor.defaultApiStyle, vendor.authType),
         });
         return { response, baseUrl: retryBaseUrl };
       });
@@ -1284,7 +1284,7 @@ export class GenericAIProvider extends BaseAIProvider {
           messages: this.summarizeProviderMessages(providerMessages),
         },
       });
-      const requestInit = this.buildRequestInit(apiKey, 'openai-chat', token);
+      const requestInit = this.buildRequestInit(apiKey, 'openai-chat', vendor.authType, token);
       const response = await this.postWithRetry(`${baseUrl}/chat/completions`, payload, requestInit, trace);
       if (this.isSseResponse(response)) {
         return this.buildStreamingChatResponse(
@@ -1435,7 +1435,7 @@ export class GenericAIProvider extends BaseAIProvider {
           input: this.summarizeOpenAIResponsesInput(nextPayload.input),
         },
       });
-      const requestInit = this.buildRequestInit(apiKey, 'openai-responses', token);
+      const requestInit = this.buildRequestInit(apiKey, 'openai-responses', vendor.authType, token);
       const response = await this.postWithRetry(`${baseUrl}/responses`, nextPayload, requestInit, trace);
       if (this.isSseResponse(response)) {
         return this.buildStreamingChatResponse(
@@ -1608,7 +1608,7 @@ export class GenericAIProvider extends BaseAIProvider {
           messageCount: payload.messages.length,
         },
       });
-      const requestInit = this.buildRequestInit(apiKey, 'anthropic', token);
+      const requestInit = this.buildRequestInit(apiKey, 'anthropic', vendor.authType, token);
       const response = await this.postWithRetry(`${baseUrl}/messages`, payload, requestInit, trace);
       if (this.isSseResponse(response)) {
         return this.buildStreamingChatResponse(
@@ -2042,16 +2042,24 @@ export class GenericAIProvider extends BaseAIProvider {
     return isChinese() ? '添加 /v1 并重试' : 'Add /v1 and retry';
   }
 
-  private buildRequestInit(apiKey: string, apiStyle: VendorApiStyle, token?: vscode.CancellationToken): RequestInit {
+  private buildRequestInit(
+    apiKey: string,
+    apiStyle: VendorApiStyle,
+    authType?: VendorAuthType,
+    token?: vscode.CancellationToken,
+  ): RequestInit {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
 
-    if (apiStyle === 'anthropic') {
+    const effectiveAuthType = authType ?? (apiStyle === 'anthropic' ? 'x-api-key' : 'bearer');
+    if (effectiveAuthType === 'x-api-key') {
       headers['x-api-key'] = apiKey;
-      headers['anthropic-version'] = '2023-06-01';
     } else {
       headers.Authorization = `Bearer ${apiKey}`;
+    }
+    if (apiStyle === 'anthropic') {
+      headers['anthropic-version'] = '2023-06-01';
     }
 
     const init: RequestInit = { headers };

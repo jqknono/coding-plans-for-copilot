@@ -269,6 +269,14 @@
                                 "description": "%configuration.coding-plans.vendors.apiKey.description%",
                                 "deprecationMessage": "%configuration.coding-plans.vendors.apiKey.deprecationMessage%"
                             },
+                            "authType": {
+                                "type": "string",
+                                "enum": [
+                                    "bearer",
+                                    "x-api-key"
+                                ],
+                                "description": "Optional authentication header override for chat and /models discovery. When omitted, Anthropic uses x-api-key and OpenAI uses Authorization: Bearer. Explicit values send only the selected auth header; Anthropic always keeps anthropic-version. Does not change usageUrl authentication."
+                            },
                             "usageUrl": {
                                 "type": "string",
                                 "description": "Optional vendor usage endpoint. When configured, the extension fetches coding-plan quota usage and shows percentage summaries in the status bar. Currently verified for Zhipu usage APIs."
@@ -514,10 +522,21 @@
                         },
                         {
                             "name": "火山引擎",
-                            "baseUrl": "https://ark.cn-beijing.volces.com/api/coding",
-                            "models": [],
-                            "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
+                            "baseUrl": "https://ark.cn-beijing.volces.com/api/coding/v3",
+                            "models": [
+                                { "name": "doubao-seed-evolving" },
+                                { "name": "doubao-seed-2.1-turbo" },
+                                { "name": "doubao-seed-2.0-lite" },
+                                { "name": "minimax-m3" },
+                                { "name": "glm-5.3" },
+                                { "name": "glm-5.3-flash" },
+                                { "name": "deepseek-v4-flash" },
+                                { "name": "deepseek-v4-pro" },
+                                { "name": "kimi-k2.7-code" },
+                                { "name": "kimi-k3" }
+                            ],
+                            "useModelsEndpoint": false,
+                            "defaultApiStyle": "openai-responses"
                         },
                         {
                             "name": "Kimi",

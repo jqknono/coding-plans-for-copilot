@@ -83,7 +83,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | --- | --- | --- |
 | 智谱（zhipu） | `https://open.bigmodel.cn/api/coding/paas/v4` | `https://open.bigmodel.cn/api/anthropic`（Claude Code） / `https://open.bigmodel.cn/api/paas/v4`（通用） |
 | z.ai | `https://api.z.ai/api/anthropic` | `https://api.z.ai/api/coding/paas/v4` |
-| 火山引擎 | `https://ark.cn-beijing.volces.com/api/coding` | `https://ark.cn-beijing.volces.com/api/coding/v3` |
+| 火山引擎 | `https://ark.cn-beijing.volces.com/api/coding/v3`（Responses） | `https://ark.cn-beijing.volces.com/api/coding/v1`（Anthropic；`authType: "bearer"`） |
 | Volcengine Overseas | `https://ark.ap-southeast.bytepluses.com/api/coding` | `https://ark.ap-southeast.bytepluses.com/api/coding/v3` |
 | Kimi | `https://api.kimi.com/coding/v1` | `https://api.kimi.com/coding/v1` |
 | 阿里云（Aliyun） | `https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic` | `https://token-plan.cn-beijing.maas.aliyuncs.com/compatible-mode/v1` |
@@ -92,6 +92,17 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | DeepSeek | `https://api.deepseek.com/anthropic` | `https://api.deepseek.com/v1` |
 | OpenRouter | `https://openrouter.ai/api` | `https://openrouter.ai/api/v1` |
 
+#### 火山引擎 Coding Plan
+
+内置供应商保持名称 `火山引擎`（不改变 Secret Storage 密钥关联），使用 `defaultApiStyle: "openai-responses"`、`baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v3"` 和 `useModelsEndpoint: false`，最终请求地址为 `https://ark.cn-beijing.volces.com/api/coding/v3/responses`。平台也支持 `/api/coding/v3/chat/completions`；Responses 是推荐默认协议，并非唯一支持的协议。
+
+静态模型 ID 为 `doubao-seed-evolving`、`doubao-seed-2.1-turbo`、`doubao-seed-2.0-lite`、`minimax-m3`、`glm-5.3`、`glm-5.3-flash`、`deepseek-v4-flash`、`deepseek-v4-pro`、`kimi-k2.7-code`、`kimi-k3`。模板不预设未经证实的模型级视觉、上下文窗口或 thinking 参数。保持非空 `models` 和关闭发现后，即使强制刷新也只使用静态列表，不请求 `/models`。在 Manage Language Models 中显式添加 `火山引擎` 供应商 group 才显示模型；未作用域化的 `Coding Plans` 根仍保持隐藏。
+
+如需 Anthropic 兼容入口，将供应商设为 `defaultApiStyle: "anthropic"`、`authType: "bearer"`、`baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v1"`，同时保留 `useModelsEndpoint: false` 与静态模型。本扩展只附加 `/messages`，最终地址为 `https://ark.cn-beijing.volces.com/api/coding/v1/messages`，**不要直接复制 Claude Code 的 `/api/coding` 基地址**。官方 Claude Code 配置使用 `ANTHROPIC_AUTH_TOKEN`，对应 Bearer 认证；本扩展使用“管理供应商配置”保存的密钥，不读取该环境变量。Anthropic Bearer 请求仍携带 `anthropic-version: 2023-06-01`，不发送 `x-api-key`。
+
+**已有显式设置不会随模板自动替换。** 请手动修改 `coding-plans.vendors` 中现有的 `火山引擎` 条目，更新地址、协议、静态模型及 `useModelsEndpoint: false`。`models[].apiStyle` 优先于 `defaultApiStyle`，旧模型级协议也需删除或同步修改。不要回退到通用 `/api/v3`：它不属于这里的 Coding Plan 路由，可能产生额外按量费用。`/models` 请求失败会回退已配置或缓存模型，并非必然清空列表。
+
+参考：[Claude Code 认证](https://docs.volcengine.com/docs/82379/1928262)、[Codex Responses 配置](https://docs.volcengine.com/docs/82379/2556056)、[Coding Plan API 支持](https://docs.volcengine.com/docs/82379/2188958)。上游可用性与账号模型权限仍需使用自己的 Coding Plan 密钥验证。
 
 ### 配置示例
 
@@ -186,11 +197,12 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].name` | `string` | 必填 | 供应商唯一名称。 |
 | `coding-plans.vendors[].baseUrl` | `string` | 必填 | API 基础地址。 |
 | `coding-plans.vendors[].apiKey` | `string` | 空 | 已废弃。供应商 API Key；非空时优先于 VS Code Secret Storage 中保存的同名供应商密钥。当前供应商未配置密钥时，可按相同 `baseUrl` 兜底复用其它 `vendors[].apiKey`。 |
+| `coding-plans.vendors[].authType` | `"bearer"` / `"x-api-key"` | 随协议 | 可选，覆盖聊天及 `/models` 认证。缺省时 Anthropic 用 `x-api-key`、OpenAI 用 Bearer；显式设置仅发送所选认证头，Anthropic 始终保留 `anthropic-version`。不影响 `usageUrl` 认证。 |
 | `coding-plans.vendors[].usageUrl` | `string` | 空 | 套餐 usage 接口地址，配置后状态栏显示额度百分比。 |
 | `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | 协议风格：`openai-chat` / `openai-responses` / `anthropic`。 |
 | `coding-plans.vendors[].defaultTemperature` | `number` / `null` | 空 | 已废弃。供应商默认 temperature。配置会保留，但不会下发。 |
 | `coding-plans.vendors[].defaultTopP` | `number` | `0` | 供应商默认 topP。配置会保留，但不会下发。 |
-| `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `false` | 是否从 `/models` 拉取模型列表；执行 `Coding Plans: Update Coding Plans Models List` 后会将发现到的模型写回 `models`。 |
+| `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `true`（火山模板为 `false`） | 是否从 `/models` 拉取模型列表；执行 `Coding Plans: Update Coding Plans Models List` 后会将发现到的模型写回 `models`。为 false 时，强制刷新也只使用配置模型。 |
 | `coding-plans.vendors[].models[].name` | `string` | 必填 | 模型名称。 |
 | `coding-plans.vendors[].models[].enabled` | `boolean` | `true` | 是否在 Manage Language Models 中显示该模型；设为 `false` 时保留配置但隐藏。 |
 | `coding-plans.vendors[].models[].description` | `string` | 空 | 模型描述。 |
