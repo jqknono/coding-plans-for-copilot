@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-09-09T12:49:03.021Z",
-  "generatedAtBeijing": "2026年9月9日 20:49:03",
-  "sourceGeneratedAt": "2026-09-09T12:47:55.705Z",
-  "sourceGeneratedAtBeijing": "2026年9月9日 20:47:55",
-  "sourceMetricsGeneratedAt": "2026-09-09T12:48:08.283Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月9日 20:48:08",
+  "generatedAt": "2026-09-11T12:41:23.922Z",
+  "generatedAtBeijing": "2026年9月11日 20:41:23",
+  "sourceGeneratedAt": "2026-09-11T12:40:31.013Z",
+  "sourceGeneratedAtBeijing": "2026年9月11日 20:40:31",
+  "sourceMetricsGeneratedAt": "2026-09-11T12:40:33.227Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月11日 20:40:33",
   "summary": {
-    "openrouterProviderCount": 105,
-    "metricsProviderCount": 48,
-    "resolvedMetricsProviderCount": 48,
+    "openrouterProviderCount": 106,
+    "metricsProviderCount": 47,
+    "resolvedMetricsProviderCount": 47,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 6,
     "providersWithPlans": 14,
-    "pendingCount": 34,
+    "pendingCount": 33,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/9bed1bfffeb0183420bc9837dbb7f50c.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/d03374bc660afe9147418481b51046ce.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -85,10 +85,8 @@
           "originalPrice": 9.9,
           "originalPriceText": "¥9.9/月",
           "unit": "月",
-          "notes": "限时5折；适用: 新用户、轻度尝鲜、低门槛体验",
+          "notes": "适用: 新手尝鲜，入门首选",
           "serviceDetails": [
-            "额度规格: 1000万 Token",
-            "使用期限: 1个月",
             "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
             "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
             "套餐额度内取消 Coding Plan 三层限流",
@@ -102,10 +100,8 @@
           "originalPrice": 40,
           "originalPriceText": "¥40/月",
           "unit": "月",
-          "notes": "限时5折；适用: 日常编码、稳定使用的个人开发者",
+          "notes": "适用: 日常开发，高性价比之选",
           "serviceDetails": [
-            "额度规格: 4200万 Token",
-            "使用期限: 1个月",
             "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
             "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
             "套餐额度内取消 Coding Plan 三层限流",
@@ -119,10 +115,8 @@
           "originalPrice": 200,
           "originalPriceText": "¥200/月",
           "unit": "月",
-          "notes": "限时5折；适用: 高频 Coding 用户、进阶开发者",
+          "notes": "适用: 高频开发，持续创作无压力",
           "serviceDetails": [
-            "额度规格: 2.3亿 Token",
-            "使用期限: 1个月",
             "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
             "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
             "套餐额度内取消 Coding Plan 三层限流",
@@ -136,10 +130,8 @@
           "originalPrice": 600,
           "originalPriceText": "¥600/月",
           "unit": "月",
-          "notes": "限时5折；适用: 重度开发用户、Agent 深度使用者",
+          "notes": "限时5折；适用: 重度开发，释放 AI 生产力",
           "serviceDetails": [
-            "额度规格: 7亿 Token",
-            "使用期限: 1个月",
             "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
             "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
             "套餐额度内取消 Coding Plan 三层限流",
@@ -665,7 +657,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-Zj2JLY2i.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CM0NDTfH.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1069,7 +1061,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://deepinfra.com",
       "pricingPageUrl": "https://deepinfra.com/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $107 / $0.2156 / $0.0686）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $107 / $0.2156 / $0.0069）",
       "blocked": false
     },
     {
@@ -1204,16 +1196,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://novita.ai",
       "pricingPageUrl": "https://novita.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.32 / $0.044 / $3.96）",
-      "blocked": false
-    },
-    {
-      "slug": "open-inference",
-      "openrouterName": "OpenInference",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.openinference.ai",
-      "pricingPageUrl": "https://www.openinference.ai/pricing",
-      "reason": "官网未发现可解析的套餐价格页",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.3 / $0.006 / $1.2）",
       "blocked": false
     },
     {
