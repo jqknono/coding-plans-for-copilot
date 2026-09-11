@@ -1,0 +1,76 @@
+{
+  "date": "2026-09-11",
+  "generatedAt": "2026-09-11T10:45:32.828Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {}
+  },
+  "posts": [
+    {
+      "id": "v2ex-1241410",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1241410",
+      "title": "我们做了个《Her》： Mac 上的语音 AI 助手 Viora",
+      "content": "大学的时候看了《 Her 》这部科幻片，男主 Theodore 按住耳机随口说句话，Samantha 就能帮他整理邮件、安排日程、校对文稿，甚至记住他的喜好和工作习惯。当时觉得这种场景太酷了，但也只是科幻。 后来做开发，每天在不同窗口之间切来切去：写代码、回邮件、查文档、记任务。偶尔会想，要是有个助手能直接在我工作的地方帮忙就好了，不用打开另一个聊天窗口。 现在我们把这个想法做出来了： Viora ，一个专为 Mac 设计的语音 AI 助手。 → 直接试用 Viora （可以直接上手 Free 版本） 它和 Siri 有什么不同？ 很多人第一反应是：\"Mac 不是有 Siri 吗？\" 有是有，但你真的在用吗？ Siri 就像个健忘的客服：你问一句，它答一句，然后立刻忘掉。下次再问类似的问题，它照样一脸懵。你让它\"帮我改一下这段文字\"，它会反问你\"改成什么样\"。你让它\"发邮件给昨天联系我的那个人\"，它说\"我不知道你在说谁\"。 更别提那些让人抓狂的时刻：你在 VS Code 写代码，想让它帮忙查个 API 文档，结果它打开 Safari 给你搜了一堆不相关的网页。你在邮件里选中一段英文想翻",
+      "author": "nexmoe",
+      "createdAt": "2026-09-11T10:12:35.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "positive",
+        "sentimentConfidence": 0.92,
+        "summary": "这篇帖子介绍了Viora，一个为Mac设计的语音AI助手，详细对比了其与Siri的区别，重点展示了其在开发者工作流中的应用，包括VS Code集成、API文档查询、邮件起草、日程管理等功能，并讨论了其Free版和Pro版的订阅方案。",
+        "topics": [
+          "定价",
+          "Viora",
+          "AI 助手",
+          "开发者体验",
+          "订阅",
+          "工具集成",
+          "VS Code",
+          "API 文档"
+        ],
+        "planMentioned": "Free 版本/Pro 版本",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/383",
+      "analyzedAt": "2026-09-11T10:52:29.797Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1241298: LLM returned invalid JSON: Unexpected token 'U', \"User Safety: safe\" is not valid JSON"
+  ]
+}
