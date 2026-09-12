@@ -1,0 +1,77 @@
+{
+  "date": "2026-09-12",
+  "generatedAt": "2026-09-12T10:14:33.730Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 49,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "ChatGPT Plus, GPTPlus, Claude Pro, Gemini Pro, Leonardo Ai, Capcut Pro, Runway Max, Super Grok": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1241484",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1241484",
+      "title": "智友社回馈 V 站新老客户，抽送第 8 波 8 个智友社的 GPTPLUS 稳定特殊渠道日区月卡成品号 6",
+      "content": "各位 V 友好，感谢大家一直以来对我们智友社的支持和关注。 我们智友社的初衷是帮大家寻找市面上稳定的主流 AI 特价渠道，鉴于目前国外主流 AI 的正价订购价格昂贵，我们发现市面上有不少的价格实惠的特殊渠道 AI 产品，可惜质量参差不齐，为了节省大家的时间跟金钱，我们花了不少精力对各个渠道商的特价 AI 进行了购买评测，再从中选取稳定的渠道上架出售，我们也欢迎各位佬友跟我们推荐稳定的特殊渠道 AI ，我们会自费购买进行稳定性测试，测试通过后也能让更多的人能受益！ 由于目前国外 AI 并不能上架国内主流购物平台，所以我们只能把店铺开在了一个小众平台—链动小铺，您有问题可以随时联系我们 QQ 客服，我们会协助您一起解决。 我们的小铺地址： https://www.ldxp.cn/shop/282D9KDL 。我们的产品目前只要分成下面两种。 一：稳定特殊渠道特价商品：目前这几款我们测试下来都是很稳定，价格会随每天行情变化，请以平台价格为准。 GPTPlus 日区成品号（质保 24 小时） 62.88 | GPTPlus 东南亚区成品号（质保 24 小时） 62.88 | GPTPlus 日",
+      "author": "Ai2You",
+      "createdAt": "2026-09-12T01:26:36.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "ChatGPT Plus, GPTPlus, Claude Pro, Gemini Pro, Leonardo Ai, Capcut Pro, Runway Max, Super Grok",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "智友社回馈 V 站新老客户，抽送 8 个 GPTPlus 稳定特殊渠道日区月卡成品号，并介绍了多种 AI 工具的特价渠道套餐，包括 ChatGPT Plus、Claude Pro、Gemini Pro 等。",
+        "topics": [
+          "套餐对比",
+          "抽奖",
+          "体验卡",
+          "定价",
+          "渠道",
+          "稳定性"
+        ],
+        "planMentioned": "GPTPlus 日区月卡成品号",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/385",
+      "analyzedAt": "2026-09-12T10:19:50.409Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "v2ex: https://www.v2ex.com/api/replies/show.json?topic_id=1241537 The operation was aborted due to timeout",
+    "analysis failed for v2ex-1241533: LLM returned invalid JSON: Unexpected token 'U', \"User Safety: safe\" is not valid JSON"
+  ]
+}
