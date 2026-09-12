@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-09-11T12:41:23.922Z",
-  "generatedAtBeijing": "2026年9月11日 20:41:23",
-  "sourceGeneratedAt": "2026-09-11T12:40:31.013Z",
-  "sourceGeneratedAtBeijing": "2026年9月11日 20:40:31",
-  "sourceMetricsGeneratedAt": "2026-09-11T12:40:33.227Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月11日 20:40:33",
+  "generatedAt": "2026-09-12T12:01:32.762Z",
+  "generatedAtBeijing": "2026年9月12日 20:01:32",
+  "sourceGeneratedAt": "2026-09-12T12:00:39.675Z",
+  "sourceGeneratedAtBeijing": "2026年9月12日 20:00:39",
+  "sourceMetricsGeneratedAt": "2026-09-12T12:00:40.765Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月12日 20:00:40",
   "summary": {
     "openrouterProviderCount": 106,
-    "metricsProviderCount": 47,
-    "resolvedMetricsProviderCount": 47,
+    "metricsProviderCount": 48,
+    "resolvedMetricsProviderCount": 48,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 6,
     "providersWithPlans": 14,
-    "pendingCount": 33,
+    "pendingCount": 34,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/d03374bc660afe9147418481b51046ce.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3f98ee3e45fa3129e84c9f7e592755b4.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -429,7 +429,7 @@
             "3 workspace seats included",
             "100 containers + 10 GPU concurrency",
             "Scheduled and Web Functions (limited)",
-            "$100 / month free credits",
+            "$100 / month free compute",
             "5000 containers + 50 GPU concurrency",
             "Unlimited Scheduled Functions"
           ]
@@ -446,7 +446,7 @@
             "3 workspace seats included",
             "100 containers + 10 GPU concurrency",
             "Scheduled and Web Functions (limited)",
-            "$100 / month free credits",
+            "$100 / month free compute",
             "5000 containers + 50 GPU concurrency",
             "Unlimited Scheduled Functions"
           ]
@@ -463,7 +463,7 @@
             "3 workspace seats included",
             "100 containers + 10 GPU concurrency",
             "Scheduled and Web Functions (limited)",
-            "$100 / month free credits",
+            "$100 / month free compute",
             "5000 containers + 50 GPU concurrency",
             "Unlimited Scheduled Functions"
           ]
@@ -657,7 +657,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CM0NDTfH.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CrZrtDfF.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1007,7 +1007,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.0859 / $0.08474 / $5）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.0687 / $0.0859 / $0.067792）",
       "blocked": false
     },
     {
@@ -1180,6 +1180,15 @@
       "pricingPageUrl": "https://www.morphllm.com",
       "reason": "官网价格页探测失败：https://www.morphllm.com/pricing: HTTP 429",
       "blocked": true
+    },
+    {
+      "slug": "near-ai",
+      "openrouterName": "Near AI",
+      "providerId": null,
+      "officialWebsiteUrl": "https://near.ai",
+      "pricingPageUrl": "https://near.ai",
+      "reason": "官网价格页探测失败：https://near.ai/pricing: HTTP 404",
+      "blocked": false
     },
     {
       "slug": "nextbit",
