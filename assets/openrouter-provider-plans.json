@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-09-12T12:01:32.762Z",
-  "generatedAtBeijing": "2026年9月12日 20:01:32",
+  "generatedAt": "2026-09-13T13:11:09.074Z",
+  "generatedAtBeijing": "2026年9月13日 21:11:09",
   "sourceGeneratedAt": "2026-09-12T12:00:39.675Z",
   "sourceGeneratedAtBeijing": "2026年9月12日 20:00:39",
-  "sourceMetricsGeneratedAt": "2026-09-12T12:00:40.765Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月12日 20:00:40",
+  "sourceMetricsGeneratedAt": "2026-09-13T13:10:10.971Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月13日 21:10:10",
   "summary": {
     "openrouterProviderCount": 106,
-    "metricsProviderCount": 48,
-    "resolvedMetricsProviderCount": 48,
+    "metricsProviderCount": 49,
+    "resolvedMetricsProviderCount": 49,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
-    "heuristicProviderCount": 6,
-    "providersWithPlans": 14,
+    "heuristicProviderCount": 7,
+    "providersWithPlans": 15,
     "pendingCount": 34,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
@@ -304,6 +304,36 @@
       "privacyPolicyUrl": "https://www.digitalocean.com/legal/privacy-policy",
       "termsOfServiceUrl": "https://www.digitalocean.com/legal/terms-of-service-agreement",
       "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "inference-net",
+      "openrouterName": "InferenceNet",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 250,
+          "currentPriceText": "$250 per mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://inference.net/pricing/",
+          "serviceDetails": [
+            "New Introducing AutoEvals: Find the right model for your task"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://inference.net",
+        "https://inference.net/pricing/"
+      ],
+      "pricingPageUrl": "https://inference.net/pricing/",
+      "officialWebsiteUrl": "https://inference.net",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://inference.net/privacy-policy",
+      "termsOfServiceUrl": "https://inference.net/terms-of-service",
+      "statusPageUrl": "https://status.inference.net",
       "parseMode": "official-website-heuristic"
     },
     {
@@ -1074,6 +1104,15 @@
       "blocked": false
     },
     {
+      "slug": "dekallm",
+      "openrouterName": "DekaLLM",
+      "providerId": null,
+      "officialWebsiteUrl": "https://docs.cloudeka.ai",
+      "pricingPageUrl": "https://docs.cloudeka.ai",
+      "reason": "官网价格页探测失败：https://docs.cloudeka.ai/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "fireworks",
       "openrouterName": "Fireworks",
       "providerId": null,
@@ -1180,15 +1219,6 @@
       "pricingPageUrl": "https://www.morphllm.com",
       "reason": "官网价格页探测失败：https://www.morphllm.com/pricing: HTTP 429",
       "blocked": true
-    },
-    {
-      "slug": "near-ai",
-      "openrouterName": "Near AI",
-      "providerId": null,
-      "officialWebsiteUrl": "https://near.ai",
-      "pricingPageUrl": "https://near.ai",
-      "reason": "官网价格页探测失败：https://near.ai/pricing: HTTP 404",
-      "blocked": false
     },
     {
       "slug": "nextbit",
