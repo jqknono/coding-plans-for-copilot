@@ -1,0 +1,72 @@
+{
+  "date": "2026-09-13",
+  "generatedAt": "2026-09-13T11:14:34.437Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 20,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1241665",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1241665",
+      "title": "有没有，好用免费的 Coding Agent",
+      "content": "推荐几个来",
+      "author": "Rust2015",
+      "createdAt": "2026-09-13T06:59:34.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.9,
+        "summary": "The user is asking for recommendations for good and free coding agents.",
+        "topics": [
+          "免费",
+          "Coding Agent",
+          "推荐"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/386",
+      "analyzedAt": "2026-09-13T11:23:13.922Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}

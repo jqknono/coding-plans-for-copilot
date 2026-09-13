@@ -1,6 +1,6 @@
 {
   "date": "2026-09-12",
-  "generatedAt": "2026-09-12T10:14:33.730Z",
+  "generatedAt": "2026-09-13T11:14:34.437Z",
   "config": {
     "sources": [
       "v2ex",
@@ -24,13 +24,13 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 49,
-    "postsAfterKeywordFilter": 13,
-    "relevantPosts": 1,
-    "discussionsCreated": 1,
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 20,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
     "discussionsSkipped": 0,
     "supplierMentions": {
-      "ChatGPT Plus, GPTPlus, Claude Pro, Gemini Pro, Leonardo Ai, Capcut Pro, Runway Max, Super Grok": 1
+      "DeepSeek": 1
     }
   },
   "posts": [
@@ -65,13 +65,42 @@
       },
       "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/385",
       "analyzedAt": "2026-09-12T10:19:50.409Z"
+    },
+    {
+      "id": "v2ex-1241602",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1241602",
+      "title": "做了一个 dsh 的 TUI：手机 SSH 远程控制 + Session 费用统计, 欢迎体验加星",
+      "content": "地址: https://github.com/mushuanli/dsht/tree/main deepseek flash 4.1 变强了，也变快了 同时烧钱速度也变快了， 经常一不小心会话越来越长同时费用也越来越高, 几次日费用超过 80 块。 同时有时在外部手机 ssh 能控制 codex, 但是难控制 dsh, 开放网站又不放心，（上个月被盗刷 200 多，不知道 key 什么泄露的） 痛定思痛，决定做一个一个 tui 客户端。 现在已经做好，手机上能用，命令行也能用，每一分钱都看得清清楚楚， 也欢迎大家多使用提意见。",
+      "author": "mushuanl",
+      "createdAt": "2026-09-12T14:39:32.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "用户分享了为DeepSeek开发的TUI客户端，用于手机SSH远程控制和会话费用统计，因DeepSeek Flash 4.1使用成本高昂且存在密钥泄露导致盗刷的安全问题。",
+        "topics": [
+          "费用统计",
+          "SSH远程控制",
+          "安全问题",
+          "DeepSeek定价",
+          "TUI客户端"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/387",
+      "analyzedAt": "2026-09-13T11:23:21.700Z"
     }
   ],
   "failures": [
     "linuxdo: https://linux.do/latest.rss → 429",
     "linuxdo: https://linux.do/latest.json → 429",
-    "linuxdo: https://linux.do/latest.json → 429",
-    "v2ex: https://www.v2ex.com/api/replies/show.json?topic_id=1241537 The operation was aborted due to timeout",
-    "analysis failed for v2ex-1241533: LLM returned invalid JSON: Unexpected token 'U', \"User Safety: safe\" is not valid JSON"
+    "linuxdo: https://linux.do/latest.json → 429"
   ]
 }
