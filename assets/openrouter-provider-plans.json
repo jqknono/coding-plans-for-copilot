@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-09-13T13:11:09.074Z",
-  "generatedAtBeijing": "2026年9月13日 21:11:09",
+  "generatedAt": "2026-09-14T14:49:50.493Z",
+  "generatedAtBeijing": "2026年9月14日 22:49:50",
   "sourceGeneratedAt": "2026-09-12T12:00:39.675Z",
   "sourceGeneratedAtBeijing": "2026年9月12日 20:00:39",
-  "sourceMetricsGeneratedAt": "2026-09-13T13:10:10.971Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月13日 21:10:10",
+  "sourceMetricsGeneratedAt": "2026-09-14T14:48:58.022Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月14日 22:48:58",
   "summary": {
     "openrouterProviderCount": 106,
-    "metricsProviderCount": 49,
-    "resolvedMetricsProviderCount": 49,
+    "metricsProviderCount": 48,
+    "resolvedMetricsProviderCount": 48,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 7,
     "providersWithPlans": 15,
-    "pendingCount": 34,
+    "pendingCount": 33,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -1140,15 +1140,6 @@
       "blocked": false
     },
     {
-      "slug": "groq",
-      "openrouterName": "Groq",
-      "providerId": null,
-      "officialWebsiteUrl": "https://groq.com",
-      "pricingPageUrl": "https://groq.com/",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $350）",
-      "blocked": false
-    },
-    {
       "slug": "inceptron",
       "openrouterName": "Inceptron",
       "providerId": null,
@@ -1194,15 +1185,6 @@
       "blocked": false
     },
     {
-      "slug": "mara",
-      "openrouterName": "Mara",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.mara.com",
-      "pricingPageUrl": "https://www.mara.com",
-      "reason": "官网价格页探测失败：https://www.mara.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
       "slug": "modelrun",
       "openrouterName": "ModelRun",
       "providerId": null,
@@ -1236,6 +1218,15 @@
       "officialWebsiteUrl": "https://novita.ai",
       "pricingPageUrl": "https://novita.ai/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.3 / $0.006 / $1.2）",
+      "blocked": false
+    },
+    {
+      "slug": "open-inference",
+      "openrouterName": "OpenInference",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.openinference.ai",
+      "pricingPageUrl": "https://www.openinference.ai",
+      "reason": "官网价格页探测失败：https://www.openinference.ai/pricing: HTTP 404",
       "blocked": false
     },
     {
