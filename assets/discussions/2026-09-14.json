@@ -1,0 +1,74 @@
+{
+  "date": "2026-09-14",
+  "generatedAt": "2026-09-14T12:02:57.196Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 57,
+    "postsAfterKeywordFilter": 17,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "OpenAI, Cursor, DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1241938",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1241938",
+      "title": "codex 体验也太垃圾了，你们都咋用下去的",
+      "content": "之前一直用的 cursor ，干活相当丝滑，今天供货商没货了，看 v 上 codex 使用的人比较多就开了个 plus ，两个五小时用量都用完了一个活都没干完，体验甚至远远不如 deepseek ，ds 这才用了 50 万 token 就把 codex 半天没解决的问题搞定了，真是太离谱了",
+      "author": "tmtstudio",
+      "createdAt": "2026-09-14T09:32:35.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 1,
+        "supplier": "OpenAI, Cursor, DeepSeek",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户抱怨使用Codex Plus计划的AI编码体验很差，与Cursor和DeepSeek进行对比，认为Codex效率低下，不如DeepSeek解决问题的能力强。",
+        "topics": [
+          "AI编码助手",
+          "订阅计划",
+          "体验对比",
+          "token使用"
+        ],
+        "planMentioned": "Codex Plus",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/388",
+      "analyzedAt": "2026-09-14T12:11:28.063Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1241914: The operation was aborted due to timeout"
+  ]
+}
