@@ -1,0 +1,112 @@
+{
+  "date": "2026-09-15",
+  "generatedAt": "2026-09-15T11:16:48.522Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 14,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "火山方舟, 阿里": 1,
+      "智谱": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1242208",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1242208",
+      "title": "command go， opencode go 和各种 token plan，到底买哪个合适？",
+      "content": "买过火山方舟和阿里的 token plan 火山方舟的体验是最差的，不仅慢而且还有各种奇怪的计费逻辑，可以看我另一篇帖子 阿里的使用上还可以，但是计费方式不清晰，只有 credits,无法查看明细，最后一次买了企业版本的一千多，结果 3 天就干完了，但是查不到明细，不知道怎么用的 所以现在我就迷茫了，各位佬，买什么好啊",
+      "author": "jjustwin",
+      "createdAt": "2026-09-15T09:47:23.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.92,
+        "supplier": "火山方舟, 阿里",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户对比了火山方舟和阿里的token plan，认为火山方舟体验差且计费奇怪，阿里使用尚可但计费不透明，不知道该选择哪个更合适。",
+        "topics": [
+          "定价",
+          "计费",
+          "体验",
+          "火山方舟",
+          "阿里",
+          "token plan",
+          "套餐对比"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/390",
+      "analyzedAt": "2026-09-15T11:26:34.964Z"
+    },
+    {
+      "id": "v2ex-1242163",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1242163",
+      "title": "[开源] 做了一个 Go Runtime 的 Python Agent SDK，附一轮与 Claude Agent SDK 的对照测试",
+      "content": "最近给 Nexus 的 Agent Runtime 做了 Python 封装，叫 nexus-agent-sdk-python 。 Python 侧负责接入，实际调用模型、执行工具和管理上下文的是 Go 写的 nxs 。可以用它给自己的程序接一个能读文件、改代码、跑命令的 Agent ，也可以接自定义工具。 支持单次任务和多轮会话，提供 MCP 、Hooks 和工具权限配置。模型可以通过 Anthropic 兼容接口接入，也支持 OpenAI Chat Completions / Responses 。平台 wheel 带了 nxs 和 rg ，覆盖 macOS 、Linux 、Windows 的 x86_64 和 ARM64 。 项目在这里。 GitHub Python SDK 文档 Python 3.11+，先安装并配置模型 Key 。 pip install nexus-agent-sdk-python export ANTHROPIC_API_KEY=\"你的 API Key\" 下面这个例子读取当前目录的 README ，不开放写文件或执行命令的权限。 import asynci",
+      "author": "leemysw",
+      "createdAt": "2026-09-15T07:21:02.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "智谱",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "作者开源了一个用 Go 编写的 Python Agent SDK（nexus-agent-sdk-python），并与 Claude Agent SDK 进行了本地性能和成本对比。两边均使用智谱 Coding Plan 的 glm-5.3-flash 模型，Nexus SDK 在内存占用和 API 费用上表现更优（约低 16.7%）。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "性能",
+          "内存",
+          "模型请求",
+          "成本",
+          "体验"
+        ],
+        "planMentioned": "智谱 Coding Plan (glm-5.3-flash)",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/391",
+      "analyzedAt": "2026-09-15T11:26:41.921Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1242213: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1242205: The operation was aborted due to timeout"
+  ]
+}
