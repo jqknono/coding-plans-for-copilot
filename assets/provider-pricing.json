@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-15T07:11:58.968Z",
+  "updatedAt": "2026-09-15T13:14:46.099Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -678,7 +678,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-D6-TmNCY.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-Cq80p8f1.js"
       ],
       "plans": [
         {

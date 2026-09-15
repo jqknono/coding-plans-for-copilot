@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-14T14:49:50.493Z",
-  "generatedAtBeijing": "2026年9月14日 22:49:50",
-  "sourceGeneratedAt": "2026-09-12T12:00:39.675Z",
-  "sourceGeneratedAtBeijing": "2026年9月12日 20:00:39",
-  "sourceMetricsGeneratedAt": "2026-09-14T14:48:58.022Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月14日 22:48:58",
+  "generatedAt": "2026-09-15T13:15:49.628Z",
+  "generatedAtBeijing": "2026年9月15日 21:15:49",
+  "sourceGeneratedAt": "2026-09-15T13:14:46.099Z",
+  "sourceGeneratedAtBeijing": "2026年9月15日 21:14:46",
+  "sourceMetricsGeneratedAt": "2026-09-15T13:14:47.520Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月15日 21:14:47",
   "summary": {
     "openrouterProviderCount": 106,
     "metricsProviderCount": 48,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 7,
     "providersWithPlans": 15,
     "pendingCount": 33,
-    "blockedPendingCount": 2,
+    "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3f98ee3e45fa3129e84c9f7e592755b4.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7499ce445b48786b33419c65ac20992e.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -687,7 +687,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CrZrtDfF.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-Cq80p8f1.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1056,7 +1056,7 @@
       "officialWebsiteUrl": "https://docs.coreweave.com",
       "pricingPageUrl": "https://docs.coreweave.com/billing",
       "reason": "官网价格页探测失败：https://docs.coreweave.com/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "crusoe",
@@ -1185,6 +1185,15 @@
       "blocked": false
     },
     {
+      "slug": "mara",
+      "openrouterName": "Mara",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.mara.com",
+      "pricingPageUrl": "https://www.mara.com",
+      "reason": "官网价格页探测失败：https://www.mara.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "modelrun",
       "openrouterName": "ModelRun",
       "providerId": null,
@@ -1218,15 +1227,6 @@
       "officialWebsiteUrl": "https://novita.ai",
       "pricingPageUrl": "https://novita.ai/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.3 / $0.006 / $1.2）",
-      "blocked": false
-    },
-    {
-      "slug": "open-inference",
-      "openrouterName": "OpenInference",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.openinference.ai",
-      "pricingPageUrl": "https://www.openinference.ai",
-      "reason": "官网价格页探测失败：https://www.openinference.ai/pricing: HTTP 404",
       "blocked": false
     },
     {
