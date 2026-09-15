@@ -13,6 +13,11 @@ const REQUEST_TIMEOUT_MS = Number.parseInt(process.env.OPENROUTER_REQUEST_TIMEOU
 const ENDPOINT_CONCURRENCY = Math.max(1, Number.parseInt(process.env.OPENROUTER_ENDPOINT_CONCURRENCY || '4', 10));
 const ENDPOINT_REQUEST_RETRY_COUNT = 2;
 const ENDPOINT_REQUEST_RETRY_DELAY_MS = 750;
+const METRICS_VALIDATION_RETRY_COUNT = readNonNegativeInteger(process.env.OPENROUTER_METRICS_VALIDATION_RETRY_COUNT, 2);
+const METRICS_VALIDATION_RETRY_DELAY_MS = readNonNegativeInteger(
+  process.env.OPENROUTER_METRICS_VALIDATION_RETRY_DELAY_MS,
+  30_000,
+);
 const DEFAULT_ORGANIZATIONS = [
   'deepseek',
   'qwen',
@@ -29,6 +34,11 @@ const DEFAULT_ORGANIZATIONS = [
 ];
 const DEFAULT_MODELS_PER_ORG = 5;
 const DEFAULT_MODEL_MAX_AGE_DAYS = 180;
+
+function readNonNegativeInteger(value, fallback) {
+  const parsed = Number.parseInt(String(value ?? ''), 10);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
+}
 
 function parseDotEnv(text) {
   const result = {};
@@ -430,6 +440,17 @@ function getMetricsValidationErrors(output) {
   return errors;
 }
 
+function isRetryableMetricsValidationError(errors) {
+  const retryablePrefixes = [
+    'OpenRouter provider availability metrics are empty for every endpoint.',
+    'OpenRouter provider latency metrics are empty for every endpoint.',
+    'OpenRouter provider throughput metrics are empty for every endpoint.',
+  ];
+  return (
+    errors.length > 0 && errors.every((error) => retryablePrefixes.some((prefix) => String(error).startsWith(prefix)))
+  );
+}
+
 async function writeJsonFileAtomically(filePath, data) {
   const directory = path.dirname(filePath);
   const temporaryFile = path.join(directory, `.${path.basename(filePath)}.${process.pid}.${Date.now()}.tmp`);
@@ -537,9 +558,7 @@ async function mapWithConcurrency(values, concurrency, mapper) {
   return results;
 }
 
-async function main() {
-  await loadEnvFileIfPresent();
-
+async function collectMetricsOutput() {
   const apiKey = String(process.env.APIKEY || '').trim();
   if (!apiKey) {
     throw new Error('Missing environment variable APIKEY');
@@ -655,18 +674,54 @@ async function main() {
     failures,
   };
 
-  const validationErrors = getMetricsValidationErrors(output);
-  if (validationErrors.length > 0) {
-    throw new Error(`OpenRouter provider metrics validation failed: ${validationErrors.join(' | ')}`);
+  return output;
+}
+
+async function fetchValidatedMetrics({
+  collectMetrics = collectMetricsOutput,
+  retryCount = METRICS_VALIDATION_RETRY_COUNT,
+  retryDelayMs = METRICS_VALIDATION_RETRY_DELAY_MS,
+} = {}) {
+  const parsedRetryCount = Number(retryCount);
+  const parsedRetryDelayMs = Number(retryDelayMs);
+  const attempts = Number.isFinite(parsedRetryCount) ? Math.max(1, Math.floor(parsedRetryCount) + 1) : 1;
+  const delayMs = Number.isFinite(parsedRetryDelayMs) ? Math.max(0, parsedRetryDelayMs) : 0;
+  let validationErrors = [];
+
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    const output = await collectMetrics();
+    validationErrors = getMetricsValidationErrors(output);
+    if (validationErrors.length === 0) {
+      return output;
+    }
+
+    const canRetry = attempt < attempts && isRetryableMetricsValidationError(validationErrors);
+    if (!canRetry) {
+      break;
+    }
+
+    console.warn(
+      `[metrics] performance metrics were empty on attempt ${attempt}/${attempts}; ` +
+        `retrying in ${delayMs}ms: ${validationErrors.join(' | ')}`,
+    );
+    await sleep(delayMs);
   }
 
+  throw new Error(`OpenRouter provider metrics validation failed: ${validationErrors.join(' | ')}`);
+}
+
+async function main() {
+  await loadEnvFileIfPresent();
+
+  const output = await fetchValidatedMetrics();
   await writeJsonFileAtomically(OUTPUT_FILE, output);
 
   console.log(`[metrics] wrote ${OUTPUT_FILE}`);
   console.log(
-    `[metrics] organizations=${organizations.length} models=${modelEntries.length} providers=${endpointCount}`,
+    `[metrics] organizations=${output.summary.organizationCount} models=${output.summary.modelCount} ` +
+      `providers=${output.summary.providerEndpointCount}`,
   );
-  console.log(`[metrics] USD/CNY=${exchangeRate.rate}`);
+  console.log(`[metrics] USD/CNY=${output.exchangeRates.USD_CNY.rate}`);
 }
 
 function printHelp() {
@@ -680,6 +735,12 @@ function printHelp() {
   console.log(`  OPENROUTER_BASE_URL              API base URL (default: ${OPENROUTER_BASE_URL})`);
   console.log(`  OPENROUTER_REQUEST_TIMEOUT_MS    Per-request timeout in ms (default: ${REQUEST_TIMEOUT_MS})`);
   console.log(`  OPENROUTER_ENDPOINT_CONCURRENCY  Concurrent endpoint fetches (default: ${ENDPOINT_CONCURRENCY})`);
+  console.log(
+    `  OPENROUTER_METRICS_VALIDATION_RETRY_COUNT  Retries after empty performance metrics (default: ${METRICS_VALIDATION_RETRY_COUNT})`,
+  );
+  console.log(
+    `  OPENROUTER_METRICS_VALIDATION_RETRY_DELAY_MS  Delay between validation retries in ms (default: ${METRICS_VALIDATION_RETRY_DELAY_MS})`,
+  );
   console.log('  USD_CNY_EXCHANGE_RATE            Optional USD/CNY override');
   console.log(`  EXCHANGE_RATE_API_URL            Exchange-rate API URL (default: ${EXCHANGE_RATE_API_URL})`);
 }
@@ -698,8 +759,10 @@ if (require.main === module) {
 
 module.exports = {
   fetchJson,
+  fetchValidatedMetrics,
   getMetricsValidationErrors,
   hasPercentileStats,
+  isRetryableMetricsValidationError,
   isRetryableFetchError,
   normalizeEndpointPricing,
   withCnyPricing,

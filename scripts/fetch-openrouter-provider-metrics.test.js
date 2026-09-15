@@ -5,8 +5,10 @@ const assert = require('node:assert/strict');
 
 const {
   fetchJson,
+  fetchValidatedMetrics,
   getMetricsValidationErrors,
   hasPercentileStats,
+  isRetryableMetricsValidationError,
   normalizeEndpointPricing,
   withCnyPricing,
 } = require('./fetch-openrouter-provider-metrics');
@@ -171,6 +173,97 @@ test('metrics validation rejects fully empty latency and throughput metrics', ()
 
   assert.match(errors.join('\n'), /latency metrics are empty/);
   assert.match(errors.join('\n'), /throughput metrics are empty/);
+});
+
+test('metrics validation retries a temporary empty performance response', async () => {
+  const emptyOutput = {
+    models: [
+      {
+        id: 'deepseek/deepseek-v4-pro',
+        endpoints: [
+          {
+            providerName: 'DeepSeek',
+            uptime_last_30m: 100,
+            latency_last_30m: null,
+            throughput_last_30m: null,
+          },
+        ],
+      },
+    ],
+    failures: [],
+  };
+  const validOutput = {
+    models: [
+      {
+        id: 'deepseek/deepseek-v4-pro',
+        endpoints: [
+          {
+            providerName: 'DeepSeek',
+            uptime_last_30m: 100,
+            latency_last_30m: { p50: 1, p75: 2, p90: 3, p99: 4 },
+            throughput_last_30m: { p50: 5, p75: 6, p90: 7, p99: 8 },
+          },
+        ],
+      },
+    ],
+    failures: [],
+  };
+  const outputs = [emptyOutput, validOutput];
+  let calls = 0;
+
+  const result = await fetchValidatedMetrics({
+    collectMetrics: async () => {
+      calls += 1;
+      return outputs.shift();
+    },
+    retryCount: 1,
+    retryDelayMs: 0,
+  });
+
+  assert.equal(calls, 2);
+  assert.deepEqual(result, validOutput);
+});
+
+test('metrics validation retries only empty metric coverage errors', () => {
+  assert.equal(
+    isRetryableMetricsValidationError([
+      'OpenRouter provider latency metrics are empty for every endpoint.',
+      'OpenRouter provider throughput metrics are empty for every endpoint.',
+    ]),
+    true,
+  );
+  assert.equal(isRetryableMetricsValidationError(['OpenRouter endpoint fetch failures: 1']), false);
+});
+
+test('metrics validation remains fail-closed after retries are exhausted', async () => {
+  let calls = 0;
+  await assert.rejects(
+    fetchValidatedMetrics({
+      collectMetrics: async () => {
+        calls += 1;
+        return {
+          models: [
+            {
+              id: 'deepseek/deepseek-v4-pro',
+              endpoints: [
+                {
+                  providerName: 'DeepSeek',
+                  uptime_last_30m: 100,
+                  latency_last_30m: null,
+                  throughput_last_30m: null,
+                },
+              ],
+            },
+          ],
+          failures: [],
+        };
+      },
+      retryCount: 1,
+      retryDelayMs: 0,
+    }),
+    /latency metrics are empty/,
+  );
+  assert.equal(calls, 2);
 });
 
 test('metrics validation accepts partial nullable endpoint metrics when coverage exists', () => {

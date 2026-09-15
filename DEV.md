@@ -140,8 +140,10 @@ Optional environment variables:
 - `OPENROUTER_MODEL_MAX_AGE_DAYS`: only fetch models released within the last N days (default `180`; set to `0` to skip the release-day filter).
 - `OPENROUTER_ENDPOINT_CONCURRENCY`: concurrency for fetching endpoints (default `4`).
 - `OPENROUTER_REQUEST_TIMEOUT_MS`: request timeout in milliseconds (default `20000`).
+- `OPENROUTER_METRICS_VALIDATION_RETRY_COUNT`: whole-collection retries when every endpoint has empty performance metrics (default `2`; total attempts `3`).
+- `OPENROUTER_METRICS_VALIDATION_RETRY_DELAY_MS`: delay between those validation retries in milliseconds (default `30000`).
 
-`metrics:fetch` uses a fail-closed strategy: if an endpoint request fails, no provider endpoint is captured, or the `latency_last_30m` / `throughput_last_30m` performance percentiles of all endpoints are empty, the script exits with a non-zero status and does not overwrite the existing `assets/openrouter-provider-metrics.json`. OpenRouter latency/throughput fields require an API Key that can view endpoint performance metrics; without auth or with insufficient permissions, usually only uptime/status is returned.
+`metrics:fetch` retries a whole collection when OpenRouter temporarily returns empty performance metrics for every endpoint. It then uses a fail-closed strategy: if an endpoint request fails, no provider endpoint is captured, or the `latency_last_30m` / `throughput_last_30m` performance percentiles of all endpoints remain empty, the script exits with a non-zero status and does not overwrite the existing `assets/openrouter-provider-metrics.json`. OpenRouter latency/throughput fields require an API Key that can view endpoint performance metrics; without auth or with insufficient permissions, usually only uptime/status is returned.
 
 Fetch OpenRouter provider plan pages (for the Overseas Provider tab):
 

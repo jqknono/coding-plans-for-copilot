@@ -360,6 +360,7 @@ graph TB
   - **p90**: 90th percentile latency
   - **p99**: Tail latency (slowest 1% of requests)
 - **Throughput Metrics**: Requests processed per second (RPS)
+- **Data Safety**: Temporary all-empty performance responses are retried; persistent invalid or unauthorized responses do not overwrite the last valid metrics file.
 - **Filtering Dimensions**:
   - By model vendor (DeepSeek, Qwen, MoonshotAI, ByteDance, etc.)
   - By model name (deepseek-chat, qwen-max, etc.)
