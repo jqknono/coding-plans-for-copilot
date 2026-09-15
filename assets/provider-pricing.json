@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-09-12T12:00:39.675Z",
+  "updatedAt": "2026-09-15T07:11:58.968Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/3f98ee3e45fa3129e84c9f7e592755b4.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7499ce445b48786b33419c65ac20992e.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -678,7 +678,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CrZrtDfF.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-D6-TmNCY.js"
       ],
       "plans": [
         {
