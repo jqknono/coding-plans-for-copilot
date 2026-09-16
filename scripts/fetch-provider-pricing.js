@@ -54,6 +54,12 @@ const KIMI_DOMESTIC_MEMBERSHIP_URL = 'https://www.kimi.com/help/membership/membe
 const KIMI_OVERSEAS_CODE_URL = 'https://www.kimi.com/code';
 const KIMI_GOODS_API_URL = 'https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods';
 const KIMI_DOMESTIC_PLAN_NAMES = ['Adagio', 'Andante', 'Moderato', 'Allegretto', 'Allegro'];
+const VOLCENGINE_CODING_PLAN_URL = 'https://www.volcengine.com/activity/codingplan';
+const VOLCENGINE_PRICE_API_URL = 'https://www.volcengine.com/api/sales/calculatePriceV5';
+const VOLCENGINE_PLAN_CONFIGURATIONS = {
+  LITE: 'Coding_Plan_Lite_monthly',
+  PRO: 'Coding_Plan_Pro_monthly',
+};
 const TENCENT_CODING_PLAN_DOC_URL = 'https://cloud.tencent.com/document/product/1823/130092';
 const TENCENT_CODING_PLAN_NAVIGATION_OPTIONS = {
   waitUntil: 'commit',
@@ -3415,6 +3421,136 @@ function parseVolcServiceDetails(decodedSnippet) {
   return normalizeServiceDetails(details);
 }
 
+function collectVolcUidlText(value) {
+  if (Array.isArray(value)) {
+    return value.flatMap((item) => collectVolcUidlText(item));
+  }
+  if (value && typeof value === 'object') {
+    return typeof value.text === 'string' ? [value.text] : [];
+  }
+  return typeof value === 'string' ? [value] : [];
+}
+
+function parseVolcUidlServiceDetails(fastDescArr) {
+  const details = (Array.isArray(fastDescArr) ? fastDescArr : []).flatMap((item) => {
+    const title = normalizeText(item?.title || '');
+    const text = normalizeText(collectVolcUidlText(item?.rightContents).join(' '));
+    if (!text) {
+      return [];
+    }
+    if (/^[^：:]{1,12}[：:]/.test(text) || !title) {
+      return [text];
+    }
+    return [`${title}: ${text}`];
+  });
+  return normalizeServiceDetails(details);
+}
+
+function getVolcUidlPlanEntries(uidlText) {
+  const payload = JSON.parse(String(uidlText || ''));
+  const entriesByConfiguration = new Map();
+  const visit = (node) => {
+    if (!node || typeof node !== 'object') {
+      return;
+    }
+    const props = node.props || {};
+    const planName = normalizeText(props.name || '');
+    const configurationCode = /^Lite\s+Plan$/i.test(planName)
+      ? VOLCENGINE_PLAN_CONFIGURATIONS.LITE
+      : /^Pro\s+Plan$/i.test(planName)
+        ? VOLCENGINE_PLAN_CONFIGURATIONS.PRO
+        : null;
+    const priceConfig = props.priceConfig || {};
+    const originalAmount = normalizeText(priceConfig.originalAmount || '');
+    if (configurationCode && /\/\s*月\s*$/.test(originalAmount) && !entriesByConfiguration.has(configurationCode)) {
+      entriesByConfiguration.set(configurationCode, {
+        configurationCode,
+        plan: asPlan({
+          name: configurationCode === VOLCENGINE_PLAN_CONFIGURATIONS.LITE
+            ? 'Coding Plan Lite 月套餐'
+            : 'Coding Plan Pro 月套餐',
+          currentPriceText: normalizeVolcCurrentPriceText(priceConfig.discountAmount),
+          originalPriceText: normalizeVolcOriginalPriceText(priceConfig.originalAmount),
+          unit: '月',
+          notes: null,
+          serviceDetails: parseVolcUidlServiceDetails(props.fastDescArr),
+        }),
+      });
+    }
+    for (const child of Array.isArray(node.children) ? node.children : []) {
+      visit(child);
+    }
+  };
+
+  visit(payload?.nodeUIDL);
+  return [VOLCENGINE_PLAN_CONFIGURATIONS.LITE, VOLCENGINE_PLAN_CONFIGURATIONS.PRO]
+    .map((configurationCode) => entriesByConfiguration.get(configurationCode))
+    .filter(Boolean);
+}
+
+function parseVolcPlansFromUidlJson(uidlText) {
+  return getVolcUidlPlanEntries(uidlText).map(({ plan }) => plan);
+}
+
+function buildVolcMonthlyPriceQuery(configurationCode) {
+  return {
+    ConfigItems: [
+      {
+        Product: 'ark_bd',
+        ConfigurationCode: configurationCode,
+        ChargeItems: [
+          {
+            ChargeItemCode: `${configurationCode}_cn-beijing`,
+            AttrValue: '1',
+          },
+        ],
+        Quantity: 1,
+        Period: 'monthly',
+        Times: 1,
+        OrderType: 1,
+      },
+    ],
+  };
+}
+
+async function fetchVolcMonthlyPrice(configurationCode) {
+  const payload = await fetchJson(VOLCENGINE_PRICE_API_URL, {
+    method: 'POST',
+    headers: {
+      ...COMMON_HEADERS,
+      accept: 'application/json',
+      'content-type': 'application/json',
+      origin: 'https://www.volcengine.com',
+      referer: VOLCENGINE_CODING_PLAN_URL,
+      'x-use-bff-version': '1',
+    },
+    body: JSON.stringify(buildVolcMonthlyPriceQuery(configurationCode)),
+  });
+  const result = payload?.Result;
+  const currentPriceText = normalizeVolcCurrentPriceText(result?.TotalDiscountAmount);
+  const originalPriceText = normalizeVolcOriginalPriceText(result?.TotalOriginalAmount);
+  if (!currentPriceText || !originalPriceText) {
+    throw new Error(`Unable to read Volcengine monthly price for ${configurationCode}`);
+  }
+  return { currentPriceText, originalPriceText };
+}
+
+async function parseVolcPlansFromUidlBundle(uidlText) {
+  const entries = getVolcUidlPlanEntries(uidlText);
+  const prices = await Promise.all(entries.map(({ configurationCode }) => fetchVolcMonthlyPrice(configurationCode)));
+  return entries.map(({ plan }, index) => {
+    const price = prices[index];
+    return asPlan({
+      name: plan.name,
+      currentPriceText: price.currentPriceText,
+      originalPriceText: price.originalPriceText,
+      unit: plan.unit,
+      notes: plan.notes,
+      serviceDetails: plan.serviceDetails,
+    });
+  });
+}
+
 function parseVolcPlanFromBundle(bundleText, configurationCode) {
   const marker = `configurationCode:"${configurationCode}"`;
   const isLite = configurationCode.includes('Lite');
@@ -3485,12 +3621,16 @@ function extractVolcBundleCandidatesFromHtml(html, pageUrl) {
         if (!/activity\/codingplan/i.test(`${name} ${modulePath}`)) {
           continue;
         }
-        const sourceUrl = normalizeText(item?.source_url || '');
-        if (!sourceUrl) {
-          continue;
+        for (const sourceUrl of [item?.source_url, item?.source_url_backup]) {
+          const normalizedSourceUrl = normalizeText(sourceUrl || '');
+          if (!normalizedSourceUrl) {
+            continue;
+          }
+          const normalized = normalizedSourceUrl.startsWith('//')
+            ? `https:${normalizedSourceUrl}`
+            : absoluteUrl(normalizedSourceUrl, pageUrl);
+          urls.push(normalized);
         }
-        const normalized = sourceUrl.startsWith('//') ? `https:${sourceUrl}` : absoluteUrl(sourceUrl, pageUrl);
-        urls.push(normalized);
       }
     } catch {
       // Keep fallback extraction below.
@@ -3503,14 +3643,24 @@ function extractVolcBundleCandidatesFromHtml(html, pageUrl) {
   }
 
   return unique(
-    urls.map((url) => url.replace('/bundles/js/main.js', '/index.js')).filter((url) => /\/index\.js$/i.test(url)),
+    urls
+      .map((url) => url.replace('/bundles/js/main.js', '/index.js'))
+      .filter((url) => /(?:\/index\.js|\.json)(?:[?#].*)?$/i.test(url)),
   ).sort(
-    (left, right) => volcBundleVersion(right) - volcBundleVersion(left) || volcBundleId(right) - volcBundleId(left),
+    (left, right) => {
+      const leftIsUidl = /\.json(?:[?#].*)?$/i.test(left);
+      const rightIsUidl = /\.json(?:[?#].*)?$/i.test(right);
+      return (
+        Number(rightIsUidl) - Number(leftIsUidl) ||
+        volcBundleVersion(right) - volcBundleVersion(left) ||
+        volcBundleId(right) - volcBundleId(left)
+      );
+    },
   );
 }
 
 async function parseVolcengineCodingPlans() {
-  const pageUrl = 'https://www.volcengine.com/activity/codingplan';
+  const pageUrl = VOLCENGINE_CODING_PLAN_URL;
   const html = await fetchText(pageUrl);
   const candidates = extractVolcBundleCandidatesFromHtml(html, pageUrl);
   if (candidates.length === 0) {
@@ -3523,15 +3673,18 @@ async function parseVolcengineCodingPlans() {
   let selectedSourceUrl = null;
   let selectedPlans = [];
   for (const candidate of unique([...candidates.slice(0, 2), fallbackIndexUrl])) {
-    let bundleText;
+    let sourceText;
     try {
-      bundleText = await fetchText(candidate);
+      sourceText = await fetchText(candidate);
     } catch {
       continue;
     }
-    const lite = parseVolcPlanFromBundle(bundleText, 'Coding_Plan_Lite_monthly');
-    const pro = parseVolcPlanFromBundle(bundleText, 'Coding_Plan_Pro_monthly');
-    const plans = [lite, pro].filter(Boolean);
+    const plans = /\.json(?:[?#].*)?$/i.test(candidate)
+      ? await parseVolcPlansFromUidlBundle(sourceText)
+      : [
+          parseVolcPlanFromBundle(sourceText, VOLCENGINE_PLAN_CONFIGURATIONS.LITE),
+          parseVolcPlanFromBundle(sourceText, VOLCENGINE_PLAN_CONFIGURATIONS.PRO),
+        ].filter(Boolean);
     if (plans.length < 2) {
       continue;
     }
@@ -4531,10 +4684,12 @@ if (require.main === module) {
 
 module.exports = {
   STALE_PROVIDER_NOTICE,
+  buildVolcMonthlyPriceQuery,
   buildStaleProviderFallback,
   buildXAioPlansFromBundle,
   determinePricingUpdatedAt,
   extractProviderIdFromFailure,
+  extractVolcBundleCandidatesFromHtml,
   isRetryableFetchError,
   loadExistingPricingSnapshot,
   buildKimiCodePlansFromGoodsPayload,
@@ -4550,6 +4705,7 @@ module.exports = {
   parseJdCloudCodingPlansFromPageHtml,
   parseJdCloudCodingPlansFromText,
   parseStepfunPlansFromRenderedText,
+  parseVolcPlansFromUidlJson,
   parseXfyunCodingPlansFromHtml,
   parseBaiduCodingPlansFromHtml,
   parseBaiduTokenPlansFromHtml,

@@ -967,3 +967,116 @@ test('parseStepfunPlansFromRenderedText still reads legacy dual-price layout', (
   assert.equal(plans[0].currentPrice, 25);
   assert.equal(plans[0].originalPrice, 49);
 });
+
+const {
+  buildVolcMonthlyPriceQuery,
+  extractVolcBundleCandidatesFromHtml,
+  parseVolcPlansFromUidlJson,
+} = require('../../scripts/fetch-provider-pricing.js');
+
+test('extractVolcBundleCandidatesFromHtml accepts current UIDL JSON sources and legacy bundles', () => {
+  const html = `<script>window.gfdatav1=${JSON.stringify({
+    garrModules: {
+      data: [
+        {
+          name: '6aa24d9b6845bc01a1d8e2cf/activity/codingplan',
+          path: '/activity/codingplan',
+          source_url:
+            '//res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan/0.0.8/codingplan-vlc-uidl.json',
+        },
+        {
+          name: 'legacy/activity/codingplan',
+          path: '/activity/codingplan',
+          source_url: 'https://cdn.example.com/fes2_app_123/1.0.0.9/bundles/js/main.js',
+        },
+      ],
+    },
+  })}</script>`;
+
+  assert.deepEqual(extractVolcBundleCandidatesFromHtml(html, 'https://www.volcengine.com/activity/codingplan'), [
+    'https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan/0.0.8/codingplan-vlc-uidl.json',
+    'https://cdn.example.com/fes2_app_123/1.0.0.9/index.js',
+  ]);
+});
+
+test('parseVolcPlansFromUidlJson keeps monthly Lite and Pro cards and maps rendered details', () => {
+  const uidl = JSON.stringify({
+    nodeUIDL: {
+      children: [
+        {
+          props: {
+            name: 'Lite Plan',
+            priceConfig: { discountAmount: '9.9', originalAmount: '40/月' },
+            fastDescArr: [
+              { title: '满足个人开发者轻量化需求', rightContents: [[{ text: '模型：Doubao、GLM' }]] },
+              { title: '', rightContents: [[{ text: '适配：Claude Code、Cursor' }]] },
+            ],
+          },
+          children: [],
+        },
+        {
+          props: {
+            name: 'Pro Plan',
+            priceConfig: { discountAmount: '49.9', originalAmount: '200/月' },
+            fastDescArr: [{ title: '', rightContents: [[{ text: '能力：包含 Lite 全部权益' }]] }],
+          },
+          children: [],
+        },
+        {
+          props: {
+            name: 'Lite Plan',
+            priceConfig: { discountAmount: '116.4', originalAmount: '120/季' },
+            fastDescArr: [],
+          },
+          children: [],
+        },
+      ],
+    },
+  });
+
+  const plans = parseVolcPlansFromUidlJson(uidl);
+
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      originalPriceText: plan.originalPriceText,
+      serviceDetails: plan.serviceDetails,
+    })),
+    [
+      {
+        name: 'Coding Plan Lite 月套餐',
+        currentPriceText: '¥9.9/月',
+        originalPriceText: '¥40/月',
+        serviceDetails: ['模型：Doubao、GLM', '适配：Claude Code、Cursor'],
+      },
+      {
+        name: 'Coding Plan Pro 月套餐',
+        currentPriceText: '¥49.9/月',
+        originalPriceText: '¥200/月',
+        serviceDetails: ['能力：包含 Lite 全部权益'],
+      },
+    ],
+  );
+});
+
+test('buildVolcMonthlyPriceQuery creates the current calculatePriceV5 request body', () => {
+  assert.deepEqual(buildVolcMonthlyPriceQuery('Coding_Plan_Pro_monthly'), {
+    ConfigItems: [
+      {
+        Product: 'ark_bd',
+        ConfigurationCode: 'Coding_Plan_Pro_monthly',
+        ChargeItems: [
+          {
+            ChargeItemCode: 'Coding_Plan_Pro_monthly_cn-beijing',
+            AttrValue: '1',
+          },
+        ],
+        Quantity: 1,
+        Period: 'monthly',
+        Times: 1,
+        OrderType: 1,
+      },
+    ],
+  });
+});
