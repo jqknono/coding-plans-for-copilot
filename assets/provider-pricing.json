@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-15T13:14:46.099Z",
+  "updatedAt": "2026-09-16T07:14:38.503Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -678,7 +678,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-Cq80p8f1.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-B-rc6TOk.js"
       ],
       "plans": [
         {
@@ -1339,7 +1339,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.337/index.js"
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.8/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
       ],
       "plans": [
         {
@@ -1347,13 +1347,13 @@
           "currentPrice": 9.9,
           "currentPriceText": "¥9.9/月",
           "originalPrice": 40,
-          "originalPriceText": "¥40/月（续费价格）",
+          "originalPriceText": "¥40/月",
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "能力: Doubao-Seed-Code 与 DeepSeek-V3.2 驱动",
-            "适配: 适配Claude Code等主流编程工具",
-            "用量: 用量达 Claude Pro 的 3 倍"
+            "模型：Doubao、GLM、DeepSeek、Kimi、MiniMax等",
+            "适配：支持自由切换模型，或开启 Auto 模式",
+            "工具：Claude Code、Cursor 等主流编程工具"
           ]
         },
         {
@@ -1361,18 +1361,16 @@
           "currentPrice": 49.9,
           "currentPriceText": "¥49.9/月",
           "originalPrice": 200,
-          "originalPriceText": "¥200/月（续费价格）",
+          "originalPriceText": "¥200/月",
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "能力: 包含lite套餐全部权益",
-            "适配: 满足高阶用户的大规模编程需求",
-            "用量: 用量达 Claude Max（5x）的 3 倍，lite 套餐用量的5倍"
+            "能力：享受 Lite 套餐的所有能力和权益",
+            "适配：满足高阶用户的大规模编程需求",
+            "升级：用量为 Claude Max 数倍，Lite套餐 5 倍"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "volcengine-ai: Unable to locate Volcengine coding plan bundle"
+      ]
     },
     {
       "provider": "x-aio",
@@ -1649,7 +1647,5 @@
       ]
     }
   ],
-  "failures": [
-    "volcengine-ai: Unable to locate Volcengine coding plan bundle"
-  ]
+  "failures": []
 }
