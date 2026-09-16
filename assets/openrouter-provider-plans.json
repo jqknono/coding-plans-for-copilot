@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-09-15T13:15:49.628Z",
-  "generatedAtBeijing": "2026年9月15日 21:15:49",
-  "sourceGeneratedAt": "2026-09-15T13:14:46.099Z",
-  "sourceGeneratedAtBeijing": "2026年9月15日 21:14:46",
-  "sourceMetricsGeneratedAt": "2026-09-15T13:14:47.520Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月15日 21:14:47",
+  "generatedAt": "2026-09-16T13:14:36.088Z",
+  "generatedAtBeijing": "2026年9月16日 21:14:36",
+  "sourceGeneratedAt": "2026-09-16T13:13:35.757Z",
+  "sourceGeneratedAtBeijing": "2026年9月16日 21:13:35",
+  "sourceMetricsGeneratedAt": "2026-09-16T13:13:36.824Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月16日 21:13:36",
   "summary": {
-    "openrouterProviderCount": 106,
+    "openrouterProviderCount": 107,
     "metricsProviderCount": 48,
     "resolvedMetricsProviderCount": 48,
     "unresolvedMetricsProviderCount": 0,
@@ -687,7 +687,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-Cq80p8f1.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-Ck0LMKJ8.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -742,13 +742,13 @@
           "currentPrice": 9.9,
           "currentPriceText": "¥9.9/月",
           "originalPrice": 40,
-          "originalPriceText": "¥40/月（续费价格）",
+          "originalPriceText": "¥40/月",
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "能力: Doubao-Seed-Code 与 DeepSeek-V3.2 驱动",
-            "适配: 适配Claude Code等主流编程工具",
-            "用量: 用量达 Claude Pro 的 3 倍"
+            "模型：Doubao、GLM、DeepSeek、Kimi、MiniMax等",
+            "适配：支持自由切换模型，或开启 Auto 模式",
+            "工具：Claude Code、Cursor 等主流编程工具"
           ]
         },
         {
@@ -756,19 +756,19 @@
           "currentPrice": 49.9,
           "currentPriceText": "¥49.9/月",
           "originalPrice": 200,
-          "originalPriceText": "¥200/月（续费价格）",
+          "originalPriceText": "¥200/月",
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "能力: 包含lite套餐全部权益",
-            "适配: 满足高阶用户的大规模编程需求",
-            "用量: 用量达 Claude Max（5x）的 3 倍，lite 套餐用量的5倍"
+            "能力：享受 Lite 套餐的所有能力和权益",
+            "适配：满足高阶用户的大规模编程需求",
+            "升级：用量为 Claude Max 数倍，Lite套餐 5 倍"
           ]
         }
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://lf6-cdn2-tos.bytegoofy.com/gftar/toutiao/fe_arch/fes2_app_1761224550685339/1.0.0.337/index.js",
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.8/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1055,7 +1055,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://docs.coreweave.com",
       "pricingPageUrl": "https://docs.coreweave.com/billing",
-      "reason": "官网价格页探测失败：https://docs.coreweave.com/pricing: HTTP 404",
+      "reason": "官网价格页探测失败：https://docs.coreweave.com/pricing: Request timeout after 9000ms",
       "blocked": true
     },
     {
