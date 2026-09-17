@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-09-17T07:10:31.715Z",
+  "updatedAt": "2026-09-17T13:07:57.299Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7499ce445b48786b33419c65ac20992e.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/410e14d8e81d1d98bae4e054d4202c3a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -678,7 +678,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CyAXfBbi.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DsaRPyQN.js"
       ],
       "plans": [
         {
@@ -788,7 +788,7 @@
           ]
         },
         {
-          "name": "Moderato（海外）",
+          "name": "Plus（海外）",
           "currentPrice": 19,
           "currentPriceText": "$19/月",
           "originalPrice": null,
@@ -803,7 +803,7 @@
           ]
         },
         {
-          "name": "Allegretto（海外）",
+          "name": "Pro（海外）",
           "currentPrice": 39,
           "currentPriceText": "$39/月",
           "originalPrice": null,
@@ -818,7 +818,7 @@
           ]
         },
         {
-          "name": "Allegro（海外）",
+          "name": "Max（海外）",
           "currentPrice": 99,
           "currentPriceText": "$99/月",
           "originalPrice": null,
@@ -833,7 +833,7 @@
           ]
         },
         {
-          "name": "Vivace（海外）",
+          "name": "Ultra（海外）",
           "currentPrice": 199,
           "currentPriceText": "$199/月",
           "originalPrice": null,

@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-09-16T13:14:36.088Z",
-  "generatedAtBeijing": "2026年9月16日 21:14:36",
-  "sourceGeneratedAt": "2026-09-16T13:13:35.757Z",
-  "sourceGeneratedAtBeijing": "2026年9月16日 21:13:35",
-  "sourceMetricsGeneratedAt": "2026-09-16T13:13:36.824Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月16日 21:13:36",
+  "generatedAt": "2026-09-17T13:09:01.534Z",
+  "generatedAtBeijing": "2026年9月17日 21:09:01",
+  "sourceGeneratedAt": "2026-09-17T13:07:57.299Z",
+  "sourceGeneratedAtBeijing": "2026年9月17日 21:07:57",
+  "sourceMetricsGeneratedAt": "2026-09-17T13:07:59.394Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月17日 21:07:59",
   "summary": {
     "openrouterProviderCount": 107,
-    "metricsProviderCount": 48,
-    "resolvedMetricsProviderCount": 48,
+    "metricsProviderCount": 49,
+    "resolvedMetricsProviderCount": 49,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 7,
     "providersWithPlans": 15,
-    "pendingCount": 33,
-    "blockedPendingCount": 3,
+    "pendingCount": 34,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7499ce445b48786b33419c65ac20992e.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/410e14d8e81d1d98bae4e054d4202c3a.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -623,7 +623,7 @@
           ]
         },
         {
-          "name": "Moderato（海外）",
+          "name": "Plus（海外）",
           "currentPrice": 19,
           "currentPriceText": "$19/月",
           "originalPrice": null,
@@ -638,7 +638,7 @@
           ]
         },
         {
-          "name": "Allegretto（海外）",
+          "name": "Pro（海外）",
           "currentPrice": 39,
           "currentPriceText": "$39/月",
           "originalPrice": null,
@@ -653,7 +653,7 @@
           ]
         },
         {
-          "name": "Allegro（海外）",
+          "name": "Max（海外）",
           "currentPrice": 99,
           "currentPriceText": "$99/月",
           "originalPrice": null,
@@ -668,7 +668,7 @@
           ]
         },
         {
-          "name": "Vivace（海外）",
+          "name": "Ultra（海外）",
           "currentPrice": 199,
           "currentPriceText": "$199/月",
           "originalPrice": null,
@@ -687,7 +687,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-Ck0LMKJ8.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DsaRPyQN.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1037,7 +1037,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.atlascloud.ai",
       "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.0687 / $0.0859 / $0.067792）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.3 / $1.2 / $0.03）",
       "blocked": false
     },
     {
@@ -1055,8 +1055,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://docs.coreweave.com",
       "pricingPageUrl": "https://docs.coreweave.com/billing",
-      "reason": "官网价格页探测失败：https://docs.coreweave.com/pricing: Request timeout after 9000ms",
-      "blocked": true
+      "reason": "官网价格页探测失败：https://docs.coreweave.com/pricing: HTTP 404",
+      "blocked": false
     },
     {
       "slug": "crusoe",
@@ -1210,6 +1210,15 @@
       "pricingPageUrl": "https://www.morphllm.com",
       "reason": "官网价格页探测失败：https://www.morphllm.com/pricing: HTTP 429",
       "blocked": true
+    },
+    {
+      "slug": "near-ai",
+      "openrouterName": "Near AI",
+      "providerId": null,
+      "officialWebsiteUrl": "https://near.ai",
+      "pricingPageUrl": "https://near.ai/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.15 / $0.5 / $0.55）",
+      "blocked": false
     },
     {
       "slug": "nextbit",
