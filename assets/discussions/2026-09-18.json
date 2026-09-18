@@ -1,0 +1,108 @@
+{
+  "date": "2026-09-18",
+  "generatedAt": "2026-09-18T10:43:06.585Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 56,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Command Code Goat": 1,
+      "Zhipu (智谱), xAI (Grok)": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1243019",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1243019",
+      "title": "boss-call skills Claude message 工具平替",
+      "content": "Fable 5.1 确实很好用，但也太不经用了。 所以昨天买了一个 Command Code Goat 会员，同时也对 Model Boss 升级了一轮。 新增 boss-call ，灵感来自 Claude Code 的 message 工具，让一个 Boss 会话同时指挥多个独立的开发会话。成员可以接任务、持续开发、汇报状态、提问，再挂在线上等待下一条指令，尽量减少人在几个终端之间来回转述。 不管是 TUI 还是 GUI 都可以。目前我是让 GUI 里的 Fable 指挥 TUI 里的 DS V4.1 Flash 。 技术原理很简单：Boss 和 Worker 共享 ~/.boss-call/&lt;room&gt;/ 下的本地文件信箱。 room.json 记录成员身份和工作目录， messages.jsonl 作为 append-only 消息流，cursor 和 heartbeat 记录已读位置与在线状态。每个会话通过同一个 CLI 收发消息，空闲时阻塞在 boss-call wait ，收到新消息后继续工作。 整个过程没有服务端、daemon 或平台专用扩展，所以不同模型、C",
+      "author": "langlang280025",
+      "createdAt": "2026-09-18T08:41:48.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Command Code Goat",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "The author upgraded to Model Boss and describes the new boss-call feature that coordinates multiple development sessions, allowing team members to work independently while being directed by a boss. They discuss the technical architecture (room.json, messages.jsonl) and compare it to the previous Model Boss system.",
+        "topics": [
+          "订阅",
+          "升级",
+          "boss-call",
+          "模型对比",
+          "工具替代"
+        ],
+        "planMentioned": "Command Code Goat 会员",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/392",
+      "analyzedAt": "2026-09-18T10:48:30.257Z"
+    },
+    {
+      "id": "v2ex-1243010",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1243010",
+      "title": "在 zcode 里使用第三方模型的 API 会不会泄漏？",
+      "content": "我没有买智普的官方套餐，一直在用第三方模型，不会也把我的工作目录上传了吧，之前还在庆幸没有第一时间冲马斯克的 grok ，现在自己也中招了😂",
+      "author": "desususula",
+      "createdAt": "2026-09-18T08:05:46.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Zhipu (智谱), xAI (Grok)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.75,
+        "summary": "用户在 zcode 编码助手中使用第三方模型 API，担心工作目录被上传泄露，提到未购买智谱官方套餐，也未使用马斯克的 Grok，现感到后悔。",
+        "topics": [
+          "隐私",
+          "第三方模型",
+          "API",
+          "工作目录上传",
+          "智谱套餐",
+          "Grok",
+          "数据安全"
+        ],
+        "planMentioned": "智谱官方套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/393",
+      "analyzedAt": "2026-09-18T10:48:38.453Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
