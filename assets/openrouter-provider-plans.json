@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-09-17T13:09:01.534Z",
-  "generatedAtBeijing": "2026年9月17日 21:09:01",
-  "sourceGeneratedAt": "2026-09-17T13:07:57.299Z",
-  "sourceGeneratedAtBeijing": "2026年9月17日 21:07:57",
-  "sourceMetricsGeneratedAt": "2026-09-17T13:07:59.394Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月17日 21:07:59",
+  "generatedAt": "2026-09-18T12:47:50.629Z",
+  "generatedAtBeijing": "2026年9月18日 20:47:50",
+  "sourceGeneratedAt": "2026-09-18T12:46:53.388Z",
+  "sourceGeneratedAtBeijing": "2026年9月18日 20:46:53",
+  "sourceMetricsGeneratedAt": "2026-09-18T12:46:54.554Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月18日 20:46:54",
   "summary": {
-    "openrouterProviderCount": 107,
+    "openrouterProviderCount": 109,
     "metricsProviderCount": 49,
     "resolvedMetricsProviderCount": 49,
     "unresolvedMetricsProviderCount": 0,
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/410e14d8e81d1d98bae4e054d4202c3a.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7d0f020297551e1bed60e5579be2ad08.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -687,7 +687,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DsaRPyQN.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-C2lUIScM.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -710,7 +710,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "来源: https://redpill.ai/pricing；页面展示年付折算价 $35/month（Save 30%），换算月付价 $50/month",
+          "notes": "来源: https://redpill.ai/pricing",
           "serviceDetails": [
             "Unlimited messaging",
             "10 GB file storage",
@@ -1073,7 +1073,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.darkbloom.dev",
       "pricingPageUrl": "https://www.darkbloom.dev",
-      "reason": "官网价格页探测失败：https://www.darkbloom.dev/pricing: HTTP 404",
+      "reason": "官网价格页探测失败：https://www.darkbloom.ai/pricing: HTTP 404",
       "blocked": false
     },
     {
