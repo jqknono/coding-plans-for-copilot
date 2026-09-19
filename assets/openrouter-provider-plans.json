@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-09-18T12:47:50.629Z",
-  "generatedAtBeijing": "2026年9月18日 20:47:50",
-  "sourceGeneratedAt": "2026-09-18T12:46:53.388Z",
-  "sourceGeneratedAtBeijing": "2026年9月18日 20:46:53",
-  "sourceMetricsGeneratedAt": "2026-09-18T12:46:54.554Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月18日 20:46:54",
+  "generatedAt": "2026-09-19T12:21:02.799Z",
+  "generatedAtBeijing": "2026年9月19日 20:21:02",
+  "sourceGeneratedAt": "2026-09-19T12:20:07.279Z",
+  "sourceGeneratedAtBeijing": "2026年9月19日 20:20:07",
+  "sourceMetricsGeneratedAt": "2026-09-19T12:20:08.522Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月19日 20:20:08",
   "summary": {
     "openrouterProviderCount": 109,
-    "metricsProviderCount": 49,
-    "resolvedMetricsProviderCount": 49,
+    "metricsProviderCount": 48,
+    "resolvedMetricsProviderCount": 48,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 7,
     "providersWithPlans": 15,
-    "pendingCount": 34,
+    "pendingCount": 33,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -687,7 +687,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-C2lUIScM.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-W1FqCqFT.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -768,7 +768,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.8/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.9/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1020,15 +1020,6 @@
       "officialWebsiteUrl": "https://akashml.com",
       "pricingPageUrl": "https://akashml.com",
       "reason": "官网价格页探测失败：https://akashml.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "ambient",
-      "openrouterName": "Ambient",
-      "providerId": null,
-      "officialWebsiteUrl": null,
-      "pricingPageUrl": null,
-      "reason": "OpenRouter 元数据中缺少可用官网地址",
       "blocked": false
     },
     {
