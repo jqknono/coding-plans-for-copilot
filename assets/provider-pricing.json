@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-18T12:46:53.388Z",
+  "updatedAt": "2026-09-19T07:02:20.744Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1339,7 +1339,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.8/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.9/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
       ],
       "plans": [
         {
