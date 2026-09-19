@@ -1,0 +1,109 @@
+{
+  "date": "2026-09-19",
+  "generatedAt": "2026-09-19T10:27:31.399Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 15,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "吉吉": 1,
+      "GLM": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1243121",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1243121",
+      "title": "（源头）包稳不智降企业级的 gpt6 倍率低至 0.24， codex pro 0.2，国模 0.19， Grok Heavy0.19，更有低价高缓存的官 k 首字 1S 缓存 95%。一对一服务，一键自助免点开票。注册回复皆送体验额度。",
+      "content": "网站：吉吉 api https://www.jiji.cc 注册直接用余额体验，回复用户名直接送体验客度。 吉吉 api 目户用户过万，社区群服务目前 5000+，这是我们敢把价格压得这么低的底气，欢迎各大企业以及下游厂家以及个人对接。 稳定：即使最近的 oai 异动下很多友商顶不住，我们依然坚挺。让你选择我们便可安心，不必来来去去的折腾。 不降智：对的保的，降智带来的体验和浪费十分严重，一件事本来 5 分钟可以解决的，智障后估计花一天还没解决，把好脾气和时间都磨没了。不降智保障下，指拿打哪的感觉，让天才程序员一路过关斩将，所向披靡。 模型，一站式用什么来我们这里就够了，codex pro 低至 0.2 倍率，国模 glm-5.3 、glm-5.3-flash ，deepseek-v4.1 ，kimi-k3 ，qwen3.8max 0.19 倍率。Grok Heavy 倍率 0.19 ，gpt-image-2.5 一毛钱一张。 吉吉 API （不降智）中转站 售后 3 群：1097611338",
+      "author": "jijicc",
+      "createdAt": "2026-09-19T02:34:41.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.92,
+        "supplier": "吉吉",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.88,
+        "summary": "The post promotes Jiji's AI API services with various coding assistant models at different price points, emphasizing enterprise-friendly pricing, stability under recent changes, and registration benefits including free experience credits.",
+        "topics": [
+          "定价",
+          "模型对比",
+          "企业级",
+          "套餐",
+          "注册优惠",
+          "缓存",
+          "稳定性"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/394",
+      "analyzedAt": "2026-09-19T10:35:21.458Z"
+    },
+    {
+      "id": "v2ex-1243122",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1243122",
+      "title": "ZCode 上传代码是否早有预谋",
+      "content": "在 B 站视频评论区看到下图，然后让 AI 搜索了下 Zcode 的 150%配额也是在 6 月 13 日： 找到了这个思维导图来源： https://zcode-mindmap.380300.xyz/ ZCode 的 150%配额时间： 这个 150%配额看来就是为了这盘醋包的饺子啊😂，另外 GLM Coding Plan 页面退款政策说：“订阅服务一经购买即视为确认，不支持退款。即使您未使用完套餐，费用也无法退回”，但现在去官网找人工客服说退款就给你直接退，多的一句也没问我",
+      "author": "PolarBears",
+      "createdAt": "2026-09-19T02:41:00.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "GLM",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "The post discusses GLM Coding Plan's refund policy discrepancy - the website states no refunds after purchase, but customer service actually provides refunds upon request.",
+        "topics": [
+          "GLM Coding Plan",
+          "退款政策",
+          "订阅服务",
+          "用户体验"
+        ],
+        "planMentioned": "GLM Coding Plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/395",
+      "analyzedAt": "2026-09-19T10:35:27.525Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1243144: LLM returned invalid JSON: Unexpected token 'U', \"User Safet\"... is not valid JSON",
+    "analysis failed for v2ex-1243125: The operation was aborted due to timeout"
+  ]
+}
