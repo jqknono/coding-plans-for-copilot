@@ -1,0 +1,75 @@
+{
+  "date": "2026-09-20",
+  "generatedAt": "2026-09-20T10:48:34.944Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 63,
+    "postsAfterKeywordFilter": 18,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "DeepSeek, 阿里云百炼": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1243361",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1243361",
+      "title": "阿里云百炼的用户都不会质疑价格的吗？",
+      "content": "全世界都知道 DeepSeek V4.1 Flash 发布时，官方公告写了 9 月 10 日生效新的定价规则： 北京时间周一至周五（不含中国法定节假日） 9:00-12:00 、14:00-18:00 为高峰时段；其余时段，包括周末及中国法定节假日全天均为空闲时段。 意思是工作日有 7 个小时高峰时段，其他全部是空闲时段。 而阿里云百炼的价格表，还挂着 8 月份的公告。 DeepSeek 空闲时段为北京时间 22:00-8:00 、其余为高峰时段。 意思是每天不管是不是节假日，有 14 个小时高峰时段。 如果按这种定价，意味着在百炼使用 DeepSeek ，成本比 DeepSeek 官网贵了不止一倍。 百炼那么多用户，就没人质疑的吗…… 我刚才去找百炼客服，客服也不懂，光理解高峰期规则不一样，就花了很久。 更新下，客服最终的回答是：价格按百炼的公告为准。 百炼，拜拜。",
+      "author": "ndd200",
+      "createdAt": "2026-09-20T06:25:06.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "DeepSeek, 阿里云百炼",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.92,
+        "summary": "用户对阿里云百炼和深度求索的定价规则感到困惑，指出百炼的定价比官方更贵，且客服无法解答相关问题，认为百炼服务质量差。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "阿里云百炼",
+          "深度求索",
+          "客服"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/397",
+      "analyzedAt": "2026-09-20T10:56:18.558Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1243292: The operation was aborted due to timeout"
+  ]
+}
