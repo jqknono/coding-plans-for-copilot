@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-19T12:21:02.799Z",
-  "generatedAtBeijing": "2026年9月19日 20:21:02",
-  "sourceGeneratedAt": "2026-09-19T12:20:07.279Z",
-  "sourceGeneratedAtBeijing": "2026年9月19日 20:20:07",
-  "sourceMetricsGeneratedAt": "2026-09-19T12:20:08.522Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月19日 20:20:08",
+  "generatedAt": "2026-09-20T12:56:28.261Z",
+  "generatedAtBeijing": "2026年9月20日 20:56:28",
+  "sourceGeneratedAt": "2026-09-20T12:55:33.598Z",
+  "sourceGeneratedAtBeijing": "2026年9月20日 20:55:33",
+  "sourceMetricsGeneratedAt": "2026-09-20T12:55:35.138Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月20日 20:55:35",
   "summary": {
     "openrouterProviderCount": 109,
     "metricsProviderCount": 48,
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7d0f020297551e1bed60e5579be2ad08.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/66dc5834980a243203a5e9b442db4edd.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -687,7 +687,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-W1FqCqFT.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-NnJ0GuvN.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
