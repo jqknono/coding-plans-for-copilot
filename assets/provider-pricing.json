@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-09-19T12:20:07.279Z",
+  "updatedAt": "2026-09-20T07:27:51.745Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7d0f020297551e1bed60e5579be2ad08.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/2471cf570a8fe6a0d08a4fb82b61ff31.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -678,7 +678,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-W1FqCqFT.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-oWxjVe6a.js"
       ],
       "plans": [
         {
@@ -1205,7 +1205,9 @@
             "优先技术支持"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
     },
     {
       "provider": "synthetic-ai",
@@ -1647,5 +1649,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
+  ]
 }
