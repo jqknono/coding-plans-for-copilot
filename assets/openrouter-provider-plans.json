@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-09-20T12:56:28.261Z",
-  "generatedAtBeijing": "2026年9月20日 20:56:28",
-  "sourceGeneratedAt": "2026-09-20T12:55:33.598Z",
-  "sourceGeneratedAtBeijing": "2026年9月20日 20:55:33",
-  "sourceMetricsGeneratedAt": "2026-09-20T12:55:35.138Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月20日 20:55:35",
+  "generatedAt": "2026-09-21T14:56:43.148Z",
+  "generatedAtBeijing": "2026年9月21日 22:56:43",
+  "sourceGeneratedAt": "2026-09-21T14:55:36.700Z",
+  "sourceGeneratedAtBeijing": "2026年9月21日 22:55:36",
+  "sourceMetricsGeneratedAt": "2026-09-21T14:55:38.062Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月21日 22:55:38",
   "summary": {
     "openrouterProviderCount": 109,
-    "metricsProviderCount": 48,
-    "resolvedMetricsProviderCount": 48,
+    "metricsProviderCount": 49,
+    "resolvedMetricsProviderCount": 49,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 7,
     "providersWithPlans": 15,
-    "pendingCount": 33,
+    "pendingCount": 34,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/66dc5834980a243203a5e9b442db4edd.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/e47a4b8bd984bb512305b679e9c33561.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -687,7 +687,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-NnJ0GuvN.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-C79APigP.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1227,6 +1227,15 @@
       "officialWebsiteUrl": "https://novita.ai",
       "pricingPageUrl": "https://novita.ai/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.3 / $0.006 / $1.2）",
+      "blocked": false
+    },
+    {
+      "slug": "open-inference",
+      "openrouterName": "OpenInference",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.openinference.ai",
+      "pricingPageUrl": "https://www.openinference.ai",
+      "reason": "官网价格页探测失败：https://www.openinference.ai/pricing: HTTP 404",
       "blocked": false
     },
     {

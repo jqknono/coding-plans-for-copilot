@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-09-21T07:38:59.247Z",
+  "updatedAt": "2026-09-21T14:55:36.700Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/66dc5834980a243203a5e9b442db4edd.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/e47a4b8bd984bb512305b679e9c33561.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -179,7 +179,9 @@
             "商品类型: Token Plan 个人版"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "baidu-qianfan-ai: fetch failed"
     },
     {
       "provider": "cerebras-code",
@@ -678,7 +680,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-BilNNdzw.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-C79APigP.js"
       ],
       "plans": [
         {
@@ -917,7 +919,9 @@
             "1000 Prompts / 5小时"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "kwaikat-ai: fetch failed"
     },
     {
       "provider": "minimax-ai",
@@ -1650,6 +1654,8 @@
     }
   ],
   "failures": [
+    "baidu-qianfan-ai: fetch failed",
+    "kwaikat-ai: fetch failed",
     "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
   ]
 }
