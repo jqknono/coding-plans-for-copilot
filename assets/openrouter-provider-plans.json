@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-21T14:56:43.148Z",
-  "generatedAtBeijing": "2026年9月21日 22:56:43",
-  "sourceGeneratedAt": "2026-09-21T14:55:36.700Z",
-  "sourceGeneratedAtBeijing": "2026年9月21日 22:55:36",
-  "sourceMetricsGeneratedAt": "2026-09-21T14:55:38.062Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月21日 22:55:38",
+  "generatedAt": "2026-09-22T13:12:41.722Z",
+  "generatedAtBeijing": "2026年9月22日 21:12:41",
+  "sourceGeneratedAt": "2026-09-22T13:11:43.637Z",
+  "sourceGeneratedAtBeijing": "2026年9月22日 21:11:43",
+  "sourceMetricsGeneratedAt": "2026-09-22T13:11:44.821Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月22日 21:11:44",
   "summary": {
     "openrouterProviderCount": 109,
     "metricsProviderCount": 49,
@@ -687,7 +687,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-C79APigP.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-Il3Eqiaz.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1037,7 +1037,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $1.40 / $0.14）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $2.10 / $0.21）",
       "blocked": false
     },
     {
