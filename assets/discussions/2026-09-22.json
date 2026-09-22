@@ -1,0 +1,109 @@
+{
+  "date": "2026-09-22",
+  "generatedAt": "2026-09-22T11:06:41.501Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 18,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "OpenAI": 1,
+      "Zhipu": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1244029",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1244029",
+      "title": "Codex 是不是大部分不复杂的需求用 GPT-5.6 Luna 就够了？",
+      "content": "之前习惯性地用 Sol 中，5 小时额度很快就没了，最近开始用 Luna，发现特别耐用，改一些 bug 也都没问题",
+      "author": "vruzo",
+      "createdAt": "2026-09-22T09:59:25.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.75,
+        "summary": "用户询问 Codex 中 GPT-5.6 Luna 模型是否足以应对大多数非复杂编码需求，表示从 Sol 切换到 Luna 后额度更耐用，修复 bug 也没问题。",
+        "topics": [
+          "模型对比",
+          "额度使用",
+          "编码体验",
+          "Codex",
+          "Luna",
+          "Sol"
+        ],
+        "planMentioned": "Codex (GPT-5.6 Luna / Sol)",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/398",
+      "analyzedAt": "2026-09-22T11:16:29.164Z"
+    },
+    {
+      "id": "v2ex-1244006",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1244006",
+      "title": "智谱的 plan 值得订阅吗",
+      "content": "我记得之前抢不上啊，刚才看 lite ，94 一个月，似乎可以买 是不是 zcode 出事了，没人用了？",
+      "author": "nutting",
+      "createdAt": "2026-09-22T08:39:24.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Zhipu",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户询问智谱的lite编码套餐是否值得订阅，提到之前难以购买，现在价格94元/月，并怀疑zcode是否出了问题导致使用量下降。",
+        "topics": [
+          "编码套餐",
+          "定价",
+          "订阅",
+          "供应商问题",
+          "可用性"
+        ],
+        "planMentioned": "Zhipu Lite Plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/399",
+      "analyzedAt": "2026-09-22T11:16:33.976Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1244017: LLM returned invalid JSON: Unexpected token 'U', \"User Safety: safe\" is not valid JSON",
+    "analysis failed for v2ex-1243998: The operation was aborted due to timeout"
+  ]
+}
