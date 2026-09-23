@@ -1,6 +1,6 @@
 {
   "date": "2026-09-22",
-  "generatedAt": "2026-09-22T11:06:41.501Z",
+  "generatedAt": "2026-09-23T10:56:51.272Z",
   "config": {
     "sources": [
       "v2ex",
@@ -24,14 +24,15 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 54,
+    "totalPostsFetched": 53,
     "postsAfterKeywordFilter": 18,
-    "relevantPosts": 2,
-    "discussionsCreated": 2,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
     "discussionsSkipped": 0,
     "supplierMentions": {
-      "OpenAI": 1,
-      "Zhipu": 1
+      "GitHub Copilot": 1,
+      "土区": 1,
+      "OpenAI": 1
     }
   },
   "posts": [
@@ -97,13 +98,45 @@
       },
       "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/399",
       "analyzedAt": "2026-09-22T11:16:33.976Z"
+    },
+    {
+      "id": "v2ex-1244052",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1244052",
+      "title": "ds 4.1 现在能干活吗？",
+      "content": "我自己本身不是干开发的，只是用 ai 写了题库系统来整理题目这些 之前一直用的 Codex ，其实也是 gpt6 出来之后，系统演进的速度一下快了好多，给个需求，讨论完之后基本它就能把功能实施上线，然后用几轮再修改几轮就可以工作了。修小细节问题这些完全不会搞错 但是我开的是 5x ，这两天集中做几个功能两张重置卡全部干没了。我又开不起 20x ，太贵了。 因为目前系统的一部分能力就是调用 ai 进行分析，所以如果 Codex 的额度烧干净了，现在基本就处于完全停机状态。 所以，想问下，如果额度不够的时候，用 ds4.1 接着干活能不能行啊？现在它的能力到底怎么样",
+      "author": "ghmum",
+      "createdAt": "2026-09-22T12:11:18.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户询问 ds4.1 版本是否在达到额度限制后仍能正常运行，比较不同计划（5x 和 20x）的可用性和性能。",
+        "topics": [
+          "编码计划",
+          "套餐对比",
+          "价格",
+          "订阅",
+          "功能能力",
+          "限额"
+        ],
+        "planMentioned": "ds4.1",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/403",
+      "analyzedAt": "2026-09-23T11:10:19.482Z"
     }
   ],
   "failures": [
     "linuxdo: https://linux.do/latest.rss → 429",
     "linuxdo: https://linux.do/latest.json → 429",
     "linuxdo: https://linux.do/latest.json → 429",
-    "analysis failed for v2ex-1244017: LLM returned invalid JSON: Unexpected token 'U', \"User Safety: safe\" is not valid JSON",
-    "analysis failed for v2ex-1243998: The operation was aborted due to timeout"
+    "analysis failed for v2ex-1244289: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1244262: The operation was aborted due to timeout"
   ]
 }

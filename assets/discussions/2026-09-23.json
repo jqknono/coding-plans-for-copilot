@@ -1,0 +1,139 @@
+{
+  "date": "2026-09-23",
+  "generatedAt": "2026-09-23T10:56:51.272Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 53,
+    "postsAfterKeywordFilter": 18,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "GitHub Copilot": 1,
+      "土区": 1,
+      "OpenAI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1244310",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1244310",
+      "title": "为什么现在 codex 现在巨慢啊？",
+      "content": "最近一周开始 不知道啥时候，codex 换个哪个模型都是巨慢，一个问题思考半天，之前没有这么慢的。 想问你们也是这样吗？ 我也是 plus 套餐。",
+      "author": "JohnXu20151211",
+      "createdAt": "2026-09-23T09:38:26.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "GitHub Copilot",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户抱怨 codex（GitHub Copilot）最近一周开始变慢，思考一个问题需要半天时间，之前没有这么慢的，并询问其他用户是否遇到相同问题，同时提到自己使用的是 plus 套餐。",
+        "topics": [
+          "使用体验",
+          "故障排查",
+          "套餐"
+        ],
+        "planMentioned": "Copilot Plus",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/400",
+      "analyzedAt": "2026-09-23T11:10:01.381Z"
+    },
+    {
+      "id": "v2ex-1244305",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1244305",
+      "title": "[求问] 土区 GPT 到期后多久内可以继续订阅",
+      "content": "如题，我现在正在使用土区的订阅，之前有过一次忘记续费过期了 Plus 掉了，以为传家宝没了，后来查到可以点击 see all plans ，然后选择 499 的，选择 change plan 就可以续上了。 想问一下有没有佬知道这个方法可以暂停订阅多久？最近有学生会员（ 4 个月）好像更便宜想问一下如上述的情况最多可以“保留”多久恢复订阅的时间？小半年时间还能恢复吗？",
+      "author": "YBill",
+      "createdAt": "2026-09-23T09:19:37.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "土区",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户询问土区 GPT 订阅在到期后可以继续订阅多久，之前因忘记续费导致失去订阅，现在想了解是否可以暂停或恢复订阅的时间限制，特别是关于学生会员（4个月）这种情况的恢复可能性。",
+        "topics": [
+          "订阅",
+          "计划",
+          "续费",
+          "暂停",
+          "GPT",
+          "套餐"
+        ],
+        "planMentioned": "499",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/401",
+      "analyzedAt": "2026-09-23T11:10:07.703Z"
+    },
+    {
+      "id": "v2ex-1244281",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1244281",
+      "title": "20x 订阅里的 gpt-6-sol 额度大砍到 1200 刀了？",
+      "content": "生产环境今天（ 9 月 23 日） 09:00—15:43 ，北京时间：周额度已用从 59% 升至 69%，最新剩余约 31%；业务预估价值合计 $119.01 。 我统计了大半天的 token 使用情况，算出来 20x 的周额度大概也就 1200 刀左右。之前 5.6-sol 能算到 2500 刀左右。 虽然 6-sol 降价了一半，但是额度也被砍了一半多，而且 6-sol 的 token 平均消耗应该也上升了，综合算下来订阅里的使用量还是少了。 也收集一下 V 友们的使用情况吧。也能预料到 openai 会不断砍 codex 订阅的额度，没想到这么狠。",
+      "author": "bixinhaner",
+      "createdAt": "2026-09-23T07:56:48.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户反映OpenAI Codex订阅中GPT-6模型的周额度大幅削减，导致实际可用量减少，尽管降价但综合性价比下降，引发对订阅政策的不满。",
+        "topics": [
+          "额度削减",
+          "token消耗",
+          "性价比比较",
+          "订阅政策",
+          "OpenAI Codex"
+        ],
+        "planMentioned": "OpenAI Codex 20x subscription",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/402",
+      "analyzedAt": "2026-09-23T11:10:13.702Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1244289: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1244262: The operation was aborted due to timeout"
+  ]
+}
