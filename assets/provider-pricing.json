@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-23T07:21:39.287Z",
+  "updatedAt": "2026-09-23T13:26:11.544Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -675,7 +675,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-Il3Eqiaz.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DUbTkFNA.js"
       ],
       "plans": [
         {
@@ -1338,7 +1338,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.9/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.18/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
       ],
       "plans": [
         {

@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-09-22T13:12:41.722Z",
-  "generatedAtBeijing": "2026年9月22日 21:12:41",
-  "sourceGeneratedAt": "2026-09-22T13:11:43.637Z",
-  "sourceGeneratedAtBeijing": "2026年9月22日 21:11:43",
-  "sourceMetricsGeneratedAt": "2026-09-22T13:11:44.821Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月22日 21:11:44",
+  "generatedAt": "2026-09-23T13:27:12.041Z",
+  "generatedAtBeijing": "2026年9月23日 21:27:12",
+  "sourceGeneratedAt": "2026-09-23T13:26:11.544Z",
+  "sourceGeneratedAtBeijing": "2026年9月23日 21:26:11",
+  "sourceMetricsGeneratedAt": "2026-09-23T13:26:12.418Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月23日 21:26:12",
   "summary": {
     "openrouterProviderCount": 109,
-    "metricsProviderCount": 49,
-    "resolvedMetricsProviderCount": 49,
+    "metricsProviderCount": 53,
+    "resolvedMetricsProviderCount": 53,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
-    "heuristicProviderCount": 7,
-    "providersWithPlans": 15,
-    "pendingCount": 34,
+    "heuristicProviderCount": 8,
+    "providersWithPlans": 16,
+    "pendingCount": 37,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/e47a4b8bd984bb512305b679e9c33561.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/bc967307de4ea74210e9105a48f9d6c3.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -250,6 +250,58 @@
       "privacyPolicyUrl": "https://developers.cloudflare.com/workers-ai/privacy",
       "termsOfServiceUrl": "https://www.cloudflare.com/service-specific-terms-developer-platform/#developer-platform-terms",
       "statusPageUrl": "https://www.cloudflarestatus.com/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "cohere",
+      "openrouterName": "Cohere",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "Pro",
+          "currentPrice": 5,
+          "currentPriceText": "$5.00",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://cohere.com/pricing",
+          "serviceDetails": [
+            "Command Generative language models",
+            "Transcribe New Speech recognition model",
+            "North Small Translate NEW Machine translation model",
+            "Parse New Document parsing model",
+            "Embed Semantic representation model",
+            "Rerank Retrieval optimization model"
+          ]
+        },
+        {
+          "name": "Pro",
+          "currentPrice": 10,
+          "currentPriceText": "$10.00",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "Command Generative language models",
+            "Transcribe New Speech recognition model",
+            "North Small Translate NEW Machine translation model",
+            "Parse New Document parsing model",
+            "Embed Semantic representation model",
+            "Rerank Retrieval optimization model"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://cohere.com",
+        "https://cohere.com/pricing"
+      ],
+      "pricingPageUrl": "https://cohere.com/pricing",
+      "officialWebsiteUrl": "https://cohere.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://cohere.com/privacy",
+      "termsOfServiceUrl": "https://cohere.com/terms-of-use",
+      "statusPageUrl": "https://status.cohere.ai/",
       "parseMode": "official-website-heuristic"
     },
     {
@@ -687,7 +739,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-Il3Eqiaz.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DUbTkFNA.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -768,7 +820,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.9/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.18/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1158,6 +1210,15 @@
       "blocked": false
     },
     {
+      "slug": "krea",
+      "openrouterName": "Krea",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.krea.ai",
+      "pricingPageUrl": "https://www.krea.ai",
+      "reason": "官网价格页探测失败：homepage: fetch failed",
+      "blocked": false
+    },
+    {
       "slug": "makora",
       "openrouterName": "Makora",
       "providerId": null,
@@ -1212,6 +1273,15 @@
       "blocked": false
     },
     {
+      "slug": "nebius",
+      "openrouterName": "Nebius",
+      "providerId": null,
+      "officialWebsiteUrl": "https://docs.nebius.com",
+      "pricingPageUrl": "https://docs.nebius.com",
+      "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "nextbit",
       "openrouterName": "NextBit",
       "providerId": null,
@@ -1245,6 +1315,15 @@
       "officialWebsiteUrl": "https://parasail.io",
       "pricingPageUrl": "https://www.parasail.io/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3.00 / $15.00 / $0.30）",
+      "blocked": false
+    },
+    {
+      "slug": "primeintellect",
+      "openrouterName": "PrimeIntellect",
+      "providerId": null,
+      "officialWebsiteUrl": null,
+      "pricingPageUrl": null,
+      "reason": "OpenRouter 元数据中缺少可用官网地址",
       "blocked": false
     },
     {
