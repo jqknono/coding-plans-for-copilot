@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-09-22T13:11:43.637Z",
+  "updatedAt": "2026-09-23T07:21:39.287Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/e47a4b8bd984bb512305b679e9c33561.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/bc967307de4ea74210e9105a48f9d6c3.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -64,7 +64,6 @@
           "serviceDetails": [
             "额度: 25,000 Credits/座席/月",
             "计费方式: 按 Token 消耗抵扣 Credits",
-            "7 天限额: 无限制",
             "支持模型: 支持文本生成、图像生成、视频生成、语音识别、实时语音对话等多种模型（ 查看完整列表 ）"
           ]
         },
@@ -79,7 +78,6 @@
           "serviceDetails": [
             "额度: 100,000 Credits/座席/月",
             "计费方式: 按 Token 消耗抵扣 Credits",
-            "7 天限额: 无限制",
             "支持模型: 支持文本生成、图像生成、视频生成、语音识别、实时语音对话等多种模型（ 查看完整列表 ）"
           ]
         },
@@ -94,7 +92,6 @@
           "serviceDetails": [
             "额度: 250,000 Credits/座席/月",
             "计费方式: 按 Token 消耗抵扣 Credits",
-            "7 天限额: 无限制",
             "支持模型: 支持文本生成、图像生成、视频生成、语音识别、实时语音对话等多种模型（ 查看完整列表 ）"
           ]
         },
