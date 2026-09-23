@@ -126,7 +126,34 @@ export function normalizeModelsDevCatalog(payload: unknown): ModelsDevCatalog | 
   return { models, providers };
 }
 
+const FAST_MODEL_PRICE_MULTIPLIER = 2;
+
 export function resolveModelsDevModelConfig(
+  catalog: ModelsDevCatalog | undefined,
+  modelName: string,
+): Partial<VendorModelConfig> | undefined {
+  const directResolution = resolveDirectModelsDevModelConfig(catalog, modelName);
+  if (directResolution) {
+    return directResolution;
+  }
+
+  const baseModelName = readFastBaseModelName(modelName);
+  if (!baseModelName) {
+    return undefined;
+  }
+
+  const baseResolution = resolveDirectModelsDevModelConfig(catalog, baseModelName);
+  if (!baseResolution) {
+    return undefined;
+  }
+
+  return {
+    ...baseResolution,
+    ...(baseResolution.price === undefined ? {} : { price: doubleFastModelPrice(baseResolution.price) }),
+  };
+}
+
+function resolveDirectModelsDevModelConfig(
   catalog: ModelsDevCatalog | undefined,
   modelName: string,
 ): Partial<VendorModelConfig> | undefined {
@@ -577,6 +604,35 @@ function normalizeModelLookupText(value: string): string {
   const suffix = slashIndex >= 0 ? normalized.slice(slashIndex + 1) : normalized;
   const colonIndex = suffix.indexOf(':');
   return colonIndex >= 0 ? `${prefix}${suffix.slice(0, colonIndex)}` : normalized;
+}
+
+function readFastBaseModelName(modelName: string): string | undefined {
+  const normalized = normalizeModelLookupText(modelName);
+  const slashIndex = normalized.lastIndexOf('/');
+  const prefix = slashIndex >= 0 ? normalized.slice(0, slashIndex + 1) : '';
+  const suffix = slashIndex >= 0 ? normalized.slice(slashIndex + 1) : normalized;
+  if (!suffix.endsWith('-fast') || suffix.length <= '-fast'.length) {
+    return undefined;
+  }
+
+  return `${prefix}${suffix.slice(0, -'-fast'.length)}`;
+}
+
+function doubleFastModelPrice(price: NonNullable<VendorModelConfig['price']>): NonNullable<VendorModelConfig['price']> {
+  const doubled: NonNullable<VendorModelConfig['price']> = { ...price };
+  if (price.inputCost !== undefined) {
+    doubled.inputCost = roundPriceNumber(price.inputCost * FAST_MODEL_PRICE_MULTIPLIER);
+  }
+  if (price.outputCost !== undefined) {
+    doubled.outputCost = roundPriceNumber(price.outputCost * FAST_MODEL_PRICE_MULTIPLIER);
+  }
+  if (price.longContextInputCost !== undefined) {
+    doubled.longContextInputCost = roundPriceNumber(price.longContextInputCost * FAST_MODEL_PRICE_MULTIPLIER);
+  }
+  if (price.longContextOutputCost !== undefined) {
+    doubled.longContextOutputCost = roundPriceNumber(price.longContextOutputCost * FAST_MODEL_PRICE_MULTIPLIER);
+  }
+  return doubled;
 }
 
 function readModelSuffix(value: string): string {

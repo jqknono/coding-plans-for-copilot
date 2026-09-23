@@ -2333,6 +2333,66 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
             cache_read: 0.04,
           },
         },
+        'z-ai/glm-4.5-air-fast': {
+          id: 'z-ai/glm-4.5-air-fast',
+          name: 'GLM 4.5 Air Fast',
+          family: 'glm',
+          open_weights: false,
+          release_date: '2025-08-01',
+          reasoning: true,
+          tool_call: true,
+          modalities: {
+            input: ['text'],
+            output: ['text'],
+          },
+          limit: {
+            context: 64000,
+            output: 16384,
+          },
+          cost: {
+            input: 0.3,
+            output: 1.1,
+            cache_read: 0.05,
+            context_over_200k: {
+              input: 0.7,
+              output: 2.1,
+              cache_read: 0.1,
+            },
+          },
+        },
+      },
+    },
+    xai: {
+      id: 'xai',
+      name: 'xAI',
+      models: {
+        'grok-4.7': {
+          id: 'xai/grok-4.7',
+          name: 'Grok 4.7',
+          family: 'grok',
+          open_weights: false,
+          release_date: '2026-09-01',
+          reasoning: true,
+          tool_call: true,
+          modalities: {
+            input: ['text', 'image'],
+            output: ['text'],
+          },
+          limit: {
+            context: 500000,
+            output: 64000,
+          },
+          cost: {
+            input: 0.2,
+            output: 0.6,
+            cache_read: 0.05,
+            context_over_200k: {
+              input: 0.4,
+              output: 1.2,
+              cache_read: 0.1,
+            },
+          },
+        },
       },
     },
     opencode: {
@@ -2420,6 +2480,41 @@ async function runModelsDevCatalogTests(modelsDevCatalogModule: ModelsDevCatalog
     cacheCost: 0.04,
     outputCost: 0.8,
   });
+
+  const listedFastVariant = resolveModelsDevModelConfig(
+    catalog,
+    'z-ai/glm-4.5-air-fast',
+  );
+  assert.equal(listedFastVariant?.contextSize, 64000);
+  assert.deepEqual(listedFastVariant?.price, {
+    inputCost: 0.3,
+    cacheCost: 0.05,
+    outputCost: 1.1,
+    longContextInputCost: 0.7,
+    longContextCacheCost: 0.1,
+    longContextOutputCost: 2.1,
+  });
+
+  const derivedFastVariant = resolveModelsDevModelConfig(
+    catalog,
+    'xai/grok-4.7-fast:priority',
+  );
+  assert.equal(derivedFastVariant?.contextSize, 500000);
+  assert.equal(derivedFastVariant?.description, 'xai/grok-4.7 | xai | grok | Closed | 2026-09-01');
+  assert.deepEqual(derivedFastVariant?.price, {
+    inputCost: 0.4,
+    cacheCost: 0.05,
+    outputCost: 1.2,
+    longContextInputCost: 0.8,
+    longContextCacheCost: 0.1,
+    longContextOutputCost: 2.4,
+  });
+
+  const unmatchedFastVariant = resolveModelsDevModelConfig(
+    catalog,
+    'missing-model-fast',
+  );
+  assert.equal(unmatchedFastVariant, undefined);
 
   const proxyGemini = resolveModelsDevModelConfig(
     catalog,
@@ -3137,6 +3232,140 @@ async function runGenericProviderModelsDevEnrichmentTests(
       outputCost: 1.74,
     });
     console.log('PASS /models 刷新会使用 models.dev 补全新发现模型元数据');
+  } finally {
+    globalThis.fetch = originalFetch;
+    provider.dispose();
+    configStore.dispose();
+  }
+}
+
+async function runFastModelDiscoveryPriceTest(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule,
+  modelsDevCatalogModule: ModelsDevCatalogModule,
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const { MODELS_DEV_API_URL, MODELS_DEV_CATALOG_URL } = modelsDevCatalogModule;
+  const originalFetch = globalThis.fetch;
+
+  activeState = createState([
+    {
+      name: 'xAI',
+      baseUrl: 'https://api.x.ai/v1',
+      defaultApiStyle: 'openai-chat',
+      defaultVision: false,
+      useModelsEndpoint: true,
+      models: [],
+    },
+  ]);
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
+
+  globalThis.fetch = (async (url: string | URL | Request): Promise<Response> => {
+    const href = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+    if (href === MODELS_DEV_API_URL || href === MODELS_DEV_CATALOG_URL) {
+      return new Response(
+        JSON.stringify({
+          xai: {
+            id: 'xai',
+            name: 'xAI',
+            models: {
+              'grok-4.7': {
+                id: 'xai/grok-4.7',
+                family: 'grok',
+                open_weights: false,
+                release_date: '2026-09-01',
+                reasoning: true,
+                tool_call: true,
+                modalities: {
+                  input: ['text', 'image'],
+                  output: ['text'],
+                },
+                limit: {
+                  context: 500000,
+                  output: 64000,
+                },
+                cost: {
+                  input: 0.2,
+                  output: 0.6,
+                  cache_read: 0.05,
+                  context_over_200k: {
+                    input: 0.4,
+                    output: 1.2,
+                    cache_read: 0.1,
+                  },
+                },
+              },
+              'grok-4.6-fast': {
+                id: 'xai/grok-4.6-fast',
+                family: 'grok',
+                open_weights: false,
+                release_date: '2026-09-01',
+                reasoning: true,
+                tool_call: true,
+                modalities: {
+                  input: ['text'],
+                  output: ['text'],
+                },
+                limit: {
+                  context: 250000,
+                  output: 32000,
+                },
+                cost: {
+                  input: 0.5,
+                  output: 1.5,
+                  cache_read: 0.08,
+                },
+              },
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        },
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        data: [{ id: 'grok-4.7' }, { id: 'grok-4.7-fast' }, { id: 'grok-4.6-fast' }],
+      }),
+      {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      },
+    );
+  }) as typeof globalThis.fetch;
+
+  try {
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+      vendorName: string,
+    ) => (vendorName === 'xAI' ? 'configured' : '');
+
+    await refreshWithDiscovery(provider);
+
+    const updatedVendor = getUpdatedVendor(activeState);
+    const listedFastModel = updatedVendor.models.find((model) => model.name === 'grok-4.6-fast');
+    assert.equal(listedFastModel?.contextSize, 250000);
+    assert.deepEqual(listedFastModel?.price, {
+      inputCost: 0.5,
+      cacheCost: 0.08,
+      outputCost: 1.5,
+    });
+
+    const derivedFastModel = updatedVendor.models.find((model) => model.name === 'grok-4.7-fast');
+    assert.equal(derivedFastModel?.contextSize, 500000);
+    assert.deepEqual(derivedFastModel?.price, {
+      inputCost: 0.4,
+      cacheCost: 0.05,
+      outputCost: 1.2,
+      longContextInputCost: 0.8,
+      longContextCacheCost: 0.1,
+      longContextOutputCost: 2.4,
+    });
+    console.log('PASS /models 刷新会为未收录的 -fast 模型按基础模型价格的两倍补齐输入输出价格');
   } finally {
     globalThis.fetch = originalFetch;
     provider.dispose();
@@ -9527,6 +9756,7 @@ async function main(): Promise<void> {
     await runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
     runGenericProviderRequestContentLoggingTests(genericProviderModule);
     await runModelsDevCatalogTests(modelsDevCatalogModule);
+    await runFastModelDiscoveryPriceTest(ConfigStore, genericProviderModule, modelsDevCatalogModule);
     runGenericProviderDiscoveryMergeTests();
     await runGenericProviderModelEnabledTests(ConfigStore, genericProviderModule);
     await runGenericProviderDiscoveryDefaultVisionTests(ConfigStore, genericProviderModule);
