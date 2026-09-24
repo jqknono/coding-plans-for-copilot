@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-23T13:27:12.041Z",
-  "generatedAtBeijing": "2026年9月23日 21:27:12",
-  "sourceGeneratedAt": "2026-09-23T13:26:11.544Z",
-  "sourceGeneratedAtBeijing": "2026年9月23日 21:26:11",
-  "sourceMetricsGeneratedAt": "2026-09-23T13:26:12.418Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月23日 21:26:12",
+  "generatedAt": "2026-09-24T13:22:41.196Z",
+  "generatedAtBeijing": "2026年9月24日 21:22:41",
+  "sourceGeneratedAt": "2026-09-24T13:21:40.048Z",
+  "sourceGeneratedAtBeijing": "2026年9月24日 21:21:40",
+  "sourceMetricsGeneratedAt": "2026-09-24T13:21:41.105Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月24日 21:21:41",
   "summary": {
     "openrouterProviderCount": 109,
     "metricsProviderCount": 53,
@@ -739,7 +739,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DUbTkFNA.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-BuEvBCeU.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
