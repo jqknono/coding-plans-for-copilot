@@ -1,0 +1,76 @@
+{
+  "date": "2026-09-25",
+  "generatedAt": "2026-09-25T11:21:07.329Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 48,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Anthropic, OpenAI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1244759",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1244759",
+      "title": "打脸食言了， Opus 5.5 确实有其强大之处",
+      "content": "我之前在 v 站发过好几次反对 Claude 的评论，因为在去年人在海外仍然被 Claude 封号，再加上达里奥的各种神必发言，而且后来 gpt 还出了相当优秀的 gpt-image-2 ，所以我转向 chatgpt 快将近一年了，并且还说不理解为什么一群人顶着封号仍然强行用 claude 。 但是最近 RMB 汇率略走强，我外行卡恰好有些剩余的钱，codex 的额度也跑差不多，于是我就充了一个 claude pro ，用了下来发现 claude 确实很强，算是打脸我之前的言论了。 我是在做一个研究项目，不是纯写代码，还有系统设计+数据分析。对比用 codex 时就发现，sol ，甚至 Astra 对于数据分析这里相当一般，它发现不了我的实验统计公式实际是有问题的，即使我在 prompt 里明确让其评审我的实验结构设计；而是把大量精力放到代码，尤其是防御性编程部分，加了一堆莫名其妙的退出机制。 而在我用上 Opus 5.5 之后，仅仅让它评审一下实验结果和架构设计，它就明确发现了之前 codex 车轱辘来回转都分析不出来的实验设计问题。而且在之后的实验代码部分，opus 的实验代码设计",
+      "author": "Frankcox",
+      "createdAt": "2026-09-25T08:33:01.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 1,
+        "supplier": "Anthropic, OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享了使用Claude Pro的体验，认为其在研究项目中比Codex更强大，尤其是在数据分析和系统设计方面，从而改变了之前对Claude的负面看法。",
+        "topics": [
+          "AI编码助手",
+          "套餐订阅",
+          "用户体验",
+          "模型对比",
+          "数据分析",
+          "系统设计"
+        ],
+        "planMentioned": "Claude Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/404",
+      "analyzedAt": "2026-09-25T11:30:53.001Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1244733: LLM returned empty content (finish_reason=stop)"
+  ]
+}
