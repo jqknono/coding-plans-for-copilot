@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-09-24T13:22:41.196Z",
-  "generatedAtBeijing": "2026年9月24日 21:22:41",
-  "sourceGeneratedAt": "2026-09-24T13:21:40.048Z",
-  "sourceGeneratedAtBeijing": "2026年9月24日 21:21:40",
-  "sourceMetricsGeneratedAt": "2026-09-24T13:21:41.105Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月24日 21:21:41",
+  "generatedAt": "2026-09-25T13:22:28.376Z",
+  "generatedAtBeijing": "2026年9月25日 21:22:28",
+  "sourceGeneratedAt": "2026-09-25T13:21:29.404Z",
+  "sourceGeneratedAtBeijing": "2026年9月25日 21:21:29",
+  "sourceMetricsGeneratedAt": "2026-09-25T13:21:30.570Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月25日 21:21:30",
   "summary": {
     "openrouterProviderCount": 109,
     "metricsProviderCount": 53,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 8,
     "providersWithPlans": 16,
     "pendingCount": 37,
-    "blockedPendingCount": 2,
+    "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -1099,7 +1099,7 @@
       "officialWebsiteUrl": "https://docs.coreweave.com",
       "pricingPageUrl": "https://docs.coreweave.com/billing",
       "reason": "官网价格页探测失败：https://docs.coreweave.com/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "crusoe",
