@@ -1,6 +1,6 @@
 {
   "date": "2026-09-25",
-  "generatedAt": "2026-09-25T11:21:07.329Z",
+  "generatedAt": "2026-09-26T10:57:18.757Z",
   "config": {
     "sources": [
       "v2ex",
@@ -24,13 +24,13 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 48,
-    "postsAfterKeywordFilter": 13,
-    "relevantPosts": 1,
-    "discussionsCreated": 1,
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 14,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
     "discussionsSkipped": 0,
     "supplierMentions": {
-      "Anthropic, OpenAI": 1
+      "Claude, Codex": 1
     }
   },
   "posts": [
@@ -65,12 +65,45 @@
       },
       "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/404",
       "analyzedAt": "2026-09-25T11:30:53.001Z"
+    },
+    {
+      "id": "v2ex-1244814",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1244814",
+      "title": "独立开发产品无收入，有必要买 Claude Max 吗",
+      "content": "现在是一个 20 的 codex 和一个 20 刀的 Claude 体感是 codex 干不了什么需求就没额度了，Claude 还行。 但是加起来 40 刀，做独立开发的进度就很慢。 但是有时候忙起来，没时间 vibe coding ，也会有一周下来额度还剩一大半的情况。 同时考虑到自己开发的产品没收入，还有一些本以为 2 个月能上线结果半年没上线的产品。 在想是不是应该直接上个 Claude Max ，然后快速把产品推上线看看。 但根据经验，现在是产品比用户多，所以对于自己在这块的投入也有怀疑的想法。 毕竟网上有段子：现在很多整天折腾 AI 独立开发的人，开着最贵的 AI 会员和云服务，做出的产品却根本没人买单吗。 大家有什么想法吗，想听听建议。",
+      "author": "kamisamayo",
+      "createdAt": "2026-09-25T18:09:00.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Claude, Codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户讨论作为独立开发者是否值得购买 Claude Max 以提升编码助手使用额度，对比了当前使用的 Codex 和 Claude 方案的费用与使用情况，并寻求社区建议。",
+        "topics": [
+          "定价",
+          "Claude Max",
+          "Codex",
+          "订阅",
+          "独立开发",
+          "费用对比",
+          "使用体验"
+        ],
+        "planMentioned": "Claude Max",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/405",
+      "analyzedAt": "2026-09-26T11:05:34.723Z"
     }
   ],
   "failures": [
     "linuxdo: https://linux.do/latest.rss → 429",
     "linuxdo: https://linux.do/latest.json → 429",
     "linuxdo: https://linux.do/latest.json → 429",
-    "analysis failed for v2ex-1244733: LLM returned empty content (finish_reason=stop)"
+    "analysis failed for v2ex-1244858: The operation was aborted due to timeout"
   ]
 }
