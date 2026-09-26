@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-09-25T13:22:28.376Z",
-  "generatedAtBeijing": "2026年9月25日 21:22:28",
-  "sourceGeneratedAt": "2026-09-25T13:21:29.404Z",
-  "sourceGeneratedAtBeijing": "2026年9月25日 21:21:29",
-  "sourceMetricsGeneratedAt": "2026-09-25T13:21:30.570Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月25日 21:21:30",
+  "generatedAt": "2026-09-26T12:45:42.835Z",
+  "generatedAtBeijing": "2026年9月26日 20:45:42",
+  "sourceGeneratedAt": "2026-09-26T07:05:16.809Z",
+  "sourceGeneratedAtBeijing": "2026年9月26日 15:05:16",
+  "sourceMetricsGeneratedAt": "2026-09-26T12:44:52.043Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月26日 20:44:52",
   "summary": {
-    "openrouterProviderCount": 109,
+    "openrouterProviderCount": 110,
     "metricsProviderCount": 53,
     "resolvedMetricsProviderCount": 53,
     "unresolvedMetricsProviderCount": 0,
@@ -1099,7 +1099,7 @@
       "officialWebsiteUrl": "https://docs.coreweave.com",
       "pricingPageUrl": "https://docs.coreweave.com/billing",
       "reason": "官网价格页探测失败：https://docs.coreweave.com/pricing: HTTP 404",
-      "blocked": true
+      "blocked": false
     },
     {
       "slug": "crusoe",
@@ -1369,7 +1369,7 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "together",
