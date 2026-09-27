@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-26T07:05:16.809Z",
+  "updatedAt": "2026-09-27T07:36:33.584Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -914,9 +914,7 @@
             "1000 Prompts / 5小时"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "kwaikat-ai: Request failed: https://console.streamlake.com/api/common/describe-product-detail -> 502"
+      ]
     },
     {
       "provider": "minimax-ai",
@@ -1649,7 +1647,6 @@
     }
   ],
   "failures": [
-    "kwaikat-ai: Request failed: https://console.streamlake.com/api/common/describe-product-detail -> 502",
     "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
   ]
 }
