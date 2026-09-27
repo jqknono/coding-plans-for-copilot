@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-09-27T07:36:33.584Z",
+  "updatedAt": "2026-09-27T13:36:56.381Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/bc967307de4ea74210e9105a48f9d6c3.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1560a0348ad51a572df68ddd7b13cf8d.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -914,7 +914,9 @@
             "1000 Prompts / 5小时"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "kwaikat-ai: fetch failed"
     },
     {
       "provider": "minimax-ai",
@@ -1647,6 +1649,7 @@
     }
   ],
   "failures": [
+    "kwaikat-ai: fetch failed",
     "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
   ]
 }

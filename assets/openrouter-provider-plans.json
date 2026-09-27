@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-09-26T12:45:42.835Z",
-  "generatedAtBeijing": "2026年9月26日 20:45:42",
-  "sourceGeneratedAt": "2026-09-26T07:05:16.809Z",
-  "sourceGeneratedAtBeijing": "2026年9月26日 15:05:16",
-  "sourceMetricsGeneratedAt": "2026-09-26T12:44:52.043Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月26日 20:44:52",
+  "generatedAt": "2026-09-27T13:37:54.525Z",
+  "generatedAtBeijing": "2026年9月27日 21:37:54",
+  "sourceGeneratedAt": "2026-09-27T13:36:56.381Z",
+  "sourceGeneratedAtBeijing": "2026年9月27日 21:36:56",
+  "sourceMetricsGeneratedAt": "2026-09-27T13:36:57.312Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月27日 21:36:57",
   "summary": {
     "openrouterProviderCount": 110,
-    "metricsProviderCount": 53,
-    "resolvedMetricsProviderCount": 53,
+    "metricsProviderCount": 52,
+    "resolvedMetricsProviderCount": 52,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 8,
     "providersWithPlans": 16,
-    "pendingCount": 37,
-    "blockedPendingCount": 3,
+    "pendingCount": 36,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/bc967307de4ea74210e9105a48f9d6c3.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1560a0348ad51a572df68ddd7b13cf8d.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -1210,15 +1210,6 @@
       "blocked": false
     },
     {
-      "slug": "krea",
-      "openrouterName": "Krea",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.krea.ai",
-      "pricingPageUrl": "https://www.krea.ai",
-      "reason": "官网价格页探测失败：homepage: fetch failed",
-      "blocked": false
-    },
-    {
       "slug": "makora",
       "openrouterName": "Makora",
       "providerId": null,
@@ -1369,7 +1360,7 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": true
+      "blocked": false
     },
     {
       "slug": "together",
