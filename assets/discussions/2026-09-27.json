@@ -1,0 +1,74 @@
+{
+  "date": "2026-09-27",
+  "generatedAt": "2026-09-27T11:34:18.450Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 50,
+    "postsAfterKeywordFilter": 12,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Claude, GPT": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1245027",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1245027",
+      "title": "Codex 下周应该会有更多的重置额度。。。",
+      "content": "claude 5.5 发布后，明显感觉到各种 AI 群里又在开始找 claude 防封办法了，体验下来确实比 GPT6 更好用，而且同样订阅额度现在比 GPT 更多，现在 GPT Plus 的 gpt6 基本没法用，额度太少了。 开个 20x 也是 1-2 天清空，然后等重置。。。关注重置可以看下这个重置预测 https://resetcodex.org/events",
+      "author": "imarvin",
+      "createdAt": "2026-09-27T06:14:51.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Claude, GPT",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "讨论Claude 5.5发布后的使用体验，对比GPT6订阅额度，提到重置预测。",
+        "topics": [
+          "定价",
+          "额度",
+          "重置",
+          "体验",
+          "对比"
+        ],
+        "planMentioned": "Claude 5.5",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/406",
+      "analyzedAt": "2026-09-27T11:39:39.122Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
