@@ -1,0 +1,173 @@
+{
+  "date": "2026-09-28",
+  "generatedAt": "2026-09-28T13:08:25.553Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 18,
+    "relevantPosts": 4,
+    "discussionsCreated": 4,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Claude Code, Copilot": 1,
+      "commandcode": 1,
+      "KIMI, 火山方舟, deepseek4flash": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1245326",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1245326",
+      "title": "公司 claude code 企业账号被封， 100 来人的 Team 账号都登录不了",
+      "content": "所有账号: Organization disabled This organization has been disabled. 希望国模能力快起来吧， 就不要这么受气了， 现在应急方案 gpt 共享账号， 和 copilot 企业 team 账号过渡, 怀疑是调休导致检测出来了",
+      "author": "gitxuzan",
+      "createdAt": "2026-09-28T11:01:27.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Claude Code, Copilot",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "公司的Claude Code企业账号被封，导致100多人Team账号无法登录，建议临时使用共享GPT账号或Copilot企业Team账号过渡。",
+        "topics": [
+          "账号封禁",
+          "Claude Code",
+          "Copilot",
+          "企业账号",
+          "过渡方案"
+        ],
+        "planMentioned": "Claude Code 企业账号",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/407",
+      "analyzedAt": "2026-09-28T13:20:54.944Z"
+    },
+    {
+      "id": "v2ex-1245312",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1245312",
+      "title": "继 opencode go 之后， commandcode goat 也搞欺诈",
+      "content": "背景说明： commandcode goat 在之前通知是自 9.28 之前，deepseek v4.1flash 额度限时 60$，9.28 之后降低至 40$ 其实这没什么，commandcode 在之前一致都是官转，速度能跑到 250t/s ，99%的缓存占用，即便只有 40$量也蛮大的 然而今天 9.28 号发现官方没有任何通知的情况下，在文档中修改了描述： DeepSeek V4.1 Flash carries permanently boosted monthly credits, with no end date. DeepSeek V4.1 Flash's per-model allowance is boosted to $60 on the $10 GOAT plan and $70 on the $20 Pro plan. 看似永久提升额度，实际上 deepseek v4.1flash 从官转渠道改为了第三方部署，同一时间端官方输出速度 250-300t/s ，cmdcode 渠道只有 140t/s 速度 100%降低的同时还需要面对不确定的量化质量————甚至偷",
+      "author": "yiranw09",
+      "createdAt": "2026-09-28T09:38:33.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "commandcode",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "该帖子讨论了 DeepSeek V4.1 Flash 的不同订阅计划（$10 GOAT 计划和 $20 Pro 计划）在官方与第三方渠道（cmdcode）之间的价格、速度和缓存使用方面的对比。作者指出切换后官方速度从 250-300 t/s 降至 140 t/s，且缓存占用从 99% 降至 94%，认为这涉及潜在的欺诈行为，并提供详细的成本和性能分析。",
+        "topics": [
+          "套餐对比",
+          "价格比较",
+          "缓存使用",
+          "性能对比"
+        ],
+        "planMentioned": "DeepSeek V4.1 Flash, $10 GOAT plan, $20 Pro plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/408",
+      "analyzedAt": "2026-09-28T13:21:04.626Z"
+    },
+    {
+      "id": "v2ex-1245304",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1245304",
+      "title": "今天 KIMI 可以订阅了，但是我已经包了火山方舟的 199 套餐， deepseek4flash 勉强够，不知道 KIMI199 有多少用量，有必要换过来吗",
+      "content": "",
+      "author": "aja",
+      "createdAt": "2026-09-28T09:10:13.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "KIMI, 火山方舟, deepseek4flash",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户已订阅KIMI，但已经拥有火山方舟的199套餐，deepseek4flash勉强够用，询问是否需要切换到KIMI199。",
+        "topics": [
+          "套餐对比",
+          "订阅",
+          "AI 编码助手",
+          "切换计划",
+          "使用量"
+        ],
+        "planMentioned": "KIMI199, 火山方舟, deepseek4flash",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/409",
+      "analyzedAt": "2026-09-28T13:21:13.141Z"
+    },
+    {
+      "id": "v2ex-1245191",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1245191",
+      "title": "各位尊敬的 plus 会员用的什么模型",
+      "content": "GPT-6-SOL Medium 只够用十几分钟就 5 小时额度清零。 GPT-6-Luna Xhigh 慢得跟屎一样，比 5.6 的慢好多，而且感觉有点蠢。 现在 plus 是不是已经没法用了，必须得开 PRO",
+      "author": "SilenceLL",
+      "createdAt": "2026-09-28T03:33:40.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "The post discusses issues with GPT-6-SOL Medium and GPT-6-Luna Xhigh models, including rapid quota depletion (5 hours exhausted after ~15 minutes) and extremely slow response speeds compared to previous versions. The author questions whether the 'plus' membership is still viable or if upgrading to 'PRO' is necessary.",
+        "topics": [
+          "定价",
+          "plus",
+          "PRO",
+          "GPT-6",
+          "额度",
+          "性能",
+          "模型"
+        ],
+        "planMentioned": "plus, PRO",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/410",
+      "analyzedAt": "2026-09-28T13:21:19.759Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1245336: LLM output schema validation failed: isRelevant: expected boolean, got undefined; isCodingPlan: expected boolean, got undefined; relevance: expected number 0-1, got undefined; category: expected non-empty string, got undefined",
+    "analysis failed for v2ex-1245324: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1245314: The operation was aborted due to timeout"
+  ]
+}
