@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-28T08:13:56.316Z",
+  "updatedAt": "2026-09-28T16:33:15.816Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -914,7 +914,9 @@
             "1000 Prompts / 5小时"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "kwaikat-ai: fetch failed"
     },
     {
       "provider": "minimax-ai",
@@ -1643,10 +1645,14 @@
             "高峰期专属资源优先保障"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "zhipu-ai: Playwright parse failed: page.goto: Timeout 20000ms exceeded. Call log: - navigating to \"https://bigmodel.cn/glm-coding\", waiting until \"commit\" ; Pure JS parse failed: fetch failed; Legacy JS parse failed: fetch failed"
     }
   ],
   "failures": [
+    "zhipu-ai: Playwright parse failed: page.goto: Timeout 20000ms exceeded.\nCall log:\n  - navigating to \"https://bigmodel.cn/glm-coding\", waiting until \"commit\"\n; Pure JS parse failed: fetch failed; Legacy JS parse failed: fetch failed",
+    "kwaikat-ai: fetch failed",
     "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
   ]
 }
