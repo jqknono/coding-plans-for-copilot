@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-29T07:53:57.471Z",
+  "updatedAt": "2026-09-29T14:41:44.343Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -675,7 +675,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DxnEiTv-.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CRcurElu.js"
       ],
       "plans": [
         {
@@ -914,9 +914,7 @@
             "1000 Prompts / 5小时"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "kwaikat-ai: fetch failed"
+      ]
     },
     {
       "provider": "minimax-ai",
@@ -1649,7 +1647,6 @@
     }
   ],
   "failures": [
-    "kwaikat-ai: fetch failed",
     "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
   ]
 }

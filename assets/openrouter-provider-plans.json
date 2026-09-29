@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-09-28T16:34:11.921Z",
-  "generatedAtBeijing": "2026年9月29日 00:34:11",
-  "sourceGeneratedAt": "2026-09-28T16:33:15.816Z",
-  "sourceGeneratedAtBeijing": "2026年9月29日 00:33:15",
-  "sourceMetricsGeneratedAt": "2026-09-28T16:33:18.309Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月29日 00:33:18",
+  "generatedAt": "2026-09-29T14:42:44.700Z",
+  "generatedAtBeijing": "2026年9月29日 22:42:44",
+  "sourceGeneratedAt": "2026-09-29T14:41:44.343Z",
+  "sourceGeneratedAtBeijing": "2026年9月29日 22:41:44",
+  "sourceMetricsGeneratedAt": "2026-09-29T14:41:45.693Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月29日 22:41:45",
   "summary": {
-    "openrouterProviderCount": 110,
-    "metricsProviderCount": 52,
-    "resolvedMetricsProviderCount": 52,
+    "openrouterProviderCount": 111,
+    "metricsProviderCount": 53,
+    "resolvedMetricsProviderCount": 53,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 8,
     "providersWithPlans": 16,
-    "pendingCount": 36,
-    "blockedPendingCount": 2,
+    "pendingCount": 37,
+    "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1560a0348ad51a572df68ddd7b13cf8d.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/bfffa78ca9c4a366eccc61a76b8dca03.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -739,7 +739,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-BuEvBCeU.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CRcurElu.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1099,7 +1099,7 @@
       "officialWebsiteUrl": "https://docs.coreweave.com",
       "pricingPageUrl": "https://docs.coreweave.com/billing",
       "reason": "官网价格页探测失败：https://docs.coreweave.com/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "crusoe",
@@ -1210,12 +1210,21 @@
       "blocked": false
     },
     {
+      "slug": "krea",
+      "openrouterName": "Krea",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.krea.ai",
+      "pricingPageUrl": "https://www.krea.ai",
+      "reason": "官网价格页探测失败：homepage: fetch failed",
+      "blocked": false
+    },
+    {
       "slug": "makora",
       "openrouterName": "Makora",
       "providerId": null,
       "officialWebsiteUrl": "https://makora.statuspage.io",
       "pricingPageUrl": "https://makora.statuspage.io",
-      "reason": "官网价格页探测失败：https://makora.statuspage.io/pricing: HTTP 404",
+      "reason": "官网价格页探测失败：homepage: HTTP 503",
       "blocked": false
     },
     {
