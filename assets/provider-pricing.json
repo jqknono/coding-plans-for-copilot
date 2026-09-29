@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-09-28T16:33:15.816Z",
+  "updatedAt": "2026-09-29T07:53:57.471Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/1560a0348ad51a572df68ddd7b13cf8d.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/bfffa78ca9c4a366eccc61a76b8dca03.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -675,7 +675,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-BuEvBCeU.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DxnEiTv-.js"
       ],
       "plans": [
         {
@@ -1645,13 +1645,10 @@
             "高峰期专属资源优先保障"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "zhipu-ai: Playwright parse failed: page.goto: Timeout 20000ms exceeded. Call log: - navigating to \"https://bigmodel.cn/glm-coding\", waiting until \"commit\" ; Pure JS parse failed: fetch failed; Legacy JS parse failed: fetch failed"
+      ]
     }
   ],
   "failures": [
-    "zhipu-ai: Playwright parse failed: page.goto: Timeout 20000ms exceeded.\nCall log:\n  - navigating to \"https://bigmodel.cn/glm-coding\", waiting until \"commit\"\n; Pure JS parse failed: fetch failed; Legacy JS parse failed: fetch failed",
     "kwaikat-ai: fetch failed",
     "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
   ]
