@@ -1,0 +1,78 @@
+{
+  "date": "2026-09-29",
+  "generatedAt": "2026-09-29T12:17:59.185Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 58,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Anthropic, OpenAI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1245541",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1245541",
+      "title": "1 号员工被屠， 2 号员工 Codex 全靠赛博义父 Tibo 续命",
+      "content": "佬友们，上一篇刚聊完《 一号员工满月了：Claude Code 两次封号，第三次活下来 》，今天脸就被打肿了…… 作为独立开发，手下有两个最能打的王牌员工： 1 号：Claude Code ，干活心细、架构审美在线、能打大仗，是我的首席架构兼主力牛马。 2 号：Codex ，皮实耐操、手速极快，主打一个执行力拉满。 两天后，1 号员工突然弹窗要求重新登录。我熟练地点下 Google 一键登录，屏幕上冰冷地蹦出一行红字： Your account has been suspended 我当场脑子嗡的一下，第一反应不是悲伤，而是抠门——赶紧打开 Wise 看退没退款。 翻了一圈，好家伙，一毛没退。找客服申诉？对不起，压根没有活人客服，接待我的是个冷酷无情的 AI 机器人。 我和一个硅谷的 AI 机器人扯皮了半天，对方用最标准、最客气的企业级废话复读机：“we are unable to issue a refund” 讽刺感拉满了： 我花钱雇 AI 替我搬砖，结果 AI 卷款跑路后，大厂派了另一个 AI 负责把我扫地出门。 没办法，老农护粮，只能硬着头皮走 Wise 的争议申诉渠道。官方信",
+      "author": "olddogs",
+      "createdAt": "2026-09-29T06:50:58.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 1,
+        "supplier": "Anthropic, OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户分享了使用Claude Code和Codex编码助手的痛苦体验，包括账户被封、退款无门、额度限制等问题，并依赖Tibo重置额度来维持工作。",
+        "topics": [
+          "定价",
+          "订阅",
+          "封号",
+          "退款",
+          "客服",
+          "额度限制",
+          "重置"
+        ],
+        "planMentioned": "Claude Code, Codex",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/411",
+      "analyzedAt": "2026-09-29T12:26:07.202Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1245610: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1245593: The operation was aborted due to timeout"
+  ]
+}
