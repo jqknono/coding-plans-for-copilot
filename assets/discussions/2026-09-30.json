@@ -1,0 +1,74 @@
+{
+  "date": "2026-09-30",
+  "generatedAt": "2026-09-30T12:03:43.892Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "OpenAI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1245883",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1245883",
+      "title": "你们的 gpt6.1 sol 都有了吗",
+      "content": "我 plus 账户，为啥到现在 codex cli 里都还没有 gpt6.1 的模型，更新到最新版本了",
+      "author": "momowei",
+      "createdAt": "2026-09-30T09:58:11.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户反映在更新到最新版本后，其Plus账户的Codex CLI中仍未提供GPT-6.1模型，询问其他用户是否已拥有。",
+        "topics": [
+          "模型可用性",
+          "账户订阅",
+          "CLI工具",
+          "更新问题"
+        ],
+        "planMentioned": "ChatGPT Plus",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/412",
+      "analyzedAt": "2026-09-30T12:11:15.626Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1245871: The operation was aborted due to timeout"
+  ]
+}
