@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-29T14:41:44.343Z",
+  "updatedAt": "2026-09-30T07:59:43.070Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -914,7 +914,9 @@
             "1000 Prompts / 5小时"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "kwaikat-ai: fetch failed"
     },
     {
       "provider": "minimax-ai",
@@ -1430,7 +1432,9 @@
             "使用 LingClaw 构建个人助理"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "x-aio: Request failed: https://code.x-aio.com/assets/index-BlH8fPH1.js -> 522; Playwright fallback failed: page.goto: Timeout 6000ms exceeded. Call log: - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\""
     },
     {
       "provider": "xfyun-ai",
@@ -1647,6 +1651,8 @@
     }
   ],
   "failures": [
+    "kwaikat-ai: fetch failed",
+    "x-aio: Request failed: https://code.x-aio.com/assets/index-BlH8fPH1.js -> 522; Playwright fallback failed: page.goto: Timeout 6000ms exceeded.\nCall log:\n  - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\"\n",
     "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
   ]
 }
