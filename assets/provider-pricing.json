@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-09-30T07:59:43.070Z",
+  "updatedAt": "2026-09-30T14:42:47.765Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -914,9 +914,7 @@
             "1000 Prompts / 5小时"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "kwaikat-ai: fetch failed"
+      ]
     },
     {
       "provider": "minimax-ai",
@@ -927,59 +925,56 @@
       ],
       "plans": [
         {
-          "name": "Plus",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "name": "Go",
+          "currentPrice": 24.5,
+          "currentPriceText": "¥24.5/月",
+          "originalPrice": 49,
+          "originalPriceText": "¥49/月",
           "unit": "月",
-          "notes": "用量: 月度约 6 亿+ token M3 用量",
+          "notes": "续费金额：¥24.5/月",
           "serviceDetails": [
-            "月度约 6 亿+ token M3 用量",
-            "支持 MiniMax 旗舰模型（M3 / M2.7 / 图像 / 语音）",
-            "可同时支持 3-4 个 Agent 并发运行",
-            "支持主流的编程工具，并持续扩展中",
-            "1M 长上下文，适合处理长文档 / 大型代码库",
-            "M3 原生多模态理解：图像 / 视频输入",
-            "文本 / 图像 / 语音 共享同一额度"
+            "文本模型，如 M3.1 Flash Preview",
+            "图像和声音模型",
+            "联网搜索与多模态理解",
+            "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
+            "API Key 接入 AI Agent 和编程工具"
           ]
         },
         {
-          "name": "Max",
-          "currentPrice": 119,
-          "currentPriceText": "¥119/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "name": "Explore",
+          "currentPrice": 59.5,
+          "currentPriceText": "¥59.5/月",
+          "originalPrice": 119,
+          "originalPriceText": "¥119/月",
           "unit": "月",
-          "notes": "用量: 月度约 18 亿+ token M3 用量",
+          "notes": "续费金额：¥59.5/月",
           "serviceDetails": [
-            "月度约 18 亿+ token M3 用量",
-            "支持 MiniMax 旗舰模型（M3 / M2.7 / 图像 / 语音）",
-            "可同时支持 4-5 个 Agent 并发运行",
-            "支持主流的编程工具，并持续扩展中",
-            "1M 长上下文，适合处理长文档 / 大型代码库",
-            "M3 原生多模态理解：图像 / 视频输入",
-            "文本 / 图像 / 语音 共享同一额度",
-            "支持 Hailuo2.3视频生成，3条 / 日"
+            "文本模型，如 M3.1 Flash Preview",
+            "视频模型，如 H3",
+            "图像和声音模型",
+            "联网搜索与多模态理解",
+            "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
+            "API Key 接入 AI Agent 和编程工具"
           ]
         },
         {
-          "name": "Ultra",
-          "currentPrice": 469,
-          "currentPriceText": "¥469/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "name": "Build",
+          "currentPrice": 234.5,
+          "currentPriceText": "¥234.5/月",
+          "originalPrice": 469,
+          "originalPriceText": "¥469/月",
           "unit": "月",
-          "notes": "用量: 月度约 71 亿+ token M3 用量",
+          "notes": "续费金额：¥234.5/月",
           "serviceDetails": [
-            "月度约 71 亿+ token M3 用量",
-            "支持 MiniMax 旗舰模型（M3 / M2.7 / 图像 / 语音）",
-            "可同时支持 6-7 个 Agent 并发运行",
-            "支持主流的编程工具，并持续扩展中",
-            "1M 长上下文，适合处理长文档 / 大型代码库",
-            "M3 原生多模态理解：图像 / 视频输入",
-            "文本 / 图像 / 语音 共享同一额度",
-            "支持 Hailuo2.3视频生成，5条 / 日"
+            "文本模型，如 M3.1 Flash Preview",
+            "视频模型，如 H3",
+            "图像和声音模型",
+            "联网搜索与多模态理解",
+            "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
+            "MiniMax Code CLI",
+            "API Key 接入 AI Agent 和编程工具",
+            "高峰时段优先通行",
+            "抢先体验新功能"
           ]
         }
       ]
@@ -1432,9 +1427,7 @@
             "使用 LingClaw 构建个人助理"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "x-aio: Request failed: https://code.x-aio.com/assets/index-BlH8fPH1.js -> 522; Playwright fallback failed: page.goto: Timeout 6000ms exceeded. Call log: - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\""
+      ]
     },
     {
       "provider": "xfyun-ai",
@@ -1651,8 +1644,6 @@
     }
   ],
   "failures": [
-    "kwaikat-ai: fetch failed",
-    "x-aio: Request failed: https://code.x-aio.com/assets/index-BlH8fPH1.js -> 522; Playwright fallback failed: page.goto: Timeout 6000ms exceeded.\nCall log:\n  - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\"\n",
     "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
   ]
 }

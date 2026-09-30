@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-09-29T14:42:44.700Z",
-  "generatedAtBeijing": "2026年9月29日 22:42:44",
-  "sourceGeneratedAt": "2026-09-29T14:41:44.343Z",
-  "sourceGeneratedAtBeijing": "2026年9月29日 22:41:44",
-  "sourceMetricsGeneratedAt": "2026-09-29T14:41:45.693Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月29日 22:41:45",
+  "generatedAt": "2026-09-30T14:43:41.682Z",
+  "generatedAtBeijing": "2026年9月30日 22:43:41",
+  "sourceGeneratedAt": "2026-09-30T14:42:47.765Z",
+  "sourceGeneratedAtBeijing": "2026年9月30日 22:42:47",
+  "sourceMetricsGeneratedAt": "2026-09-30T14:42:48.623Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年9月30日 22:42:48",
   "summary": {
-    "openrouterProviderCount": 111,
+    "openrouterProviderCount": 112,
     "metricsProviderCount": 53,
     "resolvedMetricsProviderCount": 53,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
-    "heuristicProviderCount": 8,
-    "providersWithPlans": 16,
-    "pendingCount": 37,
+    "heuristicProviderCount": 9,
+    "providersWithPlans": 17,
+    "pendingCount": 36,
     "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -259,12 +259,29 @@
       "plans": [
         {
           "name": "Pro",
+          "currentPrice": 3,
+          "currentPriceText": "$3.00",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://cohere.com/pricing",
+          "serviceDetails": [
+            "Command Generative language models",
+            "Transcribe New Speech recognition model",
+            "North Small Translate NEW Machine translation model",
+            "Parse New Document parsing model",
+            "Embed Semantic representation model",
+            "Rerank Retrieval optimization model"
+          ]
+        },
+        {
+          "name": "Pro",
           "currentPrice": 5,
           "currentPriceText": "$5.00",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "来源: https://cohere.com/pricing",
+          "notes": null,
           "serviceDetails": [
             "Command Generative language models",
             "Transcribe New Speech recognition model",
@@ -302,6 +319,48 @@
       "privacyPolicyUrl": "https://cohere.com/privacy",
       "termsOfServiceUrl": "https://cohere.com/terms-of-use",
       "statusPageUrl": "https://status.cohere.ai/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "coreweave",
+      "openrouterName": "CoreWeave",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 60,
+          "currentPriceText": "$60/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://coreweave.com/forge-pricing",
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 5,
+          "currentPriceText": "$5/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://docs.coreweave.com",
+        "https://coreweave.com/forge-pricing"
+      ],
+      "pricingPageUrl": "https://coreweave.com/forge-pricing",
+      "officialWebsiteUrl": "https://docs.coreweave.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://docs.coreweave.com/policies/terms-of-service/privacy-policy",
+      "termsOfServiceUrl": "https://docs.coreweave.com/policies/terms-of-service",
+      "statusPageUrl": null,
       "parseMode": "official-website-heuristic"
     },
     {
@@ -394,59 +453,56 @@
       "providerId": "minimax-ai",
       "plans": [
         {
-          "name": "Plus",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "name": "Go",
+          "currentPrice": 24.5,
+          "currentPriceText": "¥24.5/月",
+          "originalPrice": 49,
+          "originalPriceText": "¥49/月",
           "unit": "月",
-          "notes": "用量: 月度约 6 亿+ token M3 用量",
+          "notes": "续费金额：¥24.5/月",
           "serviceDetails": [
-            "月度约 6 亿+ token M3 用量",
-            "支持 MiniMax 旗舰模型（M3 / M2.7 / 图像 / 语音）",
-            "可同时支持 3-4 个 Agent 并发运行",
-            "支持主流的编程工具，并持续扩展中",
-            "1M 长上下文，适合处理长文档 / 大型代码库",
-            "M3 原生多模态理解：图像 / 视频输入",
-            "文本 / 图像 / 语音 共享同一额度"
+            "文本模型，如 M3.1 Flash Preview",
+            "图像和声音模型",
+            "联网搜索与多模态理解",
+            "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
+            "API Key 接入 AI Agent 和编程工具"
           ]
         },
         {
-          "name": "Max",
-          "currentPrice": 119,
-          "currentPriceText": "¥119/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "name": "Explore",
+          "currentPrice": 59.5,
+          "currentPriceText": "¥59.5/月",
+          "originalPrice": 119,
+          "originalPriceText": "¥119/月",
           "unit": "月",
-          "notes": "用量: 月度约 18 亿+ token M3 用量",
+          "notes": "续费金额：¥59.5/月",
           "serviceDetails": [
-            "月度约 18 亿+ token M3 用量",
-            "支持 MiniMax 旗舰模型（M3 / M2.7 / 图像 / 语音）",
-            "可同时支持 4-5 个 Agent 并发运行",
-            "支持主流的编程工具，并持续扩展中",
-            "1M 长上下文，适合处理长文档 / 大型代码库",
-            "M3 原生多模态理解：图像 / 视频输入",
-            "文本 / 图像 / 语音 共享同一额度",
-            "支持 Hailuo2.3视频生成，3条 / 日"
+            "文本模型，如 M3.1 Flash Preview",
+            "视频模型，如 H3",
+            "图像和声音模型",
+            "联网搜索与多模态理解",
+            "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
+            "API Key 接入 AI Agent 和编程工具"
           ]
         },
         {
-          "name": "Ultra",
-          "currentPrice": 469,
-          "currentPriceText": "¥469/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "name": "Build",
+          "currentPrice": 234.5,
+          "currentPriceText": "¥234.5/月",
+          "originalPrice": 469,
+          "originalPriceText": "¥469/月",
           "unit": "月",
-          "notes": "用量: 月度约 71 亿+ token M3 用量",
+          "notes": "续费金额：¥234.5/月",
           "serviceDetails": [
-            "月度约 71 亿+ token M3 用量",
-            "支持 MiniMax 旗舰模型（M3 / M2.7 / 图像 / 语音）",
-            "可同时支持 6-7 个 Agent 并发运行",
-            "支持主流的编程工具，并持续扩展中",
-            "1M 长上下文，适合处理长文档 / 大型代码库",
-            "M3 原生多模态理解：图像 / 视频输入",
-            "文本 / 图像 / 语音 共享同一额度",
-            "支持 Hailuo2.3视频生成，5条 / 日"
+            "文本模型，如 M3.1 Flash Preview",
+            "视频模型，如 H3",
+            "图像和声音模型",
+            "联网搜索与多模态理解",
+            "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
+            "MiniMax Code CLI",
+            "API Key 接入 AI Agent 和编程工具",
+            "高峰时段优先通行",
+            "抢先体验新功能"
           ]
         }
       ],
@@ -1093,15 +1149,6 @@
       "blocked": false
     },
     {
-      "slug": "coreweave",
-      "openrouterName": "CoreWeave",
-      "providerId": null,
-      "officialWebsiteUrl": "https://docs.coreweave.com",
-      "pricingPageUrl": "https://docs.coreweave.com/billing",
-      "reason": "官网价格页探测失败：https://docs.coreweave.com/pricing: HTTP 404",
-      "blocked": true
-    },
-    {
       "slug": "crusoe",
       "openrouterName": "Crusoe",
       "providerId": null,
@@ -1224,7 +1271,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://makora.statuspage.io",
       "pricingPageUrl": "https://makora.statuspage.io",
-      "reason": "官网价格页探测失败：homepage: HTTP 503",
+      "reason": "官网价格页探测失败：https://makora.statuspage.io/pricing: HTTP 404",
       "blocked": false
     },
     {
@@ -1369,7 +1416,7 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "together",
