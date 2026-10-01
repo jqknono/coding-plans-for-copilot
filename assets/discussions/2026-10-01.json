@@ -1,0 +1,107 @@
+{
+  "date": "2026-10-01",
+  "generatedAt": "2026-10-01T12:36:34.355Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 56,
+    "postsAfterKeywordFilter": 17,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Anthropic": 1,
+      "GitHub Copilot": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1246025",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1246025",
+      "title": "国内 Visa 卡里的余额取不出来，干脆拿去开了个 Claude Pro，看看能撑多久）",
+      "content": "事情是这样的：我手上有张国内的 Visa 卡，之前往里充了点钱，后来发现怎么都取不出来。钱放着也是放着，就想着干脆拿来试试能不能订阅 Claude Pro 。 一开始在电脑上调起 Google Pay 付款，试了好几次都不行，一直提示卡号被拒。不死心，又在手机上装了 Claude App ，同样走 Google Pay 。本来没抱什么希望，结果一下就支付成功了。 开通之后，我直接在本地登录了 Claude Code ，用的是 Opus 5 High ，速度是真的快：",
+      "author": "xxzhaoming",
+      "createdAt": "2026-10-01T09:05:49.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Anthropic",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "用户用国内 Visa 卡通过 Google Pay 成功订阅 Claude Pro，随后在本地使用 Claude Code (Opus 5 High) 体验极快。",
+        "topics": [
+          "订阅",
+          "支付",
+          "Claude Pro",
+          "Claude Code",
+          "Opus",
+          "体验"
+        ],
+        "planMentioned": "Claude Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/413",
+      "analyzedAt": "2026-10-01T12:46:46.525Z"
+    },
+    {
+      "id": "v2ex-1245989",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1245989",
+      "title": "为什么 AI 写代码的功能老是在变？",
+      "content": "我用 vs code Copilot 的 ChatGPT 模型，好像每个月初 AI 都有变化，比如昨天我让 AI 写完代码后会有一个 accept 按钮，但是今天就没了，虽然不影响写代码，但是这种差异让人感觉很奇怪，我订阅了$40/月，你们会遇见这种奇怪问题吗？",
+      "author": "red13",
+      "createdAt": "2026-10-01T04:43:49.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "GitHub Copilot",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "The user is asking about changes in AI coding behavior with GitHub Copilot's ChatGPT model in VS Code, noting that features like the 'accept' button appear and disappear monthly despite paying $40/month for the subscription.",
+        "topics": [
+          "Copilot",
+          "订阅",
+          "功能变化",
+          "VS Code"
+        ],
+        "planMentioned": "GitHub Copilot Individual ($40/month)",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/414",
+      "analyzedAt": "2026-10-01T12:46:53.704Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1245947: LLM returned invalid JSON: Unexpected token 'U', \"User Safety: safe\" is not valid JSON"
+  ]
+}
