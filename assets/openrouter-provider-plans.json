@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-09-30T14:43:41.682Z",
-  "generatedAtBeijing": "2026年9月30日 22:43:41",
+  "generatedAt": "2026-10-01T15:12:41.894Z",
+  "generatedAtBeijing": "2026年10月1日 23:12:41",
   "sourceGeneratedAt": "2026-09-30T14:42:47.765Z",
   "sourceGeneratedAtBeijing": "2026年9月30日 22:42:47",
-  "sourceMetricsGeneratedAt": "2026-09-30T14:42:48.623Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年9月30日 22:42:48",
+  "sourceMetricsGeneratedAt": "2026-10-01T15:11:46.532Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月1日 23:11:46",
   "summary": {
     "openrouterProviderCount": 112,
     "metricsProviderCount": 53,
     "resolvedMetricsProviderCount": 53,
     "unresolvedMetricsProviderCount": 0,
-    "structuredProviderCount": 8,
+    "structuredProviderCount": 9,
     "heuristicProviderCount": 9,
-    "providersWithPlans": 17,
-    "pendingCount": 36,
-    "blockedPendingCount": 3,
+    "providersWithPlans": 18,
+    "pendingCount": 35,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -149,6 +149,56 @@
       "privacyPolicyUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/Plr0fi68q-intl-en",
       "termsOfServiceUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/bmesahnjh-intl-en",
       "statusPageUrl": null,
+      "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "cerebras",
+      "openrouterName": "Cerebras",
+      "providerId": "cerebras-code",
+      "plans": [
+        {
+          "name": "Cerebras Code Pro",
+          "currentPrice": 50,
+          "currentPriceText": "$50/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "速率限制可能调整",
+          "serviceDetails": [
+            "Qwen3-Coder access with fast, high-context completions",
+            "最高 24 million tokens/day",
+            "适合 indie devs、simple agentic workflows、weekend projects",
+            "OpenAI-compatible inference endpoint",
+            "131k-token context window"
+          ]
+        },
+        {
+          "name": "Cerebras Code Max",
+          "currentPrice": 200,
+          "currentPriceText": "$200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "速率限制可能调整",
+          "serviceDetails": [
+            "Qwen3-Coder access for heavy coding workflows",
+            "最高 120 million tokens/day",
+            "适合 full-time development、IDE integrations、code refactoring、multi-agent systems",
+            "OpenAI-compatible inference endpoint",
+            "131k-token context window"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.cerebras.ai/blog/introducing-cerebras-code",
+        "https://www.cerebras.ai"
+      ],
+      "pricingPageUrl": "https://www.cerebras.ai/blog/introducing-cerebras-code",
+      "officialWebsiteUrl": "https://www.cerebras.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.cerebras.ai/privacy-policy",
+      "termsOfServiceUrl": "https://www.cerebras.ai/terms-of-service",
+      "statusPageUrl": "https://status.cerebras.ai/",
       "parseMode": "provider-pricing-structured"
     },
     {
@@ -564,12 +614,7 @@
           "unit": "月",
           "notes": "来源: https://modal.com/pricing",
           "serviceDetails": [
-            "3 workspace seats included",
-            "100 containers + 10 GPU concurrency",
-            "Scheduled and Web Functions (limited)",
-            "$100 / month free compute",
-            "5000 containers + 50 GPU concurrency",
-            "Unlimited Scheduled Functions"
+            "官网价格页参考，具体权益以官网说明为准"
           ]
         },
         {
@@ -581,29 +626,19 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "3 workspace seats included",
-            "100 containers + 10 GPU concurrency",
-            "Scheduled and Web Functions (limited)",
-            "$100 / month free compute",
-            "5000 containers + 50 GPU concurrency",
-            "Unlimited Scheduled Functions"
+            "官网价格页参考，具体权益以官网说明为准"
           ]
         },
         {
-          "name": "Enterprise",
-          "currentPrice": 30,
-          "currentPriceText": "$30/mo",
+          "name": "Team",
+          "currentPrice": 100,
+          "currentPriceText": "$100/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "3 workspace seats included",
-            "100 containers + 10 GPU concurrency",
-            "Scheduled and Web Functions (limited)",
-            "$100 / month free compute",
-            "5000 containers + 50 GPU concurrency",
-            "Unlimited Scheduled Functions"
+            "官网价格页参考，具体权益以官网说明为准"
           ]
         }
       ],
@@ -1217,7 +1252,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://friendli.ai",
       "pricingPageUrl": "https://friendli.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 2.9 / $ 4.0 / $ 3.9）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 4.0 / $ 5.0 / $ 7.0）",
       "blocked": false
     },
     {
@@ -1254,15 +1289,6 @@
       "officialWebsiteUrl": "https://ionstream.ai",
       "pricingPageUrl": "https://ionstream.ai",
       "reason": "官网价格页探测失败：https://ionstream.ai/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "krea",
-      "openrouterName": "Krea",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.krea.ai",
-      "pricingPageUrl": "https://www.krea.ai",
-      "reason": "官网价格页探测失败：homepage: fetch failed",
       "blocked": false
     },
     {
@@ -1416,7 +1442,7 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": true
+      "blocked": false
     },
     {
       "slug": "together",
