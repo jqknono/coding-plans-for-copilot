@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-01T15:12:41.894Z",
-  "generatedAtBeijing": "2026年10月1日 23:12:41",
+  "generatedAt": "2026-10-02T14:33:11.333Z",
+  "generatedAtBeijing": "2026年10月2日 22:33:11",
   "sourceGeneratedAt": "2026-09-30T14:42:47.765Z",
   "sourceGeneratedAtBeijing": "2026年9月30日 22:42:47",
-  "sourceMetricsGeneratedAt": "2026-10-01T15:11:46.532Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月1日 23:11:46",
+  "sourceMetricsGeneratedAt": "2026-10-02T14:32:15.991Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月2日 22:32:15",
   "summary": {
     "openrouterProviderCount": 112,
     "metricsProviderCount": 53,
@@ -1243,7 +1243,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://fireworks.ai",
       "pricingPageUrl": "https://fireworks.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1 / $0.008 / $0.016）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.008 / $0.016 / $0.1）",
       "blocked": false
     },
     {
