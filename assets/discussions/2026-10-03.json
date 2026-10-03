@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-03",
+  "generatedAt": "2026-10-03T11:14:29.115Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 49,
+    "postsAfterKeywordFilter": 14,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "OpenAI, Claude, Volcano Cloud, Kimi, OpenCode Go, DeepSeek, Grok": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1246264",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1246264",
+      "title": "闲来无事，梳理了下自己最近的 ai 订阅",
+      "content": "5 个 openai 的 team 席位订阅，月消费 45 刀（保持） 1 个 claude pro ，月消费 20 刀（保持） 火山云 coding plan pro ，目前特价 50 元/月，下个月恢复原价 200 就不续订了 2 个 kimi 老 199 套餐，月消费 398 元/月，这个月不续订了 之前订阅的 opencode go 5 刀，5 刀优惠没了，暂时也没续订了 deepseek 平台里充的还有 40 块钱 老马家的 grok 上了 grok heavy 年付，7100 （保持） 之后就是续费着 oai 的和 claude 的了。然后看哪家有活动再偶尔开一个月尝尝鲜。",
+      "author": "rimworld",
+      "createdAt": "2026-10-03T09:07:42.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.97,
+        "supplier": "OpenAI, Claude, Volcano Cloud, Kimi, OpenCode Go, DeepSeek, Grok",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.88,
+        "summary": "The post describes the author's recent AI subscription setup including OpenAI team seats, Claude Pro, Volcano Cloud coding plan pro, Kimi subscriptions, OpenCode Go, DeepSeek, and Grok Heavy. It details monthly costs, special offers, and plans to try different providers periodically.",
+        "topics": [
+          "定价",
+          "订阅",
+          "套餐对比",
+          "优惠",
+          "体验"
+        ],
+        "planMentioned": "火山云 coding plan pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/415",
+      "analyzedAt": "2026-10-03T11:22:21.118Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
