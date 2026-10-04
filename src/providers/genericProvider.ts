@@ -2380,10 +2380,13 @@ export class GenericAIProvider extends BaseAIProvider {
       messageContentBlocks: Array.isArray(payload.message?.content) ? payload.message?.content.length : undefined,
       deltaType: payload.delta?.type,
       deltaTextLength: typeof payload.delta?.text === 'string' ? payload.delta.text.length : 0,
+      deltaThinkingLength: typeof payload.delta?.thinking === 'string' ? payload.delta.thinking.length : 0,
       hasPartialJson: typeof payload.delta?.partial_json === 'string' && payload.delta.partial_json.length > 0,
       contentBlockType: payload.content_block?.type,
       contentBlockName: payload.content_block?.name,
       contentBlockTextLength: typeof payload.content_block?.text === 'string' ? payload.content_block.text.length : 0,
+      contentBlockThinkingLength:
+        typeof payload.content_block?.thinking === 'string' ? payload.content_block.thinking.length : 0,
       hasContentBlockInput: payload.content_block?.input !== undefined,
       usage: payload.usage,
       errorType: typeof payloadError?.type === 'string' ? payloadError.type : undefined,

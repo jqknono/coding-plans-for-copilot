@@ -169,20 +169,25 @@ const UNSUPPORTED_FORWARDED_TOOL_SCHEMA_KEYS = new Set([
   'suggestSortText',
 ]);
 
-function sanitizeToolMetadataValue(value: unknown): unknown {
+const TOOL_SCHEMA_PLACEHOLDER_TEXT_KEYS = new Set(['description', 'title']);
+
+function sanitizeToolMetadataValue(value: unknown, rewritePlaceholders = false): unknown {
   if (typeof value === 'string') {
-    return sanitizeUnresolvedPlaceholderText(value);
+    return rewritePlaceholders ? sanitizeUnresolvedPlaceholderText(value) : value;
   }
 
   if (Array.isArray(value)) {
-    return value.map((item) => sanitizeToolMetadataValue(item));
+    return value.map((item) => sanitizeToolMetadataValue(item, rewritePlaceholders));
   }
 
   if (value && typeof value === 'object') {
     return Object.fromEntries(
       Object.entries(value as Record<string, unknown>)
         .filter(([key]) => !UNSUPPORTED_FORWARDED_TOOL_SCHEMA_KEYS.has(key))
-        .map(([key, nestedValue]) => [key, sanitizeToolMetadataValue(nestedValue)]),
+        .map(([key, nestedValue]) => [
+          key,
+          sanitizeToolMetadataValue(nestedValue, TOOL_SCHEMA_PLACEHOLDER_TEXT_KEYS.has(key)),
+        ]),
     );
   }
 
@@ -1060,7 +1065,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       if (!name || name.trim().length === 0) {
         throw new Error('Invalid language model tool definition: missing tool name');
       }
-      const sanitizedDescription = sanitizeToolMetadataValue(readRuntimeToolDescription(tool));
+      const sanitizedDescription = sanitizeToolMetadataValue(readRuntimeToolDescription(tool), true);
       const inputSchema = readRuntimeToolInputSchema(tool) ?? {
         type: 'object',
         properties: {},

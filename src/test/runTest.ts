@@ -1525,7 +1525,43 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
         },
       },
     ]);
+    const uuidPatternTools = provider.buildToolDefinitions({
+      tools: [
+        {
+          name: 'kill_terminal',
+          description: 'Kill a terminal by its ID.',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'string',
+                pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
+              },
+            },
+          },
+        },
+      ],
+    });
+    assert.deepEqual(uuidPatternTools, [
+      {
+        type: 'function',
+        function: {
+          name: 'kill_terminal',
+          description: 'Kill a terminal by its ID.',
+          parameters: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'string',
+                pattern: '^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$',
+              },
+            },
+          },
+        },
+      },
+    ]);
     console.log('PASS 工具定义转发前会清洗未替换占位符并移除 VS Code 扩展 schema 字段');
+    console.log('PASS 工具 schema 清洗不会破坏 UUID pattern 中的正则量化符');
 
     const openAIShapeTools = provider.buildToolDefinitions({
       tools: [
@@ -7764,6 +7800,40 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   });
   console.log('PASS anthropic 流式事件可正确累积文本与工具调用');
 
+  const anthropicEmptyInputState = createAnthropicStreamState();
+  applyAnthropicStreamEvent(anthropicEmptyInputState, 'content_block_start', {
+    index: 0,
+    content_block: {
+      type: 'tool_use',
+      id: 'toolu_empty_input',
+      name: 'read_file',
+      input: {},
+    },
+  });
+  applyAnthropicStreamEvent(anthropicEmptyInputState, 'content_block_delta', {
+    index: 0,
+    delta: {
+      type: 'input_json_delta',
+      partial_json: '{"filePath":"f:\\\\code\\\\coding-plans-for-copilot\\\\temp\\\\inspect-pages.js","startLine":1,"endLine":80}',
+    },
+  });
+  const finalizedAnthropicEmptyInput = finalizeAnthropicStreamState(
+    anthropicEmptyInputState,
+    () => 'tool_generated',
+  );
+  assert.deepEqual(finalizedAnthropicEmptyInput.toolCalls, [
+    {
+      id: 'toolu_empty_input',
+      type: 'function',
+      function: {
+        name: 'read_file',
+        arguments:
+          '{"filePath":"f:\\\\code\\\\coding-plans-for-copilot\\\\temp\\\\inspect-pages.js","startLine":1,"endLine":80}',
+      },
+    },
+  ]);
+  console.log('PASS anthropic 流式 tool_use 空 input 不会污染后续 input_json_delta');
+
   const anthropicThinkingState = createAnthropicStreamState();
   applyAnthropicStreamEvent(anthropicThinkingState, 'content_block_start', {
     index: 0,
@@ -7781,6 +7851,96 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   });
   assert.equal(anthropicThinkingDelta.textDelta, '');
   assert.equal(anthropicThinkingDelta.reasoningDelta, 'plan first');
+
+  const anthropicReasoningCompatState = createAnthropicStreamState();
+  const anthropicReasoningStart = applyAnthropicStreamEvent(anthropicReasoningCompatState, 'content_block_start', {
+    index: 0,
+    content_block: {
+      type: 'reasoning',
+      text: '纸面估值快照身份对应不同证据',
+    },
+  });
+  const anthropicReasoningDelta = applyAnthropicStreamEvent(anthropicReasoningCompatState, 'content_block_delta', {
+    index: 0,
+    delta: {
+      type: 'text_delta',
+      text: '；继续核对',
+    },
+  });
+  applyAnthropicStreamEvent(anthropicReasoningCompatState, 'content_block_start', {
+    index: 1,
+    content_block: {
+      type: 'text',
+      text: '',
+    },
+  });
+  applyAnthropicStreamEvent(anthropicReasoningCompatState, 'content_block_delta', {
+    index: 1,
+    delta: {
+      type: 'text_delta',
+      text: '最终答案',
+    },
+  });
+  const finalizedAnthropicReasoningCompat = finalizeAnthropicStreamState(
+    anthropicReasoningCompatState,
+    () => 'tool_generated',
+  );
+  assert.equal(anthropicReasoningStart.textDelta, '');
+  assert.equal(anthropicReasoningStart.reasoningDelta, '纸面估值快照身份对应不同证据');
+  assert.equal(anthropicReasoningDelta.textDelta, '');
+  assert.equal(anthropicReasoningDelta.reasoningDelta, '；继续核对');
+  assert.equal(finalizedAnthropicReasoningCompat.content, '最终答案');
+  assert.equal(
+    finalizedAnthropicReasoningCompat.reasoningContent,
+    '纸面估值快照身份对应不同证据；继续核对',
+  );
+
+  const anthropicThinkingTextFieldState = createAnthropicStreamState();
+  const anthropicThinkingTextFieldStart = applyAnthropicStreamEvent(
+    anthropicThinkingTextFieldState,
+    'content_block_start',
+    {
+      index: 0,
+      content_block: {
+        type: 'thinking',
+        text: '纸面估值快照身份对应不同证据',
+      },
+    },
+  );
+  assert.equal(anthropicThinkingTextFieldStart.textDelta, '');
+  assert.equal(anthropicThinkingTextFieldStart.reasoningDelta, '纸面估值快照身份对应不同证据');
+  assert.equal(
+    finalizeAnthropicStreamState(anthropicThinkingTextFieldState, () => 'tool_generated').content,
+    '',
+  );
+
+  const parsedAnthropicThinkingTextField = protocolsModule.parseAnthropicResponse(
+    {
+      id: 'msg_thinking_text_field',
+      role: 'assistant',
+      content: [
+        {
+          type: 'thinking',
+          text: '纸面估值快照身份对应不同证据',
+        },
+        {
+          type: 'reasoning',
+          text: '；继续核对',
+        },
+        {
+          type: 'text',
+          text: '最终答案',
+        },
+      ],
+    },
+    () => 'tool_generated',
+  );
+  assert.deepEqual(parsedAnthropicThinkingTextField, {
+    content: '最终答案',
+    reasoningContent: '纸面估值快照身份对应不同证据；继续核对',
+    toolCalls: [],
+  });
+  console.log('PASS anthropic 兼容 reasoning/thinking 文本块不会泄漏到正文');
 
   const anthropicUsageState = createAnthropicStreamState();
   applyAnthropicStreamEvent(anthropicUsageState, 'message_start', {

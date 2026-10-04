@@ -950,23 +950,31 @@ export function applyAnthropicStreamEvent(
 
   if (resolvedEventType === 'content_block_start' && typeof payload.index === 'number' && payload.content_block) {
     if (isAnthropicToolUseBlock(payload.content_block)) {
+      const initialInput = payload.content_block.input;
+      const hasInitialInput =
+        initialInput !== undefined &&
+        !(
+          typeof initialInput === 'object' &&
+          initialInput !== null &&
+          !Array.isArray(initialInput) &&
+          Object.keys(initialInput as object).length === 0
+        );
       state.blocks.set(payload.index, {
         type: 'tool_use',
         text: '',
         id: payload.content_block.id,
         name: payload.content_block.name,
-        inputJson: payload.content_block.input !== undefined ? JSON.stringify(payload.content_block.input) : '',
+        inputJson: hasInitialInput ? JSON.stringify(initialInput) : '',
       });
       return { textDelta };
     }
 
-    const isThinkingBlock = payload.content_block.type === 'thinking';
-    const initialText =
-      typeof payload.content_block.thinking === 'string'
-        ? payload.content_block.thinking
-        : typeof (payload.content_block as { text?: unknown }).text === 'string'
-          ? (payload.content_block as { text: string }).text
-          : '';
+    const isThinkingBlock = isAnthropicThinkingType(payload.content_block.type);
+    const initialText = isThinkingBlock
+      ? readAnthropicThinkingText(payload.content_block)
+      : typeof (payload.content_block as { text?: unknown }).text === 'string'
+        ? (payload.content_block as { text: string }).text
+        : '';
 
     state.blocks.set(payload.index, {
       type: isThinkingBlock ? 'thinking' : 'text',
@@ -1004,7 +1012,9 @@ export function applyAnthropicStreamEvent(
         ? payload.delta.thinking
         : payload.delta?.type === 'thinking_delta' && typeof payload.delta?.text === 'string'
           ? payload.delta.text
-          : '';
+          : block.type === 'thinking' && deltaText.length > 0
+            ? deltaText
+            : '';
     if (block.type === 'thinking' && deltaThinking.length > 0) {
       block.text += deltaThinking;
       state.reasoningContent += deltaThinking;
@@ -1479,8 +1489,8 @@ export function parseAnthropicResponse(
   const toolCalls: ChatToolCall[] = [];
 
   for (const block of response.content ?? []) {
-    if (block.type === 'thinking' && typeof (block as AnthropicResponseThinkingContentBlock).thinking === 'string') {
-      const thinkingText = (block as AnthropicResponseThinkingContentBlock).thinking;
+    if (isAnthropicThinkingType(block.type)) {
+      const thinkingText = readAnthropicThinkingText(block);
       if (thinkingText.trim().length > 0) {
         thinkingParts.push(thinkingText);
       }
@@ -1563,8 +1573,11 @@ function toAnthropicContentBlocks(content: ChatMessageContent): AnthropicRequest
 }
 
 function isAnthropicTextBlock(block: AnthropicResponseContentBlock): block is AnthropicResponseTextContentBlock {
-  const text = (block as { text?: unknown }).text;
-  return block.type === 'text' || (typeof text === 'string' && !isAnthropicToolUseType(block.type));
+  if (isAnthropicThinkingType(block.type) || isAnthropicToolUseType(block.type)) {
+    return false;
+  }
+
+  return block.type === 'text' || typeof (block as { text?: unknown }).text === 'string';
 }
 
 function isAnthropicToolUseBlock(block: { type?: string; name?: string; input?: unknown }): boolean {
@@ -1581,6 +1594,38 @@ function isAnthropicToolUseType(type: string | undefined): boolean {
 
   const normalized = type.trim().toLowerCase();
   return normalized === 'tool_use' || normalized.endsWith('_tool_use');
+}
+
+function isAnthropicThinkingType(type: string | undefined): boolean {
+  if (typeof type !== 'string') {
+    return false;
+  }
+
+  const normalized = type.trim().toLowerCase();
+  return (
+    normalized === 'thinking' ||
+    normalized === 'reasoning' ||
+    normalized === 'redacted_thinking' ||
+    normalized.endsWith('_thinking')
+  );
+}
+
+function readAnthropicThinkingText(block: unknown): string {
+  if (!block || typeof block !== 'object') {
+    return '';
+  }
+
+  const record = block as { thinking?: unknown; text?: unknown; summary?: unknown };
+  if (typeof record.thinking === 'string') {
+    return record.thinking;
+  }
+  if (typeof record.text === 'string') {
+    return record.text;
+  }
+  if (typeof record.summary === 'string') {
+    return record.summary;
+  }
+  return '';
 }
 
 export function summarizeOpenAIChatResponse(response: OpenAIChatResponse): Record<string, unknown> {
