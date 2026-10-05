@@ -23,4 +23,3 @@ sequenceDiagram
 | --- | --- |
 | `src/providers/baseProvider.ts` | 在工具 schema 转发前递归剔除非标准编辑器扩展字段 |
 | `src/test/runTest.ts` | 增加回归断言，覆盖占位符清洗与 schema 字段剔除 |
-| `cases/anthropic-tool-schema-sanitization.md` | 记录可验收场景 |

@@ -2,18 +2,18 @@
 
 ## Development Principles
 
-- All scripts must implement the `-h` parameter.
-- This project does not maintain a changelog; release notes are generated from Git tags/releases. Do not create or reference a `CHANGELOG.md`.
-- This project is implemented only for the current target version by default; do not keep compatibility code for old VS Code versions, old configurations, or old data structures.
-- Price/plan information changes should be implemented by improving the fetch scripts first, not by directly editing `assets/*.json` data files (they are written by scripts only during script verification).
+- All scripts implement the `-h` parameter.
+- Generate release notes from Git tags/releases; keep project docs focused on current behavior rather than a maintained `CHANGELOG.md`.
+- Target the current VS Code version, configuration shape, and data structures by default; evolve forward instead of retaining legacy compatibility layers.
+- Update price/plan information by improving the fetch scripts first; let scripts write `assets/*.json` during verification.
 
 ## Project Positioning
 
 - This repository contains two parts:
   - VS Code extension (`src/`): multi-vendor model integration + Commit Message generation.
   - Price/performance dashboard (`pages/` + `assets/` + `scripts/`): displays coding plans and OpenRouter provider performance metrics.
-- The core positioning of the VS Code extension is a general OpenAI Chat, OpenAI Responses, and Anthropic protocol adapter; request construction should prefer public/general protocol fields and avoid relying on Copilot-private request fields.
-- Unlike native VS Code/Copilot Chat built-in endpoint requests, this extension must keep compatibility with OpenAI/Anthropic-style APIs reverse-proxied by Codex, Claude Code, etc.; do not sacrifice general compatibility to get closer to Copilot's private endpoint.
+- The VS Code extension is a general OpenAI Chat, OpenAI Responses, and Anthropic protocol adapter; construct requests with public/general protocol fields.
+- Preserve compatibility with OpenAI/Anthropic-style APIs reverse-proxied by Codex, Claude Code, and similar tools, even when that differs from native VS Code/Copilot Chat built-in endpoint requests.
 - Core dashboard data files:
   - `assets/provider-pricing.json` (domestic/structured plans)
   - `assets/openrouter-provider-metrics.json` (OpenRouter metrics)
@@ -22,9 +22,9 @@
 ## Price Page Fetching
 
 - When fetching vendor pricing pages or any price-related web content, prefer and actively use the Playwright MCP tool.
-- For dynamically rendered pages, front-end rendered content, and flows that may have anti-scraping mechanisms, use Playwright MCP by default instead of direct HTTP fetching.
-- Only fall back to non-browser requests when Playwright MCP is unavailable or browser capability is clearly not needed.
-- If a page is accessible but cannot be parsed reliably, prefer adding a Playwright path (including necessary waits and interactions) before marking the vendor as pending.
+- For dynamically rendered pages, front-end rendered content, and flows that may have anti-scraping mechanisms, use Playwright MCP by default.
+- Fall back to non-browser requests when Playwright MCP is unavailable or browser capability is clearly unnecessary.
+- If a page is accessible but cannot be parsed reliably, add a Playwright path (including necessary waits and interactions) before marking the vendor as pending.
 
 ## Data Fetching Order
 
@@ -47,21 +47,21 @@
   - `/provider-pricing.json`
   - `/openrouter-provider-metrics.json`
   - `/openrouter-provider-plans.json`
-- Do not change the JSON paths above arbitrarily; if you must change them, update `pages/app.js` and `scripts/serve-pricing-page.js` accordingly.
+- Keep the JSON paths above stable; when a path must change, update `pages/app.js` and `scripts/serve-pricing-page.js` in the same change.
 
 ## Environment Variables and Security
 
 - `metrics:fetch` and `openrouter:plans:fetch` require `APIKEY` (OpenRouter API Key).
 - Environment variables can be loaded from the `.env` file in the project root.
-- When debugging the extension or doing manual API tests, you may reuse `BASE_URL`, `APIKEY`, `MODEL` from `.env`; treat them as local test parameters by default and do not commit them to the repository configuration.
-- Never expose any secrets in documentation, logs, or commit messages.
+- When debugging the extension or doing manual API tests, reuse `BASE_URL`, `APIKEY`, `MODEL` from `.env` as local test parameters and keep them out of committed repository configuration.
+- Keep secrets out of documentation, logs, and commit messages.
 
 ## Code Map (Extension)
 
 - Entries: `src/extension.node.ts` (Node.js host) and `src/extension.web.ts` (browser host); shared activation is in `src/extension.ts`.
 - Configuration: `src/config/configStore.ts` (`coding-plans.vendors` normalization; new configs use `defaultApiStyle` / `models[].apiStyle`, `apiType` is only read for migration).
 - Protocols and requests: `src/providers/genericProvider.ts`, `genericProviderProtocols.ts`; VS Code API adaptation: `lmChatProviderAdapter.ts`.
-- Behavior and regression notes: see [DEV.md](DEV.md), [docs/testing.md](docs/testing.md); acceptance scenarios in [cases/](cases/) (non-automated; review or supplement before changing behavior).
+- Behavior and regression notes: see [DEV.md](DEV.md) and [docs/testing.md](docs/testing.md). Express expected behavior through implementation and automated tests.
 
 ## Development and Validation
 

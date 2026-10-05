@@ -692,18 +692,15 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       };
     }
 
-    if (
-      part &&
-      typeof part === 'object' &&
-      (part as { constructor?: { name?: string } }).constructor?.name?.includes('ThinkingPart')
-    ) {
+    if (this.isThinkingResponsePart(part)) {
+      const thinkingPart = part as { id?: unknown; value?: unknown; metadata?: { signature?: unknown; _completeThinking?: unknown } };
       return {
         type: 'thinking',
-        id: typeof (part as { id?: unknown }).id === 'string' ? (part as { id: string }).id : undefined,
-        length: typeof (part as { value?: unknown }).value === 'string' ? (part as { value: string }).value.length : 0,
-        hasSignature: typeof (part as { metadata?: { signature?: unknown } }).metadata?.signature === 'string',
-        hasCompleteThinking:
-          typeof (part as { metadata?: { _completeThinking?: unknown } }).metadata?._completeThinking === 'string',
+        id: typeof thinkingPart.id === 'string' ? thinkingPart.id : undefined,
+        length: typeof thinkingPart.value === 'string' ? thinkingPart.value.length : 0,
+        constructorName: (part as { constructor?: { name?: string } }).constructor?.name,
+        hasSignature: typeof thinkingPart.metadata?.signature === 'string',
+        hasCompleteThinking: typeof thinkingPart.metadata?._completeThinking === 'string',
       };
     }
 
@@ -711,6 +708,29 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     return {
       type: unknownPart.constructor?.name ?? typeof part,
     };
+  }
+
+  private isThinkingResponsePart(part: unknown): boolean {
+    if (!part || typeof part !== 'object') {
+      return false;
+    }
+    const thinkingCtor = (vscode as unknown as { LanguageModelThinkingPart?: new (...args: unknown[]) => unknown })
+      .LanguageModelThinkingPart;
+    if (thinkingCtor && part instanceof thinkingCtor) {
+      return true;
+    }
+    const constructorName = (part as { constructor?: { name?: string } }).constructor?.name;
+    if (typeof constructorName === 'string' && constructorName.includes('ThinkingPart')) {
+      return true;
+    }
+    const value = (part as { value?: unknown }).value;
+    const id = (part as { id?: unknown }).id;
+    const metadata = (part as { metadata?: unknown }).metadata;
+    const hasThinkingMetadata =
+      !!metadata &&
+      typeof metadata === 'object' &&
+      ('signature' in metadata || '_completeThinking' in metadata);
+    return typeof value === 'string' && (typeof id === 'string' || hasThinkingMetadata);
   }
 
   private summarizeError(error: unknown): Record<string, unknown> {

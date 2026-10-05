@@ -22,11 +22,11 @@ argument-hint: "可选：供应商名、失败现象或要改的脚本"
 
 ## 原则
 
-- 不手改 `assets/*.json`；动态页用 Playwright MCP（见 [AGENTS.md](../../../AGENTS.md)）。
-- 改 JSON 字段须对照 `pages/app.js` 与 [AGENTS.md](../../../AGENTS.md)「Script and Page Contracts / 契约」一节。
+- 通过抓取脚本更新 `assets/*.json`；动态页用 Playwright MCP（见 [AGENTS.md](../../../AGENTS.md)）。
+- 调整 JSON 字段时，同步对照 `pages/app.js` 与 [AGENTS.md](../../../AGENTS.md)「Script and Page Contracts / 契约」一节。
 
 ## 参考
 
 - 本地服务：`scripts/serve-pricing-page.js`
 - 页面逻辑：`pages/app.js`
-- 用例：`cases/openrouter-metrics-fail-closed.md`、`cases/issue-105-pricing-failure-card-hidden.md`
+- 用实现与自动化测试表达行为预期。
