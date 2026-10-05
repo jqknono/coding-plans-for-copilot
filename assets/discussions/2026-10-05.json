@@ -1,0 +1,177 @@
+{
+  "date": "2026-10-05",
+  "generatedAt": "2026-10-05T13:52:06.107Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 50,
+    "postsAfterKeywordFilter": 11,
+    "relevantPosts": 4,
+    "discussionsCreated": 4,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Claude, Codex, Cursor, Zhipu GLM, Z.ai, Kimi, MiniMax, Xiaomi MiMo, Qoder, OpenRouter, DeepSeek": 1,
+      "Claude": 2,
+      "Anthropic": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1246529",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1246529",
+      "title": "做了个查 AI 用量的 App",
+      "content": "做了个 App 叫 usAge ：连上账号，用了多少、什么时候重置、还剩多少钱，一屏看清；放个小组件在桌面，抬头就能看到。 支持哪些服务 Claude 、Codex 、Cursor 、智谱 GLM / Z.ai 、Kimi 、MiniMax 、Xiaomi MiMo 、Qoder 、OpenRouter 、DeepSeek （鸿蒙版的 Qoder 在下个版本）。 订阅制看已用比例和重置倒计时，按量付费看余额和花销 网页登录或者填 API Key 都能连 没有你在用的？ App 里可以申请接入，直接回帖也行 主要功能 一屏看全部额度 ：5 小时窗口、每周额度、Token 消耗、账号信息，点开就有 五种小组件 ：基础、数码管、贡献图、LED 、卡包，小中大三种尺寸，一个最多放 4 个账号。小组件上能直接切换额度、刷新，Codex 有重置卡时也能在小组件上直接用掉 分享卡片 ：Token 战绩、额度状态、AI 花销三种，可以拿来晒 多设备同步 ：Apple 设备走 iCloud ，华为设备走云空间，手机上连一次，其他设备自动出现 Mac 版除了主窗口还有菜单栏，会读本机日志，显示今天 Cod",
+      "author": "chenzhe",
+      "createdAt": "2026-10-05T11:10:46.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude, Codex, Cursor, Zhipu GLM, Z.ai, Kimi, MiniMax, Xiaomi MiMo, Qoder, OpenRouter, DeepSeek",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "The developer created an app called usAge that tracks AI usage across multiple coding assistant services (Claude, Codex, Cursor, Zhipu, Kimi, etc.), showing quota usage, reset timers, and costs in one view. It supports subscription and pay-per-use models, offers desktop widgets, cross-device sync, and secure credential storage, with a free version and a one-time Pro purchase.",
+        "topics": [
+          "用量查询",
+          "订阅",
+          "套餐对比",
+          "体验卡",
+          "激活",
+          "定价",
+          "多服务支持"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/416",
+      "analyzedAt": "2026-10-05T13:57:09.593Z"
+    },
+    {
+      "id": "v2ex-1246523",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1246523",
+      "title": "准备注册美国公司来使用 claude",
+      "content": "国庆又被封了一个 100 美金的号, 好几个大额的号了, 大部分都 Fully refunded, 但我的目的是正常使用, 而不是贪小便宜. 这几天开始用 100 美金的 codex, 这货比货真的不能比, codex 真的是白给你都不要的那种. 我研究了一轮,其实也尝试过好多方法, 比如在其他国家家里使用家庭宽带, 托管电脑远程连过去, 但最终逃不过. 发现只能通过注册美国公司的方式来进行, 这个是最稳定的, 和 claude 公司销售直接联系后不会轻易被封号, 还可以使用 team plan. 我研究了一轮, 只有怀俄明/科罗拉多持有成本最低, 还有 EIN 和美国银行账号, 就算不用在 Claude,用在做跨境/外贸也是可以的. 不知道这 2 个州是否免税州, 否则看起来单次成本很低, 但综合成本很高. 走 stripe atlas 和 doola 比较省事, 但是费用很高. 不知道谁有全过程的攻略, 可以自行注册.",
+      "author": "wises",
+      "createdAt": "2026-10-05T10:20:22.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "帖子讨论通过注册美国公司使用 Claude，提到团队计划和费用，并寻找完整注册攻略。",
+        "topics": [
+          "注册",
+          "美国公司",
+          "Claude",
+          "团队计划",
+          "费用",
+          "稳定性",
+          "攻略"
+        ],
+        "planMentioned": "team plan",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/417",
+      "analyzedAt": "2026-10-05T13:57:17.238Z"
+    },
+    {
+      "id": "v2ex-1246517",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1246517",
+      "title": "没有海外信用卡也能用 Claude，新人送 10 美元",
+      "content": "常有人问我：没有海外信用卡，Claude 是不是就用不了？ 能用，就是绕。虚拟卡、代充、账号风控，一圈折腾下来钱没少花，人也累。 做 aicoding.inc 就是想把这段路省掉。国内支付直接充值，企业也可以走对公转账。余额按官方价的 1.9 折、2.9 折、4.9 折三档消耗，用多少扣多少，不用预付一大笔。 说句实在的，中转毕竟多了一层，数据合规要求特别严的团队，建议自己先评估。日常写代码、跑 Claude Code 这类场景，目前有数万人在用。 想先试试的话，加社群送 10 美元额度，不花钱也能跑起来看看。 https://aicoding.inc",
+      "author": "aicodinginc",
+      "createdAt": "2026-10-05T08:43:25.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "介绍了一个无需海外信用卡即可使用Claude的服务平台aicoding.inc，支持国内支付充值、多种折扣方案，并赠送新人10美元额度，让用户可以轻松体验Claude Code等AI编程工具。",
+        "topics": [
+          "定价",
+          "折扣",
+          "充值",
+          "免费额度",
+          "Claude",
+          "Claude Code",
+          "试用",
+          "海外信用卡",
+          "数据合规"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/418",
+      "analyzedAt": "2026-10-05T13:57:27.085Z"
+    },
+    {
+      "id": "v2ex-1246510",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1246510",
+      "title": "新注册用来开通 Claude 的 Google 账号被风控了",
+      "content": "最近由于被 Claude 封号出现这些问题，想向各位 V 友支支招。 事情是这样的：前段时间 Claude 被封号，我就新注册了一个 Google 账号，通过安卓虚拟机，在 Google Play 上绑定了国内的 Visa 卡，开通了 Claude Pro （之前一直 Apple ID 订阅，现在是想着即使封号也能退款到银行卡）。 结果现在 Claude 账号倒是没事，反而是 Google 账号被风控了，一直登录不上去，提示\"该手机号验证次数过多\"。我换了好几个没注册过 Google 的手机号都不行，所以现在完全收不到任何邮件。下次 Claude 需要重新登录的时候，我也就登不上了。 想请教几个问题： 1.这种情况是要等一段时间再尝试登录吗？还有没有其他办法能登上这个账号？ 2.如果实在救不回来，只能放弃这个 Google 账号——但它绑定了我的信用卡，这会有影响吗？另外，新的 Google 账号还能再绑定同一张信用卡吗？ 3.在放弃这个账号之前，有办法解绑这个信用卡吗？ 麻烦各位大佬指点，感激不尽！",
+      "author": "ofDamon",
+      "createdAt": "2026-10-05T07:59:49.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Anthropic",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户因Claude被封号后新注册Google账号尝试开通Claude Pro，但遇到了手机验证频繁限制导致无法登录的问题，并询问是否可以解绑信用卡、申请退款等问题。",
+        "topics": [
+          "账号被封",
+          "Claude Pro",
+          "退款",
+          "信用卡",
+          "登录问题"
+        ],
+        "planMentioned": "Claude Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/419",
+      "analyzedAt": "2026-10-05T13:57:33.316Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
