@@ -360,12 +360,21 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
   }
 }
 
+export interface ChatThinkingBlock {
+  type: 'thinking' | 'redacted_thinking';
+  id?: string;
+  thinking?: string;
+  signature?: string;
+  data?: string;
+}
+
 export interface ChatMessage {
   role: 'user' | 'assistant' | 'system' | 'tool';
   content: ChatMessageContent;
   tool_calls?: ChatToolCall[];
   tool_call_id?: string;
   reasoning_content?: string;
+  thinkingBlocks?: ChatThinkingBlock[];
 }
 
 export const INTERNAL_REASONING_CONTENT_MIME_TYPE = 'application/vnd.coding-plans.reasoning-content+json';
@@ -975,15 +984,20 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       const contentParts: ChatContentPart[] = [];
       const toolCalls: vscode.LanguageModelToolCallPart[] = [];
       const toolResults: vscode.LanguageModelToolResultPart[] = [];
+      const thinkingBlocks: ChatThinkingBlock[] = [];
       let reasoningContent: string | undefined;
 
       for (const part of message.content) {
         if (part instanceof vscode.LanguageModelTextPart) {
           contentParts.push({ type: 'text', text: part.value });
         } else if (this.isThinkingPart(part)) {
+          const thinkingBlock = this.readThinkingBlockFromPart(part);
+          if (thinkingBlock) {
+            thinkingBlocks.push(thinkingBlock);
+          }
           const thinkingText = this.readThinkingPartContent(part);
           if (thinkingText) {
-            reasoningContent = thinkingText;
+            reasoningContent = `${reasoningContent ?? ''}${thinkingText}`;
           }
         } else if (part instanceof vscode.LanguageModelToolCallPart) {
           toolCalls.push(part);
@@ -1032,6 +1046,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
           role: 'assistant',
           content,
           ...(reasoningContent ? { reasoning_content: reasoningContent } : {}),
+          ...(thinkingBlocks.length > 0 ? { thinkingBlocks } : {}),
           tool_calls: toolCalls.map((call) => ({
             id: call.callId || this.makeToolCallId(),
             type: 'function',
@@ -1049,6 +1064,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
         role,
         content,
         ...(role === 'assistant' && reasoningContent ? { reasoning_content: reasoningContent } : {}),
+        ...(role === 'assistant' && thinkingBlocks.length > 0 ? { thinkingBlocks } : {}),
       });
     }
 
@@ -1099,12 +1115,19 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     content: string,
     toolCalls?: ChatToolCall[],
     reasoningContent?: string,
+    thinkingBlocks?: ChatThinkingBlock[],
   ): Array<vscode.LanguageModelResponsePart | unknown> {
     const parts: Array<vscode.LanguageModelResponsePart | unknown> = [];
 
-    const trimmedReasoningContent = reasoningContent?.trim();
-    if (trimmedReasoningContent) {
-      parts.push(this.createReasoningResponsePart(trimmedReasoningContent));
+    if (thinkingBlocks && thinkingBlocks.length > 0) {
+      for (const block of thinkingBlocks) {
+        parts.push(this.createThinkingResponsePart(block));
+      }
+    } else {
+      const trimmedReasoningContent = reasoningContent?.trim();
+      if (trimmedReasoningContent) {
+        parts.push(this.createReasoningResponsePart(trimmedReasoningContent));
+      }
     }
 
     if (content.trim().length > 0) {
@@ -1203,13 +1226,35 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     );
   }
 
-  protected createReasoningResponsePart(reasoningContent: string): vscode.LanguageModelDataPart | unknown {
-    const thinkingCtor = (vscode as unknown as { LanguageModelThinkingPart?: new (...args: any[]) => unknown })
-      .LanguageModelThinkingPart;
+  protected createReasoningResponsePart(
+    reasoningContent: string,
+    id?: string,
+    metadata?: { readonly [key: string]: unknown },
+  ): vscode.LanguageModelDataPart | unknown {
+    const thinkingCtor = (vscode as unknown as {
+      LanguageModelThinkingPart?: new (
+        value: string | string[],
+        id?: string,
+        metadata?: { readonly [key: string]: unknown },
+      ) => unknown;
+    }).LanguageModelThinkingPart;
     if (thinkingCtor) {
-      return new thinkingCtor(reasoningContent);
+      return new thinkingCtor(reasoningContent, id, metadata);
     }
     return this.createReasoningDataPart(reasoningContent);
+  }
+
+  protected createThinkingResponsePart(block: ChatThinkingBlock): vscode.LanguageModelDataPart | unknown {
+    if (block.type === 'redacted_thinking') {
+      return this.createReasoningResponsePart('', block.id, {
+        redactedData: block.data,
+      });
+    }
+
+    return this.createReasoningResponsePart(block.thinking ?? '', block.id, {
+      ...(block.signature ? { signature: block.signature } : {}),
+      _completeThinking: block.thinking ?? '',
+    });
   }
 
   private readReasoningContentPart(part: vscode.LanguageModelDataPart): string | undefined {
@@ -1245,6 +1290,10 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     if (!part || typeof part !== 'object') {
       return undefined;
     }
+    const metadata = (part as { metadata?: { _completeThinking?: unknown } }).metadata;
+    if (typeof metadata?._completeThinking === 'string' && metadata._completeThinking.trim().length > 0) {
+      return metadata._completeThinking;
+    }
     const value = (part as { value?: unknown }).value;
     if (typeof value === 'string' && value.trim().length > 0) {
       return value;
@@ -1254,6 +1303,52 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       return joined.trim().length > 0 ? joined : undefined;
     }
     return undefined;
+  }
+
+  private readThinkingBlockFromPart(part: unknown): ChatThinkingBlock | undefined {
+    if (!part || typeof part !== 'object') {
+      return undefined;
+    }
+
+    const record = part as {
+      id?: unknown;
+      value?: unknown;
+      metadata?: {
+        signature?: unknown;
+        redactedData?: unknown;
+        _completeThinking?: unknown;
+      };
+    };
+    const id = typeof record.id === 'string' && record.id.trim().length > 0 ? record.id : undefined;
+    const metadata = record.metadata;
+    if (typeof metadata?.redactedData === 'string' && metadata.redactedData.length > 0) {
+      return {
+        type: 'redacted_thinking',
+        ...(id ? { id } : {}),
+        data: metadata.redactedData,
+      };
+    }
+
+    const completeThinking =
+      typeof metadata?._completeThinking === 'string' ? metadata._completeThinking : undefined;
+    const signature = typeof metadata?.signature === 'string' && metadata.signature.length > 0 ? metadata.signature : undefined;
+    const valueText =
+      typeof record.value === 'string'
+        ? record.value
+        : Array.isArray(record.value)
+          ? record.value.filter((entry): entry is string => typeof entry === 'string').join('')
+          : '';
+    const thinking = completeThinking ?? valueText;
+    if (!thinking && !signature) {
+      return undefined;
+    }
+
+    return {
+      type: 'thinking',
+      ...(id ? { id } : {}),
+      thinking,
+      ...(signature ? { signature } : {}),
+    };
   }
 
   private stringifyToolResultContent(

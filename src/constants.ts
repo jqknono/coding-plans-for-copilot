@@ -99,6 +99,26 @@ export const RESPONSES_THINKING_EFFORT_VALUES = ['low', 'medium', 'high', 'xhigh
 export type ResponsesThinkingEffort = (typeof RESPONSES_THINKING_EFFORT_VALUES)[number];
 export const ANTHROPIC_EFFORT_VALUES = ['low', 'medium', 'high', 'xhigh', 'max'] as const;
 export type AnthropicEffort = (typeof ANTHROPIC_EFFORT_VALUES)[number];
+export const ANTHROPIC_MIN_THINKING_BUDGET_TOKENS = 1024;
+export const ANTHROPIC_THINKING_BUDGET_TOKENS = {
+  low: 1024,
+  medium: 4096,
+  high: 8192,
+  xhigh: 12288,
+  max: 16384,
+} as const satisfies Record<AnthropicEffort, number>;
+
+export function resolveAnthropicThinkingBudgetTokens(
+  effort: AnthropicEffort | undefined,
+  maxTokens: number | undefined,
+): number {
+  const requested = ANTHROPIC_THINKING_BUDGET_TOKENS[effort ?? 'max'];
+  if (maxTokens === undefined || maxTokens <= 1) {
+    return requested;
+  }
+  const maxBudget = Math.max(1, Math.floor(maxTokens) - 1);
+  return Math.min(Math.max(requested, ANTHROPIC_MIN_THINKING_BUDGET_TOKENS), maxBudget);
+}
 export const THINKING_EFFORT_VALUES = CHAT_THINKING_EFFORT_VALUES;
 export type ThinkingEffort = ChatThinkingEffort;
 export const THINKING_EFFORT_MODEL_OPTION_KEY = 'thinkingEffort';

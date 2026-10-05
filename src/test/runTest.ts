@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { resolveAnthropicThinkingBudgetTokens } from '../constants';
 
 const ENABLE_THINKING_OPTION_KEY = '_enableThinking';
 
@@ -189,7 +190,11 @@ function createVscodeMock() {
   }
 
   class FakeLanguageModelThinkingPart {
-    constructor(public readonly value: string) {}
+    constructor(
+      public readonly value: string,
+      public readonly id?: string,
+      public readonly metadata?: { readonly [key: string]: unknown },
+    ) {}
   }
 
   class FakeLanguageModelChatMessage {
@@ -5004,6 +5009,15 @@ async function runGenericProviderThinkingEffortTests(
   configStoreCtor: ConfigStoreCtor,
   genericProviderModule: GenericProviderModule,
 ): Promise<void> {
+  assert.equal(resolveAnthropicThinkingBudgetTokens('low', 16000), 1024);
+  assert.equal(resolveAnthropicThinkingBudgetTokens('medium', 16000), 4096);
+  assert.equal(resolveAnthropicThinkingBudgetTokens('high', 16000), 8192);
+  assert.equal(resolveAnthropicThinkingBudgetTokens('xhigh', 16000), 12288);
+  assert.equal(resolveAnthropicThinkingBudgetTokens('max', 16000), 15999);
+  assert.equal(resolveAnthropicThinkingBudgetTokens('max', 12800), 12799);
+  assert.equal(resolveAnthropicThinkingBudgetTokens(undefined, 16000), 15999);
+  console.log('PASS anthropic thinking budget 会按 effort 映射，并始终小于 max_tokens');
+
   const { GenericAIProvider } = genericProviderModule;
   const originalFetch = globalThis.fetch;
 
@@ -5920,9 +5934,13 @@ async function runGenericProviderThinkingEffortTests(
       },
     },
   );
-  assert.deepEqual(anthropicPayload.thinking, { type: 'adaptive' });
+  assert.deepEqual(anthropicPayload.thinking, {
+    type: 'enabled',
+    budget_tokens: resolveAnthropicThinkingBudgetTokens('xhigh', 12800),
+    display: 'summarized',
+  });
   assert.deepEqual(anthropicPayload.output_config, { effort: 'xhigh' });
-  console.log('PASS anthropic 会分别按请求级 thinking 开关与 effort 发送 thinking 和 output_config.effort');
+  console.log('PASS anthropic 会按请求级 thinking 开关与 effort 发送 enabled thinking budget 和 output_config.effort');
 
   const copilotAliasAnthropicPayload = await capturePayload(
     [
@@ -5950,9 +5968,47 @@ async function runGenericProviderThinkingEffortTests(
       },
     },
   );
-  assert.deepEqual(copilotAliasAnthropicPayload.thinking, { type: 'adaptive' });
+  assert.deepEqual(copilotAliasAnthropicPayload.thinking, {
+    type: 'enabled',
+    budget_tokens: resolveAnthropicThinkingBudgetTokens('high', 12800),
+    display: 'summarized',
+  });
   assert.deepEqual(copilotAliasAnthropicPayload.output_config, { effort: 'high' });
-  console.log('PASS anthropic 会把 Copilot 风格 reasoningEffort 当作 effort');
+  console.log('PASS anthropic 会把 Copilot 风格 reasoningEffort 当作 effort 并映射 thinking budget');
+
+  const anthropicMaxEffortPayload = await capturePayload(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/anthropic/v1',
+        defaultApiStyle: 'anthropic',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            contextSize: 64000,
+            maxInputTokens: 32000,
+            maxOutputTokens: 16000,
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        effort: 'max',
+        thinkingType: 'think',
+      },
+    },
+  );
+  assert.deepEqual(anthropicMaxEffortPayload.thinking, {
+    type: 'enabled',
+    budget_tokens: resolveAnthropicThinkingBudgetTokens('max', 12800),
+    display: 'summarized',
+  });
+  assert.deepEqual(anthropicMaxEffortPayload.output_config, { effort: 'max' });
+  console.log('PASS anthropic effort=max 会发送 enabled thinking，并把 budget_tokens 限制在 max_tokens 以内');
 
   const copilotDisableAnthropicPayload = await capturePayload(
     [
@@ -7697,6 +7753,52 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
     content: 'B',
   });
   console.log('PASS anthropic 会将同一轮连续 tool_result 合并到一个 user 消息');
+
+  const anthropicThinkingRoundTrip = toAnthropicMessages(
+    [
+      {
+        role: 'assistant',
+        content: '',
+        thinkingBlocks: [
+          {
+            type: 'thinking',
+            thinking: 'plan first',
+            signature: 'sig_plan',
+          },
+        ],
+        tool_calls: [
+          {
+            id: 'call_thinking_1',
+            type: 'function',
+            function: {
+              name: 'read_file',
+              arguments: '{"path":"/tmp/a"}',
+            },
+          },
+        ],
+      },
+      {
+        role: 'tool',
+        tool_call_id: 'call_thinking_1',
+        content: 'A',
+      },
+    ],
+    () => 'generated_call',
+  );
+  assert.deepEqual(anthropicThinkingRoundTrip.messages[0]?.content, [
+    {
+      type: 'thinking',
+      thinking: 'plan first',
+      signature: 'sig_plan',
+    },
+    {
+      type: 'tool_use',
+      id: 'call_thinking_1',
+      name: 'read_file',
+      input: { path: '/tmp/a' },
+    },
+  ]);
+  console.log('PASS anthropic 工具续轮会回传 thinking 与 signature');
   const anthropicMergedTurn = toAnthropicMessages(
     [
       {
@@ -7849,8 +7951,35 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
       thinking: 'plan first',
     },
   });
+  applyAnthropicStreamEvent(anthropicThinkingState, 'content_block_delta', {
+    index: 0,
+    delta: {
+      type: 'signature_delta',
+      signature: 'sig_plan',
+    },
+  });
+  const anthropicThinkingStop = applyAnthropicStreamEvent(anthropicThinkingState, 'content_block_stop', {
+    index: 0,
+  });
+  const finalizedAnthropicThinking = finalizeAnthropicStreamState(anthropicThinkingState, () => 'tool_generated');
   assert.equal(anthropicThinkingDelta.textDelta, '');
   assert.equal(anthropicThinkingDelta.reasoningDelta, 'plan first');
+  assert.equal(anthropicThinkingDelta.thinkingId, 'thinking_0');
+  assert.deepEqual(anthropicThinkingStop.completedThinking, {
+    type: 'thinking',
+    id: 'thinking_0',
+    thinking: 'plan first',
+    signature: 'sig_plan',
+  });
+  assert.equal(finalizedAnthropicThinking.reasoningContent, 'plan first');
+  assert.deepEqual(finalizedAnthropicThinking.thinkingBlocks, [
+    {
+      type: 'thinking',
+      id: 'thinking_0',
+      thinking: 'plan first',
+      signature: 'sig_plan',
+    },
+  ]);
 
   const anthropicReasoningCompatState = createAnthropicStreamState();
   const anthropicReasoningStart = applyAnthropicStreamEvent(anthropicReasoningCompatState, 'content_block_start', {
@@ -7938,8 +8067,19 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   assert.deepEqual(parsedAnthropicThinkingTextField, {
     content: '最终答案',
     reasoningContent: '纸面估值快照身份对应不同证据；继续核对',
+    thinkingBlocks: [
+      {
+        type: 'thinking',
+        thinking: '纸面估值快照身份对应不同证据',
+      },
+      {
+        type: 'thinking',
+        thinking: '；继续核对',
+      },
+    ],
     toolCalls: [],
   });
+  console.log('PASS anthropic 流式 thinking 会累积 signature 并在块结束时给出完整 thinking block');
   console.log('PASS anthropic 兼容 reasoning/thinking 文本块不会泄漏到正文');
 
   const anthropicUsageState = createAnthropicStreamState();

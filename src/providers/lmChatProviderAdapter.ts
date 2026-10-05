@@ -424,15 +424,20 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
         this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
 
         let reportedPartCount = 0;
+        let thinkingPartCount = 0;
         try {
           for await (const part of response.stream as AsyncIterable<vscode.LanguageModelResponsePart>) {
+            const summarizedPart = this.summarizeResponsePart(part);
             logger.debug('Adapter reporting response part to VS Code', {
               traceId,
               provider: vendor,
               modelId: model.id,
               index: reportedPartCount,
-              part: this.summarizeResponsePart(part),
+              part: summarizedPart,
             });
+            if (summarizedPart.type === 'thinking') {
+              thinkingPartCount += 1;
+            }
             progress.report(part as vscode.LanguageModelResponsePart);
             reportedPartCount += 1;
           }
@@ -462,6 +467,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
           provider: vendor,
           modelId: model.id,
           reportedPartCount,
+          thinkingPartCount,
           attempt: attempt + 1,
         });
         this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
@@ -693,7 +699,11 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     ) {
       return {
         type: 'thinking',
+        id: typeof (part as { id?: unknown }).id === 'string' ? (part as { id: string }).id : undefined,
         length: typeof (part as { value?: unknown }).value === 'string' ? (part as { value: string }).value.length : 0,
+        hasSignature: typeof (part as { metadata?: { signature?: unknown } }).metadata?.signature === 'string',
+        hasCompleteThinking:
+          typeof (part as { metadata?: { _completeThinking?: unknown } }).metadata?._completeThinking === 'string',
       };
     }
 

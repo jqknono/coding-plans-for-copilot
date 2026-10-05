@@ -4,6 +4,7 @@ import {
   BaseLanguageModel,
   AIModelConfig,
   ChatMessage,
+  ChatThinkingBlock,
   ChatToolCall,
   ReasoningEffortValue,
   ReasoningEffortFormat,
@@ -14,6 +15,7 @@ import { ConfigStore, VendorApiStyle, VendorAuthType, VendorConfig, VendorModelC
 import {
   ANTHROPIC_EFFORT_VALUES,
   AnthropicEffort,
+  resolveAnthropicThinkingBudgetTokens,
   CHAT_THINKING_EFFORT_VALUES,
   ChatThinkingEffort,
   DEFAULT_MODEL_TOOLS,
@@ -128,9 +130,15 @@ interface ResolvedOpenAIResponsesReasoningOptions {
 }
 
 interface ResolvedAnthropicThinkingOptions {
-  thinking?: {
-    type: 'adaptive' | 'disabled';
-  };
+  thinking?:
+    | {
+        type: 'enabled';
+        budget_tokens: number;
+        display?: 'summarized';
+      }
+    | {
+        type: 'disabled';
+      };
   effort?: AnthropicEffort;
 }
 
@@ -142,6 +150,7 @@ interface ParsedSseEvent {
 interface StreamingCompletionResult {
   content: string;
   reasoningContent?: string;
+  thinkingBlocks?: ChatThinkingBlock[];
   toolCalls: ChatToolCall[];
   usage?: Record<string, unknown>;
   responseId?: string;
@@ -724,7 +733,10 @@ export class GenericAIProvider extends BaseAIProvider {
     };
   }
 
-  private buildAnthropicThinkingOptions(request: GenericChatRequest): ResolvedAnthropicThinkingOptions | undefined {
+  private buildAnthropicThinkingOptions(
+    request: GenericChatRequest,
+    maxTokens?: number,
+  ): ResolvedAnthropicThinkingOptions | undefined {
     if (!this.isModelThinkingEnabled(request)) {
       return undefined;
     }
@@ -737,7 +749,17 @@ export class GenericAIProvider extends BaseAIProvider {
     }
 
     return {
-      ...(thinking === undefined ? {} : { thinking: { type: thinking ? 'adaptive' : 'disabled' } as const }),
+      ...(thinking === undefined
+        ? {}
+        : {
+            thinking: thinking
+              ? ({
+                  type: 'enabled',
+                  budget_tokens: resolveAnthropicThinkingBudgetTokens(supportedEffort, maxTokens),
+                  display: 'summarized',
+                } as const)
+              : ({ type: 'disabled' } as const),
+          }),
       ...(supportedEffort ? { effort: supportedEffort } : {}),
     };
   }
@@ -1570,7 +1592,6 @@ export class GenericAIProvider extends BaseAIProvider {
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertMessages(request.messages);
     this.logRequestMessageContentPreviews(trace, providerMessages);
-    const thinkingOptions = this.buildAnthropicThinkingOptions(request);
     const { system, messages } = toAnthropicMessages(providerMessages, () => this.generateToolCallId());
     const tools = request.capabilities.toolCalling
       ? buildAnthropicToolDefinitions(this.buildToolDefinitions(request.options))
@@ -1578,6 +1599,7 @@ export class GenericAIProvider extends BaseAIProvider {
     const streamAllowed = this.isStreamingAllowed(request);
     const requestedOutputLimit = this.resolveRequestedOutputLimit(request);
     const maxTokens = requestedOutputLimit;
+    const thinkingOptions = this.buildAnthropicThinkingOptions(request, maxTokens);
     const payload: AnthropicChatRequest = {
       model: modelName,
       system: system || undefined,
@@ -1591,6 +1613,18 @@ export class GenericAIProvider extends BaseAIProvider {
     };
 
     try {
+      logger.info('Prepared Anthropic thinking request', {
+        ...trace,
+        thinking: payload.thinking,
+        outputConfig: payload.output_config,
+        thinkingBlockCount: providerMessages.reduce(
+          (count, message) => count + (message.thinkingBlocks?.length ?? 0),
+          0,
+        ),
+        assistantThinkingBlocks: providerMessages
+          .filter((message) => message.role === 'assistant')
+          .map((message) => this.summarizeThinkingBlocksForLog(message.thinkingBlocks)),
+      });
       logger.debug('Prepared Anthropic payload', {
         ...trace,
         baseUrl,
@@ -1651,6 +1685,25 @@ export class GenericAIProvider extends BaseAIProvider {
               }
             }
             const finalized = finalizeAnthropicStreamState(state, () => this.generateToolCallId());
+            logger.info('Anthropic stream thinking summary', {
+              ...trace,
+              responseId: state.responseId,
+              stopReason: state.stopReason,
+              streamedReasoning,
+              reasoningContentLength: finalized.reasoningContent?.length ?? 0,
+              thinkingBlockCount: finalized.thinkingBlocks?.length ?? 0,
+              thinkingBlocks: this.summarizeThinkingBlocksForLog(finalized.thinkingBlocks),
+              contentBlockTypes: [...state.blocks.values()].map((block) => block.type),
+              usage: finalized.usage,
+              recentEventTypes: streamEventSummaries.map((event) => ({
+                eventType: event.eventType,
+                payloadType: event.payloadType,
+                deltaType: event.deltaType,
+                contentBlockType: event.contentBlockType,
+                deltaThinkingLength: event.deltaThinkingLength,
+                hasSignatureDelta: event.hasSignatureDelta,
+              })),
+            });
             if (finalized.content.trim().length === 0 && finalized.toolCalls.length === 0) {
               logger.warn('Anthropic stream finalized without text or tool calls', {
                 ...trace,
@@ -1664,6 +1717,8 @@ export class GenericAIProvider extends BaseAIProvider {
               mode: 'stream',
               responseId: state.responseId,
               contentLength: finalized.content.length,
+              reasoningContentLength: finalized.reasoningContent?.length ?? 0,
+              thinkingBlockCount: finalized.thinkingBlocks?.length ?? 0,
               toolCallCount: finalized.toolCalls.length,
               usage: finalized.usage,
               stopReason: state.stopReason,
@@ -1671,6 +1726,7 @@ export class GenericAIProvider extends BaseAIProvider {
             return {
               content: finalized.content,
               reasoningContent: finalized.reasoningContent,
+              thinkingBlocks: finalized.thinkingBlocks,
               toolCalls: finalized.toolCalls,
               usage: finalized.usage as Record<string, unknown> | undefined,
               responseId: state.responseId,
@@ -1715,7 +1771,12 @@ export class GenericAIProvider extends BaseAIProvider {
       finalized.usage,
       maxTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxTokens),
     );
-    const responseParts = this.buildResponseParts(finalized.content, finalized.toolCalls, finalized.reasoningContent);
+    const responseParts = this.buildResponseParts(
+      finalized.content,
+      finalized.toolCalls,
+      finalized.reasoningContent,
+      finalized.thinkingBlocks,
+    );
     if (normalizedUsage) {
       responseParts.push(this.createUsageResponsePart(normalizedUsage));
     }
@@ -1748,9 +1809,19 @@ export class GenericAIProvider extends BaseAIProvider {
       parsedToolCallCount: parsed.toolCalls.length,
       usage: response.usage,
     });
+    logger.info('Parsed Anthropic thinking summary', {
+      ...trace,
+      responseId: response.id,
+      parsedReasoningContentLength: parsed.reasoningContent?.length ?? 0,
+      thinkingBlockCount: parsed.thinkingBlocks?.length ?? 0,
+      thinkingBlocks: this.summarizeThinkingBlocksForLog(parsed.thinkingBlocks),
+      contentBlockTypes: (response.content ?? []).map((block) => block.type),
+      usage: response.usage,
+    });
     return {
       content: parsed.content,
       reasoningContent: parsed.reasoningContent,
+      thinkingBlocks: parsed.thinkingBlocks,
       toolCalls: parsed.toolCalls,
       usage: response.usage as Record<string, unknown> | undefined,
       responseId: response.id,
@@ -2266,11 +2337,23 @@ export class GenericAIProvider extends BaseAIProvider {
     };
   }
 
+  private summarizeThinkingBlocksForLog(thinkingBlocks?: ChatThinkingBlock[]): Array<Record<string, unknown>> {
+    return (thinkingBlocks ?? []).map((block) => ({
+      type: block.type,
+      id: block.id,
+      thinkingLength: block.thinking?.length ?? 0,
+      hasSignature: typeof block.signature === 'string' && block.signature.length > 0,
+      hasData: typeof block.data === 'string' && block.data.length > 0,
+    }));
+  }
+
   private summarizeProviderMessages(messages: ChatMessage[]): Array<Record<string, unknown>> {
     return messages.map((message) => ({
       role: message.role,
       contentLength: message.content.length,
       reasoningContentLength: message.reasoning_content?.length ?? 0,
+      thinkingBlockCount: message.thinkingBlocks?.length ?? 0,
+      thinkingBlocks: this.summarizeThinkingBlocksForLog(message.thinkingBlocks),
       toolCallCount: message.tool_calls?.length ?? 0,
       toolCalls: (message.tool_calls ?? []).map((toolCall) => ({
         id: toolCall.id,
@@ -2381,12 +2464,15 @@ export class GenericAIProvider extends BaseAIProvider {
       deltaType: payload.delta?.type,
       deltaTextLength: typeof payload.delta?.text === 'string' ? payload.delta.text.length : 0,
       deltaThinkingLength: typeof payload.delta?.thinking === 'string' ? payload.delta.thinking.length : 0,
+      hasSignatureDelta: typeof payload.delta?.signature === 'string' && payload.delta.signature.length > 0,
       hasPartialJson: typeof payload.delta?.partial_json === 'string' && payload.delta.partial_json.length > 0,
       contentBlockType: payload.content_block?.type,
       contentBlockName: payload.content_block?.name,
       contentBlockTextLength: typeof payload.content_block?.text === 'string' ? payload.content_block.text.length : 0,
       contentBlockThinkingLength:
         typeof payload.content_block?.thinking === 'string' ? payload.content_block.thinking.length : 0,
+      hasContentBlockSignature:
+        typeof payload.content_block?.signature === 'string' && payload.content_block.signature.length > 0,
       hasContentBlockInput: payload.content_block?.input !== undefined,
       usage: payload.usage,
       errorType: typeof payloadError?.type === 'string' ? payloadError.type : undefined,
@@ -2513,7 +2599,11 @@ export class GenericAIProvider extends BaseAIProvider {
     ) {
       return {
         type: 'thinking',
+        id: typeof (part as { id?: unknown }).id === 'string' ? (part as { id: string }).id : undefined,
         length: typeof (part as { value?: unknown }).value === 'string' ? (part as { value: string }).value.length : 0,
+        hasSignature: typeof (part as { metadata?: { signature?: unknown } }).metadata?.signature === 'string',
+        hasCompleteThinking:
+          typeof (part as { metadata?: { _completeThinking?: unknown } }).metadata?._completeThinking === 'string',
       };
     }
 
@@ -2659,18 +2749,26 @@ export class GenericAIProvider extends BaseAIProvider {
 
   private enqueueStreamContent(
     queue: AsyncIterableQueue<vscode.LanguageModelResponsePart | unknown>,
-    update: { textDelta: string; reasoningDelta?: string },
+    update: {
+      textDelta: string;
+      reasoningDelta?: string;
+      thinkingId?: string;
+      completedThinking?: ChatThinkingBlock;
+    },
   ): boolean {
     const reasoningDelta = update.reasoningDelta ?? '';
     if (reasoningDelta.length > 0) {
       // Streamed reasoning deltas must not be trimmed: whitespace often sits at
       // chunk boundaries (e.g. "word ") and trimming per delta would join words.
-      queue.push(this.createReasoningResponsePart(reasoningDelta));
+      queue.push(this.createReasoningResponsePart(reasoningDelta, update.thinkingId));
+    }
+    if (update.completedThinking) {
+      queue.push(this.createThinkingResponsePart(update.completedThinking));
     }
     if (update.textDelta.length > 0) {
       queue.push(new vscode.LanguageModelTextPart(update.textDelta));
     }
-    return reasoningDelta.length > 0;
+    return reasoningDelta.length > 0 || !!update.completedThinking;
   }
 
   private buildStreamingChatResponse(
@@ -2697,6 +2795,7 @@ export class GenericAIProvider extends BaseAIProvider {
           '',
           finalized.toolCalls,
           finalized.streamedReasoning ? undefined : finalized.reasoningContent,
+          finalized.streamedReasoning ? undefined : finalized.thinkingBlocks,
         )) {
           queue.push(part);
         }
@@ -2716,6 +2815,9 @@ export class GenericAIProvider extends BaseAIProvider {
           responseId: finalized.responseId,
           contentLength: finalized.content.length,
           reasoningContentLength: finalized.reasoningContent?.length ?? 0,
+          thinkingBlockCount: finalized.thinkingBlocks?.length ?? 0,
+          thinkingBlocks: provider.summarizeThinkingBlocksForLog(finalized.thinkingBlocks),
+          streamedReasoning: finalized.streamedReasoning === true,
           toolCallCount: finalized.toolCalls.length,
           usage: normalizedUsage,
         });

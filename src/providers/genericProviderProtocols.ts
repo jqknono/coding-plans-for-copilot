@@ -4,6 +4,7 @@ import {
   ChatImageContentPart,
   ChatMessage,
   ChatMessageContent,
+  ChatThinkingBlock,
   ChatToolCall,
   ChatToolDefinition,
 } from './baseProvider';
@@ -13,9 +14,15 @@ type ThinkingToggle = {
   type: 'enabled' | 'disabled';
 };
 
-type AnthropicThinkingToggle = {
-  type: 'adaptive' | 'disabled';
-};
+type AnthropicThinkingToggle =
+  | {
+      type: 'enabled';
+      budget_tokens: number;
+      display?: 'summarized';
+    }
+  | {
+      type: 'disabled';
+    };
 
 export interface OpenAIChatRequest {
   model: string;
@@ -189,6 +196,17 @@ interface AnthropicImageContentBlock {
   };
 }
 
+interface AnthropicThinkingContentBlock {
+  type: 'thinking';
+  thinking: string;
+  signature?: string;
+}
+
+interface AnthropicRedactedThinkingContentBlock {
+  type: 'redacted_thinking';
+  data: string;
+}
+
 interface AnthropicToolUseContentBlock {
   type: 'tool_use';
   id: string;
@@ -205,6 +223,8 @@ interface AnthropicToolResultContentBlock {
 type AnthropicRequestContentBlock =
   | AnthropicTextContentBlock
   | AnthropicImageContentBlock
+  | AnthropicThinkingContentBlock
+  | AnthropicRedactedThinkingContentBlock
   | AnthropicToolUseContentBlock
   | AnthropicToolResultContentBlock;
 
@@ -240,8 +260,13 @@ interface AnthropicResponseTextContentBlock {
 }
 
 interface AnthropicResponseThinkingContentBlock {
-  type: 'thinking';
-  thinking: string;
+  type: string;
+  thinking?: string;
+  text?: string;
+  summary?: string;
+  signature?: string;
+  data?: string;
+  id?: string;
 }
 
 interface AnthropicResponseToolUseContentBlock {
@@ -340,6 +365,7 @@ export interface AnthropicStreamEvent {
     type?: string;
     text?: string;
     thinking?: string;
+    signature?: string;
     partial_json?: string;
     stop_reason?: string | null;
   };
@@ -347,6 +373,8 @@ export interface AnthropicStreamEvent {
     type?: string;
     text?: string;
     thinking?: string;
+    signature?: string;
+    data?: string;
     id?: string;
     name?: string;
     input?: unknown;
@@ -402,6 +430,9 @@ export interface AnthropicStreamState {
     number,
     {
       type: 'text' | 'thinking' | 'tool_use';
+      signature?: string;
+      data?: string;
+      thinkingType?: 'thinking' | 'redacted_thinking';
       text: string;
       id?: string;
       name?: string;
@@ -933,7 +964,7 @@ export function applyAnthropicStreamEvent(
   state: AnthropicStreamState,
   eventType: string | undefined,
   payload: AnthropicStreamEvent,
-): { textDelta: string; reasoningDelta?: string } {
+): { textDelta: string; reasoningDelta?: string; thinkingId?: string; completedThinking?: ChatThinkingBlock } {
   const resolvedEventType = eventType || payload.type;
   let textDelta = '';
 
@@ -975,22 +1006,33 @@ export function applyAnthropicStreamEvent(
       : typeof (payload.content_block as { text?: unknown }).text === 'string'
         ? (payload.content_block as { text: string }).text
         : '';
+    const initialSignature =
+      typeof payload.content_block.signature === 'string' ? payload.content_block.signature : undefined;
+    const initialData = typeof payload.content_block.data === 'string' ? payload.content_block.data : undefined;
 
     state.blocks.set(payload.index, {
       type: isThinkingBlock ? 'thinking' : 'text',
       text: initialText,
+      id: typeof payload.content_block.id === 'string' ? payload.content_block.id : undefined,
+      signature: initialSignature,
+      data: initialData,
+      thinkingType: isThinkingBlock
+        ? isAnthropicRedactedThinkingType(payload.content_block.type)
+          ? 'redacted_thinking'
+          : 'thinking'
+        : undefined,
       inputJson: '',
     });
 
     if (initialText.length > 0) {
       if (isThinkingBlock) {
         state.reasoningContent += initialText;
-        return { textDelta, reasoningDelta: initialText };
+        return { textDelta, reasoningDelta: initialText, thinkingId: anthropicThinkingPartId(payload.index) };
       }
       state.content += initialText;
       textDelta = initialText;
     }
-    return { textDelta };
+    return { textDelta, ...(isThinkingBlock ? { thinkingId: anthropicThinkingPartId(payload.index) } : {}) };
   }
 
   if (resolvedEventType === 'content_block_delta' && typeof payload.index === 'number') {
@@ -1018,11 +1060,37 @@ export function applyAnthropicStreamEvent(
     if (block.type === 'thinking' && deltaThinking.length > 0) {
       block.text += deltaThinking;
       state.reasoningContent += deltaThinking;
-      return { textDelta, reasoningDelta: deltaThinking };
+      return { textDelta, reasoningDelta: deltaThinking, thinkingId: anthropicThinkingPartId(payload.index) };
+    }
+
+    if (
+      block.type === 'thinking' &&
+      (payload.delta?.type === 'signature_delta' || typeof payload.delta?.signature === 'string') &&
+      typeof payload.delta?.signature === 'string' &&
+      payload.delta.signature.length > 0
+    ) {
+      block.signature = `${block.signature ?? ''}${payload.delta.signature}`;
     }
 
     if (payload.delta?.type === 'input_json_delta' && typeof payload.delta.partial_json === 'string') {
       block.inputJson += payload.delta.partial_json;
+    }
+    return { textDelta };
+  }
+
+  if (resolvedEventType === 'content_block_stop' && typeof payload.index === 'number') {
+    const block = state.blocks.get(payload.index);
+    if (block?.type === 'thinking') {
+      const completedThinking = toChatThinkingBlock({
+        type: block.thinkingType ?? 'thinking',
+        id: anthropicThinkingPartId(payload.index),
+        thinking: block.text,
+        signature: block.signature,
+        data: block.data,
+      });
+      if (completedThinking) {
+        return { textDelta, thinkingId: completedThinking.id, completedThinking };
+      }
     }
     return { textDelta };
   }
@@ -1059,10 +1127,27 @@ function mergeAnthropicUsage(
 export function finalizeAnthropicStreamState(
   state: AnthropicStreamState,
   generateToolCallId: GenerateToolCallId,
-): { content: string; reasoningContent?: string; toolCalls: ChatToolCall[]; usage?: AnthropicChatResponse['usage'] } {
+): {
+  content: string;
+  reasoningContent?: string;
+  thinkingBlocks?: ChatThinkingBlock[];
+  toolCalls: ChatToolCall[];
+  usage?: AnthropicChatResponse['usage'];
+} {
   const toolCalls: ChatToolCall[] = [];
-  for (const [, block] of [...state.blocks.entries()].sort((left, right) => left[0] - right[0])) {
+  const thinkingBlocks: ChatThinkingBlock[] = [];
+  for (const [index, block] of [...state.blocks.entries()].sort((left, right) => left[0] - right[0])) {
     if (block.type === 'thinking') {
+      const thinkingBlock = toChatThinkingBlock({
+        type: block.thinkingType ?? 'thinking',
+        id: anthropicThinkingPartId(index),
+        thinking: block.text,
+        signature: block.signature,
+        data: block.data,
+      });
+      if (thinkingBlock) {
+        thinkingBlocks.push(thinkingBlock);
+      }
       continue;
     }
     if (block.type !== 'tool_use' || !block.name) {
@@ -1090,6 +1175,9 @@ export function finalizeAnthropicStreamState(
     if (!state.reasoningContent && parsed.reasoningContent) {
       state.reasoningContent = parsed.reasoningContent;
     }
+    if (thinkingBlocks.length === 0 && parsed.thinkingBlocks && parsed.thinkingBlocks.length > 0) {
+      thinkingBlocks.push(...parsed.thinkingBlocks);
+    }
   }
 
   const reasoningContent = state.reasoningContent || undefined;
@@ -1097,6 +1185,7 @@ export function finalizeAnthropicStreamState(
   return {
     content: state.content,
     ...(reasoningContent ? { reasoningContent } : {}),
+    ...(thinkingBlocks.length > 0 ? { thinkingBlocks } : {}),
     toolCalls,
     usage: state.usage,
   };
@@ -1144,10 +1233,13 @@ export function buildOpenAIResponsesToolDefinitions(
 }
 
 export function toOpenAIChatMessages(messages: ChatMessage[]): OpenAIChatMessage[] {
-  return messages.map((message) => ({
-    ...message,
-    content: toOpenAIChatContent(message.content),
-  }));
+  return messages.map((message) => {
+    const { thinkingBlocks: _thinkingBlocks, ...rest } = message;
+    return {
+      ...rest,
+      content: toOpenAIChatContent(message.content),
+    };
+  });
 }
 
 function toOpenAIChatContent(content: ChatMessageContent): OpenAIChatMessage['content'] {
@@ -1444,6 +1536,7 @@ export function toAnthropicMessages(
 
     if (message.role === 'assistant' && message.tool_calls && message.tool_calls.length > 0) {
       const contentBlocks: AnthropicRequestContentBlock[] = [];
+      contentBlocks.push(...toAnthropicThinkingRequestBlocks(message.thinkingBlocks));
       const textContent = getTextContent(message.content);
       if (textContent.trim().length > 0) {
         contentBlocks.push({ type: 'text', text: textContent });
@@ -1467,7 +1560,8 @@ export function toAnthropicMessages(
       continue;
     }
 
-    const contentBlocks = toAnthropicContentBlocks(message.content);
+    const thinkingBlocks = role === 'assistant' ? toAnthropicThinkingRequestBlocks(message.thinkingBlocks) : [];
+    const contentBlocks = [...thinkingBlocks, ...toAnthropicContentBlocks(message.content)];
     normalizedMessages.push({
       role,
       content: contentBlocks.length > 0 ? contentBlocks : getTextContent(message.content),
@@ -1483,9 +1577,10 @@ export function toAnthropicMessages(
 export function parseAnthropicResponse(
   response: AnthropicChatResponse,
   generateToolCallId: GenerateToolCallId,
-): { content: string; reasoningContent?: string; toolCalls: ChatToolCall[] } {
+): { content: string; reasoningContent?: string; thinkingBlocks?: ChatThinkingBlock[]; toolCalls: ChatToolCall[] } {
   const textParts: string[] = [];
   const thinkingParts: string[] = [];
+  const thinkingBlocks: ChatThinkingBlock[] = [];
   const toolCalls: ChatToolCall[] = [];
 
   for (const block of response.content ?? []) {
@@ -1493,6 +1588,10 @@ export function parseAnthropicResponse(
       const thinkingText = readAnthropicThinkingText(block);
       if (thinkingText.trim().length > 0) {
         thinkingParts.push(thinkingText);
+      }
+      const thinkingBlock = toChatThinkingBlock(block);
+      if (thinkingBlock) {
+        thinkingBlocks.push(thinkingBlock);
       }
       continue;
     }
@@ -1527,6 +1626,7 @@ export function parseAnthropicResponse(
   return {
     content: textParts.join(''),
     ...(reasoningContent ? { reasoningContent } : {}),
+    ...(thinkingBlocks.length > 0 ? { thinkingBlocks } : {}),
     toolCalls,
   };
 }
@@ -1610,6 +1710,10 @@ function isAnthropicThinkingType(type: string | undefined): boolean {
   );
 }
 
+function isAnthropicRedactedThinkingType(type: string | undefined): boolean {
+  return typeof type === 'string' && type.trim().toLowerCase() === 'redacted_thinking';
+}
+
 function readAnthropicThinkingText(block: unknown): string {
   if (!block || typeof block !== 'object') {
     return '';
@@ -1626,6 +1730,87 @@ function readAnthropicThinkingText(block: unknown): string {
     return record.summary;
   }
   return '';
+}
+
+function anthropicThinkingPartId(index: number): string {
+  return `thinking_${index}`;
+}
+
+function toChatThinkingBlock(block: unknown): ChatThinkingBlock | undefined {
+  if (!block || typeof block !== 'object') {
+    return undefined;
+  }
+
+  const record = block as {
+    type?: unknown;
+    id?: unknown;
+    thinking?: unknown;
+    text?: unknown;
+    summary?: unknown;
+    signature?: unknown;
+    data?: unknown;
+  };
+  const type = typeof record.type === 'string' ? record.type : 'thinking';
+  const id = typeof record.id === 'string' && record.id.trim().length > 0 ? record.id : undefined;
+  const signature =
+    typeof record.signature === 'string' && record.signature.length > 0 ? record.signature : undefined;
+  const data = typeof record.data === 'string' && record.data.length > 0 ? record.data : undefined;
+  const thinkingText = readAnthropicThinkingText(record);
+
+  if (isAnthropicRedactedThinkingType(type)) {
+    if (!data) {
+      return undefined;
+    }
+    return {
+      type: 'redacted_thinking',
+      ...(id ? { id } : {}),
+      data,
+    };
+  }
+
+  if (!thinkingText && !signature) {
+    return undefined;
+  }
+
+  return {
+    type: 'thinking',
+    ...(id ? { id } : {}),
+    thinking: thinkingText,
+    ...(signature ? { signature } : {}),
+  };
+}
+
+function toAnthropicThinkingRequestBlocks(
+  thinkingBlocks: ChatThinkingBlock[] | undefined,
+): Array<AnthropicThinkingContentBlock | AnthropicRedactedThinkingContentBlock> {
+  if (!thinkingBlocks || thinkingBlocks.length === 0) {
+    return [];
+  }
+
+  const blocks: Array<AnthropicThinkingContentBlock | AnthropicRedactedThinkingContentBlock> = [];
+  for (const block of thinkingBlocks) {
+    if (block.type === 'redacted_thinking') {
+      if (typeof block.data === 'string' && block.data.length > 0) {
+        blocks.push({
+          type: 'redacted_thinking',
+          data: block.data,
+        });
+      }
+      continue;
+    }
+
+    if (typeof block.thinking !== 'string' && typeof block.signature !== 'string') {
+      continue;
+    }
+
+    blocks.push({
+      type: 'thinking',
+      thinking: typeof block.thinking === 'string' ? block.thinking : '',
+      ...(typeof block.signature === 'string' && block.signature.length > 0 ? { signature: block.signature } : {}),
+    });
+  }
+
+  return blocks;
 }
 
 export function summarizeOpenAIChatResponse(response: OpenAIChatResponse): Record<string, unknown> {
@@ -1695,6 +1880,8 @@ export function summarizeAnthropicResponseForLogging(
       id: 'id' in block ? block.id : undefined,
       name: 'name' in block ? block.name : undefined,
       textLength: 'text' in block && typeof block.text === 'string' ? block.text.length : 0,
+      thinkingLength: 'thinking' in block && typeof block.thinking === 'string' ? block.thinking.length : 0,
+      hasSignature: 'signature' in block && typeof block.signature === 'string' && block.signature.length > 0,
       hasInput: 'input' in block && block.input !== undefined,
     })),
     contentTextPreview: buildPreview(

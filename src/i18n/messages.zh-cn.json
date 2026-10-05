@@ -62,7 +62,7 @@
   "effortTitle": "Effort",
   "anthropicEffortDescription": "Anthropic API 模型的 More Actions effort 配置项，支持 `low`、`medium`、`high`、`xhigh`、`max`。保存后会由 VS Code 随请求传入。",
   "anthropicThinkingTitle": "Thinking Type",
-  "anthropicThinkingDescription": "Anthropic API 模型的单次请求 thinking 开关，支持 `think`、`non-think`。选择 think 时发送 adaptive thinking；选择 non-think 时关闭 thinking。",
+  "anthropicThinkingDescription": "Anthropic API 模型的单次请求 thinking 开关，支持 `think`、`non-think`。选择 think 时发送 enabled thinking，并把 Effort 映射为 `budget_tokens`；选择 non-think 时关闭 thinking。",
   "chatThinkingTitle": "Thinking Type",
   "chatThinkingDescription": "Chat Completions API 模型的单次请求 thinking 开关，支持 `enabled`、`disabled`、`default`，默认值为 `default`：不携带 thinking 参数，只发送 `reasoning_effort`（与原生 Custom Endpoint 一致）。需要 `thinking.enabled` 的厂商请选择 `enabled`。",
   "unsupportedModelName": "暂未支持",

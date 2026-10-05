@@ -62,7 +62,7 @@
   "effortTitle": "Effort",
   "anthropicEffortDescription": "More Actions effort configuration for Anthropic API models. Supported values: `low`, `medium`, `high`, `xhigh`, `max`. Saved values are passed by VS Code with model requests.",
   "anthropicThinkingTitle": "Thinking Type",
-  "anthropicThinkingDescription": "Request-level thinking toggle for Anthropic API models. Supported values: `think`, `non-think`. When set to think, adaptive thinking is sent; when set to non-think, thinking is disabled.",
+  "anthropicThinkingDescription": "Request-level thinking toggle for Anthropic API models. Supported values: `think`, `non-think`. When set to think, enabled thinking is sent with `budget_tokens` mapped from Effort; when set to non-think, thinking is disabled.",
   "chatThinkingTitle": "Thinking Type",
   "chatThinkingDescription": "Request-level thinking toggle for Chat Completions API models. Supported values: `enabled`, `disabled`, `default`; the default is `default`, which omits the thinking parameter and only sends `reasoning_effort` (native Custom Endpoint shape). Choose `enabled` to also send `thinking.enabled` for vendors that require it.",
   "unsupportedModelName": "Not Supported",

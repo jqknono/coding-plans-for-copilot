@@ -10,7 +10,7 @@
 | A6 | `request.modelOptions.thinkingEffort = max` | 对该模型发起 `openai-chat` 请求 | 上游 payload 不包含 `thinking` 字段，包含 `reasoning_effort: "max"` |
 | A7 | `request.modelOptions.thinkingEffort = high` | 对该模型发起 `openai-responses` 请求 | 上游 payload 包含 `reasoning: { effort: "high" }` |
 | A7a | `request.modelOptions.thinkingEffort = max` | 对该模型发起 `openai-responses` 请求 | 上游 payload 包含 `reasoning: { effort: "max" }` |
-| A8 | `request.modelOptions.thinkingType = true` 且 `effort = max` | 对该模型发起 `anthropic` 请求 | 上游 payload 包含 `thinking: { type: "adaptive" }` 与 `output_config.effort: "max"` |
+| A8 | `request.modelOptions.thinkingType = true` 且 `effort = max` | 对该模型发起 `anthropic` 请求 | 上游 payload 包含 `thinking: { type: "enabled", budget_tokens, display: "summarized" }`（budget 由 effort 映射）与 `output_config.effort: "max"` |
 | A9 | `LanguageModelChatInformation` 按 VS Code 1.120 公开接口返回 | 打开 Language Models picker | 模型信息只包含公开 API 定义的字段 |
 | A10 | `modelOptions` 同时带有内部 source 标记、`temperature` 与 `thinkingEffort` | adapter 转发请求 | 仅剥离内部 source 标记，保留请求级覆盖项 |
 | A11 | `request.modelOptions.thinkingType = default` 且 `thinkingEffort = high` | 对该模型发起 `openai-chat` 请求 | 上游 payload 不包含 `thinking` 字段，可继续包含 `reasoning_effort: "high"` |
@@ -19,7 +19,7 @@
 | A14 | Copilot/VS Code 只传入 `modelConfiguration.reasoningEffort` | adapter 转发请求 | 归一成 `thinkingEffort`，上游按协议发送 effort；已有 `thinkingEffort` 时不覆盖 |
 | A15 | schema 默认 `thinkingType = default/think`，同时传入 Copilot `_enableThinking = false` | 对该模型发起聊天请求 | `openai-chat` 发送 `thinking.disabled` 且省略 `reasoning_effort`；`openai-responses` 省略 `reasoning`；`anthropic` 发送 `thinking.disabled` 且保留独立 effort。上游 JSON 不含 `_enableThinking` |
 | A16 | 显式 `thinkingType = enabled`，同时传入 Copilot `_enableThinking = false` | adapter 转发并构造 `openai-chat` payload | 保留显式 `thinkingType=enabled`，上游发送 `thinking.enabled` 与 `reasoning_effort` |
-| A17 | 仅传入 Copilot `_enableThinking = true`，无 `thinkingType` | 对该模型发起聊天请求 | 不改写 / 不强开 thinking；`anthropic` 不因此发送 `thinking.adaptive` |
+| A17 | 仅传入 Copilot `_enableThinking = true`，无 `thinkingType` | 对该模型发起聊天请求 | 不改写 / 不强开 thinking；`anthropic` 不因此发送 `thinking.enabled` |
 
 ```mermaid
 sequenceDiagram
