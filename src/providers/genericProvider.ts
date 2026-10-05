@@ -342,6 +342,29 @@ export class GenericAIProvider extends BaseAIProvider {
     return this.toProviderMessages(messages);
   }
 
+  private convertRequestMessages(messages: vscode.LanguageModelChatMessage[]): ChatMessage[] {
+    const providerMessages = this.convertMessages(messages);
+    const locale = vscode.workspace.getConfiguration('coding-plans').get<string>('locale', '').trim();
+    if (locale.length === 0) {
+      return providerMessages;
+    }
+
+    const localeInstruction =
+      `Use ${locale} for all natural-language reasoning/thinking content you emit and for the final response. ` +
+      'Preserve code, identifiers, file paths, commands, API fields, and literal text when required by the task.';
+    let insertionIndex = 0;
+    for (let index = 0; index < providerMessages.length; index += 1) {
+      if (providerMessages[index].role === 'system') {
+        insertionIndex = index + 1;
+      }
+    }
+    providerMessages.splice(insertionIndex, 0, {
+      role: 'system',
+      content: localeInstruction,
+    });
+    return providerMessages;
+  }
+
   async refreshModels(options: RefreshModelsOptions = {}): Promise<void> {
     if (options.forceDiscoveryRetry) {
       this.forceDiscoveryRetryRequested = true;
@@ -1268,7 +1291,7 @@ export class GenericAIProvider extends BaseAIProvider {
     trace: RequestTraceContext,
     token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse> {
-    const providerMessages = this.convertMessages(request.messages);
+    const providerMessages = this.convertRequestMessages(request.messages);
     this.logRequestMessageContentPreviews(trace, providerMessages);
     const messages = toOpenAIChatMessages(providerMessages);
     const supportsToolCalling = !!request.capabilities.toolCalling;
@@ -1421,7 +1444,7 @@ export class GenericAIProvider extends BaseAIProvider {
     trace: RequestTraceContext,
     token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse> {
-    const providerMessages = this.convertMessages(request.messages);
+    const providerMessages = this.convertRequestMessages(request.messages);
     this.logRequestMessageContentPreviews(trace, providerMessages);
     const reasoningOptions = this.buildOpenAIResponsesReasoningOptions(request);
     const tools = request.capabilities.toolCalling
@@ -1590,7 +1613,7 @@ export class GenericAIProvider extends BaseAIProvider {
     trace: RequestTraceContext,
     token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse> {
-    const providerMessages = this.convertMessages(request.messages);
+    const providerMessages = this.convertRequestMessages(request.messages);
     this.logRequestMessageContentPreviews(trace, providerMessages);
     const { system, messages } = toAnthropicMessages(providerMessages, () => this.generateToolCallId());
     const tools = request.capabilities.toolCalling

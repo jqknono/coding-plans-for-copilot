@@ -195,6 +195,7 @@ References: [Claude Code authentication](https://docs.volcengine.com/docs/82379/
 
 | Config Key | Type | Default Value | Description |
 | --- | --- | --- | --- |
+| `coding-plans.locale` | `string` | Empty | Locale override for natural-language responses and any reasoning/thinking text emitted by Coding Plans models. Enter a BCP 47 locale such as `zh-CN` or `en-US`, or a language name. Empty leaves language selection to the model. The extension sends this as a system instruction; model support and compliance vary. |
 | `coding-plans.logLevel` | `string` | `info` | Sets the native channel level: `trace` / `debug` / `info` / `warn` / `error` / `off`; only `trace` logs request message content previews. |
 | `coding-plans.autoRefreshModels` | `boolean` | `true` | Whether settings/API-key changes and empty model-picker queries automatically refresh runtime models and the VS Code model picker. Set to `false` to disable automatic refresh; manual refresh commands still work. |
 | `coding-plans.vendors` | `array` | Built-in vendor templates | Vendor configuration list. |

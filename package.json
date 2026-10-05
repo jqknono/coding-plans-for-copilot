@@ -225,6 +225,12 @@
                         "Disable Coding Plans logs."
                     ],
                     "description": "%configuration.coding-plans.logLevel.description%",
+                    "order": 7
+                },
+                "coding-plans.locale": {
+                    "type": "string",
+                    "default": "",
+                    "description": "%configuration.coding-plans.locale.description%",
                     "order": 6
                 },
                 "coding-plans.advanced": {
@@ -246,7 +252,7 @@
                     "type": "boolean",
                     "default": false,
                     "description": "%configuration.coding-plans.autoRefreshModels.description%",
-                    "order": 7
+                    "order": 8
                 },
                 "coding-plans.vendors": {
                     "type": "array",

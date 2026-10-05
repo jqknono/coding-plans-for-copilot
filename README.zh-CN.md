@@ -191,6 +191,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 | 配置键 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
+| `coding-plans.locale` | `string` | 空 | Coding Plans 模型的自然语言响应及模型输出的 reasoning/thinking 文本使用的语言。填写 `zh-CN`、`en-US` 等 BCP 47 locale 或语言名称；留空时由模型自行选择。插件通过 system 指令发送此约束，模型是否支持及遵循取决于上游模型。 |
 | `coding-plans.logLevel` | `string` | `info` | 设置原生通道等级：`trace` / `debug` / `info` / `warn` / `error` / `off`；只有 `trace` 记录请求消息内容预览。 |
 | `coding-plans.autoRefreshModels` | `boolean` | `true` | 是否允许 settings/API Key 变化和空模型选择器查询自动刷新运行时模型及 VS Code 模型选择器；设为 `false` 时，手动刷新命令仍可用。 |
 | `coding-plans.vendors` | `array` | 内置供应商模板 | 供应商配置列表。 |
