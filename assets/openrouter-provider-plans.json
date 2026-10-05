@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-10-04T13:49:48.576Z",
-  "generatedAtBeijing": "2026年10月4日 21:49:48",
-  "sourceGeneratedAt": "2026-09-30T14:42:47.765Z",
-  "sourceGeneratedAtBeijing": "2026年9月30日 22:42:47",
-  "sourceMetricsGeneratedAt": "2026-10-04T13:48:57.739Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月4日 21:48:57",
+  "generatedAt": "2026-10-05T16:55:43.476Z",
+  "generatedAtBeijing": "2026年10月6日 00:55:43",
+  "sourceGeneratedAt": "2026-10-05T16:54:40.634Z",
+  "sourceGeneratedAtBeijing": "2026年10月6日 00:54:40",
+  "sourceMetricsGeneratedAt": "2026-10-05T16:54:41.766Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月6日 00:54:41",
   "summary": {
     "openrouterProviderCount": 112,
-    "metricsProviderCount": 55,
-    "resolvedMetricsProviderCount": 55,
+    "metricsProviderCount": 54,
+    "resolvedMetricsProviderCount": 54,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
-    "heuristicProviderCount": 9,
-    "providersWithPlans": 18,
+    "heuristicProviderCount": 8,
+    "providersWithPlans": 17,
     "pendingCount": 37,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
@@ -410,60 +410,6 @@
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://docs.coreweave.com/policies/terms-of-service/privacy-policy",
       "termsOfServiceUrl": "https://docs.coreweave.com/policies/terms-of-service",
-      "statusPageUrl": null,
-      "parseMode": "official-website-heuristic"
-    },
-    {
-      "slug": "digitalocean",
-      "openrouterName": "DigitalOcean",
-      "providerId": null,
-      "plans": [
-        {
-          "name": "官网价格参考",
-          "currentPrice": 4,
-          "currentPriceText": "$4/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "来源: https://www.digitalocean.com/pricing",
-          "serviceDetails": [
-            "官网价格页参考，具体权益以官网说明为准"
-          ]
-        },
-        {
-          "name": "官网价格参考 2",
-          "currentPrice": 12,
-          "currentPriceText": "$12/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "官网价格页参考，具体权益以官网说明为准"
-          ]
-        },
-        {
-          "name": "官网价格参考 3",
-          "currentPrice": 11,
-          "currentPriceText": "$11/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "官网价格页参考，具体权益以官网说明为准"
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://www.digitalocean.com",
-        "https://www.digitalocean.com/pricing"
-      ],
-      "pricingPageUrl": "https://www.digitalocean.com/pricing",
-      "officialWebsiteUrl": "https://www.digitalocean.com",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://www.digitalocean.com/legal/privacy-policy",
-      "termsOfServiceUrl": "https://www.digitalocean.com/legal/terms-of-service-agreement",
       "statusPageUrl": null,
       "parseMode": "official-website-heuristic"
     },
@@ -1247,6 +1193,15 @@
       "blocked": false
     },
     {
+      "slug": "digitalocean",
+      "openrouterName": "DigitalOcean",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.digitalocean.com",
+      "pricingPageUrl": "https://cloud.digitalocean.com/login?redirect_url=https%3A%2F%2Fcloud.digitalocean.com%2Fbilling",
+      "reason": "官网价格页探测失败：https://www.digitalocean.com/pricing: HTTP 500",
+      "blocked": false
+    },
+    {
       "slug": "fireworks",
       "openrouterName": "Fireworks",
       "providerId": null,
@@ -1280,15 +1235,6 @@
       "officialWebsiteUrl": "https://www.inceptron.io",
       "pricingPageUrl": "https://www.inceptron.io/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3/h / $5/h / $8/h）",
-      "blocked": false
-    },
-    {
-      "slug": "io-net",
-      "openrouterName": "Io Net",
-      "providerId": null,
-      "officialWebsiteUrl": "https://io.net",
-      "pricingPageUrl": "https://io.net",
-      "reason": "官网价格页探测失败：https://io.net/pricing: HTTP 404",
       "blocked": false
     },
     {
