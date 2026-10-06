@@ -78,7 +78,6 @@ export function resolveChatLanguageModelsModelUrl(
 function toChatLanguageModelsReasoningEffortFormat(
   apiType: 'chat-completions' | 'responses' | 'messages',
 ): 'chat-completions' | 'responses' | 'messages' {
-  // reasoningEffortFormat 与 apiType 保持一致。
   return apiType;
 }
 
