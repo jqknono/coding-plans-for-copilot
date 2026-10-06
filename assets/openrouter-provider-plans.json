@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-10-05T16:55:43.476Z",
-  "generatedAtBeijing": "2026年10月6日 00:55:43",
-  "sourceGeneratedAt": "2026-10-05T16:54:40.634Z",
-  "sourceGeneratedAtBeijing": "2026年10月6日 00:54:40",
-  "sourceMetricsGeneratedAt": "2026-10-05T16:54:41.766Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月6日 00:54:41",
+  "generatedAt": "2026-10-06T14:51:54.613Z",
+  "generatedAtBeijing": "2026年10月6日 22:51:54",
+  "sourceGeneratedAt": "2026-10-06T14:50:58.102Z",
+  "sourceGeneratedAtBeijing": "2026年10月6日 22:50:58",
+  "sourceMetricsGeneratedAt": "2026-10-06T14:50:59.546Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月6日 22:50:59",
   "summary": {
     "openrouterProviderCount": 112,
-    "metricsProviderCount": 54,
-    "resolvedMetricsProviderCount": 54,
+    "metricsProviderCount": 53,
+    "resolvedMetricsProviderCount": 53,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
-    "heuristicProviderCount": 8,
-    "providersWithPlans": 17,
-    "pendingCount": 37,
-    "blockedPendingCount": 2,
+    "heuristicProviderCount": 9,
+    "providersWithPlans": 18,
+    "pendingCount": 35,
+    "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/bfffa78ca9c4a366eccc61a76b8dca03.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/cb54b11e70d26492c777c8eb0c0dbee9.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -410,6 +410,60 @@
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://docs.coreweave.com/policies/terms-of-service/privacy-policy",
       "termsOfServiceUrl": "https://docs.coreweave.com/policies/terms-of-service",
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "digitalocean",
+      "openrouterName": "DigitalOcean",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 4,
+          "currentPriceText": "$4/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.digitalocean.com/pricing",
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 12,
+          "currentPriceText": "$12/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        },
+        {
+          "name": "官网价格参考 3",
+          "currentPrice": 11,
+          "currentPriceText": "$11/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.digitalocean.com",
+        "https://www.digitalocean.com/pricing"
+      ],
+      "pricingPageUrl": "https://www.digitalocean.com/pricing",
+      "officialWebsiteUrl": "https://www.digitalocean.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.digitalocean.com/legal/privacy-policy",
+      "termsOfServiceUrl": "https://www.digitalocean.com/legal/terms-of-service-agreement",
       "statusPageUrl": null,
       "parseMode": "official-website-heuristic"
     },
@@ -1193,15 +1247,6 @@
       "blocked": false
     },
     {
-      "slug": "digitalocean",
-      "openrouterName": "DigitalOcean",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.digitalocean.com",
-      "pricingPageUrl": "https://cloud.digitalocean.com/login?redirect_url=https%3A%2F%2Fcloud.digitalocean.com%2Fbilling",
-      "reason": "官网价格页探测失败：https://www.digitalocean.com/pricing: HTTP 500",
-      "blocked": false
-    },
-    {
       "slug": "fireworks",
       "openrouterName": "Fireworks",
       "providerId": null,
@@ -1252,8 +1297,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://makora.statuspage.io",
       "pricingPageUrl": "https://makora.statuspage.io",
-      "reason": "官网价格页探测失败：https://makora.statuspage.io/pricing: HTTP 404",
-      "blocked": false
+      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
+      "blocked": true
     },
     {
       "slug": "mancer",
@@ -1397,15 +1442,6 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "tenstorrent",
-      "openrouterName": "Tenstorrent",
-      "providerId": null,
-      "officialWebsiteUrl": "https://console.tenstorrent.com",
-      "pricingPageUrl": "https://console.tenstorrent.com",
-      "reason": "官网价格页探测失败：https://console.tenstorrent.com/pricing: HTTP 404",
       "blocked": false
     },
     {
