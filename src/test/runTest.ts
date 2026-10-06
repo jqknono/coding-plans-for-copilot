@@ -2834,12 +2834,12 @@ function runChatLanguageModelsConfigTests(): void {
   assert.equal(toChatLanguageModelsApiType('anthropic', undefined), 'messages');
   assert.equal(toChatLanguageModelsApiType('openai-chat', 'responses'), 'responses');
 
-  // 模型对象生成：url 为完整 endpoint，id 为 vendor/model
+  // 模型对象生成：url 为完整 endpoint，id 为 model name
   const config = toChatLanguageModelsModelConfig(
     { name: 'demo', baseUrl: 'https://api.example.com/v1', defaultApiStyle: 'openai-chat' } as VendorRecord,
     { name: 'gpt-x', contextSize: 128000 } as VendorModelRecord,
   );
-  assert.equal(config.id, 'demo/gpt-x');
+  assert.equal(config.id, 'gpt-x');
   assert.equal(config.url, 'https://api.example.com/v1/chat/completions');
   assert.equal(config.apiType, 'chat-completions');
   assert.equal(config.contextWindow, 128000);

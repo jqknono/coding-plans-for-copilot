@@ -26,7 +26,8 @@
         "/^node --test tests/scripts/fetch-provider-pricing\\.test\\.js$/": {
             "approve": true,
             "matchCommandLine": true
-        }
+        },
+        "npx tsc": true
     },
     "coding-plans.logLevel": "debug"
 }

@@ -11,7 +11,7 @@ export interface ChatLanguageModelsModelConfig {
   id: string;
   maxOutputTokens?: number;
   name: string;
-  reasoningEffortFormat?: 'chat-completions' | 'responses';
+  reasoningEffortFormat?: 'chat-completions' | 'responses' | 'messages';
   streaming?: boolean;
   supportsReasoningEffort?: string[];
   thinking?: boolean;
@@ -77,9 +77,9 @@ export function resolveChatLanguageModelsModelUrl(
 
 function toChatLanguageModelsReasoningEffortFormat(
   apiType: 'chat-completions' | 'responses' | 'messages',
-): 'chat-completions' | 'responses' | undefined {
-  // reasoningEffortFormat 与 apiType 保持一致；messages（Anthropic）无对应格式，省略。
-  return apiType === 'chat-completions' || apiType === 'responses' ? apiType : undefined;
+): 'chat-completions' | 'responses' | 'messages' {
+  // reasoningEffortFormat 与 apiType 保持一致。
+  return apiType;
 }
 
 /**
@@ -94,7 +94,7 @@ export function toChatLanguageModelsModelConfig(
   const apiType = toChatLanguageModelsApiType(model.apiStyle ?? vendor.defaultApiStyle, model.apiType);
   const config: ChatLanguageModelsModelConfig = {
     apiType,
-    id: `${vendor.name}/${model.name}`,
+    id: model.name,
     name: model.name,
     url: resolveChatLanguageModelsModelUrl(vendor.baseUrl, apiType),
   };
@@ -104,10 +104,7 @@ export function toChatLanguageModelsModelConfig(
   }
   config.editTools = [...CHAT_LANGUAGE_MODELS_FIXED_EDIT_TOOLS];
   config.maxOutputTokens = CHAT_LANGUAGE_MODELS_FIXED_MAX_OUTPUT_TOKENS;
-  const reasoningEffortFormat = toChatLanguageModelsReasoningEffortFormat(apiType);
-  if (reasoningEffortFormat !== undefined) {
-    config.reasoningEffortFormat = reasoningEffortFormat;
-  }
+  config.reasoningEffortFormat = toChatLanguageModelsReasoningEffortFormat(apiType);
   if (model.streaming !== undefined) {
     config.streaming = model.streaming;
   }
