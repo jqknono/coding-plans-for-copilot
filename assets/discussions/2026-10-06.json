@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-06",
+  "generatedAt": "2026-10-06T12:55:45.495Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 18,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "GitHub": 1,
+      "Anthropic": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1246675",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1246675",
+      "title": "不让干的都干了， A/还是没有封号，实在是善",
+      "content": "IP: flower 云 JP/SG/US 出口随便选，还有一个甲骨文大阪出口，几台机器的 IP 都不一样，甚至还有腾讯云 SG 的。 环境：Mac + surge / Linux + http proxy （非 tun ） / Linux 直连 客户端: CC + 网页版 + App 对话语言：全部简体中文 对话内容：因为要处理公司资料，他知道我在中国，详细到具体省市，公司名 注册：原来的 claude 号因为共享被封了，销号后使用同一邮箱，同一信用卡，指纹浏览器注册（和被封时同一 IP ），注册后原来被封的 CC 重新登陆，未做任何环境清理 时区：SG （ SG 和北京时间没有时差） 支付：Apple Card （自己的，随便填了个免税州地址） Github：绑定了，上面都是中国相关的 repo 用量：Max 20 每周都用完，一滴不剩 薅羊毛：每月必取消 plan ，然后 Pro -&gt; Max 5 -&gt; Max 20 玩一遍 上面干的基本把不能干的都干了，一点事没有，可见风控他就是个玄学，直接注册，用就完了。上次翻车用了 sub2api 过了半小时就翻车了，这次没有用",
+      "author": "WorldDominator",
+      "createdAt": "2026-10-06T12:50:04.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "GitHub",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "用户描述了使用 GitHub Copilot 订阅计划的经历，包括从 Max 5 升级到 Max 20 的操作、账号被封后重试的过程，以及高频 API 调用（每周 20 次）的实际使用情况。",
+        "topics": [
+          "订阅",
+          "Max 5",
+          "Max 20",
+          "注册",
+          "账号封禁",
+          "云服务",
+          "API调用"
+        ],
+        "planMentioned": "Max 5, Max 20",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/420",
+      "analyzedAt": "2026-10-06T13:07:13.103Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1246665: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1246660: LLM returned empty content (finish_reason=stop)",
+    "analysis failed for v2ex-1246636: LLM returned empty content (finish_reason=stop)"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "date": "2026-10-05",
-  "generatedAt": "2026-10-05T13:52:06.107Z",
+  "generatedAt": "2026-10-06T12:55:45.495Z",
   "config": {
     "sources": [
       "v2ex",
@@ -24,14 +24,13 @@
     "relevanceThreshold": 0.7
   },
   "summary": {
-    "totalPostsFetched": 50,
-    "postsAfterKeywordFilter": 11,
-    "relevantPosts": 4,
-    "discussionsCreated": 4,
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 18,
+    "relevantPosts": 5,
+    "discussionsCreated": 5,
     "discussionsSkipped": 0,
     "supplierMentions": {
-      "Claude, Codex, Cursor, Zhipu GLM, Z.ai, Kimi, MiniMax, Xiaomi MiMo, Qoder, OpenRouter, DeepSeek": 1,
-      "Claude": 2,
+      "GitHub": 1,
       "Anthropic": 1
     }
   },
@@ -167,11 +166,46 @@
       },
       "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/419",
       "analyzedAt": "2026-10-05T13:57:33.316Z"
+    },
+    {
+      "id": "v2ex-1246558",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1246558",
+      "title": "目前有没有用了两年 Claude 没被封的？",
+      "content": "特别好奇，国内有没有人两年一直还在用 claude ，目前还稳稳地用着的，有吗？用的 max 还是 pro ？日常用的多吗？有没有保号经验分享下？",
+      "author": "microscopec",
+      "createdAt": "2026-10-05T15:49:39.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Anthropic",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户询问国内是否有人连续使用 Claude 两年未被封号，想了解使用的是 Pro 还是 Max 套餐、日常使用频率以及保号经验。",
+        "topics": [
+          "Claude",
+          "订阅",
+          "封号",
+          "Pro",
+          "Max",
+          "保号经验"
+        ],
+        "planMentioned": "Pro, Max",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/421",
+      "analyzedAt": "2026-10-06T13:07:20.140Z"
     }
   ],
   "failures": [
     "linuxdo: https://linux.do/latest.rss → 429",
     "linuxdo: https://linux.do/latest.json → 429",
-    "linuxdo: https://linux.do/latest.json → 429"
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1246665: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1246660: LLM returned empty content (finish_reason=stop)",
+    "analysis failed for v2ex-1246636: LLM returned empty content (finish_reason=stop)"
   ]
 }
