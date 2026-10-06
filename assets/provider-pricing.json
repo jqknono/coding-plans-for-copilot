@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-05T16:54:40.634Z",
+  "updatedAt": "2026-10-06T08:35:38.571Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -176,9 +176,7 @@
             "商品类型: Token Plan 个人版"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "baidu-qianfan-ai: fetch failed"
+      ]
     },
     {
       "provider": "cerebras-code",
@@ -1646,7 +1644,6 @@
     }
   ],
   "failures": [
-    "baidu-qianfan-ai: fetch failed",
     "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
   ]
 }
