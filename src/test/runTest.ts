@@ -2793,10 +2793,7 @@ function runChatLanguageModelsConfigTests(): void {
     toChatLanguageModelsApiType,
     toChatLanguageModelsModelConfig,
   } = require('../config/chatLanguageModelsConfig') as {
-    resolveChatLanguageModelsModelUrl: (
-      baseUrl: string,
-      apiType: 'chat-completions' | 'responses' | 'messages',
-    ) => string;
+    resolveChatLanguageModelsModelUrl: (baseUrl: string) => string;
     toChatLanguageModelsApiType: (
       apiStyle: 'openai-chat' | 'openai-responses' | 'anthropic' | undefined,
       apiType: 'chat' | 'responses' | 'anthropic' | undefined,
@@ -2807,26 +2804,30 @@ function runChatLanguageModelsConfigTests(): void {
     ) => Record<string, unknown>;
   };
 
-  // url 应解析为完整 endpoint，与运行时 `${baseUrl}/<path>` 一致
+  // url 直接使用原始 baseUrl，仅去掉尾斜杠，不追加 API 路径
   assert.equal(
-    resolveChatLanguageModelsModelUrl('https://api.example.com/v1', 'chat-completions'),
-    'https://api.example.com/v1/chat/completions',
+    resolveChatLanguageModelsModelUrl('https://api.example.com/v1'),
+    'https://api.example.com/v1',
   );
   assert.equal(
-    resolveChatLanguageModelsModelUrl('https://api.example.com/v1/', 'responses'),
-    'https://api.example.com/v1/responses',
+    resolveChatLanguageModelsModelUrl('https://api.example.com/v1/'),
+    'https://api.example.com/v1',
   );
   assert.equal(
-    resolveChatLanguageModelsModelUrl('https://api.anthropic.com', 'messages'),
-    'https://api.anthropic.com/messages',
+    resolveChatLanguageModelsModelUrl('http://100.64.0.14:34046/v1'),
+    'http://100.64.0.14:34046/v1',
   );
-  // 已含显式 API 路径时原样使用，避免重复拼接
   assert.equal(
-    resolveChatLanguageModelsModelUrl('https://gateway.example.com/v1/chat/completions', 'chat-completions'),
+    resolveChatLanguageModelsModelUrl('https://api.anthropic.com'),
+    'https://api.anthropic.com',
+  );
+  // 已含完整路径时也原样保留（仅去尾斜杠）
+  assert.equal(
+    resolveChatLanguageModelsModelUrl('https://gateway.example.com/v1/chat/completions'),
     'https://gateway.example.com/v1/chat/completions',
   );
   // 空 baseUrl 保持原样
-  assert.equal(resolveChatLanguageModelsModelUrl('', 'chat-completions'), '');
+  assert.equal(resolveChatLanguageModelsModelUrl(''), '');
 
   // apiType 映射
   assert.equal(toChatLanguageModelsApiType('openai-chat', undefined), 'chat-completions');
@@ -2834,23 +2835,24 @@ function runChatLanguageModelsConfigTests(): void {
   assert.equal(toChatLanguageModelsApiType('anthropic', undefined), 'messages');
   assert.equal(toChatLanguageModelsApiType('openai-chat', 'responses'), 'responses');
 
-  // 模型对象生成：url 为完整 endpoint，id 为 model name（不含 vendor 前缀）
+  // 模型对象生成：url 为原始 baseUrl，id 为 model name（不含 vendor 前缀）
   const config = toChatLanguageModelsModelConfig(
     { name: 'demo', baseUrl: 'https://api.example.com/v1', defaultApiStyle: 'openai-chat' } as VendorRecord,
     { name: 'gpt-x', contextSize: 128000 } as VendorModelRecord,
   );
   assert.equal(config.id, 'gpt-x');
-  assert.equal(config.url, 'https://api.example.com/v1/chat/completions');
+  assert.equal(config.url, 'https://api.example.com/v1');
   assert.equal(config.apiType, 'chat-completions');
   assert.equal(config.contextWindow, 128000);
   assert.equal(config.reasoningEffortFormat, 'chat-completions');
 
-  // Anthropic 模型也输出 reasoningEffortFormat
+  // Anthropic 模型也输出 reasoningEffortFormat，url 仍为原始 baseUrl
   const anthropicConfig = toChatLanguageModelsModelConfig(
     { name: 'cliproxyapi', baseUrl: 'https://api.anthropic.com', defaultApiStyle: 'anthropic' } as VendorRecord,
     { name: 'claude-opus-4.6', contextSize: 200000 } as VendorModelRecord,
   );
   assert.equal(anthropicConfig.id, 'claude-opus-4.6');
+  assert.equal(anthropicConfig.url, 'https://api.anthropic.com');
   assert.equal(anthropicConfig.reasoningEffortFormat, 'messages');
   assert.equal(anthropicConfig.apiType, 'messages');
 

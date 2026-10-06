@@ -26,15 +26,6 @@ export const CHAT_LANGUAGE_MODELS_FIXED_EDIT_TOOLS = ['apply-patch', 'find-repla
 export const CHAT_LANGUAGE_MODELS_FIXED_MAX_OUTPUT_TOKENS = 100000;
 export const CHAT_LANGUAGE_MODELS_FIXED_SUPPORTS_REASONING_EFFORT = ['xhigh', 'high', 'max'];
 
-const CHAT_LANGUAGE_MODELS_API_PATH_BY_TYPE: Record<
-  'chat-completions' | 'responses' | 'messages',
-  string
-> = {
-  'chat-completions': '/chat/completions',
-  responses: '/responses',
-  messages: '/messages',
-};
-
 export function toChatLanguageModelsApiType(
   apiStyle: VendorApiStyle | undefined,
   apiType: VendorModelConfig['apiType'],
@@ -55,24 +46,13 @@ export function toChatLanguageModelsApiType(
 }
 
 /**
- * 将扩展内的 baseUrl 解析为 chatLanguageModels.json 模型级完整 endpoint URL。
- * VS Code customendpoint 对模型 url 的语义是完整请求地址：若未包含显式 API 路径
- * （/chat/completions、/responses、/messages），会按 apiType 自动补路径，可能与
- * 扩展运行时使用的地址不一致。因此这里显式拼出完整 endpoint，与运行时保持一致。
+ * 将扩展内的 baseUrl 解析为 chatLanguageModels.json 模型级 url。
+ * 直接使用供应商原始配置（如 http://100.64.0.14:34046/v1），仅做尾斜杠规范化，
+ * 不擅自追加 /chat/completions、/responses、/messages 等路径。
  */
-export function resolveChatLanguageModelsModelUrl(
-  baseUrl: string,
-  apiType: 'chat-completions' | 'responses' | 'messages',
-): string {
+export function resolveChatLanguageModelsModelUrl(baseUrl: string): string {
   const normalized = baseUrl.trim().replace(/\/+$/, '');
-  if (normalized.length === 0) {
-    return baseUrl;
-  }
-  const apiPath = CHAT_LANGUAGE_MODELS_API_PATH_BY_TYPE[apiType];
-  if (normalized.toLowerCase().endsWith(apiPath)) {
-    return normalized;
-  }
-  return `${normalized}${apiPath}`;
+  return normalized.length === 0 ? baseUrl : normalized;
 }
 
 function toChatLanguageModelsReasoningEffortFormat(
@@ -95,7 +75,7 @@ export function toChatLanguageModelsModelConfig(
     apiType,
     id: model.name,
     name: model.name,
-    url: resolveChatLanguageModelsModelUrl(vendor.baseUrl, apiType),
+    url: resolveChatLanguageModelsModelUrl(vendor.baseUrl),
   };
 
   if (model.contextSize !== undefined) {
