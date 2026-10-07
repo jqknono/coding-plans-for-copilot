@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-10-06T14:51:54.613Z",
-  "generatedAtBeijing": "2026年10月6日 22:51:54",
-  "sourceGeneratedAt": "2026-10-06T14:50:58.102Z",
-  "sourceGeneratedAtBeijing": "2026年10月6日 22:50:58",
-  "sourceMetricsGeneratedAt": "2026-10-06T14:50:59.546Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月6日 22:50:59",
+  "generatedAt": "2026-10-07T15:21:53.206Z",
+  "generatedAtBeijing": "2026年10月7日 23:21:53",
+  "sourceGeneratedAt": "2026-10-07T15:20:53.149Z",
+  "sourceGeneratedAtBeijing": "2026年10月7日 23:20:53",
+  "sourceMetricsGeneratedAt": "2026-10-07T15:20:54.610Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月7日 23:20:54",
   "summary": {
     "openrouterProviderCount": 112,
-    "metricsProviderCount": 53,
-    "resolvedMetricsProviderCount": 53,
+    "metricsProviderCount": 52,
+    "resolvedMetricsProviderCount": 52,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 9,
     "providersWithPlans": 18,
-    "pendingCount": 35,
+    "pendingCount": 34,
     "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -1352,15 +1352,6 @@
       "officialWebsiteUrl": "https://docs.nebius.com",
       "pricingPageUrl": "https://docs.nebius.com",
       "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "nextbit",
-      "openrouterName": "NextBit",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.nextbit256.com",
-      "pricingPageUrl": "https://www.nextbit256.com",
-      "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
       "blocked": false
     },
     {
