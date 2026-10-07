@@ -1,0 +1,76 @@
+{
+  "date": "2026-10-07",
+  "generatedAt": "2026-10-07T12:49:20.865Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 14,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "OpenAI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1246819",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1246819",
+      "title": "Windows 版本的 codex(chatgpt)客户端经常出问题，是我一个人吗？",
+      "content": "2 天更新 8 回我就不说了，每次重新打开客户端的时候头像经常加载不出来，有时候会显示用户名有时候又会显示邮箱地址。 网络环境完全不变的情况下，用量和重置经常无法加载，那个狗屁宠物也是有时候出来了不说话，有时候鼠标根本拽不动。 用内置的浏览器跑定时任务经常出现莫名其妙的断联失控，明明跑的好好的，突然就没法用了。控制系统浏览器也经常连不上。 再加上 5h 限制真是狗的一笔，经常排除错误到一半就没量了。 难道只有我一个的 Windows 客户端这么难用？ mac 的没有这种问题吗",
+      "author": "sakujo",
+      "createdAt": "2026-10-07T12:12:05.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.95,
+        "summary": "用户抱怨Windows版Codex客户端经常出现加载问题、断联和5小时使用限制，怀疑只有自己遇到这些问题，并询问Mac版是否更好。",
+        "topics": [
+          "客户端稳定性",
+          "加载问题",
+          "用量限制",
+          "功能故障",
+          "订阅限制"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/423",
+      "analyzedAt": "2026-10-07T12:59:08.387Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1246789: LLM returned invalid JSON: Unexpected token 'U', \"User Safety: safe\" is not valid JSON",
+    "analysis failed for v2ex-1246776: The operation was aborted due to timeout"
+  ]
+}
