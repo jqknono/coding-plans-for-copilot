@@ -41,7 +41,7 @@ jobs:
         run: node --test tests/scripts/fetch-provider-pricing.test.js tests/scripts/pricing-execution.test.js
 
       - name: Fetch latest provider pricing
-        run: npm run pricing:fetch
+        run: npm run pricing:fetch -- --confirm
 
       - name: Detect provider pricing parsing failures
         id: pricing_failures

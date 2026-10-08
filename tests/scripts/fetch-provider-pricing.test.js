@@ -11,6 +11,10 @@ const {
   parseAliyunServiceDetailsFromDocsHtml,
   parseAliyunTokenPlansFromDocsHtml,
   parseHuaweiTokenPlans,
+  parseOpenCodePlans,
+  mergeScopedPricingResults,
+  parseFetchArgs,
+  assertPricingChangesConfirmed,
   parseCompshareCodingPlansFromHtml,
   parseKimiDomesticMembershipPlansFromHtml,
   parseKimiDomesticMembershipPlansFromText,
@@ -30,6 +34,178 @@ const {
 
 test('extractProviderIdFromFailure reads provider id prefix', () => {
   assert.equal(extractProviderIdFromFailure('jdcloud-ai: page.goto: Timeout 20000ms exceeded'), 'jdcloud-ai');
+});
+
+test('parseOpenCodePlans returns Go and Go Plus monthly plans without the expired first-month promo', async () => {
+  const result = await parseOpenCodePlans();
+
+  assert.equal(result.provider, 'opencode');
+  assert.deepEqual(
+    result.plans.map((plan) => [plan.name, plan.currentPriceText, plan.currentPrice]),
+    [
+      ['OpenCode Go', '$10/月', 10],
+      ['OpenCode Go Plus', '$40/月', 40],
+    ],
+  );
+  for (const plan of result.plans) {
+    assert.doesNotMatch(`${plan.currentPriceText} ${plan.notes} ${plan.serviceDetails.join(' ')}`, /首月/);
+  }
+});
+
+test('parseFetchArgs refreshes all providers by default and reads --provider in both forms', () => {
+  assert.deepEqual(parseFetchArgs([]), { help: false, providerId: null, confirm: false });
+  assert.deepEqual(parseFetchArgs(['--provider', 'opencode']), { help: false, providerId: 'opencode', confirm: false });
+  assert.deepEqual(parseFetchArgs(['--provider=opencode']), { help: false, providerId: 'opencode', confirm: false });
+});
+
+test('parseFetchArgs reads --confirm alone and alongside --provider', () => {
+  assert.deepEqual(parseFetchArgs(['--confirm']), { help: false, providerId: null, confirm: true });
+  assert.deepEqual(parseFetchArgs(['--provider=opencode', '--confirm']), {
+    help: false,
+    providerId: 'opencode',
+    confirm: true,
+  });
+});
+
+test('parseFetchArgs returns help before validating other arguments', () => {
+  assert.deepEqual(parseFetchArgs(['-h']), { help: true, providerId: null, confirm: false });
+  assert.deepEqual(parseFetchArgs(['--help', '--provider', 'no-such-provider']), {
+    help: true,
+    providerId: null,
+    confirm: false,
+  });
+});
+
+for (const [name, argv, message] of [
+  ['an unknown provider id', ['--provider', 'no-such-provider'], /unknown provider id: no-such-provider/],
+  ['a missing provider value', ['--provider'], /--provider requires a provider id/],
+  ['an empty inline provider value', ['--provider='], /--provider requires a provider id/],
+  ['a flag in place of a provider value', ['--provider', '--verbose'], /--provider requires a provider id/],
+  ['an unknown argument', ['--all'], /unknown argument: --all/],
+]) {
+  test(`parseFetchArgs rejects ${name}`, () => {
+    assert.throws(() => parseFetchArgs(argv), message);
+  });
+}
+
+test('mergeScopedPricingResults keeps other providers and failures when refreshing one provider', () => {
+  const merged = mergeScopedPricingResults({
+    providerId: 'opencode',
+    existingProviders: [
+      { provider: 'opencode', plans: [{ name: 'old' }] },
+      { provider: 'kimi-ai', plans: [{ name: 'K1' }] },
+    ],
+    existingFailures: ['opencode: old failure', 'kimi-ai: kept failure'],
+    providers: [{ provider: 'opencode', plans: [{ name: 'new' }] }],
+    failures: [],
+  });
+
+  assert.deepEqual(merged.providers, [
+    { provider: 'kimi-ai', plans: [{ name: 'K1' }] },
+    { provider: 'opencode', plans: [{ name: 'new' }] },
+  ]);
+  assert.deepEqual(merged.failures, ['kimi-ai: kept failure']);
+});
+
+test('mergeScopedPricingResults returns refreshed results unchanged without a provider scope', () => {
+  const providers = [{ provider: 'opencode', plans: [] }];
+  const failures = ['opencode: boom'];
+
+  const merged = mergeScopedPricingResults({
+    providerId: null,
+    existingProviders: [{ provider: 'kimi-ai', plans: [] }],
+    existingFailures: ['kimi-ai: kept failure'],
+    providers,
+    failures,
+  });
+
+  assert.deepEqual(merged, { providers, failures });
+});
+
+function pricingPlan(name, currentPrice, overrides = {}) {
+  return {
+    name,
+    currentPrice,
+    currentPriceText: `$${currentPrice}/月`,
+    originalPrice: null,
+    originalPriceText: null,
+    notes: null,
+    serviceDetails: ['随时取消'],
+    ...overrides,
+  };
+}
+
+const pricedProviders = [
+  { provider: 'opencode', plans: [pricingPlan('OpenCode Go', 10), pricingPlan('OpenCode Go Plus', 40)] },
+  { provider: 'kimi-ai', plans: [pricingPlan('Plus（海外）', 19)] },
+];
+
+const repricedProviders = [
+  { provider: 'opencode', plans: [pricingPlan('OpenCode Go', 12), pricingPlan('OpenCode Go Plus', 40)] },
+  { provider: 'kimi-ai', plans: [pricingPlan('Max（海外）', 99)] },
+];
+
+test('assertPricingChangesConfirmed allows a full run whose plans match the existing asset', () => {
+  assert.doesNotThrow(() =>
+    assertPricingChangesConfirmed({
+      providerId: null,
+      confirm: false,
+      existingProviders: pricedProviders,
+      freshProviders: structuredClone(pricedProviders),
+    }),
+  );
+});
+
+test('assertPricingChangesConfirmed reports added, removed and repriced plans in a blocked full run', () => {
+  assert.throws(
+    () =>
+      assertPricingChangesConfirmed({
+        providerId: null,
+        confirm: false,
+        existingProviders: pricedProviders,
+        freshProviders: repricedProviders,
+      }),
+    (error) => {
+      assert.match(error.message, /--confirm/);
+      assert.match(error.message, /opencode: repriced OpenCode Go/);
+      assert.match(error.message, /kimi-ai: removed Plus/);
+      assert.match(error.message, /kimi-ai: added Max/);
+      return true;
+    },
+  );
+});
+
+for (const [label, options] of [
+  ['--confirm', { providerId: null, confirm: true }],
+  ['a single-provider scope', { providerId: 'opencode', confirm: false }],
+]) {
+  test(`assertPricingChangesConfirmed allows plan changes with ${label}`, () => {
+    assert.doesNotThrow(() =>
+      assertPricingChangesConfirmed({ ...options, existingProviders: pricedProviders, freshProviders: repricedProviders }),
+    );
+  });
+}
+
+test('assertPricingChangesConfirmed ignores note and service detail changes', () => {
+  const noteOnlyProviders = [
+    {
+      provider: 'opencode',
+      plans: [
+        pricingPlan('OpenCode Go', 10, { notes: '已售罄', serviceDetails: ['新文案'] }),
+        pricingPlan('OpenCode Go Plus', 40),
+      ],
+    },
+    { provider: 'kimi-ai', plans: [pricingPlan('Plus（海外）', 19)] },
+  ];
+
+  assert.doesNotThrow(() =>
+    assertPricingChangesConfirmed({
+      providerId: null,
+      confirm: false,
+      existingProviders: pricedProviders,
+      freshProviders: noteOnlyProviders,
+    }),
+  );
 });
 
 test('restoreFailedProvidersFromSnapshot keeps previous plans and marks them stale', () => {

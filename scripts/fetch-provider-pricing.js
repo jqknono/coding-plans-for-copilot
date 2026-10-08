@@ -3950,21 +3950,37 @@ async function parseXiaomiMimoTokenPlans() {
 
 async function parseOpenCodePlans() {
   const goPageUrl = 'https://opencode.ai/go';
+  const goDocsUrl = 'https://opencode.ai/docs/go/';
   const mainPageUrl = 'https://opencode.ai';
 
-  // OpenCode Go pricing from official page
+  // OpenCode Go 与 Go Plus 价格来自官网, 用量规则来自 Go 文档.
+  // 月度额度为按模型划分的美元额度上限, 5 小时额度为月额度的 20%, 每周为 50%.
   const plans = [
     asPlan({
       name: 'OpenCode Go',
       currentPriceText: '$10/月',
       currentPrice: 10,
       unit: '月',
-      notes: '首月 $5',
+      notes: '模型低成本接入',
       serviceDetails: [
-        '首月 $5，之后 $10/月',
-        '支持模型: GLM-5、Kimi K2.5、MiMo-V2-Pro、MiMo-V2-Omni、MiniMax M2.5、MiniMax M2.7',
-        '每 5 小时请求数: 1,150~20,000（按模型不同）',
-        '可充值 Credit，随时取消',
+        '支持模型: GLM-5.3、Kimi K3、DeepSeek V4、MiMo-V2.6、MiniMax M3、Qwen3.8、GPT 6 Luna 等（以官网列表为准）',
+        '月度额度: $15~$60（按模型不同）',
+        '每 5 小时请求数: 110~45,300（按模型不同，估算值）',
+        '随时取消',
+        '适配任何 AI 编程工具',
+      ],
+    }),
+    asPlan({
+      name: 'OpenCode Go Plus',
+      currentPriceText: '$40/月',
+      currentPrice: 40,
+      unit: '月',
+      notes: '更高用量上限',
+      serviceDetails: [
+        '包含 Go 全部模型与权益',
+        '月度额度: $60~$240（按模型不同）',
+        '每 5 小时请求数: 440~90,600（按模型不同，估算值）',
+        '随时取消',
         '适配任何 AI 编程工具',
       ],
     }),
@@ -3972,7 +3988,7 @@ async function parseOpenCodePlans() {
 
   return {
     provider: PROVIDER_IDS.OPENCODE,
-    sourceUrls: unique([goPageUrl, mainPageUrl]),
+    sourceUrls: unique([goPageUrl, goDocsUrl, mainPageUrl]),
     fetchedAt: new Date().toISOString(),
     plans: dedupePlans(plans),
   };
@@ -4567,11 +4583,8 @@ async function parseKiloPassPlans() {
   };
 }
 
-async function main() {
-  const existingSnapshot = await loadExistingPricingSnapshot();
-  const providers = [];
-  const failures = [];
-  const tasks = [
+function getPricingTasks() {
+  return [
     { provider: PROVIDER_IDS.ZHIPU, fn: parseZhipuCodingPlans },
     { provider: PROVIDER_IDS.KIMI, fn: parseKimiCodingPlans },
     { provider: PROVIDER_IDS.XFYUN, fn: parseXfyunCodingPlans },
@@ -4599,6 +4612,13 @@ async function main() {
     { provider: PROVIDER_IDS.CHUTES, fn: parseChutesPlans },
     { provider: PROVIDER_IDS.KILO_PASS, fn: parseKiloPassPlans },
   ];
+}
+
+async function main(providerId = null, { confirm = false } = {}) {
+  const existingSnapshot = await loadExistingPricingSnapshot();
+  const providers = [];
+  const failures = [];
+  const tasks = getPricingTasks().filter((task) => !providerId || task.provider === providerId);
 
   const results = await runPricingTasks(tasks);
   for (let index = 0; index < tasks.length; index += 1) {
@@ -4640,16 +4660,30 @@ async function main() {
   }
 
   const providersWithFallback = restoreFailedProvidersFromSnapshot(providers, failures, existingSnapshot.providers);
+  const scoped = mergeScopedPricingResults({
+    providerId,
+    existingProviders: existingSnapshot.providers,
+    existingFailures: existingSnapshot.failures,
+    providers: providersWithFallback,
+    failures,
+  });
 
-  const normalizedProviders = normalizeProviderCurrencySymbols(providersWithFallback);
+  const normalizedProviders = normalizeProviderCurrencySymbols(scoped.providers);
   normalizedProviders.sort((left, right) => String(left?.provider || '').localeCompare(String(right?.provider || '')));
 
-  const updatedAt = determinePricingUpdatedAt(existingSnapshot, normalizedProviders, failures);
+  assertPricingChangesConfirmed({
+    providerId,
+    confirm,
+    existingProviders: existingSnapshot.providers,
+    freshProviders: normalizedProviders,
+  });
+
+  const updatedAt = determinePricingUpdatedAt(existingSnapshot, normalizedProviders, scoped.failures);
 
   const output = {
     updatedAt,
     providers: normalizedProviders,
-    failures,
+    failures: scoped.failures,
   };
 
   const outputText = `${JSON.stringify(output, null, 2)}\n`;
@@ -4660,24 +4694,139 @@ async function main() {
   const summary = providersWithFallback.map((provider) => `${provider.provider}: ${provider.plans.length}`).join(', ');
   console.log(`[pricing] wrote ${OUTPUT_FILE}`);
   console.log(`[pricing] plans -> ${summary}`);
-  if (failures.length > 0) {
-    console.log(`[pricing] failures -> ${failures.length}`);
+  if (scoped.failures.length > 0) {
+    console.log(`[pricing] failures -> ${scoped.failures.length}`);
+  }
+}
+
+function parseFetchArgs(argv) {
+  if (argv.includes('-h') || argv.includes('--help')) {
+    return { help: true, providerId: null, confirm: false };
+  }
+
+  let providerId = null;
+  let confirm = false;
+  for (let index = 0; index < argv.length; index += 1) {
+    const arg = argv[index];
+    if (arg === '--confirm') {
+      confirm = true;
+      continue;
+    }
+    if (arg === '--provider') {
+      index += 1;
+      providerId = argv[index];
+    } else if (arg.startsWith('--provider=')) {
+      providerId = arg.slice('--provider='.length);
+    } else {
+      throw new Error(`unknown argument: ${arg}`);
+    }
+    if (!providerId || providerId.startsWith('-')) {
+      throw new Error('--provider requires a provider id');
+    }
+  }
+
+  if (providerId !== null && !getPricingTasks().some((task) => task.provider === providerId)) {
+    throw new Error(`unknown provider id: ${providerId}`);
+  }
+
+  return { help: false, providerId, confirm };
+}
+
+// Keeps results of providers outside the selected scope so a single-provider refresh does not drop the rest.
+function mergeScopedPricingResults({ providerId, existingProviders, existingFailures, providers, failures }) {
+  if (!providerId) {
+    return { providers, failures };
+  }
+
+  return {
+    providers: [
+      ...(existingProviders || []).filter((provider) => provider?.provider !== providerId),
+      ...providers,
+    ],
+    failures: [
+      ...(existingFailures || []).filter((failure) => extractProviderIdFromFailure(failure) !== providerId),
+      ...failures,
+    ],
+  };
+}
+
+const PRICE_FIELDS = ['currentPrice', 'currentPriceText', 'originalPrice', 'originalPriceText'];
+
+function describePlanChanges(existingPlans, freshPlans) {
+  const existingByName = new Map(existingPlans.map((plan) => [plan.name, plan]));
+  const freshByName = new Map(freshPlans.map((plan) => [plan.name, plan]));
+  const changes = [];
+
+  for (const name of freshByName.keys()) {
+    if (!existingByName.has(name)) {
+      changes.push(`added ${name}`);
+    }
+  }
+  for (const [name, existing] of existingByName) {
+    const fresh = freshByName.get(name);
+    if (!fresh) {
+      changes.push(`removed ${name}`);
+    } else if (PRICE_FIELDS.some((field) => (existing[field] ?? null) !== (fresh[field] ?? null))) {
+      changes.push(`repriced ${name}: ${existing.currentPriceText} -> ${fresh.currentPriceText}`);
+    }
+  }
+  return changes;
+}
+
+// Notes and service details change often, so only plan names and prices are guarded.
+function findPricingChanges(existingProviders, freshProviders) {
+  const existingById = new Map(existingProviders.map((provider) => [provider.provider, provider]));
+  const freshById = new Map(freshProviders.map((provider) => [provider.provider, provider]));
+  const providerIds = [...new Set([...existingById.keys(), ...freshById.keys()])].sort();
+
+  return providerIds.flatMap((providerId) =>
+    describePlanChanges(existingById.get(providerId)?.plans || [], freshById.get(providerId)?.plans || []).map(
+      (change) => `${providerId}: ${change}`,
+    ),
+  );
+}
+
+function assertPricingChangesConfirmed({ providerId, confirm, existingProviders, freshProviders }) {
+  if (providerId || confirm) {
+    return;
+  }
+
+  const changes = findPricingChanges(existingProviders, freshProviders);
+  if (changes.length > 0) {
+    const details = changes.map((change) => `  ${change}`).join('\n');
+    throw new Error(`pricing plans changed; review the diff and rerun with --confirm to write:\n${details}`);
   }
 }
 
 function printHelp() {
-  console.log('Usage: node scripts/fetch-provider-pricing.js [-h|--help]');
+  console.log('Usage: node scripts/fetch-provider-pricing.js [-h|--help] [--provider <id>] [--confirm]');
   console.log('');
   console.log('Fetches coding-plan prices into assets/provider-pricing.json.');
+  console.log('');
+  console.log('Options:');
+  console.log('  --provider <id>  Refresh only one provider; other providers are kept from the existing file.');
+  console.log('  --confirm        Full runs only: write even if plans were added, removed or repriced.');
+  console.log('  -h, --help       Show this help.');
+  console.log('');
+  console.log(`Provider ids: ${getPricingTasks().map((task) => task.provider).join(', ')}`);
 }
 
 if (require.main === module) {
-  if (process.argv.includes('-h') || process.argv.includes('--help')) {
+  let args;
+  try {
+    args = parseFetchArgs(process.argv.slice(2));
+  } catch (error) {
+    console.error(`[pricing] ${error.message}`);
+    console.error('[pricing] Run with -h to see usage.');
+    process.exit(1);
+  }
+
+  if (args.help) {
     printHelp();
     process.exit(0);
   }
 
-  main().catch((error) => {
+  main(args.providerId, { confirm: args.confirm }).catch((error) => {
     console.error('[pricing] fatal:', error);
     process.exit(1);
   });
@@ -4698,6 +4847,10 @@ module.exports = {
   parseAliyunServiceDetailsFromDocsHtml,
   parseAliyunTokenPlansFromDocsHtml,
   parseHuaweiTokenPlans,
+  parseOpenCodePlans,
+  assertPricingChangesConfirmed,
+  mergeScopedPricingResults,
+  parseFetchArgs,
   navigateTencentCodingPlanPage,
   parseCompshareCodingPlansFromHtml,
   parseKimiDomesticMembershipPlansFromHtml,

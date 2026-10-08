@@ -38,7 +38,7 @@ jobs:
           google-chrome --version
 
       - name: Fetch latest provider pricing
-        run: npm run pricing:fetch
+        run: npm run pricing:fetch -- --confirm
 
       - name: Fetch OpenRouter provider metrics
         id: fetch_metrics

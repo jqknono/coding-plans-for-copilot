@@ -36,6 +36,9 @@
 - `openrouter:plans:fetch` depends on the artifacts of the first two steps:
   - `assets/provider-pricing.json`
   - `assets/openrouter-provider-metrics.json`
+- To refresh a single provider, run `npm run pricing:fetch -- --provider <id>` (e.g. `--provider opencode`). Other providers and their failures are kept from the existing asset. Run `npm run pricing:fetch -- -h` to list provider ids.
+- A full `npm run pricing:fetch` (without `--provider`) aborts without writing if any provider's plans were added, removed or repriced, and prints the diff. Review it, then rerun with `--confirm` only if the changes are intended. CI passes `--confirm`.
+- After any full `npm run pricing:fetch`, review `git --no-pager diff -- assets/provider-pricing.json` and confirm every provider you did not intend to change is unchanged. Restore unintended providers from HEAD before committing.
 
 ## Script and Page Contracts
 

@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-08T08:26:45.757Z",
+  "updatedAt": "2026-10-08T08:54:02.512Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1054,6 +1054,7 @@
       "provider": "opencode",
       "sourceUrls": [
         "https://opencode.ai/go",
+        "https://opencode.ai/docs/go/",
         "https://opencode.ai"
       ],
       "plans": [
@@ -1064,12 +1065,28 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "首月 $5",
+          "notes": "模型低成本接入",
           "serviceDetails": [
-            "首月 $5，之后 $10/月",
-            "支持模型: GLM-5、Kimi K2.5、MiMo-V2-Pro、MiMo-V2-Omni、MiniMax M2.5、MiniMax M2.7",
-            "每 5 小时请求数: 1,150~20,000（按模型不同）",
-            "可充值 Credit，随时取消",
+            "支持模型: GLM-5.3、Kimi K3、DeepSeek V4、MiMo-V2.6、MiniMax M3、Qwen3.8、GPT 6 Luna 等（以官网列表为准）",
+            "月度额度: $15~$60（按模型不同）",
+            "每 5 小时请求数: 110~45,300（按模型不同，估算值）",
+            "随时取消",
+            "适配任何 AI 编程工具"
+          ]
+        },
+        {
+          "name": "OpenCode Go Plus",
+          "currentPrice": 40,
+          "currentPriceText": "$40/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "更高用量上限",
+          "serviceDetails": [
+            "包含 Go 全部模型与权益",
+            "月度额度: $60~$240（按模型不同）",
+            "每 5 小时请求数: 440~90,600（按模型不同，估算值）",
+            "随时取消",
             "适配任何 AI 编程工具"
           ]
         }
