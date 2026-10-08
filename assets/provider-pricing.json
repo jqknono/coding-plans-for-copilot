@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-07T15:20:53.149Z",
+  "updatedAt": "2026-10-08T08:26:45.757Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -675,7 +675,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CRcurElu.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-wrKx_s8z.js"
       ],
       "plans": [
         {
@@ -1427,9 +1427,7 @@
             "使用 LingClaw 构建个人助理"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "x-aio: Request failed: https://code.x-aio.com/assets/index-BlH8fPH1.js -> 522; Playwright fallback failed: page.goto: Timeout 6000ms exceeded. Call log: - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\""
+      ]
     },
     {
       "provider": "xfyun-ai",
@@ -1646,7 +1644,6 @@
     }
   ],
   "failures": [
-    "x-aio: Request failed: https://code.x-aio.com/assets/index-BlH8fPH1.js -> 522; Playwright fallback failed: page.goto: Timeout 6000ms exceeded.\nCall log:\n  - navigating to \"https://code.x-aio.com/\", waiting until \"domcontentloaded\"\n",
     "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
   ]
 }
