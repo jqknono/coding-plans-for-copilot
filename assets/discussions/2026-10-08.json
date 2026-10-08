@@ -1,0 +1,105 @@
+{
+  "date": "2026-10-08",
+  "generatedAt": "2026-10-08T12:58:28.544Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 9,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Cursor": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1247159",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1247159",
+      "title": "AI 时代，哪些软件还能够继续赚钱呢？",
+      "content": "AI 时代，有很多大型行业软件，我曾经以为它们有很深的护城河；但是目前看来，都不稳当了； 比如 Adobe ，非常危险，目前的 vibe coding photoshop 类似的东东一个接一个，感觉 Adobe 就是眼睁睁看着用户被拉走； 下一步的，就是有很深行业积累的，价格极高昂的专业软件，比如 CAD ，电路设计等等，它们也不稳当； 再下一步，我感觉会卷到操作系统，数据库.... 最后，可能大多数人跟软件的交互变成了特定的或者通用的 harness agent 软件； 问题来了，现在开始卷 harness agent ，能打过已有的各种 xxx code 吗？ 还是未来，软件行业，彻底变成了几个大模型厂家收套餐费，其他所有的东西都变成了 agent+skill ？",
+      "author": "aitobox",
+      "createdAt": "2026-10-08T11:46:23.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": null,
+        "supplierCategory": "other",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.9,
+        "summary": "The post discusses how AI is disrupting traditional software industries (Adobe, CAD, etc.) and speculates that the future may involve paying large model providers for coding plans, with everything becoming agent+skill based.",
+        "topics": [
+          "行业趋势",
+          "套餐费",
+          "agent",
+          "软件行业",
+          "大模型"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/425",
+      "analyzedAt": "2026-10-08T13:01:56.579Z"
+    },
+    {
+      "id": "v2ex-1247091",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1247091",
+      "title": "有没有用 cursor teams 套餐的大佬，请教下",
+      "content": "cursor 的 teams 有以下 2 个套餐： Standard：$40/用户/月 Premium：$120/用户/月 想请教下： 1 Standard 是不是有跟 pro 套餐一样的 cursor model 用量池和一定额度的 other models 额度？ 2 Standard 的用量池是否有不少于 pro 套餐的用量？比如 cursor model 用 grok 能用到多少 token ？",
+      "author": "money1991",
+      "createdAt": "2026-10-08T08:33:35.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Cursor",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.9,
+        "summary": "The user is asking about Cursor Teams plans, specifically comparing the Standard ($40/user/month) and Premium ($120/user/month) tiers, and wants to know if Standard has the same Cursor model usage pool and other model quotas as Pro, and whether Standard's usage pool is at least as generous as Pro.",
+        "topics": [
+          "套餐对比",
+          "定价",
+          "用量池",
+          "Cursor Teams",
+          "Pro 套餐"
+        ],
+        "planMentioned": "Cursor Teams Standard, Cursor Teams Premium",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/426",
+      "analyzedAt": "2026-10-08T13:02:03.862Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
