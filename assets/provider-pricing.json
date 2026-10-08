@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-08T08:54:02.512Z",
+  "updatedAt": "2026-10-08T15:19:24.234Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1150,13 +1150,13 @@
       ],
       "plans": [
         {
-          "name": "Flash Mini",
+          "name": "Mini",
           "currentPrice": 49,
           "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
@@ -1166,59 +1166,57 @@
           ]
         },
         {
-          "name": "Flash Plus",
+          "name": "Plus",
           "currentPrice": 99,
           "currentPriceText": "¥99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
-            "月使用量: 1600M Credits",
+            "月使用量: 1,600M Credits",
             "覆盖多款 MCP 工具",
             "优先 API 速率",
             "优先技术支持"
           ]
         },
         {
-          "name": "Flash Pro",
+          "name": "Pro",
           "currentPrice": 199,
           "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
-            "月使用量: 8000M Credits",
+            "月使用量: 8,000M Credits",
             "覆盖多款 MCP 工具",
             "优先 API 速率",
             "优先技术支持"
           ]
         },
         {
-          "name": "Flash Max",
+          "name": "Max",
           "currentPrice": 699,
           "currentPriceText": "¥699/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
-            "月使用量: 40000M Credits",
+            "月使用量: 40,000M Credits",
             "覆盖多款 MCP 工具",
             "优先 API 速率",
             "优先技术支持"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
+      ]
     },
     {
       "provider": "synthetic-ai",
@@ -1660,7 +1658,5 @@
       ]
     }
   ],
-  "failures": [
-    "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
-  ]
+  "failures": []
 }

@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-10-07T15:21:53.206Z",
-  "generatedAtBeijing": "2026年10月7日 23:21:53",
-  "sourceGeneratedAt": "2026-10-07T15:20:53.149Z",
-  "sourceGeneratedAtBeijing": "2026年10月7日 23:20:53",
-  "sourceMetricsGeneratedAt": "2026-10-07T15:20:54.610Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月7日 23:20:54",
+  "generatedAt": "2026-10-08T15:20:18.683Z",
+  "generatedAtBeijing": "2026年10月8日 23:20:18",
+  "sourceGeneratedAt": "2026-10-08T15:19:24.234Z",
+  "sourceGeneratedAtBeijing": "2026年10月8日 23:19:24",
+  "sourceMetricsGeneratedAt": "2026-10-08T15:19:25.220Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月8日 23:19:25",
   "summary": {
     "openrouterProviderCount": 112,
-    "metricsProviderCount": 52,
-    "resolvedMetricsProviderCount": 52,
+    "metricsProviderCount": 53,
+    "resolvedMetricsProviderCount": 53,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 9,
     "providersWithPlans": 18,
-    "pendingCount": 34,
-    "blockedPendingCount": 3,
+    "pendingCount": 35,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -830,7 +830,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CRcurElu.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-wrKx_s8z.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -928,13 +928,13 @@
       "providerId": "stepfun-step-plan",
       "plans": [
         {
-          "name": "Flash Mini",
+          "name": "Mini",
           "currentPrice": 49,
           "currentPriceText": "¥49/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
@@ -944,51 +944,51 @@
           ]
         },
         {
-          "name": "Flash Plus",
+          "name": "Plus",
           "currentPrice": 99,
           "currentPriceText": "¥99/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
-            "月使用量: 1600M Credits",
+            "月使用量: 1,600M Credits",
             "覆盖多款 MCP 工具",
             "优先 API 速率",
             "优先技术支持"
           ]
         },
         {
-          "name": "Flash Pro",
+          "name": "Pro",
           "currentPrice": 199,
           "currentPriceText": "¥199/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
-            "月使用量: 8000M Credits",
+            "月使用量: 8,000M Credits",
             "覆盖多款 MCP 工具",
             "优先 API 速率",
             "优先技术支持"
           ]
         },
         {
-          "name": "Flash Max",
+          "name": "Max",
           "currentPrice": 699,
           "currentPriceText": "¥699/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
-            "月使用量: 40000M Credits",
+            "月使用量: 40,000M Credits",
             "覆盖多款 MCP 工具",
             "优先 API 速率",
             "优先技术支持"
@@ -1283,6 +1283,15 @@
       "blocked": false
     },
     {
+      "slug": "io-net",
+      "openrouterName": "Io Net",
+      "providerId": null,
+      "officialWebsiteUrl": "https://io.net",
+      "pricingPageUrl": "https://io.net",
+      "reason": "官网价格页探测失败：https://io.net/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "ionstream",
       "openrouterName": "Ionstream",
       "providerId": null,
@@ -1297,8 +1306,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://makora.statuspage.io",
       "pricingPageUrl": "https://makora.statuspage.io",
-      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
-      "blocked": true
+      "reason": "官网价格页探测失败：https://makora.statuspage.io/pricing: HTTP 404",
+      "blocked": false
     },
     {
       "slug": "mancer",
