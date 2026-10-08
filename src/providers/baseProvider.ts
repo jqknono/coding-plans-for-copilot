@@ -111,6 +111,47 @@ export function normalizeHttpBaseUrl(value: string | undefined): string | undefi
   }
 }
 
+/**
+ * Detect the actual image MIME type from binary data using magic bytes.
+ * Returns the detected MIME type, or undefined if the format is not recognized.
+ *
+ * This guards against callers (e.g. VS Code LanguageModelDataPart) declaring
+ * an incorrect mimeType — Anthropic validates that the declared media_type
+ * matches the actual image content and rejects mismatches.
+ */
+export function detectImageMimeType(data: Uint8Array): string | undefined {
+  if (data.length < 4) {
+    return undefined;
+  }
+  // PNG: 89 50 4E 47
+  if (data[0] === 0x89 && data[1] === 0x50 && data[2] === 0x4e && data[3] === 0x47) {
+    return 'image/png';
+  }
+  // JPEG: FF D8 FF
+  if (data[0] === 0xff && data[1] === 0xd8 && data[2] === 0xff) {
+    return 'image/jpeg';
+  }
+  // GIF: 47 49 46 38 ("GIF8")
+  if (data[0] === 0x47 && data[1] === 0x49 && data[2] === 0x46 && data[3] === 0x38) {
+    return 'image/gif';
+  }
+  // WebP: RIFF....WEBP
+  if (
+    data.length >= 12 &&
+    data[0] === 0x52 &&
+    data[1] === 0x49 &&
+    data[2] === 0x46 &&
+    data[3] === 0x46 &&
+    data[8] === 0x57 &&
+    data[9] === 0x45 &&
+    data[10] === 0x42 &&
+    data[11] === 0x50
+  ) {
+    return 'image/webp';
+  }
+  return undefined;
+}
+
 export function getCompactErrorMessage(error: unknown): string {
   if (typeof error === 'string') {
     return sanitizeErrorMessage(error);
@@ -1183,7 +1224,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       if (part.mimeType.startsWith('image/')) {
         return {
           type: 'image',
-          mimeType: part.mimeType,
+          mimeType: detectImageMimeType(part.data) ?? part.mimeType,
           data: this.encodeBase64(part.data),
         };
       }

@@ -1636,6 +1636,35 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
   }
 }
 
+function runDetectImageMimeTypeTests(baseProviderModule: BaseProviderModule): void {
+  const { detectImageMimeType } = baseProviderModule;
+
+  // PNG magic bytes: 89 50 4E 47
+  assert.equal(detectImageMimeType(new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a])), 'image/png');
+  console.log('PASS detectImageMimeType 识别 PNG');
+
+  // JPEG magic bytes: FF D8 FF
+  assert.equal(detectImageMimeType(new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10])), 'image/jpeg');
+  console.log('PASS detectImageMimeType 识别 JPEG');
+
+  // GIF magic bytes: 47 49 46 38
+  assert.equal(detectImageMimeType(new Uint8Array([0x47, 0x49, 0x46, 0x38, 0x39, 0x61])), 'image/gif');
+  console.log('PASS detectImageMimeType 识别 GIF');
+
+  // WebP magic bytes: RIFF....WEBP
+  const webpHeader = new Uint8Array([0x52, 0x49, 0x46, 0x46, 0x00, 0x00, 0x00, 0x00, 0x57, 0x45, 0x42, 0x50]);
+  assert.equal(detectImageMimeType(webpHeader), 'image/webp');
+  console.log('PASS detectImageMimeType 识别 WebP');
+
+  // Unrecognized data returns undefined
+  assert.equal(detectImageMimeType(new Uint8Array([0x00, 0x01, 0x02, 0x03])), undefined);
+  console.log('PASS detectImageMimeType 未识别格式返回 undefined');
+
+  // Data too short returns undefined
+  assert.equal(detectImageMimeType(new Uint8Array([0x89, 0x50])), undefined);
+  console.log('PASS detectImageMimeType 数据过短返回 undefined');
+}
+
 async function runGenericProviderContextSizeTests(
   configStoreCtor: ConfigStoreCtor,
   genericProviderModule: GenericProviderModule,
@@ -5015,6 +5044,89 @@ async function runGenericProviderMultimodalPayloadTests(
     },
   });
   console.log('PASS anthropic 会把 LanguageModelDataPart 图片转成 base64 image block');
+
+  // Test: PNG data with wrong image/jpeg mimeType gets corrected
+  {
+    // PNG magic bytes followed by some data
+    const pngData = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00]);
+    activeState = createStaticVendorState([
+      {
+        name: 'Vendor',
+        baseUrl: 'https://api.example.test/v1',
+        defaultApiStyle: 'anthropic',
+        defaultVision: true,
+        models: [
+          {
+            name: 'vision-coder',
+            apiStyle: 'anthropic',
+            contextSize: 64000,
+            capabilities: { tools: false, vision: true },
+          },
+        ],
+      },
+    ]);
+    const configStore = new configStoreCtor(createExtensionContext() as never);
+    const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
+      refreshModels(): Promise<void>;
+      sendRequest(request: {
+        modelId: string;
+        messages: Array<{ role: number; content: unknown[] }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options?: { tools?: unknown[] };
+      }): Promise<unknown>;
+      dispose(): void;
+    };
+
+    let mismatchPayload: Record<string, unknown> | undefined;
+    const savedFetch = globalThis.fetch;
+    globalThis.fetch = (async (_url: string | URL | Request, init?: RequestInit): Promise<Response> => {
+      mismatchPayload = JSON.parse(String(init?.body ?? '{}')) as Record<string, unknown>;
+      const body = {
+        id: 'msg_test',
+        role: 'assistant',
+        content: [{ type: 'text', text: 'ok' }],
+      };
+      return new Response(JSON.stringify(body), {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      });
+    }) as typeof globalThis.fetch;
+
+    try {
+      (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+        vendorName: string,
+      ) => (vendorName === 'Vendor' ? 'configured' : '');
+      await provider.refreshModels();
+      await provider.sendRequest({
+        modelId: 'Vendor/vision-coder',
+        messages: [
+          {
+            role: 1,
+            content: [
+              new vscode.LanguageModelTextPart('describe this image'),
+              // Deliberately wrong mimeType: image/jpeg for PNG data
+              new vscode.LanguageModelDataPart(pngData, 'image/jpeg'),
+            ],
+          },
+        ],
+        capabilities: { toolCalling: false, imageInput: true },
+        options: { tools: [] },
+      });
+      assert.ok(mismatchPayload);
+      const msgs = mismatchPayload.messages as Array<{ content: Array<Record<string, unknown>> }>;
+      const imageBlock = msgs[0]?.content[1] as { source: { media_type: string } };
+      assert.equal(
+        imageBlock.source.media_type,
+        'image/png',
+        'PNG data with wrong image/jpeg mimeType should be corrected to image/png',
+      );
+      console.log('PASS anthropic mimeType 不匹配时根据 magic bytes 修正为实际图片格式');
+    } finally {
+      globalThis.fetch = savedFetch;
+      provider.dispose();
+      configStore.dispose();
+    }
+  }
 }
 
 async function runGenericProviderThinkingEffortTests(
@@ -10065,6 +10177,7 @@ async function main(): Promise<void> {
     await runConfigStoreVendorApiKeySecretStorageTests(ConfigStore);
     runChatLanguageModelsConfigTests();
     runTokenWindowResolutionTests(baseProviderModule);
+    runDetectImageMimeTypeTests(baseProviderModule);
     await runGenericProviderContextSizeTests(ConfigStore, genericProviderModule);
     runGenericProviderRequestContentLoggingTests(genericProviderModule);
     await runModelsDevCatalogTests(modelsDevCatalogModule);
