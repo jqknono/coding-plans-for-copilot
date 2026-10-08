@@ -934,10 +934,10 @@ test('buildXAioPlansFromBundle reads monthly plan prices from app chunk', () => 
 
 test('parseStepfunPlansFromRenderedText reads single-price Credit tiers', () => {
   const pageText = `
-    Step Plan 套餐方案 月付 Flash Mini ¥49 适合刚开始体验 AI 的入门用户 新用户 15 天内免费体验 400M Credits月使用量
-    Flash Plus ¥99 适合日常使用 AI 提效的用户 首三月专享 1600M Credits月使用量 优先 API 速率
-    Flash Pro ¥199 适合高频使用 AI 的深度用户 8000M Credits月使用量
-    Flash Max ¥699 适合高强度使用 AI 的专业用户 40000M Credits月使用量 统一 Credit 额度体系
+    Step Plan 套餐方案 月付 Mini ¥49 足量起步 400M Credits月使用量 新用户 15 天内免费体验
+    Plus ¥99 主力日用 首三月专享 1,600M Credits月使用量 优先 API 速率
+    Pro ¥199 专业优选 8000M Credits月使用量
+    Max ¥699 全能尊享 40000M Credits月使用量 统一 Credit 额度体系
   `;
   const plans = parseStepfunPlansFromRenderedText(pageText);
   assert.equal(plans.length, 4);
@@ -948,15 +948,16 @@ test('parseStepfunPlansFromRenderedText reads single-price Credit tiers', () => 
       originalPriceText: plan.originalPriceText,
     })),
     [
-      { name: 'Flash Mini', currentPriceText: '¥49/月', originalPriceText: null },
-      { name: 'Flash Plus', currentPriceText: '¥99/月', originalPriceText: null },
-      { name: 'Flash Pro', currentPriceText: '¥199/月', originalPriceText: null },
-      { name: 'Flash Max', currentPriceText: '¥699/月', originalPriceText: null },
+      { name: 'Mini', currentPriceText: '¥49/月', originalPriceText: null },
+      { name: 'Plus', currentPriceText: '¥99/月', originalPriceText: null },
+      { name: 'Pro', currentPriceText: '¥199/月', originalPriceText: null },
+      { name: 'Max', currentPriceText: '¥699/月', originalPriceText: null },
     ],
   );
   assert.match(plans[0].notes, /15 天内免费体验/);
   assert.match(plans[0].serviceDetails.join('\n'), /400M Credits/);
   assert.match(plans[1].notes, /首三月专享/);
+  assert.match(plans[1].serviceDetails.join('\n'), /1,600M Credits/);
 });
 
 test('parseStepfunPlansFromRenderedText still reads legacy dual-price layout', () => {
