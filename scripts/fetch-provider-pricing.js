@@ -4165,15 +4165,15 @@ async function parseMthreadsCodingPlans() {
 
 function parseStepfunPlansFromRenderedText(pageText) {
   const text = normalizeText(pageText);
-  if (!/Step\s*Plan/i.test(text) || !/Flash\s+Mini/i.test(text)) {
+  if (!/Step\s*Plan/i.test(text) || !/(?:Flash\s+)?Mini/i.test(text)) {
     return [];
   }
 
   const tierSpecs = [
-    ['Flash Mini', ['Flash Plus', '统一 Credit', '开发者评价']],
-    ['Flash Plus', ['Flash Pro', '统一 Credit', '开发者评价']],
-    ['Flash Pro', ['Flash Max', '统一 Credit', '开发者评价']],
-    ['Flash Max', ['统一 Credit', '开发者评价', '如需企业']],
+    ['Mini', ['Plus', '统一 Credit', '开发者评价']],
+    ['Plus', ['Pro', '统一 Credit', '开发者评价']],
+    ['Pro', ['Max', '统一 Credit', '开发者评价']],
+    ['Max', ['统一 Credit', '开发者评价', '如需企业']],
   ];
   const plans = [];
   for (const [tier, nextLabels] of tierSpecs) {
@@ -4190,7 +4190,7 @@ function parseStepfunPlansFromRenderedText(pageText) {
     const originalPrice = dualPriceMatch ? Number(dualPriceMatch[2]) : null;
     const promptMatch = segment.match(/每\s*5\s*小时\s*([0-9,]+)\s*次\s*Prompt/i);
     const callMatch = segment.match(/[（(]\s*[～~]?\s*([0-9,]+)\s*次模型调用\s*[）)]/);
-    const creditsMatch = segment.match(/([0-9]+M)\s*Credits\s*月使用量/i);
+    const creditsMatch = segment.match(/([0-9][0-9,]*M)\s*Credits\s*月使用量/i);
     const notes = [
       /已售罄/.test(segment) ? '当前页面显示已售罄' : null,
       /新用户\s*15\s*天内免费体验/.test(segment) ? '新用户 15 天内免费体验' : null,
@@ -4230,7 +4230,8 @@ function parseStepfunPlansFromRenderedText(pageText) {
 async function parseStepfunStepPlans() {
   const pageUrl = 'https://platform.stepfun.com/step-plan?channel=step-dev';
   const { text } = await fetchRenderedPageText(pageUrl, 'StepFun Step Plan parser', {
-    waitForText: /Flash\s+Mini[\s\S]*¥\s*[0-9]+[\s\S]*Flash\s+Max[\s\S]*¥\s*[0-9]+/,
+    waitForText:
+      /(?:Flash\s+)?Mini[\s\S]*¥\s*[0-9]+[\s\S]*(?:Flash\s+)?Max[\s\S]*¥\s*[0-9]+/,
     waitForTimeoutMs: 25_000,
     timeoutMs: 30_000,
   });
