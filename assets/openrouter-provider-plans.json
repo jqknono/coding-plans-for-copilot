@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-08T15:20:18.683Z",
-  "generatedAtBeijing": "2026年10月8日 23:20:18",
-  "sourceGeneratedAt": "2026-10-08T15:19:24.234Z",
-  "sourceGeneratedAtBeijing": "2026年10月8日 23:19:24",
-  "sourceMetricsGeneratedAt": "2026-10-08T15:19:25.220Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月8日 23:19:25",
+  "generatedAt": "2026-10-09T15:03:47.866Z",
+  "generatedAtBeijing": "2026年10月9日 23:03:47",
+  "sourceGeneratedAt": "2026-10-09T08:30:54.706Z",
+  "sourceGeneratedAtBeijing": "2026年10月9日 16:30:54",
+  "sourceMetricsGeneratedAt": "2026-10-09T15:02:50.770Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月9日 23:02:50",
   "summary": {
     "openrouterProviderCount": 112,
     "metricsProviderCount": 53,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 9,
     "providersWithPlans": 18,
     "pendingCount": 35,
-    "blockedPendingCount": 2,
+    "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -830,7 +830,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-wrKx_s8z.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CXvv4AYB.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1361,7 +1361,7 @@
       "officialWebsiteUrl": "https://docs.nebius.com",
       "pricingPageUrl": "https://docs.nebius.com",
       "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "novita",
