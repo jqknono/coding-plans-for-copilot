@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-09T15:03:47.866Z",
-  "generatedAtBeijing": "2026年10月9日 23:03:47",
-  "sourceGeneratedAt": "2026-10-09T08:30:54.706Z",
-  "sourceGeneratedAtBeijing": "2026年10月9日 16:30:54",
-  "sourceMetricsGeneratedAt": "2026-10-09T15:02:50.770Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月9日 23:02:50",
+  "generatedAt": "2026-10-10T14:20:19.044Z",
+  "generatedAtBeijing": "2026年10月10日 22:20:19",
+  "sourceGeneratedAt": "2026-10-10T14:19:27.516Z",
+  "sourceGeneratedAtBeijing": "2026年10月10日 22:19:27",
+  "sourceMetricsGeneratedAt": "2026-10-10T14:19:29.854Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月10日 22:19:29",
   "summary": {
     "openrouterProviderCount": 112,
     "metricsProviderCount": 53,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 9,
     "providersWithPlans": 18,
     "pendingCount": 35,
-    "blockedPendingCount": 3,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -48,7 +48,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "支持的模型: 仅支持以下精确版本： 推荐模型： qwen3.7-plus （支持图片理解）、 qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解） 、 qwen3-max-2026-01-23、qwen3-coder-next、qwen3-coder-plus、glm-4.7",
+            "支持的模型: 仅支持以下精确版本： 推荐模型： qwen3.7-plus （支持图片理解）、 qwen3.6-plus （支持图片理解）、 kimi-k2.5 （支持图片理解）、 glm-5 、 MiniMax-M2.5 更多模型：qwen3.5-plus（支持图片理解）",
             "用量限制: 每 5 小时 6,000 次请求 每周 45,000 次请求 每月 90,000 次请求",
             "OpenClaw 开源、自托管个人 AI 助手: Hermes Agent 开源 AI 代理框架，内置自学习循环",
             "OpenCode 开源 AI 编程代理工具: Cursor AI 原生代码编辑器",
@@ -830,7 +830,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CXvv4AYB.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-BR_7u2Mu.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1351,7 +1351,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://near.ai",
       "pricingPageUrl": "https://near.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.15 / $0.5 / $0.55）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.04 / $1.35 / $0.15）",
       "blocked": false
     },
     {
@@ -1361,7 +1361,7 @@
       "officialWebsiteUrl": "https://docs.nebius.com",
       "pricingPageUrl": "https://docs.nebius.com",
       "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
-      "blocked": true
+      "blocked": false
     },
     {
       "slug": "novita",
