@@ -1,0 +1,106 @@
+{
+  "date": "2026-10-10",
+  "generatedAt": "2026-10-10T12:03:17.337Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 58,
+    "postsAfterKeywordFilter": 17,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Codex": 1,
+      "ChatGPT, Claude": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1247671",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1247671",
+      "title": "Codex 纯 Pro 池｜高性价比｜高稳定性｜共享重置",
+      "content": "• 纯 Pro 池，纯 200 线路、纯 500 线路 • Codex 全模型可用 • 高 RPM / 高并发，适合长时间持续跑 • 多线路冗余，官方波动也有稳定线路可选 • 按量全场 0.2 ，充值立享最低 0.17 ，月度阶梯最低 0.15 • 包月订阅多档可选，综合最低不到 0.1 • 订阅套餐还可以共享官方重置 地址： codex.zhuanyedaili.com ⁠ 联系方式：QQ 群：1106944249 https://codex.zhuanyedaili.com/scripts/codex-qq-group.jpg",
+      "author": "AI952995",
+      "createdAt": "2026-10-10T08:52:46.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Codex",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "该帖子推广 Codex 纯 Pro 池服务，提供高性价比、高稳定性的订阅套餐，支持共享官方重置，价格低至 0.15 元/次。",
+        "topics": [
+          "定价",
+          "套餐",
+          "Codex",
+          "共享重置",
+          "高性价比",
+          "稳定性"
+        ],
+        "planMentioned": "纯 Pro 池",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/427",
+      "analyzedAt": "2026-10-10T12:13:28.553Z"
+    },
+    {
+      "id": "v2ex-1247562",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1247562",
+      "title": "Chatgpt/Claude 低价代充，充自己的账号",
+      "content": "chatgpt plus 130 chatgpt pro 5x 680 chatgpt pro 20x 1280 claude pro 150 claude max 5x 900 claude max 20x 1850 wx:bHVsdWlpaw==",
+      "author": "wulipanghu",
+      "createdAt": "2026-10-10T03:17:22.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "ChatGPT, Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "该帖子讨论了低成本的AI代码助手账号购买方式，列出了ChatGPT Plus、ChatGPT Pro和Claude Pro/Max等不同计划的价格层级。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "替代方案"
+        ],
+        "planMentioned": "ChatGPT Plus, ChatGPT Pro, Claude Pro, Claude Max",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/428",
+      "analyzedAt": "2026-10-10T12:13:32.838Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1247667: The operation was aborted due to timeout"
+  ]
+}
