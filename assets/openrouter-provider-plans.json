@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-10-10T14:20:19.044Z",
-  "generatedAtBeijing": "2026年10月10日 22:20:19",
+  "generatedAt": "2026-10-11T14:45:45.444Z",
+  "generatedAtBeijing": "2026年10月11日 22:45:45",
   "sourceGeneratedAt": "2026-10-10T14:19:27.516Z",
   "sourceGeneratedAtBeijing": "2026年10月10日 22:19:27",
-  "sourceMetricsGeneratedAt": "2026-10-10T14:19:29.854Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月10日 22:19:29",
+  "sourceMetricsGeneratedAt": "2026-10-11T14:44:55.221Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月11日 22:44:55",
   "summary": {
     "openrouterProviderCount": 112,
-    "metricsProviderCount": 53,
-    "resolvedMetricsProviderCount": 53,
+    "metricsProviderCount": 54,
+    "resolvedMetricsProviderCount": 54,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 9,
     "providersWithPlans": 18,
-    "pendingCount": 35,
+    "pendingCount": 36,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -1442,6 +1442,15 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "tenstorrent",
+      "openrouterName": "Tenstorrent",
+      "providerId": null,
+      "officialWebsiteUrl": "https://console.tenstorrent.com",
+      "pricingPageUrl": "https://console.tenstorrent.com",
+      "reason": "官网价格页探测失败：https://console.tenstorrent.com/pricing: HTTP 404",
       "blocked": false
     },
     {
