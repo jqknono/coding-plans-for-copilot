@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-11T14:45:45.444Z",
-  "generatedAtBeijing": "2026年10月11日 22:45:45",
-  "sourceGeneratedAt": "2026-10-10T14:19:27.516Z",
-  "sourceGeneratedAtBeijing": "2026年10月10日 22:19:27",
-  "sourceMetricsGeneratedAt": "2026-10-11T14:44:55.221Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月11日 22:44:55",
+  "generatedAt": "2026-10-12T17:31:36.469Z",
+  "generatedAtBeijing": "2026年10月13日 01:31:36",
+  "sourceGeneratedAt": "2026-10-12T17:30:32.499Z",
+  "sourceGeneratedAtBeijing": "2026年10月13日 01:30:32",
+  "sourceMetricsGeneratedAt": "2026-10-12T17:30:34.233Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月13日 01:30:34",
   "summary": {
     "openrouterProviderCount": 112,
     "metricsProviderCount": 54,
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/cb54b11e70d26492c777c8eb0c0dbee9.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/f935c74f443ae966a872b62f0b4ff447.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -660,97 +660,6 @@
       "providerId": "kimi-ai",
       "plans": [
         {
-          "name": "Andante（大陆）",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: 大陆",
-            "套餐定位: 日常使用",
-            "Agent 用量约 30 个",
-            "Agent 优先生成队列（4 倍速）",
-            "Office 文件处理、深度研究、网站部署",
-            "Kimi Code 可调用",
-            "定制化看板，含小组件任务（6 个）、定时任务（6 个）",
-            "精选插件（15+ 种可调用）",
-            "专业数据库 1000 次调用",
-            "制作并发布带数据库的网站",
-            "项目数 20 个，项目存储空间 20GB"
-          ]
-        },
-        {
-          "name": "Moderato（大陆）",
-          "currentPrice": 99,
-          "currentPriceText": "¥99/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: 大陆",
-            "套餐定位: 效率升级",
-            "Agent 用量约 60 个",
-            "Agent 任务并行 2 个",
-            "Agent 集群可用 25 次（2 个子任务并行）",
-            "梦境记忆、自进化技能",
-            "定时任务、小组件任务各 10 个",
-            "Kimi Code 可调用",
-            "专业数据库 2000 次调用"
-          ]
-        },
-        {
-          "name": "Allegretto（大陆）",
-          "currentPrice": 199,
-          "currentPriceText": "¥199/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: 大陆",
-            "套餐定位: 专业优选",
-            "Agent 用量约 150 个",
-            "Agent 任务并行 2 个",
-            "Agent 集群可用 50 次（4 个子任务并行）",
-            "梦境记忆、自进化技能",
-            "目标模式，Agent 自主推进完成",
-            "专属 Kimi Claw，支持 10 个 Kimi Claw 群聊",
-            "定时任务、小组件任务各 15 个",
-            "Kimi Code 可调用",
-            "专业数据库 5000 次调用"
-          ]
-        },
-        {
-          "name": "Allegro（大陆）",
-          "currentPrice": 699,
-          "currentPriceText": "¥699/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "计价币种: 人民币（CNY）",
-            "适用区域: 大陆",
-            "套餐定位: 全能尊享",
-            "Agent 用量约 360 个",
-            "Agent 任务并行 4 个",
-            "Agent 集群可用 120 次（8 个子任务并行）",
-            "梦境记忆、自进化技能",
-            "目标模式，Agent 自主推进完成",
-            "专属 Kimi Claw，支持 10 个 Kimi Claw 群聊",
-            "支持百万 Tokens 超长对话容量",
-            "定时任务、小组件任务各 20 个，项目数 100 个，项目存储空间 50GB",
-            "Kimi Code 可调用",
-            "专业数据库 12000 次调用"
-          ]
-        },
-        {
           "name": "Adagio（海外）",
           "currentPrice": 0,
           "currentPriceText": "$0/月",
@@ -830,7 +739,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-BR_7u2Mu.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DZ1yQQGy.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1198,7 +1107,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://legal.crusoe.ai",
       "pricingPageUrl": "https://legal.crusoe.ai",
-      "reason": "官网价格页探测失败：https://legal.crusoe.ai/pricing: HTTP 403",
+      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
       "blocked": true
     },
     {
