@@ -1,0 +1,111 @@
+{
+  "date": "2026-10-12",
+  "generatedAt": "2026-10-12T14:40:19.966Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 61,
+    "postsAfterKeywordFilter": 20,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "OpenAI": 1,
+      "Cursor, Codex, GPT, Claude": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1248213",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1248213",
+      "title": "闹笑话了，这下承认 plus 额度确实不够用了",
+      "content": "我不是开发，平常也就是用用 office 三件套，自己一直是开的 gpt plus 套餐，使用场景就是电脑上的 codex 和服务器上的 hermes 。 之前研究 codex++的时候，为了测试切换中转，在电脑上设置了朋友共享给我的 sub2api ，试了一下觉得没啥用，就把 codex++卸载了，然后就一直 hermes 和 codex 随机用，老看人说 plus 额度不够用，我看我每周额度基本也就用个 10%最多了，我还以为是因为我不写代码所以用的少。 今天用 codex 的时候突然说已达到使用上限，我看了眼我账号的额度还有 100%，试了 hermes 和网页端都正常，只有电脑上的 codex 使用上限了，然后就在网页端对话开始排查，他让我给他啥我就给他啥，折腾了半天，结果是我 codex 的 config.toml 里写的是朋友共享给我的 sub2api 。。。。卸载 codex++并没有把配置删除。。。 所以。。这几个月我的 codex 都是用的人家的额度，那 10%不到的额度都是我 hermes 用的。。。我还说我的 plus 真省。。。 在 config 里删掉了朋友的",
+      "author": "94nb",
+      "createdAt": "2026-10-12T12:57:45.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户分享了使用 ChatGPT Plus 订阅配合 Codex 编码助手的经历，发现因配置残留误用了朋友的 sub2api 额度数月，修正后自用额度消耗显著增加，并提到其 Plus 账号似乎没有 5 小时使用限制。",
+        "topics": [
+          "Plus",
+          "Codex",
+          "额度",
+          "配置问题",
+          "sub2api",
+          "使用限制"
+        ],
+        "planMentioned": "ChatGPT Plus",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/429",
+      "analyzedAt": "2026-10-12T14:51:20.980Z"
+    },
+    {
+      "id": "v2ex-1248133",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1248133",
+      "title": "有个疑问，为啥大家都要这么大量的订阅，都是 max 起步，我感觉日常工作 20 刀就够了啊，大家都有私活或者产品吗",
+      "content": "公司可以支持 AI 报销，不限制模型和厂商，只要有账单和支付证明就行，最近一直是 cursor 或者 codex 的 20 刀用，cursor 的话像遇到一些难处理的会用到 gpt 或者 claude 模型，一般 auto 一个月都够用了，codex 也差不多 很好奇大家起步就是 Claude MAX 这种，是除了工作之外还有其他要用到的地方吗，大家都有私活或者自己的产品吗",
+      "author": "coderMonkey",
+      "createdAt": "2026-10-12T08:16:52.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Cursor, Codex, GPT, Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "用户分享自己使用 Cursor 或 Codex 每月 20 美元套餐的经验，并询问为何其他人起步就订阅高价位套餐（如 Claude MAX），好奇大家是否有私活或产品需求。",
+        "topics": [
+          "定价",
+          "订阅",
+          "Cursor",
+          "套餐对比",
+          "使用体验",
+          "报销"
+        ],
+        "planMentioned": "Cursor Auto, Claude MAX",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/430",
+      "analyzedAt": "2026-10-12T14:51:27.906Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1248210: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1248205: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1248187: The operation was aborted due to timeout"
+  ]
+}
