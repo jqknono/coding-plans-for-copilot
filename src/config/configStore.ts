@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import {
-  ADVANCED_OPTIONS_SETTING_KEY,
   AUTO_REFRESH_MODELS_SETTING_KEY,
-  DEFAULT_ADVANCED_RESERVED_OUTPUT,
+  CHAT_LANGUAGE_MODELS_OVERRIDE_CONTEXT_WINDOW_SETTING_KEY,
+  CHAT_LANGUAGE_MODELS_OVERRIDE_MAX_OUTPUT_TOKENS_SETTING_KEY,
   DEFAULT_AUTO_REFRESH_MODELS,
   DEFAULT_MODEL_CAPABILITIES_TOOLS,
   DEFAULT_MODEL_CAPABILITIES_VISION,
@@ -68,8 +68,9 @@ export interface VendorConfig {
   models: VendorModelConfig[];
 }
 
-export interface AdvancedOptions {
-  defaultReservedOutput: number;
+export interface ChatLanguageModelsTokenOverrides {
+  overrideContextWindow?: number;
+  overrideMaxOutputTokens?: number;
 }
 
 export interface VendorValidationError {
@@ -104,14 +105,21 @@ export class ConfigStore implements vscode.Disposable {
     return config.get<boolean>(AUTO_REFRESH_MODELS_SETTING_KEY, DEFAULT_AUTO_REFRESH_MODELS) !== false;
   }
 
-  getAdvancedOptions(): AdvancedOptions {
+  getChatLanguageModelsTokenOverrides(): ChatLanguageModelsTokenOverrides {
     const config = vscode.workspace.getConfiguration('coding-plans');
-    const raw = config.get<Record<string, unknown> | undefined>(ADVANCED_OPTIONS_SETTING_KEY, undefined);
-    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
-      return { defaultReservedOutput: DEFAULT_ADVANCED_RESERVED_OUTPUT };
-    }
+    const overrideContextWindow = this.readPositiveNumber(
+      config.get<unknown>(CHAT_LANGUAGE_MODELS_OVERRIDE_CONTEXT_WINDOW_SETTING_KEY, undefined),
+    );
+    const overrideMaxOutputTokens = this.readPositiveNumber(
+      config.get<unknown>(CHAT_LANGUAGE_MODELS_OVERRIDE_MAX_OUTPUT_TOKENS_SETTING_KEY, undefined),
+    );
     return {
-      defaultReservedOutput: this.readNonNegativeInteger(raw.defaultReservedOutput) ?? DEFAULT_ADVANCED_RESERVED_OUTPUT,
+      ...(overrideContextWindow === undefined
+        ? {}
+        : { overrideContextWindow: Math.max(1, Math.floor(overrideContextWindow)) }),
+      ...(overrideMaxOutputTokens === undefined
+        ? {}
+        : { overrideMaxOutputTokens: Math.max(1, Math.floor(overrideMaxOutputTokens)) }),
     };
   }
 
@@ -1056,21 +1064,6 @@ export class ConfigStore implements vscode.Disposable {
       ?.map((item) => item.toLowerCase())
       .filter((item): item is ReasoningEffortValue => allowed.has(item as ReasoningEffortValue));
     return values && values.length > 0 ? values : undefined;
-  }
-
-  private readNonNegativeInteger(value: unknown): number | undefined {
-    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
-      return Math.floor(value);
-    }
-
-    if (typeof value === 'string') {
-      const parsed = Number(value.trim());
-      if (Number.isFinite(parsed) && parsed >= 0) {
-        return Math.floor(parsed);
-      }
-    }
-
-    return undefined;
   }
 
   private readNonNegativeNumber(value: unknown): number | undefined {

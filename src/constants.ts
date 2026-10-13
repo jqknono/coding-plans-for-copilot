@@ -84,13 +84,13 @@ export const SUMMARY_JSON_SCHEMA = [
 export const CONVENTIONAL_COMMIT_SUBJECT_RE =
   /^(feat|fix|docs|style|refactor|perf|test|build|ci|chore|revert)(\([a-z0-9_.\-\/]+\))?!?: .+/i;
 
-export const ADVANCED_OPTIONS_SETTING_KEY = 'advanced';
-export const DEFAULT_ADVANCED_RESERVED_OUTPUT = 30000;
+export const CHAT_LANGUAGE_MODELS_OVERRIDE_CONTEXT_WINDOW_SETTING_KEY = 'overrideContextWindow';
+export const CHAT_LANGUAGE_MODELS_OVERRIDE_MAX_OUTPUT_TOKENS_SETTING_KEY = 'overrideMaxOutputTokens';
 export const VENDOR_API_KEY_PREFIX = 'coding-plans.vendor.apiKey.';
 export const DEFAULT_TOKEN_SIDE_LIMIT = 200000;
 export const DEFAULT_CONTEXT_WINDOW_SIZE = 400000;
-export const DEFAULT_REQUEST_MAX_TOKENS = DEFAULT_TOKEN_SIDE_LIMIT;
-export const DEFAULT_RESERVED_OUTPUT_TOKENS = 30000;
+export const DEFAULT_REQUEST_MAX_TOKENS = 50000;
+export const DEFAULT_RESERVED_OUTPUT_TOKENS = 50000;
 export const DEFAULT_RESERVED_OUTPUT_RATIO = 0.2;
 export const DEFAULT_MODEL_CAPABILITIES_TOOLS = true;
 export const DEFAULT_MODEL_CAPABILITIES_VISION = false;

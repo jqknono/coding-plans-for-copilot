@@ -1278,6 +1278,51 @@ async function runConfigNormalizationTests(configStoreCtor: ConfigStoreCtor): Pr
   }
 }
 
+async function runChatLanguageModelsTokenOverrideSettingTests(configStoreCtor: ConfigStoreCtor): Promise<void> {
+  activeState = createState([], {
+    overrideContextWindow: 256000,
+    overrideMaxOutputTokens: 65536,
+  });
+  let configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    assert.deepEqual(configStore.getChatLanguageModelsTokenOverrides(), {
+      overrideContextWindow: 256000,
+      overrideMaxOutputTokens: 65536,
+    });
+  } finally {
+    configStore.dispose();
+  }
+
+  activeState = createState([], {
+    overrideContextWindow: 0,
+    overrideMaxOutputTokens: 0,
+  });
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  try {
+    assert.deepEqual(configStore.getChatLanguageModelsTokenOverrides(), {});
+  } finally {
+    configStore.dispose();
+  }
+
+  const manifest = require('../../package.json');
+  const properties = manifest.contributes.configuration.properties;
+  assert.equal('coding-plans.advanced' in properties, false, 'Advanced settings must be removed');
+  for (const setting of ['coding-plans.overrideContextWindow', 'coding-plans.overrideMaxOutputTokens']) {
+    assert.equal(properties[setting].type, 'number', `${setting} must be independently editable in Settings`);
+    assert.equal(properties[setting].minimum, 0, `${setting} uses zero to retain the existing default`);
+  }
+  const modelProperties = properties['coding-plans.vendors'].items.properties.models.items.properties;
+  assert.equal('overrideContextWindow' in modelProperties, false, 'context override must not be model-scoped');
+  assert.equal('overrideMaxOutputTokens' in modelProperties, false, 'output override must not be model-scoped');
+  assert.deepEqual(properties['coding-plans.locale'].enum, ['', 'zh-CN', 'en-US']);
+  assert.deepEqual(properties['coding-plans.locale'].enumDescriptions, [
+    '%configuration.coding-plans.locale.default%',
+    '%configuration.coding-plans.locale.zhCN%',
+    '%configuration.coding-plans.locale.enUS%',
+  ]);
+  console.log('PASS chatLanguageModels token overrides are root-level Settings and treat zero as unset');
+}
+
 async function runConfigStoreVendorApiKeySecretStorageTests(configStoreCtor: ConfigStoreCtor): Promise<void> {
   activeState = createState([
     {
@@ -1469,9 +1514,9 @@ function runTokenWindowResolutionTests(baseProviderModule: BaseProviderModule): 
   try {
     const defaultWindow = provider.resolveTokenWindowLimits(undefined, undefined, undefined);
     assert.deepEqual(defaultWindow, {
-      maxTokens: 430000,
+      maxTokens: 450000,
       maxInputTokens: 400000,
-      maxOutputTokens: 30000,
+      maxOutputTokens: 50000,
     });
     console.log('PASS runtime token window 未配置时按输入+输出窗口汇总总上下文');
 
@@ -1753,6 +1798,7 @@ async function runGenericProviderContextSizeTests(
     assert.equal(models[0]?.maxInputTokens, 104858);
     assert.equal(models[0]?.maxOutputTokens, 26214);
     assert.equal(cappedProvider.resolveRequestedOutputLimit({ modelId: models[0]!.id }), 26214);
+    assert.equal(cappedProvider.resolveRequestedOutputLimit({ modelId: 'Vendor/unknown' }), 50000);
     console.log('PASS GenericAIProvider 请求上游时默认输出预算会按模型上限收敛');
   } finally {
     cappedProvider.dispose();
@@ -2836,6 +2882,7 @@ function runChatLanguageModelsConfigTests(): void {
     toChatLanguageModelsModelConfig: (
       vendor: VendorRecord,
       model: VendorModelRecord,
+      tokenOverrides?: import('../config/configStore').ChatLanguageModelsTokenOverrides,
     ) => Record<string, unknown>;
   };
 
@@ -2892,6 +2939,51 @@ function runChatLanguageModelsConfigTests(): void {
   assert.equal(anthropicConfig.apiType, 'messages');
 
   console.log('PASS chatLanguageModels.json 导出 url/id/reasoningEffortFormat 正确');
+
+  // 根级覆盖项作用于传入的任意模型
+  const overrideConfig = toChatLanguageModelsModelConfig(
+    { name: 'demo', baseUrl: 'https://api.example.com/v1', defaultApiStyle: 'openai-chat' } as VendorRecord,
+    { name: 'gpt-x', contextSize: 128000 } as VendorModelRecord,
+    { overrideContextWindow: 256000, overrideMaxOutputTokens: 65536 },
+  );
+  assert.equal(overrideConfig.contextWindow, 256000);
+  assert.equal(overrideConfig.maxOutputTokens, 65536);
+
+  // 未配置全局覆盖时，fallback 到 contextSize 和固定 maxOutputTokens
+  const fallbackContextConfig = toChatLanguageModelsModelConfig(
+    { name: 'demo', baseUrl: 'https://api.example.com/v1', defaultApiStyle: 'openai-chat' } as VendorRecord,
+    { name: 'gpt-x', contextSize: 64000 } as VendorModelRecord,
+  );
+  assert.equal(fallbackContextConfig.contextWindow, 64000);
+  assert.equal(fallbackContextConfig.maxOutputTokens, 100000);
+
+  // 零值视为未配置，fallback 到 contextSize 和固定 maxOutputTokens
+  const zeroOverrideConfig = toChatLanguageModelsModelConfig(
+    { name: 'demo', baseUrl: 'https://api.example.com/v1', defaultApiStyle: 'openai-chat' } as VendorRecord,
+    { name: 'gpt-x', contextSize: 32000 } as VendorModelRecord,
+    { overrideContextWindow: 0, overrideMaxOutputTokens: 0 },
+  );
+  assert.equal(zeroOverrideConfig.contextWindow, 32000);
+  assert.equal(zeroOverrideConfig.maxOutputTokens, 100000);
+
+  // 仅覆盖 maxOutputTokens 时，contextWindow 仍从模型 contextSize 导出
+  const partialOverrideConfig = toChatLanguageModelsModelConfig(
+    { name: 'demo', baseUrl: 'https://api.example.com/v1', defaultApiStyle: 'openai-chat' } as VendorRecord,
+    { name: 'gpt-x', contextSize: 200000 } as VendorModelRecord,
+    { overrideMaxOutputTokens: 32000 },
+  );
+  assert.equal(partialOverrideConfig.contextWindow, 200000);
+  assert.equal(partialOverrideConfig.maxOutputTokens, 32000);
+
+  const secondModelConfig = toChatLanguageModelsModelConfig(
+    { name: 'another-vendor', baseUrl: 'https://another.example.com/v1', defaultApiStyle: 'openai-chat' } as VendorRecord,
+    { name: 'another-model', contextSize: 64000 } as VendorModelRecord,
+    { overrideContextWindow: 256000, overrideMaxOutputTokens: 65536 },
+  );
+  assert.equal(secondModelConfig.contextWindow, 256000);
+  assert.equal(secondModelConfig.maxOutputTokens, 65536);
+
+  console.log('PASS 根级 overrideContextWindow/overrideMaxOutputTokens 正确覆盖 chatLanguageModels.json 声明字段');
 }
 
 async function runVendorAuthAndVolcengineTests(
@@ -4308,9 +4400,12 @@ async function runGenericProviderOutputLimitToggleTests(
   async function capturePayload(
     vendors: VendorRecord[],
     modelId: string,
-    options: { modelOptions?: Record<string, unknown> } = {},
+    options: { modelOptions?: Record<string, unknown>; locale?: string } = {},
   ): Promise<{ payload: Record<string, unknown>; response: unknown }> {
     activeState = createStaticVendorState(vendors);
+    if (options.locale !== undefined) {
+      activeState.settings.locale = options.locale;
+    }
     const configStore = new configStoreCtor(createExtensionContext() as never);
     const provider = new GenericAIProvider(createExtensionContext() as never, configStore) as unknown as {
       refreshModels(): Promise<void>;
@@ -4609,10 +4704,10 @@ async function runGenericProviderOutputLimitToggleTests(
     'Vendor/coder',
   );
   assert.equal(requiredMaxTokensRetryResult.payloads.length, 1);
-  assert.equal(requiredMaxTokensRetryResult.payloads[0]?.max_tokens, 30000);
+  assert.equal(requiredMaxTokensRetryResult.payloads[0]?.max_tokens, 50000);
   assert.equal(
     readAttachedTokenUsage(requiredMaxTokensRetryResult.response)?.outputBuffer,
-    30000,
+    50000,
   );
   console.log('PASS openai-chat 首次请求已带 max_tokens');
 
@@ -4634,10 +4729,10 @@ async function runGenericProviderOutputLimitToggleTests(
     'Vendor/dynamic-coder',
   );
   assert.equal(implicitReserveRetryResult.payloads.length, 1);
-  assert.equal(implicitReserveRetryResult.payloads[0]?.max_tokens, 30000);
+  assert.equal(implicitReserveRetryResult.payloads[0]?.max_tokens, 50000);
   assert.equal(
     readAttachedTokenUsage(implicitReserveRetryResult.response)?.outputBuffer,
-    30000,
+    50000,
   );
   console.log('PASS 默认输出上限会写入首次请求的 max_tokens 与 outputBuffer');
 
@@ -4866,6 +4961,25 @@ async function runGenericProviderOutputLimitToggleTests(
   assert.equal('reasoning_effort' in unwrappedOpenAIChatResult.payload, true);
   assert.equal(unwrappedOpenAIChatResult.payload.max_tokens, 12800);
   console.log('PASS openai-chat 仍保留 reasoning_effort 与 max_tokens，但不发送 thinking 与其它增强字段');
+
+  for (const locale of ['zh-CN', 'en-US']) {
+    const localeResult = await capturePayload(
+      [
+        {
+          name: 'Vendor',
+          baseUrl: 'https://example.test/v1',
+          defaultApiStyle: 'openai-chat',
+          defaultVision: false,
+          models: [{ name: 'coder', contextSize: 64000 }],
+        },
+      ],
+      'Vendor/coder',
+      { locale },
+    );
+    const messages = localeResult.payload.messages as Array<{ role: string; content: string }>;
+    assert.ok(messages.some((message) => message.role === 'system' && message.content.includes(`Use ${locale}`)));
+  }
+  console.log('PASS coding-plans.locale 的中文和英文 enum 值会加入自然语言 system 指令');
 
   const unwrappedResponsesPayload = await captureOpenAIResponsesPayload(
     [
@@ -6411,7 +6525,7 @@ async function runGenericProviderAnthropicSamplingCompatibilityTests(
 
     assert.ok(payload);
   assert.equal('temperature' in payload, false);
-  assert.equal(payload.max_tokens, 30000);
+  assert.equal(payload.max_tokens, 50000);
   assert.equal('top_p' in payload, false);
   console.log('PASS anthropic 请求发送必需 max_tokens，但不发送 temperature 与 top_p');
   } finally {
@@ -10308,6 +10422,7 @@ async function main(): Promise<void> {
       await runTestCase(ConfigStore, testCase);
     }
     await runConfigNormalizationTests(ConfigStore);
+    await runChatLanguageModelsTokenOverrideSettingTests(ConfigStore);
     await runVendorAuthAndVolcengineTests(ConfigStore, genericProviderModule, lmChatProviderAdapterModule);
     await runConfigStoreVendorApiKeySecretStorageTests(ConfigStore);
     runChatLanguageModelsConfigTests();

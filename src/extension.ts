@@ -538,7 +538,11 @@ export async function copyModelAsChatLanguageModel(configStore: ConfigStore): Pr
   }
 
   try {
-    const modelConfig = toChatLanguageModelsModelConfig(pickedVendor.vendor, pickedModel.model);
+    const modelConfig = toChatLanguageModelsModelConfig(
+      pickedVendor.vendor,
+      pickedModel.model,
+      configStore.getChatLanguageModelsTokenOverrides(),
+    );
     const serialized = serializeChatLanguageModelsModelConfig(modelConfig);
     await vscode.env.clipboard.writeText(serialized);
     vscode.window.showInformationMessage(getMessage('copyModelAsChatLanguageModelCopied'));

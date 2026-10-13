@@ -33,12 +33,16 @@
   "configuration.coding-plans.terminalIntent.maxEntries.description": "Maximum number of recent terminal intent records kept in memory for the Terminal Intent panel.",
   "configuration.coding-plans.commitMessage.showGenerateCommand.description": "Show the \"Generate Commit Message\" command in Source Control and Command Palette.",
   "configuration.coding-plans.commitMessage.language.description": "Language for generated commit messages",
-  "configuration.coding-plans.locale.description": "Language for natural-language responses and any reasoning/thinking text emitted by Coding Plans models. Enter a BCP 47 locale (e.g. zh-CN or en-US) or a language name; leave empty for no override.",
+  "configuration.coding-plans.locale.description": "Language for natural-language responses and any reasoning/thinking text emitted by Coding Plans models.",
+  "configuration.coding-plans.locale.default": "Use the language from the request (no override)",
+  "configuration.coding-plans.locale.zhCN": "Simplified Chinese",
+  "configuration.coding-plans.locale.enUS": "English",
+  "configuration.coding-plans.overrideContextWindow.description": "Override the contextWindow declared in chatLanguageModels.json for every Coding Plans model. Does not affect request-side token calculations. Leave unset or 0 to use each model's contextSize.",
+  "configuration.coding-plans.overrideMaxOutputTokens.description": "Override the maxOutputTokens declared in chatLanguageModels.json for every Coding Plans model. Does not affect the actual max_tokens sent in requests. Leave unset or 0 to use the fixed default (100000).",
   "configuration.coding-plans.commitMessage.useRecentCommitStyle.description": "When enabled, read up to the latest 7 local commit messages and mimic their writing style for generated commit messages. This optional style sample is unavailable in VS Code for the Web.",
   "configuration.coding-plans.commitMessage.modelVendor.description": "Preferred vendor name for commit message generation (e.g. Zhipu). Leave empty to always prompt.",
   "configuration.coding-plans.commitMessage.modelId.description": "Preferred model name for commit message generation (e.g. glm-4-flash). Used together with modelVendor.",
   "configuration.coding-plans.commitMessage.options.description": "Advanced commit-message options as a JSON object (prompt, maxDiffLines, pipelineMode, summary* thresholds, max bullet count, subject length, validation switches, llmMaxPromptLength budget).",
   "configuration.coding-plans.logLevel.description": "Sets the native VS Code log level for the Coding Plans output channel.",
-  "configuration.coding-plans.autoRefreshModels.description": "Controls whether settings/API-key changes and empty model-picker queries automatically refresh runtime models and the VS Code language model picker. Manual refresh commands always work.",
-  "configuration.coding-plans.advanced.description": "Advanced settings as a JSON object (defaultReservedOutput)."
+  "configuration.coding-plans.autoRefreshModels.description": "Controls whether settings/API-key changes and empty model-picker queries automatically refresh runtime models and the VS Code language model picker. Manual refresh commands always work."
 }

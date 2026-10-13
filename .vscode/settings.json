@@ -27,7 +27,8 @@
             "approve": true,
             "matchCommandLine": true
         },
-        "npx tsc": true
+        "npx tsc": true,
+        "npm ci": true
     },
     "coding-plans.logLevel": "debug"
 }

@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.17.0",
+    "version": "0.17.1",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -58,7 +58,8 @@
                 {
                     "type": "webview",
                     "id": "coding-plans-terminalIntent-view",
-                    "name": "%views.coding-plans.terminalIntent.view.name%"
+                    "name": "%views.coding-plans.terminalIntent.view.name%",
+                    "icon": "assets/icon.svg"
                 }
             ]
         },
@@ -226,16 +227,16 @@
                     },
                     "default": {
                         "prompt": "FORMAT REQUIREMENT:\nFollow the Conventional Commits format: <type>(<scope>): <description>.\nCommon types: feat, fix, docs, style, refactor, perf, test, build, ci, chore.\nOutput ONLY the commit message, no explanation, no markdown fences.",
-                        "maxDiffLines": 3000,
+                        "maxDiffLines": 10000,
                         "pipelineMode": "single",
                         "summaryTriggerLines": 1200,
                         "summaryChunkLines": 800,
                         "summaryMaxChunks": 12,
-                        "maxBodyBulletCount": 7,
+                        "maxBodyBulletCount": 5,
                         "subjectMaxLength": 72,
                         "requireConventionalType": true,
                         "warnOnValidationFailure": true,
-                        "llmMaxPromptLength": 20000
+                        "llmMaxPromptLength": 60000
                     },
                     "description": "%configuration.coding-plans.commitMessage.options.description%",
                     "order": 5
@@ -266,42 +267,49 @@
                 "coding-plans.locale": {
                     "type": "string",
                     "default": "",
+                    "enum": [
+                        "",
+                        "zh-CN",
+                        "en-US"
+                    ],
+                    "enumDescriptions": [
+                        "%configuration.coding-plans.locale.default%",
+                        "%configuration.coding-plans.locale.zhCN%",
+                        "%configuration.coding-plans.locale.enUS%"
+                    ],
                     "description": "%configuration.coding-plans.locale.description%",
                     "order": 6
                 },
-                "coding-plans.advanced": {
-                    "type": "object",
-                    "additionalProperties": false,
-                    "properties": {
-                        "defaultReservedOutput": {
-                            "type": "number",
-                            "minimum": 0
-                        }
-                    },
-                    "default": {
-                        "defaultReservedOutput": 60000
-                    },
-                    "description": "%configuration.coding-plans.advanced.description%",
-                    "order": 100
+                "coding-plans.overrideContextWindow": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "%configuration.coding-plans.overrideContextWindow.description%",
+                    "order": 8
+                },
+                "coding-plans.overrideMaxOutputTokens": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "%configuration.coding-plans.overrideMaxOutputTokens.description%",
+                    "order": 9
                 },
                 "coding-plans.autoRefreshModels": {
                     "type": "boolean",
                     "default": false,
                     "description": "%configuration.coding-plans.autoRefreshModels.description%",
-                    "order": 8
+                    "order": 10
                 },
                 "coding-plans.terminalIntent.enabled": {
                     "type": "boolean",
                     "default": true,
                     "description": "%configuration.coding-plans.terminalIntent.enabled.description%",
-                    "order": 9
+                    "order": 11
                 },
                 "coding-plans.terminalIntent.maxEntries": {
                     "type": "number",
                     "default": 10,
                     "minimum": 1,
                     "description": "%configuration.coding-plans.terminalIntent.maxEntries.description%",
-                    "order": 10
+                    "order": 12
                 },
                 "coding-plans.vendors": {
                     "type": "array",
@@ -579,16 +587,36 @@
                             "name": "火山引擎",
                             "baseUrl": "https://ark.cn-beijing.volces.com/api/coding/v3",
                             "models": [
-                                { "name": "doubao-seed-evolving" },
-                                { "name": "doubao-seed-2.1-turbo" },
-                                { "name": "doubao-seed-2.0-lite" },
-                                { "name": "minimax-m3" },
-                                { "name": "glm-5.3" },
-                                { "name": "glm-5.3-flash" },
-                                { "name": "deepseek-v4-flash" },
-                                { "name": "deepseek-v4-pro" },
-                                { "name": "kimi-k2.7-code" },
-                                { "name": "kimi-k3" }
+                                {
+                                    "name": "doubao-seed-evolving"
+                                },
+                                {
+                                    "name": "doubao-seed-2.1-turbo"
+                                },
+                                {
+                                    "name": "doubao-seed-2.0-lite"
+                                },
+                                {
+                                    "name": "minimax-m3"
+                                },
+                                {
+                                    "name": "glm-5.3"
+                                },
+                                {
+                                    "name": "glm-5.3-flash"
+                                },
+                                {
+                                    "name": "deepseek-v4-flash"
+                                },
+                                {
+                                    "name": "deepseek-v4-pro"
+                                },
+                                {
+                                    "name": "kimi-k2.7-code"
+                                },
+                                {
+                                    "name": "kimi-k3"
+                                }
                             ],
                             "useModelsEndpoint": false,
                             "defaultApiStyle": "openai-responses"

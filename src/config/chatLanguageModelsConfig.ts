@@ -1,4 +1,4 @@
-import { VendorApiStyle, VendorConfig, VendorModelConfig } from './configStore';
+import { ChatLanguageModelsTokenOverrides, VendorApiStyle, VendorConfig, VendorModelConfig } from './configStore';
 
 /**
  * chatLanguageModels.json 模型级配置对象。
@@ -69,6 +69,7 @@ function toChatLanguageModelsReasoningEffortFormat(
 export function toChatLanguageModelsModelConfig(
   vendor: VendorConfig,
   model: VendorModelConfig,
+  tokenOverrides: ChatLanguageModelsTokenOverrides = {},
 ): ChatLanguageModelsModelConfig {
   const apiType = toChatLanguageModelsApiType(model.apiStyle ?? vendor.defaultApiStyle, model.apiType);
   const config: ChatLanguageModelsModelConfig = {
@@ -78,11 +79,16 @@ export function toChatLanguageModelsModelConfig(
     url: resolveChatLanguageModelsModelUrl(vendor.baseUrl),
   };
 
-  if (model.contextSize !== undefined) {
+  if (tokenOverrides.overrideContextWindow !== undefined && tokenOverrides.overrideContextWindow > 0) {
+    config.contextWindow = tokenOverrides.overrideContextWindow;
+  } else if (model.contextSize !== undefined) {
     config.contextWindow = model.contextSize;
   }
   config.editTools = [...CHAT_LANGUAGE_MODELS_FIXED_EDIT_TOOLS];
-  config.maxOutputTokens = CHAT_LANGUAGE_MODELS_FIXED_MAX_OUTPUT_TOKENS;
+  config.maxOutputTokens =
+    tokenOverrides.overrideMaxOutputTokens !== undefined && tokenOverrides.overrideMaxOutputTokens > 0
+      ? tokenOverrides.overrideMaxOutputTokens
+      : CHAT_LANGUAGE_MODELS_FIXED_MAX_OUTPUT_TOKENS;
   config.reasoningEffortFormat = toChatLanguageModelsReasoningEffortFormat(apiType);
   if (model.streaming !== undefined) {
     config.streaming = model.streaming;

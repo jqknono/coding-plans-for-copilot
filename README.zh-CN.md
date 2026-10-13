@@ -226,7 +226,6 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch","multi-find-replace","find-replace","code-rewrite"]` | Copilot 风格编辑工具声明；透传到 VS Code/Copilot 的 `capabilities.editToolsHint`，用于选择编辑工具偏好。 |
 | `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | 由协议推导 | Copilot 风格 reasoning effort 格式元数据：`chat-completions` / `responses`。anthropic 协议不关注此项。 |
 | `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | 空 | 声明性元数据，不代表上游真实数据保留策略。 |
-| `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | 请求侧默认输出 token 预算；仅作为发送请求时的预算覆盖值，最终仍会按模型输出上限收敛。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示"生成 Commit 消息"命令。 |
 | `coding-plans.commitMessage.language` | `string` | `en` | 提交消息语言：`en` / `zh-cn`。 |
 | `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | 是否参考最近 20 条 commit 风格。 |
@@ -248,7 +247,7 @@ API Key 推荐通过「设置 API Key」写入 VS Code Secret Storage。`coding-
 
 - **System Instructions**：System 类提示词占用（系统提示、模式说明、策略提示等），属于 prompt tokens。
 - **Tool Definitions**：工具定义占用（工具名、描述、参数 JSON Schema），属于 prompt tokens。
-- **Reserved Output**：为本轮回答预留的输出 token 预算，非已生成的回复内容。
+- **Reserved Output**：为本轮回答预留的输出 token 预算，非已生成的回复内容。请求默认使用 `50000` tokens，并受模型 `maxOutputTokens` 上限约束。
 - **Context Window**：配置了 `contextSize` 时，运行时按总窗口拆分为 80% 输入窗口与 20% 输出窗口；未配置 `contextSize` 时使用显式 `maxInputTokens/maxOutputTokens`，且总窗口按两者求和对齐原生 custom endpoint 口径。当前公开 API 不提供将上游 usage 明细分发回原生 Context Window 的接口，因此本扩展自行维护上下文窗口的分子展示。
 - 状态栏显示统一的 `CodingPlans` 条目：正文以简洁百分比展示套餐 usage 与 context 占比，悬浮查看详细信息。
 - 若供应商配置了 `usageUrl`，会额外展示套餐额度百分比。

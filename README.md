@@ -230,7 +230,6 @@ References: [Claude Code authentication](https://docs.volcengine.com/docs/82379/
 | `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch","multi-find-replace","find-replace","code-rewrite"]` | Copilot-style edit tool declaration passed through to VS Code/Copilot as `capabilities.editToolsHint` for edit-tool preference selection. |
 | `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | Derived from protocol | Copilot-style reasoning effort wire-format metadata: `chat-completions` / `responses`. Not applicable for anthropic protocol. |
 | `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | Empty | Declarative metadata only; it does not change upstream provider retention behavior. |
-| `coding-plans.advanced.defaultReservedOutput` | `number` | `60000` | Request-side default output token budget. It only overrides request budgeting and is still capped by the model output limit. |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show "Generate Commit Message" command. |
 | `coding-plans.commitMessage.language` | `string` | `en` | Commit message language: `en` / `zh-cn`. |
 | `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | Whether to reference the style of the last 20 commits. |
@@ -252,7 +251,7 @@ Limited by VS Code's public API, this extension additionally implements context 
 
 - **System Instructions**: System-class prompts occupy (system prompts, mode descriptions, strategy prompts, etc.), counted as prompt tokens.
 - **Tool Definitions**: Tool definitions occupy (tool names, descriptions, parameter JSON Schema), counted as prompt tokens.
-- **Reserved Output**: Output token budget reserved for this round of response, not the actual generated reply content.
+- **Reserved Output**: Output token budget reserved for this round of response, not the actual generated reply content. Requests use a default output budget of `50000` tokens, capped by the model's `maxOutputTokens`.
 - **Context Window**: When `contextSize` is configured, runtime splits the total window into 80% input and 20% output. When `contextSize` is not configured, it uses explicit `maxInputTokens/maxOutputTokens`, and the total window follows the native custom endpoint convention of `maxInputTokens + maxOutputTokens`. The current public API does not provide an interface to return upstream usage breakdown to the native Context Window, so this extension maintains the numerator display of the context window itself.
 - Status bar displays a unified `CodingPlans` entry: the body shows a concise percentage of plan usage and context ratio; hover to view detailed information.
 - If the vendor has `usageUrl` configured, it additionally displays plan quota percentage.

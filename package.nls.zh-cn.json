@@ -33,12 +33,16 @@
   "configuration.coding-plans.terminalIntent.maxEntries.description": "Terminal Intent 面板在内存中保留的最近终端意图条数上限。",
   "configuration.coding-plans.commitMessage.showGenerateCommand.description": "控制是否在源代码管理和命令面板中显示“生成提交消息”功能。",
   "configuration.coding-plans.commitMessage.language.description": "生成提交消息的语言",
-  "configuration.coding-plans.locale.description": "Coding Plans 模型的自然语言响应及其输出的 reasoning/thinking 文本使用的语言。输入 BCP 47 locale（如 zh-CN、en-US）或语言名称；留空表示不覆盖。",
+  "configuration.coding-plans.locale.description": "Coding Plans 模型的自然语言响应及其输出的 reasoning/thinking 文本使用的语言。",
+  "configuration.coding-plans.locale.default": "跟随请求语言（不覆盖）",
+  "configuration.coding-plans.locale.zhCN": "简体中文",
+  "configuration.coding-plans.locale.enUS": "英语",
+  "configuration.coding-plans.overrideContextWindow.description": "覆盖所有 Coding Plans 模型导出到 chatLanguageModels.json 的 contextWindow。不会影响请求侧 token 计算；留空或设为 0 时使用各模型的 contextSize。",
+  "configuration.coding-plans.overrideMaxOutputTokens.description": "覆盖所有 Coding Plans 模型导出到 chatLanguageModels.json 的 maxOutputTokens。不会影响请求中实际发送的 max_tokens；留空或设为 0 时使用固定默认值 100000。",
   "configuration.coding-plans.commitMessage.useRecentCommitStyle.description": "开启后会读取最近最多 7 条本地 commit 消息（不足则取全部），并按相近风格生成新的 commit message。VS Code Web 中无法获取这项可选风格样本。",
   "configuration.coding-plans.commitMessage.modelVendor.description": "生成提交消息时优先使用的供应商名称（例如 Zhipu）。留空则每次弹窗选择。",
   "configuration.coding-plans.commitMessage.modelId.description": "生成提交消息时优先使用的模型名称（例如 glm-4-flash）。需与 modelVendor 配合使用。",
   "configuration.coding-plans.commitMessage.options.description": "提交消息的高级参数（JSON 对象）：包括 prompt、maxDiffLines、pipelineMode、summary 相关阈值、最大 bullet 数、标题长度、校验开关，以及 llmMaxPromptLength 输入预算。",
   "configuration.coding-plans.logLevel.description": "设置 Coding Plans 输出通道使用的 VS Code 原生日志等级。",
-  "configuration.coding-plans.autoRefreshModels.description": "控制 settings/API Key 变化和空模型选择器查询时，是否自动刷新运行时模型及 VS Code 模型选择器。手动刷新命令始终可用。",
-  "configuration.coding-plans.advanced.description": "高级设置（JSON 对象）：包括 defaultReservedOutput 等。"
+  "configuration.coding-plans.autoRefreshModels.description": "控制 settings/API Key 变化和空模型选择器查询时，是否自动刷新运行时模型及 VS Code 模型选择器。手动刷新命令始终可用。"
 }

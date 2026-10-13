@@ -26,19 +26,28 @@
   </g>
 
   <g>
-    <rect x="58" y="86" width="186" height="64" rx="20" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
-    <text x="151" y="126" text-anchor="middle" fill="#FFFFFF" font-size="30" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">ZHIPU</text>
+    <rect x="58" y="70" width="186" height="58" rx="18" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
+    <text x="151" y="108" text-anchor="middle" fill="#FFFFFF" font-size="27" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">ZHIPU</text>
 
-    <rect x="268" y="86" width="186" height="64" rx="20" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
-    <text x="361" y="126" text-anchor="middle" fill="#FFFFFF" font-size="30" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">KIMI</text>
+    <rect x="268" y="70" width="186" height="58" rx="18" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
+    <text x="361" y="108" text-anchor="middle" fill="#FFFFFF" font-size="27" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">KIMI</text>
 
-    <rect x="58" y="186" width="186" height="64" rx="20" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
-    <text x="151" y="226" text-anchor="middle" fill="#FFFFFF" font-size="24" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">VOLCENGINE</text>
+    <rect x="58" y="145" width="186" height="58" rx="18" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
+    <text x="151" y="183" text-anchor="middle" fill="#FFFFFF" font-size="20" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">VOLCENGINE</text>
 
-    <rect x="268" y="186" width="186" height="64" rx="20" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
-    <text x="361" y="226" text-anchor="middle" fill="#FFFFFF" font-size="25" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">MINIMAX</text>
+    <rect x="268" y="145" width="186" height="58" rx="18" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
+    <text x="361" y="183" text-anchor="middle" fill="#FFFFFF" font-size="23" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">MINIMAX</text>
 
-    <rect x="130" y="286" width="252" height="64" rx="20" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
-    <text x="256" y="326" text-anchor="middle" fill="#FFFFFF" font-size="30" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">ALIYUN</text>
+    <rect x="58" y="220" width="186" height="58" rx="18" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
+    <text x="151" y="258" text-anchor="middle" fill="#FFFFFF" font-size="27" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">ALIYUN</text>
+
+    <rect x="268" y="220" width="186" height="58" rx="18" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
+    <text x="361" y="258" text-anchor="middle" fill="#FFFFFF" font-size="22" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">DEEPSEEK</text>
+
+    <rect x="58" y="295" width="186" height="58" rx="18" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
+    <text x="151" y="333" text-anchor="middle" fill="#FFFFFF" font-size="25" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">CLAUDE</text>
+
+    <rect x="268" y="295" width="186" height="58" rx="18" fill="url(#pill)" stroke="#EAF8FF" stroke-opacity="0.5"/>
+    <text x="361" y="333" text-anchor="middle" fill="#FFFFFF" font-size="27" font-weight="700" font-family="Segoe UI, Microsoft YaHei, Arial, sans-serif">GPT</text>
   </g>
 </svg>

@@ -1962,21 +1962,11 @@ export class GenericAIProvider extends BaseAIProvider {
   }
 
   private resolveRequestedOutputLimit(request: GenericChatRequest): number {
-    const advanced = this.configStore.getAdvancedOptions();
     const model = this.getModel(request.modelId);
-
-    if (advanced.defaultReservedOutput > 0) {
-      const desired = Math.max(1, Math.floor(advanced.defaultReservedOutput));
-      if (!model) {
-        return desired;
-      }
-      return Math.max(1, Math.min(desired, Math.floor(model.maxOutputTokens)));
-    }
-
     if (!model) {
       return DEFAULT_REQUEST_MAX_TOKENS;
     }
-    return Math.max(1, Math.floor(model.maxOutputTokens));
+    return Math.max(1, Math.min(DEFAULT_REQUEST_MAX_TOKENS, Math.floor(model.maxOutputTokens)));
   }
 
   private resolveOutputBuffer(
