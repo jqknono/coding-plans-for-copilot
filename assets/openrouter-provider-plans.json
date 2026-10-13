@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-12T17:31:36.469Z",
-  "generatedAtBeijing": "2026年10月13日 01:31:36",
-  "sourceGeneratedAt": "2026-10-12T17:30:32.499Z",
-  "sourceGeneratedAtBeijing": "2026年10月13日 01:30:32",
-  "sourceMetricsGeneratedAt": "2026-10-12T17:30:34.233Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月13日 01:30:34",
+  "generatedAt": "2026-10-13T15:41:11.882Z",
+  "generatedAtBeijing": "2026年10月13日 23:41:11",
+  "sourceGeneratedAt": "2026-10-13T15:40:14.815Z",
+  "sourceGeneratedAtBeijing": "2026年10月13日 23:40:14",
+  "sourceMetricsGeneratedAt": "2026-10-13T15:40:16.001Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月13日 23:40:16",
   "summary": {
     "openrouterProviderCount": 112,
     "metricsProviderCount": 54,
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/f935c74f443ae966a872b62f0b4ff447.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/18ecb94d031fcedd7cc9f98efa4dc57c.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -739,7 +739,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DZ1yQQGy.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CmUYs_Cs.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1107,7 +1107,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://legal.crusoe.ai",
       "pricingPageUrl": "https://legal.crusoe.ai",
-      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
+      "reason": "官网价格页探测失败：https://legal.crusoe.ai/pricing: HTTP 403",
       "blocked": true
     },
     {
@@ -1115,8 +1115,8 @@
       "openrouterName": "Darkbloom",
       "providerId": null,
       "officialWebsiteUrl": "https://www.darkbloom.dev",
-      "pricingPageUrl": "https://www.darkbloom.dev",
-      "reason": "官网价格页探测失败：https://www.darkbloom.ai/pricing: HTTP 404",
+      "pricingPageUrl": "https://www.darkbloom.ai/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.05 / $2.2 / $0.025）",
       "blocked": false
     },
     {
@@ -1260,7 +1260,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://near.ai",
       "pricingPageUrl": "https://near.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.04 / $1.35 / $0.15）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.04 / $1.35 / $0.08）",
       "blocked": false
     },
     {
