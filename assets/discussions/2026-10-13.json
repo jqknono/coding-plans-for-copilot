@@ -1,0 +1,139 @@
+{
+  "date": "2026-10-13",
+  "generatedAt": "2026-10-13T13:44:30.554Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 17,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "CodeX": 1,
+      "Codex": 1,
+      "Zhipu AI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1248508",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1248508",
+      "title": "请问你们是怎么找到 vibe coding 的需求的",
+      "content": "为啥大家都能找到那么多的需求，额度都不够用了。我现在 codex plus 也每周只能用到一半量，有的时候知道要重置了，也不知道做什么，好迷茫。",
+      "author": "biuuuuu",
+      "createdAt": "2026-10-13T12:34:40.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "CodeX",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.65,
+        "summary": "用户询问大家如何找到足够的 coding 需求来用完 CodeX Plus 的每周额度，表示自己的额度不够用且不知道如何利用重置后的额度，感到迷茫。",
+        "topics": [
+          "使用体验",
+          "额度",
+          "CodeX Plus",
+          "需求寻找"
+        ],
+        "planMentioned": "CodeX Plus",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/431",
+      "analyzedAt": "2026-10-13T13:56:54.053Z"
+    },
+    {
+      "id": "v2ex-1248505",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1248505",
+      "title": "帮你打破 plus 5h 枷锁",
+      "content": "• 打破 5 小时用量窗口限制，按周发放用量！ • 每周发放 260 刀，额度比 plus 还多！ • Codex 全模型都可以用！ • 官方重置时同步恢复一轮套餐额度。 • 地址： codex.zhuanyedaili.com • 认准 150B 订阅套餐",
+      "author": "AI952995",
+      "createdAt": "2026-10-13T12:12:46.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Codex",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "该帖子宣传一个突破 Codex 5小时使用限制的订阅套餐，每周提供260美元额度，支持全模型 Codex，官方重置时同步恢复额度。",
+        "topics": [
+          "定价",
+          "套餐",
+          "Codex",
+          "使用限制",
+          "订阅"
+        ],
+        "planMentioned": "150B 订阅套餐",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/432",
+      "analyzedAt": "2026-10-13T13:56:59.650Z"
+    },
+    {
+      "id": "v2ex-1248481",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1248481",
+      "title": "glm flash 能力大幅增强后， max 套餐一直用不完，重置卡都攒了 10 张",
+      "content": "因为我很多项目是需要视觉校验的，模型直接有了视觉能力后无论是写还是验收都又快又稳",
+      "author": "rrZ2C",
+      "createdAt": "2026-10-13T10:05:51.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Zhipu AI",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "GLM Flash 视觉功能大幅提升后，用户发现 MAX 套餐消耗过快，已累积 10 张重置卡，反映出套餐使用体验有待改善。",
+        "topics": [
+          "套餐使用",
+          "重置卡",
+          "视觉功能",
+          "GLM Flash"
+        ],
+        "planMentioned": "MAX 套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/433",
+      "analyzedAt": "2026-10-13T13:57:08.627Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1248522: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1248515: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1248507: The operation was aborted due to timeout"
+  ]
+}
