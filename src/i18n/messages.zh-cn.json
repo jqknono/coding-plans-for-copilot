@@ -100,5 +100,9 @@
   "vendorConfigError": "供应商配置错误",
   "vendorConfigMissingField": "供应商「{0}」缺少必填字段「{1}」",
   "vendorConfigFixInSettings": "请打开设置修复后重试",
-  "vendorConfigFixAction": "打开设置"
+  "vendorConfigFixAction": "打开设置",
+  "terminalIntentViewDescription": "最近的 run_in_terminal goal 与 explanation",
+  "terminalIntentEmpty": "暂无终端工具意图。",
+  "terminalIntentMissingGoal": "(未提供 goal)",
+  "terminalIntentMissingExplanation": "(未提供 explanation)"
 }

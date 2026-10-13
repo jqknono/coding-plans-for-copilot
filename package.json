@@ -44,6 +44,24 @@
                 }
             }
         ],
+        "viewsContainers": {
+            "panel": [
+                {
+                    "id": "coding-plans-terminalIntent",
+                    "title": "%viewsContainers.coding-plans.terminalIntent.title%",
+                    "icon": "assets/icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "coding-plans-terminalIntent": [
+                {
+                    "type": "webview",
+                    "id": "coding-plans-terminalIntent-view",
+                    "name": "%views.coding-plans.terminalIntent.view.name%"
+                }
+            ]
+        },
         "commands": [
             {
                 "command": "coding-plans.manage",
@@ -75,6 +93,17 @@
                 "command": "coding-plans.selectCommitMessageModel",
                 "title": "%commands.coding-plans.selectCommitMessageModel.title%",
                 "category": "%commands.category%"
+            },
+            {
+                "command": "coding-plans.terminalIntent.focus",
+                "title": "%commands.coding-plans.terminalIntent.focus.title%",
+                "category": "%commands.category%"
+            },
+            {
+                "command": "coding-plans.terminalIntent.clear",
+                "title": "%commands.coding-plans.terminalIntent.clear.title%",
+                "icon": "$(clear-all)",
+                "category": "%commands.category%"
             }
         ],
         "menus": {
@@ -83,6 +112,13 @@
                     "command": "coding-plans.generateCommitMessage",
                     "group": "navigation",
                     "when": "scmProvider == git && config.coding-plans.commitMessage.showGenerateCommand"
+                }
+            ],
+            "view/title": [
+                {
+                    "command": "coding-plans.terminalIntent.clear",
+                    "when": "view == coding-plans-terminalIntent-view",
+                    "group": "navigation"
                 }
             ],
             "commandPalette": [
@@ -253,6 +289,19 @@
                     "default": false,
                     "description": "%configuration.coding-plans.autoRefreshModels.description%",
                     "order": 8
+                },
+                "coding-plans.terminalIntent.enabled": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "%configuration.coding-plans.terminalIntent.enabled.description%",
+                    "order": 9
+                },
+                "coding-plans.terminalIntent.maxEntries": {
+                    "type": "number",
+                    "default": 10,
+                    "minimum": 1,
+                    "description": "%configuration.coding-plans.terminalIntent.maxEntries.description%",
+                    "order": 10
                 },
                 "coding-plans.vendors": {
                     "type": "array",

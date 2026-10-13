@@ -81,6 +81,9 @@ type PlanUsageStatusModule = typeof import('../planUsageStatus');
 type CommitMessageGeneratorModule = typeof import('../commitMessageGenerator');
 type ExtensionModule = typeof import('../extension');
 type I18nModule = typeof import('../i18n/i18n');
+type TerminalIntentExtractModule = typeof import('../terminalIntent/extract');
+type TerminalIntentStoreModule = typeof import('../terminalIntent/store');
+type TerminalIntentViewProviderModule = typeof import('../terminalIntent/viewProvider');
 
 type TestContext = {
   state: MockState;
@@ -300,6 +303,9 @@ function createVscodeMock() {
             return undefined;
           },
         };
+      },
+      registerWebviewViewProvider(): FakeDisposable {
+        return new FakeDisposable();
       },
       createStatusBarItem() {
         const item = {
@@ -8491,6 +8497,131 @@ function runContextUsageStateTests(contextUsageStateModule: ContextUsageStateMod
   console.log('PASS ContextUsageState 与状态栏文案正常生成');
 }
 
+function runTerminalIntentTests(
+  extractModule: TerminalIntentExtractModule,
+  storeModule: TerminalIntentStoreModule,
+  viewProviderModule: TerminalIntentViewProviderModule,
+): void {
+  const { extractTerminalIntent } = extractModule;
+  const { TerminalIntentStore } = storeModule;
+  const { clampCommandDisplayText, escapeHtml, renderTerminalIntentHtml } = viewProviderModule;
+
+  assert.equal(
+    extractTerminalIntent({
+      callId: 'call-1',
+      name: 'read_file',
+      input: { explanation: 'x', goal: 'y' },
+    }),
+    undefined,
+  );
+  assert.equal(
+    extractTerminalIntent({
+      callId: 'call-2',
+      name: 'run_in_terminal',
+      input: { command: 'npm test' },
+    }),
+    undefined,
+  );
+
+  const extracted = extractTerminalIntent({
+    callId: 'call-3',
+    name: 'run_in_terminal',
+    input: {
+      command: 'npm test',
+      explanation: 'Run unit tests',
+      goal: 'Verify regressions',
+    },
+  }, 1_700_000_000_000);
+  assert.deepEqual(extracted, {
+    callId: 'call-3',
+    toolName: 'run_in_terminal',
+    goal: 'Verify regressions',
+    explanation: 'Run unit tests',
+    command: 'npm test',
+    timestamp: 1_700_000_000_000,
+  });
+  console.log('PASS TerminalIntent extract 仅保留 run_in_terminal 的 goal/explanation');
+
+  activeState.settings['terminalIntent.enabled'] = true;
+  activeState.settings['terminalIntent.maxEntries'] = 2;
+  const store = new TerminalIntentStore(2);
+  assert.ok(
+    store.captureFromToolCall({
+      callId: 'a',
+      name: 'run_in_terminal',
+      input: { goal: 'one', explanation: 'first' },
+    }),
+  );
+  assert.equal(
+    store.captureFromToolCall({
+      callId: 'a',
+      name: 'run_in_terminal',
+      input: { goal: 'one', explanation: 'first again' },
+    }),
+    undefined,
+  );
+  assert.ok(
+    store.captureFromToolCall({
+      callId: 'b',
+      name: 'run_in_terminal',
+      input: { goal: 'two', explanation: 'second' },
+    }),
+  );
+  assert.ok(
+    store.captureFromToolCall({
+      callId: 'c',
+      name: 'run_in_terminal',
+      input: { goal: 'three', explanation: 'third' },
+    }),
+  );
+  assert.deepEqual(
+    store.getEntries().map((entry) => entry.callId),
+    ['c', 'b'],
+  );
+
+  activeState.settings['terminalIntent.enabled'] = false;
+  assert.equal(
+    store.captureFromToolCall({
+      callId: 'd',
+      name: 'run_in_terminal',
+      input: { goal: 'four', explanation: 'disabled' },
+    }),
+    undefined,
+  );
+  assert.deepEqual(
+    store.getEntries().map((entry) => entry.callId),
+    ['c', 'b'],
+  );
+
+  store.clear();
+  assert.equal(store.getEntries().length, 0);
+  store.dispose();
+  activeState.settings['terminalIntent.enabled'] = true;
+  console.log('PASS TerminalIntent store 支持去重、裁剪、开关与清空');
+
+  assert.equal(escapeHtml('<goal>&"\''), '&lt;goal&gt;&amp;&quot;&#39;');
+  assert.equal(clampCommandDisplayText('one\ntwo\nthree'), 'one\ntwo\nthree');
+  assert.equal(clampCommandDisplayText('one\ntwo\nthree\nfour\nfive'), 'one\ntwo\nthree\n…');
+  const html = renderTerminalIntentHtml([
+    {
+      callId: 'call-html',
+      toolName: 'run_in_terminal',
+      goal: 'Install <deps>',
+      explanation: 'Run npm & ci',
+      command: 'npm ci\nline2\nline3\nline4',
+      timestamp: 1_700_000_000_000,
+    },
+  ]);
+  assert.match(html, /Install &lt;deps&gt;/);
+  assert.match(html, /Run npm &amp; ci/);
+  assert.match(html, /class="command"/);
+  assert.match(html, /-webkit-line-clamp: 3/);
+  assert.match(html, /title="npm ci&#10;line2&#10;line3&#10;line4"/);
+  assert.match(html, /npm ci\nline2\nline3\n…/);
+  assert.doesNotMatch(html, /line4<\/code>/);
+  console.log('PASS TerminalIntent panel HTML 正确转义展示字段');
+}
+
 function runPlanUsageStatusTests(
   planUsageStatusModule: PlanUsageStatusModule,
   contextUsageStateModule: ContextUsageStateModule,
@@ -10168,6 +10299,10 @@ async function main(): Promise<void> {
     const commitMessageGeneratorModule = require('../commitMessageGenerator') as CommitMessageGeneratorModule;
     const extensionModule = require('../extension') as ExtensionModule;
     const i18nModule = require('../i18n/i18n') as I18nModule;
+    const terminalIntentExtractModule = require('../terminalIntent/extract') as TerminalIntentExtractModule;
+    const terminalIntentStoreModule = require('../terminalIntent/store') as TerminalIntentStoreModule;
+    const terminalIntentViewProviderModule =
+      require('../terminalIntent/viewProvider') as TerminalIntentViewProviderModule;
     await runNativeLogLevelConfigurationTests();
     for (const testCase of testCases) {
       await runTestCase(ConfigStore, testCase);
@@ -10206,6 +10341,7 @@ async function main(): Promise<void> {
     runTokenUsageNormalizationTests(tokenUsageModule);
     runContextUsageStateTests(contextUsageStateModule);
     runPlanUsageStatusTests(planUsageStatusModule, contextUsageStateModule);
+    runTerminalIntentTests(terminalIntentExtractModule, terminalIntentStoreModule, terminalIntentViewProviderModule);
     await runCommitMessageGeneratorTests(commitMessageGeneratorModule);
     await runManageVendorConfigurationTests(ConfigStore, extensionModule);
     await i18nModule.initI18n();

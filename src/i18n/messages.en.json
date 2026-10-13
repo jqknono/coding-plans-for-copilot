@@ -100,5 +100,9 @@
   "vendorConfigError": "Vendor Configuration Error",
   "vendorConfigMissingField": "Vendor \"{0}\" is missing required field \"{1}\"",
   "vendorConfigFixInSettings": "Open settings to fix and retry",
-  "vendorConfigFixAction": "Open Settings"
+  "vendorConfigFixAction": "Open Settings",
+  "terminalIntentViewDescription": "Recent run_in_terminal goal and explanation",
+  "terminalIntentEmpty": "No terminal tool intents yet.",
+  "terminalIntentMissingGoal": "(no goal)",
+  "terminalIntentMissingExplanation": "(no explanation)"
 }

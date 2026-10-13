@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { ContextUsageState, LastContextUsageSnapshot } from '../contextUsageState';
+import { TerminalIntentStore } from '../terminalIntent/store';
 import { BaseAIProvider, BaseLanguageModel, getCompactErrorMessage } from './baseProvider';
 import { ConfigStore } from '../config/configStore';
 import { isEmptyModelResponseError } from './genericProvider';
@@ -192,6 +193,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     private readonly provider: BaseAIProvider,
     private readonly configStore?: ConfigStore,
     private readonly contextUsageState?: ContextUsageState,
+    private readonly terminalIntentStore?: TerminalIntentStore,
   ) {
     this.disposables.push(
       this.provider.onDidChangeModels(() => {
@@ -439,6 +441,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
               thinkingPartCount += 1;
             }
             progress.report(part as vscode.LanguageModelResponsePart);
+            this.captureTerminalIntent(part);
             reportedPartCount += 1;
           }
         } catch (error) {
@@ -802,6 +805,25 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       provider: vendor,
       modelId: model.id,
       snapshot: this.summarizeSnapshot(snapshot),
+    });
+  }
+
+  private captureTerminalIntent(part: vscode.LanguageModelResponsePart | unknown): void {
+    if (!this.terminalIntentStore || !(part instanceof vscode.LanguageModelToolCallPart)) {
+      return;
+    }
+
+    const captured = this.terminalIntentStore.captureFromToolCall(part);
+    if (!captured) {
+      return;
+    }
+
+    logger.debug('Adapter captured terminal intent for panel', {
+      callId: captured.callId,
+      toolName: captured.toolName,
+      hasGoal: captured.goal.length > 0,
+      hasExplanation: captured.explanation.length > 0,
+      hasCommand: !!captured.command,
     });
   }
 

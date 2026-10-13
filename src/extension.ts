@@ -22,9 +22,13 @@ import {
   LANGUAGE_MODELS_REFRESH_LOG_PREFIX,
   PREFERRED_LANGUAGE_MODELS_REFRESH_COMMANDS,
   REFRESH_MODELS_COMMAND,
+  TERMINAL_INTENT_MAX_ENTRIES_SETTING_KEY,
   UPDATE_MODELS_COMMAND,
 } from './constants';
 import { logger } from './logging/outputChannelLogger';
+import { readTerminalIntentMaxEntries } from './terminalIntent/settings';
+import { TerminalIntentStore } from './terminalIntent/store';
+import { registerTerminalIntentView } from './terminalIntent/viewProvider';
 
 let providers: Map<string, GenericAIProvider> = new Map();
 let refreshModelsCommandInProgress = false;
@@ -583,6 +587,16 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
   await configStore.ready();
   const contextUsageState = new ContextUsageState();
   context.subscriptions.push(contextUsageState);
+  const terminalIntentStore = new TerminalIntentStore(readTerminalIntentMaxEntries());
+  context.subscriptions.push(terminalIntentStore);
+  registerTerminalIntentView(context, terminalIntentStore);
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration(`coding-plans.${TERMINAL_INTENT_MAX_ENTRIES_SETTING_KEY}`)) {
+        terminalIntentStore.setMaxEntries(readTerminalIntentMaxEntries());
+      }
+    }),
+  );
   const planUsageState = new PlanUsageState();
   context.subscriptions.push(planUsageState);
   const codingPlanStatusBarController = new CodingPlanStatusBarController(contextUsageState, planUsageState);
@@ -596,7 +610,7 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
     getAvailableModels: () => genericProvider.getAvailableModels(),
   });
 
-  const adapter = new LMChatProviderAdapter(genericProvider, configStore, contextUsageState);
+  const adapter = new LMChatProviderAdapter(genericProvider, configStore, contextUsageState, terminalIntentStore);
   context.subscriptions.push(adapter);
   registerLanguageModelProvider(adapter);
   context.subscriptions.push(
