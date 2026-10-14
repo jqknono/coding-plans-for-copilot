@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-10-13T15:41:11.882Z",
-  "generatedAtBeijing": "2026年10月13日 23:41:11",
-  "sourceGeneratedAt": "2026-10-13T15:40:14.815Z",
-  "sourceGeneratedAtBeijing": "2026年10月13日 23:40:14",
-  "sourceMetricsGeneratedAt": "2026-10-13T15:40:16.001Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月13日 23:40:16",
+  "generatedAt": "2026-10-14T13:25:18.801Z",
+  "generatedAtBeijing": "2026年10月14日 21:25:18",
+  "sourceGeneratedAt": "2026-10-14T13:24:20.659Z",
+  "sourceGeneratedAtBeijing": "2026年10月14日 21:24:20",
+  "sourceMetricsGeneratedAt": "2026-10-14T13:24:22.255Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月14日 21:24:22",
   "summary": {
     "openrouterProviderCount": 112,
-    "metricsProviderCount": 54,
-    "resolvedMetricsProviderCount": 54,
+    "metricsProviderCount": 53,
+    "resolvedMetricsProviderCount": 53,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 9,
     "providersWithPlans": 18,
-    "pendingCount": 36,
+    "pendingCount": 35,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/18ecb94d031fcedd7cc9f98efa4dc57c.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/47c0e9624a14b1b63d3ca545fb3b0117.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -739,7 +739,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CmUYs_Cs.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-gzGAA3kD.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1116,7 +1116,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.darkbloom.dev",
       "pricingPageUrl": "https://www.darkbloom.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.05 / $2.2 / $0.025）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.035 / $2.2 / $0.0175）",
       "blocked": false
     },
     {
@@ -1323,7 +1323,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.relace.ai",
       "pricingPageUrl": "https://relace.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $1.00 / $3.00 / $0.20）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.50 / $0.05 / $2.00）",
       "blocked": false
     },
     {
@@ -1351,15 +1351,6 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "tenstorrent",
-      "openrouterName": "Tenstorrent",
-      "providerId": null,
-      "officialWebsiteUrl": "https://console.tenstorrent.com",
-      "pricingPageUrl": "https://console.tenstorrent.com",
-      "reason": "官网价格页探测失败：https://console.tenstorrent.com/pricing: HTTP 404",
       "blocked": false
     },
     {
