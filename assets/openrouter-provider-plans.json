@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-10-14T13:25:18.801Z",
-  "generatedAtBeijing": "2026年10月14日 21:25:18",
-  "sourceGeneratedAt": "2026-10-14T13:24:20.659Z",
-  "sourceGeneratedAtBeijing": "2026年10月14日 21:24:20",
-  "sourceMetricsGeneratedAt": "2026-10-14T13:24:22.255Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月14日 21:24:22",
+  "generatedAt": "2026-10-15T13:11:43.386Z",
+  "generatedAtBeijing": "2026年10月15日 21:11:43",
+  "sourceGeneratedAt": "2026-10-15T13:10:45.287Z",
+  "sourceGeneratedAtBeijing": "2026年10月15日 21:10:45",
+  "sourceMetricsGeneratedAt": "2026-10-15T13:10:46.889Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月15日 21:10:46",
   "summary": {
     "openrouterProviderCount": 112,
-    "metricsProviderCount": 53,
-    "resolvedMetricsProviderCount": 53,
+    "metricsProviderCount": 55,
+    "resolvedMetricsProviderCount": 55,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 9,
     "providersWithPlans": 18,
-    "pendingCount": 35,
+    "pendingCount": 37,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -504,12 +504,12 @@
       "plans": [
         {
           "name": "Go",
-          "currentPrice": 24.5,
-          "currentPriceText": "¥24.5/月",
-          "originalPrice": 49,
-          "originalPriceText": "¥49/月",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "续费金额：¥24.5/月",
+          "notes": "续费金额：¥49/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash Preview",
             "图像和声音模型",
@@ -520,12 +520,12 @@
         },
         {
           "name": "Explore",
-          "currentPrice": 59.5,
-          "currentPriceText": "¥59.5/月",
-          "originalPrice": 119,
-          "originalPriceText": "¥119/月",
+          "currentPrice": 119,
+          "currentPriceText": "¥119/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "续费金额：¥59.5/月",
+          "notes": "续费金额：¥119/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash Preview",
             "视频模型，如 H3",
@@ -537,12 +537,12 @@
         },
         {
           "name": "Build",
-          "currentPrice": 234.5,
-          "currentPriceText": "¥234.5/月",
-          "originalPrice": 469,
-          "originalPriceText": "¥469/月",
+          "currentPrice": 469,
+          "currentPriceText": "¥469/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "续费金额：¥234.5/月",
+          "notes": "续费金额：¥469/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash Preview",
             "视频模型，如 H3",
@@ -739,7 +739,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-gzGAA3kD.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CgGKEBE0.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1273,6 +1273,15 @@
       "blocked": false
     },
     {
+      "slug": "nextbit",
+      "openrouterName": "NextBit",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.nextbit256.com",
+      "pricingPageUrl": "https://www.nextbit256.com",
+      "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "novita",
       "openrouterName": "Novita",
       "providerId": null,
@@ -1351,6 +1360,15 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "tenstorrent",
+      "openrouterName": "Tenstorrent",
+      "providerId": null,
+      "officialWebsiteUrl": "https://console.tenstorrent.com",
+      "pricingPageUrl": "https://console.tenstorrent.com",
+      "reason": "官网价格页探测失败：https://console.tenstorrent.com/pricing: HTTP 404",
       "blocked": false
     },
     {
