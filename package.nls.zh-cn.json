@@ -37,7 +37,7 @@
   "configuration.coding-plans.locale.default": "跟随请求语言（不覆盖）",
   "configuration.coding-plans.locale.zhCN": "简体中文",
   "configuration.coding-plans.locale.enUS": "英语",
-  "configuration.coding-plans.overrideContextWindow.description": "覆盖所有 Coding Plans 模型导出到 chatLanguageModels.json 的 contextWindow。不会影响请求侧 token 计算；留空或设为 0 时使用各模型的 contextSize。",
+  "configuration.coding-plans.overrideContextWindow.description": "刷新 models.dev 元数据时，若其 contextSize 更大，则直接把 vendors.models.contextSize 写成该上限；VS Code 展示的就是写回后的值。不会改写手工配置的 contextSize 或上游 /models 原始限制，也不会改变请求侧 token 预算；留空或设为 0 时不启用上限。",
   "configuration.coding-plans.overrideMaxOutputTokens.description": "覆盖所有 Coding Plans 模型导出到 chatLanguageModels.json 的 maxOutputTokens。不会影响请求中实际发送的 max_tokens；留空或设为 0 时使用固定默认值 100000。",
   "configuration.coding-plans.commitMessage.useRecentCommitStyle.description": "开启后会读取最近最多 7 条本地 commit 消息（不足则取全部），并按相近风格生成新的 commit message。VS Code Web 中无法获取这项可选风格样本。",
   "configuration.coding-plans.commitMessage.modelVendor.description": "生成提交消息时优先使用的供应商名称（例如 Zhipu）。留空则每次弹窗选择。",

@@ -1314,12 +1314,57 @@ async function runChatLanguageModelsTokenOverrideSettingTests(configStoreCtor: C
   const modelProperties = properties['coding-plans.vendors'].items.properties.models.items.properties;
   assert.equal('overrideContextWindow' in modelProperties, false, 'context override must not be model-scoped');
   assert.equal('overrideMaxOutputTokens' in modelProperties, false, 'output override must not be model-scoped');
+  assert.equal(
+    'modelsDevContextSize' in modelProperties,
+    false,
+    'contextSize itself is overwritten instead of introducing a separate source field',
+  );
   assert.deepEqual(properties['coding-plans.locale'].enum, ['', 'zh-CN', 'en-US']);
   assert.deepEqual(properties['coding-plans.locale'].enumDescriptions, [
     '%configuration.coding-plans.locale.default%',
     '%configuration.coding-plans.locale.zhCN%',
     '%configuration.coding-plans.locale.enUS%',
   ]);
+
+  activeState = createState([], { overrideContextWindow: 256000 });
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  let overrideChangeCount = 0;
+  const subscription = configStore.onDidChangeChatLanguageModelsTokenOverrides(() => {
+    overrideChangeCount += 1;
+  });
+  try {
+    for (const listener of [...activeState.listeners]) {
+      listener({
+        affectsConfiguration(changedSection: string): boolean {
+          return changedSection === 'coding-plans.overrideContextWindow';
+        },
+      });
+    }
+    assert.equal(overrideChangeCount, 1, '上下文窗口覆盖变更应通知运行时模型刷新');
+  } finally {
+    subscription.dispose();
+    configStore.dispose();
+  }
+
+  activeState = createState([], { overrideMaxOutputTokens: 65536 });
+  configStore = new configStoreCtor(createExtensionContext() as never);
+  let outputOverrideChangeCount = 0;
+  const outputOverrideSubscription = configStore.onDidChangeChatLanguageModelsTokenOverrides(() => {
+    outputOverrideChangeCount += 1;
+  });
+  try {
+    for (const listener of [...activeState.listeners]) {
+      listener({
+        affectsConfiguration(changedSection: string): boolean {
+          return changedSection === 'coding-plans.overrideMaxOutputTokens';
+        },
+      });
+    }
+    assert.equal(outputOverrideChangeCount, 1, '输出窗口覆盖变更应通知使用该设置的导出逻辑');
+  } finally {
+    outputOverrideSubscription.dispose();
+    configStore.dispose();
+  }
   console.log('PASS chatLanguageModels token overrides are root-level Settings and treat zero as unset');
 }
 
@@ -1721,6 +1766,50 @@ async function runGenericProviderContextSizeTests(
   genericProviderModule: GenericProviderModule,
 ): Promise<void> {
   const { GenericAIProvider } = genericProviderModule;
+
+  activeState = createState(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [
+          {
+            name: 'large-context-model',
+            contextSize: 1048576,
+          },
+        ],
+      },
+    ],
+    { overrideContextWindow: 256000 },
+  );
+
+  const overrideConfigStore = new configStoreCtor(createExtensionContext() as never);
+  const overrideProvider = new GenericAIProvider(
+    createExtensionContext() as never,
+    overrideConfigStore,
+  ) as unknown as {
+    buildConfiguredModelsForVendor(vendor: VendorRecord): Array<{
+      maxTokens: number;
+      maxInputTokens: number;
+      maxOutputTokens: number;
+    }>;
+    dispose(): void;
+  };
+
+  try {
+    const vendor = overrideConfigStore.getVendors()[0] as VendorRecord;
+    const models = overrideProvider.buildConfiguredModelsForVendor(vendor);
+    assert.equal(models[0]?.maxTokens, 1048576);
+    assert.equal(models[0]?.maxInputTokens, 838861);
+    assert.equal(models[0]?.maxOutputTokens, 209715);
+    console.log('PASS overrideContextWindow 不覆盖手工配置的 Context Size');
+  } finally {
+    overrideProvider.dispose();
+    overrideConfigStore.dispose();
+  }
+
   activeState = createState([
     {
       name: 'Vendor',
@@ -2865,6 +2954,28 @@ function runGenericProviderDiscoveryMergeTests(): void {
   );
   assert.equal(untouched[0]?.apiStyle, 'openai-chat');
 
+  const oldCappedModelsDevConfig = mergeConfiguredModelOverrides(
+    [
+      {
+        name: 'gemini-3-flash-preview',
+        contextSize: 256000,
+        description: 'google/gemini-3-flash-preview | google | gemini-flash | Closed | 2025-12-17',
+        price: { inputCost: 0.5, outputCost: 3 },
+      },
+    ],
+    [
+      {
+        name: 'gemini-3-flash-preview',
+        contextSize: 500000,
+        description: 'google/gemini-3-flash-preview | google | gemini-flash | Closed | 2025-12-17',
+        price: { inputCost: 0.5, outputCost: 3 },
+      },
+    ],
+    false,
+    'cliproxyapi',
+  );
+  assert.equal(oldCappedModelsDevConfig[0]?.contextSize, 500000);
+
   console.log('PASS Grok 模型刷新时会从 openai-chat 自动升级为 openai-responses');
 }
 
@@ -3412,6 +3523,163 @@ async function runGenericProviderModelsDevEnrichmentTests(
       outputCost: 1.74,
     });
     console.log('PASS /models 刷新会使用 models.dev 补全新发现模型元数据');
+  } finally {
+    globalThis.fetch = originalFetch;
+    provider.dispose();
+    configStore.dispose();
+  }
+}
+
+async function runGenericProviderModelsDevContextWindowOverrideTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule,
+  modelsDevCatalogModule: ModelsDevCatalogModule,
+): Promise<void> {
+  const { GenericAIProvider } = genericProviderModule;
+  const { MODELS_DEV_API_URL, MODELS_DEV_CATALOG_URL } = modelsDevCatalogModule;
+  const originalFetch = globalThis.fetch;
+  let discoveryCalls = 0;
+
+  activeState = createState(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        useModelsEndpoint: true,
+        models: [],
+      },
+    ],
+    { overrideContextWindow: 256000 },
+  );
+  const persistedSourceState = createState(
+    [
+      {
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'openai-chat',
+        defaultVision: false,
+        models: [
+          {
+            name: 'large-context-model',
+            description: 'provider/large-context-model | provider | family | Closed | 2026-01-01',
+            contextSize: 1048576,
+          },
+        ],
+      },
+    ],
+    { overrideContextWindow: 256000 },
+  );
+  activeState = persistedSourceState;
+  const sourceMigrationProbe = new configStoreCtor(createExtensionContext() as never);
+  const sourceMigrationProvider = new GenericAIProvider(
+    createExtensionContext() as never,
+    sourceMigrationProbe,
+  ) as unknown as {
+    buildConfiguredModelsForVendor(vendor: VendorRecord): Array<{
+      maxTokens: number;
+      maxInputTokens: number;
+      maxOutputTokens: number;
+    }>;
+    dispose(): void;
+  };
+  try {
+    const vendor = sourceMigrationProbe.getVendors()[0] as VendorRecord;
+    const migrated = vendor.models[0];
+    assert.equal(migrated?.contextSize, 256000, 'models.dev generated description should rewrite oversized contextSize to override');
+    const configuredModels = sourceMigrationProvider.buildConfiguredModelsForVendor(vendor);
+    assert.equal(configuredModels[0]?.maxTokens, 256000, 'models.dev 1M must remain capped after restart');
+    assert.equal(configuredModels[0]?.maxInputTokens, 204800);
+    assert.equal(configuredModels[0]?.maxOutputTokens, 51200);
+  } finally {
+    sourceMigrationProvider.dispose();
+    sourceMigrationProbe.dispose();
+  }
+
+  const configStore = new configStoreCtor(createExtensionContext() as never);
+  const provider = new GenericAIProvider(createExtensionContext() as never, configStore);
+
+  globalThis.fetch = (async (url: string | URL | Request): Promise<Response> => {
+    const href = typeof url === 'string' ? url : url instanceof URL ? url.toString() : url.url;
+    discoveryCalls += 1;
+    if (href === MODELS_DEV_API_URL || href === MODELS_DEV_CATALOG_URL) {
+      return new Response(
+        JSON.stringify({
+          provider: {
+            id: 'provider',
+            models: {
+              'large-context-model': {
+                id: 'provider/large-context-model',
+                limit: { context: 1048576 },
+              },
+              'small-context-model': {
+                id: 'provider/small-context-model',
+                limit: { context: 128000 },
+              },
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { 'content-type': 'application/json' },
+        },
+      );
+    }
+
+    return new Response(
+      JSON.stringify({
+        data: [
+          { id: 'large-context-model', context_length: 400000 },
+          { id: 'small-context-model', context_length: 400000 },
+          { id: 'upstream-only-model', context_length: 400000 },
+        ],
+      }),
+      {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+      },
+    );
+  }) as typeof globalThis.fetch;
+
+  try {
+    (configStore as unknown as { getApiKey(vendorName: string): Promise<string> }).getApiKey = async (
+      vendorName: string,
+    ) => (vendorName === 'Vendor' ? 'configured' : '');
+
+    await refreshWithDiscovery(provider);
+
+    const modelsByName = new Map(provider.getAvailableModels().map((model) => [model.name, model]));
+    const largeContextModel = modelsByName.get('large-context-model');
+    assert.equal(largeContextModel?.maxTokens, 256000);
+    assert.equal(largeContextModel?.maxInputTokens, 204800);
+    assert.equal(largeContextModel?.maxOutputTokens, 51200);
+
+    const smallContextModel = modelsByName.get('small-context-model');
+    assert.equal(smallContextModel?.maxTokens, 128000);
+    assert.equal(smallContextModel?.maxInputTokens, 102400);
+    assert.equal(smallContextModel?.maxOutputTokens, 25600);
+
+    const upstreamOnlyModel = modelsByName.get('upstream-only-model');
+    assert.equal(upstreamOnlyModel?.maxTokens, 400000);
+    assert.equal(upstreamOnlyModel?.maxInputTokens, 320000);
+    assert.equal(upstreamOnlyModel?.maxOutputTokens, 80000);
+
+    const updatedModels = getUpdatedVendor(activeState).models;
+    assert.equal(
+      updatedModels.find((model) => model.name === 'large-context-model')?.contextSize,
+      256000,
+      'discovery should write the override value into contextSize',
+    );
+
+    const discoveryCallsBeforeSettingsRefresh = discoveryCalls;
+    await provider.refreshModels();
+    assert.equal(discoveryCalls, discoveryCallsBeforeSettingsRefresh, '常规刷新不应重复请求模型发现端点');
+    const persistedLargeContextModel = provider.getAvailableModels().find((model) => model.name === 'large-context-model');
+    assert.equal(persistedLargeContextModel?.maxTokens, 256000);
+    assert.equal(persistedLargeContextModel?.maxInputTokens, 204800);
+    assert.equal(persistedLargeContextModel?.maxOutputTokens, 51200);
+    console.log('PASS overrideContextWindow 直接把超限的 models.dev contextSize 写成上限');
   } finally {
     globalThis.fetch = originalFetch;
     provider.dispose();
@@ -10436,6 +10704,11 @@ async function main(): Promise<void> {
     await runGenericProviderModelEnabledTests(ConfigStore, genericProviderModule);
     await runGenericProviderDiscoveryDefaultVisionTests(ConfigStore, genericProviderModule);
     await runGenericProviderModelsDevEnrichmentTests(ConfigStore, genericProviderModule, modelsDevCatalogModule);
+    await runGenericProviderModelsDevContextWindowOverrideTests(
+      ConfigStore,
+      genericProviderModule,
+      modelsDevCatalogModule,
+    );
     await runGenericProviderModelsDevProxyFallbackTests(ConfigStore, genericProviderModule, modelsDevCatalogModule);
     await runGenericProviderStaleDiscoveryWriteTests(ConfigStore, genericProviderModule, modelsDevCatalogModule);
     await runGenericProviderGeneratedFallbackUpgradeTests(ConfigStore, genericProviderModule, modelsDevCatalogModule);

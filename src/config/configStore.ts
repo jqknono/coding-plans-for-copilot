@@ -80,8 +80,13 @@ export interface VendorValidationError {
   reason: string;
 }
 export class ConfigStore implements vscode.Disposable {
-  private readonly onDidChangeEmitter = new vscode.EventEmitter<void>();
-  public readonly onDidChange = this.onDidChangeEmitter.event;
+  private readonly onDidChangeVendorsEmitter = new vscode.EventEmitter<void>();
+  /** Vendor configuration changed; consumers may need to refresh upstream model discovery. */
+  public readonly onDidChange = this.onDidChangeVendorsEmitter.event;
+  private readonly onDidChangeChatLanguageModelsTokenOverridesEmitter = new vscode.EventEmitter<void>();
+  /** Root-level token overrides changed without changing vendor configuration. */
+  public readonly onDidChangeChatLanguageModelsTokenOverrides =
+    this.onDidChangeChatLanguageModelsTokenOverridesEmitter.event;
   private readonly disposables: vscode.Disposable[] = [];
   private readonly readyPromise: Promise<void>;
 
@@ -89,15 +94,29 @@ export class ConfigStore implements vscode.Disposable {
     this.disposables.push(
       vscode.workspace.onDidChangeConfiguration((e) => {
         if (e.affectsConfiguration('coding-plans.vendors')) {
-          this.onDidChangeEmitter.fire();
+          this.onDidChangeVendorsEmitter.fire();
+        }
+        if (
+          e.affectsConfiguration(`coding-plans.${CHAT_LANGUAGE_MODELS_OVERRIDE_CONTEXT_WINDOW_SETTING_KEY}`) ||
+          e.affectsConfiguration(`coding-plans.${CHAT_LANGUAGE_MODELS_OVERRIDE_MAX_OUTPUT_TOKENS_SETTING_KEY}`)
+        ) {
+          if (e.affectsConfiguration(`coding-plans.${CHAT_LANGUAGE_MODELS_OVERRIDE_CONTEXT_WINDOW_SETTING_KEY}`)) {
+            void this.rewriteOversizedModelsDevContextSizes();
+          }
+          this.onDidChangeChatLanguageModelsTokenOverridesEmitter.fire();
         }
       }),
     );
-    this.readyPromise = this.migrateLegacyVendorModelThinkingConfig();
+    this.readyPromise = this.initializeStoredConfig();
   }
 
   async ready(): Promise<void> {
     await this.readyPromise;
+  }
+
+  private async initializeStoredConfig(): Promise<void> {
+    await this.migrateLegacyVendorModelThinkingConfig();
+    await this.rewriteOversizedModelsDevContextSizes();
   }
 
   isAutoRefreshModelsEnabled(): boolean {
@@ -160,7 +179,72 @@ export class ConfigStore implements vscode.Disposable {
     } else {
       await this.context.secrets.delete(secretKey);
     }
-    this.onDidChangeEmitter.fire();
+    this.onDidChangeVendorsEmitter.fire();
+  }
+
+  /**
+   * Persist capped contextSize values for models.dev-enriched entries when the root override changes.
+   * Hand-authored models without a models.dev description are left untouched.
+   */
+  async rewriteOversizedModelsDevContextSizes(): Promise<void> {
+    const overrideContextWindow = this.getChatLanguageModelsTokenOverrides().overrideContextWindow;
+    if (overrideContextWindow === undefined) {
+      return;
+    }
+
+    const config = vscode.workspace.getConfiguration('coding-plans');
+    const rawVendors = config.get<unknown[]>('vendors', []);
+    if (!Array.isArray(rawVendors) || rawVendors.length === 0) {
+      return;
+    }
+
+    let changed = false;
+    const updatedVendors = rawVendors.map((rawVendor) => {
+      if (!rawVendor || typeof rawVendor !== 'object') {
+        return rawVendor;
+      }
+
+      const vendorObj = rawVendor as Record<string, unknown>;
+      if (!Array.isArray(vendorObj.models) || vendorObj.models.length === 0) {
+        return rawVendor;
+      }
+
+      let vendorChanged = false;
+      const models = vendorObj.models.map((rawModel) => {
+        if (!rawModel || typeof rawModel !== 'object') {
+          return rawModel;
+        }
+
+        const modelObj = rawModel as Record<string, unknown>;
+        const description =
+          typeof modelObj.description === 'string' && modelObj.description.trim().length > 0
+            ? modelObj.description.trim()
+            : undefined;
+        if (!this.isModelsDevGeneratedDescription(description)) {
+          return rawModel;
+        }
+
+        const contextSize = this.readPositiveNumber(modelObj.contextSize);
+        if (contextSize === undefined || contextSize <= overrideContextWindow) {
+          return rawModel;
+        }
+
+        vendorChanged = true;
+        changed = true;
+        return {
+          ...modelObj,
+          contextSize: overrideContextWindow,
+        };
+      });
+
+      return vendorChanged ? { ...vendorObj, models } : rawVendor;
+    });
+
+    if (!changed) {
+      return;
+    }
+
+    await config.update('vendors', updatedVendors, vscode.ConfigurationTarget.Global);
   }
 
   async updateVendorModels(vendorName: string, models: VendorModelConfig[]): Promise<void> {
@@ -455,6 +539,27 @@ export class ConfigStore implements vscode.Disposable {
     const obj = raw as Record<string, unknown>;
     const name = typeof obj.name === 'string' ? obj.name.trim() : '';
     return name.length > 0 ? name : undefined;
+  }
+
+  private isModelsDevGeneratedDescription(description: string | undefined): boolean {
+    const normalizedDescription = description?.trim();
+    return !!normalizedDescription && normalizedDescription.split(' | ').length >= 5;
+  }
+
+  private capModelsDevContextSize(
+    contextSize: number | undefined,
+    description: string | undefined,
+  ): number | undefined {
+    if (contextSize === undefined || !this.isModelsDevGeneratedDescription(description)) {
+      return contextSize;
+    }
+
+    const overrideContextWindow = this.getChatLanguageModelsTokenOverrides().overrideContextWindow;
+    if (overrideContextWindow === undefined || contextSize <= overrideContextWindow) {
+      return contextSize;
+    }
+
+    return overrideContextWindow;
   }
 
   private cloneModelWithNormalizedName(
@@ -810,7 +915,7 @@ export class ConfigStore implements vscode.Disposable {
     }
     const description =
       typeof obj.description === 'string' && obj.description.trim().length > 0 ? obj.description.trim() : undefined;
-    const contextSize = this.readPositiveNumber(obj.contextSize);
+    const contextSize = this.capModelsDevContextSize(this.readPositiveNumber(obj.contextSize), description);
     const maxInputTokens = this.readPositiveNumber(obj.maxInputTokens);
     const maxOutputTokens = this.readPositiveNumber(obj.maxOutputTokens);
     const normalizedContextSize = contextSize === undefined ? undefined : Math.max(1, Math.floor(contextSize));
@@ -1102,7 +1207,8 @@ export class ConfigStore implements vscode.Disposable {
 
   dispose(): void {
     this.disposables.forEach((d) => d.dispose());
-    this.onDidChangeEmitter.dispose();
+    this.onDidChangeVendorsEmitter.dispose();
+    this.onDidChangeChatLanguageModelsTokenOverridesEmitter.dispose();
   }
 
   /**
