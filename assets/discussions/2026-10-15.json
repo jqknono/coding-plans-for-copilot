@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-15",
+  "generatedAt": "2026-10-15T10:59:51.740Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 14,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {}
+  },
+  "posts": [
+    {
+      "id": "v2ex-1249094",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1249094",
+      "title": "大家目前用的什么 code plan 聊聊你们的方案😄",
+      "content": "找人代充，中转站还是官方套餐？",
+      "author": "s0n1c",
+      "createdAt": "2026-10-15T09:05:37.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.8,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.5,
+        "summary": "用户询问目前使用的 code plan，并讨论是否通过代充、中转站还是官方套餐来充值。",
+        "topics": [
+          "定价",
+          "套餐",
+          "代充",
+          "中转站",
+          "官方套餐",
+          "订阅"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/435",
+      "analyzedAt": "2026-10-15T11:08:53.556Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1249107: The operation was aborted due to timeout"
+  ]
+}
