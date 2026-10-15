@@ -193,6 +193,8 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | --- | --- | --- | --- |
 | `coding-plans.locale` | `string` | 空 | Coding Plans 模型的自然语言响应及模型输出的 reasoning/thinking 文本使用的语言。填写 `zh-CN`、`en-US` 等 BCP 47 locale 或语言名称；留空时由模型自行选择。插件通过 system 指令发送此约束，模型是否支持及遵循取决于上游模型。 |
 | `coding-plans.logLevel` | `string` | `info` | 设置原生通道等级：`trace` / `debug` / `info` / `warn` / `error` / `off`；只有 `trace` 记录请求消息内容预览。 |
+| `coding-plans.overrideContextWindow` | `number` | 空 | 刷新 models.dev 元数据时，若其上下文窗口更大，则直接把 `contextSize` 写成该上限；VS Code 展示的就是写回后的 Context Size，并按 80% 输入、20% 输出拆分。不会改写手工配置的 `contextSize` 或上游 `/models` 原始限制，也不会改变请求侧输出预算。留空或设为 `0` 时不启用上限。 |
+| `coding-plans.overrideMaxOutputTokens` | `number` | 空 | 仅覆盖通过“拷贝模型为 chatLanguageModels.json”命令导出的 `maxOutputTokens`。留空或设为 `0` 时使用 `100000`；不会改变请求侧输出预算或本扩展暴露的运行时模型。 |
 | `coding-plans.autoRefreshModels` | `boolean` | `true` | 是否允许 settings/API Key 变化和空模型选择器查询自动刷新运行时模型及 VS Code 模型选择器；设为 `false` 时，手动刷新命令仍可用。 |
 | `coding-plans.vendors` | `array` | 内置供应商模板 | 供应商配置列表。 |
 | `coding-plans.vendors[].name` | `string` | 必填 | 供应商唯一名称。 |
@@ -248,7 +250,7 @@ API Key 推荐通过「设置 API Key」写入 VS Code Secret Storage。`coding-
 - **System Instructions**：System 类提示词占用（系统提示、模式说明、策略提示等），属于 prompt tokens。
 - **Tool Definitions**：工具定义占用（工具名、描述、参数 JSON Schema），属于 prompt tokens。
 - **Reserved Output**：为本轮回答预留的输出 token 预算，非已生成的回复内容。请求默认使用 `50000` tokens，并受模型 `maxOutputTokens` 上限约束。
-- **Context Window**：配置了 `contextSize` 时，运行时按总窗口拆分为 80% 输入窗口与 20% 输出窗口；未配置 `contextSize` 时使用显式 `maxInputTokens/maxOutputTokens`，且总窗口按两者求和对齐原生 custom endpoint 口径。当前公开 API 不提供将上游 usage 明细分发回原生 Context Window 的接口，因此本扩展自行维护上下文窗口的分子展示。
+- **Context Window**：当 `coding-plans.overrideContextWindow` 为正数时，models.dev 富化会把超限的 `contextSize` 直接写成该上限；VS Code 展示的就是写回后的总窗口，并按 80% 输入、20% 输出拆分。手工配置的 `contextSize` 与上游 `/models` 原始限制保持不变。否则，配置了 `contextSize` 时运行时按总窗口拆分为 80% 输入窗口与 20% 输出窗口；两者均未配置时使用显式 `maxInputTokens/maxOutputTokens`，且总窗口按两者求和对齐原生 custom endpoint 口径。当前公开 API 不提供将上游 usage 明细分发回原生 Context Window 的接口，因此本扩展自行维护上下文窗口的分子展示。
 - 状态栏显示统一的 `CodingPlans` 条目：正文以简洁百分比展示套餐 usage 与 context 占比，悬浮查看详细信息。
 - 若供应商配置了 `usageUrl`，会额外展示套餐额度百分比。
 

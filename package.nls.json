@@ -37,7 +37,7 @@
   "configuration.coding-plans.locale.default": "Use the language from the request (no override)",
   "configuration.coding-plans.locale.zhCN": "Simplified Chinese",
   "configuration.coding-plans.locale.enUS": "English",
-  "configuration.coding-plans.overrideContextWindow.description": "Override the contextWindow declared in chatLanguageModels.json for every Coding Plans model. Does not affect request-side token calculations. Leave unset or 0 to use each model's contextSize.",
+  "configuration.coding-plans.overrideContextWindow.description": "When refreshing models.dev metadata, write contextSize down to this value if the models.dev window is larger. That written contextSize is what VS Code shows. It does not change hand-authored contextSize values or raw upstream /models limits, nor the request-side token budget. Leave unset or 0 to disable the cap.",
   "configuration.coding-plans.overrideMaxOutputTokens.description": "Override the maxOutputTokens declared in chatLanguageModels.json for every Coding Plans model. Does not affect the actual max_tokens sent in requests. Leave unset or 0 to use the fixed default (100000).",
   "configuration.coding-plans.commitMessage.useRecentCommitStyle.description": "When enabled, read up to the latest 7 local commit messages and mimic their writing style for generated commit messages. This optional style sample is unavailable in VS Code for the Web.",
   "configuration.coding-plans.commitMessage.modelVendor.description": "Preferred vendor name for commit message generation (e.g. Zhipu). Leave empty to always prompt.",

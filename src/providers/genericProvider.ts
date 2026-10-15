@@ -307,6 +307,13 @@ export class GenericAIProvider extends BaseAIProvider {
         void this.refreshModels();
       }),
     );
+    if (typeof this.configStore.onDidChangeChatLanguageModelsTokenOverrides === 'function') {
+      this.disposables.push(
+        this.configStore.onDidChangeChatLanguageModelsTokenOverrides(() => {
+          void this.refreshModels();
+        }),
+      );
+    }
   }
 
   async initialize(): Promise<void> {
@@ -1032,6 +1039,23 @@ export class GenericAIProvider extends BaseAIProvider {
     return this.buildConfiguredModelsFromVendorModels(vendor, vendor.models);
   }
 
+  /**
+   * Cap a models.dev context window before writing it into vendors.models.contextSize.
+   * Hand-authored contextSize values and raw upstream /models limits stay untouched.
+   */
+  private capModelsDevContextWindow(modelsDevContextSize: number | undefined): number | undefined {
+    const overrideContextWindow = this.configStore.getChatLanguageModelsTokenOverrides().overrideContextWindow;
+    if (
+      overrideContextWindow === undefined ||
+      modelsDevContextSize === undefined ||
+      modelsDevContextSize <= overrideContextWindow
+    ) {
+      return modelsDevContextSize;
+    }
+
+    return overrideContextWindow;
+  }
+
   private buildConfiguredModelsFromVendorModels(
     vendor: VendorConfig,
     vendorModels: VendorModelConfig[],
@@ -1214,8 +1238,9 @@ export class GenericAIProvider extends BaseAIProvider {
         const modelsDevConfig = resolveModelsDevModelConfig(modelsDevCatalog, modelId);
         const inferredApiStyle = modelsDevConfig?.apiStyle ?? inferDefaultApiStyleForModel(modelId);
         const runtime = this.readRuntimeFromGenericModelEntry(entry);
+        const modelsDevContextSize = this.capModelsDevContextWindow(modelsDevConfig?.contextSize);
         const resolvedTokens = this.resolveTokenWindowLimits(
-          modelsDevConfig?.contextSize ?? runtime.maxTokens,
+          modelsDevContextSize ?? runtime.maxTokens,
           runtime.maxInputTokens,
           runtime.maxOutputTokens,
         );

@@ -74,6 +74,14 @@ export function mergeConfiguredModelOverrides(
       };
     }
 
+    if (isModelsDevGeneratedDescription(configured.description) && discovered.contextSize !== undefined) {
+      return {
+        ...configured,
+        description: discovered.description ?? configured.description,
+        contextSize: discovered.contextSize,
+      };
+    }
+
     if (isGeneratedFallbackModelConfig(configured, discovered, vendorName)) {
       return {
         ...discovered,
@@ -90,6 +98,10 @@ export function mergeConfiguredModelOverrides(
 
     return configured;
   });
+}
+
+function isModelsDevGeneratedDescription(description: string | undefined): boolean {
+  return typeof description === 'string' && description.split(' | ').length >= 5;
 }
 
 export function toVendorStateKey(vendorName: string): string {
