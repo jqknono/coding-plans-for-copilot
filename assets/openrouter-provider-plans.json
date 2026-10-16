@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-10-15T13:11:43.386Z",
-  "generatedAtBeijing": "2026年10月15日 21:11:43",
-  "sourceGeneratedAt": "2026-10-15T13:10:45.287Z",
-  "sourceGeneratedAtBeijing": "2026年10月15日 21:10:45",
-  "sourceMetricsGeneratedAt": "2026-10-15T13:10:46.889Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月15日 21:10:46",
+  "generatedAt": "2026-10-16T13:05:59.157Z",
+  "generatedAtBeijing": "2026年10月16日 21:05:59",
+  "sourceGeneratedAt": "2026-10-16T06:45:15.629Z",
+  "sourceGeneratedAtBeijing": "2026年10月16日 14:45:15",
+  "sourceMetricsGeneratedAt": "2026-10-16T13:05:05.280Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月16日 21:05:05",
   "summary": {
     "openrouterProviderCount": 112,
-    "metricsProviderCount": 55,
-    "resolvedMetricsProviderCount": 55,
+    "metricsProviderCount": 56,
+    "resolvedMetricsProviderCount": 56,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
-    "heuristicProviderCount": 9,
-    "providersWithPlans": 18,
-    "pendingCount": 37,
-    "blockedPendingCount": 2,
+    "heuristicProviderCount": 12,
+    "providersWithPlans": 21,
+    "pendingCount": 35,
+    "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -72,6 +72,36 @@
       "termsOfServiceUrl": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0",
       "statusPageUrl": "https://status.alibabacloud.com/",
       "parseMode": "provider-pricing-structured"
+    },
+    {
+      "slug": "atlas-cloud",
+      "openrouterName": "AtlasCloud",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "Plus",
+          "currentPrice": 10.4,
+          "currentPriceText": "$10.4",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.atlascloud.ai/pricing/models",
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.atlascloud.ai",
+        "https://www.atlascloud.ai/pricing/models"
+      ],
+      "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
+      "officialWebsiteUrl": "https://www.atlascloud.ai",
+      "websiteSource": "privacy_policy_url",
+      "privacyPolicyUrl": "https://www.atlascloud.ai/privacy",
+      "termsOfServiceUrl": null,
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
     },
     {
       "slug": "baidu",
@@ -468,6 +498,80 @@
       "parseMode": "official-website-heuristic"
     },
     {
+      "slug": "featherless",
+      "openrouterName": "Featherless",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 25,
+          "currentPriceText": "$25/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://featherless.ai/pricing",
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 50,
+          "currentPriceText": "$50/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://featherless.ai",
+        "https://featherless.ai/pricing"
+      ],
+      "pricingPageUrl": "https://featherless.ai/pricing",
+      "officialWebsiteUrl": "https://featherless.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://featherless.ai/privacy",
+      "termsOfServiceUrl": "https://featherless.ai/terms",
+      "statusPageUrl": "https://featherless.ai/status",
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "fireworks",
+      "openrouterName": "Fireworks",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "Base",
+          "currentPrice": 6.19,
+          "currentPriceText": "$6.19",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://fireworks.ai/pricing",
+          "serviceDetails": [
+            "Join us for our inaugural conference, Forge 2026",
+            "Customize open models with your own data with minimal setup",
+            "Pay per GPU second for faster speeds, higher rate limits, and lower costs at scale"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://fireworks.ai",
+        "https://fireworks.ai/pricing"
+      ],
+      "pricingPageUrl": "https://fireworks.ai/pricing",
+      "officialWebsiteUrl": "https://fireworks.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://fireworks.ai/privacy-policy",
+      "termsOfServiceUrl": "https://fireworks.ai/terms-of-service",
+      "statusPageUrl": "https://status.fireworks.ai/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
       "slug": "inference-net",
       "openrouterName": "InferenceNet",
       "providerId": null,
@@ -739,7 +843,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CgGKEBE0.js",
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-DeZ5alHT.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1084,15 +1188,6 @@
       "blocked": false
     },
     {
-      "slug": "atlas-cloud",
-      "openrouterName": "AtlasCloud",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.atlascloud.ai",
-      "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.3 / $1.2 / $0.03）",
-      "blocked": false
-    },
-    {
       "slug": "baseten",
       "openrouterName": "BaseTen",
       "providerId": null,
@@ -1156,15 +1251,6 @@
       "blocked": false
     },
     {
-      "slug": "fireworks",
-      "openrouterName": "Fireworks",
-      "providerId": null,
-      "officialWebsiteUrl": "https://fireworks.ai",
-      "pricingPageUrl": "https://fireworks.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.008 / $0.016 / $0.1）",
-      "blocked": false
-    },
-    {
       "slug": "friendli",
       "openrouterName": "Friendli",
       "providerId": null,
@@ -1213,9 +1299,9 @@
       "slug": "makora",
       "openrouterName": "Makora",
       "providerId": null,
-      "officialWebsiteUrl": "https://makora.statuspage.io",
-      "pricingPageUrl": "https://makora.statuspage.io",
-      "reason": "官网价格页探测失败：https://makora.statuspage.io/pricing: HTTP 404",
+      "officialWebsiteUrl": "https://status.makora.com",
+      "pricingPageUrl": "https://status.makora.com",
+      "reason": "官网价格页探测失败：https://status.makora.com/pricing: HTTP 404",
       "blocked": false
     },
     {
@@ -1360,7 +1446,7 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": false
+      "blocked": true
     },
     {
       "slug": "tenstorrent",
