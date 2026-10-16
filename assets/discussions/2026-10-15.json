@@ -1,6 +1,6 @@
 {
   "date": "2026-10-15",
-  "generatedAt": "2026-10-15T10:59:51.740Z",
+  "generatedAt": "2026-10-16T10:53:50.208Z",
   "config": {
     "sources": [
       "v2ex",
@@ -26,10 +26,12 @@
   "summary": {
     "totalPostsFetched": 55,
     "postsAfterKeywordFilter": 14,
-    "relevantPosts": 1,
-    "discussionsCreated": 1,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
     "discussionsSkipped": 0,
-    "supplierMentions": {}
+    "supplierMentions": {
+      "Claude": 1
+    }
   },
   "posts": [
     {
@@ -63,12 +65,45 @@
       },
       "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/435",
       "analyzedAt": "2026-10-15T11:08:53.556Z"
+    },
+    {
+      "id": "v2ex-1249170",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1249170",
+      "title": "我买 Claude 账号被骗 1198 的经历",
+      "content": "买 CC 账号被骗 1198 元，骗子“小高姐的 AI 厨房”，QQ 2908781866 花 1198 元买 Claude 5X 账号，折腾了一晚上，最后没拿到符合约定的账号，退款也没退成。把经过写出来，给准备买号的人提个醒。 以下根据我保存的聊天记录整理，时间按聊天记录显示。原始聊天和相关材料我自己留存。涉及我的判断和无法确认的事情，会单独说明。 简单说：付款前卖的是“5X 独享号，封号可以补”；付款后先让我跑脚本、填第三方 Key 。我明确不要中转，对方回答“不是中转站”。后来好不容易登录了一个账号，页面却显示 Pro ，周额度已经用了 27%。我提出质疑，对方说“被秒封了”，以桌面端不质保为由不退款，最后又提出给我配置反代。 1. 从闲鱼找号，被介绍到 QQ 我想买一个 Claude 成品账号，在闲鱼上找到一个“deepseek20x”的商品，卖家“两文峰的账号”，对方说认识的人有。我给了 QQ 号，随后一个昵称为“小高姐的 AI 厨房”的人加了我，交易联系 QQ 是 2908781866 。 我没有证据证明闲鱼上的介绍人与这个 QQ 是同一个人，也不知道他们具体是什么关系。 ",
+      "author": "ddeef",
+      "createdAt": "2026-10-15T14:50:04.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.88,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.95,
+        "summary": "用户分享在闲鱼和 QQ 上购买 Claude 5X 独享号被骗 1198 元的经历，卖家交付第三方反代脚本而非真实账号，并以各种理由拒绝退款，提醒他人谨慎购买 AI 编码助手账号。",
+        "topics": [
+          "Claude",
+          "账号购买",
+          "诈骗预警",
+          "定价",
+          "退款",
+          "中转",
+          "订阅"
+        ],
+        "planMentioned": "Claude 5X 独享号",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/436",
+      "analyzedAt": "2026-10-16T11:00:01.406Z"
     }
   ],
   "failures": [
     "linuxdo: https://linux.do/latest.rss → 429",
     "linuxdo: https://linux.do/latest.json → 429",
     "linuxdo: https://linux.do/latest.json → 429",
-    "analysis failed for v2ex-1249107: The operation was aborted due to timeout"
+    "analysis failed for v2ex-1249428: LLM returned empty content (finish_reason=stop)"
   ]
 }
