@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-10-16T13:05:59.157Z",
-  "generatedAtBeijing": "2026年10月16日 21:05:59",
-  "sourceGeneratedAt": "2026-10-16T06:45:15.629Z",
-  "sourceGeneratedAtBeijing": "2026年10月16日 14:45:15",
-  "sourceMetricsGeneratedAt": "2026-10-16T13:05:05.280Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月16日 21:05:05",
+  "generatedAt": "2026-10-17T12:02:55.120Z",
+  "generatedAtBeijing": "2026年10月17日 20:02:55",
+  "sourceGeneratedAt": "2026-10-17T06:35:03.562Z",
+  "sourceGeneratedAtBeijing": "2026年10月17日 14:35:03",
+  "sourceMetricsGeneratedAt": "2026-10-17T12:02:07.445Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月17日 20:02:07",
   "summary": {
     "openrouterProviderCount": 112,
-    "metricsProviderCount": 56,
-    "resolvedMetricsProviderCount": 56,
+    "metricsProviderCount": 55,
+    "resolvedMetricsProviderCount": 55,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
-    "heuristicProviderCount": 12,
-    "providersWithPlans": 21,
+    "heuristicProviderCount": 11,
+    "providersWithPlans": 20,
     "pendingCount": 35,
-    "blockedPendingCount": 3,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -330,75 +330,6 @@
       "privacyPolicyUrl": "https://developers.cloudflare.com/workers-ai/privacy",
       "termsOfServiceUrl": "https://www.cloudflare.com/service-specific-terms-developer-platform/#developer-platform-terms",
       "statusPageUrl": "https://www.cloudflarestatus.com/",
-      "parseMode": "official-website-heuristic"
-    },
-    {
-      "slug": "cohere",
-      "openrouterName": "Cohere",
-      "providerId": null,
-      "plans": [
-        {
-          "name": "Pro",
-          "currentPrice": 3,
-          "currentPriceText": "$3.00",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "来源: https://cohere.com/pricing",
-          "serviceDetails": [
-            "Command Generative language models",
-            "Transcribe New Speech recognition model",
-            "North Small Translate NEW Machine translation model",
-            "Parse New Document parsing model",
-            "Embed Semantic representation model",
-            "Rerank Retrieval optimization model"
-          ]
-        },
-        {
-          "name": "Pro",
-          "currentPrice": 5,
-          "currentPriceText": "$5.00",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "Command Generative language models",
-            "Transcribe New Speech recognition model",
-            "North Small Translate NEW Machine translation model",
-            "Parse New Document parsing model",
-            "Embed Semantic representation model",
-            "Rerank Retrieval optimization model"
-          ]
-        },
-        {
-          "name": "Pro",
-          "currentPrice": 10,
-          "currentPriceText": "$10.00",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "Command Generative language models",
-            "Transcribe New Speech recognition model",
-            "North Small Translate NEW Machine translation model",
-            "Parse New Document parsing model",
-            "Embed Semantic representation model",
-            "Rerank Retrieval optimization model"
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://cohere.com",
-        "https://cohere.com/pricing"
-      ],
-      "pricingPageUrl": "https://cohere.com/pricing",
-      "officialWebsiteUrl": "https://cohere.com",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://cohere.com/privacy",
-      "termsOfServiceUrl": "https://cohere.com/terms-of-use",
-      "statusPageUrl": "https://status.cohere.ai/",
       "parseMode": "official-website-heuristic"
     },
     {
@@ -1193,7 +1124,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $2.10 / $0.21）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $1.30 / $0.13）",
       "blocked": false
     },
     {
@@ -1446,7 +1377,7 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": true
+      "blocked": false
     },
     {
       "slug": "tenstorrent",
