@@ -331,28 +331,6 @@ async function withSuppressedProviderModelChangeUiSync<T>(callback: () => Promis
   }
 }
 
-/**
- * Validates vendor configurations and shows error messages for any missing required fields.
- * Returns true if there are errors (caller should abort), false if all configs are valid.
- */
-async function validateAndReportConfig(configStore: ConfigStore): Promise<boolean> {
-  const errors = configStore.validateVendorConfigs();
-  if (errors.length === 0) {
-    return false;
-  }
-
-  const messages = errors.map((e) => getMessage('vendorConfigMissingField', e.vendorName, e.field));
-  const fullMessage = [getMessage('vendorConfigError'), ...messages].join('\n');
-
-  const action = getMessage('vendorConfigFixAction');
-  const result = await vscode.window.showErrorMessage(fullMessage, { modal: false }, action);
-  if (result === action) {
-    await vscode.commands.executeCommand('workbench.action.openSettings', 'coding-plans.vendors');
-  }
-
-  return true;
-}
-
 async function refreshCodingPlansModels(
   configStore: ConfigStore,
   genericProvider: GenericAIProvider,
@@ -389,10 +367,6 @@ async function runModelsUpdateCommand(
   genericProvider: GenericAIProvider,
   adapter: LMChatProviderAdapter,
 ): Promise<void> {
-  if (await validateAndReportConfig(configStore)) {
-    return;
-  }
-
   if (refreshModelsCommandInProgress) {
     logger.warn(`${LANGUAGE_MODELS_REFRESH_LOG_PREFIX} skipped re-entrant refresh command`);
     return;
@@ -414,10 +388,6 @@ export async function manageVendorConfiguration(
   genericProvider: GenericAIProvider,
   adapter: LMChatProviderAdapter,
 ): Promise<void> {
-  if (await validateAndReportConfig(configStore)) {
-    return;
-  }
-
   const vendors = configStore.getVendors();
   if (vendors.length === 0) {
     const action = getMessage('manageActionOpenSettings');
@@ -525,7 +495,7 @@ export async function copyModelAsChatLanguageModel(configStore: ConfigStore): Pr
     pickedVendor.vendor.models.map((model) => ({
       label: model.name,
       description: model.apiStyle ?? pickedVendor.vendor.defaultApiStyle,
-      detail: model.contextSize ? `${model.contextSize} tokens` : undefined,
+      detail: model.contextWindow ? `${model.contextWindow} tokens` : undefined,
       model,
     })),
     {
@@ -541,7 +511,6 @@ export async function copyModelAsChatLanguageModel(configStore: ConfigStore): Pr
     const modelConfig = toChatLanguageModelsModelConfig(
       pickedVendor.vendor,
       pickedModel.model,
-      configStore.getChatLanguageModelsTokenOverrides(),
     );
     const serialized = serializeChatLanguageModelsModelConfig(modelConfig);
     await vscode.env.clipboard.writeText(serialized);

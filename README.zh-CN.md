@@ -62,7 +62,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 点击市场页面上的 **Install** 按钮，会自动在 VS Code 中打开扩展并安装。
 
-> **前置条件**：需要 VS Code ≥ 1.120.0，且已安装 [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) 扩展。
+> **前置条件**：需要 VS Code ≥ 1.142.0，且已安装 [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) 扩展。
 
 ### 配置
 
@@ -70,9 +70,9 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
 3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
 4. 打开 Copilot Chat（`Ctrl+L`），在模型选择器中选择 `Coding Plans` 提供的模型
-5. `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`，并显示 `Thinking Type`（`enabled` / `disabled` / `default`，默认 `default`；`default` 不携带 `thinking` 字段，只发送 `reasoning_effort`，与原生 Custom Endpoint 一致）。需要 `thinking.enabled` 时请选择 `enabled`。OpenAI Responses 模型支持 `low` / `medium` / `high` / `xhigh` / `max`（默认 `max`）。Anthropic 模型显示 `Effort`（`low` / `medium` / `high` / `xhigh` / `max`，默认 `max`）和 `Thinking Type`（`think` / `non-think`，默认 `think`）；`think` 会发送 `thinking.enabled`，并把 Effort 映射为 `budget_tokens`，`non-think` 关闭 thinking。Copilot Chat 可能传入 `reasoningEffort` 而不是 `thinkingEffort`，adapter 会按别名归一。More Actions 仅包含 thinking 相关项。供应商配置里的 `temperature` / `topP` 仍会保留，但不会下发。
-6. 当供应商启用 `useModelsEndpoint` 时，可执行 `Coding Plans: Update Coding Plans Models List`，扩展会重新请求 `/models`，写回 `coding-plans.vendors[].models` 并刷新 VS Code 模型选择器。保存 settings 默认只刷新当前已配置模型，不会自动请求 `/models` 或写回模型列表；如需禁止 settings/API Key 变化自动刷新运行时模型和 VS Code 模型选择器，可将 `coding-plans.autoRefreshModels` 设为 `false`，手动刷新命令不受影响。
-   - 刷新过程中会优先使用 [models.dev](https://models.dev/) 的 `catalog.json`，失败时回退 `api.json`，按模型 ID/名称为新发现模型补全 `description`、`capabilities`、`contextSize`、`apiStyle` 和 `price`；匹配时会忽略模型名最后路径段中 `:` 后的标记（如 `:free`）；`description` 会显示 `id | Lab | Family | Weights | ReleaseDate`，其中 `Lab` 来自模型 ID 前缀；`capabilities.thinking` 对应 models.dev 的 `reasoning`；新模型 `apiStyle` 仅按模型自身来源推导：OpenAI 与 Grok/xAI 使用 `openai-responses`，Anthropic 使用 `anthropic`，其它默认 `openai-chat`；Grok 模型若仍保留旧的 `openai-chat` 会在刷新时自动升级为 `openai-responses`；价格按所有匹配模型来源取中位数，不使用本地供应商名匹配 models.dev provider；如果无法获取或无法匹配，则保留上游 `/models` 与内置默认值。已有手工模型配置不会被刷新覆盖；扩展自动生成的 fallback 描述（如 `供应商名 model: 模型名`）可被升级为 models.dev 新结构。
+5. `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`，并显示 `Thinking Type`（`enabled` / `disabled` / `default`，默认 `default`；`default` 省略 `thinking` 字段，只发送 `reasoning_effort`，与原生 Custom Endpoint 一致）。需要 `thinking.enabled` 时请选择 `enabled`。OpenAI Responses 模型支持 `low` / `medium` / `high` / `xhigh` / `max`（默认 `max`）。Anthropic 模型显示 `Effort`（`low` / `medium` / `high` / `xhigh` / `max`，默认 `max`）和 `Thinking Type`（`think` / `non-think`，默认 `think`）；`think` 会发送 `thinking.enabled`，并把 Effort 映射为 `budget_tokens`，`non-think` 关闭 thinking。Copilot Chat 可能传入 `reasoningEffort` 作为 `thinkingEffort` 的别名，adapter 会按别名归一。More Actions 同时提供输入预算 Context Size。
+6. 供应商启用 `useModelsEndpoint` 后，执行 `Coding Plans: Update Coding Plans Models List` 可请求 `/models`、写回模型列表并刷新选择器。保存 settings/API Key 会即时本地重建已配置模型，预算随之生效；`coding-plans.autoRefreshModels: false` 仅关闭自动选择器同步及空查询刷新。远端发现与模型列表写回仍由手动更新命令执行。
+   - 模型发现优先读取 [models.dev](https://models.dev/) 的 `catalog.json`，失败时回退 `api.json`，按模型 ID/名称补全新条目的能力、预算来源及价格元数据。新模型 `apiStyle` 按来源推导：OpenAI 与 Grok/xAI 使用 `responses`，Anthropic 使用 `messages`，其余使用 `chat-completions`。已有手工属性与预算保持原值；自动来源能力可随发现刷新。
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
 
 ### 内置供应商端点
@@ -94,11 +94,11 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 #### 火山引擎 Coding Plan
 
-内置供应商保持名称 `火山引擎`（不改变 Secret Storage 密钥关联），使用 `defaultApiStyle: "openai-responses"`、`baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v3"` 和 `useModelsEndpoint: false`，最终请求地址为 `https://ark.cn-beijing.volces.com/api/coding/v3/responses`。平台也支持 `/api/coding/v3/chat/completions`；Responses 是推荐默认协议，并非唯一支持的协议。
+内置供应商保持名称 `火山引擎`（保留 Secret Storage 密钥关联），使用 `defaultApiStyle: "responses"`、`baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v3"` 和 `useModelsEndpoint: false`，最终请求地址为 `https://ark.cn-beijing.volces.com/api/coding/v3/responses`。平台也支持 `/api/coding/v3/chat/completions`；Responses 是推荐默认协议，并非唯一支持的协议。
 
 静态模型 ID 为 `doubao-seed-evolving`、`doubao-seed-2.1-turbo`、`doubao-seed-2.0-lite`、`minimax-m3`、`glm-5.3`、`glm-5.3-flash`、`deepseek-v4-flash`、`deepseek-v4-pro`、`kimi-k2.7-code`、`kimi-k3`。模板不预设未经证实的模型级视觉、上下文窗口或 thinking 参数。保持非空 `models` 和关闭发现后，即使强制刷新也只使用静态列表，不请求 `/models`。在 Manage Language Models 中显式添加 `火山引擎` 供应商 group 才显示模型；未作用域化的 `Coding Plans` 根仍保持隐藏。
 
-如需 Anthropic 兼容入口，将供应商设为 `defaultApiStyle: "anthropic"`、`authType: "bearer"`、`baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v1"`，同时保留 `useModelsEndpoint: false` 与静态模型。本扩展只附加 `/messages`，最终地址为 `https://ark.cn-beijing.volces.com/api/coding/v1/messages`，**不要直接复制 Claude Code 的 `/api/coding` 基地址**。官方 Claude Code 配置使用 `ANTHROPIC_AUTH_TOKEN`，对应 Bearer 认证；本扩展使用“管理供应商配置”保存的密钥，不读取该环境变量。Anthropic Bearer 请求仍携带 `anthropic-version: 2023-06-01`，不发送 `x-api-key`。
+如需 Anthropic 兼容入口，将供应商设为 `defaultApiStyle: "messages"`、`authType: "bearer"`、`baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v1"`，同时保留 `useModelsEndpoint: false` 与静态模型。本扩展只附加 `/messages`，最终地址为 `https://ark.cn-beijing.volces.com/api/coding/v1/messages`，**请使用此扩展专用基地址，区分 Claude Code 的 `/api/coding` 路径**。官方 Claude Code 配置使用 `ANTHROPIC_AUTH_TOKEN`，对应 Bearer 认证；本扩展使用“管理供应商配置”保存的密钥，该环境变量仅属于 Claude Code 配置。Anthropic Bearer 请求仍携带 `anthropic-version: 2023-06-01`，省略 `x-api-key`。
 
 **已有显式设置不会随模板自动替换。** 请手动修改 `coding-plans.vendors` 中现有的 `火山引擎` 条目，更新地址、协议、静态模型及 `useModelsEndpoint: false`。`models[].apiStyle` 优先于 `defaultApiStyle`，旧模型级协议也需删除或同步修改。不要回退到通用 `/api/v3`：它不属于这里的 Coding Plan 路由，可能产生额外按量费用。`/models` 请求失败会回退已配置或缓存模型，并非必然清空列表。
 
@@ -106,7 +106,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 ### 配置示例
 
-> Moonshot/Kimi 注意事项：部分 Anthropic-compatible 入口在开启 thinking 且发生工具调用续轮时，会要求 assistant tool-call 历史消息携带非标准 `reasoning_content` 字段，并可能返回 `thinking is enabled but reasoning_content is missing in assistant tool call message`。本项目不为 Anthropic 路径默认发送该字段。使用 Moonshot/Kimi 的 Anthropic 入口时，建议在模型行 `More Actions` 中关闭 thinking；如需 thinking 能力，优先改用 OpenAI Chat 兼容 API 并配置 `apiStyle` 为 `openai-chat`。详见 [Moonshot Anthropic Thinking Tool-Call Compatibility](docs/moonshot-anthropic-thinking-tool-call.md)。
+> Moonshot/Kimi 注意事项：部分 Anthropic-compatible 入口在开启 thinking 且发生工具调用续轮时，会要求 assistant tool-call 历史消息携带非标准 `reasoning_content` 字段，并可能返回 `thinking is enabled but reasoning_content is missing in assistant tool call message`。本项目的 Anthropic 路径默认省略该字段。使用 Moonshot/Kimi 的 Anthropic 入口时，建议在模型行 `More Actions` 中关闭 thinking；如需 thinking 能力，优先改用 OpenAI Chat 兼容 API 并配置 `apiStyle` 为 `chat-completions`。详见 [Moonshot Anthropic Thinking Tool-Call Compatibility](docs/moonshot-anthropic-thinking-tool-call.md)。
 
 **Anthropic 风格示例**
 
@@ -116,15 +116,18 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
     {
       "name": "my-anthropic-vendor",
       "baseUrl": "https://api.example.com/anthropic",
-      "defaultApiStyle": "anthropic",
+      "defaultApiStyle": "messages",
       "useModelsEndpoint": false,
       "models": [
         {
           "name": "my-model",
           "enabled": true,
           "capabilities": { "tools": true, "vision": false },
+          "contextWindow": 160000,
           "maxInputTokens": 128000,
-          "maxOutputTokens": 30000
+          "maxOutputTokens": 30000,
+          "limitSource": "configured",
+          "contextBudget": { "inputTokens": 64000, "outputTokens": 16000 }
         }
       ]
     }
@@ -140,7 +143,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
     {
       "name": "my-openai-vendor",
       "baseUrl": "https://api.example.com/v1",
-      "defaultApiStyle": "openai-chat",
+      "defaultApiStyle": "chat-completions",
       "useModelsEndpoint": true,
       "models": []
     }
@@ -156,12 +159,12 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
     {
       "name": "openai-responses-demo",
       "baseUrl": "https://api.openai.com/v1",
-      "defaultApiStyle": "openai-responses",
+      "defaultApiStyle": "responses",
       "useModelsEndpoint": false,
       "models": [
         {
           "name": "gpt-5",
-          "apiStyle": "openai-responses",
+          "apiStyle": "responses",
           "enabled": true,
           "editTools": ["apply-patch"],
           "price": {
@@ -175,8 +178,6 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
           "streaming": true,
           "supportsReasoningEffort": ["high", "xhigh", "max"],
           "capabilities": { "tools": true, "vision": false, "thinking": true },
-          "toolCalling": true,
-          "vision": false,
           "zeroDataRetentionEnabled": false
         }
       ]
@@ -187,37 +188,32 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 ### 可配置项
 
+配置仅接受当前 schema 字段；供应商、模型及 `capabilities` 对象使用封闭字段集合。`apiStyle` / `defaultApiStyle` 仅接受 `chat-completions`、`responses`、`messages`。旧配置请参照[一次迁移指南](docs/configuration-migration.md)。
+
 `Coding Plans` 输出使用 VS Code 原生日志通道；`coding-plans.logLevel` 会同步设置该通道的原生日志等级，也可通过输出面板中的 Set Log Level 临时调整。设为 `Trace` 时，请求中的 system/user/assistant 文本会分别记录前 1000 个字符，可能包含敏感上下文；tool 内容和图片数据不会写入该预览。
 
 | 配置键 | 类型 | 默认值 | 说明 |
 | --- | --- | --- | --- |
-| `coding-plans.locale` | `string` | 空 | Coding Plans 模型的自然语言响应及模型输出的 reasoning/thinking 文本使用的语言。填写 `zh-CN`、`en-US` 等 BCP 47 locale 或语言名称；留空时由模型自行选择。插件通过 system 指令发送此约束，模型是否支持及遵循取决于上游模型。 |
-| `coding-plans.logLevel` | `string` | `info` | 设置原生通道等级：`trace` / `debug` / `info` / `warn` / `error` / `off`；只有 `trace` 记录请求消息内容预览。 |
-| `coding-plans.overrideContextWindow` | `number` | 空 | 刷新 models.dev 元数据时，若其上下文窗口更大，则直接把 `contextSize` 写成该上限；VS Code 展示的就是写回后的 Context Size，并按 80% 输入、20% 输出拆分。不会改写手工配置的 `contextSize` 或上游 `/models` 原始限制，也不会改变请求侧输出预算。留空或设为 `0` 时不启用上限。 |
-| `coding-plans.overrideMaxOutputTokens` | `number` | 空 | 仅覆盖通过“拷贝模型为 chatLanguageModels.json”命令导出的 `maxOutputTokens`。留空或设为 `0` 时使用 `100000`；不会改变请求侧输出预算或本扩展暴露的运行时模型。 |
-| `coding-plans.autoRefreshModels` | `boolean` | `true` | 是否允许 settings/API Key 变化和空模型选择器查询自动刷新运行时模型及 VS Code 模型选择器；设为 `false` 时，手动刷新命令仍可用。 |
+| `coding-plans.locale` | `string` | 空 | 允许空值、`zh-CN`、`en-US`；通过 system 指令指定自然语言响应和模型输出的 reasoning/thinking 语言，留空时跟随请求。 |
+| `coding-plans.logLevel` | `string` | `warn` | 设置原生通道等级：`trace` / `debug` / `info` / `warn` / `error` / `off`；只有 `trace` 记录请求消息内容预览。 |
+| `coding-plans.autoRefreshModels` | `boolean` | `false` | 控制自动模型选择器同步及空查询刷新。关闭后，本地配置仍即时重建生效；远端发现使用手动更新命令。 |
 | `coding-plans.vendors` | `array` | 内置供应商模板 | 供应商配置列表。 |
 | `coding-plans.vendors[].name` | `string` | 必填 | 供应商唯一名称。 |
 | `coding-plans.vendors[].baseUrl` | `string` | 必填 | API 基础地址。 |
-| `coding-plans.vendors[].apiKey` | `string` | 空 | 已废弃。供应商 API Key；非空时优先于 VS Code Secret Storage 中保存的同名供应商密钥。当前供应商未配置密钥时，可按相同 `baseUrl` 兜底复用其它 `vendors[].apiKey`。 |
 | `coding-plans.vendors[].authType` | `"bearer"` / `"x-api-key"` | 随协议 | 可选，覆盖聊天及 `/models` 认证。缺省时 Anthropic 用 `x-api-key`、OpenAI 用 Bearer；显式设置仅发送所选认证头，Anthropic 始终保留 `anthropic-version`。不影响 `usageUrl` 认证。 |
 | `coding-plans.vendors[].usageUrl` | `string` | 空 | 套餐 usage 接口地址，配置后状态栏显示额度百分比。 |
-| `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | 协议风格：`openai-chat` / `openai-responses` / `anthropic`。 |
-| `coding-plans.vendors[].defaultTemperature` | `number` / `null` | 空 | 已废弃。供应商默认 temperature。配置会保留，但不会下发。 |
-| `coding-plans.vendors[].defaultTopP` | `number` | `0` | 供应商默认 topP。配置会保留，但不会下发。 |
+| `coding-plans.vendors[].defaultApiStyle` | `string` | `chat-completions` | 协议风格：`chat-completions` / `responses` / `messages`。 |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `true`（火山模板为 `false`） | 是否从 `/models` 拉取模型列表；执行 `Coding Plans: Update Coding Plans Models List` 后会将发现到的模型写回 `models`。为 false 时，强制刷新也只使用配置模型。 |
 | `coding-plans.vendors[].models[].name` | `string` | 必填 | 模型名称。 |
 | `coding-plans.vendors[].models[].enabled` | `boolean` | `true` | 是否在 Manage Language Models 中显示该模型；设为 `false` 时保留配置但隐藏。 |
 | `coding-plans.vendors[].models[].description` | `string` | 空 | 模型描述。 |
 | `coding-plans.vendors[].models[].apiStyle` | `string` | 继承供应商 | 模型级协议风格覆盖。 |
-| `coding-plans.vendors[].models[].temperature` | `number` / `"inherit"` | `"inherit"` | 已废弃。模型级 temperature 覆盖；`"inherit"` 表示使用供应商 `defaultTemperature`。配置会保留，但不会下发。 |
-| `coding-plans.vendors[].models[].topP` | `number` | 继承供应商 | 模型级 topP 覆盖。配置会保留，但不会下发。 |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | 模型能力声明。`thinking` 对应 models.dev 的 `reasoning`。 |
-| `coding-plans.vendors[].models[].toolCalling` | `boolean` / `number` | `true` | Copilot 风格工具调用能力别名；等价于 `capabilities.tools`。 |
-| `coding-plans.vendors[].models[].vision` | `boolean` | 继承 `defaultVision` | Copilot 风格视觉能力别名；等价于 `capabilities.vision`。 |
-| `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | 模型总上下文窗口主字段；来自 models.dev 的 `limit.context`。自动刷新新模型时只写入该字段。运行时会拆成 `maxInputTokens=80%` 与 `maxOutputTokens=20%`，避免 VS Code Language Models 把上下文显示为超出总窗口。 |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | `400000` | 显式输入上下文 token 上限；仅在未配置 `contextSize` 时作为另一套标准使用。原生 Context Window 总量按 `maxInputTokens + maxOutputTokens` 汇总。 |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `30000` | 显式输出 token 上限；仅在未配置 `contextSize` 时作为另一套标准使用。原生 Context Window 总量按 `maxInputTokens + maxOutputTokens` 汇总。 |
+| `coding-plans.vendors[].models[].contextWindow` | `integer` | 已知能力 | 模型总上下文能力 `C`，整数 ≥ 2，与预算分离。 |
+| `coding-plans.vendors[].models[].maxInputTokens` | `integer` | 已知能力 | 整数 ≥ 1；独立输入能力 `I`；可选输入上限为 `min(I, C-R)`，按已知约束计算。 |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `integer` | 已知能力 | 整数 ≥ 1；独立输出能力 `O`，约束实际输出预算 `R`。 |
+| `coding-plans.vendors[].models[].contextBudget` | `object` | 输入 `400000` / 输出 `50000` | `inputTokens` 为默认输入预算，`outputTokens` 为实际输出预算，`presets` 为数字输入档位；均受模型能力约束。 |
+| `coding-plans.vendors[].models[].limitSource` | `string` | 按来源 | `configured` 保留显式能力；`endpoint` / `models.dev` 可刷新能力，预算独立保留。 |
 | `coding-plans.vendors[].models[].price.inputCost` | `number` | 空 | 输入成本元数据，单位为 credits / 1M tokens，显示在 Manage Language Models 的 Cost 列。 |
 | `coding-plans.vendors[].models[].price.cacheCost` | `number` | 空 | 缓存输入成本元数据，单位为 credits / 1M tokens，显示在 Manage Language Models 的 Cost 列。 |
 | `coding-plans.vendors[].models[].price.outputCost` | `number` | 空 | 输出成本元数据，单位为 credits / 1M tokens，显示在 Manage Language Models 的 Cost 列。 |
@@ -230,29 +226,49 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | 空 | 声明性元数据，不代表上游真实数据保留策略。 |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | 是否显示"生成 Commit 消息"命令。 |
 | `coding-plans.commitMessage.language` | `string` | `en` | 提交消息语言：`en` / `zh-cn`。 |
-| `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | 是否参考最近 20 条 commit 风格。 |
+| `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | 是否参考最近最多 7 条本地 commit 风格。 |
 | `coding-plans.commitMessage.modelVendor` | `string` | 空 | 生成提交消息时优先使用的供应商名。 |
 | `coding-plans.commitMessage.modelId` | `string` | 空 | 生成提交消息时优先使用的模型名。 |
 | `coding-plans.commitMessage.options.prompt` | `string` | 内置提示词 | 覆盖生成提示词。 |
-| `coding-plans.commitMessage.options.maxDiffLines` | `number` | `3000` | 读取 diff 的最大行数。 |
+| `coding-plans.commitMessage.options.maxDiffLines` | `number` | `10000` | 读取 diff 的最大行数。 |
 | `coding-plans.commitMessage.options.pipelineMode` | `string` | `single` | 生成管线：`single` / `two-stage` / `auto`。 |
-| `coding-plans.commitMessage.options.maxBodyBulletCount` | `number` | `7` | 正文 bullet 最大数量。 |
+| `coding-plans.commitMessage.options.maxBodyBulletCount` | `number` | `5` | 正文 bullet 最大数量。 |
 | `coding-plans.commitMessage.options.subjectMaxLength` | `number` | `72` | 标题最大长度。 |
 | `coding-plans.commitMessage.options.requireConventionalType` | `boolean` | `true` | 是否强制 Conventional Commits 类型。 |
 | `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | 校验失败时是否提示告警。 |
 
-API Key 推荐通过「设置 API Key」写入 VS Code Secret Storage。`coding-plans.vendors[].apiKey` 仅作为已废弃的临时配置入口保留；非空时优先于 Secret Storage 生效。若当前供应商未配置密钥，扩展会按相同 `baseUrl` 从其它 `vendors[].apiKey` 兜底读取。
+API Key 通过「设置 API Key」写入 VS Code Secret Storage，按供应商名称关联。原生 provider 的 `configuration.apiKey` 同样写入 Secret Storage。
 
 ### 上下文窗口展示
 
-受限于 VS Code 公开 API，本扩展额外实现了上下文窗口展示：
+配置按职责分为两组，沿用原有字段路径：
 
-- **System Instructions**：System 类提示词占用（系统提示、模式说明、策略提示等），属于 prompt tokens。
-- **Tool Definitions**：工具定义占用（工具名、描述、参数 JSON Schema），属于 prompt tokens。
-- **Reserved Output**：为本轮回答预留的输出 token 预算，非已生成的回复内容。请求默认使用 `50000` tokens，并受模型 `maxOutputTokens` 上限约束。
-- **Context Window**：当 `coding-plans.overrideContextWindow` 为正数时，models.dev 富化会把超限的 `contextSize` 直接写成该上限；VS Code 展示的就是写回后的总窗口，并按 80% 输入、20% 输出拆分。手工配置的 `contextSize` 与上游 `/models` 原始限制保持不变。否则，配置了 `contextSize` 时运行时按总窗口拆分为 80% 输入窗口与 20% 输出窗口；两者均未配置时使用显式 `maxInputTokens/maxOutputTokens`，且总窗口按两者求和对齐原生 custom endpoint 口径。当前公开 API 不提供将上游 usage 明细分发回原生 Context Window 的接口，因此本扩展自行维护上下文窗口的分子展示。
-- 状态栏显示统一的 `CodingPlans` 条目：正文以简洁百分比展示套餐 usage 与 context 占比，悬浮查看详细信息。
-- 若供应商配置了 `usageUrl`，会额外展示套餐额度百分比。
+| 分组 | 字段 | 推荐操作 |
+| --- | --- | --- |
+| 模型能力 | `contextWindow`、可选 `maxInputTokens`、`maxOutputTokens` | 通常由模型发现维护；服务商仅公布总容量时可省略独立输入上限 |
+| 使用策略 | `contextBudget` | 日常调整默认输入、实际输出与可选档位，或直接使用原生 Context Size |
+
+例如，下面是一个模型条目，省略独立输入上限后，最大可选输入为 `200000 - 16000 = 184000`：
+
+```json
+{
+  "name": "example-model",
+  "contextWindow": 200000,
+  "maxOutputTokens": 64000,
+  "contextBudget": { "inputTokens": 128000, "outputTokens": 16000 }
+}
+```
+
+JSON 补全为 `contextBudget` 提供 64K 输入 / 16K 输出示例；实际默认策略保持 400000/50000。`limitSource` 由发现维护，手工固定能力时设为 `configured`。原生请求级 `contextSize` 表示选中的输入预算。
+
+- **能力与预算**：`contextWindow=C` 为总能力，`maxInputTokens=I` / `maxOutputTokens=O` 为独立能力。`contextBudget.inputTokens` 是默认输入 `P`，`outputTokens` 是实际输出 `R`；先预留 `R`，再约束 `P ≤ min(I, C-R)`。新预算默认输入 `400000`、输出 `50000`，按已知能力收缩。
+- **原生 Context Size**：模型行使用数字 `schema.contextSize`（`group: tokens`）选择输入 `P`，默认值为解析后的默认输入。默认数字档位为 32k/64k/128k/256k/512k，另有默认/最大；可通过 `presets` 定制。VS Code 保存每个模型的选择。注册输入上限为 `min(I, C-R)`，输出为 `R`，隐藏 `maxContextWindowTokens=C`；原生有效分母为受 `C` 约束的 `P+R`。
+- **请求与统计**：`R` 通过 `max_tokens`（Chat / Anthropic）或 `max_output_tokens`（Responses）下发。System Instructions、Tool Definitions 均属于输入。`provideTokenCount()` 提供当前文本/消息的本地估算，与响应 usage 上报分离；原生上下文分子由宿主管理。
+- **状态栏**：统一 `CodingPlans` 条目展示最近完成请求的真实 usage：输入 / `P`、生成 / `R`；占用为 `prompt + max(R, completion)`，分母为 `P+R`，超限百分比保留原值。配置 `usageUrl` 后还展示套餐额度。
+- **校验**：读取配置时仅校验；未知字段或无效值会触发路径提示。供应商级错误隔离该供应商，模型级错误仅隔离该模型，其余有效条目继续使用。配置原文保持原样，旧键由用户按[迁移说明](docs/configuration-migration.md)手动调整。
+- **验收边界**：原生集成含未公开运行时字段适配，仅静态核实当前 VS Code 1.142 宿主支持，尚未 UI 手动验收。第三方 Copilot 包装器内部还有 8192-token 输出预留限制；原生 UI、compaction 与线上请求预算应分别观察，等价性尚待验证。
+
+详见 [上下文窗口说明](docs/copilot-chat-context-window.md)。
 
 ## 高级功能
 

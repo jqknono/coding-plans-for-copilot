@@ -1,95 +1,67 @@
-# VS Code Chat Context Window 的值是怎么来的
+# Copilot Chat 上下文窗口与请求预算
 
-更新时间：2026-05-26
+更新时间：2026-10-18
 
-## 一句话结论
+## 能力、预算与选择
 
-`Context Window X / Y tokens` 表示：
-
-| 部分 | 含义 | 来源 |
+| 层级 | 字段 | 当前语义 |
 | --- | --- | --- |
-| `Y` | 当前所选模型的总上下文窗口 | 由 VS Code 根据所选模型的上下文能力决定 |
-| `X` | 当前这轮对话已经占用的上下文 token | 由 VS Code / Copilot 在运行时把当前请求上下文拼装并计数后得到 |
+| 模型能力 | `contextWindow=C` | 输入与输出共享的总能力 |
+| 模型能力 | `maxInputTokens=I` / `maxOutputTokens=O` | 独立输入、输出能力；与预算分离 |
+| 能力来源 | `limitSource` | `configured` 保留显式能力；`endpoint` / `models.dev` 可随发现刷新，保留预算 |
+| 默认策略 | `contextBudget.inputTokens` / `outputTokens` | 默认输入 `P` / 实际输出 `R`；初始为 400000 / 50000，受已知能力约束 |
+| 输入档位 | `contextBudget.presets` | 数字输入档位，默认 32000/64000/128000/256000/512000，另有默认/最大 |
+| 宿主选择 | 请求级 `contextSize` | VS Code 按模型保存所选输入 `P`，与旧配置字段 `models[].contextSize` 分离 |
 
-这个控件本质上是“上下文占用统计”，不是“完整 prompt 明细列表”。
+先按输出能力与总容量确定 `R`，再确定 `P ≤ min(I,C-R)`。能力字段保留来源值，用户选小预算后能力仍可用于选择更大档位。未知能力仅采用已知约束。
 
-## `Y` 是怎么得到的
+原生模型信息注册 `maxInputTokens=min(I,C-R)` 作为可选输入上限、`maxOutputTokens=R`，并通过隐藏字段 `maxContextWindowTokens=C` 适配总能力。`schema.contextSize` 为 `type: number`、`group: tokens`，默认值为解析后的默认输入 `P`。UI 有效窗口为受 `C` 约束的 `P+R`。
 
-官方文档只明确说明一件事：`Context Window` 的分母会随着你切换模型而变化，因为不同模型的 context window 不同。
+`R` 是线上请求的输出预算：OpenAI Chat / Anthropic 发送 `max_tokens`，OpenAI Responses 发送 `max_output_tokens`。
 
-对自定义模型提供方，VS Code 公开给扩展的模型容量元数据是：
+## 原生 Context Window 与状态栏
 
-| API 字段 | 含义 |
+- 原生 `Context Window X / Y` 中，`Y` 按所选输入预算加输出预留计算，并受总能力约束；`X` 由 VS Code / Copilot 拼装当前上下文并统计。
+- System Instructions、Tool Definitions、会话历史、文件与检索内容、工具结果等均属于输入上下文。
+- `provideTokenCount()` 当前委托模型对本次文本或消息做本地估算；其职责是 token 计数，而非上游 response usage 上报。估算接口与最近完成请求的真实 usage 分开维护。
+- 公开 `LanguageModelChatProvider` / 响应 progress API 尚无将上游真实 usage 分类明细写回原生控件的契约。原生分子仍由宿主管理，扩展状态栏单独展示真实请求统计。
+
+统一 `CodingPlans` 状态栏使用**最近完成请求**的预算快照和上游 usage：
+
+| 项目 | 计算方式 |
 | --- | --- |
-| `maxInputTokens` | 模型最多可接受多少输入 token |
-| `maxOutputTokens` | 模型最多可生成多少输出 token |
+| 输入 | `promptTokens / P` |
+| 生成 | `completionTokens / R` |
+| 占用 | `promptTokens + max(R,completionTokens)` |
+| 有效分母 | `P+R` |
+| 占用比例 | `占用 / (P+R)`，保留超过 100% 的结果 |
 
-本仓库里，这两个值的来源链路是：
+输出预留与已生成内容取较大值，避免重复相加；超限数值保留真实结果。上游缺少 usage 时显示缺失状态，本地估算仅服务计数接口。配置 `usageUrl` 后还会显示套餐额度。
 
-| 步骤 | 本仓库实现 |
-| --- | --- |
-| 1. 读取模型配置 | `AIModelConfig.maxTokens` 表示模型总上下文窗口，`maxInputTokens` / `maxOutputTokens` 是拆分值，见 [src/providers/baseProvider.ts](../src/providers/baseProvider.ts) |
-| 2. 生成对外模型信息 | `toLanguageModelInfo(...)` 把 `model.maxInputTokens` 和 `model.maxOutputTokens` 暴露给 VS Code，见 [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) |
-| 3. VS Code 显示分母 | VS Code 根据当前选中的模型信息显示 `Y` |
+## 当前配置契约
 
-所以，对这个仓库来说，`Y` 最终来自模型配置，再通过扩展注册的 `LanguageModelChatInformation` 传给 VS Code。
+- “模型能力”使用 `contextWindow`、可选独立输入 `maxInputTokens`、输出 `maxOutputTokens`；“使用策略”使用 `contextBudget` 或原生选择器。总容量为整数 ≥ 2，独立能力及预算为整数 ≥ 1。
+- `limitSource` 允许 `configured`、`endpoint`、`models.dev`。手工固定能力时使用 `configured`；发现来源可刷新能力并保留预算。补全隐藏此元数据，`contextBudget` 提供 64K/16K 示例，运行时默认策略为 400000/50000。
+- 配置读取仅校验，原文保持原样。未知字段或无效值会弹窗提示字段路径；供应商级错误隔离供应商，模型级错误仅隔离该模型，其余有效项继续使用。
+- 旧配置由用户按[一次迁移说明](configuration-migration.md)手动调整；保存、启动与读取均采用当前字段契约。
+- 复制到 `chatLanguageModels.json` 时导出默认 `P+R` / `R`，保留原生 `apiType`。原生 provider `configuration.apiKey` 写入 Secret Storage，原生请求 `contextSize` 继续表示所选输入预算。
+- 即使 `autoRefreshModels: false`，保存 settings/API Key 后本地模型仍即时重建；远端发现及模型列表写回由手动更新命令执行，与纯校验路径分开。
 
-## `X` 是怎么得到的
+## 宿主适配与验收边界
 
-官方文档说明，`X` 表示“当前已使用的上下文”，会随着对话推进不断增长；hover 时还能看到按类别拆分的占用。官方还能确认这些上下文来源会参与统计：
+最低宿主为 VS Code `1.142.0`，类型依赖保留 `@types/vscode ^1.120.0`。原生集成含未公开运行时字段适配，其稳定性以当前宿主实现为依据。
 
-| 来源 | 官方说明 |
-| --- | --- |
-| 系统与指令层 | system prompt、custom instructions 也属于 context window 的一部分 |
-| 隐式上下文 | 活动文件、当前选区、文件名会自动带入 |
-| 显式上下文 | `#file`、`#codebase`、`#terminalSelection`、`#fetch` 等 |
-| 工作区检索结果 | Copilot 会自动做 workspace indexing、search、read、usages 等检索，再把结果带入 |
-| 工具结果 | tool outputs、previous tool results 会进入上下文 |
-| 会话历史 | conversation history 会进入上下文 |
-| 多模态上下文 | 图片、浏览器元素、页面内容等 |
-| 历史压缩结果 | 上下文快满时，VS Code 会自动 compact 旧历史，摘要仍继续占用上下文 |
+2026-10-17 静态核实当前安装宿主 `1.142.0`（提交 `6d62b1d5dace93a33b3a6d3eca1317bd5e15bcb1`）：
 
-所以，`X` 不是“当前输入框文本长度”，而是“这次请求最终真正送进模型的上下文总量”。
+- Workbench 支持数字 `contextSize`、模型配置默认值和 `tokens` 分组；总窗口逻辑支持 `min(maxContextWindowTokens, P+R)`。
+- Extension Host 的模型信息桥接保留 `maxContextWindowTokens` 与 `configurationSchema`。
+- 随宿主打包的 Copilot 包含原生 Context Size schema；第三方语言模型包装器的 `maxOutputTokens` getter 固定为 `8192`，形成内部输出预留限制。
 
-## 这仓库能确认到哪一步
+**以上仅为静态核实，尚未 UI 手动验收。** 原生 UI 分母、Copilot compaction 预算和实际请求输出 `R` 应分别观察，等价性尚待验证。
 
-这点最重要：
+## 参考与后续
 
-本仓库不会把“当前这轮响应结束后”拿到的真实 `usage` 实时精确写回 VS Code 原生 `Context Window`。
-
-并且按 2026-04-22 这次对当前 VS Code 源码链路与本扩展运行日志的核对结果，第三方 `LanguageModelChatProvider.provideTokenCount(...)` 也不会驱动原生 `Context Window` 弹层里的 `X`。
-
-能确认的实现如下：
-
-| 位置 | 结论 |
-| --- | --- |
-| [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) | `provideTokenCount(...)` 固定返回 `0`；既不做本地 prompt token 估算，也不复用上一轮上游 usage 作为当前请求 token 计数 |
-| [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) | `reportUsageToProgress(...)` 会读取响应里的 usage |
-| [src/providers/lmChatProviderAdapter.ts](../src/providers/lmChatProviderAdapter.ts) | `updateContextUsageState(...)` 会把 usage 缓存到本仓库自己的 `CodingPlans Context` 状态栏状态里 |
-| [src/providers/genericProviderProtocols.ts](../src/providers/genericProviderProtocols.ts) | Anthropic 流式响应会合并 `message_start` 与 `message_delta` 的 usage，保留 `input_tokens`、缓存输入 token 与 `output_tokens` 后再更新 `CodingPlans Context` |
-| VS Code 源码 `src/vs/workbench/api/browser/mainThreadLanguageModels.ts` / `src/vs/workbench/api/common/extHostLanguageModels.ts` | `provideTokenCount(...)` 只被桥接到 `computeTokenLength(...)` / `countTokens(...)` 能力；本次未找到原生 `Context Window` UI 消费这条路径的源码 |
-
-因此可以明确下结论：
-
-1. VS Code 原生 `Context Window` 的 `X`，不是本仓库把上游 `usage.totalTokens` 原样回填出来的值。
-2. 本仓库公开参与原生控件的能力，只有模型元数据和 `provideTokenCount()` 这个估算接口。
-3. 现在这里的 `provideTokenCount()` 已固定返回 `0`，避免把上一轮真实上下文占用误当成当前请求 token 计数，进而干扰 VS Code / Copilot 的 compaction 预算。
-4. 因此，原生 `Context Window` 里的 `X` 目前仍应视为 VS Code / Copilot 自己的内部上下文拼装统计结果；对第三方 provider，这个值可能保持 `0`。
-
-## 最终结论
-
-如果你只关心“vscode chat 的 context 窗口中的值是如何得到的”，可以直接记这一句：
-
-`Y` 来自当前模型的上下文能力；`X` 来自 VS Code / Copilot 把当前请求要发送的上下文拼起来后做的运行时统计。  
-在本仓库里，模型容量由扩展提供给 VS Code；但对第三方 provider，当前并不能依靠 `provideTokenCount()` 或上游 `usage` 去驱动原生 `Context Window` 的 `X`。
-
-## 参考
-
-- VS Code 官方：Manage context for AI  
-  https://code.visualstudio.com/docs/copilot/chat/copilot-chat-context
-- VS Code 官方：Chat overview  
-  https://code.visualstudio.com/docs/copilot/chat/copilot-chat
-- VS Code 官方：How Copilot understands your workspace  
-  https://code.visualstudio.com/docs/copilot/reference/workspace-context
-- VS Code 官方：Language Model Chat Provider API  
-  https://code.visualstudio.com/api/extension-guides/ai/language-model-chat-provider
+- [Chat API 调查与待验收项](../todo/vscode-chat-api-follow-up.md)
+- [VS Code：Manage context for AI](https://code.visualstudio.com/docs/copilot/chat/copilot-chat-context)
+- [Language Model Chat Provider API](https://code.visualstudio.com/api/extension-guides/ai/language-model-chat-provider)
+- [本仓库适配器](../src/providers/lmChatProviderAdapter.ts)、[预算解析](../src/providers/contextBudget.ts)

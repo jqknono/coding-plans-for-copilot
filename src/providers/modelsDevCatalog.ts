@@ -1,4 +1,4 @@
-import { VendorApiStyle, VendorModelConfig } from '../config/configStore';
+import type { VendorApiStyle, VendorModelConfig } from '../config/configStore';
 
 export const MODELS_DEV_CATALOG_URL = 'https://models.dev/catalog.json';
 export const MODELS_DEV_API_URL = 'https://models.dev/api.json';
@@ -20,7 +20,6 @@ export interface ModelsDevModel {
   knowledge?: unknown;
   reasoning?: boolean;
   tool_call?: boolean;
-  temperature?: boolean;
   attachment?: boolean;
   modalities?: {
     input?: unknown;
@@ -28,6 +27,7 @@ export interface ModelsDevModel {
   };
   limit?: {
     context?: unknown;
+    input?: unknown;
     output?: unknown;
   };
   cost?: {
@@ -43,9 +43,7 @@ export interface ModelsDevCatalog {
   providers: Record<string, ModelsDevProvider>;
 }
 
-export async function fetchModelsDevCatalog(
-  fetchImpl: typeof fetch = fetch,
-): Promise<ModelsDevCatalog | undefined> {
+export async function fetchModelsDevCatalog(fetchImpl: typeof fetch = fetch): Promise<ModelsDevCatalog | undefined> {
   const catalog = await fetchModelsDevJson(fetchImpl, MODELS_DEV_CATALOG_URL);
   const normalizedCatalog = normalizeModelsDevCatalog(catalog);
   if (normalizedCatalog) {
@@ -168,10 +166,7 @@ function resolveDirectModelsDevModelConfig(
   const limit = readModelsDevLimit(model);
   const price = resolveModelsDevPrice(matches);
   const modelKey = pickModelsDevDescriptionModelKey(globalMatch?.modelKey, readMatchedModelKey(bestMatch), modelName);
-  const description = buildModelsDevDescription(
-    model,
-    modelKey,
-  );
+  const description = buildModelsDevDescription(model, modelKey);
   const apiStyle = inferDefaultApiStyleForModel(modelName, model, modelKey);
   const tools = readModelsDevBooleanCapability(model, matches, 'tool_call');
   const reasoning = readModelsDevBooleanCapability(model, matches, 'reasoning');
@@ -186,7 +181,8 @@ function resolveDirectModelsDevModelConfig(
       : undefined;
 
   const normalized: Partial<VendorModelConfig> = {
-    ...(limit.contextSize === undefined ? {} : { contextSize: limit.contextSize }),
+    ...limit,
+    limitSource: 'models.dev',
     ...(capabilities === undefined ? {} : { capabilities }),
     ...(price === undefined ? {} : { price }),
     ...(description === undefined ? {} : { description }),
@@ -219,22 +215,19 @@ export function inferDefaultApiStyleForModel(
   const lab = model ? readModelsDevLab(model, modelKey) : readModelProviderPrefix(modelName);
   const normalizedLab = normalizeComparableText(lab ?? '');
   if (normalizedLab === 'openai') {
-    return 'openai-responses';
+    return 'responses';
   }
   if (normalizedLab === 'anthropic') {
-    return 'anthropic';
+    return 'messages';
   }
   if (isGrokModel(modelName, model, modelKey)) {
-    return 'openai-responses';
+    return 'responses';
   }
 
-  return 'openai-chat';
+  return 'chat-completions';
 }
 
-function resolveModelsDevModelMatches(
-  catalog: ModelsDevCatalog | undefined,
-  modelName: string,
-): ModelsDevModelMatch[] {
+function resolveModelsDevModelMatches(catalog: ModelsDevCatalog | undefined, modelName: string): ModelsDevModelMatch[] {
   if (!catalog) {
     return [];
   }
@@ -257,7 +250,9 @@ function resolveModelsDevModelMatches(
   return matches;
 }
 
-function normalizeModelsDevModels(rawModels: Record<string, unknown> | undefined): Record<string, ModelsDevModel> | undefined {
+function normalizeModelsDevModels(
+  rawModels: Record<string, unknown> | undefined,
+): Record<string, ModelsDevModel> | undefined {
   if (!rawModels) {
     return undefined;
   }
@@ -342,13 +337,18 @@ function resolveModelsDevModelFromRecord(
       readModelSuffix(modelKey),
       typeof model.id === 'string' ? readModelSuffix(model.id) : '',
     ];
-    const rawCandidates = candidates.map((candidate) => normalizeModelLookupText(candidate)).filter((candidate) => candidate.length > 0);
+    const rawCandidates = candidates
+      .map((candidate) => normalizeModelLookupText(candidate))
+      .filter((candidate) => candidate.length > 0);
     let score = 0;
     if (rawCandidates.some((candidate) => candidate === normalizedName)) {
       score = 100;
     } else if (candidates.some((candidate) => normalizeComparableText(candidate) === comparableName)) {
       score = 90;
-    } else if (suffixName.length > 0 && candidates.some((candidate) => normalizeComparableText(candidate) === suffixName)) {
+    } else if (
+      suffixName.length > 0 &&
+      candidates.some((candidate) => normalizeComparableText(candidate) === suffixName)
+    ) {
       score = 80;
     }
 
@@ -372,11 +372,17 @@ function readModelProviderPrefix(modelName: string): string | undefined {
 }
 
 function readModelsDevLimit(model: ModelsDevModel): {
-  contextSize?: number;
+  contextWindow?: number;
+  maxInputTokens?: number;
+  maxOutputTokens?: number;
 } {
-  const contextSize = readPositiveInteger(model.limit?.context);
+  const contextWindow = readPositiveInteger(model.limit?.context);
+  const maxInputTokens = readPositiveInteger(model.limit?.input);
+  const maxOutputTokens = readPositiveInteger(model.limit?.output);
   return {
-    contextSize,
+    ...(contextWindow === undefined ? {} : { contextWindow }),
+    ...(maxInputTokens === undefined ? {} : { maxInputTokens }),
+    ...(maxOutputTokens === undefined ? {} : { maxOutputTokens }),
   };
 }
 
@@ -431,12 +437,11 @@ function readMatchedModelKey(match: ModelsDevModelMatch | undefined): string | u
 function readModelsDevBooleanCapability(
   model: ModelsDevModel,
   matches: readonly ModelsDevModelMatch[],
-  key: 'reasoning' | 'tool_call' | 'temperature',
+  key: 'reasoning' | 'tool_call',
 ): boolean | undefined {
-  const values = [
-    model[key],
-    ...matches.map((match) => match.model[key]),
-  ].filter((value): value is boolean => typeof value === 'boolean');
+  const values = [model[key], ...matches.map((match) => match.model[key])].filter(
+    (value): value is boolean => typeof value === 'boolean',
+  );
   if (values.some((value) => value)) {
     return true;
   }
@@ -447,15 +452,18 @@ function readModelsDevBooleanCapability(
   return undefined;
 }
 
-function readsImageInputFromModels(model: ModelsDevModel, matches: readonly ModelsDevModelMatch[]): boolean | undefined {
+function readsImageInputFromModels(
+  model: ModelsDevModel,
+  matches: readonly ModelsDevModelMatch[],
+): boolean | undefined {
   const modelImageInput = readsImageInput(model);
   if (modelImageInput !== undefined) {
     return modelImageInput;
   }
 
-  const values = [
-    ...matches.map((match) => readsImageInput(match.model)),
-  ].filter((value): value is boolean => typeof value === 'boolean');
+  const values = [...matches.map((match) => readsImageInput(match.model))].filter(
+    (value): value is boolean => typeof value === 'boolean',
+  );
   if (values.some((value) => value)) {
     return true;
   }
@@ -511,7 +519,9 @@ function resolveModelsDevPrice(matches: readonly ModelsDevModelMatch[]): VendorM
 }
 
 function readMedianModelsDevPrice(matches: readonly ModelsDevModelMatch[]): VendorModelConfig['price'] {
-  const prices = matches.map((match) => readModelsDevPrice(match.model)).filter((price): price is NonNullable<VendorModelConfig['price']> => price !== undefined);
+  const prices = matches
+    .map((match) => readModelsDevPrice(match.model))
+    .filter((price): price is NonNullable<VendorModelConfig['price']> => price !== undefined);
   if (prices.length === 0) {
     return undefined;
   }
@@ -527,7 +537,9 @@ function readMedianModelsDevPrice(matches: readonly ModelsDevModelMatch[]): Vend
   ] as const;
 
   for (const key of priceKeys) {
-    const median = readMedian(prices.map((price) => price[key]).filter((value): value is number => value !== undefined));
+    const median = readMedian(
+      prices.map((price) => price[key]).filter((value): value is number => value !== undefined),
+    );
     if (median !== undefined) {
       medianPrice[key] = median;
     }
@@ -563,21 +575,7 @@ function readsImageInput(model: ModelsDevModel): boolean | undefined {
 }
 
 function readPositiveInteger(value: unknown): number | undefined {
-  const parsed = readPositiveNumber(value);
-  return parsed === undefined ? undefined : Math.floor(parsed);
-}
-
-function readPositiveNumber(value: unknown): number | undefined {
-  if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
-    return value;
-  }
-  if (typeof value === 'string') {
-    const parsed = Number(value.trim());
-    if (Number.isFinite(parsed) && parsed > 0) {
-      return parsed;
-    }
-  }
-  return undefined;
+  return typeof value === 'number' && Number.isSafeInteger(value) && value > 0 ? value : undefined;
 }
 
 function readNonNegativeNumber(value: unknown): number | undefined {
@@ -598,7 +596,10 @@ function readNonEmptyString(value: unknown): string | undefined {
 }
 
 function normalizeModelLookupText(value: string): string {
-  const normalized = value.trim().replace(/^\/+|\/+$/g, '').toLowerCase();
+  const normalized = value
+    .trim()
+    .replace(/^\/+|\/+$/g, '')
+    .toLowerCase();
   const slashIndex = normalized.lastIndexOf('/');
   const prefix = slashIndex >= 0 ? normalized.slice(0, slashIndex + 1) : '';
   const suffix = slashIndex >= 0 ? normalized.slice(slashIndex + 1) : normalized;
@@ -642,5 +643,8 @@ function readModelSuffix(value: string): string {
 }
 
 function normalizeComparableText(value: string): string {
-  return value.trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '');
 }

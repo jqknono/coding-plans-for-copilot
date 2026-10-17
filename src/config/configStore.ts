@@ -1,176 +1,96 @@
 import * as vscode from 'vscode';
+import { mergeConfiguredModelOverrides } from '../providers/genericProviderDiscovery';
 import {
   AUTO_REFRESH_MODELS_SETTING_KEY,
-  CHAT_LANGUAGE_MODELS_OVERRIDE_CONTEXT_WINDOW_SETTING_KEY,
-  CHAT_LANGUAGE_MODELS_OVERRIDE_MAX_OUTPUT_TOKENS_SETTING_KEY,
   DEFAULT_AUTO_REFRESH_MODELS,
   DEFAULT_MODEL_CAPABILITIES_TOOLS,
   DEFAULT_MODEL_CAPABILITIES_VISION,
   VENDOR_API_KEY_PREFIX,
 } from '../constants';
+import {
+  getRootConfigurationKeys,
+  isConfigObject,
+  isValidModelConfig,
+  isVendorApiStyle,
+  validateRootConfiguration,
+  validateVendorConfiguration,
+} from './configValidation';
+import type {
+  ValidatedVendor,
+  VendorApiStyle,
+  VendorConfig,
+  VendorModelConfig,
+  VendorValidationError,
+} from './configValidation';
 
-export type VendorApiStyle = 'openai-chat' | 'openai-responses' | 'anthropic';
-export type VendorApiType = 'chat' | 'responses' | 'anthropic';
-export type VendorAuthType = 'bearer' | 'x-api-key';
-export type ReasoningEffortValue = 'none' | 'low' | 'medium' | 'high' | 'xhigh' | 'max';
-export type ReasoningEffortFormat = 'chat-completions' | 'responses';
+export type {
+  VendorApiStyle,
+  VendorAuthType,
+  ReasoningEffortValue,
+  ReasoningEffortFormat,
+  VendorModelPriceConfig,
+  VendorModelConfig,
+  VendorConfig,
+  VendorValidationError,
+} from './configValidation';
 
-export interface VendorModelPriceConfig {
-  inputCost?: number;
-  cacheCost?: number;
-  outputCost?: number;
-  longContextInputCost?: number;
-  longContextCacheCost?: number;
-  longContextOutputCost?: number;
-}
-
-export interface VendorModelConfig {
-  name: string;
-  enabled?: boolean;
-  description?: string;
-  apiStyle?: VendorApiStyle;
-  apiType?: VendorApiType;
-  temperature?: number;
-  topP?: number;
-  capabilities?: {
-    tools?: boolean;
-    vision?: boolean;
-    thinking?: boolean;
-  };
-  toolCalling?: boolean | number;
-  vision?: boolean;
-  /**
-   * Total context window size in tokens.
-   */
-  contextSize?: number;
-  maxInputTokens?: number;
-  maxOutputTokens?: number;
-  streaming?: boolean;
-  editTools?: string[];
-  supportsReasoningEffort?: ReasoningEffortValue[];
-  reasoningEffortFormat?: ReasoningEffortFormat;
-  zeroDataRetentionEnabled?: boolean;
-  price?: VendorModelPriceConfig;
-}
-
-export interface VendorConfig {
-  name: string;
-  baseUrl: string;
-  apiKey?: string;
-  authType?: VendorAuthType;
-  usageUrl?: string;
-  apiType?: VendorApiType;
-  defaultApiStyle: VendorApiStyle;
-  defaultTemperature?: number;
-  defaultTopP?: number;
-  useModelsEndpoint: boolean;
-  defaultVision: boolean;
-  models: VendorModelConfig[];
-}
-
-export interface ChatLanguageModelsTokenOverrides {
-  overrideContextWindow?: number;
-  overrideMaxOutputTokens?: number;
-}
-
-export interface VendorValidationError {
-  vendorIndex: number;
-  vendorName: string;
-  field: string;
-  reason: string;
-}
 export class ConfigStore implements vscode.Disposable {
   private readonly onDidChangeVendorsEmitter = new vscode.EventEmitter<void>();
-  /** Vendor configuration changed; consumers may need to refresh upstream model discovery. */
+  /** 厂商配置和密钥变化事件，与自动发现开关独立。 */
   public readonly onDidChange = this.onDidChangeVendorsEmitter.event;
-  private readonly onDidChangeChatLanguageModelsTokenOverridesEmitter = new vscode.EventEmitter<void>();
-  /** Root-level token overrides changed without changing vendor configuration. */
-  public readonly onDidChangeChatLanguageModelsTokenOverrides =
-    this.onDidChangeChatLanguageModelsTokenOverridesEmitter.event;
   private readonly disposables: vscode.Disposable[] = [];
   private readonly readyPromise: Promise<void>;
+  private lastErrorSignature = '';
 
   constructor(private readonly context: vscode.ExtensionContext) {
     this.disposables.push(
-      vscode.workspace.onDidChangeConfiguration((e) => {
-        if (e.affectsConfiguration('coding-plans.vendors')) {
-          this.onDidChangeVendorsEmitter.fire();
+      vscode.workspace.onDidChangeConfiguration((event) => {
+        const vendorsChanged = event.affectsConfiguration('coding-plans.vendors');
+        if (vendorsChanged || event.affectsConfiguration('coding-plans')) {
+          this.getVendors();
         }
-        if (
-          e.affectsConfiguration(`coding-plans.${CHAT_LANGUAGE_MODELS_OVERRIDE_CONTEXT_WINDOW_SETTING_KEY}`) ||
-          e.affectsConfiguration(`coding-plans.${CHAT_LANGUAGE_MODELS_OVERRIDE_MAX_OUTPUT_TOKENS_SETTING_KEY}`)
-        ) {
-          if (e.affectsConfiguration(`coding-plans.${CHAT_LANGUAGE_MODELS_OVERRIDE_CONTEXT_WINDOW_SETTING_KEY}`)) {
-            void this.rewriteOversizedModelsDevContextSizes();
-          }
-          this.onDidChangeChatLanguageModelsTokenOverridesEmitter.fire();
+        if (vendorsChanged) {
+          this.onDidChangeVendorsEmitter.fire();
         }
       }),
     );
-    this.readyPromise = this.initializeStoredConfig();
+    this.readyPromise = Promise.resolve().then(() => {
+      this.getVendors();
+    });
   }
 
+  /** 初始化仅校验和报告；设置写入由显式更新方法负责。 */
   async ready(): Promise<void> {
     await this.readyPromise;
   }
 
-  private async initializeStoredConfig(): Promise<void> {
-    await this.migrateLegacyVendorModelThinkingConfig();
-    await this.rewriteOversizedModelsDevContextSizes();
-  }
-
   isAutoRefreshModelsEnabled(): boolean {
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    return config.get<boolean>(AUTO_REFRESH_MODELS_SETTING_KEY, DEFAULT_AUTO_REFRESH_MODELS) !== false;
-  }
-
-  getChatLanguageModelsTokenOverrides(): ChatLanguageModelsTokenOverrides {
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const overrideContextWindow = this.readPositiveNumber(
-      config.get<unknown>(CHAT_LANGUAGE_MODELS_OVERRIDE_CONTEXT_WINDOW_SETTING_KEY, undefined),
+    return (
+      vscode.workspace
+        .getConfiguration('coding-plans')
+        .get<boolean>(AUTO_REFRESH_MODELS_SETTING_KEY, DEFAULT_AUTO_REFRESH_MODELS) === true
     );
-    const overrideMaxOutputTokens = this.readPositiveNumber(
-      config.get<unknown>(CHAT_LANGUAGE_MODELS_OVERRIDE_MAX_OUTPUT_TOKENS_SETTING_KEY, undefined),
-    );
-    return {
-      ...(overrideContextWindow === undefined
-        ? {}
-        : { overrideContextWindow: Math.max(1, Math.floor(overrideContextWindow)) }),
-      ...(overrideMaxOutputTokens === undefined
-        ? {}
-        : { overrideMaxOutputTokens: Math.max(1, Math.floor(overrideMaxOutputTokens)) }),
-    };
   }
 
   getVendors(): VendorConfig[] {
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const raw = config.get<unknown[]>('vendors', []);
-    return this.normalizeVendors(raw);
+    const result = this.readValidatedConfiguration();
+    this.reportErrors(result.errors);
+    return result.vendors.map((vendor) => this.normalizeVendor(vendor));
   }
 
   getVendor(name: string): VendorConfig | undefined {
-    return this.getVendors().find((v) => v.name === name);
+    return this.getVendors().find((vendor) => vendor.name === name);
   }
 
+  /** 密钥仅按厂商名称读取 SecretStorage，配置作用域与其他厂商保持隔离。 */
   async getApiKey(vendorName: string): Promise<string> {
-    const vendor = this.getVendor(vendorName);
-    const configuredApiKey = vendor?.apiKey?.trim() || '';
-    if (configuredApiKey.length > 0) {
-      return configuredApiKey;
-    }
-    const key = await this.context.secrets.get(VENDOR_API_KEY_PREFIX + vendorName);
-    const secretApiKey = (key || '').trim();
-    if (secretApiKey.length > 0) {
-      return secretApiKey;
-    }
-
-    return this.findConfiguredApiKeyFallback(vendorName, vendor?.baseUrl) ?? '';
+    return ((await this.context.secrets.get(VENDOR_API_KEY_PREFIX + vendorName)) ?? '').trim();
   }
 
   async setApiKey(vendorName: string, apiKey: string): Promise<void> {
     const secretKey = VENDOR_API_KEY_PREFIX + vendorName;
     const normalized = apiKey.trim();
-    const current = ((await this.context.secrets.get(secretKey)) || '').trim();
+    const current = ((await this.context.secrets.get(secretKey)) ?? '').trim();
     if (current === normalized) {
       return;
     }
@@ -182,1073 +102,293 @@ export class ConfigStore implements vscode.Disposable {
     this.onDidChangeVendorsEmitter.fire();
   }
 
-  /**
-   * Persist capped contextSize values for models.dev-enriched entries when the root override changes.
-   * Hand-authored models without a models.dev description are left untouched.
-   */
-  async rewriteOversizedModelsDevContextSizes(): Promise<void> {
-    const overrideContextWindow = this.getChatLanguageModelsTokenOverrides().overrideContextWindow;
-    if (overrideContextWindow === undefined) {
-      return;
-    }
-
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const rawVendors = config.get<unknown[]>('vendors', []);
-    if (!Array.isArray(rawVendors) || rawVendors.length === 0) {
-      return;
-    }
-
-    let changed = false;
-    const updatedVendors = rawVendors.map((rawVendor) => {
-      if (!rawVendor || typeof rawVendor !== 'object') {
-        return rawVendor;
-      }
-
-      const vendorObj = rawVendor as Record<string, unknown>;
-      if (!Array.isArray(vendorObj.models) || vendorObj.models.length === 0) {
-        return rawVendor;
-      }
-
-      let vendorChanged = false;
-      const models = vendorObj.models.map((rawModel) => {
-        if (!rawModel || typeof rawModel !== 'object') {
-          return rawModel;
-        }
-
-        const modelObj = rawModel as Record<string, unknown>;
-        const description =
-          typeof modelObj.description === 'string' && modelObj.description.trim().length > 0
-            ? modelObj.description.trim()
-            : undefined;
-        if (!this.isModelsDevGeneratedDescription(description)) {
-          return rawModel;
-        }
-
-        const contextSize = this.readPositiveNumber(modelObj.contextSize);
-        if (contextSize === undefined || contextSize <= overrideContextWindow) {
-          return rawModel;
-        }
-
-        vendorChanged = true;
-        changed = true;
-        return {
-          ...modelObj,
-          contextSize: overrideContextWindow,
-        };
-      });
-
-      return vendorChanged ? { ...vendorObj, models } : rawVendor;
-    });
-
-    if (!changed) {
-      return;
-    }
-
-    await config.update('vendors', updatedVendors, vscode.ConfigurationTarget.Global);
-  }
-
   async updateVendorModels(vendorName: string, models: VendorModelConfig[]): Promise<void> {
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const rawVendors = config.get<unknown[]>('vendors', []);
-    if (!Array.isArray(rawVendors)) {
+    // 发现适配器也遵循当前 schema，写回只接收完整合法的数据集。
+    if (!Array.isArray(models) || !models.every(isValidModelConfig)) {
       return;
     }
-
-    const normalizedVendorName = vendorName.trim();
-    if (normalizedVendorName.length === 0) {
-      return;
-    }
-
-    // Model names discovered from `/models` are the source of truth for membership.
-    const inputNames = models
-      .map((model) => (typeof model?.name === 'string' ? model.name.trim() : ''))
-      .filter((name) => name.length > 0);
-    let changed = false;
-
-    const updatedVendors = rawVendors.map((rawVendor) => {
-      if (!rawVendor || typeof rawVendor !== 'object') {
-        return rawVendor;
-      }
-
-      const vendorObj = rawVendor as Record<string, unknown>;
-      const name = typeof vendorObj.name === 'string' ? vendorObj.name.trim() : '';
-      if (name !== normalizedVendorName) {
-        return rawVendor;
-      }
-
-      // Build a stable canonical casing from the currently stored config.
-      // If the discovered list only differs by name casing, keep the existing casing to avoid flapping.
-      const existingNameByKey = new Map<string, string>();
-      const currentNames: string[] = [];
-      if (Array.isArray(vendorObj.models)) {
-        for (const rawModel of vendorObj.models) {
-          const rawName = this.readModelName(rawModel);
-          if (!rawName) {
-            continue;
+    await this.updateVendor(vendorName, (raw, validated) => {
+      const vendor = this.normalizeVendor(validated);
+      const rawModels = (raw.models ?? []) as unknown[];
+      const existingByName = new Map<string, VendorModelConfig>();
+      const isolated: unknown[] = [];
+      const isolatedNames = new Set<string>();
+      for (const model of rawModels) {
+        if (isValidModelConfig(model)) {
+          const key = model.name.trim().toLowerCase();
+          if (!existingByName.has(key)) {
+            existingByName.set(key, model);
           }
-          const key = rawName.toLowerCase();
-          if (existingNameByKey.has(key)) {
-            continue;
+        } else {
+          // 隔离条目仍保留原始设置，由用户修正，发现流程仅更新有效模型。
+          isolated.push(model);
+          if (isConfigObject(model) && typeof model.name === 'string') {
+            isolatedNames.add(model.name.trim().toLowerCase());
           }
-          existingNameByKey.set(key, rawName);
-          currentNames.push(rawName);
         }
       }
 
-      const defaultVision = typeof vendorObj.defaultVision === 'boolean' ? vendorObj.defaultVision : false;
-      const defaultApiStyle = this.normalizeApiStyle(vendorObj.defaultApiStyle ?? vendorObj.apiType);
-      const rawModels = Array.isArray(vendorObj.models) ? vendorObj.models : [];
-      const nextModels = this.buildUpdatedModelEntries(
-        inputNames,
-        models,
-        rawModels,
-        existingNameByKey,
-        defaultVision,
-        defaultApiStyle,
-        normalizedVendorName,
-      );
-      const normalizedCurrentModels = this.buildUpdatedModelEntries(
-        currentNames,
-        [],
-        rawModels,
-        existingNameByKey,
-        defaultVision,
-        defaultApiStyle,
-        normalizedVendorName,
-      );
-
-      const currentSignature = JSON.stringify(normalizedCurrentModels);
-      const nextSignature = JSON.stringify(nextModels);
-      if (currentSignature === nextSignature) {
-        return rawVendor;
+      const next: VendorModelConfig[] = [];
+      const seen = new Set<string>();
+      for (const input of models) {
+        const key = input.name.trim().toLowerCase();
+        if (seen.has(key) || isolatedNames.has(key)) {
+          continue;
+        }
+        seen.add(key);
+        const existing = existingByName.get(key);
+        const canonical = existing?.name.trim() ?? input.name.trim();
+        const discovered = { ...input, name: canonical };
+        const merged = existing
+          ? mergeConfiguredModelOverrides(
+              [this.storedModel(existing, vendor)],
+              [discovered],
+              vendor.defaultVision,
+              vendor.name,
+            )[0]
+          : discovered;
+        if (!isValidModelConfig(merged)) {
+          return raw;
+        }
+        next.push(this.storedModel(merged, vendor));
       }
-
-      changed = true;
-      return {
-        ...vendorObj,
-        models: nextModels,
-      };
+      const current = [...existingByName.values()].map((model) => this.storedModel(model, vendor));
+      const sorted = this.sortModels(next);
+      if (JSON.stringify(this.sortModels(current)) === JSON.stringify(sorted)) {
+        return raw;
+      }
+      return { ...raw, models: [...sorted, ...isolated] };
     });
-
-    if (!changed) {
-      return;
-    }
-
-    await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
   }
 
   async updateVendorBaseUrl(vendorName: string, baseUrl: string): Promise<void> {
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const rawVendors = config.get<unknown[]>('vendors', []);
-    if (!Array.isArray(rawVendors)) {
+    const normalized = baseUrl.trim();
+    if (normalized.length === 0) {
       return;
     }
-
-    const normalizedVendorName = vendorName.trim();
-    const normalizedBaseUrl = baseUrl.trim();
-    if (normalizedVendorName.length === 0 || normalizedBaseUrl.length === 0) {
-      return;
-    }
-
-    let changed = false;
-    const updatedVendors = rawVendors.map((rawVendor) => {
-      if (!rawVendor || typeof rawVendor !== 'object') {
-        return rawVendor;
-      }
-
-      const vendorObj = rawVendor as Record<string, unknown>;
-      const name = typeof vendorObj.name === 'string' ? vendorObj.name.trim() : '';
-      if (name !== normalizedVendorName) {
-        return rawVendor;
-      }
-
-      const currentBaseUrl = typeof vendorObj.baseUrl === 'string' ? vendorObj.baseUrl.trim() : '';
-      if (currentBaseUrl === normalizedBaseUrl) {
-        return rawVendor;
-      }
-
-      changed = true;
-      return {
-        ...vendorObj,
-        baseUrl: normalizedBaseUrl,
-      };
-    });
-
-    if (!changed) {
-      return;
-    }
-
-    await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
+    await this.updateVendor(vendorName, (raw, vendor) =>
+      vendor.baseUrl.trim() === normalized ? raw : { ...raw, baseUrl: normalized },
+    );
   }
 
   async updateVendorModelApiStyle(vendorName: string, modelName: string, apiStyle: VendorApiStyle): Promise<boolean> {
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const rawVendors = config.get<unknown[]>('vendors', []);
-    if (!Array.isArray(rawVendors)) {
+    const key = modelName.trim().toLowerCase();
+    if (key.length === 0 || !isVendorApiStyle(apiStyle)) {
       return false;
     }
-
-    const normalizedVendorName = vendorName.trim();
-    const normalizedModelName = modelName.trim().toLowerCase();
-    const normalizedApiStyle = this.normalizeApiStyle(apiStyle);
-    if (normalizedVendorName.length === 0 || normalizedModelName.length === 0) {
-      return false;
-    }
-
-    let changed = false;
-    const updatedVendors = rawVendors.map((rawVendor) => {
-      if (!rawVendor || typeof rawVendor !== 'object') {
-        return rawVendor;
-      }
-
-      const vendorObj = rawVendor as Record<string, unknown>;
-      const name = typeof vendorObj.name === 'string' ? vendorObj.name.trim() : '';
-      if (name !== normalizedVendorName || !Array.isArray(vendorObj.models)) {
-        return rawVendor;
-      }
-
-      let vendorChanged = false;
-      const nextModels = vendorObj.models.map((rawModel) => {
-        if (!rawModel || typeof rawModel !== 'object') {
-          return rawModel;
+    return this.updateVendor(vendorName, (raw) => {
+      let changed = false;
+      const models = ((raw.models ?? []) as unknown[]).map((model) => {
+        if (!isValidModelConfig(model) || model.name.trim().toLowerCase() !== key || model.apiStyle === apiStyle) {
+          return model;
         }
-
-        const modelObj = rawModel as Record<string, unknown>;
-        const currentModelName = typeof modelObj.name === 'string' ? modelObj.name.trim().toLowerCase() : '';
-        if (currentModelName !== normalizedModelName) {
-          return rawModel;
-        }
-
-        if (modelObj.apiStyle === normalizedApiStyle) {
-          return rawModel;
-        }
-
-        vendorChanged = true;
-        return {
-          ...modelObj,
-          apiStyle: normalizedApiStyle,
-        };
+        changed = true;
+        return { ...model, apiStyle };
       });
-
-      if (!vendorChanged) {
-        return rawVendor;
-      }
-
-      changed = true;
-      return {
-        ...vendorObj,
-        models: nextModels,
-      };
+      return changed ? { ...raw, models } : raw;
     });
-
-    if (!changed) {
-      return false;
-    }
-
-    await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
-    return true;
   }
 
-  private async migrateLegacyVendorModelThinkingConfig(): Promise<void> {
+  /** 复用写入作用域与厂商级校验；模型级错误保留给对应更新方法处理。 */
+  private async updateVendor(
+    vendorName: string,
+    update: (raw: Record<string, unknown>, vendor: ValidatedVendor) => Record<string, unknown>,
+  ): Promise<boolean> {
+    const name = vendorName.trim();
     const config = vscode.workspace.getConfiguration('coding-plans');
-    const rawVendors = config.get<unknown[]>('vendors', []);
-    if (!Array.isArray(rawVendors)) {
-      return;
+    const raw = config.get<unknown>('vendors', []);
+    if (name.length === 0 || !Array.isArray(raw)) {
+      return false;
     }
-
     let changed = false;
-    const updatedVendors = rawVendors.map((rawVendor) => {
-      if (!rawVendor || typeof rawVendor !== 'object' || Array.isArray(rawVendor)) {
-        return rawVendor;
+    const vendors = raw.map((entry: unknown) => {
+      const validated = validateVendorConfiguration([entry]).vendors[0];
+      if (!validated || validated.name.trim() !== name || !isConfigObject(entry)) {
+        return entry;
       }
-
-      const vendorObj = rawVendor as Record<string, unknown>;
-      if (!Array.isArray(vendorObj.models)) {
-        return rawVendor;
-      }
-
-      let vendorChanged = false;
-      const updatedModels = vendorObj.models.map((rawModel) => {
-        const migrated = this.migrateLegacyModelThinkingConfig(rawModel);
-        if (migrated.changed) {
-          vendorChanged = true;
-        }
-        return migrated.model;
-      });
-
-      if (!vendorChanged) {
-        return rawVendor;
-      }
-
-      changed = true;
-      return {
-        ...vendorObj,
-        models: updatedModels,
-      };
+      const next = update(entry, validated);
+      changed ||= next !== entry;
+      return next;
     });
-
-    if (!changed) {
-      return;
+    if (changed) {
+      await config.update('vendors', vendors, this.resolveVendorsConfigTarget(config));
     }
-
-    await config.update('vendors', updatedVendors, this.resolveVendorsConfigTarget());
+    return changed;
   }
 
-  private migrateLegacyModelThinkingConfig(rawModel: unknown): { model: unknown; changed: boolean } {
-    if (!rawModel || typeof rawModel !== 'object' || Array.isArray(rawModel)) {
-      return { model: rawModel, changed: false };
-    }
-
-    const modelObj = rawModel as Record<string, unknown>;
-    if (!Object.prototype.hasOwnProperty.call(modelObj, 'thinking')) {
-      return { model: rawModel, changed: false };
-    }
-
-    const legacyThinking = this.readBooleanValue(modelObj.thinking);
-    const migratedModel = Object.fromEntries(Object.entries(modelObj).filter(([key]) => key !== 'thinking'));
-    if (legacyThinking === undefined) {
-      return { model: migratedModel, changed: true };
-    }
-
-    const rawCapabilities = modelObj.capabilities;
-    const currentCapabilities =
-      rawCapabilities && typeof rawCapabilities === 'object' && !Array.isArray(rawCapabilities)
-        ? (rawCapabilities as Record<string, unknown>)
-        : undefined;
-    const capabilities =
-      currentCapabilities && Object.prototype.hasOwnProperty.call(currentCapabilities, 'thinking')
-        ? currentCapabilities
-        : {
-            ...currentCapabilities,
-            thinking: legacyThinking,
-          };
-
+  private normalizeVendor(vendor: ValidatedVendor): VendorConfig {
+    const defaults: Pick<VendorConfig, 'defaultApiStyle' | 'defaultVision'> = {
+      defaultApiStyle: vendor.defaultApiStyle ?? 'chat-completions',
+      defaultVision: vendor.defaultVision ?? DEFAULT_MODEL_CAPABILITIES_VISION,
+    };
     return {
-      model: {
-        ...migratedModel,
-        capabilities,
+      ...vendor,
+      ...defaults,
+      name: vendor.name.trim(),
+      baseUrl: vendor.baseUrl.trim(),
+      ...(vendor.usageUrl === undefined ? {} : { usageUrl: vendor.usageUrl.trim() }),
+      models: vendor.models.map((model) => this.normalizeModel(model, defaults)),
+    };
+  }
+
+  /** 仅接收 validator 已确认的当前结构；默认值只填补省略字段。 */
+  private normalizeModel(
+    model: VendorModelConfig,
+    defaults: Pick<VendorConfig, 'defaultApiStyle' | 'defaultVision'>,
+  ): VendorModelConfig {
+    return {
+      ...model,
+      name: model.name.trim(),
+      enabled: model.enabled ?? true,
+      apiStyle: model.apiStyle ?? defaults.defaultApiStyle,
+      limitSource: model.limitSource ?? 'configured',
+      capabilities: {
+        ...model.capabilities,
+        tools: model.capabilities?.tools ?? DEFAULT_MODEL_CAPABILITIES_TOOLS,
+        vision: model.capabilities?.vision ?? defaults.defaultVision,
       },
-      changed: true,
+      ...(model.description === undefined ? {} : { description: model.description.trim() }),
+      ...(model.contextBudget === undefined
+        ? {}
+        : {
+            contextBudget: {
+              ...model.contextBudget,
+              ...(model.contextBudget.presets === undefined ? {} : { presets: [...model.contextBudget.presets] }),
+            },
+          }),
+      ...(model.price === undefined ? {} : { price: { ...model.price } }),
+      ...(model.editTools === undefined ? {} : { editTools: [...new Set(model.editTools.map((tool) => tool.trim()))] }),
+      ...(model.supportsReasoningEffort === undefined
+        ? {}
+        : {
+            supportsReasoningEffort: [...new Set(model.supportsReasoningEffort)],
+          }),
     };
   }
 
-  private readModelName(raw: unknown): string | undefined {
-    if (!raw || typeof raw !== 'object') {
-      return undefined;
-    }
-    const obj = raw as Record<string, unknown>;
-    const name = typeof obj.name === 'string' ? obj.name.trim() : '';
-    return name.length > 0 ? name : undefined;
-  }
-
-  private isModelsDevGeneratedDescription(description: string | undefined): boolean {
-    const normalizedDescription = description?.trim();
-    return !!normalizedDescription && normalizedDescription.split(' | ').length >= 5;
-  }
-
-  private capModelsDevContextSize(
-    contextSize: number | undefined,
-    description: string | undefined,
-  ): number | undefined {
-    if (contextSize === undefined || !this.isModelsDevGeneratedDescription(description)) {
-      return contextSize;
-    }
-
-    const overrideContextWindow = this.getChatLanguageModelsTokenOverrides().overrideContextWindow;
-    if (overrideContextWindow === undefined || contextSize <= overrideContextWindow) {
-      return contextSize;
-    }
-
-    return overrideContextWindow;
-  }
-
-  private cloneModelWithNormalizedName(
-    raw: unknown,
-    name: string,
-    defaultVision: boolean,
-    defaultApiStyle: VendorApiStyle,
-  ): VendorModelConfig {
-    if (!raw || typeof raw !== 'object') {
-      return this.buildStoredModelEntry({ name }, name, defaultVision, defaultApiStyle);
-    }
-    return this.buildStoredModelEntry(raw, name, defaultVision, defaultApiStyle);
-  }
-
-  private buildStoredModelEntry(
-    raw: unknown,
-    name: string,
-    defaultVision: boolean,
-    defaultApiStyle: VendorApiStyle,
-  ): VendorModelConfig {
-    const rawObject = raw && typeof raw === 'object' ? (raw as Record<string, unknown>) : undefined;
-    const normalized = this.normalizeModel(raw, defaultVision, defaultApiStyle);
-    if (!normalized) {
-      const stored: VendorModelConfig = {
-        name,
-        enabled:
-          rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'enabled') ? rawObject.enabled !== false : true,
-        capabilities: {
-          tools: DEFAULT_MODEL_CAPABILITIES_TOOLS,
-          vision: defaultVision,
-        },
-      };
-      if (rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'apiStyle')) {
-        stored.apiStyle = this.normalizeApiStyle(rawObject.apiStyle, defaultApiStyle);
-      }
-      if (rawObject && Object.prototype.hasOwnProperty.call(rawObject, 'apiType')) {
-        stored.apiType = this.normalizeApiType(rawObject.apiType);
-        stored.apiStyle = this.normalizeApiStyle(rawObject.apiType, defaultApiStyle);
-      }
-      return stored;
-    }
-
-    const stored: VendorModelConfig = {
-      name,
-      enabled: normalized.enabled,
-      description: normalized.description,
-      apiType: normalized.apiType,
-      temperature: normalized.temperature,
-      topP: normalized.topP,
-      contextSize: normalized.contextSize,
-      maxInputTokens: normalized.maxInputTokens,
-      maxOutputTokens: normalized.maxOutputTokens,
-      capabilities: normalized.capabilities,
-    };
-
-    if (
-      rawObject &&
-      (Object.prototype.hasOwnProperty.call(rawObject, 'apiStyle') ||
-        Object.prototype.hasOwnProperty.call(rawObject, 'apiType'))
-    ) {
-      stored.apiStyle = normalized.apiStyle;
-    }
-    if (normalized.streaming !== undefined) {
-      stored.streaming = normalized.streaming;
-    }
-    if (normalized.editTools !== undefined) {
-      stored.editTools = normalized.editTools;
-    }
-    if (normalized.supportsReasoningEffort !== undefined) {
-      stored.supportsReasoningEffort = normalized.supportsReasoningEffort;
-    }
-    if (normalized.reasoningEffortFormat !== undefined) {
-      stored.reasoningEffortFormat = normalized.reasoningEffortFormat;
-    }
-    if (normalized.zeroDataRetentionEnabled !== undefined) {
-      stored.zeroDataRetentionEnabled = normalized.zeroDataRetentionEnabled;
-    }
-    if (normalized.price !== undefined) {
-      stored.price = normalized.price;
+  private storedModel(model: VendorModelConfig, vendor: VendorConfig): VendorModelConfig {
+    const stored = this.normalizeModel(model, vendor);
+    // 省略的协议继续继承厂商默认值，显式发现 metadata 保留其来源。
+    if (model.apiStyle === undefined) {
+      delete stored.apiStyle;
     }
     return stored;
   }
 
-  private buildUpdatedModelEntries(
-    names: string[],
-    inputModels: VendorModelConfig[],
-    rawModels: unknown[],
-    existingNameByKey: Map<string, string>,
-    defaultVision: boolean,
-    defaultApiStyle: VendorApiStyle,
-    vendorName: string,
-  ): VendorModelConfig[] {
-    const existingModelByKey = new Map<string, VendorModelConfig>();
-    for (const rawModel of rawModels) {
-      const rawName = this.readModelName(rawModel);
-      if (!rawName) {
-        continue;
-      }
-
-      const key = rawName.toLowerCase();
-      if (existingModelByKey.has(key)) {
-        continue;
-      }
-      existingModelByKey.set(key, rawModel as VendorModelConfig);
-    }
-
-    const inputModelByKey = new Map<string, VendorModelConfig>();
-    for (const inputModel of inputModels) {
-      const name = typeof inputModel?.name === 'string' ? inputModel.name.trim() : '';
-      if (name.length === 0) {
-        continue;
-      }
-
-      const key = name.toLowerCase();
-      if (inputModelByKey.has(key)) {
-        continue;
-      }
-
-      inputModelByKey.set(key, inputModel);
-    }
-
-    const seen = new Set<string>();
-    const normalized: VendorModelConfig[] = [];
-
-    for (const rawName of names) {
-      const name = rawName.trim();
-      if (name.length === 0) {
-        continue;
-      }
-
-      const key = name.toLowerCase();
-      if (seen.has(key)) {
-        continue;
-      }
-      seen.add(key);
-
-      const canonical = existingNameByKey.get(key) ?? name;
-      const inputModel = inputModelByKey.get(key);
-      const existingModel = existingModelByKey.get(key);
-      if (existingModel) {
-        if (inputModel && this.shouldReplaceGeneratedFallbackModel(existingModel, inputModel, vendorName)) {
-          normalized.push(this.buildInputModelEntry(inputModel, canonical, defaultVision, defaultApiStyle));
-          continue;
-        }
-        normalized.push(this.cloneModelWithNormalizedName(existingModel, canonical, defaultVision, defaultApiStyle));
-        continue;
-      }
-
-      if (inputModel) {
-        normalized.push(this.buildInputModelEntry(inputModel, canonical, defaultVision, defaultApiStyle));
-        continue;
-      }
-
-      normalized.push(this.buildStoredModelEntry({ name: canonical }, canonical, defaultVision, defaultApiStyle));
-    }
-
-    return this.sortRawModelsByName(normalized);
-  }
-
-  private buildInputModelEntry(
-    inputModel: VendorModelConfig,
-    canonical: string,
-    defaultVision: boolean,
-    defaultApiStyle: VendorApiStyle,
-  ): VendorModelConfig {
-    return this.buildStoredModelEntry(
-      {
-        ...inputModel,
-        temperature: undefined,
-        topP: undefined,
-        capabilities: {
-          ...inputModel.capabilities,
-          vision: inputModel.vision ?? defaultVision,
-        },
-      },
-      canonical,
-      defaultVision,
-      defaultApiStyle,
-    );
-  }
-
-  private shouldReplaceGeneratedFallbackModel(
-    existingModel: VendorModelConfig,
-    inputModel: VendorModelConfig,
-    vendorName: string,
-  ): boolean {
-    if (!this.isEnrichedInputModel(inputModel)) {
-      return false;
-    }
-    if (
-      existingModel.price !== undefined ||
-      existingModel.temperature !== undefined ||
-      existingModel.topP !== undefined ||
-      existingModel.streaming !== undefined ||
-      existingModel.editTools !== undefined ||
-      existingModel.supportsReasoningEffort !== undefined ||
-      existingModel.reasoningEffortFormat !== undefined ||
-      existingModel.zeroDataRetentionEnabled !== undefined
-    ) {
-      return false;
-    }
-
-    return this.isGeneratedFallbackDescription(existingModel.description, existingModel.name, vendorName);
-  }
-
-  private isEnrichedInputModel(model: VendorModelConfig): boolean {
-    return (
-      model.price !== undefined ||
-      model.apiStyle !== undefined ||
-      typeof model.capabilities?.thinking === 'boolean' ||
-      (model.description !== undefined && !this.isGeneratedFallbackDescription(model.description, model.name))
-    );
-  }
-
-  private isGeneratedFallbackDescription(
-    description: string | undefined,
-    modelName: string,
-    vendorName?: string,
-  ): boolean {
-    const normalizedDescription = description?.trim();
-    const normalizedModelName = modelName.trim();
-    if (!normalizedDescription || !normalizedModelName) {
-      return false;
-    }
-    const normalizedVendorName = vendorName?.trim();
-    if (normalizedVendorName) {
-      return (
-        normalizedDescription === `${normalizedVendorName} model: ${normalizedModelName}` ||
-        normalizedDescription === `${normalizedVendorName} 可用模型: ${normalizedModelName}`
-      );
-    }
-    return (
-      normalizedDescription.endsWith(` model: ${normalizedModelName}`) ||
-      normalizedDescription.endsWith(` 可用模型: ${normalizedModelName}`)
-    );
-  }
-
-  private sortRawModelsByName(models: VendorModelConfig[]): VendorModelConfig[] {
+  private sortModels(models: VendorModelConfig[]): VendorModelConfig[] {
     return [...models].sort((left, right) => {
-      const leftName = left.name.trim();
-      const rightName = right.name.trim();
-      const leftKey = leftName.toLowerCase();
-      const rightKey = rightName.toLowerCase();
-      if (leftKey < rightKey) {
-        return -1;
-      }
-      if (leftKey > rightKey) {
-        return 1;
-      }
-      if (leftName < rightName) {
-        return -1;
-      }
-      if (leftName > rightName) {
-        return 1;
-      }
-      return 0;
+      const a = left.name.toLowerCase();
+      const b = right.name.toLowerCase();
+      return a < b ? -1 : a > b ? 1 : left.name < right.name ? -1 : left.name > right.name ? 1 : 0;
     });
   }
 
-  private normalizeVendors(raw: unknown): VendorConfig[] {
-    if (!Array.isArray(raw)) {
-      return [];
-    }
-    return raw.map((v) => this.normalizeVendor(v)).filter((v): v is VendorConfig => v !== undefined);
-  }
-
-  private findConfiguredApiKeyFallback(vendorName: string, baseUrl: string | undefined): string | undefined {
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const inspected = config.inspect<unknown[]>('vendors');
-    const candidates = [
-      inspected?.workspaceFolderValue,
-      inspected?.workspaceValue,
-      inspected?.globalValue,
-      inspected?.defaultValue,
-    ];
-    const normalizedVendorName = vendorName.trim();
-    const normalizedBaseUrl = this.normalizeComparableBaseUrl(baseUrl);
-
-    const scopedVendors = candidates.flatMap((raw) => this.normalizeVendors(raw));
-    const sameNameKey = scopedVendors
-      .find((vendor) => vendor.name === normalizedVendorName && vendor.apiKey)
-      ?.apiKey?.trim();
-    if (sameNameKey) {
-      return sameNameKey;
-    }
-
-    if (!normalizedBaseUrl) {
-      return undefined;
-    }
-
-    return scopedVendors
-      .find((vendor) => this.normalizeComparableBaseUrl(vendor.baseUrl) === normalizedBaseUrl && vendor.apiKey)
-      ?.apiKey?.trim();
-  }
-
-  private normalizeComparableBaseUrl(baseUrl: string | undefined): string {
-    return (baseUrl ?? '').trim().replace(/\/+$/, '').toLowerCase();
-  }
-
-  private normalizeVendor(raw: unknown): VendorConfig | undefined {
-    if (!raw || typeof raw !== 'object') {
-      return undefined;
-    }
-    const obj = raw as Record<string, unknown>;
-    const name = typeof obj.name === 'string' ? obj.name.trim() : '';
-    if (!name) {
-      return undefined;
-    }
-    const baseUrl = typeof obj.baseUrl === 'string' ? obj.baseUrl.trim() : '';
-    const apiKey = typeof obj.apiKey === 'string' && obj.apiKey.trim().length > 0 ? obj.apiKey.trim() : undefined;
-    const authType = obj.authType === 'bearer' || obj.authType === 'x-api-key' ? obj.authType : undefined;
-    const usageUrl =
-      typeof obj.usageUrl === 'string' && obj.usageUrl.trim().length > 0 ? obj.usageUrl.trim() : undefined;
-    const apiType = this.normalizeApiType(obj.apiType);
-    const defaultApiStyle = this.normalizeApiStyle(obj.defaultApiStyle ?? obj.apiType);
-    const defaultTemperature = this.readSamplingNumber(obj.defaultTemperature, 0, 2);
-    const defaultTopP = this.readSamplingNumber(obj.defaultTopP, 0, 1);
-    const useModelsEndpoint = typeof obj.useModelsEndpoint === 'boolean' ? obj.useModelsEndpoint : true;
-    const defaultVision = typeof obj.defaultVision === 'boolean' ? obj.defaultVision : false;
-    const models = Array.isArray(obj.models)
-      ? obj.models
-          .map((m) => this.normalizeModel(m, defaultVision, defaultApiStyle))
-          .filter((m): m is VendorModelConfig => m !== undefined)
-      : [];
-    return {
-      name,
-      baseUrl,
-      apiKey,
-      authType,
-      usageUrl,
-      apiType,
-      defaultApiStyle,
-      defaultTemperature,
-      defaultTopP,
-      useModelsEndpoint,
-      defaultVision,
-      models,
-    };
-  }
-
-  private normalizeModel(
-    raw: unknown,
-    defaultVision = DEFAULT_MODEL_CAPABILITIES_VISION,
-    defaultApiStyle: VendorApiStyle = 'openai-chat',
-  ): VendorModelConfig | undefined {
-    if (!raw || typeof raw !== 'object') {
-      return undefined;
-    }
-    const obj = raw as Record<string, unknown>;
-    const name = typeof obj.name === 'string' ? obj.name.trim() : '';
-    if (!name) {
-      return undefined;
-    }
-    const description =
-      typeof obj.description === 'string' && obj.description.trim().length > 0 ? obj.description.trim() : undefined;
-    const contextSize = this.capModelsDevContextSize(this.readPositiveNumber(obj.contextSize), description);
-    const maxInputTokens = this.readPositiveNumber(obj.maxInputTokens);
-    const maxOutputTokens = this.readPositiveNumber(obj.maxOutputTokens);
-    const normalizedContextSize = contextSize === undefined ? undefined : Math.max(1, Math.floor(contextSize));
-    const normalizedMaxInputTokens =
-      maxInputTokens === undefined ? undefined : Math.max(1, Math.floor(maxInputTokens));
-    const normalizedMaxOutputTokens =
-      maxOutputTokens === undefined ? undefined : Math.max(1, Math.floor(maxOutputTokens));
-    const apiType = this.normalizeApiType(obj.apiType);
-    const apiStyle = this.normalizeApiStyle(obj.apiStyle ?? obj.apiType, defaultApiStyle);
-    const temperature = this.readSamplingNumber(obj.temperature, 0, 2);
-    const topP = this.readSamplingNumber(obj.topP, 0, 1);
-    const enabled = obj.enabled !== false;
-    const toolCalling = this.readToolCallingValue(obj.toolCalling);
-    const vision = this.readBooleanValue(obj.vision);
-    const streaming = this.readBooleanValue(obj.streaming);
-    const thinking = this.readBooleanValue(obj.thinking);
-    const editTools = this.readStringArray(obj.editTools);
-    const supportsReasoningEffort = this.readReasoningEffortArray(obj.supportsReasoningEffort);
-    const reasoningEffortFormat = this.normalizeReasoningEffortFormat(obj.reasoningEffortFormat);
-    const zeroDataRetentionEnabled = this.readBooleanValue(obj.zeroDataRetentionEnabled);
-    const price = this.normalizeModelPrice(obj.price);
-    let capabilities: VendorModelConfig['capabilities'];
-    if (obj.capabilities && typeof obj.capabilities === 'object') {
-      const cap = obj.capabilities as Record<string, unknown>;
-      capabilities = {
-        tools: typeof cap.tools === 'boolean' ? cap.tools : undefined,
-        vision: typeof cap.vision === 'boolean' ? cap.vision : undefined,
-        thinking: typeof cap.thinking === 'boolean' ? cap.thinking : undefined,
-      };
-    }
-    capabilities = {
-      tools:
-        typeof capabilities?.tools === 'boolean'
-          ? capabilities.tools
-          : typeof toolCalling === 'boolean'
-            ? toolCalling
-            : undefined,
-      vision: typeof capabilities?.vision === 'boolean' ? capabilities.vision : vision,
-      ...(typeof capabilities?.thinking === 'boolean'
-        ? { thinking: capabilities.thinking }
-        : typeof thinking === 'boolean'
-          ? { thinking }
-          : {}),
-    };
-
-    return this.withModelDefaults(
-      {
-        name,
-        enabled,
-        description,
-        apiStyle,
-        apiType,
-        temperature,
-        topP,
-        capabilities,
-        contextSize: normalizedContextSize,
-        maxInputTokens: normalizedMaxInputTokens,
-        maxOutputTokens: normalizedMaxOutputTokens,
-        streaming,
-        editTools,
-        supportsReasoningEffort,
-        reasoningEffortFormat,
-        zeroDataRetentionEnabled,
-        price,
-      },
-      defaultVision,
-      defaultApiStyle,
-    );
-  }
-
-  private withModelDefaults(
-    model: VendorModelConfig,
-    defaultVision = DEFAULT_MODEL_CAPABILITIES_VISION,
-    defaultApiStyle: VendorApiStyle = 'openai-chat',
-  ): VendorModelConfig {
-    return {
-      name: model.name,
-      enabled: model.enabled !== false,
-      description: model.description,
-      apiStyle: this.normalizeApiStyle(model.apiStyle, defaultApiStyle),
-      apiType: model.apiType,
-      temperature: model.temperature,
-      topP: model.topP,
-      contextSize: model.contextSize,
-      maxInputTokens: model.maxInputTokens,
-      maxOutputTokens: model.maxOutputTokens,
-      capabilities: {
-        tools: model.capabilities?.tools ?? DEFAULT_MODEL_CAPABILITIES_TOOLS,
-        vision: model.capabilities?.vision ?? defaultVision,
-        ...(typeof model.capabilities?.thinking === 'boolean' ? { thinking: model.capabilities.thinking } : {}),
-      },
-      streaming: model.streaming,
-      editTools: model.editTools,
-      supportsReasoningEffort: model.supportsReasoningEffort,
-      reasoningEffortFormat: model.reasoningEffortFormat,
-      zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
-      price: model.price,
-    };
-  }
-
-  private normalizeApiStyle(value: unknown, fallback: VendorApiStyle = 'openai-chat'): VendorApiStyle {
-    return value === 'anthropic'
-      ? 'anthropic'
-      : value === 'openai-responses' || value === 'responses'
-        ? 'openai-responses'
-        : value === 'openai-chat' || value === 'chat'
-          ? 'openai-chat'
-          : fallback;
-  }
-
-  private normalizeApiType(value: unknown): VendorApiType | undefined {
-    return value === 'responses' || value === 'openai-responses'
-      ? 'responses'
-      : value === 'anthropic'
-        ? 'anthropic'
-        : value === 'chat' || value === 'openai-chat'
-          ? 'chat'
-          : undefined;
-  }
-
-  private normalizeReasoningEffortFormat(value: unknown): ReasoningEffortFormat | undefined {
-    return value === 'responses' || value === 'chat-completions' ? value : undefined;
-  }
-
-  private normalizeModelPrice(value: unknown): VendorModelPriceConfig | undefined {
-    if (!value || typeof value !== 'object' || Array.isArray(value)) {
-      return undefined;
-    }
-
-    const obj = value as Record<string, unknown>;
-    const price: VendorModelPriceConfig = {};
-    const inputCost = this.readNonNegativeNumber(obj.inputCost);
-    const cacheCost = this.readNonNegativeNumber(obj.cacheCost);
-    const outputCost = this.readNonNegativeNumber(obj.outputCost);
-    const longContextInputCost = this.readNonNegativeNumber(obj.longContextInputCost);
-    const longContextCacheCost = this.readNonNegativeNumber(obj.longContextCacheCost);
-    const longContextOutputCost = this.readNonNegativeNumber(obj.longContextOutputCost);
-
-    if (inputCost !== undefined) {
-      price.inputCost = inputCost;
-    }
-    if (cacheCost !== undefined) {
-      price.cacheCost = cacheCost;
-    }
-    if (outputCost !== undefined) {
-      price.outputCost = outputCost;
-    }
-    if (longContextInputCost !== undefined) {
-      price.longContextInputCost = longContextInputCost;
-    }
-    if (longContextCacheCost !== undefined) {
-      price.longContextCacheCost = longContextCacheCost;
-    }
-    if (longContextOutputCost !== undefined) {
-      price.longContextOutputCost = longContextOutputCost;
-    }
-
-    return Object.values(price).some((entry) => entry !== undefined) ? price : undefined;
-  }
-
-  private resolveVendorsConfigTarget(): vscode.ConfigurationTarget {
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const inspected = config.inspect<unknown[]>('vendors');
+  private resolveVendorsConfigTarget(config: vscode.WorkspaceConfiguration): vscode.ConfigurationTarget {
+    const inspected = config.inspect<unknown>('vendors');
     if (inspected?.workspaceFolderValue !== undefined) {
       return vscode.ConfigurationTarget.WorkspaceFolder;
     }
     if (inspected?.workspaceValue !== undefined) {
       return vscode.ConfigurationTarget.Workspace;
     }
-    if (inspected?.globalValue !== undefined) {
-      return vscode.ConfigurationTarget.Global;
-    }
     return vscode.ConfigurationTarget.Global;
   }
 
-  private readPositiveNumber(value: unknown): number | undefined {
-    if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
-      return value;
+  private readValidatedConfiguration(): ReturnType<typeof validateVendorConfiguration> {
+    const config = vscode.workspace.getConfiguration('coding-plans');
+    const result = validateVendorConfiguration(config.get<unknown>('vendors', []));
+    const rootErrors = this.readRootErrors(config);
+    for (const folder of vscode.workspace.workspaceFolders ?? []) {
+      rootErrors.push(...this.readRootErrors(vscode.workspace.getConfiguration('coding-plans', folder.uri)));
     }
-    if (typeof value === 'string') {
-      const parsed = Number(value.trim());
-      if (Number.isFinite(parsed) && parsed > 0) {
-        return parsed;
-      }
+    const unique = new Map<string, VendorValidationError>();
+    for (const error of [...rootErrors, ...result.errors]) {
+      unique.set(JSON.stringify(error), error);
     }
-    return undefined;
+    return { vendors: result.vendors, errors: [...unique.values()] };
   }
 
-  private readBooleanValue(value: unknown): boolean | undefined {
-    if (typeof value === 'boolean') {
-      return value;
-    }
-    if (typeof value === 'number' && Number.isFinite(value)) {
-      return value > 0;
-    }
-    if (typeof value === 'string') {
-      const normalized = value.trim().toLowerCase();
-      if (normalized === 'true') {
-        return true;
+  /** 从公开配置视图枚举实际键，并以 inspect 读取显式作用域；全程使用 VS Code API。 */
+  private readRootErrors(config: vscode.WorkspaceConfiguration): VendorValidationError[] {
+    const errors: VendorValidationError[] = [];
+    const keys = new Set(getRootConfigurationKeys());
+    const collect = (value: unknown) => {
+      if (isConfigObject(value)) {
+        errors.push(...validateRootConfiguration(value));
+        Object.keys(value).forEach((key) => keys.add(key));
       }
-      if (normalized === 'false') {
-        return false;
+    };
+    collect(config.get<unknown>(''));
+    const enumerable: Record<string, unknown> = Object.create(null);
+    for (const key of Object.keys(config)) {
+      const value: unknown = config[key];
+      // WorkspaceConfiguration 的 API 方法与实际设置值分开处理。
+      if (['get', 'has', 'inspect', 'update'].includes(key) && typeof value === 'function') {
+        continue;
       }
-      const parsed = Number(normalized);
-      if (Number.isFinite(parsed)) {
-        return parsed > 0;
+      enumerable[key] = value;
+    }
+    collect(enumerable);
+    const scopes = [
+      'globalValue',
+      'workspaceValue',
+      'workspaceFolderValue',
+      'globalLanguageValue',
+      'workspaceLanguageValue',
+      'workspaceFolderLanguageValue',
+    ] as const;
+    const root = config.inspect<unknown>('');
+    for (const scope of scopes) {
+      collect(root?.[scope]);
+    }
+    for (const key of keys) {
+      if (key === 'vendors') {
+        continue;
+      }
+      const effective = config.get<unknown>(key);
+      if (effective !== undefined) {
+        errors.push(...validateRootConfiguration({ [key]: effective }));
+      }
+      const inspected = config.inspect<unknown>(key);
+      for (const scope of scopes) {
+        const value = inspected?.[scope];
+        if (value !== undefined) {
+          errors.push(...validateRootConfiguration({ [key]: value }));
+        }
       }
     }
-    return undefined;
+    return errors;
   }
 
-  private readToolCallingValue(value: unknown): boolean | number | undefined {
-    if (typeof value === 'boolean') {
-      return value;
+  private reportErrors(errors: VendorValidationError[]): void {
+    const signature = errors.length === 0 ? '' : JSON.stringify(errors.map((error) => JSON.stringify(error)).sort());
+    if (signature === this.lastErrorSignature) {
+      return;
     }
-    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
-      return value;
+    this.lastErrorSignature = signature;
+    if (errors.length === 0) {
+      return;
     }
-    if (typeof value === 'string') {
-      const normalized = value.trim().toLowerCase();
-      if (normalized === 'true') {
-        return true;
-      }
-      if (normalized === 'false') {
-        return false;
-      }
-      const parsed = Number(normalized);
-      if (Number.isFinite(parsed) && parsed >= 0) {
-        return parsed;
-      }
-    }
-    return undefined;
-  }
-
-  private readStringArray(value: unknown): string[] | undefined {
-    if (!Array.isArray(value)) {
-      return undefined;
-    }
-    const normalized = value
-      .map((item) => (typeof item === 'string' ? item.trim() : ''))
-      .filter((item) => item.length > 0);
-    if (normalized.length === 0) {
-      return undefined;
-    }
-    return Array.from(new Set(normalized));
-  }
-
-  private readReasoningEffortArray(value: unknown): ReasoningEffortValue[] | undefined {
-    const allowed = new Set<ReasoningEffortValue>(['none', 'low', 'medium', 'high', 'xhigh', 'max']);
-    const values = this.readStringArray(value)
-      ?.map((item) => item.toLowerCase())
-      .filter((item): item is ReasoningEffortValue => allowed.has(item as ReasoningEffortValue));
-    return values && values.length > 0 ? values : undefined;
-  }
-
-  private readNonNegativeNumber(value: unknown): number | undefined {
-    if (typeof value === 'number' && Number.isFinite(value) && value >= 0) {
-      return value;
-    }
-
-    if (typeof value === 'string') {
-      const parsed = Number(value.trim());
-      if (Number.isFinite(parsed) && parsed >= 0) {
-        return parsed;
-      }
-    }
-
-    return undefined;
-  }
-
-  private readSamplingNumber(value: unknown, min: number, max: number): number | undefined {
-    if (typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max) {
-      return value;
-    }
-
-    if (typeof value === 'string') {
-      const normalized = value.trim().toLowerCase();
-      if (normalized.length === 0 || normalized === 'inherit' || normalized === 'none') {
+    const action = '打开设置 JSON';
+    const details = errors.map((error) => `${error.path ?? error.field}: ${error.reason}`).join('\n');
+    void vscode.window.showWarningMessage(`Coding Plans 配置校验提示：\n${details}`, action).then(
+      (selected) => {
+        if (selected === action) {
+          return vscode.commands.executeCommand('workbench.action.openSettingsJson');
+        }
         return undefined;
-      }
-      const parsed = Number(normalized);
-      if (Number.isFinite(parsed) && parsed >= min && parsed <= max) {
-        return parsed;
-      }
-    }
+      },
+      () => undefined,
+    );
+  }
 
-    return undefined;
+  /** 对外保留错误数组契约；根错误使用 vendorIndex=-1，模型错误附带 modelIndex。 */
+  validateVendorConfigs(): VendorValidationError[] {
+    return this.readValidatedConfiguration().errors;
   }
 
   dispose(): void {
-    this.disposables.forEach((d) => d.dispose());
+    this.disposables.forEach((disposable) => disposable.dispose());
     this.onDidChangeVendorsEmitter.dispose();
-    this.onDidChangeChatLanguageModelsTokenOverridesEmitter.dispose();
-  }
-
-  /**
-   * Validates all configured vendors against required fields.
-   * Returns an array of errors for vendors with missing required fields.
-   */
-  validateVendorConfigs(): VendorValidationError[] {
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const raw = config.get<unknown[]>('vendors', []);
-    if (!Array.isArray(raw)) {
-      return [];
-    }
-
-    const errors: VendorValidationError[] = [];
-    for (let i = 0; i < raw.length; i++) {
-      const rawVendor = raw[i];
-      if (!rawVendor || typeof rawVendor !== 'object') {
-        continue;
-      }
-      const obj = rawVendor as Record<string, unknown>;
-      const vendorName = typeof obj.name === 'string' ? obj.name.trim() : `#${i + 1}`;
-
-      if (typeof obj.name !== 'string' || obj.name.trim().length === 0) {
-        errors.push({ vendorIndex: i, vendorName, field: 'name', reason: 'name is required' });
-      }
-
-      if (typeof obj.baseUrl !== 'string' || obj.baseUrl.trim().length === 0) {
-        errors.push({ vendorIndex: i, vendorName, field: 'baseUrl', reason: 'baseUrl is required' });
-      }
-
-      if (typeof obj.useModelsEndpoint !== 'boolean') {
-        errors.push({
-          vendorIndex: i,
-          vendorName,
-          field: 'useModelsEndpoint',
-          reason: 'useModelsEndpoint is required (boolean)',
-        });
-      }
-    }
-
-    return errors;
   }
 }

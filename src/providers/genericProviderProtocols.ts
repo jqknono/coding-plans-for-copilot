@@ -29,8 +29,6 @@ export interface OpenAIChatRequest {
   messages: OpenAIChatMessage[];
   tools?: ChatToolDefinition[];
   tool_choice?: 'auto' | 'required';
-  temperature?: number;
-  top_p?: number;
   thinking?: ThinkingToggle;
   reasoning_effort?: Exclude<ChatThinkingEffort, 'none'>;
   max_tokens?: number;
@@ -130,7 +128,6 @@ export interface OpenAIResponsesRequest {
   input: OpenAIResponsesInputItem[];
   tools?: OpenAIResponsesToolDefinition[];
   tool_choice?: 'auto' | 'required';
-  top_p?: number;
   reasoning?: {
     effort: ResponsesThinkingEffort;
   };
@@ -244,8 +241,6 @@ export interface AnthropicChatRequest {
   output_config?: {
     effort: AnthropicEffort;
   };
-  temperature?: number;
-  top_p?: number;
   stream?: boolean;
 }
 
@@ -745,7 +740,7 @@ function resolveOpenAIResponsesToolCall(
 
   const toolCall = state.toolCalls.get(toolCallKey);
   if (!toolCall) {
-    throw new Error('Failed to resolve OpenAI Responses tool call stream state.');
+    throw new Error('Failed to resolve responses tool call stream state.');
   }
 
   toolCall.callId = callId ?? toolCall.callId;

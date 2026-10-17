@@ -1,4 +1,5 @@
-import { ChatLanguageModelsTokenOverrides, VendorApiStyle, VendorConfig, VendorModelConfig } from './configStore';
+import type { VendorApiStyle, VendorConfig, VendorModelConfig } from './configStore';
+import { resolveModelBudget } from '../providers/contextBudget';
 
 /**
  * chatLanguageModels.json 模型级配置对象。
@@ -23,26 +24,12 @@ export interface ChatLanguageModelsModelConfig {
 
 /** 固定输出值：拷贝到 chatLanguageModels.json 时使用的模型属性。 */
 export const CHAT_LANGUAGE_MODELS_FIXED_EDIT_TOOLS = ['apply-patch', 'find-replace', 'multi-find-replace'];
-export const CHAT_LANGUAGE_MODELS_FIXED_MAX_OUTPUT_TOKENS = 100000;
 export const CHAT_LANGUAGE_MODELS_FIXED_SUPPORTS_REASONING_EFFORT = ['xhigh', 'high', 'max'];
 
 export function toChatLanguageModelsApiType(
   apiStyle: VendorApiStyle | undefined,
-  apiType: VendorModelConfig['apiType'],
 ): 'chat-completions' | 'responses' | 'messages' {
-  if (apiType === 'responses') {
-    return 'responses';
-  }
-  if (apiType === 'anthropic') {
-    return 'messages';
-  }
-  if (apiStyle === 'openai-responses') {
-    return 'responses';
-  }
-  if (apiStyle === 'anthropic') {
-    return 'messages';
-  }
-  return 'chat-completions';
+  return apiStyle ?? 'chat-completions';
 }
 
 /**
@@ -64,14 +51,14 @@ function toChatLanguageModelsReasoningEffortFormat(
 /**
  * 将扩展内部的 vendor+model 配置转换为 chatLanguageModels.json 的模型对象。
  * 字段按字母序排列，与 VS Code 保存 chatLanguageModels.json 时的顺序一致；
- * maxOutputTokens/editTools/supportsReasoningEffort/zeroDataRetentionEnabled 使用固定值。
+ * token 声明与运行时共享预算解析，模型能力保持原值。
  */
 export function toChatLanguageModelsModelConfig(
   vendor: VendorConfig,
   model: VendorModelConfig,
-  tokenOverrides: ChatLanguageModelsTokenOverrides = {},
 ): ChatLanguageModelsModelConfig {
-  const apiType = toChatLanguageModelsApiType(model.apiStyle ?? vendor.defaultApiStyle, model.apiType);
+  const apiType = toChatLanguageModelsApiType(model.apiStyle ?? vendor.defaultApiStyle);
+  const budget = resolveModelBudget(model, model.contextBudget);
   const config: ChatLanguageModelsModelConfig = {
     apiType,
     id: model.name,
@@ -79,16 +66,9 @@ export function toChatLanguageModelsModelConfig(
     url: resolveChatLanguageModelsModelUrl(vendor.baseUrl),
   };
 
-  if (tokenOverrides.overrideContextWindow !== undefined && tokenOverrides.overrideContextWindow > 0) {
-    config.contextWindow = tokenOverrides.overrideContextWindow;
-  } else if (model.contextSize !== undefined) {
-    config.contextWindow = model.contextSize;
-  }
+  config.contextWindow = budget.effectiveContextWindow;
   config.editTools = [...CHAT_LANGUAGE_MODELS_FIXED_EDIT_TOOLS];
-  config.maxOutputTokens =
-    tokenOverrides.overrideMaxOutputTokens !== undefined && tokenOverrides.overrideMaxOutputTokens > 0
-      ? tokenOverrides.overrideMaxOutputTokens
-      : CHAT_LANGUAGE_MODELS_FIXED_MAX_OUTPUT_TOKENS;
+  config.maxOutputTokens = budget.outputTokens;
   config.reasoningEffortFormat = toChatLanguageModelsReasoningEffortFormat(apiType);
   if (model.streaming !== undefined) {
     config.streaming = model.streaming;

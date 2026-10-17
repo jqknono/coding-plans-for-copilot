@@ -19,8 +19,8 @@ applyTo: "src/**/*.ts"
 
 ## 易错点
 
-- 配置：优先 `defaultApiStyle` / `models[].apiStyle`（`openai-chat` | `openai-responses` | `anthropic`），勿在新逻辑里依赖已弃用的 `apiType`。
-- `contextSize`：按 80% 输入 / 20% 输出拆分；勿与随意手写的 `maxInputTokens`/`maxOutputTokens` 打架。
+- 配置：仅接受 `defaultApiStyle` / `models[].apiStyle`（`chat-completions` | `responses` | `messages`）；未知字段和枚举值由统一 validator 报告并按厂商或模型隔离。读取保持设置原样，旧字段由用户按发布说明手动迁移。
+- 上下文：`contextWindow`、`maxInputTokens`、`maxOutputTokens` 描述模型能力，`contextBudget` 描述默认输入与实际输出预算；原生请求 `contextSize` 仅表示输入选择。统一预算解析负责能力约束。
 - 未加 scope 的 `coding-plans` 根不应在无 group 时向 `selectChatModels` 暴露模型；模型路径为 `coding-plans > vendorName > family`（desktop 冒烟会覆盖）。
 - 请求路径固定为原生 Custom Endpoint：不发送 temperature / topP / personality；聊天请求不做兼容性隐式重试（`/models` 的 `withOptionalV1Retry` 除外）。改请求构造时对照 `genericProvider.ts` 与厂商实测。
 

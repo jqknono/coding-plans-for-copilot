@@ -20,7 +20,7 @@
 使用 Moonshot/Kimi 的 Anthropic-compatible 入口时：
 
 - 如果需要继续使用 Anthropic `/messages` 路径，请在模型行 `More Actions` 中将 thinking 设为 `non-think`。
-- 如果需要 thinking 能力，请优先改用 Moonshot/Kimi 的 OpenAI Chat 兼容 API，并将供应商或模型的 `apiStyle` 配置为 `openai-chat`。
+- 如果需要 thinking 能力，请优先改用 Moonshot/Kimi 的 OpenAI Chat 兼容 API，并将供应商或模型的 `apiStyle` 配置为 `chat-completions`。
 
 ### 后续扩展边界
 

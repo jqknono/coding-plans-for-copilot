@@ -4,7 +4,7 @@
 
 | Topic | Detail |
 | --- | --- |
-| Affected protocol | `openai-chat` |
+| Affected protocol | `chat-completions` |
 | Affected model shape | DeepSeek thinking mode responses that include `reasoning_content` |
 | Failure mode | 工具调用后的下一次请求未回传 `reasoning_content`，上游返回 `400 invalid_request_error` |
 | Current decision | 展示 thinking 过程；不按 `tool_call_id` 缓存/回填。仅当 VS Code 把 reasoning DataPart 带回 assistant 历史时，才通过消息转换恢复 `reasoning_content` |

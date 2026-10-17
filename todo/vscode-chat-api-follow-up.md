@@ -1,86 +1,45 @@
-# VS Code Chat API Follow-up
+# VS Code Chat API 调查与跟进
 
-更新时间：2026-03-22
+更新时间：2026-10-18
 
-## TODO
+## 当前结论
 
-- 当前结论：不再尝试通过 `provideTokenCount` 回填 VS Code 原生 `Context Window` 分子。
-- 当前原因：公开的 VS Code Chat / Language Model 扩展 API 没有提供把上游真实 usage 明细写回原生 Context Window 的公开接口。
-- 当前策略：`provideTokenCount` 固定返回 `0`；最近一次已完成请求的真实 usage 只显示在状态栏 `CodingPlans Context`。
-- 后续触发条件：如果 VS Code 未来公开以下任一能力，再重新评估并恢复原生 Chat 集成。
-  - 原生 Context Window usage 上报接口
-  - 原生 prompt/completion/total/outputBuffer 明细上报接口
-  - 明确支持从扩展向 Chat UI 回写真实 request usage 的公开 API
+- 最低宿主提升至 VS Code `1.142.0`；`@types/vscode` 保留 `^1.120.0`。
+- 已静态核实当前安装的 1.142.0 宿主支持数字 `schema.contextSize`（`group: tokens`）、模型选择持久化路径及隐藏 `maxContextWindowTokens` 桥接。原生有效分母按所选输入 `P` 加输出 `R` 计算，受总能力 `C` 约束。
+- 此集成含未公开运行时字段适配，证据来自当前 Workbench、Extension Host 与随宿主打包的 Copilot 源码，公开 API 的稳定性保证仅覆盖其已公开部分。**尚未 UI 手动验收。**
+- 第三方 Copilot 包装器内部 `maxOutputTokens` getter 固定为 `8192`，形成内部输出预留限制；原生 UI、compaction 与上游请求预算的等价性仍待实测。
+- `provideTokenCount()` 当前执行本地文本/消息估算，已替代旧版固定 `0` 行为。它是当前输入的 token 计数接口，与上游响应 usage 上报分离。
+- 公开 `LanguageModelChatProvider` / `Progress<LanguageModelResponsePart>` 尚无写回真实 prompt/completion/total/outputBuffer 明细的契约。最近完成请求的真实 usage 继续由 `CodingPlans` 状态栏承载。
 
-## 关联到本仓库的判断
+## 当前仓库契约
 
-- 仓库当前使用的是 `vscode.lm.registerLanguageModelChatProvider(...)` 接入模型。
-- 公开 API 文档明确要求实现 `provideLanguageModelChatResponse(...)` 和 `provideTokenCount(...)`，但没有公开“response usage 上报”接口。
-- 公开文档说明原生 Context Window 会显示 token 总量和分类明细，并随会话增长更新；但文档没有给扩展作者提供对应的 usage 写回方式。
-- 由此推断：对于第三方 `LanguageModelChatProvider`，扩展目前只能提供模型信息、响应流和 token 计数，不能把上游 API 返回的 usage 明细正式注入到原生 Chat 的上下文用量 UI 中。
+- 能力：`contextWindow=C`、独立输入/输出能力、`limitSource`；预算：`contextBudget { inputTokens, outputTokens, presets }`。
+- 原生选择：数字输入 `P`，默认值来自默认输入预算；默认数字档位 32k/64k/128k/256k/512k，另有默认/最大，由宿主保存选择。
+- 模型信息：可选输入上限 `min(I,C-R)`、输出 `R`、隐藏总能力 `C`。
+- 统计：最近完成请求输入 / `P`、生成 / `R`，占用 `prompt+max(R,completion)`，分母 `P+R`，保留超限值。
+- 关闭自动刷新仍即时本地重建预算；远端发现继续由手动更新命令执行。
 
-这是一条基于官方公开文档的工程推断，不是来自某一页文档的直接声明。
+## 配置契约与协作收尾
 
-## 已收集官方文档
+- 协议唯一值为 `chat-completions` / `responses` / `messages`，分别对应 OpenAI Chat、OpenAI Responses、Anthropic Messages。
+- 校验仅报告路径并隔离相关供应商或模型；配置原文保持原样，旧键由用户按[迁移指南](../docs/configuration-migration.md)手动处理。
+- 原生 provider `configuration.apiKey`、请求级 `contextSize` 和复制导出的 `apiType` 保留各自契约。
+- [ ] 配置 agent 将 `maxInputTokens` / `maxOutputTokens` 校验下限对齐为 `1`，`contextWindow` 维持 `2`。
+- [ ] 配置 agent 从根规则移除 `commitMessage.options.recentStyleMaxTotalLength`，与 manifest 的当前允许字段集合对齐。
+- [ ] 在能力 `C=2`、`I=1`、`O=1` 和预算 `1/1` 的正向配置中，核对 schema 与运行时均接受该值。
+- [ ] 在用户、工作区、文件夹作用域保存当前合法配置，确认读取保留原文、各有效模型可选，并核对手动迁移后的预算。
 
-### 1. Language Model Chat Provider API
+## 待配合 UI 验收
 
-- URL: https://code.visualstudio.com/api/extension-guides/ai/language-model-chat-provider
-- 关键信息：
-  - 该接口用于“把你自己的语言模型贡献到 VS Code chat”。
-  - 文档列出的 provider 责任包括：发现模型、处理 chat 请求、提供 token counting。
-  - 文档要求实现的核心方法是：
-    - `provideLanguageModelChatInformation`
-    - `provideLanguageModelChatResponse`
-    - `provideTokenCount`
-  - 文档没有给出任何“usage 上报到原生 Context Window”的方法。
-- 备注：
-  - 页面还注明：通过该 API 提供的模型“目前仅对 individual GitHub Copilot plans 用户可用”，这也是产品侧能力边界的一部分。
+- [ ] 在 VS Code 1.142 中查看模型 Context Size，确认默认/最大与数字档位，以及 schema 默认输入值。
+- [ ] 切换模型后恢复选择，确认宿主保存的 `P` 与下一次请求预算一致。
+- [ ] 对照原生分母、请求日志 `R` 和状态栏 `P+R`，分别记录 UI、compaction 与第三方包装器 8192 预留的表现。
+- [ ] 关闭 `autoRefreshModels` 后编辑本地预算，确认新请求即时使用新值；通过手动更新命令核对远端发现。
 
-### 2. VS Code API Reference
+## 后续触发条件
 
-- URL: https://code.visualstudio.com/api/references/vscode-api
-- 关键信息：
-  - `vscode.lm.registerLanguageModelChatProvider(vendor, provider)` 是公开注册入口。
-  - `LanguageModelChatProvider` 公开方法只有：
-    - `provideLanguageModelChatInformation(...)`
-    - `provideLanguageModelChatResponse(..., progress, ...)`
-    - `provideTokenCount(...)`
-  - `progress` 的公开类型是 `Progress<LanguageModelResponsePart>`，文档只说明它用于输出响应流片段。
-  - API Reference 中没有公开 `promptTokens`、`completionTokens`、`totalTokens`、`outputBuffer` 之类的 response usage 回传入口。
+升级宿主或 Copilot 时复核数字 schema、隐藏总窗口桥接、配置持久化及第三方包装器输出预留；若公开 API 增加 usage/context 明细上报，再评估原生统计接入及状态栏职责。
 
-### 3. Chat Participant API
+同步维护 [上下文说明](../docs/copilot-chat-context-window.md)、双语 README 与 DEV.md，保持本地估算、真实 usage 和宿主 UI 三层职责清晰。
 
-- URL: https://code.visualstudio.com/api/extension-guides/ai/chat
-- 关键信息：
-  - VS Code 确实公开了 Chat Participant API，扩展可以通过 `vscode.chat.createChatParticipant(...)` 创建 `@participant`。
-  - 这套 API 适合做“参与者/代理”扩展，不等同于给原生 Context Window 注入 usage 数据。
-- 对本仓库的意义：
-  - “VS Code Chat 完全没有开放 API”这个说法不准确。
-  - 更准确的说法是：公开了 Chat Participant 和 Language Model Provider API，但没有公开我们当前需要的原生 usage/context 写回 API。
-
-### 4. Manage context for AI
-
-- URL: https://code.visualstudio.com/docs/copilot/chat/copilot-chat-context
-- 关键信息：
-  - 官方文档说明聊天输入框会显示 Context Window 控件。
-  - hover 时会显示精确 token 数 / 总上下文和分类拆分。
-  - 随着对话继续，这个控件会更新；分母随所选模型上下文窗口变化。
-  - 上下文满时会自动 compaction。
-- 对本仓库的意义：
-  - 这是用户侧行为文档，不是扩展侧写回接口文档。
-  - 文档描述了 UI 能显示什么，但没有说明第三方扩展如何上报这些 usage 明细。
-
-## 后续跟进建议
-
-1. 每次升级 VS Code API 时，优先检查：
-   - `LanguageModelChatProvider`
-   - `Progress<LanguageModelResponsePart>`
-   - Chat / AI extensibility release notes
-2. 若公开 API 新增 usage/context 上报能力：
-   - 恢复原生 Context Window 分子维护
-   - 评估是否可以移除或降级 `CodingPlans Context` 状态栏
-   - 同步更新 `README.md`、`README.zh-CN.md`、`DEV.md`、`docs/copilot-chat-context-window.md`
-3. 若仍无公开 API：
-   - 继续保持 `provideTokenCount = 0`
-   - 继续以状态栏承载最近一次真实 usage
+参考：[Provider API](https://code.visualstudio.com/api/extension-guides/ai/language-model-chat-provider)、[API Reference](https://code.visualstudio.com/api/references/vscode-api)、[Manage context](https://code.visualstudio.com/docs/copilot/chat/copilot-chat-context)。

@@ -2,10 +2,15 @@ import * as vscode from 'vscode';
 import { NormalizedTokenUsage } from './providers/tokenUsage';
 
 export interface LastContextUsageSnapshot extends NormalizedTokenUsage {
+  /** false 表示最近完成请求缺少用量；省略时沿用已有用量。 */
+  usageAvailable?: boolean;
   provider: string;
   modelId: string;
   modelName: string;
   totalContextWindow: number;
+  inputBudget?: number;
+  outputBudget?: number;
+  modelContextWindow?: number;
   traceId: string;
   recordedAt: number;
 }
@@ -68,43 +73,54 @@ export class ContextStatusBarController implements vscode.Disposable {
 }
 
 export function buildContextStatusText(snapshot: LastContextUsageSnapshot | undefined): string {
-  if (!snapshot || snapshot.totalContextWindow <= 0) {
+  if (!snapshot || snapshot.usageAvailable === false || snapshot.totalContextWindow <= 0) {
     return `${CONTEXT_STATUS_LABEL}${STATUS_BAR_NO_BREAK_SPACE}--`;
   }
 
-  const percentage = Math.min(
-    100,
-    Math.max(0, Math.round((readOccupiedContextTokens(snapshot) / snapshot.totalContextWindow) * 100)),
-  );
+  const percentage = Math.max(0, Math.round((readOccupiedContextTokens(snapshot) / snapshot.totalContextWindow) * 100));
   return `${CONTEXT_STATUS_LABEL}${STATUS_BAR_NO_BREAK_SPACE}${percentage}%`;
 }
 
 export function buildContextStatusTooltip(snapshot: LastContextUsageSnapshot | undefined): string {
-  if (!snapshot || snapshot.totalContextWindow <= 0) {
-    return ['**CodingPlans Context**', '', 'No completed request usage is available yet.'].join('\n');
+  if (!snapshot) {
+    return ['**CodingPlans Context**', '', '等待最近完成请求的用量。'].join('\n');
   }
 
-  const occupiedContextTokens = readOccupiedContextTokens(snapshot);
-  const ratio = Number(((occupiedContextTokens / snapshot.totalContextWindow) * 100).toFixed(1));
-  const recordedAt = new Date(snapshot.recordedAt).toISOString();
-
   return [
-    '**CodingPlans Context**',
+    '**CodingPlans Context · 最近完成请求**',
     '',
-    `${ratio}% of ${formatCompactTokens(snapshot.totalContextWindow)}`,
-    '',
-    `- Prompt: ${formatCompactTokens(snapshot.promptTokens)}`,
-    `- Completion: ${formatCompactTokens(snapshot.completionTokens)}`,
-    `- Total: ${formatCompactTokens(snapshot.totalTokens)}`,
-    `- Reserved Output: ${snapshot.outputBuffer === undefined ? '--' : formatCompactTokens(snapshot.outputBuffer)}`,
-    `- Occupied Context: ${formatCompactTokens(occupiedContextTokens)}`,
-    `- Model: ${snapshot.modelName}`,
-    `- Updated: ${recordedAt}`,
+    ...buildContextUsageDetails(snapshot).map(([label, value]) => `- ${label}: ${value}`),
   ].join('\n');
 }
 
-function readOccupiedContextTokens(snapshot: LastContextUsageSnapshot): number {
-  return Math.min(snapshot.totalContextWindow, snapshot.totalTokens + Math.max(snapshot.outputBuffer ?? 0, 0));
+export function readOccupiedContextTokens(snapshot: LastContextUsageSnapshot): number {
+  return snapshot.promptTokens + Math.max(snapshot.completionTokens, snapshot.outputBudget ?? snapshot.outputBuffer ?? 0);
+}
+
+/** 状态栏 tooltip 与详情页共用最近完成请求的展示契约。 */
+export function buildContextUsageDetails(snapshot: LastContextUsageSnapshot): Array<[string, string]> {
+  const usageAvailable = snapshot.usageAvailable !== false;
+  const outputBudget = snapshot.outputBudget ?? snapshot.outputBuffer;
+  const occupiedContextTokens = readOccupiedContextTokens(snapshot);
+  const ratio = usageAvailable && snapshot.totalContextWindow > 0
+    ? `${Number(((occupiedContextTokens / snapshot.totalContextWindow) * 100).toFixed(1))}% of ${formatCompactTokens(snapshot.totalContextWindow)}`
+    : '--';
+  const formatBudget = (value: number | undefined): string => value === undefined ? '--' : formatCompactTokens(value);
+  const formatUsage = (value: number): string => usageAvailable ? formatCompactTokens(value) : '--';
+
+  return [
+    ...(usageAvailable ? [] : [['最近完成请求', '缺少用量，实际占用未知'] as [string, string]]),
+    ['Context', ratio],
+    ['Prompt', `${formatUsage(snapshot.promptTokens)} / ${formatBudget(snapshot.inputBudget)}`],
+    ['Completion', `${formatUsage(snapshot.completionTokens)} / ${formatBudget(outputBudget)}`],
+    ['有效窗口 (P + R)', snapshot.totalContextWindow > 0 ? formatCompactTokens(snapshot.totalContextWindow) : '--'],
+    ['模型窗口 C', formatBudget(snapshot.modelContextWindow)],
+    ['Total', formatUsage(snapshot.totalTokens)],
+    ['Reserved Output', formatBudget(snapshot.outputBuffer)],
+    ['Occupied Context', formatUsage(occupiedContextTokens)],
+    ['Model', snapshot.modelName],
+    ['Updated', new Date(snapshot.recordedAt).toISOString()],
+  ];
 }
 
 function formatCompactTokens(value: number): string {

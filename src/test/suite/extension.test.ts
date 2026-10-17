@@ -13,11 +13,14 @@ const EXPECTED_COMMANDS = [
 interface TestVendorConfig {
   name: string;
   baseUrl: string;
-  defaultApiStyle: 'openai-chat';
+  defaultApiStyle: 'chat-completions';
   useModelsEndpoint: boolean;
   models: Array<{
     name: string;
-    contextSize: number;
+    contextWindow: number;
+    maxInputTokens: number;
+    maxOutputTokens: number;
+    contextBudget: { inputTokens: number; outputTokens: number };
     capabilities: {
       tools: boolean;
       vision: boolean;
@@ -57,12 +60,15 @@ suite('VS Code Desktop Smoke Tests', () => {
     const testVendor: TestVendorConfig = {
       name: 'DesktopInit',
       baseUrl: 'https://example.test/v1',
-      defaultApiStyle: 'openai-chat',
+      defaultApiStyle: 'chat-completions',
       useModelsEndpoint: false,
       models: [
         {
           name: 'desktop-init-model',
-          contextSize: 32000,
+          contextWindow: 32000,
+          maxInputTokens: 25600,
+          maxOutputTokens: 6400,
+          contextBudget: { inputTokens: 25600, outputTokens: 6400 },
           capabilities: {
             tools: true,
             vision: false,
@@ -99,12 +105,15 @@ suite('VS Code Desktop Smoke Tests', () => {
     const testVendor: TestVendorConfig = {
       name: 'DesktopTest',
       baseUrl: 'https://example.test/v1',
-      defaultApiStyle: 'openai-chat',
+      defaultApiStyle: 'chat-completions',
       useModelsEndpoint: false,
       models: [
         {
           name: 'desktop-smoke-model',
-          contextSize: 32000,
+          contextWindow: 32000,
+          maxInputTokens: 25600,
+          maxOutputTokens: 6400,
+          contextBudget: { inputTokens: 25600, outputTokens: 6400 },
           capabilities: {
             tools: true,
             vision: false,

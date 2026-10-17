@@ -1,7 +1,7 @@
 import { AIModelConfig, normalizeHttpBaseUrl } from './baseProvider';
-import { VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
+import type { VendorApiStyle, VendorConfig, VendorModelConfig } from '../config/configStore';
 import { DEFAULT_MODEL_TOOLS, NON_RETRYABLE_DISCOVERY_STATUS_CODES } from '../constants';
-import { isGrokModel } from './modelsDevCatalog';
+import { readPositiveTokenInteger } from './contextBudget';
 
 export interface ModelVendorMapping {
   vendor: VendorConfig;
@@ -51,7 +51,7 @@ export function mergeConfiguredModelOverrides(
   currentModels: VendorModelConfig[],
   discoveredModels: VendorModelConfig[],
   defaultVisionForNewModels: boolean,
-  vendorName?: string,
+  _vendorName?: string,
 ): VendorModelConfig[] {
   const configuredByName = new Map<string, VendorModelConfig>();
   for (const model of currentModels) {
@@ -74,34 +74,38 @@ export function mergeConfiguredModelOverrides(
       };
     }
 
-    if (isModelsDevGeneratedDescription(configured.description) && discovered.contextSize !== undefined) {
-      return {
-        ...configured,
-        description: discovered.description ?? configured.description,
-        contextSize: discovered.contextSize,
+    const automaticLimits = configured.limitSource === 'endpoint' || configured.limitSource === 'models.dev';
+    const next = { ...configured };
+    if (automaticLimits) {
+      // 自动来源刷新模型能力；显式元数据与用户预算保持原值。
+      next.capabilities = {
+        ...configured.capabilities,
+        ...Object.fromEntries(Object.entries(discovered.capabilities ?? {}).filter(([, value]) => value !== undefined)),
       };
+      for (const key of [
+        'description', 'streaming', 'editTools', 'supportsReasoningEffort',
+        'reasoningEffortFormat', 'zeroDataRetentionEnabled',
+      ] as const) {
+        if (configured[key] === undefined && discovered[key] !== undefined) {
+          Object.assign(next, { [key]: discovered[key] });
+        }
+      }
+      if (discovered.price !== undefined) {
+        next.price = { ...discovered.price, ...configured.price };
+      }
     }
-
-    if (isGeneratedFallbackModelConfig(configured, discovered, vendorName)) {
-      return {
-        ...discovered,
-        enabled: configured.enabled,
-      };
+    if (automaticLimits && (discovered.limitSource === 'endpoint' || discovered.limitSource === 'models.dev')) {
+      // 缺失数据沿用已知能力；预算和手动属性始终保留。
+      for (const key of ['contextWindow', 'maxInputTokens', 'maxOutputTokens'] as const) {
+        const value = readPositiveTokenInteger(discovered[key]);
+        if (value !== undefined) {
+          next[key] = value;
+        }
+      }
+      next.limitSource = discovered.limitSource;
     }
-
-    if (shouldAdoptDiscoveredApiStyle(configured, discovered)) {
-      return {
-        ...configured,
-        apiStyle: discovered.apiStyle,
-      };
-    }
-
-    return configured;
+    return next;
   });
-}
-
-function isModelsDevGeneratedDescription(description: string | undefined): boolean {
-  return typeof description === 'string' && description.split(' | ').length >= 5;
 }
 
 export function toVendorStateKey(vendorName: string): string {
@@ -115,7 +119,9 @@ export function buildVendorDiscoverySignature(vendor: VendorConfig, apiKey: stri
   return `${toVendorStateKey(vendor.name)}|${normalizedBaseUrl.toLowerCase()}|${vendor.defaultApiStyle}|${vendor.authType ?? ''}|${endpointFlag}|${modelsSignature}|${hashText(apiKey.trim())}`;
 }
 
-function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefined {
+function toVendorModelConfig(
+  model: AIModelConfig & Pick<VendorModelConfig, 'contextWindow' | 'limitSource'>,
+): VendorModelConfig | undefined {
   const name = model.name.trim();
   if (name.length === 0) {
     return undefined;
@@ -129,14 +135,16 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
     name,
     enabled: true,
     description: model.description?.trim() || undefined,
-    apiStyle: readVendorApiStyle(model.apiStyle),
-    contextSize: readPositiveTokenInteger(model.maxTokens),
+    apiStyle: model.apiStyle,
+    contextWindow: readPositiveTokenInteger(model.contextWindow),
+    maxInputTokens: readPositiveTokenInteger(model.maxInputTokens),
+    maxOutputTokens: readPositiveTokenInteger(model.maxOutputTokens),
+    limitSource: model.limitSource ?? (model.modelsDevEnriched ? 'models.dev' : 'endpoint'),
     capabilities: {
       tools,
       vision,
       thinking: model.capabilities?.thinking,
     },
-    vision: model.modelsDevEnriched && typeof vision === 'boolean' ? vision : undefined,
     streaming: model.streaming,
     editTools: model.editTools,
     supportsReasoningEffort: model.supportsReasoningEffort,
@@ -144,84 +152,6 @@ function toVendorModelConfig(model: AIModelConfig): VendorModelConfig | undefine
     zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
     price: buildPriceConfig(model),
   };
-}
-
-function readVendorApiStyle(value: unknown): VendorApiStyle | undefined {
-  return value === 'openai-responses' || value === 'anthropic' || value === 'openai-chat' ? value : undefined;
-}
-
-function shouldAdoptDiscoveredApiStyle(
-  configured: VendorModelConfig,
-  discovered: VendorModelConfig,
-): boolean {
-  return (
-    discovered.apiStyle === 'openai-responses' &&
-    configured.apiStyle === 'openai-chat' &&
-    isGrokModel(configured.name)
-  );
-}
-
-function isGeneratedFallbackModelConfig(
-  configured: VendorModelConfig,
-  discovered: VendorModelConfig,
-  vendorName: string | undefined,
-): boolean {
-  if (!isEnrichedDiscoveredModel(discovered)) {
-    return false;
-  }
-  if (configured.price !== undefined) {
-    return false;
-  }
-  if (
-    configured.temperature !== undefined ||
-    configured.topP !== undefined ||
-    configured.streaming !== undefined ||
-    configured.editTools !== undefined ||
-    configured.supportsReasoningEffort !== undefined ||
-    configured.reasoningEffortFormat !== undefined ||
-    configured.zeroDataRetentionEnabled !== undefined
-  ) {
-    return false;
-  }
-
-  return isGeneratedFallbackDescription(configured.description, configured.name, vendorName);
-}
-
-function isEnrichedDiscoveredModel(model: VendorModelConfig): boolean {
-  return (
-    model.price !== undefined ||
-    model.apiStyle !== undefined ||
-    typeof model.capabilities?.thinking === 'boolean' ||
-    isNonGeneratedDescription(model.description, model.name)
-  );
-}
-
-function isNonGeneratedDescription(description: string | undefined, modelName: string): boolean {
-  return description !== undefined && !isGeneratedFallbackDescription(description, modelName, undefined);
-}
-
-function isGeneratedFallbackDescription(
-  description: string | undefined,
-  modelName: string,
-  vendorName: string | undefined,
-): boolean {
-  const normalizedDescription = description?.trim();
-  const normalizedModelName = modelName.trim();
-  if (!normalizedDescription || !normalizedModelName) {
-    return false;
-  }
-
-  const candidates = [
-    `${vendorName ?? ''} model: ${normalizedModelName}`,
-    `${vendorName ?? ''} 可用模型: ${normalizedModelName}`,
-  ].filter((candidate) => !candidate.startsWith(' '));
-  if (vendorName !== undefined && vendorName.trim().length > 0) {
-    return candidates.includes(normalizedDescription);
-  }
-  return (
-    normalizedDescription.endsWith(` model: ${normalizedModelName}`) ||
-    normalizedDescription.endsWith(` 可用模型: ${normalizedModelName}`)
-  );
 }
 
 function buildPriceConfig(model: AIModelConfig): VendorModelConfig['price'] {
@@ -245,13 +175,6 @@ function buildPriceConfig(model: AIModelConfig): VendorModelConfig['price'] {
     price.longContextOutputCost = model.longContextOutputCost;
   }
   return Object.values(price).some((entry) => entry !== undefined) ? price : undefined;
-}
-
-function readPositiveTokenInteger(value: number | undefined): number | undefined {
-  if (typeof value !== 'number' || !Number.isFinite(value) || value <= 0) {
-    return undefined;
-  }
-  return Math.floor(value);
 }
 
 function hashText(value: string): string {

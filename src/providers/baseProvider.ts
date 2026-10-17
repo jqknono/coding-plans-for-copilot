@@ -1,16 +1,15 @@
 import * as vscode from 'vscode';
 import {
-  DEFAULT_CONFIGURED_MODELS,
-  DEFAULT_CONTEXT_WINDOW_SIZE,
   DEFAULT_MODEL_EDIT_TOOLS,
-  DEFAULT_RESERVED_OUTPUT_RATIO,
-  DEFAULT_RESERVED_OUTPUT_TOKENS,
   DEFAULT_TOKEN_SIDE_LIMIT,
   MODEL_VERSION_LABEL,
 } from '../constants';
 import { logger } from '../logging/outputChannelLogger';
+import { resolveModelBudget } from './contextBudget';
+import type { VendorApiStyle } from '../config/configStore';
+import type { ContextBudgetPolicy, ModelLimits, ModelLimitSource, ResolvedModelBudget } from './contextBudget';
 
-export { MODEL_VERSION_LABEL, DEFAULT_CONFIGURED_MODELS };
+export { MODEL_VERSION_LABEL };
 
 export interface ModelCapabilities {
   toolCalling?: boolean | number;
@@ -22,12 +21,15 @@ export type ReasoningEffortValue = 'none' | 'low' | 'medium' | 'high' | 'xhigh' 
 export type ReasoningEffortFormat = 'chat-completions' | 'responses';
 
 export interface AIModelConfig {
+  contextWindow?: number;
+  limitSource?: ModelLimitSource;
+  contextBudget?: ContextBudgetPolicy;
+  tokenLimits?: ModelLimits;
   id: string;
   vendor: string;
   family: string;
   name: string;
-  apiStyle?: string;
-  apiType?: string;
+  apiStyle?: VendorApiStyle;
   version?: string;
   /**
    * Maximum input context window size in tokens.
@@ -270,12 +272,13 @@ function readRuntimeToolInputSchema(tool: vscode.LanguageModelChatTool): unknown
 }
 
 export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
+  public readonly tokenLimits: Readonly<ModelLimits>;
+  public readonly contextBudget: ResolvedModelBudget;
   public readonly id: string;
   public readonly vendor: string;
   public readonly family: string;
   public readonly name: string;
-  public readonly apiStyle?: string;
-  public readonly apiType?: string;
+  public readonly apiStyle?: VendorApiStyle;
   public readonly version: string;
   public readonly maxTokens: number;
   public readonly maxInputTokens: number;
@@ -302,12 +305,20 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
     this.vendor = modelInfo.vendor;
     this.family = modelInfo.family;
     this.name = modelInfo.name;
-    this.apiStyle = typeof modelInfo.apiStyle === 'string' ? modelInfo.apiStyle : undefined;
-    this.apiType = typeof modelInfo.apiType === 'string' ? modelInfo.apiType : undefined;
+    this.apiStyle = modelInfo.apiStyle;
     this.version = modelInfo.version || MODEL_VERSION_LABEL;
-    this.maxTokens = Math.max(1, Math.floor(modelInfo.maxTokens));
-    this.maxInputTokens = Math.max(1, Math.floor(modelInfo.maxInputTokens ?? DEFAULT_TOKEN_SIDE_LIMIT));
-    this.maxOutputTokens = Math.max(1, Math.floor(modelInfo.maxOutputTokens ?? DEFAULT_TOKEN_SIDE_LIMIT));
+    this.tokenLimits = Object.freeze({
+      ...(modelInfo.tokenLimits ?? {
+        contextWindow: modelInfo.contextWindow ?? modelInfo.maxTokens,
+        maxInputTokens: modelInfo.maxInputTokens ?? DEFAULT_TOKEN_SIDE_LIMIT,
+        maxOutputTokens: modelInfo.maxOutputTokens ?? DEFAULT_TOKEN_SIDE_LIMIT,
+        limitSource: modelInfo.limitSource,
+      }),
+    });
+    this.contextBudget = resolveModelBudget(this.tokenLimits, modelInfo.contextBudget);
+    this.maxTokens = this.tokenLimits.contextWindow ?? this.contextBudget.inputCeiling + this.contextBudget.outputTokens;
+    this.maxInputTokens = this.contextBudget.inputCeiling;
+    this.maxOutputTokens = this.contextBudget.outputTokens;
     this.capabilities = modelInfo.capabilities ?? {
       toolCalling: true,
       imageInput: true,
@@ -332,6 +343,11 @@ export abstract class BaseLanguageModel implements vscode.LanguageModelChat {
     options?: vscode.LanguageModelChatRequestOptions,
     token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse>;
+
+  /** 在逻辑请求开始时准备一次选项，供后续各次尝试复用。 */
+  prepareRequestOptions(options?: vscode.LanguageModelChatRequestOptions): vscode.LanguageModelChatRequestOptions {
+    return options ?? {};
+  }
 
   countTokens(text: string | vscode.LanguageModelChatMessage, _token?: vscode.CancellationToken): Promise<number> {
     return Promise.resolve(this.estimateTokenCount(text));
@@ -526,104 +542,6 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return this.getPredefinedModels();
   }
 
-  protected getConfiguredModelIds(): string[] {
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const configured = config.get<string[]>('models', [...DEFAULT_CONFIGURED_MODELS]);
-    const deduped = new Set<string>();
-    const models: string[] = [];
-
-    for (const rawModelId of configured) {
-      if (typeof rawModelId !== 'string') {
-        continue;
-      }
-      const modelId = rawModelId.trim();
-      if (modelId.length === 0) {
-        continue;
-      }
-
-      const dedupeKey = modelId.toLowerCase();
-      if (deduped.has(dedupeKey)) {
-        continue;
-      }
-      deduped.add(dedupeKey);
-      models.push(modelId);
-    }
-
-    return models;
-  }
-
-  protected buildConfiguredModelConfigs(
-    describe: (modelId: string) => string,
-    fallbackFamily: string,
-  ): AIModelConfig[] {
-    const modelSettings = this.readModelSettingsById();
-    return this.getConfiguredModelIds().map((modelId) =>
-      this.buildModelConfig(modelId, undefined, describe, fallbackFamily, modelSettings),
-    );
-  }
-
-  protected async resolveModelConfigsFromGenericModelApi(
-    fetchPayload: () => Promise<unknown>,
-    describe: (modelId: string) => string,
-    fallbackFamily: string,
-  ): Promise<AIModelConfig[]> {
-    try {
-      const payload = await fetchPayload();
-      const discoveredModels = this.buildModelConfigsFromGenericPayload(payload, describe, fallbackFamily);
-      if (discoveredModels.length > 0) {
-        return discoveredModels;
-      }
-    } catch (error) {
-      logger.warn(`Failed to fetch model list from generic API for ${this.getVendor()}`, error);
-    }
-
-    return this.buildConfiguredModelConfigs(describe, fallbackFamily);
-  }
-
-  protected buildModelConfigsFromGenericPayload(
-    payload: unknown,
-    describe: (modelId: string) => string,
-    fallbackFamily: string,
-  ): AIModelConfig[] {
-    const modelSettings = this.readModelSettingsById();
-    const deduped = new Set<string>();
-    const models: AIModelConfig[] = [];
-    const entries = this.readGenericModelEntries(payload);
-
-    for (const entry of entries) {
-      const modelId = this.readModelId(entry);
-      if (!modelId || !this.isLikelyChatModel(modelId)) {
-        continue;
-      }
-
-      const dedupeKey = modelId.toLowerCase();
-      if (deduped.has(dedupeKey)) {
-        continue;
-      }
-      deduped.add(dedupeKey);
-
-      models.push(
-        this.buildModelConfig(
-          modelId,
-          this.readRuntimeFromGenericModelEntry(entry),
-          describe,
-          fallbackFamily,
-          modelSettings,
-        ),
-      );
-    }
-
-    return models;
-  }
-
-  protected inferModelFamily(modelId: string, fallbackFamily: string): string {
-    const parts = modelId.split('-').filter(Boolean);
-    if (parts.length >= 2) {
-      return `${parts[0]}-${parts[1]}`;
-    }
-    return parts[0] || fallbackFamily;
-  }
-
   protected isLikelyChatModel(modelId: string): boolean {
     const lower = modelId.toLowerCase();
     return (
@@ -634,178 +552,6 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       !lower.includes('asr') &&
       !lower.includes('audio')
     );
-  }
-
-  private buildModelConfig(
-    modelId: string,
-    discovered: Partial<ResolvedModelRuntimeSettings> | undefined,
-    describe: (modelId: string) => string,
-    fallbackFamily: string,
-    modelSettings: Map<string, Partial<ResolvedModelRuntimeSettings>>,
-  ): AIModelConfig {
-    const runtime = this.resolveModelRuntimeSettings(modelId, discovered, modelSettings);
-    return {
-      id: modelId,
-      vendor: this.getVendor(),
-      family: this.inferModelFamily(modelId, fallbackFamily),
-      name: modelId,
-      version: MODEL_VERSION_LABEL,
-      maxTokens: runtime.maxTokens,
-      maxInputTokens: runtime.maxInputTokens,
-      maxOutputTokens: runtime.maxOutputTokens,
-      capabilities: {
-        toolCalling: runtime.toolCalling,
-        imageInput: runtime.imageInput,
-      },
-      description: describe(modelId),
-    };
-  }
-
-  private resolveModelRuntimeSettings(
-    modelId: string,
-    discovered: Partial<ResolvedModelRuntimeSettings> | undefined,
-    modelSettings: Map<string, Partial<ResolvedModelRuntimeSettings>>,
-  ): ResolvedModelRuntimeSettings {
-    const override = modelSettings.get(modelId.toLowerCase());
-    const resolvedTokens = this.resolveTokenWindowLimits(
-      override?.maxTokens ?? discovered?.maxTokens,
-      override?.maxInputTokens ?? discovered?.maxInputTokens,
-      override?.maxOutputTokens ?? discovered?.maxOutputTokens,
-    );
-    const toolCalling = override?.toolCalling ?? discovered?.toolCalling ?? true;
-    const imageInput = override?.imageInput ?? discovered?.imageInput ?? true;
-
-    return {
-      maxTokens: resolvedTokens.maxTokens,
-      maxInputTokens: resolvedTokens.maxInputTokens,
-      maxOutputTokens: resolvedTokens.maxOutputTokens,
-      toolCalling,
-      imageInput,
-    };
-  }
-
-  protected resolveTokenWindowLimits(
-    contextSize: number | undefined,
-    explicitMaxInputTokens: number | undefined,
-    explicitMaxOutputTokens: number | undefined,
-  ): Pick<ResolvedModelRuntimeSettings, 'maxTokens' | 'maxInputTokens' | 'maxOutputTokens'> {
-    const normalizeTokenValue = (value: number | undefined): number | undefined => {
-      if (value === undefined) {
-        return undefined;
-      }
-      if (!Number.isFinite(value) || value <= 0) {
-        return undefined;
-      }
-      return Math.max(1, Math.floor(value));
-    };
-
-    const normalizedContextSize = normalizeTokenValue(contextSize);
-    if (normalizedContextSize !== undefined) {
-      const maxOutputTokens = Math.max(1, Math.floor(normalizedContextSize * DEFAULT_RESERVED_OUTPUT_RATIO));
-      return {
-        maxTokens: normalizedContextSize,
-        maxInputTokens: Math.max(1, normalizedContextSize - maxOutputTokens),
-        maxOutputTokens,
-      };
-    }
-
-    const maxInputTokens = normalizeTokenValue(explicitMaxInputTokens) ?? DEFAULT_CONTEXT_WINDOW_SIZE;
-    const maxOutputTokens = normalizeTokenValue(explicitMaxOutputTokens) ?? DEFAULT_RESERVED_OUTPUT_TOKENS;
-    return {
-      maxTokens: Math.max(1, maxInputTokens + maxOutputTokens),
-      maxInputTokens,
-      maxOutputTokens,
-    };
-  }
-
-  private readModelSettingsById(): Map<string, Partial<ResolvedModelRuntimeSettings>> {
-    const settingsByModel = new Map<string, Partial<ResolvedModelRuntimeSettings>>();
-    const config = vscode.workspace.getConfiguration('coding-plans');
-    const modelSettingsRaw = config.get<Record<string, unknown>>('modelSettings', {});
-
-    if (!modelSettingsRaw || typeof modelSettingsRaw !== 'object') {
-      return settingsByModel;
-    }
-
-    for (const [rawModelId, rawValue] of Object.entries(modelSettingsRaw)) {
-      const modelId = rawModelId.trim().toLowerCase();
-      if (modelId.length === 0 || !rawValue || typeof rawValue !== 'object') {
-        continue;
-      }
-
-      const parsed = rawValue as {
-        maxInputTokens?: unknown;
-        maxOutputTokens?: unknown;
-        contextSize?: unknown;
-        capabilities?:
-          | {
-              tools?: unknown;
-              vision?: unknown;
-              toolCalling?: unknown;
-              imageInput?: unknown;
-            }
-          | unknown;
-      };
-
-      const legacyContextSize = this.readPositiveInteger(parsed.contextSize);
-      const maxInputTokens = this.readPositiveInteger(parsed.maxInputTokens);
-      const maxOutputTokens = this.readPositiveInteger(parsed.maxOutputTokens);
-
-      const capabilities =
-        parsed.capabilities && typeof parsed.capabilities === 'object'
-          ? (parsed.capabilities as {
-              tools?: unknown;
-              vision?: unknown;
-              toolCalling?: unknown;
-              imageInput?: unknown;
-            })
-          : undefined;
-
-      const toolCalling = this.readToolCallingValue(capabilities?.toolCalling ?? capabilities?.tools);
-      const imageInput = this.readBooleanValue(capabilities?.imageInput ?? capabilities?.vision);
-
-      const normalized: Partial<ResolvedModelRuntimeSettings> = {};
-      if (legacyContextSize !== undefined || maxInputTokens !== undefined || maxOutputTokens !== undefined) {
-        const resolvedTokens = this.resolveTokenWindowLimits(legacyContextSize, maxInputTokens, maxOutputTokens);
-        normalized.maxTokens = resolvedTokens.maxTokens;
-        normalized.maxInputTokens = resolvedTokens.maxInputTokens;
-        normalized.maxOutputTokens = resolvedTokens.maxOutputTokens;
-      }
-      if (toolCalling !== undefined) {
-        normalized.toolCalling = toolCalling;
-      }
-      if (imageInput !== undefined) {
-        normalized.imageInput = imageInput;
-      }
-
-      if (Object.keys(normalized).length > 0) {
-        settingsByModel.set(modelId, normalized);
-      }
-    }
-
-    return settingsByModel;
-  }
-
-  protected readGenericModelEntries(payload: unknown): GenericModelListEntry[] {
-    if (Array.isArray(payload)) {
-      return payload as GenericModelListEntry[];
-    }
-
-    if (!payload || typeof payload !== 'object') {
-      return [];
-    }
-
-    const maybeData = (payload as { data?: unknown }).data;
-    if (Array.isArray(maybeData)) {
-      return maybeData as GenericModelListEntry[];
-    }
-
-    const maybeModels = (payload as { models?: unknown }).models;
-    if (Array.isArray(maybeModels)) {
-      return maybeModels as GenericModelListEntry[];
-    }
-
-    return [];
   }
 
   protected readModelId(entry: GenericModelListEntry): string | undefined {

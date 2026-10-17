@@ -19,7 +19,6 @@ import {
   CHAT_THINKING_EFFORT_VALUES,
   ChatThinkingEffort,
   DEFAULT_MODEL_TOOLS,
-  DEFAULT_REQUEST_MAX_TOKENS,
   ENABLE_THINKING_MODEL_OPTION_KEY,
   EFFORT_MODEL_OPTION_KEY,
   REASONING_EFFORT_MODEL_OPTION_KEY,
@@ -82,13 +81,38 @@ import {
   toOpenAIResponsesInputWithoutInstructions,
 } from './genericProviderProtocols';
 import { attachTokenUsage, normalizeTokenUsage, NormalizedTokenUsage } from './tokenUsage';
+import { resolveModelBudget, resolveRequestBudget } from './contextBudget';
+import type { ModelLimits, ResolvedModelBudget } from './contextBudget';
+
+interface RequestLifetime {
+  signal: AbortSignal;
+  streaming: boolean;
+  dispose(): void;
+}
+
+interface CapturedRequestContext {
+  readonly modelId: string;
+  readonly mapping: ModelVendorMapping;
+  readonly configuredModel?: VendorModelConfig;
+  readonly modelSnapshot: BaseLanguageModel;
+  readonly apiKeyResult: Promise<{ ok: true; apiKey: string } | { ok: false; error: unknown }>;
+}
 
 interface GenericChatRequest {
   modelId: string;
   messages: vscode.LanguageModelChatMessage[];
   options?: vscode.LanguageModelChatRequestOptions;
   capabilities: vscode.LanguageModelChatCapabilities;
+  budget: ResolvedModelBudget;
+  modelSnapshot: BaseLanguageModel;
+  configuredModel?: VendorModelConfig;
+  streamingAllowed?: boolean;
+  lifetime?: RequestLifetime;
 }
+
+/** 直接调用 provider 时也在入口补齐快照；模型入口始终传入已解析的预算。 */
+type GenericChatRequestInput = Omit<GenericChatRequest, 'budget' | 'modelSnapshot'> &
+  Partial<Pick<GenericChatRequest, 'budget' | 'modelSnapshot'>>;
 
 interface RefreshModelsOptions {
   forceDiscoveryRetry?: boolean;
@@ -255,17 +279,30 @@ export class GenericLanguageModel extends BaseLanguageModel {
     super(provider, modelInfo);
   }
 
+  public prepareRequestOptions(
+    options?: vscode.LanguageModelChatRequestOptions,
+  ): vscode.LanguageModelChatRequestOptions {
+    return (this.provider as GenericAIProvider).prepareRequestOptions(this.id, options);
+  }
+
   async sendRequest(
     messages: vscode.LanguageModelChatMessage[],
     options?: vscode.LanguageModelChatRequestOptions,
     token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse> {
+    if (token?.isCancellationRequested) {
+      throw new vscode.LanguageModelError(getMessage('requestCancelled'));
+    }
     const provider = this.provider as GenericAIProvider;
+    const preparedOptions = this.prepareRequestOptions(options);
+    const budget = resolveRequestBudget(this.contextBudget, preparedOptions.modelOptions?.contextSize);
     const request: GenericChatRequest = {
       modelId: this.id,
       messages,
-      options,
+      options: preparedOptions,
       capabilities: this.capabilities,
+      budget,
+      modelSnapshot: this,
     };
 
     try {
@@ -281,6 +318,7 @@ export class GenericLanguageModel extends BaseLanguageModel {
 
 export class GenericAIProvider extends BaseAIProvider {
   private modelVendorMap = new Map<string, ModelVendorMapping>();
+  private readonly requestContexts = new WeakMap<vscode.LanguageModelChatRequestOptions, CapturedRequestContext>();
   private readonly vendorDiscoveryState = new Map<string, VendorDiscoveryState>();
   private readonly disabledStreamingModelIds = new Set<string>();
   private readonly emptyOpenAIChatPromptedModelKeys = new Set<string>();
@@ -298,22 +336,9 @@ export class GenericAIProvider extends BaseAIProvider {
     super(context);
     this.disposables.push(
       this.configStore.onDidChange(() => {
-        if (!this.configStore.isAutoRefreshModelsEnabled()) {
-          logger.info(
-            `${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} automatic provider refresh skipped because coding-plans.autoRefreshModels is disabled`,
-          );
-          return;
-        }
         void this.refreshModels();
       }),
     );
-    if (typeof this.configStore.onDidChangeChatLanguageModelsTokenOverrides === 'function') {
-      this.disposables.push(
-        this.configStore.onDidChangeChatLanguageModelsTokenOverrides(() => {
-          void this.refreshModels();
-        }),
-      );
-    }
   }
 
   async initialize(): Promise<void> {
@@ -409,7 +434,7 @@ export class GenericAIProvider extends BaseAIProvider {
   private async refreshModelsInternal(options: RefreshModelsOptions = {}): Promise<void> {
     const forceDiscoveryRetry = options.forceDiscoveryRetry === true;
     const discoverFromEndpoint = options.discoverFromEndpoint === true;
-    const vendors = this.configStore.getVendors();
+    const vendors = structuredClone(this.configStore.getVendors());
     logger.info('Refreshing Coding Plans vendor models', {
       vendorCount: vendors.length,
       forceDiscoveryRetry,
@@ -422,7 +447,7 @@ export class GenericAIProvider extends BaseAIProvider {
         state: this.summarizeDiscoveryStateForLog(state),
       })),
     });
-    this.modelVendorMap.clear();
+    const nextModelVendorMap = new Map<string, ModelVendorMapping>();
     const allModelConfigs: AIModelConfig[] = [];
     const activeVendorKeys = new Set(vendors.map((vendor) => toVendorStateKey(vendor.name)));
 
@@ -467,7 +492,7 @@ export class GenericAIProvider extends BaseAIProvider {
           discoveryEnabled: vendor.useModelsEndpoint && discoverFromEndpoint,
           modelCount: configuredModels.length,
         });
-        this.appendResolvedModels(vendor, configuredModels, allModelConfigs);
+        this.appendResolvedModels(vendor, configuredModels, allModelConfigs, nextModelVendorMap);
         continue;
       }
 
@@ -479,7 +504,7 @@ export class GenericAIProvider extends BaseAIProvider {
           vendor: vendor.name,
           fallbackCount: configuredModels.length,
         });
-        this.appendResolvedModels(vendor, configuredModels, allModelConfigs);
+        this.appendResolvedModels(vendor, configuredModels, allModelConfigs, nextModelVendorMap);
         continue;
       }
 
@@ -496,7 +521,7 @@ export class GenericAIProvider extends BaseAIProvider {
           fallbackCount: configuredModels.length,
           resolvedCount: cached.length,
         });
-        this.appendResolvedModels(vendor, cached, allModelConfigs);
+        this.appendResolvedModels(vendor, cached, allModelConfigs, nextModelVendorMap);
         continue;
       }
 
@@ -527,7 +552,7 @@ export class GenericAIProvider extends BaseAIProvider {
           suppressRetry: shouldSuppressDiscoveryRetry(discovered.status),
           cachedModels: fallbackModels,
         });
-        this.appendResolvedModels(vendor, fallbackModels, allModelConfigs);
+        this.appendResolvedModels(vendor, fallbackModels, allModelConfigs, nextModelVendorMap);
         continue;
       }
 
@@ -581,13 +606,16 @@ export class GenericAIProvider extends BaseAIProvider {
         suppressRetry: false,
         cachedModels: resolvedModels,
       });
-      this.appendResolvedModels(currentVendor, resolvedModels, allModelConfigs);
+      this.appendResolvedModels(currentVendor, resolvedModels, allModelConfigs, nextModelVendorMap);
     }
 
     const nextModelsSnapshot = this.buildModelsSnapshot(allModelConfigs);
     const modelsChanged = nextModelsSnapshot !== this.modelsSnapshot;
+    const nextModels = allModelConfigs.map((m) => this.createModel(m));
+    // 新模型与映射在同一同步段发布，刷新等待期间继续服务当前模型。
+    this.modelVendorMap = nextModelVendorMap;
+    this.models = nextModels;
     this.modelsSnapshot = nextModelsSnapshot;
-    this.models = allModelConfigs.map((m) => this.createModel(m));
     logger.info('Coding Plans models refreshed', {
       modelCount: this.models.length,
       modelIds: this.models.map((m) => m.id),
@@ -630,23 +658,62 @@ export class GenericAIProvider extends BaseAIProvider {
     return currentSignature === signature ? currentVendor : undefined;
   }
 
-  async sendRequest(
-    request: GenericChatRequest,
-    token?: vscode.CancellationToken,
-  ): Promise<vscode.LanguageModelChatResponse> {
-    const mapping = this.modelVendorMap.get(request.modelId);
-    if (!mapping) {
+  public prepareRequestOptions(
+    modelId: string,
+    options?: vscode.LanguageModelChatRequestOptions,
+  ): vscode.LanguageModelChatRequestOptions {
+    if (options && this.requestContexts.get(options)?.modelId === modelId) {
+      return options;
+    }
+    const currentMapping = this.modelVendorMap.get(modelId);
+    const modelSnapshot = this.getModel(modelId);
+    if (!currentMapping || !modelSnapshot) {
       throw new vscode.LanguageModelError(getMessage('vendorNotConfigured'));
     }
+    // 配置深拷贝与凭据读取同步启动；WeakMap 将私有数据与公开 options 隔离。
+    const mapping = structuredClone(currentMapping);
+    const preparedOptions = {
+      ...options,
+      modelOptions: options?.modelOptions && { ...options.modelOptions },
+    };
+    const apiKeyResult: CapturedRequestContext['apiKeyResult'] = this.configStore.getApiKey(mapping.vendor.name).then(
+      (apiKey) => ({ ok: true as const, apiKey }),
+      (error: unknown) => ({ ok: false as const, error }),
+    );
+    this.requestContexts.set(preparedOptions, Object.freeze({
+      modelId,
+      mapping,
+      configuredModel: this.findConfiguredModel(mapping.vendor, mapping.modelName),
+      modelSnapshot,
+      apiKeyResult,
+    }));
+    return preparedOptions;
+  }
+
+  async sendRequest(
+    input: GenericChatRequestInput,
+    token?: vscode.CancellationToken,
+  ): Promise<vscode.LanguageModelChatResponse> {
+    if (token?.isCancellationRequested) {
+      throw new vscode.LanguageModelError(getMessage('requestCancelled'));
+    }
+    const options = this.prepareRequestOptions(input.modelId, input.options);
+    const context = this.requestContexts.get(options)!;
+    const { mapping } = context;
+    const modelSnapshot = input.modelSnapshot ?? context.modelSnapshot;
+    const request: GenericChatRequest = {
+      ...input,
+      options,
+      modelSnapshot,
+      capabilities: { ...modelSnapshot.capabilities },
+      budget: input.budget ?? resolveRequestBudget(modelSnapshot.contextBudget, options?.modelOptions?.contextSize),
+      configuredModel: context.configuredModel,
+      streamingAllowed: modelSnapshot.streaming !== false && !this.isStreamingDisabledForSession(input.modelId),
+    };
 
     const baseUrl = normalizeHttpBaseUrl(mapping.vendor.baseUrl);
     if (!baseUrl) {
       throw new vscode.LanguageModelError(getMessage('baseUrlInvalid'));
-    }
-
-    const apiKey = await this.configStore.getApiKey(mapping.vendor.name);
-    if (!apiKey) {
-      throw new vscode.LanguageModelError(getMessage('apiKeyRequired', mapping.vendor.name));
     }
 
     const traceId = this.generateTraceId('lmreq');
@@ -657,29 +724,61 @@ export class GenericAIProvider extends BaseAIProvider {
       modelName: mapping.modelName,
       protocol: mapping.apiStyle,
     };
-    this.attachCancellationLogging(token, trace);
-    const requestSummary = this.summarizeGenericChatRequest(request);
-    logger.info('Language model request start', {
-      ...trace,
-      baseUrl,
-      messageCount: request.messages.length,
-      toolCount: request.options?.tools?.length ?? 0,
-      toolMode: request.options?.toolMode,
+    const controller = new AbortController();
+    const cancellation = token?.onCancellationRequested(() => {
+      logger.warn('Language model cancellation requested', trace);
+      controller.abort();
     });
-    logger.debug('Language model request payload details', {
-      ...trace,
-      request: requestSummary,
-    });
-
-    if (mapping.apiStyle === 'anthropic') {
-      return this.sendAnthropicRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, trace, token);
+    if (token?.isCancellationRequested) {
+      controller.abort();
     }
+    const lifetime: RequestLifetime = {
+      signal: controller.signal,
+      streaming: false,
+      dispose: () => cancellation?.dispose(),
+    };
+    request.lifetime = lifetime;
+    try {
+      controller.signal.throwIfAborted();
+      const apiKeyResult = await context.apiKeyResult;
+      controller.signal.throwIfAborted();
+      if (!apiKeyResult.ok) {
+        throw apiKeyResult.error;
+      }
+      const apiKey = apiKeyResult.apiKey;
+      if (!apiKey) {
+        throw new vscode.LanguageModelError(getMessage('apiKeyRequired', mapping.vendor.name));
+      }
+      const requestSummary = this.summarizeGenericChatRequest(request);
+      logger.info('Language model request start', {
+        ...trace,
+        baseUrl,
+        messageCount: request.messages.length,
+        toolCount: request.options?.tools?.length ?? 0,
+        toolMode: request.options?.toolMode,
+      });
+      logger.debug('Language model request payload details', {
+        ...trace,
+        request: requestSummary,
+      });
 
-    if (mapping.apiStyle === 'openai-responses') {
-      return this.sendOpenAIResponsesRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, trace, token);
+      const result = await (mapping.apiStyle === 'messages'
+        ? this.sendAnthropicRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, trace)
+        : mapping.apiStyle === 'responses'
+          ? this.sendOpenAIResponsesRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, trace)
+          : this.sendOpenAIChatRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, trace));
+      Object.defineProperty(result, 'contextBudget', { value: request.budget, enumerable: true });
+      return result;
+    } catch (error) {
+      if (controller.signal.aborted) {
+        throw new vscode.LanguageModelError(getMessage('requestCancelled'));
+      }
+      throw error;
+    } finally {
+      if (!lifetime.streaming) {
+        lifetime.dispose();
+      }
     }
-
-    return this.sendOpenAIChatRequest(request, mapping.vendor, mapping.modelName, baseUrl, apiKey, trace, token);
   }
 
   private findConfiguredModel(vendor: VendorConfig, modelName: string): VendorModelConfig | undefined {
@@ -795,11 +894,11 @@ export class GenericAIProvider extends BaseAIProvider {
   }
 
   private isModelThinkingEnabled(request: GenericChatRequest): boolean {
-    return this.getModel(request.modelId)?.capabilities.thinking !== false;
+    return request.modelSnapshot.capabilities.thinking !== false;
   }
 
   private isReasoningEffortSupported(request: GenericChatRequest, effort: ReasoningEffortValue): boolean {
-    const supported = this.getModel(request.modelId)?.supportsReasoningEffort;
+    const supported = request.modelSnapshot.supportsReasoningEffort;
     if (!supported || supported.length === 0) {
       return true;
     }
@@ -981,17 +1080,17 @@ export class GenericAIProvider extends BaseAIProvider {
     vendor: VendorConfig,
     compositeId: string,
   ): AIModelConfig {
-    const resolvedTokens = this.resolveTokenWindowLimits(
-      model.contextSize,
-      model.maxInputTokens,
-      model.maxOutputTokens,
-    );
-    const toolCalling = model.toolCalling ?? model.capabilities?.tools ?? DEFAULT_MODEL_TOOLS;
-    const imageInput = model.vision ?? model.capabilities?.vision ?? vendor.defaultVision;
+    const resolvedTokens = resolveModelBudget(model, model.contextBudget);
+    const tokenLimits: ModelLimits = {
+      contextWindow: model.contextWindow,
+      maxInputTokens: model.maxInputTokens,
+      maxOutputTokens: model.maxOutputTokens,
+      limitSource: model.limitSource,
+    };
+    const toolCalling = model.capabilities?.tools ?? DEFAULT_MODEL_TOOLS;
+    const imageInput = model.capabilities?.vision ?? vendor.defaultVision;
     const thinking = model.capabilities?.thinking;
-    const inferredApiStyle = inferDefaultApiStyleForModel(model.name);
-    const apiStyle =
-      model.apiStyle ?? (inferredApiStyle !== 'openai-chat' ? inferredApiStyle : vendor.defaultApiStyle);
+    const apiStyle = model.apiStyle ?? vendor.defaultApiStyle;
 
     return {
       id: compositeId,
@@ -999,12 +1098,15 @@ export class GenericAIProvider extends BaseAIProvider {
       family: vendor.name,
       name: model.name,
       version: vendor.name,
-      maxTokens: resolvedTokens.maxTokens,
-      maxInputTokens: resolvedTokens.maxInputTokens,
-      maxOutputTokens: resolvedTokens.maxOutputTokens,
+      maxTokens: model.contextWindow ?? resolvedTokens.effectiveContextWindow,
+      maxInputTokens: resolvedTokens.inputCeiling,
+      maxOutputTokens: resolvedTokens.outputTokens,
+      tokenLimits,
+      contextWindow: model.contextWindow,
+      limitSource: model.limitSource,
+      contextBudget: model.contextBudget,
       capabilities: { toolCalling, imageInput, ...(typeof thinking === 'boolean' ? { thinking } : {}) },
       apiStyle,
-      apiType: model.apiType ?? this.apiStyleToApiType(apiStyle),
       streaming: model.streaming,
       editTools: model.editTools,
       supportsReasoningEffort: model.supportsReasoningEffort,
@@ -1020,40 +1122,19 @@ export class GenericAIProvider extends BaseAIProvider {
     };
   }
 
-  private apiStyleToApiType(apiStyle: VendorApiStyle): 'chat' | 'responses' | 'anthropic' {
-    return apiStyle === 'openai-responses' ? 'responses' : apiStyle === 'anthropic' ? 'anthropic' : 'chat';
-  }
-
   private apiStyleToReasoningEffortFormat(apiStyle: VendorApiStyle): ReasoningEffortFormat | undefined {
-    if (apiStyle === 'openai-responses') {
+    if (apiStyle === 'responses') {
       return 'responses';
     }
-    if (apiStyle === 'openai-chat') {
+    if (apiStyle === 'chat-completions') {
       return 'chat-completions';
     }
-    // anthropic style does not use reasoningEffortFormat
+    // messages 协议通过 thinking 与 effort 字段控制推理。
     return undefined;
   }
 
   private buildConfiguredModelsForVendor(vendor: VendorConfig): AIModelConfig[] {
     return this.buildConfiguredModelsFromVendorModels(vendor, vendor.models);
-  }
-
-  /**
-   * Cap a models.dev context window before writing it into vendors.models.contextSize.
-   * Hand-authored contextSize values and raw upstream /models limits stay untouched.
-   */
-  private capModelsDevContextWindow(modelsDevContextSize: number | undefined): number | undefined {
-    const overrideContextWindow = this.configStore.getChatLanguageModelsTokenOverrides().overrideContextWindow;
-    if (
-      overrideContextWindow === undefined ||
-      modelsDevContextSize === undefined ||
-      modelsDevContextSize <= overrideContextWindow
-    ) {
-      return modelsDevContextSize;
-    }
-
-    return overrideContextWindow;
   }
 
   private buildConfiguredModelsFromVendorModels(
@@ -1066,12 +1147,26 @@ export class GenericAIProvider extends BaseAIProvider {
         continue;
       }
       const compositeId = `${vendor.name}/${model.name}`;
-      models.push(this.buildModelFromVendorConfig(model, vendor, compositeId));
+      try {
+        models.push(this.buildModelFromVendorConfig(model, vendor, compositeId));
+      } catch (error) {
+        logger.warn('Skip configured model with invalid limits', {
+          vendor: vendor.name,
+          modelId: compositeId,
+          error: this.summarizeError(error),
+        });
+      }
     }
     return models;
   }
 
-  private appendResolvedModels(vendor: VendorConfig, models: AIModelConfig[], target: AIModelConfig[]): void {
+  private appendResolvedModels(
+    vendor: VendorConfig,
+    models: AIModelConfig[],
+    target: AIModelConfig[],
+    mappings: Map<string, ModelVendorMapping>,
+  ): void {
+    const vendorSnapshot = structuredClone(vendor);
     const configuredApiStyleByName = new Map<string, VendorApiStyle>();
     for (const vendorModel of vendor.models) {
       configuredApiStyleByName.set(
@@ -1093,8 +1188,8 @@ export class GenericAIProvider extends BaseAIProvider {
 
     for (const model of models) {
       const actualName = model.id.includes('/') ? model.id.substring(model.id.indexOf('/') + 1) : model.id;
-      const apiStyle = configuredApiStyleByName.get(actualName.trim().toLowerCase()) ?? vendor.defaultApiStyle;
-      this.modelVendorMap.set(model.id, { vendor, modelName: actualName, apiStyle });
+      const apiStyle = model.apiStyle ?? configuredApiStyleByName.get(actualName.trim().toLowerCase()) ?? vendor.defaultApiStyle;
+      mappings.set(model.id, { vendor: vendorSnapshot, modelName: actualName, apiStyle });
     }
     target.push(...models);
   }
@@ -1111,6 +1206,10 @@ export class GenericAIProvider extends BaseAIProvider {
         maxTokens: model.maxTokens,
         maxInputTokens: model.maxInputTokens,
         maxOutputTokens: model.maxOutputTokens,
+        tokenLimits: model.tokenLimits,
+        contextWindow: model.contextWindow,
+        limitSource: model.limitSource,
+        contextBudget: model.contextBudget,
         capabilities: model.capabilities,
         inputCost: model.inputCost,
         cacheCost: model.cacheCost,
@@ -1235,43 +1334,54 @@ export class GenericAIProvider extends BaseAIProvider {
         }
         seen.add(modelId.toLowerCase());
 
-        const modelsDevConfig = resolveModelsDevModelConfig(modelsDevCatalog, modelId);
-        const inferredApiStyle = modelsDevConfig?.apiStyle ?? inferDefaultApiStyleForModel(modelId);
-        const runtime = this.readRuntimeFromGenericModelEntry(entry);
-        const modelsDevContextSize = this.capModelsDevContextWindow(modelsDevConfig?.contextSize);
-        const resolvedTokens = this.resolveTokenWindowLimits(
-          modelsDevContextSize ?? runtime.maxTokens,
-          runtime.maxInputTokens,
-          runtime.maxOutputTokens,
-        );
-        const compositeId = `${vendor.name}/${modelId}`;
-        const modelsDevToolCalling = modelsDevConfig?.capabilities?.tools;
-        const modelsDevVision = modelsDevConfig?.capabilities?.vision;
-        const modelsDevThinking = modelsDevConfig?.capabilities?.thinking;
-        models.push({
-          id: compositeId,
-          vendor: 'coding-plans',
-          family: vendor.name,
-          name: modelId,
-          version: vendor.name,
-          maxTokens: resolvedTokens.maxTokens,
-          maxInputTokens: resolvedTokens.maxInputTokens,
-          maxOutputTokens: resolvedTokens.maxOutputTokens,
-          capabilities: {
-            toolCalling: modelsDevToolCalling ?? runtime.toolCalling ?? DEFAULT_MODEL_TOOLS,
-            imageInput: modelsDevVision ?? vendor.defaultVision,
-            ...(typeof modelsDevThinking === 'boolean' ? { thinking: modelsDevThinking } : {}),
-          },
-          apiStyle: inferredApiStyle,
-          inputCost: modelsDevConfig?.price?.inputCost,
-          cacheCost: modelsDevConfig?.price?.cacheCost,
-          outputCost: modelsDevConfig?.price?.outputCost,
-          longContextInputCost: modelsDevConfig?.price?.longContextInputCost,
-          longContextCacheCost: modelsDevConfig?.price?.longContextCacheCost,
-          longContextOutputCost: modelsDevConfig?.price?.longContextOutputCost,
-          modelsDevEnriched: modelsDevConfig !== undefined,
-          description: modelsDevConfig?.description ?? getMessage('genericDynamicModelDescription', vendor.name, modelId),
-        });
+        try {
+          const modelsDevConfig = resolveModelsDevModelConfig(modelsDevCatalog, modelId);
+          const inferredApiStyle = modelsDevConfig?.apiStyle ?? inferDefaultApiStyleForModel(modelId);
+          const runtime = this.readRuntimeFromGenericModelEntry(entry);
+          const hasRuntimeLimits = runtime.maxTokens !== undefined ||
+            runtime.maxInputTokens !== undefined || runtime.maxOutputTokens !== undefined;
+          const tokenLimits: ModelLimits = {
+            contextWindow: runtime.maxTokens ?? modelsDevConfig?.contextWindow,
+            maxInputTokens: runtime.maxInputTokens ?? modelsDevConfig?.maxInputTokens,
+            maxOutputTokens: runtime.maxOutputTokens ?? modelsDevConfig?.maxOutputTokens,
+            limitSource: hasRuntimeLimits ? 'endpoint' : modelsDevConfig?.limitSource,
+          };
+          const resolvedTokens = resolveModelBudget(tokenLimits);
+          const compositeId = `${vendor.name}/${modelId}`;
+          const modelsDevToolCalling = modelsDevConfig?.capabilities?.tools;
+          const modelsDevVision = modelsDevConfig?.capabilities?.vision;
+          const modelsDevThinking = modelsDevConfig?.capabilities?.thinking;
+          models.push({
+            id: compositeId,
+            vendor: 'coding-plans',
+            family: vendor.name,
+            name: modelId,
+            version: vendor.name,
+            maxTokens: tokenLimits.contextWindow ?? resolvedTokens.effectiveContextWindow,
+            ...tokenLimits,
+            tokenLimits,
+            capabilities: {
+              toolCalling: modelsDevToolCalling ?? runtime.toolCalling ?? DEFAULT_MODEL_TOOLS,
+              imageInput: modelsDevVision ?? runtime.imageInput ?? vendor.defaultVision,
+              ...(typeof modelsDevThinking === 'boolean' ? { thinking: modelsDevThinking } : {}),
+            },
+            apiStyle: inferredApiStyle,
+            inputCost: modelsDevConfig?.price?.inputCost,
+            cacheCost: modelsDevConfig?.price?.cacheCost,
+            outputCost: modelsDevConfig?.price?.outputCost,
+            longContextInputCost: modelsDevConfig?.price?.longContextInputCost,
+            longContextCacheCost: modelsDevConfig?.price?.longContextCacheCost,
+            longContextOutputCost: modelsDevConfig?.price?.longContextOutputCost,
+            modelsDevEnriched: modelsDevConfig !== undefined,
+            description: modelsDevConfig?.description ?? getMessage('genericDynamicModelDescription', vendor.name, modelId),
+          });
+        } catch (error) {
+          logger.warn('Skip discovered model with invalid limits', {
+            vendor: vendor.name,
+            modelId,
+            error: this.summarizeError(error),
+          });
+        }
       }
 
       logger.info(`${LANGUAGE_MODELS_DISCOVERY_LOG_PREFIX} completed /models discovery`, {
@@ -1314,7 +1424,6 @@ export class GenericAIProvider extends BaseAIProvider {
     baseUrl: string,
     apiKey: string,
     trace: RequestTraceContext,
-    token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertRequestMessages(request.messages);
     this.logRequestMessageContentPreviews(trace, providerMessages);
@@ -1339,12 +1448,10 @@ export class GenericAIProvider extends BaseAIProvider {
     };
 
     try {
-      logger.debug('Prepared OpenAI chat payload', {
+      logger.debug('Prepared chat-completions payload', {
         ...trace,
         baseUrl,
         payload: {
-          temperature: payload.temperature,
-          topP: payload.top_p,
           thinking: payload.thinking,
           reasoningEffort: payload.reasoning_effort,
           maxTokens: payload.max_tokens,
@@ -1354,16 +1461,15 @@ export class GenericAIProvider extends BaseAIProvider {
           messages: this.summarizeProviderMessages(providerMessages),
         },
       });
-      const requestInit = this.buildRequestInit(apiKey, 'openai-chat', vendor.authType, token);
+      const requestInit = this.buildRequestInit(apiKey, 'chat-completions', vendor.authType, request.lifetime?.signal);
       const response = await this.postWithRetry(`${baseUrl}/chat/completions`, payload, requestInit, trace);
       if (this.isSseResponse(response)) {
         return this.buildStreamingChatResponse(
           trace,
-          'openai-chat',
+          'chat-completions',
           request,
           vendor,
           modelName,
-          payload.max_tokens,
           async (queue) => {
             const state = createOpenAIChatStreamState();
             let streamedReasoning = false;
@@ -1381,7 +1487,7 @@ export class GenericAIProvider extends BaseAIProvider {
               }
             }
             const finalized = finalizeOpenAIChatStreamState(state, () => this.generateToolCallId());
-            this.logUpstreamResponseSummary('openai-chat', vendor, modelName, {
+            this.logUpstreamResponseSummary('chat-completions', vendor, modelName, {
               mode: 'stream',
               responseId: state.responseId,
               contentLength: finalized.content.length,
@@ -1400,7 +1506,7 @@ export class GenericAIProvider extends BaseAIProvider {
         );
       }
 
-      logger.warn('OpenAI chat stream request returned non-SSE response; parsing response body directly', trace);
+      logger.warn('chat-completions stream request returned non-SSE response; parsing response body directly', trace);
       const parsedResponse = await this.readParsedResponse<OpenAIChatResponse>(response);
       return this.buildOpenAIChatResponseFromPayload(
         request,
@@ -1408,11 +1514,10 @@ export class GenericAIProvider extends BaseAIProvider {
         modelName,
         trace,
         parsedResponse,
-        payload.max_tokens,
       );
     } catch (error: any) {
       const providerError = this.toProviderError(error);
-      logger.error('OpenAI chat request failed', {
+      logger.error('chat-completions request failed', {
         ...trace,
         error: this.summarizeError(error),
         translatedError: providerError.message,
@@ -1427,16 +1532,16 @@ export class GenericAIProvider extends BaseAIProvider {
     modelName: string,
     trace: RequestTraceContext,
     response: OpenAIChatResponse,
-    maxTokens: number | undefined,
   ): vscode.LanguageModelChatResponse {
+    request.lifetime?.signal.throwIfAborted();
     const responseMessage = response.choices[0]?.message;
     const directContent = readOpenAIChatMessageContentText(responseMessage);
     const reasoningContent = readOpenAIChatMessageReasoningText(responseMessage);
     const content = directContent || ((responseMessage?.tool_calls?.length ?? 0) > 0 ? '' : reasoningContent);
     const usageData = response.usage;
-    this.ensureNonEmptyCompletion('openai-chat', trace, vendor, modelName, content, responseMessage?.tool_calls);
-    this.logUpstreamResponseSummary('openai-chat', vendor, modelName, summarizeOpenAIChatResponse(response));
-    logger.debug('Parsed OpenAI chat response', {
+    this.ensureNonEmptyCompletion('chat-completions', trace, vendor, modelName, content, responseMessage?.tool_calls, request.configuredModel);
+    this.logUpstreamResponseSummary('chat-completions', vendor, modelName, summarizeOpenAIChatResponse(response));
+    logger.debug('Parsed chat-completions response', {
       ...trace,
       responseId: response.id,
       content,
@@ -1446,9 +1551,9 @@ export class GenericAIProvider extends BaseAIProvider {
       usage: usageData,
     });
     const normalizedUsage = normalizeTokenUsage(
-      'openai-chat',
+      'chat-completions',
       usageData as Record<string, unknown> | undefined,
-      maxTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxTokens),
+      this.resolveOutputBuffer(request),
     );
     const responseParts = this.buildResponseParts(content, responseMessage?.tool_calls, reasoningContent);
     if (normalizedUsage) {
@@ -1467,7 +1572,6 @@ export class GenericAIProvider extends BaseAIProvider {
     baseUrl: string,
     apiKey: string,
     trace: RequestTraceContext,
-    token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertRequestMessages(request.messages);
     this.logRequestMessageContentPreviews(trace, providerMessages);
@@ -1491,11 +1595,10 @@ export class GenericAIProvider extends BaseAIProvider {
     };
 
     const sendPayload = async (nextPayload: OpenAIResponsesRequest): Promise<vscode.LanguageModelChatResponse> => {
-      logger.debug('Prepared OpenAI responses payload', {
+      logger.debug('Prepared responses payload', {
         ...trace,
         baseUrl,
         payload: {
-          topP: nextPayload.top_p,
           reasoning: nextPayload.reasoning,
           maxOutputTokens: nextPayload.max_output_tokens,
           toolChoice: nextPayload.tool_choice,
@@ -1505,16 +1608,15 @@ export class GenericAIProvider extends BaseAIProvider {
           input: this.summarizeOpenAIResponsesInput(nextPayload.input),
         },
       });
-      const requestInit = this.buildRequestInit(apiKey, 'openai-responses', vendor.authType, token);
+      const requestInit = this.buildRequestInit(apiKey, 'responses', vendor.authType, request.lifetime?.signal);
       const response = await this.postWithRetry(`${baseUrl}/responses`, nextPayload, requestInit, trace);
       if (this.isSseResponse(response)) {
         return this.buildStreamingChatResponse(
           trace,
-          'openai-responses',
+          'responses',
           request,
           vendor,
           modelName,
-          nextPayload.max_output_tokens,
           async (queue) => {
             const state = createOpenAIResponsesStreamState();
             let streamedReasoning = false;
@@ -1534,7 +1636,7 @@ export class GenericAIProvider extends BaseAIProvider {
               }
             }
             const finalized = finalizeOpenAIResponsesStreamState(state, () => this.generateToolCallId());
-            this.logUpstreamResponseSummary('openai-responses', vendor, modelName, {
+            this.logUpstreamResponseSummary('responses', vendor, modelName, {
               mode: 'stream',
               responseId: state.responseId,
               contentLength: finalized.content.length,
@@ -1554,7 +1656,7 @@ export class GenericAIProvider extends BaseAIProvider {
       }
 
       logger.warn(
-        'OpenAI responses stream request returned non-SSE response; parsing response body directly',
+        'responses stream request returned non-SSE response; parsing response body directly',
         trace,
       );
       const parsedResponse = await this.readParsedResponse<OpenAIResponsesResponse>(response);
@@ -1564,16 +1666,14 @@ export class GenericAIProvider extends BaseAIProvider {
         modelName,
         trace,
         parsedResponse,
-        nextPayload.max_output_tokens,
       );
     };
 
-    let effectivePayload = payload;
     try {
-      return await sendPayload(effectivePayload);
+      return await sendPayload(payload);
     } catch (error: any) {
       const providerError = this.toProviderError(error);
-      logger.error('OpenAI responses request failed', {
+      logger.error('responses request failed', {
         ...trace,
         error: this.summarizeError(error),
         translatedError: providerError.message,
@@ -1588,12 +1688,12 @@ export class GenericAIProvider extends BaseAIProvider {
     modelName: string,
     trace: RequestTraceContext,
     response: OpenAIResponsesResponse,
-    maxOutputTokens: number | undefined,
   ): vscode.LanguageModelChatResponse {
-    this.logUpstreamResponseSummary('openai-responses', vendor, modelName, summarizeOpenAIResponsesResponse(response));
+    request.lifetime?.signal.throwIfAborted();
+    this.logUpstreamResponseSummary('responses', vendor, modelName, summarizeOpenAIResponsesResponse(response));
     const parsed = parseOpenAIResponsesResponse(response, () => this.generateToolCallId());
-    this.ensureNonEmptyCompletion('openai-responses', trace, vendor, modelName, parsed.content, parsed.toolCalls);
-    logger.debug('Parsed OpenAI responses payload', {
+    this.ensureNonEmptyCompletion('responses', trace, vendor, modelName, parsed.content, parsed.toolCalls);
+    logger.debug('Parsed responses payload', {
       ...trace,
       responseId: response.id,
       outputCount: response.output?.length ?? 0,
@@ -1611,15 +1711,15 @@ export class GenericAIProvider extends BaseAIProvider {
       usage: response.usage,
     });
     const normalizedUsage = normalizeTokenUsage(
-      'openai-responses',
+      'responses',
       response.usage as Record<string, unknown> | undefined,
-      maxOutputTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxOutputTokens),
+      this.resolveOutputBuffer(request),
     );
     const responseParts = this.buildResponseParts(parsed.content, parsed.toolCalls, parsed.reasoningContent);
     if (normalizedUsage) {
       responseParts.push(this.createUsageResponsePart(normalizedUsage));
     }
-    logger.debug('Built OpenAI responses result parts', {
+    logger.debug('Built responses result parts', {
       ...trace,
       responseParts: this.summarizeResponseParts(responseParts),
     });
@@ -1636,7 +1736,6 @@ export class GenericAIProvider extends BaseAIProvider {
     baseUrl: string,
     apiKey: string,
     trace: RequestTraceContext,
-    token?: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatResponse> {
     const providerMessages = this.convertRequestMessages(request.messages);
     this.logRequestMessageContentPreviews(trace, providerMessages);
@@ -1661,7 +1760,7 @@ export class GenericAIProvider extends BaseAIProvider {
     };
 
     try {
-      logger.info('Prepared Anthropic thinking request', {
+      logger.info('Prepared messages thinking request', {
         ...trace,
         thinking: payload.thinking,
         outputConfig: payload.output_config,
@@ -1673,15 +1772,13 @@ export class GenericAIProvider extends BaseAIProvider {
           .filter((message) => message.role === 'assistant')
           .map((message) => this.summarizeThinkingBlocksForLog(message.thinkingBlocks)),
       });
-      logger.debug('Prepared Anthropic payload', {
+      logger.debug('Prepared messages payload', {
         ...trace,
         baseUrl,
         payload: {
           maxTokens: payload.max_tokens,
           thinking: payload.thinking,
           outputConfig: payload.output_config,
-          temperature: payload.temperature,
-          topP: payload.top_p,
           stream: payload.stream,
           toolChoice: payload.tool_choice,
           toolCount: payload.tools?.length ?? 0,
@@ -1690,16 +1787,15 @@ export class GenericAIProvider extends BaseAIProvider {
           messageCount: payload.messages.length,
         },
       });
-      const requestInit = this.buildRequestInit(apiKey, 'anthropic', vendor.authType, token);
+      const requestInit = this.buildRequestInit(apiKey, 'messages', vendor.authType, request.lifetime?.signal);
       const response = await this.postWithRetry(`${baseUrl}/messages`, payload, requestInit, trace);
       if (this.isSseResponse(response)) {
         return this.buildStreamingChatResponse(
           trace,
-          'anthropic',
+          'messages',
           request,
           vendor,
           modelName,
-          payload.max_tokens,
           async (queue) => {
             const state = createAnthropicStreamState();
             const streamEventSummaries: Array<Record<string, unknown>> = [];
@@ -1716,12 +1812,12 @@ export class GenericAIProvider extends BaseAIProvider {
               if (streamEventSummaries.length < 40) {
                 streamEventSummaries.push(eventSummary);
               }
-              logger.debug('Anthropic stream event received', {
+              logger.debug('messages stream event received', {
                 ...trace,
                 event: eventSummary,
               });
               if (this.isAnthropicErrorStreamEvent(event.event, streamEvent)) {
-                logger.warn('Anthropic stream returned error event', {
+                logger.warn('messages stream returned error event', {
                   ...trace,
                   event: eventSummary,
                 });
@@ -1733,7 +1829,7 @@ export class GenericAIProvider extends BaseAIProvider {
               }
             }
             const finalized = finalizeAnthropicStreamState(state, () => this.generateToolCallId());
-            logger.info('Anthropic stream thinking summary', {
+            logger.info('messages stream thinking summary', {
               ...trace,
               responseId: state.responseId,
               stopReason: state.stopReason,
@@ -1753,7 +1849,7 @@ export class GenericAIProvider extends BaseAIProvider {
               })),
             });
             if (finalized.content.trim().length === 0 && finalized.toolCalls.length === 0) {
-              logger.warn('Anthropic stream finalized without text or tool calls', {
+              logger.warn('messages stream finalized without text or tool calls', {
                 ...trace,
                 responseId: state.responseId,
                 stopReason: state.stopReason,
@@ -1761,7 +1857,7 @@ export class GenericAIProvider extends BaseAIProvider {
                 recentEvents: streamEventSummaries,
               });
             }
-            this.logUpstreamResponseSummary('anthropic', vendor, modelName, {
+            this.logUpstreamResponseSummary('messages', vendor, modelName, {
               mode: 'stream',
               responseId: state.responseId,
               contentLength: finalized.content.length,
@@ -1784,7 +1880,7 @@ export class GenericAIProvider extends BaseAIProvider {
         );
       }
 
-      logger.warn('Anthropic stream request returned non-SSE response; parsing response body directly', trace);
+      logger.warn('messages stream request returned non-SSE response; parsing response body directly', trace);
       const parsedResponse = await this.readParsedResponse<AnthropicChatResponse>(response);
       return this.buildAnthropicResponseFromPayload(
         request,
@@ -1792,11 +1888,10 @@ export class GenericAIProvider extends BaseAIProvider {
         modelName,
         trace,
         parsedResponse,
-        payload.max_tokens,
       );
     } catch (error: any) {
       const providerError = this.toProviderError(error);
-      logger.error('Anthropic request failed', {
+      logger.error('messages request failed', {
         ...trace,
         error: this.summarizeError(error),
         translatedError: providerError.message,
@@ -1811,13 +1906,13 @@ export class GenericAIProvider extends BaseAIProvider {
     modelName: string,
     trace: RequestTraceContext,
     response: AnthropicChatResponse,
-    maxTokens: number | undefined,
   ): vscode.LanguageModelChatResponse {
+    request.lifetime?.signal.throwIfAborted();
     const finalized = this.parseAnthropicCompletion(vendor, modelName, trace, response);
     const normalizedUsage = normalizeTokenUsage(
-      'anthropic',
+      'messages',
       finalized.usage,
-      maxTokens === undefined ? undefined : this.resolveOutputBuffer(request, maxTokens),
+      this.resolveOutputBuffer(request),
     );
     const responseParts = this.buildResponseParts(
       finalized.content,
@@ -1840,15 +1935,15 @@ export class GenericAIProvider extends BaseAIProvider {
     trace: RequestTraceContext,
     response: AnthropicChatResponse,
   ): StreamingCompletionResult {
-    this.logUpstreamResponseSummary('anthropic', vendor, modelName, summarizeAnthropicResponseForLogging(response));
-    logger.debug('Anthropic raw response shape', {
+    this.logUpstreamResponseSummary('messages', vendor, modelName, summarizeAnthropicResponseForLogging(response));
+    logger.debug('messages raw response shape', {
       ...trace,
       responseShape: this.summarizeRawResponseShape(response),
       responseContent: response.content,
     });
     const parsed = parseAnthropicResponse(response, () => this.generateToolCallId());
-    this.ensureNonEmptyCompletion('anthropic', trace, vendor, modelName, parsed.content, parsed.toolCalls);
-    logger.debug('Parsed Anthropic response', {
+    this.ensureNonEmptyCompletion('messages', trace, vendor, modelName, parsed.content, parsed.toolCalls);
+    logger.debug('Parsed messages response', {
       ...trace,
       responseId: response.id,
       parsedContent: parsed.content,
@@ -1857,7 +1952,7 @@ export class GenericAIProvider extends BaseAIProvider {
       parsedToolCallCount: parsed.toolCalls.length,
       usage: response.usage,
     });
-    logger.info('Parsed Anthropic thinking summary', {
+    logger.info('Parsed messages thinking summary', {
       ...trace,
       responseId: response.id,
       parsedReasoningContentLength: parsed.reasoningContent?.length ?? 0,
@@ -1886,6 +1981,7 @@ export class GenericAIProvider extends BaseAIProvider {
     let attempt = 0;
 
     while (true) {
+      requestInit.signal?.throwIfAborted();
       const startedAt = Date.now();
       logger.debug('Upstream POST attempt start', {
         ...trace,
@@ -1909,7 +2005,7 @@ export class GenericAIProvider extends BaseAIProvider {
         });
         return response;
       } catch (error: any) {
-        if (this.isAbortError(error)) {
+        if (requestInit.signal?.aborted || this.isAbortError(error)) {
           logger.warn('Upstream POST aborted', {
             ...trace,
             attempt: attempt + 1,
@@ -1941,14 +2037,30 @@ export class GenericAIProvider extends BaseAIProvider {
           delayMs,
           url,
         });
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
+        await this.waitForRetry(delayMs, requestInit.signal);
         attempt += 1;
       }
     }
   }
 
+  private async waitForRetry(delayMs: number, signal?: AbortSignal | null): Promise<void> {
+    signal?.throwIfAborted();
+    await new Promise<void>((resolve, reject) => {
+      const onAbort = () => {
+        clearTimeout(timer);
+        signal?.removeEventListener('abort', onAbort);
+        reject(signal?.reason);
+      };
+      const timer = setTimeout(() => {
+        signal?.removeEventListener('abort', onAbort);
+        resolve();
+      }, delayMs);
+      signal?.addEventListener('abort', onAbort, { once: true });
+    });
+  }
+
   private logUpstreamResponseSummary(
-    protocol: 'openai-chat' | 'openai-responses' | 'anthropic',
+    protocol: 'chat-completions' | 'responses' | 'messages',
     vendor: VendorConfig,
     modelName: string,
     summary: Record<string, unknown>,
@@ -1967,15 +2079,17 @@ export class GenericAIProvider extends BaseAIProvider {
     modelName: string,
     usage: NormalizedTokenUsage | undefined,
   ): void {
-    const model = this.getModel(request.modelId);
-    const totalContextWindow = model?.maxTokens;
+    const model = request.modelSnapshot;
+    const totalContextWindow = request.budget.effectiveContextWindow;
     logger.debug('Language model token usage', {
       vendor: vendor.name,
       modelId: request.modelId,
       modelName,
-      maxTokens: model?.maxTokens,
-      maxInputTokens: model?.maxInputTokens,
-      maxOutputTokens: model?.maxOutputTokens,
+      maxTokens: model.maxTokens,
+      maxInputTokens: request.budget.inputTokens,
+      maxOutputTokens: request.budget.outputTokens,
+      contextBudget: request.budget,
+      tokenLimits: model.tokenLimits,
       totalContextWindow,
       promptTokens: usage?.promptTokens,
       completionTokens: usage?.completionTokens,
@@ -1987,27 +2101,11 @@ export class GenericAIProvider extends BaseAIProvider {
   }
 
   private resolveRequestedOutputLimit(request: GenericChatRequest): number {
-    const model = this.getModel(request.modelId);
-    if (!model) {
-      return DEFAULT_REQUEST_MAX_TOKENS;
-    }
-    return Math.max(1, Math.min(DEFAULT_REQUEST_MAX_TOKENS, Math.floor(model.maxOutputTokens)));
+    return request.budget.outputTokens;
   }
 
-  private resolveOutputBuffer(
-    request: GenericChatRequest,
-    requestedOutputLimit: number | undefined,
-  ): number | undefined {
-    const model = this.getModel(request.modelId);
-    if (!model) {
-      return requestedOutputLimit;
-    }
-
-    if (requestedOutputLimit === undefined) {
-      return model.maxOutputTokens;
-    }
-
-    return Math.max(0, Math.min(model.maxOutputTokens, Math.floor(requestedOutputLimit)));
+  private resolveOutputBuffer(request: GenericChatRequest): number {
+    return request.budget.outputTokens;
   }
 
   private async withOptionalV1Retry<T>(
@@ -2155,31 +2253,23 @@ export class GenericAIProvider extends BaseAIProvider {
     apiKey: string,
     apiStyle: VendorApiStyle,
     authType?: VendorAuthType,
-    token?: vscode.CancellationToken,
+    signal?: AbortSignal,
   ): RequestInit {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
 
-    const effectiveAuthType = authType ?? (apiStyle === 'anthropic' ? 'x-api-key' : 'bearer');
+    const effectiveAuthType = authType ?? (apiStyle === 'messages' ? 'x-api-key' : 'bearer');
     if (effectiveAuthType === 'x-api-key') {
       headers['x-api-key'] = apiKey;
     } else {
       headers.Authorization = `Bearer ${apiKey}`;
     }
-    if (apiStyle === 'anthropic') {
+    if (apiStyle === 'messages') {
       headers['anthropic-version'] = '2023-06-01';
     }
 
-    const init: RequestInit = { headers };
-
-    if (token) {
-      const controller = new AbortController();
-      token.onCancellationRequested(() => controller.abort());
-      init.signal = controller.signal;
-    }
-
-    return init;
+    return { headers, ...(signal ? { signal } : {}) };
   }
 
   private toProviderError(error: any): vscode.LanguageModelError {
@@ -2306,21 +2396,6 @@ export class GenericAIProvider extends BaseAIProvider {
     return `${prefix}_${Date.now()}_${Math.floor(Math.random() * 100000)}`;
   }
 
-  private attachCancellationLogging(token: vscode.CancellationToken | undefined, trace: RequestTraceContext): void {
-    if (!token) {
-      return;
-    }
-
-    if (token.isCancellationRequested) {
-      logger.warn('Language model request already cancelled before dispatch', trace);
-      return;
-    }
-
-    token.onCancellationRequested(() => {
-      logger.warn('Language model cancellation requested', trace);
-    });
-  }
-
   private summarizeGenericChatRequest(request: GenericChatRequest): Record<string, unknown> {
     return {
       messageCount: request.messages.length,
@@ -2333,6 +2408,7 @@ export class GenericAIProvider extends BaseAIProvider {
       toolCount: request.options?.tools?.length ?? 0,
       toolMode: request.options?.toolMode,
       capabilities: request.capabilities,
+      contextBudget: request.budget,
     };
   }
 
@@ -2529,7 +2605,7 @@ export class GenericAIProvider extends BaseAIProvider {
   }
 
   private isStreamingAllowed(request: GenericChatRequest): boolean {
-    return this.getModel(request.modelId)?.streaming !== false && !this.isStreamingDisabledForSession(request.modelId);
+    return request.streamingAllowed ?? request.modelSnapshot.streaming !== false;
   }
 
   private disableStreamingForSession(modelId: string, reason: string, trace?: RequestTraceContext): void {
@@ -2569,7 +2645,7 @@ export class GenericAIProvider extends BaseAIProvider {
       (typeof payloadRecord.message === 'string' && payloadRecord.message.trim().length > 0
         ? payloadRecord.message.trim()
         : undefined) ??
-      'Anthropic stream returned an error event.';
+      'messages stream returned an error event.';
     const status = this.readAnthropicStreamErrorStatus(payloadRecord, payloadError);
     const error: Error & { response?: { status?: number; data: unknown } } = new Error(message);
     error.response = {
@@ -2718,6 +2794,7 @@ export class GenericAIProvider extends BaseAIProvider {
     modelName: string,
     content: string,
     toolCalls: ChatToolCall[] | undefined,
+    configuredModel?: VendorModelConfig,
   ): void {
     if (content.trim().length > 0 || (toolCalls?.length ?? 0) > 0) {
       return;
@@ -2729,22 +2806,26 @@ export class GenericAIProvider extends BaseAIProvider {
       vendor: vendor.name,
       modelName,
     });
-    if (protocol === 'openai-chat') {
-      this.promptToSwitchModelToResponsesApi(vendor, modelName, trace);
+    if (protocol === 'chat-completions') {
+      this.promptToSwitchModelToResponsesApi(vendor, modelName, trace, configuredModel);
     }
     throw markEmptyModelResponseError(
       new vscode.LanguageModelError(getMessage('requestFailed', getMessage('emptyModelResponse'))),
     );
   }
 
-  private promptToSwitchModelToResponsesApi(vendor: VendorConfig, modelName: string, trace: RequestTraceContext): void {
+  private promptToSwitchModelToResponsesApi(
+    vendor: VendorConfig,
+    modelName: string,
+    trace: RequestTraceContext,
+    configuredModel?: VendorModelConfig,
+  ): void {
     const promptKey = `${vendor.name}\u0000${modelName}`;
     if (this.emptyOpenAIChatPromptedModelKeys.has(promptKey)) {
       return;
     }
 
-    const model = this.findConfiguredModel(vendor, modelName);
-    if (model?.apiStyle === 'openai-responses') {
+    if (configuredModel?.apiStyle === 'responses') {
       return;
     }
 
@@ -2758,7 +2839,7 @@ export class GenericAIProvider extends BaseAIProvider {
           return;
         }
 
-        const changed = await this.configStore.updateVendorModelApiStyle(vendor.name, modelName, 'openai-responses');
+        const changed = await this.configStore.updateVendorModelApiStyle(vendor.name, modelName, 'responses');
         if (!changed) {
           logger.warn('Failed to switch model to Responses API because the model config was not found', {
             ...trace,
@@ -2768,7 +2849,7 @@ export class GenericAIProvider extends BaseAIProvider {
           return;
         }
 
-        logger.info('Switched model to Responses API after empty OpenAI chat completion', {
+        logger.info('Switched model to Responses API after empty chat-completions completion', {
           ...trace,
           vendor: vendor.name,
           modelName,
@@ -2776,7 +2857,7 @@ export class GenericAIProvider extends BaseAIProvider {
         await this.refreshModels();
       })
       .catch((error: unknown) => {
-        logger.warn('Failed to prompt for Responses API switch after empty OpenAI chat completion', {
+        logger.warn('Failed to prompt for Responses API switch after empty chat-completions completion', {
           ...trace,
           vendor: vendor.name,
           modelName,
@@ -2815,7 +2896,6 @@ export class GenericAIProvider extends BaseAIProvider {
     request: GenericChatRequest,
     vendor: VendorConfig,
     modelName: string,
-    requestedOutputLimit: number | undefined,
     execute: (
       queue: AsyncIterableQueue<vscode.LanguageModelResponsePart | unknown>,
     ) => Promise<StreamingCompletionResult>,
@@ -2824,11 +2904,15 @@ export class GenericAIProvider extends BaseAIProvider {
     const queue = new AsyncIterableQueue<vscode.LanguageModelResponsePart | unknown>();
     const result = {} as vscode.LanguageModelChatResponse & Record<string, unknown>;
     result[RESPONSE_TRACE_ID_FIELD] = trace.traceId;
+    if (request.lifetime) {
+      request.lifetime.streaming = true;
+    }
 
     const completion = (async () => {
       try {
         const finalized = await execute(queue);
-        provider.ensureNonEmptyCompletion(protocol, trace, vendor, modelName, finalized.content, finalized.toolCalls);
+        request.lifetime?.signal.throwIfAborted();
+        provider.ensureNonEmptyCompletion(protocol, trace, vendor, modelName, finalized.content, finalized.toolCalls, request.configuredModel);
         for (const part of provider.buildResponseParts(
           '',
           finalized.toolCalls,
@@ -2841,7 +2925,7 @@ export class GenericAIProvider extends BaseAIProvider {
         const normalizedUsage = normalizeTokenUsage(
           protocol,
           finalized.usage,
-          requestedOutputLimit === undefined ? undefined : provider.resolveOutputBuffer(request, requestedOutputLimit),
+          provider.resolveOutputBuffer(request),
         );
         if (normalizedUsage) {
           queue.push(provider.createUsageResponsePart(normalizedUsage));
@@ -2862,16 +2946,24 @@ export class GenericAIProvider extends BaseAIProvider {
         queue.close();
         return finalized;
       } catch (error) {
-        provider.disableStreamingForSession(request.modelId, `${protocol}_stream_error`, trace);
-        const providerError = error instanceof vscode.LanguageModelError ? error : provider.toProviderError(error);
+        if (!request.lifetime?.signal.aborted && !provider.isAbortError(error)) {
+          provider.disableStreamingForSession(request.modelId, `${protocol}_stream_error`, trace);
+        }
+        const providerError = request.lifetime?.signal.aborted
+          ? new vscode.LanguageModelError(getMessage('requestCancelled'))
+          : error instanceof vscode.LanguageModelError ? error : provider.toProviderError(error);
         logger.error('Language model streaming response failed', {
           ...trace,
           error: provider.summarizeError(error),
         });
         queue.fail(providerError);
         throw providerError;
+      } finally {
+        request.lifetime?.dispose();
       }
     })();
+    // stream 消费方可独立消费；保留原 Promise 的拒绝供迭代器观察。
+    void completion.catch(() => undefined);
 
     result.stream = queue;
     result.text = (async function* streamText(): AsyncIterable<string> {
@@ -2927,7 +3019,11 @@ export class GenericAIProvider extends BaseAIProvider {
       enabled: model.enabled !== false,
       apiStyle: model.apiStyle,
       description: model.description,
-      contextSize: model.contextSize,
+      contextWindow: model.contextWindow,
+      maxInputTokens: model.maxInputTokens,
+      maxOutputTokens: model.maxOutputTokens,
+      limitSource: model.limitSource,
+      contextBudget: model.contextBudget,
       capabilities: model.capabilities,
       price: model.price,
     }));

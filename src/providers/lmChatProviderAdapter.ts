@@ -20,6 +20,7 @@ import {
 import { getMessage } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
 import { NormalizedTokenUsage, readAttachedTokenUsage } from './tokenUsage';
+import { ResolvedModelBudget, resolveRequestBudget } from './contextBudget';
 
 const MAX_EMPTY_MODEL_RESPONSE_RETRIES = 2;
 const LANGUAGE_MODELS_PICKER_LOG_PREFIX = '[coding-plans][language-models-picker]';
@@ -44,7 +45,9 @@ type LanguageModelConfigurationSchemaProperty = {
   description?: string;
   enum?: Array<string | number>;
   default?: string | number;
-  group?: 'navigation';
+  group?: 'navigation' | 'tokens';
+  enumItemLabels?: string[];
+  enumDescriptions?: string[];
 };
 
 type LanguageModelConfigurationSchema = {
@@ -52,9 +55,10 @@ type LanguageModelConfigurationSchema = {
 };
 
 type LanguageModelChatInformationWithHiddenFields = vscode.LanguageModelChatInformation & {
+  maxContextWindowTokens?: number;
   configurationSchema?: LanguageModelConfigurationSchema;
   isUserSelectable?: boolean;
-  apiType?: string;
+  apiType?: 'chat' | 'responses' | 'anthropic';
   supportsReasoningEffort?: readonly string[];
   reasoningEffortFormat?: string;
   zeroDataRetentionEnabled?: boolean;
@@ -77,9 +81,17 @@ type ProvideLanguageModelChatResponseOptionsWithModelConfiguration = vscode.Prov
 
 function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModelConfigurationSchema {
   const properties: Record<string, LanguageModelConfigurationSchemaProperty> = {};
+  properties.contextSize = {
+    type: 'number',
+    title: getMessage('contextSizeTitle'),
+    description: getMessage('contextSizeDescription'),
+    enum: [...model.contextBudget.presets],
+    default: model.contextBudget.inputTokens,
+    group: 'tokens',
+  };
 
   if (model.capabilities.thinking !== false) {
-    if (model.apiStyle === 'anthropic') {
+    if (model.apiStyle === 'messages') {
       const effortOptions = resolveReasoningEffortOptions(model, [...ANTHROPIC_EFFORT_VALUES]);
       if (effortOptions.length > 0) {
         properties[EFFORT_MODEL_OPTION_KEY] = {
@@ -99,7 +111,7 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
         default: 'think',
         group: 'navigation',
       };
-    } else if (model.apiStyle === 'openai-responses') {
+    } else if (model.apiStyle === 'responses') {
       const effortOptions = resolveReasoningEffortOptions(model, [...RESPONSES_THINKING_EFFORT_VALUES]);
       if (effortOptions.length > 0) {
         properties[THINKING_EFFORT_MODEL_OPTION_KEY] = {
@@ -161,6 +173,7 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
     version: model.version,
     maxInputTokens: model.maxInputTokens,
     maxOutputTokens: model.maxOutputTokens,
+    maxContextWindowTokens: model.tokenLimits.contextWindow,
     capabilities: {
       ...model.capabilities,
       editToolsHint: model.editTools,
@@ -170,7 +183,8 @@ function toLanguageModelInfo(model: BaseLanguageModel): vscode.LanguageModelChat
     // Without it the chat model picker filters the model out (AIo() filter).
     ...({
       isUserSelectable: true,
-      apiType: model.apiType,
+      // 宿主隐藏字段使用其自身枚举，仅在适配边界转换。
+      apiType: model.apiStyle === 'messages' ? 'anthropic' : model.apiStyle === 'responses' ? 'responses' : 'chat',
       supportsReasoningEffort: model.supportsReasoningEffort,
       reasoningEffortFormat: model.reasoningEffortFormat,
       zeroDataRetentionEnabled: model.zeroDataRetentionEnabled,
@@ -384,7 +398,8 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
 
     let traceId = this.generateTraceId('adapter');
     const requestMessageSummaries = messages.map((message) => this.summarizeRequestMessage(message));
-    const forwardedOptions = this.toForwardedRequestOptions(options);
+    const forwardedOptions = targetModel.prepareRequestOptions(this.toForwardedRequestOptions(options));
+    const budget = resolveRequestBudget(targetModel.contextBudget, forwardedOptions.modelOptions?.contextSize);
     logger.info('Adapter received language model chat request', {
       traceId,
       provider: vendor,
@@ -423,8 +438,6 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
           hasText: !!response.text,
           attempt: attempt + 1,
         });
-        this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
-
         let reportedPartCount = 0;
         let thinkingPartCount = 0;
         try {
@@ -473,7 +486,9 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
           thinkingPartCount,
           attempt: attempt + 1,
         });
-        this.reportUsageToProgress(progress, response, traceId, vendor, model, targetModel.maxTokens, options);
+        if (!token.isCancellationRequested) {
+          this.reportUsageToProgress(progress, response, traceId, vendor, model, budget, options);
+        }
         return;
       }
     } catch (error) {
@@ -756,7 +771,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     traceId: string,
     vendor: string,
     model: vscode.LanguageModelChatInformation,
-    totalContextWindow: number,
+    budget: ResolvedModelBudget,
     options?: vscode.ProvideLanguageModelChatResponseOptions,
   ): void {
     if (!this.shouldTrackContextUsage(options)) {
@@ -769,19 +784,15 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     }
 
     const usage = readAttachedTokenUsage(response);
-    if (!usage) {
-      return;
-    }
-
-    this.updateContextUsageState(traceId, vendor, model, usage, totalContextWindow);
+    this.updateContextUsageState(traceId, vendor, model, usage, budget);
   }
 
   private updateContextUsageState(
     traceId: string,
     vendor: string,
     model: vscode.LanguageModelChatInformation,
-    usage: NormalizedTokenUsage,
-    totalContextWindow: number,
+    usage: NormalizedTokenUsage | undefined,
+    budget: ResolvedModelBudget,
   ): void {
     if (!this.contextUsageState) {
       return;
@@ -791,13 +802,17 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       provider: vendor,
       modelId: model.id,
       modelName: model.name,
-      totalContextWindow,
+      totalContextWindow: budget.effectiveContextWindow,
+      inputBudget: budget.inputTokens,
+      outputBudget: budget.outputTokens,
+      modelContextWindow: budget.modelContextWindow,
       traceId,
       recordedAt: Date.now(),
-      promptTokens: usage.promptTokens,
-      completionTokens: usage.completionTokens,
-      totalTokens: usage.totalTokens,
-      outputBuffer: usage.outputBuffer,
+      usageAvailable: usage !== undefined,
+      promptTokens: usage?.promptTokens ?? 0,
+      completionTokens: usage?.completionTokens ?? 0,
+      totalTokens: usage?.totalTokens ?? 0,
+      outputBuffer: budget.outputTokens,
     };
     this.contextUsageState.update(snapshot);
     logger.info('Adapter cached last completed request usage for CodingPlans Context status bar', {
@@ -866,6 +881,12 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       ...(modelConfiguration ?? {}),
       ...(modelOptions ?? {}),
     });
+    if (modelConfiguration?.contextSize !== undefined) {
+      if (modelOptions?.contextSize !== undefined && modelOptions.contextSize !== modelConfiguration.contextSize) {
+        logger.warn('使用宿主已选择的输入预算，调用参数中的上下文值保留为诊断信息。');
+      }
+      forwardedModelOptions.contextSize = modelConfiguration.contextSize;
+    }
 
     return {
       ...options,

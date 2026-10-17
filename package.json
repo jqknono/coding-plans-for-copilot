@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.17.2",
+    "version": "0.18.0",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -12,7 +12,7 @@
         "url": "https://github.com/jqknono/coding-plans-for-copilot.git"
     },
     "engines": {
-        "vscode": "^1.120.0"
+        "vscode": "^1.142.0"
     },
     "categories": [
         "Machine Learning",
@@ -178,7 +178,7 @@
                             "type": "string"
                         },
                         "maxDiffLines": {
-                            "type": "number",
+                            "type": "integer",
                             "minimum": 1
                         },
                         "pipelineMode": {
@@ -190,23 +190,23 @@
                             ]
                         },
                         "summaryTriggerLines": {
-                            "type": "number",
+                            "type": "integer",
                             "minimum": 1
                         },
                         "summaryChunkLines": {
-                            "type": "number",
+                            "type": "integer",
                             "minimum": 1
                         },
                         "summaryMaxChunks": {
-                            "type": "number",
+                            "type": "integer",
                             "minimum": 1
                         },
                         "maxBodyBulletCount": {
-                            "type": "number",
+                            "type": "integer",
                             "minimum": 2
                         },
                         "subjectMaxLength": {
-                            "type": "number",
+                            "type": "integer",
                             "minimum": 20
                         },
                         "requireConventionalType": {
@@ -216,13 +216,8 @@
                             "type": "boolean"
                         },
                         "llmMaxPromptLength": {
-                            "type": "number",
+                            "type": "integer",
                             "minimum": 500
-                        },
-                        "recentStyleMaxTotalLength": {
-                            "type": "number",
-                            "minimum": 500,
-                            "deprecationMessage": "Deprecated: use llmMaxPromptLength instead."
                         }
                     },
                     "default": {
@@ -280,18 +275,6 @@
                     "description": "%configuration.coding-plans.locale.description%",
                     "order": 6
                 },
-                "coding-plans.overrideContextWindow": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "%configuration.coding-plans.overrideContextWindow.description%",
-                    "order": 8
-                },
-                "coding-plans.overrideMaxOutputTokens": {
-                    "type": "number",
-                    "minimum": 0,
-                    "description": "%configuration.coding-plans.overrideMaxOutputTokens.description%",
-                    "order": 9
-                },
                 "coding-plans.autoRefreshModels": {
                     "type": "boolean",
                     "default": false,
@@ -305,7 +288,7 @@
                     "order": 11
                 },
                 "coding-plans.terminalIntent.maxEntries": {
-                    "type": "number",
+                    "type": "integer",
                     "default": 10,
                     "minimum": 1,
                     "description": "%configuration.coding-plans.terminalIntent.maxEntries.description%",
@@ -322,15 +305,12 @@
                         ],
                         "properties": {
                             "name": {
-                                "type": "string"
+                                "type": "string",
+                                "pattern": "\\S"
                             },
                             "baseUrl": {
-                                "type": "string"
-                            },
-                            "apiKey": {
                                 "type": "string",
-                                "description": "%configuration.coding-plans.vendors.apiKey.description%",
-                                "deprecationMessage": "%configuration.coding-plans.vendors.apiKey.deprecationMessage%"
+                                "pattern": "\\S"
                             },
                             "authType": {
                                 "type": "string",
@@ -342,7 +322,8 @@
                             },
                             "usageUrl": {
                                 "type": "string",
-                                "description": "Optional vendor usage endpoint. When configured, the extension fetches coding-plan quota usage and shows percentage summaries in the status bar. Currently verified for Zhipu usage APIs."
+                                "description": "Optional vendor usage endpoint. When configured, the extension fetches coding-plan quota usage and shows percentage summaries in the status bar. Currently verified for Zhipu usage APIs.",
+                                "pattern": "\\S"
                             },
                             "useModelsEndpoint": {
                                 "type": "boolean",
@@ -354,27 +335,6 @@
                                 "default": false,
                                 "description": "Whether newly discovered models for this vendor should have vision capabilities by default."
                             },
-                            "defaultTemperature": {
-                                "oneOf": [
-                                    {
-                                        "type": "null"
-                                    },
-                                    {
-                                        "type": "number",
-                                        "exclusiveMinimum": 0,
-                                        "maximum": 1
-                                    }
-                                ],
-                                "default": null,
-                                "description": "%configuration.coding-plans.vendors.defaultTemperature.description%",
-                                "deprecationMessage": "%configuration.coding-plans.vendors.defaultTemperature.deprecationMessage%"
-                            },
-                            "defaultTopP": {
-                                "type": "number",
-                                "minimum": 0,
-                                "maximum": 1,
-                                "description": "%configuration.coding-plans.vendors.defaultTopP.description%"
-                            },
                             "models": {
                                 "type": "array",
                                 "items": {
@@ -384,7 +344,8 @@
                                     ],
                                     "properties": {
                                         "name": {
-                                            "type": "string"
+                                            "type": "string",
+                                            "pattern": "\\S"
                                         },
                                         "enabled": {
                                             "type": "boolean",
@@ -393,33 +354,6 @@
                                         },
                                         "description": {
                                             "type": "string"
-                                        },
-                                        "temperature": {
-                                            "oneOf": [
-                                                {
-                                                    "type": "string",
-                                                    "enum": [
-                                                        "inherit"
-                                                    ],
-                                                    "enumDescriptions": [
-                                                        "%configuration.coding-plans.vendors.models.temperature.inherit.description%"
-                                                    ]
-                                                },
-                                                {
-                                                    "type": "number",
-                                                    "exclusiveMinimum": 0,
-                                                    "maximum": 1
-                                                }
-                                            ],
-                                            "default": "inherit",
-                                            "description": "%configuration.coding-plans.vendors.models.temperature.description%",
-                                            "deprecationMessage": "%configuration.coding-plans.vendors.models.temperature.deprecationMessage%"
-                                        },
-                                        "topP": {
-                                            "type": "number",
-                                            "minimum": 0,
-                                            "maximum": 1,
-                                            "description": "%configuration.coding-plans.vendors.models.topP.description%"
                                         },
                                         "capabilities": {
                                             "type": "object",
@@ -440,34 +374,80 @@
                                                     "description": "Whether to expose and send reasoning/thinking controls for this model."
                                                 }
                                             },
-                                            "required": [
-                                                "tools",
-                                                "vision"
-                                            ]
+                                            "additionalProperties": false
                                         },
-                                        "contextSize": {
-                                            "type": "number",
-                                            "minimum": 1,
-                                            "description": "Primary total context window size for this model. When present, it takes precedence over maxInputTokens/maxOutputTokens for model declaration and is split into maxInputTokens=80% plus maxOutputTokens=20% so VS Code reports the expected total context."
+                                        "contextWindow": {
+                                            "type": "integer",
+                                            "minimum": 2,
+                                            "title": "%configuration.coding-plans.vendors.models.contextWindow.title%",
+                                            "description": "%configuration.coding-plans.vendors.models.contextWindow.description%"
                                         },
                                         "maxInputTokens": {
-                                            "type": "number",
+                                            "type": "integer",
                                             "minimum": 1,
-                                            "description": "Alternative explicit input context token limit. Used when contextSize is not set."
+                                            "title": "%configuration.coding-plans.vendors.models.maxInputTokens.title%",
+                                            "description": "%configuration.coding-plans.vendors.models.maxInputTokens.description%"
                                         },
                                         "maxOutputTokens": {
-                                            "type": "number",
+                                            "type": "integer",
                                             "minimum": 1,
-                                            "description": "Alternative explicit output token limit. Used when contextSize is not set."
+                                            "title": "%configuration.coding-plans.vendors.models.maxOutputTokens.title%",
+                                            "description": "%configuration.coding-plans.vendors.models.maxOutputTokens.description%"
+                                        },
+                                        "contextBudget": {
+                                            "type": "object",
+                                            "title": "%configuration.coding-plans.vendors.models.contextBudget.title%",
+                                            "additionalProperties": false,
+                                            "description": "%configuration.coding-plans.vendors.models.contextBudget.description%",
+                                            "defaultSnippets": [
+                                                {
+                                                    "label": "%configuration.coding-plans.vendors.models.contextBudget.snippet.label%",
+                                                    "body": {
+                                                        "inputTokens": 64000,
+                                                        "outputTokens": 16000
+                                                    }
+                                                }
+                                            ],
+                                            "properties": {
+                                                "inputTokens": {
+                                                    "type": "integer",
+                                                    "minimum": 1,
+                                                    "description": "%configuration.coding-plans.vendors.models.contextBudget.inputTokens.description%"
+                                                },
+                                                "outputTokens": {
+                                                    "type": "integer",
+                                                    "minimum": 1,
+                                                    "description": "%configuration.coding-plans.vendors.models.contextBudget.outputTokens.description%"
+                                                },
+                                                "presets": {
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "integer",
+                                                        "minimum": 1
+                                                    },
+                                                    "description": "%configuration.coding-plans.vendors.models.contextBudget.presets.description%"
+                                                }
+                                            }
+                                        },
+                                        "limitSource": {
+                                            "type": "string",
+                                            "title": "%configuration.coding-plans.vendors.models.limitSource.title%",
+                                            "doNotSuggest": true,
+                                            "enum": [
+                                                "configured",
+                                                "endpoint",
+                                                "models.dev"
+                                            ],
+                                            "description": "%configuration.coding-plans.vendors.models.limitSource.description%"
                                         },
                                         "apiStyle": {
                                             "type": "string",
                                             "enum": [
-                                                "openai-chat",
-                                                "openai-responses",
-                                                "anthropic"
+                                                "chat-completions",
+                                                "responses",
+                                                "messages"
                                             ],
-                                            "description": "Optional per-model API protocol style. When set, it overrides the vendor defaultApiStyle. For openai-responses models, request usage is read from the /responses result when available."
+                                            "description": "Optional per-model API protocol style. When set, it overrides the vendor defaultApiStyle. For responses models, request usage is read from the /responses result when available."
                                         },
                                         "streaming": {
                                             "type": "boolean",
@@ -478,12 +458,7 @@
                                             "type": "array",
                                             "items": {
                                                 "type": "string",
-                                                "enum": [
-                                                    "apply-patch",
-                                                    "multi-find-replace",
-                                                    "find-replace",
-                                                    "code-rewrite"
-                                                ]
+                                                "pattern": "\\S"
                                             },
                                             "default": [
                                                 "apply-patch",
@@ -514,7 +489,7 @@
                                                 "chat-completions",
                                                 "responses"
                                             ],
-                                            "description": "Copilot-style reasoning effort wire format metadata. Defaults to the selected API style when not configured. Not applicable for anthropic API style."
+                                            "description": "Copilot-style reasoning effort wire format metadata: chat-completions or responses. Defaults to the selected API style when omitted; messages uses Anthropic thinking controls."
                                         },
                                         "zeroDataRetentionEnabled": {
                                             "type": "boolean",
@@ -557,28 +532,30 @@
                                                 }
                                             }
                                         }
-                                    }
+                                    },
+                                    "additionalProperties": false
                                 },
                                 "default": []
                             },
                             "defaultApiStyle": {
                                 "type": "string",
                                 "enum": [
-                                    "openai-chat",
-                                    "openai-responses",
-                                    "anthropic"
+                                    "chat-completions",
+                                    "responses",
+                                    "messages"
                                 ],
-                                "default": "openai-chat",
-                                "description": "Default API protocol style for this vendor. Models can override it with models[].apiStyle. Use openai-chat for /chat/completions, openai-responses for /responses, or anthropic for /messages-compatible endpoints. For openai-responses models, request usage is read from the /responses result when available."
+                                "default": "chat-completions",
+                                "description": "Default API protocol style for this vendor. Models can override it with models[].apiStyle. Use chat-completions for /chat/completions, responses for /responses, or messages for /messages-compatible endpoints. For responses models, request usage is read from the /responses result when available."
                             }
-                        }
+                        },
+                        "additionalProperties": false
                     },
                     "default": [
                         {
                             "name": "Zhipu",
                             "baseUrl": "https://open.bigmodel.cn/api/coding/paas/v4",
                             "usageUrl": "https://open.bigmodel.cn/api/monitor/usage/quota/limit",
-                            "defaultApiStyle": "openai-chat",
+                            "defaultApiStyle": "chat-completions",
                             "defaultVision": false,
                             "useModelsEndpoint": true,
                             "models": []
@@ -619,49 +596,49 @@
                                 }
                             ],
                             "useModelsEndpoint": false,
-                            "defaultApiStyle": "openai-responses"
+                            "defaultApiStyle": "responses"
                         },
                         {
                             "name": "Kimi",
                             "baseUrl": "https://api.kimi.com/coding/v1",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
+                            "defaultApiStyle": "messages"
                         },
                         {
                             "name": "Aliyun",
                             "baseUrl": "https://token-plan.cn-beijing.maas.aliyuncs.com/apps/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
+                            "defaultApiStyle": "messages"
                         },
                         {
                             "name": "OpenRouter",
                             "baseUrl": "https://openrouter.ai/api",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
+                            "defaultApiStyle": "messages"
                         },
                         {
                             "name": "Tencent",
                             "baseUrl": "https://api.lkeap.cloud.tencent.com/plan/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
+                            "defaultApiStyle": "messages"
                         },
                         {
                             "name": "Xiaomi MiMo",
                             "baseUrl": "https://token-plan-cn.xiaomimimo.com/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
+                            "defaultApiStyle": "messages"
                         },
                         {
                             "name": "DeepSeek",
                             "baseUrl": "https://api.deepseek.com/anthropic",
                             "models": [],
                             "useModelsEndpoint": true,
-                            "defaultApiStyle": "anthropic"
+                            "defaultApiStyle": "messages"
                         }
                     ],
                     "description": "%configuration.coding-plans.vendors.description%",

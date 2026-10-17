@@ -1,23 +1,11 @@
-## Top-P Zero Omit Request
+# 采样参数请求策略
 
-### Background
+## 当前行为
 
-| Topic | Detail |
-| --- | --- |
-| Affected protocols | `openai-chat`, `openai-responses`, `anthropic` |
-| Current behavior | `top_p` is never sent. Vendor / model `topP` keys remain in configuration. |
+`chat-completions`、`responses`、`messages` 三条协议路径统一省略上游 `top_p` 和 `temperature` 字段。思考控制与输出预算继续按所选协议映射。
 
-### Request Rule
+扩展 settings 仅保留当前字段集合，旧供应商默认采样项和模型采样覆盖项均已移除。用户按[配置一次迁移指南](configuration-migration.md)手动整理旧键；配置读取仅校验并保留原文。
 
-```mermaid
-flowchart TD
-  A[Build request payload] --> B[omit top_p]
-```
+## 验证重点
 
-### Implementation Notes
-
-| Area | Change |
-| --- | --- |
-| `src/providers/genericProvider.ts` | 请求路径不拼接 `top_p` |
-| `src/test/runTest.ts` | 回归测试断言正数 / 零值 `topP` 都不下发 |
-| `README*` / `DEV.md` / `package.nls*` | 说明 `topP` 配置会保留，但不会下发 |
+使用当前合法供应商与模型配置，正向验证各协议的模型 ID、消息、工具定义及输出预算。采样策略属于请求构造契约，schema 则负责定义用户可配置字段。

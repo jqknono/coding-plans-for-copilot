@@ -7,7 +7,7 @@ export interface NormalizedTokenUsage {
   outputBuffer?: number;
 }
 
-export type SupportedUsageProtocol = 'openai-chat' | 'openai-responses' | 'anthropic';
+export type SupportedUsageProtocol = 'chat-completions' | 'responses' | 'messages';
 
 type NumericUsageRecord = Record<string, unknown>;
 
@@ -94,11 +94,11 @@ function normalizeAttachedUsage(record: Record<string, unknown>): NormalizedToke
 }
 
 function readPromptTokens(protocol: SupportedUsageProtocol, usage: NumericUsageRecord): number | undefined {
-  if (protocol === 'openai-chat') {
+  if (protocol === 'chat-completions') {
     return readNonNegativeInteger(usage.prompt_tokens);
   }
 
-  if (protocol === 'anthropic') {
+  if (protocol === 'messages') {
     return (
       readNonNegativeInteger(usage.prompt_tokens) ??
       readAnthropicEffectiveInputTokens(usage) ??
@@ -110,11 +110,11 @@ function readPromptTokens(protocol: SupportedUsageProtocol, usage: NumericUsageR
 }
 
 function readCompletionTokens(protocol: SupportedUsageProtocol, usage: NumericUsageRecord): number | undefined {
-  if (protocol === 'openai-chat') {
+  if (protocol === 'chat-completions') {
     return readNonNegativeInteger(usage.completion_tokens);
   }
 
-  if (protocol === 'anthropic') {
+  if (protocol === 'messages') {
     return readNonNegativeInteger(usage.completion_tokens) ?? readNonNegativeInteger(usage.output_tokens);
   }
 
@@ -132,7 +132,7 @@ function readExplicitTotalTokens(
     return totalTokens;
   }
 
-  if (protocol !== 'anthropic') {
+  if (protocol !== 'messages') {
     return undefined;
   }
 

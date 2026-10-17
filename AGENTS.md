@@ -62,7 +62,7 @@
 ## Code Map (Extension)
 
 - Entries: `src/extension.node.ts` (Node.js host) and `src/extension.web.ts` (browser host); shared activation is in `src/extension.ts`.
-- Configuration: `src/config/configStore.ts` (`coding-plans.vendors` normalization; new configs use `defaultApiStyle` / `models[].apiStyle`, `apiType` is only read for migration).
+- Configuration: `src/config/configValidation.ts` validates current fields and isolates errors; `src/config/configStore.ts` normalizes valid vendors and stores credentials in SecretStorage. Protocol fields use `defaultApiStyle` / `models[].apiStyle` with `chat-completions`, `responses`, or `messages`. Configuration reads preserve settings; release notes provide manual migration steps.
 - Protocols and requests: `src/providers/genericProvider.ts`, `genericProviderProtocols.ts`; VS Code API adaptation: `lmChatProviderAdapter.ts`.
 - Behavior and regression notes: see [DEV.md](DEV.md) and [docs/testing.md](docs/testing.md). Express expected behavior through implementation and automated tests.
 

@@ -62,7 +62,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 Click the **Install** button on the marketplace page, which will automatically open the extension in VS Code and install it.
 
-> **Prerequisites**: Requires VS Code ≥ 1.120.0 and the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension installed.
+> **Prerequisites**: Requires VS Code ≥ 1.142.0 and the [GitHub Copilot](https://marketplace.visualstudio.com/items?itemName=GitHub.copilot) extension installed.
 
 ### Configuration
 
@@ -70,9 +70,9 @@ Click the **Install** button on the marketplace page, which will automatically o
 2. Pick the platform you've registered with from the vendor picker (e.g., Zhipu, Kimi, Volcengine, etc.)
 3. Select "Set API Key" and paste your API Key; the extension stores it and refreshes models
 4. Open Copilot Chat (`Ctrl+L`) and choose a model provided by `Coding Plans` in the model picker
-5. Set `Thinking Effort` per request from the model row `More Actions` menu. OpenAI Chat-compatible models support `none` / `low` / `medium` / `high` / `xhigh` / `max`, and also show `Thinking Type` (`enabled` / `disabled` / `default`, default: `default`; `default` omits the `thinking` field and only sends `reasoning_effort`, matching native Custom Endpoint). Choose `enabled` to also send `thinking.enabled`. OpenAI Responses models support `low` / `medium` / `high` / `xhigh` / `max` (default: `max`). Anthropic models show `Effort` (`low` / `medium` / `high` / `xhigh` / `max`, default: `max`) and `Thinking Type` (`think` / `non-think`, default: `think`); `think` sends `thinking.enabled` with `budget_tokens` mapped from Effort, and `non-think` disables thinking. Copilot Chat may pass `reasoningEffort` instead of `thinkingEffort`; the adapter maps that alias. More Actions is thinking-only. Vendor `temperature` / `topP` keys remain in settings but are not sent.
-6. When a vendor has `useModelsEndpoint` enabled, run `Coding Plans: Update Coding Plans Models List` to request `/models`, write the result back to `coding-plans.vendors[].models`, and refresh the VS Code model picker. By default, saving settings only refreshes currently configured models; it does not automatically request `/models` or write back the model list. Set `coding-plans.autoRefreshModels` to `false` to stop settings/API-key changes from automatically refreshing runtime models and the VS Code model picker; manual refresh commands still work.
-   - During refresh, the extension prefers [models.dev](https://models.dev/) `catalog.json` and falls back to `api.json` to enrich newly discovered models by model ID/name with `description`, `capabilities`, `contextSize`, `apiStyle`, and `price`. Matching ignores tags after `:` in the final model path segment, such as `:free`. The `description` shows `id | Lab | Family | Weights | ReleaseDate`, where `Lab` comes from the model ID prefix. `capabilities.thinking` maps to models.dev `reasoning`. New model `apiStyle` is inferred only from the model source: OpenAI and Grok/xAI use `openai-responses`, Anthropic uses `anthropic`, and all others default to `openai-chat`. Grok models that still have the legacy `openai-chat` value are automatically upgraded to `openai-responses` during refresh. Prices use the median across all matching model sources and do not match the local vendor name to a models.dev provider. If the catalog cannot be fetched or matched, it keeps the upstream `/models` data and built-in defaults. Existing manual model entries are not overwritten; extension-generated fallback descriptions such as `vendor model: model` can be upgraded to the models.dev structure.
+5. Set `Thinking Effort` per request from the model row `More Actions` menu. OpenAI Chat-compatible models support `none` / `low` / `medium` / `high` / `xhigh` / `max`, and also show `Thinking Type` (`enabled` / `disabled` / `default`, default: `default`; `default` omits the `thinking` field and only sends `reasoning_effort`, matching native Custom Endpoint). Choose `enabled` to also send `thinking.enabled`. OpenAI Responses models support `low` / `medium` / `high` / `xhigh` / `max` (default: `max`). Anthropic models show `Effort` (`low` / `medium` / `high` / `xhigh` / `max`, default: `max`) and `Thinking Type` (`think` / `non-think`, default: `think`); `think` sends `thinking.enabled` with `budget_tokens` mapped from Effort, and `non-think` disables thinking. Copilot Chat may pass `reasoningEffort` instead of `thinkingEffort`; the adapter maps that alias. More Actions also exposes Context Size for the input budget.
+6. With `useModelsEndpoint` enabled, run `Coding Plans: Update Coding Plans Models List` to request `/models`, write back the model list and refresh the picker. Settings/API-key changes always rebuild configured models locally, applying budgets immediately. `coding-plans.autoRefreshModels: false` disables automatic picker synchronization and empty-query refresh; remote discovery and model-list writeback remain manual.
+   - Discovery prefers [models.dev](https://models.dev/) `catalog.json`, falling back to `api.json`, to enrich new model entries with capability, source and price metadata by model ID/name. New model `apiStyle` follows its source: OpenAI and Grok/xAI use `responses`, Anthropic uses `messages`, and other models use `chat-completions`. Existing manual attributes and budgets remain intact; automatically sourced capabilities can refresh.
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.
 
 ### Built-in Vendor Endpoints
@@ -93,16 +93,16 @@ The following vendors come with built-in default configurations and are ready to
 | OpenRouter | `https://openrouter.ai/api` | `https://openrouter.ai/api/v1` |
 
 To switch to OpenAI-compatible endpoints, modify the vendor's `baseUrl` and `defaultApiStyle`.
-The built-in Zhipu default uses the dedicated GLM Coding Plan endpoint `https://open.bigmodel.cn/api/coding/paas/v4`. If you want the Claude Code-compatible entrypoint instead, switch `baseUrl` to `https://open.bigmodel.cn/api/anthropic` and set `defaultApiStyle` to `anthropic`.
+The built-in Zhipu default uses the dedicated GLM Coding Plan endpoint `https://open.bigmodel.cn/api/coding/paas/v4`. If you want the Claude Code-compatible entrypoint instead, switch `baseUrl` to `https://open.bigmodel.cn/api/anthropic` and set `defaultApiStyle` to `messages`.
 The built-in Xiaomi MiMo default uses the Token Plan endpoint. If you want pay-as-you-go API access instead, switch `baseUrl` to `https://api.xiaomimimo.com/anthropic` (`https://api.xiaomimimo.com/v1` for OpenAI compatibility) and use the matching API key.
 
 #### Volcano Engine Coding Plan
 
-The built-in vendor keeps the name `火山引擎` (including its Secret Storage key association). It uses `defaultApiStyle: "openai-responses"`, `baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v3"`, and `useModelsEndpoint: false`. The resulting request URL is `https://ark.cn-beijing.volces.com/api/coding/v3/responses`. Chat Completions is also supported at `/api/coding/v3/chat/completions`; Responses is the recommended default, not the only supported protocol.
+The built-in vendor keeps the name `火山引擎` (including its Secret Storage key association). It uses `defaultApiStyle: "responses"`, `baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v3"`, and `useModelsEndpoint: false`. The resulting request URL is `https://ark.cn-beijing.volces.com/api/coding/v3/responses`. Chat Completions is also supported at `/api/coding/v3/chat/completions`; Responses is the recommended default, not the only supported protocol.
 
 The static model IDs are `doubao-seed-evolving`, `doubao-seed-2.1-turbo`, `doubao-seed-2.0-lite`, `minimax-m3`, `glm-5.3`, `glm-5.3-flash`, `deepseek-v4-flash`, `deepseek-v4-pro`, `kimi-k2.7-code`, and `kimi-k3`. No unverified per-model vision, context-window, or thinking settings are preset. Keep `models` populated and discovery disabled: even a forced refresh then uses the static list without requesting `/models`. Add the `火山引擎` provider group in Manage Language Models to see these models; the unscoped `Coding Plans` root remains hidden.
 
-For the Anthropic-compatible alternative, set vendor `defaultApiStyle: "anthropic"`, `authType: "bearer"`, and `baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v1"`, keeping `useModelsEndpoint: false` and the static models. This extension only appends `/messages`, producing `https://ark.cn-beijing.volces.com/api/coding/v1/messages`; do **not** copy Claude Code's `/api/coding` base URL directly. The official Claude Code setup uses `ANTHROPIC_AUTH_TOKEN`, hence Bearer authentication; this extension uses the key stored through Manage Vendor Configuration, not that environment variable. Anthropic Bearer requests still include `anthropic-version: 2023-06-01` and omit `x-api-key`.
+For the Anthropic-compatible alternative, set vendor `defaultApiStyle: "messages"`, `authType: "bearer"`, and `baseUrl: "https://ark.cn-beijing.volces.com/api/coding/v1"`, keeping `useModelsEndpoint: false` and the static models. This extension only appends `/messages`, producing `https://ark.cn-beijing.volces.com/api/coding/v1/messages`; do **not** copy Claude Code's `/api/coding` base URL directly. The official Claude Code setup uses `ANTHROPIC_AUTH_TOKEN`, hence Bearer authentication; this extension uses the key stored through Manage Vendor Configuration, not that environment variable. Anthropic Bearer requests still include `anthropic-version: 2023-06-01` and omit `x-api-key`.
 
 **Existing explicit settings are not automatically replaced.** Manually update the existing `火山引擎` entry in `coding-plans.vendors` with the new endpoint, protocol, static models and `useModelsEndpoint: false`. An explicit `models[].apiStyle` takes precedence over `defaultApiStyle`; remove or update old model-level overrides too. Do not use the general `/api/v3` endpoint as a fallback: it is outside this Coding Plan route and may incur additional usage charges. A failed `/models` request falls back to configured/cached models; it does not necessarily clear the list.
 
@@ -110,7 +110,7 @@ References: [Claude Code authentication](https://docs.volcengine.com/docs/82379/
 
 ### Configuration Examples
 
-> Moonshot/Kimi note: some Anthropic-compatible entrypoints require a non-standard `reasoning_content` field on assistant tool-call history messages when thinking is enabled and a tool continuation occurs. They may return `thinking is enabled but reasoning_content is missing in assistant tool call message`. This project does not send that field by default on the Anthropic path. When using Moonshot/Kimi Anthropic entrypoints, disable thinking from the model row `More Actions`; if you need thinking, prefer the OpenAI Chat-compatible API and set `apiStyle` to `openai-chat`. See [Moonshot Anthropic Thinking Tool-Call Compatibility](docs/moonshot-anthropic-thinking-tool-call.md).
+> Moonshot/Kimi note: some Anthropic-compatible entrypoints require a non-standard `reasoning_content` field on assistant tool-call history messages when thinking is enabled and a tool continuation occurs. They may return `thinking is enabled but reasoning_content is missing in assistant tool call message`. This project does not send that field by default on the Anthropic path. When using Moonshot/Kimi Anthropic entrypoints, disable thinking from the model row `More Actions`; if you need thinking, prefer the OpenAI Chat-compatible API and set `apiStyle` to `chat-completions`. See [Moonshot Anthropic Thinking Tool-Call Compatibility](docs/moonshot-anthropic-thinking-tool-call.md).
 
 **Anthropic Style Example**
 
@@ -120,15 +120,18 @@ References: [Claude Code authentication](https://docs.volcengine.com/docs/82379/
     {
       "name": "my-anthropic-vendor",
       "baseUrl": "https://api.example.com/anthropic",
-      "defaultApiStyle": "anthropic",
+      "defaultApiStyle": "messages",
       "useModelsEndpoint": false,
       "models": [
         {
           "name": "my-model",
           "enabled": true,
           "capabilities": { "tools": true, "vision": false },
+          "contextWindow": 160000,
           "maxInputTokens": 128000,
-          "maxOutputTokens": 30000
+          "maxOutputTokens": 30000,
+          "limitSource": "configured",
+          "contextBudget": { "inputTokens": 64000, "outputTokens": 16000 }
         }
       ]
     }
@@ -144,7 +147,7 @@ References: [Claude Code authentication](https://docs.volcengine.com/docs/82379/
     {
       "name": "my-openai-vendor",
       "baseUrl": "https://api.example.com/v1",
-      "defaultApiStyle": "openai-chat",
+      "defaultApiStyle": "chat-completions",
       "useModelsEndpoint": true,
       "models": []
     }
@@ -160,12 +163,12 @@ References: [Claude Code authentication](https://docs.volcengine.com/docs/82379/
     {
       "name": "openai-responses-demo",
       "baseUrl": "https://api.openai.com/v1",
-      "defaultApiStyle": "openai-responses",
+      "defaultApiStyle": "responses",
       "useModelsEndpoint": false,
       "models": [
         {
           "name": "gpt-5",
-          "apiStyle": "openai-responses",
+          "apiStyle": "responses",
           "enabled": true,
           "editTools": ["apply-patch"],
           "price": {
@@ -179,8 +182,6 @@ References: [Claude Code authentication](https://docs.volcengine.com/docs/82379/
           "streaming": true,
           "supportsReasoningEffort": ["high", "xhigh", "max"],
           "capabilities": { "tools": true, "vision": false, "thinking": true },
-          "toolCalling": true,
-          "vision": false,
           "zeroDataRetentionEnabled": false
         }
       ]
@@ -191,37 +192,32 @@ References: [Claude Code authentication](https://docs.volcengine.com/docs/82379/
 
 ### Configurable Items
 
+Configuration accepts only current schema fields; vendor, model and `capabilities` objects have closed property sets. `apiStyle` / `defaultApiStyle` accept only `chat-completions`, `responses`, and `messages`. See the [one-time migration guide](docs/configuration-migration.md) for existing settings.
+
 `Coding Plans` uses VS Code's native log channel. `coding-plans.logLevel` synchronizes the channel's native level, and Set Log Level in the Output panel can temporarily override it. At `Trace`, the first 1,000 characters of each system/user/assistant message are logged and may contain sensitive context; tool content and image data are excluded from this preview.
 
 | Config Key | Type | Default Value | Description |
 | --- | --- | --- | --- |
-| `coding-plans.locale` | `string` | Empty | Locale override for natural-language responses and any reasoning/thinking text emitted by Coding Plans models. Enter a BCP 47 locale such as `zh-CN` or `en-US`, or a language name. Empty leaves language selection to the model. The extension sends this as a system instruction; model support and compliance vary. |
-| `coding-plans.logLevel` | `string` | `info` | Sets the native channel level: `trace` / `debug` / `info` / `warn` / `error` / `off`; only `trace` logs request message content previews. |
-| `coding-plans.overrideContextWindow` | `number` | Empty | When models.dev enrichment writes `contextSize`, values larger than this are written down to the override. VS Code then shows that written Context Size with an 80% input / 20% output split. Hand-authored `contextSize` values and raw upstream `/models` limits are not rewritten, and the request-side output budget is unchanged. Leave empty or set to `0` to disable the cap. |
-| `coding-plans.overrideMaxOutputTokens` | `number` | Empty | Overrides `maxOutputTokens` only for configurations copied with **Copy Model as chatLanguageModels.json**. Leave empty or set to `0` to use `100000`; it does not alter request-side output budgets or models exposed by this extension. |
-| `coding-plans.autoRefreshModels` | `boolean` | `true` | Whether settings/API-key changes and empty model-picker queries automatically refresh runtime models and the VS Code model picker. Set to `false` to disable automatic refresh; manual refresh commands still work. |
+| `coding-plans.locale` | `string` | Empty | Accepts empty, `zh-CN`, or `en-US`. Adds a system instruction for natural-language responses and emitted reasoning/thinking; empty follows the request. |
+| `coding-plans.logLevel` | `string` | `warn` | Sets the native channel level: `trace` / `debug` / `info` / `warn` / `error` / `off`; only `trace` logs request message content previews. |
+| `coding-plans.autoRefreshModels` | `boolean` | `false` | Controls automatic picker synchronization and empty-query refresh. Local configuration still rebuilds immediately when disabled; remote discovery uses the manual update command. |
 | `coding-plans.vendors` | `array` | Built-in vendor templates | Vendor configuration list. |
 | `coding-plans.vendors[].name` | `string` | Required | Vendor unique name. |
 | `coding-plans.vendors[].baseUrl` | `string` | Required | API base address. |
-| `coding-plans.vendors[].apiKey` | `string` | Empty | Deprecated. Vendor API key. When non-empty, it takes precedence over the same vendor key stored in VS Code Secret Storage. If the current vendor has no key, another `vendors[].apiKey` with the same `baseUrl` can be used as a fallback. |
 | `coding-plans.vendors[].authType` | `"bearer"` / `"x-api-key"` | Protocol-dependent | Optional override for chat and `/models`: omitted uses `x-api-key` for Anthropic and Bearer for OpenAI. Explicit values send only the selected auth header; Anthropic always keeps `anthropic-version`. Does not change `usageUrl` authentication. |
 | `coding-plans.vendors[].usageUrl` | `string` | Empty | Plan usage API address; when configured, status bar displays quota percentage. |
-| `coding-plans.vendors[].defaultApiStyle` | `string` | `openai-chat` | Protocol style: `openai-chat` / `openai-responses` / `anthropic`. |
-| `coding-plans.vendors[].defaultTemperature` | `number` / `null` | Empty | Deprecated. Vendor default temperature. Kept in configuration but not sent. |
-| `coding-plans.vendors[].defaultTopP` | `number` | `0` | Vendor default topP. Kept in configuration but not sent. |
+| `coding-plans.vendors[].defaultApiStyle` | `string` | `chat-completions` | Protocol style: `chat-completions` / `responses` / `messages`. |
 | `coding-plans.vendors[].useModelsEndpoint` | `boolean` | `true` (Volcano Engine template: `false`) | Whether to fetch model list from `/models`; running `Coding Plans: Update Coding Plans Models List` writes discovered models back to `models`. When false, even forced refresh uses only configured models. |
 | `coding-plans.vendors[].models[].name` | `string` | Required | Model name. |
 | `coding-plans.vendors[].models[].enabled` | `boolean` | `true` | Whether to show this model in Manage Language Models; set to `false` to keep it configured but hidden. |
 | `coding-plans.vendors[].models[].description` | `string` | Empty | Model description. |
 | `coding-plans.vendors[].models[].apiStyle` | `string` | Inherit from vendor | Model-level protocol style override. |
-| `coding-plans.vendors[].models[].temperature` | `number` / `"inherit"` | `"inherit"` | Deprecated. Model-level temperature override. `"inherit"` uses the vendor `defaultTemperature`. Kept in configuration but not sent. |
-| `coding-plans.vendors[].models[].topP` | `number` | Inherit from vendor | Model-level topP override. Kept in configuration but not sent. |
 | `coding-plans.vendors[].models[].capabilities` | `object` | `{ tools: true, vision: false }` | Model capability declaration. `thinking` maps to models.dev `reasoning`. |
-| `coding-plans.vendors[].models[].toolCalling` | `boolean` / `number` | `true` | Copilot-style tool-calling alias, equivalent to `capabilities.tools`. |
-| `coding-plans.vendors[].models[].vision` | `boolean` | Inherits `defaultVision` | Copilot-style vision alias, equivalent to `capabilities.vision`. |
-| `coding-plans.vendors[].models[].contextSize` | `number` | `400000` | Primary total model context window, sourced from models.dev `limit.context`. Automatic refresh only writes this field for new models. Runtime splits it into `maxInputTokens=80%` and `maxOutputTokens=20%` so VS Code Language Models reports the expected total context. |
-| `coding-plans.vendors[].models[].maxInputTokens` | `number` | `400000` | Alternative explicit input context token limit, used only when `contextSize` is not set. Native Context Window total is derived as `maxInputTokens + maxOutputTokens`. |
-| `coding-plans.vendors[].models[].maxOutputTokens` | `number` | `30000` | Alternative explicit output token limit, used only when `contextSize` is not set. Native Context Window total is derived as `maxInputTokens + maxOutputTokens`. |
+| `coding-plans.vendors[].models[].contextWindow` | `integer` | Known capacity | Total model context capability `C`, integer ≥ 2, separate from budgets. |
+| `coding-plans.vendors[].models[].maxInputTokens` | `integer` | Known capacity | Integer ≥ 1; independent input capability `I`; selectable input ceiling is `min(I, C-R)`, using known constraints. |
+| `coding-plans.vendors[].models[].maxOutputTokens` | `integer` | Known capacity | Integer ≥ 1; independent output capability `O`, constraining actual output budget `R`. |
+| `coding-plans.vendors[].models[].contextBudget` | `object` | Input `400000` / output `50000` | `inputTokens` is the default input budget, `outputTokens` the actual output budget, and `presets` numeric input presets; model capabilities constrain the result. |
+| `coding-plans.vendors[].models[].limitSource` | `string` | By source | `configured` preserves explicit limits; `endpoint` / `models.dev` permits capability refresh while keeping budgets separate. |
 | `coding-plans.vendors[].models[].price.inputCost` | `number` | Empty | Input cost metadata in credits per 1M tokens, shown in the Manage Language Models Cost column. |
 | `coding-plans.vendors[].models[].price.cacheCost` | `number` | Empty | Cached input cost metadata in credits per 1M tokens, shown in the Manage Language Models Cost column. |
 | `coding-plans.vendors[].models[].price.outputCost` | `number` | Empty | Output cost metadata in credits per 1M tokens, shown in the Manage Language Models Cost column. |
@@ -234,29 +230,49 @@ References: [Claude Code authentication](https://docs.volcengine.com/docs/82379/
 | `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | Empty | Declarative metadata only; it does not change upstream provider retention behavior. |
 | `coding-plans.commitMessage.showGenerateCommand` | `boolean` | `true` | Whether to show "Generate Commit Message" command. |
 | `coding-plans.commitMessage.language` | `string` | `en` | Commit message language: `en` / `zh-cn`. |
-| `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | Whether to reference the style of the last 20 commits. |
+| `coding-plans.commitMessage.useRecentCommitStyle` | `boolean` | `false` | Whether to reference the style of the latest 7 local commits. |
 | `coding-plans.commitMessage.modelVendor` | `string` | Empty | Preferred vendor name when generating commit messages. |
 | `coding-plans.commitMessage.modelId` | `string` | Empty | Preferred model name when generating commit messages. |
 | `coding-plans.commitMessage.options.prompt` | `string` | Built-in prompt | Override generation prompt. |
-| `coding-plans.commitMessage.options.maxDiffLines` | `number` | `3000` | Maximum number of lines to read from diff. |
+| `coding-plans.commitMessage.options.maxDiffLines` | `number` | `10000` | Maximum number of lines to read from diff. |
 | `coding-plans.commitMessage.options.pipelineMode` | `string` | `single` | Generation pipeline: `single` / `two-stage` / `auto`. |
-| `coding-plans.commitMessage.options.maxBodyBulletCount` | `number` | `7` | Maximum number of body bullets. |
+| `coding-plans.commitMessage.options.maxBodyBulletCount` | `number` | `5` | Maximum number of body bullets. |
 | `coding-plans.commitMessage.options.subjectMaxLength` | `number` | `72` | Maximum subject length. |
 | `coding-plans.commitMessage.options.requireConventionalType` | `boolean` | `true` | Whether to enforce Conventional Commits type. |
 | `coding-plans.commitMessage.options.warnOnValidationFailure` | `boolean` | `true` | Whether to show warning on validation failure. |
 
-API keys should be stored through "Set API Key" in VS Code Secret Storage. `coding-plans.vendors[].apiKey` is kept only as a deprecated temporary entry; when non-empty, it takes precedence over Secret Storage. If the current vendor has no key, the extension falls back to another `vendors[].apiKey` with the same `baseUrl`.
+Store API keys through Set API Key in VS Code Secret Storage, associated with the vendor name. Native provider `configuration.apiKey` also writes to Secret Storage.
 
 ### Context Window Display
 
-Limited by VS Code's public API, this extension additionally implements context window display:
+Configuration is organized by responsibility while retaining existing field paths:
 
-- **System Instructions**: System-class prompts occupy (system prompts, mode descriptions, strategy prompts, etc.), counted as prompt tokens.
-- **Tool Definitions**: Tool definitions occupy (tool names, descriptions, parameter JSON Schema), counted as prompt tokens.
-- **Reserved Output**: Output token budget reserved for this round of response, not the actual generated reply content. Requests use a default output budget of `50000` tokens, capped by the model's `maxOutputTokens`.
-- **Context Window**: When `coding-plans.overrideContextWindow` is positive, models.dev enrichment writes oversized `contextSize` values down to that override; VS Code then shows the written total with an 80% input and 20% output split. Hand-authored `contextSize` values and raw upstream `/models` limits remain unchanged. Otherwise, when `contextSize` is configured, runtime splits that total window into 80% input and 20% output. When neither is configured, it uses explicit `maxInputTokens/maxOutputTokens`, and the total window follows the native custom endpoint convention of `maxInputTokens + maxOutputTokens`. The current public API does not provide an interface to return upstream usage breakdown to the native Context Window, so this extension maintains the numerator display of the context window itself.
-- Status bar displays a unified `CodingPlans` entry: the body shows a concise percentage of plan usage and context ratio; hover to view detailed information.
-- If the vendor has `usageUrl` configured, it additionally displays plan quota percentage.
+| Group | Fields | Recommended use |
+| --- | --- | --- |
+| Model capability | `contextWindow`, optional `maxInputTokens`, `maxOutputTokens` | Usually populated by discovery; omit the independent input limit when the provider only publishes total capacity |
+| Usage policy | `contextBudget` | Adjust default input, actual output and presets here, or use the native Context Size picker |
+
+For example, this model entry omits the independent input limit, giving a selectable input ceiling of `200000 - 16000 = 184000`:
+
+```json
+{
+  "name": "example-model",
+  "contextWindow": 200000,
+  "maxOutputTokens": 64000,
+  "contextBudget": { "inputTokens": 128000, "outputTokens": 16000 }
+}
+```
+
+JSON completion offers a 64K input / 16K output `contextBudget` example, separate from the 400000/50000 runtime defaults. Discovery maintains `limitSource`; use `configured` to pin capabilities. Native request-level `contextSize` represents the selected input budget.
+
+- **Capabilities and budgets**: `contextWindow=C` is total capability; `maxInputTokens=I` / `maxOutputTokens=O` are independent capabilities. `contextBudget.inputTokens` supplies default input `P`; `outputTokens` supplies actual output `R`. Reserve `R` first, then constrain `P ≤ min(I, C-R)`. New budgets default to `400000` input / `50000` output, reduced by known capabilities.
+- **Native Context Size**: numeric `schema.contextSize` (`group: tokens`) selects input `P`, with resolved default input as its default. Numeric presets default to 32k/64k/128k/256k/512k, plus Default/Maximum; `presets` customizes them. VS Code saves each model's selection. Registered input ceiling is `min(I, C-R)`, output is `R`, and hidden `maxContextWindowTokens=C`; the effective native denominator is `P+R`, constrained by `C`.
+- **Requests and counting**: `R` is sent as `max_tokens` (Chat / Anthropic) or `max_output_tokens` (Responses). System Instructions and Tool Definitions count as input. `provideTokenCount()` locally estimates the current text/message, independently of response usage reporting; the host manages the native numerator.
+- **Status bar**: unified `CodingPlans` shows real usage from the latest completed request: input / `P`, generation / `R`; occupied context is `prompt + max(R, completion)` over `P+R`. Percentages retain over-limit values. Configuring `usageUrl` also shows plan quota.
+- **Validation**: configuration reads only validate. Unknown fields or invalid values trigger a field-path notification. Vendor errors isolate that vendor; model errors isolate only that model, leaving other valid entries available. Settings remain untouched; manually update old keys using the [migration guide](docs/configuration-migration.md).
+- **Validation boundary**: native integration adapts unpublished runtime fields. Current VS Code 1.142 host support was checked statically only; manual UI acceptance is pending. The third-party Copilot wrapper also has an internal 8192-token output reservation limit. Native UI, compaction and actual request budgets require separate observation; equivalence is unverified.
+
+See [context-window details](docs/copilot-chat-context-window.md).
 
 ## Advanced Features
 

@@ -105,9 +105,33 @@ jobs:
             echo "No .vsix file found after build"
             exit 1
           fi
-          gh release create "${{ steps.version.outputs.tag }}" \
-            --title "Release ${{ steps.version.outputs.tag }}" \
-            --generate-notes \
+          TAG_NAME="${{ steps.version.outputs.tag }}"
+          PREVIOUS_TAG="$(git describe --tags --abbrev=0 --match 'v[0-9]*' "${TAG_NAME}^" 2>/dev/null || true)"
+          NOTES_FILE="${RUNNER_TEMP}/release-notes.md"
+          MIGRATION_FILE="docs/configuration-migration.md"
+          GENERATE_ARGS=(-f "tag_name=${TAG_NAME}")
+
+          if [[ -n "${PREVIOUS_TAG}" ]]; then
+            GENERATE_ARGS+=(-f "previous_tag_name=${PREVIOUS_TAG}")
+            DIFF_BASE="${PREVIOUS_TAG}"
+          else
+            # 首个版本及根提交以空树为差异基线。
+            DIFF_BASE="$(git hash-object -t tree --stdin </dev/null)"
+          fi
+
+          gh api --method POST "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
+            "${GENERATE_ARGS[@]}" --jq '.body' > "${NOTES_FILE}"
+
+          # 仅在目标 tag 的差异包含迁移文档时附加；后续沿用文档的版本仅含自动 notes。
+          MIGRATION_CHANGED="$(git diff --name-only "${DIFF_BASE}" "${TAG_NAME}" -- "${MIGRATION_FILE}")"
+          if [[ -n "${MIGRATION_CHANGED}" ]] && git cat-file -e "${TAG_NAME}:${MIGRATION_FILE}" 2>/dev/null; then
+            printf '\n\n---\n\n' >> "${NOTES_FILE}"
+            git show "${TAG_NAME}:${MIGRATION_FILE}" >> "${NOTES_FILE}"
+          fi
+
+          gh release create "${TAG_NAME}" \
+            --title "Release ${TAG_NAME}" \
+            --notes-file "${NOTES_FILE}" \
             "${VSIX_FILE}"
 
       - name: Summary

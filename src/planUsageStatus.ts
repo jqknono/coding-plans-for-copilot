@@ -1,6 +1,11 @@
 import * as vscode from 'vscode';
 import { ConfigStore, VendorConfig } from './config/configStore';
-import { ContextUsageState, LastContextUsageSnapshot } from './contextUsageState';
+import {
+  buildContextUsageDetails,
+  ContextUsageState,
+  LastContextUsageSnapshot,
+  readOccupiedContextTokens,
+} from './contextUsageState';
 import { normalizeHttpBaseUrl, getCompactErrorMessage } from './providers/baseProvider';
 import { logger } from './logging/outputChannelLogger';
 
@@ -320,6 +325,8 @@ export function buildCodingPlanStatusText(
   const contextPercentage = readContextPercentage(contextSnapshot);
   if (contextPercentage !== undefined) {
     parts.push(`Ctx ${contextPercentage}%`);
+  } else if (contextSnapshot) {
+    parts.push('Ctx --');
   }
 
   return parts.length > 0 ? `CodingPlans ${parts.join(' | ')}` : 'CodingPlans --';
@@ -352,21 +359,12 @@ export function buildCodingPlanStatusTooltip(
     );
   }
 
-  if (contextSnapshot && contextSnapshot.totalContextWindow > 0) {
-    const occupiedContextTokens = readOccupiedContextTokens(contextSnapshot);
-    const ratio = Number(((occupiedContextTokens / contextSnapshot.totalContextWindow) * 100).toFixed(1));
+  if (contextSnapshot) {
     sections.push(
       '',
       '**Context**',
       '',
-      `- Context: ${ratio}% of ${formatCompactTokens(contextSnapshot.totalContextWindow)}`,
-      `- Prompt: ${formatCompactTokens(contextSnapshot.promptTokens)}`,
-      `- Completion: ${formatCompactTokens(contextSnapshot.completionTokens)}`,
-      `- Total: ${formatCompactTokens(contextSnapshot.totalTokens)}`,
-      `- Reserved Output: ${contextSnapshot.outputBuffer === undefined ? '--' : formatCompactTokens(contextSnapshot.outputBuffer)}`,
-      `- Occupied Context: ${formatCompactTokens(occupiedContextTokens)}`,
-      `- Model: ${contextSnapshot.modelName}`,
-      `- Updated: ${new Date(contextSnapshot.recordedAt).toISOString()}`,
+      ...buildContextUsageDetails(contextSnapshot).map(([label, value]) => `- ${label}: ${value}`),
     );
   }
 
@@ -423,23 +421,11 @@ export function buildCodingPlanDetailsHtml(
     );
   }
 
-  if (contextSnapshot && contextSnapshot.totalContextWindow > 0) {
-    const occupiedContextTokens = readOccupiedContextTokens(contextSnapshot);
-    const ratio = Number(((occupiedContextTokens / contextSnapshot.totalContextWindow) * 100).toFixed(1));
+  if (contextSnapshot) {
     sections.push(
-      renderDetailsSection('Context', [
-        renderDetailsItem('Context', `${ratio}% of ${formatCompactTokens(contextSnapshot.totalContextWindow)}`),
-        renderDetailsItem('Prompt', formatCompactTokens(contextSnapshot.promptTokens)),
-        renderDetailsItem('Completion', formatCompactTokens(contextSnapshot.completionTokens)),
-        renderDetailsItem('Total', formatCompactTokens(contextSnapshot.totalTokens)),
-        renderDetailsItem(
-          'Reserved Output',
-          contextSnapshot.outputBuffer === undefined ? '--' : formatCompactTokens(contextSnapshot.outputBuffer),
-        ),
-        renderDetailsItem('Occupied Context', formatCompactTokens(occupiedContextTokens)),
-        renderDetailsItem('Model', contextSnapshot.modelName),
-        renderDetailsItem('Updated', new Date(contextSnapshot.recordedAt).toISOString()),
-      ]),
+      renderDetailsSection('Context', buildContextUsageDetails(contextSnapshot).map(
+        ([label, value]) => renderDetailsItem(label, value),
+      )),
     );
   }
 
@@ -744,27 +730,10 @@ function formatUsageMetric(value: number): string {
 }
 
 function readContextPercentage(snapshot: LastContextUsageSnapshot | undefined): number | undefined {
-  if (!snapshot || snapshot.totalContextWindow <= 0) {
+  if (!snapshot || snapshot.usageAvailable === false || snapshot.totalContextWindow <= 0) {
     return undefined;
   }
-  return Math.min(
-    100,
-    Math.max(0, Math.round((readOccupiedContextTokens(snapshot) / snapshot.totalContextWindow) * 100)),
-  );
-}
-
-function readOccupiedContextTokens(snapshot: LastContextUsageSnapshot): number {
-  return Math.min(snapshot.totalContextWindow, snapshot.totalTokens + Math.max(snapshot.outputBuffer ?? 0, 0));
-}
-
-function formatCompactTokens(value: number): string {
-  if (value >= 1_000_000) {
-    return `${Number((value / 1_000_000).toFixed(1))}M`;
-  }
-  if (value >= 1_000) {
-    return `${Number((value / 1_000).toFixed(1))}K`;
-  }
-  return String(value);
+  return Math.max(0, Math.round((readOccupiedContextTokens(snapshot) / snapshot.totalContextWindow) * 100));
 }
 
 let statusDetailsPanel: vscode.WebviewPanel | undefined;

@@ -57,6 +57,8 @@
   "vendorNotConfiguredResponse": "No matching vendor is configured. Please configure coding-plans.vendors first.",
   "vendorNotConfiguredMatch": "Vendor \"{0}\" is not configured. Please configure coding-plans.vendors first.",
   "thinkingEffortTitle": "Thinking Effort",
+  "contextSizeTitle": "Context Size",
+  "contextSizeDescription": "Input token budget P for this model. Choose Default, Maximum, or a numeric preset (32k/64k/128k/256k/512k by default). VS Code saves the selection. Reserved output R is additional; the effective window is P + R, constrained by the model's total capacity.",
   "thinkingEffortDescription": "Shown in the model row More Actions menu. Supported values: `none`, `low`, `medium`, `high`, `xhigh`, `max`; the default is `high`. Saved values are passed by VS Code with model requests.",
   "responsesThinkingEffortDescription": "More Actions configuration for Responses API models. Supported values: `low`, `medium`, `high`, `xhigh`, `max`; the default is `max`. Saved values are passed by VS Code with model requests.",
   "effortTitle": "Effort",

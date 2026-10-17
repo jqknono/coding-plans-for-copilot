@@ -5,7 +5,6 @@ import {
   COMMIT_MESSAGE_MODEL_ID_SETTING_KEY,
   COMMIT_MESSAGE_MODEL_SELECTION_LOG_PREFIX,
   COMMIT_MESSAGE_MODEL_VENDOR_SETTING_KEY,
-  COMMIT_MESSAGE_OPTIONS_LEGACY_RECENT_STYLE_MAX_TOTAL_LENGTH_KEY,
   COMMIT_MESSAGE_OPTIONS_LLM_MAX_PROMPT_LENGTH_KEY,
   COMMIT_MESSAGE_OPTIONS_MAX_BODY_BULLET_COUNT_KEY,
   COMMIT_MESSAGE_OPTIONS_MAX_DIFF_LINES_KEY,
@@ -33,15 +32,6 @@ import {
   DEFAULT_SUMMARY_MAX_CHUNKS,
   DEFAULT_SUMMARY_TRIGGER_LINES,
   DEFAULT_WARN_ON_VALIDATION_FAILURE,
-  LEGACY_COMMIT_MESSAGE_MAX_DIFF_LINES_SETTING_KEY,
-  LEGACY_COMMIT_MESSAGE_PIPELINE_MODE_SETTING_KEY,
-  LEGACY_COMMIT_MESSAGE_PROMPT_SETTING_KEY,
-  LEGACY_COMMIT_MESSAGE_REQUIRE_CONVENTIONAL_TYPE_SETTING_KEY,
-  LEGACY_COMMIT_MESSAGE_SUBJECT_MAX_LENGTH_SETTING_KEY,
-  LEGACY_COMMIT_MESSAGE_SUMMARY_CHUNK_LINES_SETTING_KEY,
-  LEGACY_COMMIT_MESSAGE_SUMMARY_MAX_CHUNKS_SETTING_KEY,
-  LEGACY_COMMIT_MESSAGE_SUMMARY_TRIGGER_LINES_SETTING_KEY,
-  LEGACY_COMMIT_MESSAGE_WARN_ON_VALIDATION_FAILURE_SETTING_KEY,
   REQUEST_SOURCE_COMMIT_MESSAGE,
   REQUEST_SOURCE_MODEL_OPTION_KEY,
   REQUEST_CANCELLED_ERROR_CODE,
@@ -99,8 +89,6 @@ type CommitMessageOptions = {
   requireConventionalType?: boolean;
   warnOnValidationFailure?: boolean;
   llmMaxPromptLength?: number;
-  // Backward compatibility: old key name.
-  recentStyleMaxTotalLength?: number;
 };
 
 type DiffSummary = {
@@ -205,32 +193,24 @@ function readPositiveIntegerValue(value: unknown, fallback: number): number {
 function getCommitMessageSettings(): CommitMessageSettings {
   const config = vscode.workspace.getConfiguration('coding-plans');
   const options = getCommitMessageOptions(config);
-  const pipelineMode = normalizePipelineMode(
-    typeof options[COMMIT_MESSAGE_OPTIONS_PIPELINE_MODE_KEY] === 'string'
-      ? options[COMMIT_MESSAGE_OPTIONS_PIPELINE_MODE_KEY]
-      : config.get<string>(LEGACY_COMMIT_MESSAGE_PIPELINE_MODE_SETTING_KEY, DEFAULT_PIPELINE_MODE),
-  );
+  const pipelineMode = normalizePipelineMode(options[COMMIT_MESSAGE_OPTIONS_PIPELINE_MODE_KEY]);
 
   return {
     pipelineMode,
     maxDiffLines: readPositiveIntegerValue(
-      options[COMMIT_MESSAGE_OPTIONS_MAX_DIFF_LINES_KEY] ??
-        config.get<number>(LEGACY_COMMIT_MESSAGE_MAX_DIFF_LINES_SETTING_KEY, DEFAULT_COMMIT_MESSAGE_MAX_DIFF_LINES),
+      options[COMMIT_MESSAGE_OPTIONS_MAX_DIFF_LINES_KEY],
       DEFAULT_COMMIT_MESSAGE_MAX_DIFF_LINES,
     ),
     summaryTriggerLines: readPositiveIntegerValue(
-      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_TRIGGER_LINES_KEY] ??
-        config.get<number>(LEGACY_COMMIT_MESSAGE_SUMMARY_TRIGGER_LINES_SETTING_KEY, DEFAULT_SUMMARY_TRIGGER_LINES),
+      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_TRIGGER_LINES_KEY],
       DEFAULT_SUMMARY_TRIGGER_LINES,
     ),
     summaryChunkLines: readPositiveIntegerValue(
-      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_CHUNK_LINES_KEY] ??
-        config.get<number>(LEGACY_COMMIT_MESSAGE_SUMMARY_CHUNK_LINES_SETTING_KEY, DEFAULT_SUMMARY_CHUNK_LINES),
+      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_CHUNK_LINES_KEY],
       DEFAULT_SUMMARY_CHUNK_LINES,
     ),
     summaryMaxChunks: readPositiveIntegerValue(
-      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_MAX_CHUNKS_KEY] ??
-        config.get<number>(LEGACY_COMMIT_MESSAGE_SUMMARY_MAX_CHUNKS_SETTING_KEY, DEFAULT_SUMMARY_MAX_CHUNKS),
+      options[COMMIT_MESSAGE_OPTIONS_SUMMARY_MAX_CHUNKS_KEY],
       DEFAULT_SUMMARY_MAX_CHUNKS,
     ),
     maxBodyBulletCount: Math.max(
@@ -241,30 +221,21 @@ function getCommitMessageSettings(): CommitMessageSettings {
       ),
     ),
     subjectMaxLength: readPositiveIntegerValue(
-      options[COMMIT_MESSAGE_OPTIONS_SUBJECT_MAX_LENGTH_KEY] ??
-        config.get<number>(LEGACY_COMMIT_MESSAGE_SUBJECT_MAX_LENGTH_SETTING_KEY, DEFAULT_SUBJECT_MAX_LENGTH),
+      options[COMMIT_MESSAGE_OPTIONS_SUBJECT_MAX_LENGTH_KEY],
       DEFAULT_SUBJECT_MAX_LENGTH,
     ),
     requireConventionalType:
       typeof options[COMMIT_MESSAGE_OPTIONS_REQUIRE_CONVENTIONAL_TYPE_KEY] === 'boolean'
         ? options[COMMIT_MESSAGE_OPTIONS_REQUIRE_CONVENTIONAL_TYPE_KEY]
-        : config.get<boolean>(
-            LEGACY_COMMIT_MESSAGE_REQUIRE_CONVENTIONAL_TYPE_SETTING_KEY,
-            DEFAULT_REQUIRE_CONVENTIONAL_TYPE,
-          ),
+        : DEFAULT_REQUIRE_CONVENTIONAL_TYPE,
     warnOnValidationFailure:
       typeof options[COMMIT_MESSAGE_OPTIONS_WARN_ON_VALIDATION_FAILURE_KEY] === 'boolean'
         ? options[COMMIT_MESSAGE_OPTIONS_WARN_ON_VALIDATION_FAILURE_KEY]
-        : config.get<boolean>(
-            LEGACY_COMMIT_MESSAGE_WARN_ON_VALIDATION_FAILURE_SETTING_KEY,
-            DEFAULT_WARN_ON_VALIDATION_FAILURE,
-          ),
+        : DEFAULT_WARN_ON_VALIDATION_FAILURE,
     llmMaxPromptLength: Math.max(
       500,
       readPositiveIntegerValue(
-        options[COMMIT_MESSAGE_OPTIONS_LLM_MAX_PROMPT_LENGTH_KEY] ??
-          options[COMMIT_MESSAGE_OPTIONS_LEGACY_RECENT_STYLE_MAX_TOTAL_LENGTH_KEY] ??
-          DEFAULT_LLM_MAX_PROMPT_LENGTH,
+        options[COMMIT_MESSAGE_OPTIONS_LLM_MAX_PROMPT_LENGTH_KEY],
         DEFAULT_LLM_MAX_PROMPT_LENGTH,
       ),
     ),
@@ -290,7 +261,7 @@ function getCommitFormatPrompt(): string {
   const configured =
     typeof options[COMMIT_MESSAGE_OPTIONS_PROMPT_KEY] === 'string'
       ? options[COMMIT_MESSAGE_OPTIONS_PROMPT_KEY]
-      : config.get<string>(LEGACY_COMMIT_MESSAGE_PROMPT_SETTING_KEY, DEFAULT_COMMIT_FORMAT_PROMPT);
+      : DEFAULT_COMMIT_FORMAT_PROMPT;
   const trimmed = configured.trim();
   return trimmed.length > 0 ? trimmed : DEFAULT_COMMIT_FORMAT_PROMPT;
 }
