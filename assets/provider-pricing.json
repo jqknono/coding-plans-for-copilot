@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-16T06:45:15.629Z",
+  "updatedAt": "2026-10-17T06:35:03.562Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1151,7 +1151,9 @@
             "Included models: DeepSeek、MiniMax M2.5、Kimi K2.5、Qwen3 Coder、GLM 等"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "synthetic-ai: page.waitForFunction: Timeout 12000ms exceeded."
     },
     {
       "provider": "tencent-cloud-ai",
@@ -1567,5 +1569,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "synthetic-ai: page.waitForFunction: Timeout 12000ms exceeded."
+  ]
 }
