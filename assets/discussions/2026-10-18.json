@@ -1,0 +1,203 @@
+{
+  "date": "2026-10-18",
+  "generatedAt": "2026-10-18T10:32:45.868Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 5,
+    "discussionsCreated": 5,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Claude": 2,
+      "Claude, Codex": 1,
+      "OpenAI": 1,
+      "Trae, Codex, CodeBuddy, 火山引擎": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1249762",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1249762",
+      "title": "Claude 过验证后丝滑升 5x",
+      "content": "书接上文在 PC 端直开 20 刀的 Pro 后： Claude 很好开啊 蹬得太猛发现根本不够用，升 100 刀 5x 时跳了验证，幸好之前在闲鱼上办过一张马来西亚的驾照，丝滑过验证后继续用 Revolut 在 PC 端付款成功，零基础选手又可以继续快乐地 Vibe Coding 了 目前正在复刻一个可以导出个人数据的滴答清单，做一个自用的信用卡玩卡工具，还想做个能持久化的微信公众号 Rss 方案 做下来有一个最大感受，就是普通人也可以轻松地定制满足自己需求的各种 app 了。自己作为一个不会编程的人，也慢慢的学会了 Git 版本控制、多 Agent 协同、开发流程等知识。程序员真的是挺危险的，还好自己不在这个行业内，不然也得整天焦虑",
+      "author": "lfsc",
+      "createdAt": "2026-10-18T08:15:13.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "The user upgraded from the $20 Pro plan to the $100 5x plan after hitting usage limits, passed verification using a Malaysian driver's license, and successfully paid via Revolut on PC. They are now happily using Claude for Vibe Coding to build personal apps like a Todoist data exporter and a credit card tool.",
+        "topics": [
+          "订阅",
+          "升级",
+          "定价",
+          "Claude",
+          "体验卡",
+          "Vibe Coding",
+          "过验证"
+        ],
+        "planMentioned": "Claude Pro 5x ($100)",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/440",
+      "analyzedAt": "2026-10-18T10:38:04.348Z"
+    },
+    {
+      "id": "v2ex-1249753",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1249753",
+      "title": "总感觉现在的 token 越来越不够用了呀，是错觉吗？",
+      "content": "以前感觉订阅的不管是 claude 还是 codex 怎么用都用不完，现在随随便便一两天，两三天就见底了，codex 要不是重置的频繁我都没法干活了，是因为以前让 ai 做的工作少，而且不敢给他复杂工作，所以省，现在所有大大小小工作全让 ai 来做，而且难度越来越高，所以越来越费了，还是说现在给的确实是少了？不是网上各种媒体总说以后 token 越来越便宜么，什么人人都用得起，白菜价，我怎么感觉越来越贵了，是我的错觉吗？",
+      "author": "illegals0001",
+      "createdAt": "2026-10-18T06:43:55.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Claude, Codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "用户反映订阅的 Claude 和 Codex 代码助手 token 消耗越来越快，几天后就用完，怀疑是使用场景变复杂导致还是官方实际给的额度变少了，感觉与宣传的“token 越来越便宜”背道而驰。",
+        "topics": [
+          "token限制",
+          "订阅",
+          "Claude",
+          "Codex",
+          "使用成本",
+          "套餐"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/441",
+      "analyzedAt": "2026-10-18T10:38:10.821Z"
+    },
+    {
+      "id": "v2ex-1249696",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1249696",
+      "title": "最近这 codex 额度消耗快的离谱啊， 5x 套餐随便几个问题 10% 额度没了",
+      "content": "",
+      "author": "longpc",
+      "createdAt": "2026-10-18T01:15:46.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户抱怨Codex的额度消耗过快，在5x套餐下，几个问题就消耗了10%的额度。",
+        "topics": [
+          "额度消耗",
+          "套餐",
+          "Codex"
+        ],
+        "planMentioned": "5x 套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/442",
+      "analyzedAt": "2026-10-18T10:38:16.213Z"
+    },
+    {
+      "id": "v2ex-1249713",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1249713",
+      "title": "ios 上 claude 从 pro 升级 max，扣费了但是依旧还是 pro",
+      "content": "如题，这个问题怎么解决，昨天晚上就升级了。到今天上午还是 pro 。。。 然后我以为是当次交易失败了。我就继续从 max 125 刀升级到 max 250 刀，想着是不是会覆盖，发现还是没用。依旧 apple 扣费了，但是还是显示 pro 。这下心态彻底炸了 有没 V 友遇到过类似情况并解决了的，分享下成功经验，不胜感激！",
+      "author": "tuchuanw",
+      "createdAt": "2026-10-18T02:41:24.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户在 iOS 上将 Claude 从 Pro 升级到 Max，但扣费后仍显示为 Pro，寻求解决方法。",
+        "topics": [
+          "定价",
+          "订阅",
+          "故障排查",
+          "体验卡"
+        ],
+        "planMentioned": "Pro, Max",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/443",
+      "analyzedAt": "2026-10-18T10:38:21.468Z"
+    },
+    {
+      "id": "v2ex-1249701",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1249701",
+      "title": "今年真的不一样了，同样的项目，去年 Trae 们还动不动给我写废了",
+      "content": "同样的项目，去年 Trae 们还动不动给我写废了； codex 写得几十天，得买很大额度的； codebuddy 跟傻缺一样（去年）； 火山引擎的 code plan 慢的要死，每秒 10-30tok ； 去年用国产 ai 智能体们，花了三千多，写了五六坨，一个都没有用起来； 今年就不一样了，国产 ai 智能体打出了狗脑子，300 块写了好几个应用了；",
+      "author": "eben",
+      "createdAt": "2026-10-18T01:49:52.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Trae, Codex, CodeBuddy, 火山引擎",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "作者对比去年与今年使用各类 AI 编码助手的体验，指出去年 Trae、Codex、CodeBuddy 及火山引擎 code plan 表现不佳且成本高，而今年国产 AI 智能体大幅进步，仅花 300 元就成功开发多个应用。",
+        "topics": [
+          "使用体验",
+          "套餐对比",
+          "定价",
+          "国产AI",
+          "火山引擎",
+          "Codex",
+          "Trae"
+        ],
+        "planMentioned": "火山引擎 code plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/444",
+      "analyzedAt": "2026-10-18T10:38:28.543Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
