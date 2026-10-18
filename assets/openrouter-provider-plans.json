@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-17T12:02:55.120Z",
-  "generatedAtBeijing": "2026年10月17日 20:02:55",
-  "sourceGeneratedAt": "2026-10-17T06:35:03.562Z",
-  "sourceGeneratedAtBeijing": "2026年10月17日 14:35:03",
-  "sourceMetricsGeneratedAt": "2026-10-17T12:02:07.445Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月17日 20:02:07",
+  "generatedAt": "2026-10-18T12:31:27.624Z",
+  "generatedAtBeijing": "2026年10月18日 20:31:27",
+  "sourceGeneratedAt": "2026-10-18T12:30:32.240Z",
+  "sourceGeneratedAtBeijing": "2026年10月18日 20:30:32",
+  "sourceMetricsGeneratedAt": "2026-10-18T12:30:33.782Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月18日 20:30:33",
   "summary": {
     "openrouterProviderCount": 112,
     "metricsProviderCount": 55,
@@ -516,7 +516,7 @@
           "unit": "月",
           "notes": "来源: https://inference.net/pricing/",
           "serviceDetails": [
-            "New Introducing AutoEvals: Find the right model for your task"
+            "New DeepSeek V4.1 Flash 1017 is now available on Inference.net"
           ]
         }
       ],
