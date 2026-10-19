@@ -1,0 +1,205 @@
+{
+  "date": "2026-10-19",
+  "generatedAt": "2026-10-19T12:24:33.231Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 20,
+    "relevantPosts": 5,
+    "discussionsCreated": 5,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "MiniMax": 1,
+      "Claude Desktop App, GPT Plus": 1,
+      "Cursor, GPT, Gemini, OpenCode, Command Code, DeepSeek, Qwen, GLM": 1,
+      "DeepSeek, OpenAI (via relay)": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1250114",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1250114",
+      "title": "匿名狂跑 200T Token 的“Space Bunny”终于破案了，居然是 MiniMax M3.1 Flash，刚已经发布",
+      "content": "简单看了一圈数据，这波明显是冲着刚火起来的 ds4.1flash-1017 去的：DeepSWE 73.7%，OSWorld V2 61.7 分直接拿了国产第一，日常输出还能飙到 200+ TPS 。最狠的是价格，百万输入 1 块、输出 4 块，连 DS 最稳的缓存都直接干到了 1 毛钱，后面居然还要开源权重。 这玩意会不会是新的斩杀线？ glm 和 kimi 该发力了，预测未来几天会有新的模型出来",
+      "author": "yan55667",
+      "createdAt": "2026-10-19T12:08:56.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "MiniMax",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "帖子讨论 MiniMax M3.1 Flash 模型在 DeepSWE 和 OSWorld 等编程评测中表现优异，日常输出可达 200+ TPS，且价格极具竞争力（百万输入 1 元、输出 4 元），缓存低至 0.1 元，并计划开源权重。",
+        "topics": [
+          "定价",
+          "评测成绩",
+          "开源权重",
+          "编程能力",
+          "Token价格"
+        ],
+        "planMentioned": "MiniMax M3.1 Flash",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/445",
+      "analyzedAt": "2026-10-19T12:34:29.097Z"
+    },
+    {
+      "id": "v2ex-1250104",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1250104",
+      "title": "第一个号被封了之后",
+      "content": "前情提要 https://www.v2ex.com/t/1245975 10 月 1 号被封号了之后，在注册第二个号之前，先研究了一波网上的防封操作，大致就是用指纹浏览器、用家宽、堵 DNS 泄漏和 WebRTC 泄漏、彻底清除电脑里跟 claude desktop app 有关的文件 然后在指纹浏览器里注册了账号。不得不说家宽 IP 似乎有点用，因为这次注册没有要求验证手机号。 注册后用了几天，通过新的 appstore 账号 + 礼品卡开通了 pro ；之后又用了一段时间，准备升级 max 5x 的时候出了问题。 倒不是 claude 出了问题，而是 appstore 账号出了问题，似乎是被苹果风控了，总是不允许我购买 max 5x ，尝试的次数多了甚至把我号锁了，找了苹果客服才告知要在一段时间之后才能换密码重新登录，不得已又买了 gpt plus 临时顶着。 所以现状就是用完 claude pro 之后用 gpt plus ，然后等苹果把我 apple id 解锁之后再次尝试升级到 max 5x ，看看到时候会不会出现手机号验证或 kyc 另外为了防止第二个号突然被封导致工作中断",
+      "author": "milkleeeeee",
+      "createdAt": "2026-10-19T11:18:04.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude Desktop App, GPT Plus",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "The author describes how their first AI coding assistant account was banned, leading them to create a second account and face difficulties upgrading to the max 5x tier due to Apple's security measures requiring password resets. They eventually switched to GPT Plus as a temporary solution while waiting for their Apple ID to be unlocked.",
+        "topics": [
+          "账号管理",
+          "订阅升级",
+          "支付问题",
+          "AI代码助手",
+          "AppleID",
+          "替代方案"
+        ],
+        "planMentioned": "max 5x",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/446",
+      "analyzedAt": "2026-10-19T12:34:41.116Z"
+    },
+    {
+      "id": "v2ex-1250072",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1250072",
+      "title": "用了国内外这么多模型的感受",
+      "content": "公司给我们订阅了 cursor 的 team 席位，还包含 Grok bot 的额度。 好好写代码（不是许愿式，起码自己先看看要怎么写，然后让 AI 写完了，自己再看看对不对的那种），再用 grok bot 读读代码，做一做代码审阅。 公司并没有因为我们大量使用 AI ，而给我们额外的工作量，tokens 基本够用了。 除了有一些私活，或者自己的小东西，不想用公司的，team 订阅的管理员能看到。 于是我就兜兜转转地，偶尔地、突发地，用了很多种订阅，其实挺浪费的，经常用半个月闲半个月，下个月就不续订了。 用过 GPT 的官方订阅，一直在白嫖 Gemini 的 flash 。甚至还充值过 opencode 的 zen ，当时想着既然是突发式地用几天，直接用原价，可能也比订一个月用几天再闲置花钱少。 A\\的倒是没用过，老封号我用它干嘛。 国产的就订阅过 command code 的 go ，opencode 的 go ，还有 DeepSeek 的官方 API 。 自己在公司也部署过 q4 量化的 qwen3.8-flash 和 q8 量化的 qwen3.8-27b 。 这种情况持续了有大半",
+      "author": "siriusliangcn",
+      "createdAt": "2026-10-19T08:54:33.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Cursor, GPT, Gemini, OpenCode, Command Code, DeepSeek, Qwen, GLM",
+        "supplierCategory": "other",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.75,
+        "summary": "作者分享了公司订阅Cursor团队版以及个人使用GPT、Gemini、DeepSeek、Qwen、GLM等多种国内外模型和编码套餐的体验，对比了它们在代码编写与小说创作场景下的表现，认为国外模型更像靠谱的同事，而国内模型在非代码场景下表现不稳定、耗费心神。",
+        "topics": [
+          "套餐对比",
+          "使用体验",
+          "模型对比",
+          "编码辅助",
+          "订阅",
+          "国产模型",
+          "国外模型"
+        ],
+        "planMentioned": "Cursor team, GPT official, Command Code Go, OpenCode Go, DeepSeek API",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/447",
+      "analyzedAt": "2026-10-19T12:34:51.988Z"
+    },
+    {
+      "id": "v2ex-1250071",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1250071",
+      "title": "年底会不会出个 500$以上 的订阅",
+      "content": "跟 openai 一样，目前 20x 真的很快就花完。",
+      "author": "nathandoge",
+      "createdAt": "2026-10-19T08:51:16.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "The post asks whether a new AI coding assistant subscription plan exceeding $500 will be released at year-end, drawing comparisons to OpenAI's subscription model and noting that current usage is already depleting quickly.",
+        "topics": [
+          "订阅",
+          "定价",
+          "AI辅助编程"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/448",
+      "analyzedAt": "2026-10-19T12:34:58.479Z"
+    },
+    {
+      "id": "v2ex-1250010",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1250010",
+      "title": "大家还是少用点中转站吧，水太深了",
+      "content": "由于经常改远程机器上的文件，修改后 git 操作十分不便，因此想要一个 web 版的 git ，找了一圈没有合适好用的，就想着自己用 AI 撸一个。 在网页版豆包讨论完需求文档后形成 md 文件，扔给 opencode ， opencode + 中转站 gpt-6.1-sol ，3 小时花了 7 块钱，产出界面新手村水平，fetch 、pull 、push 、功能区等等功能无一个落地成功，纯废！ 想着 gpt-6.1-sol 不应该这么拉，但是手上又无现成 gpt 套餐，就拿 deepseek-41-flash 试了下(周五晚上还未到 1017 版本)， 一样的把 md 需求文件扔给它，大半小时后产出完成，打开居然把我惊艳到了，超出预期，基本功能全部可用，落地成功！ gpt-6.1-sol 的水平不应该这么拉，所以什么原因不用多说也明白， 原本都是修修改改，AI 胜任起来没有明确的体验，这次是真的把我恶心到了！ 该中转站知名度还不低，避免纠纷这里就不写出来了。 后续决定还是优先考虑用官方的 api 吧！ 撸的产出： https://github.com/selfly/synclavis",
+      "author": "selfly",
+      "createdAt": "2026-10-19T06:26:50.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "DeepSeek, OpenAI (via relay)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "作者使用 opencode 配合中转站的 GPT-6.1-sol 开发 Web 版 Git 工具，3 小时花费 7 元但结果极差；改用 DeepSeek-41-flash 仅半小时即成功实现所有功能，质疑中转站模型质量，决定后续优先使用官方 API。",
+        "topics": [
+          "AI编码助手",
+          "中转站",
+          "模型对比",
+          "定价",
+          "官方API",
+          "DeepSeek",
+          "GPT",
+          "opencode"
+        ],
+        "planMentioned": "GPT 套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/449",
+      "analyzedAt": "2026-10-19T12:35:06.850Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
