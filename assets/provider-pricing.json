@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-19T07:20:16.309Z",
+  "updatedAt": "2026-10-19T15:21:32.610Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -675,7 +675,7 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-C37uvlav.js"
+        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CrxTHdKm.js"
       ],
       "plans": [
         {
@@ -835,14 +835,14 @@
       "plans": [
         {
           "name": "Go",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "currentPrice": 24.5,
+          "currentPriceText": "¥24.5/月",
+          "originalPrice": 49,
+          "originalPriceText": "¥49/月",
           "unit": "月",
-          "notes": "续费金额：¥49/月",
+          "notes": "续费金额：¥24.5/月",
           "serviceDetails": [
-            "文本模型，如 M3.1 Flash Preview",
+            "文本模型，如 M3.1 Flash",
             "图像和声音模型",
             "联网搜索与多模态理解",
             "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
@@ -851,14 +851,14 @@
         },
         {
           "name": "Explore",
-          "currentPrice": 119,
-          "currentPriceText": "¥119/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "currentPrice": 59.5,
+          "currentPriceText": "¥59.5/月",
+          "originalPrice": 119,
+          "originalPriceText": "¥119/月",
           "unit": "月",
-          "notes": "续费金额：¥119/月",
+          "notes": "续费金额：¥59.5/月",
           "serviceDetails": [
-            "文本模型，如 M3.1 Flash Preview",
+            "文本模型，如 M3.1 Flash",
             "视频模型，如 H3",
             "图像和声音模型",
             "联网搜索与多模态理解",
@@ -868,14 +868,14 @@
         },
         {
           "name": "Build",
-          "currentPrice": 469,
-          "currentPriceText": "¥469/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "currentPrice": 234.5,
+          "currentPriceText": "¥234.5/月",
+          "originalPrice": 469,
+          "originalPriceText": "¥469/月",
           "unit": "月",
-          "notes": "续费金额：¥469/月",
+          "notes": "续费金额：¥234.5/月",
           "serviceDetails": [
-            "文本模型，如 M3.1 Flash Preview",
+            "文本模型，如 M3.1 Flash",
             "视频模型，如 H3",
             "图像和声音模型",
             "联网搜索与多模态理解",
