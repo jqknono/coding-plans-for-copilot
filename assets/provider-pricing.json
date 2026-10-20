@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-10-20T07:12:14.881Z",
+  "updatedAt": "2026-10-20T13:24:42.051Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -43,7 +43,9 @@
             "Lingma 阿里云智能编码助手，提供独立 IDE: Kilo CLI 轻量高性能命令行编程工具"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "aliyun-ai: Request failed: https://www.aliyun.com/benefit/scene/codingplan -> 413"
     },
     {
       "provider": "aliyun-token-plan",
@@ -1569,6 +1571,7 @@
     }
   ],
   "failures": [
+    "aliyun-ai: Request failed: https://www.aliyun.com/benefit/scene/codingplan -> 413",
     "synthetic-ai: page.waitForFunction: Timeout 12000ms exceeded."
   ]
 }

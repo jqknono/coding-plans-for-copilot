@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-19T15:22:25.556Z",
-  "generatedAtBeijing": "2026年10月19日 23:22:25",
-  "sourceGeneratedAt": "2026-10-19T15:21:32.610Z",
-  "sourceGeneratedAtBeijing": "2026年10月19日 23:21:32",
-  "sourceMetricsGeneratedAt": "2026-10-19T15:21:34.727Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月19日 23:21:34",
+  "generatedAt": "2026-10-20T13:25:39.884Z",
+  "generatedAtBeijing": "2026年10月20日 21:25:39",
+  "sourceGeneratedAt": "2026-10-20T13:24:42.051Z",
+  "sourceGeneratedAtBeijing": "2026年10月20日 21:24:42",
+  "sourceMetricsGeneratedAt": "2026-10-20T13:24:43.542Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月20日 21:24:43",
   "summary": {
     "openrouterProviderCount": 112,
     "metricsProviderCount": 55,
@@ -774,7 +774,6 @@
         "https://www.kimi.com/help/membership/membership-pricing",
         "https://www.kimi.com/code",
         "https://www.kimi.com/apiv2/kimi.gateway.order.v1.GoodsService/ListGoods",
-        "https://statics.moonshot.cn/kimi-web-seo/assets/index-CrxTHdKm.js",
         "https://platform.moonshot.ai"
       ],
       "pricingPageUrl": "https://www.kimi.com/help/membership/membership-pricing",
@@ -1394,7 +1393,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.together.ai",
       "pricingPageUrl": "https://www.together.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.30 / $0.06 / $1.20）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3.00 / $0.30 / $15.00）",
       "blocked": false
     },
     {
