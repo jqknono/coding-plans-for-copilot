@@ -1,0 +1,141 @@
+{
+  "date": "2026-10-20",
+  "generatedAt": "2026-10-20T11:03:21.686Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 17,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Codex, Google Gemini": 1,
+      "Claude, GPT, Gemini, Grok, DeepSeek": 1,
+      "智谱, Kimi, Cursor, Codex, DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1250387",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1250387",
+      "title": "试用了一下 Gemini 4 Argon，编程能力依旧北美大豆包。",
+      "content": "以前一直用 codex 。但是最近用太猛，把额度用完了， 刚好发现 google gemini 最新模型发布了于是就去试了下。 对比模型 codex antigravity Astra xhigh Argon high 项目规模 7 个模块，涉及服务端、app 、后端、管理后台等，项目总共 30w+代码 使用场景 bug fix ，每个模块都代码都给他，手机连接 adb 提示词 说明 bug 问题，复现方法，期望效果。 执行逻辑 codex antigravity 按照我提供的复现方案，自己去操作 app 进行复现，然后抓日志，看代码，然后分析修复。修复完再按复现步骤去回归验证。 直接就开干改代码了，也没去复现问题，修完就不管了，也不自己编译从新验证。 耗时情况 codex antigravity 修一个 bug 大概十多二十分钟。 一个 bug 干了四十多分钟 最终效果 codex antigravity 基本上 ai 说修好了，都是真修好了。都不需要我去看代码验证。 我的 bug 确实复现不出来了，但是他大爷的，流程根本走不到原来 bug 位置，因为在前面就出 bug 了。我又再次",
+      "author": "pulutom40",
+      "createdAt": "2026-10-20T09:52:12.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Codex, Google Gemini",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "用户对比了 Codex 和 Gemini 4 Argon 在大型项目(30w+ 代码)中的 Bug 修复能力，认为 Codex 表现远优于 Argon，且吐槽 Argon 修 Bug 越改越多、额度消耗快(2 小时用完 $20 套餐)，而 Codex $100 套餐体验更好。",
+        "topics": [
+          "编程能力对比",
+          "定价",
+          "套餐对比",
+          "使用体验",
+          "额度消耗",
+          "Bug修复"
+        ],
+        "planMentioned": "Codex $100套餐, Gemini Argon $20套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/450",
+      "analyzedAt": "2026-10-20T11:10:19.124Z"
+    },
+    {
+      "id": "v2ex-1250384",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1250384",
+      "title": "[推广] Beeve AI： Claude 最低 0.17 倍率， GPT 最低 0.2 倍率，注册留 ID 送 3$ 积分",
+      "content": "我在运营 Beeve AI ，来 V 站发个推广，也送点积分给大家试试。 目前 Claude 最低 0.17 倍率（ Claude 特惠组），GPT 最低 0.2 倍率（ GPT 组） ，另外也有 Gemini 、Grok 、DeepSeek 。平时用 Claude Code 、Codex 的朋友可以试一下。 注册后在本帖留一下 Beeve AI 用户 ID ，送 3$ 积分。 不用先充值，留用户 ID 就行。 网站： https://api.beeve.site/ 注册： https://api.beeve.site/register 模型价格： https://api.beeve.site/pricing 上面的倍率按本站模型基础价计算，具体模型和价格以模型广场为准（登录后查看）。 用着有什么问题，直接在楼里说。",
+      "author": "DICK23",
+      "createdAt": "2026-10-20T09:42:45.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude, GPT, Gemini, Grok, DeepSeek",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "Beeve AI 推出 AI 编码助手推广活动，提供 Claude 最低 0.17 倍率、GPT 最低 0.2 倍率等优惠，注册用户可获得 3$ 积分。",
+        "topics": [
+          "定价",
+          "套餐",
+          "推广",
+          "积分",
+          "注册",
+          "折扣"
+        ],
+        "planMentioned": "Beeve AI 积分计划",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/451",
+      "analyzedAt": "2026-10-20T11:10:26.214Z"
+    },
+    {
+      "id": "v2ex-1250346",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1250346",
+      "title": "大家是怎么搭配自己的模型套餐的？",
+      "content": "因为每天蹬的比较多，目前我的搭配是： 1. 智谱 v1 max 包年，明年一月就到期了（主力） 2. kimi max 月续费 3. curso 只是这个月体验了一下 4. codex plus 虽然是 plus 这个月的疯狂重置蹭了很多 token 5. ds flash 兜底的，要是都蹭完了才会充 5 块",
+      "author": "Kaly33",
+      "createdAt": "2026-10-20T07:56:44.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.98,
+        "supplier": "智谱, Kimi, Cursor, Codex, DeepSeek",
+        "supplierCategory": "other",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.86,
+        "summary": "分享个人 AI 编码模型套餐的搭配方案：智谱 v1 max 包年作为主力，Kimi Max 按月续费，Cursor 和 Codex Plus 临时使用，DeepSeek Flash 作为低成本兜底。",
+        "topics": [
+          "套餐搭配",
+          "订阅续费",
+          "Token 用量",
+          "套餐对比",
+          "使用体验"
+        ],
+        "planMentioned": "智谱 v1 max, Kimi Max, Cursor, Codex Plus, DeepSeek Flash",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/452",
+      "analyzedAt": "2026-10-20T11:10:35.817Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1250337: The operation was aborted due to timeout"
+  ]
+}
