@@ -1,0 +1,110 @@
+{
+  "date": "2026-10-21",
+  "generatedAt": "2026-10-21T11:20:15.216Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 16,
+    "relevantPosts": 2,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 1,
+    "supplierMentions": {
+      "Claude, Codex": 1,
+      "codex": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1250714",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1250714",
+      "title": "Claude 和 Codex 来回切的人有救了：写了个 ccx，一键带着上下文切过去接着干",
+      "content": "我自己 Claude 和 Codex 两边都有号，一般是 5 小时额度用完了就切到另一边，或者让两边模型交叉检查一下。但每次接手都得把来龙去脉重新 bb 一遍：项目是干嘛的、做到哪了、哪些方案试过不行……挺烦的。 我受不了了，所以写了 ccx ：把一个 Claude Code 会话和一个 Codex 线程关联起来，双向同步上下文（消息、工具调用、计划、git status）。Mac 菜单栏点一下 ⇄，Codex 就带着完整上下文接着干；Codex 也用完了，回到原来的 Claude 对话说一句「继续」，那边的进展自动带回来。 每条进展只送一次，不重复烧 token 新版本加了额度提醒：哪边的 5 小时额度到 90% 就提醒你，一键切过去 全部本机跑，不用注册，没有服务器，MIT 开源 安装简单，把 README 里那句话丢给 Claude Code 或 Codex，让它一键装好就行： https://github.com/aaronwong1999/ccx 目前只支持 macOS + 两个桌面版。基本是周末用 Opus 5.5 搞的，有问题提 issue 老铁们。",
+      "author": "imrun",
+      "createdAt": "2026-10-21T10:35:09.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.88,
+        "supplier": "Claude, Codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.94,
+        "summary": "作者发布开源工具 ccx，可在 Claude Code 与 Codex 桌面版之间双向同步会话上下文，并在 5 小时额度接近耗尽时提醒切换。工具完全本地运行，目前仅支持 macOS，可通过 README 中的命令安装。",
+        "topics": [
+          "额度提醒",
+          "上下文同步",
+          "跨模型切换",
+          "Claude Code",
+          "Codex",
+          "开源工具",
+          "本机运行"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": null,
+      "analyzedAt": "2026-10-21T11:28:02.161Z"
+    },
+    {
+      "id": "v2ex-1250691",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1250691",
+      "title": "我感觉 codex 的额度消耗，似乎变快了？大家有感觉吗？",
+      "content": "我 100$的套餐，以前都是最强模型猛猛干，基本上不会遇上不够用的情况，而且基本上每周都还能剩一半左右的额度。现在同样的用法，基本上两三天额度就用完了。 虽然最近隔两天就重置一次，但是怎么感觉有点被当猴耍了的感觉？似乎偷偷把消耗调快了，然后重置一遍大家还得感谢他？",
+      "author": "pulutom40",
+      "createdAt": "2026-10-21T09:05:31.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "codex",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "用户抱怨 Codex $100 套餐的额度消耗变得异常快，怀疑提供商偷偷调整了消耗速度，对重置机制感到不满。",
+        "topics": [
+          "codex",
+          "额度消耗",
+          "套餐",
+          "定价",
+          "订阅",
+          "使用体验"
+        ],
+        "planMentioned": "$100套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/454",
+      "analyzedAt": "2026-10-21T11:28:10.003Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1250414: LLM returned invalid JSON: Unexpected token 'U', \"User Safety: safe\" is not valid JSON"
+  ]
+}
