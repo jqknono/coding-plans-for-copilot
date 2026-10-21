@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-10-21T07:04:32.764Z",
+  "updatedAt": "2026-10-21T13:33:50.056Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/2677da1d1d9c347cd5d69a3b0e97b87d.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/8895c00c367135d38e849df3a286753b.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -1260,7 +1260,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.18/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.22/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
       ],
       "plans": [
         {
@@ -1272,7 +1272,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "模型：Doubao、GLM、DeepSeek、Kimi、MiniMax等",
+            "模型：Doubao、GLM、DeepSeek、Kimi 等",
             "适配：支持自由切换模型，或开启 Auto 模式",
             "工具：Claude Code、Cursor 等主流编程工具"
           ]

@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-10-20T13:25:39.884Z",
-  "generatedAtBeijing": "2026年10月20日 21:25:39",
-  "sourceGeneratedAt": "2026-10-20T13:24:42.051Z",
-  "sourceGeneratedAtBeijing": "2026年10月20日 21:24:42",
-  "sourceMetricsGeneratedAt": "2026-10-20T13:24:43.542Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月20日 21:24:43",
+  "generatedAt": "2026-10-21T13:34:45.143Z",
+  "generatedAtBeijing": "2026年10月21日 21:34:45",
+  "sourceGeneratedAt": "2026-10-21T13:33:50.056Z",
+  "sourceGeneratedAtBeijing": "2026年10月21日 21:33:50",
+  "sourceMetricsGeneratedAt": "2026-10-21T13:33:51.573Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月21日 21:33:51",
   "summary": {
-    "openrouterProviderCount": 112,
-    "metricsProviderCount": 55,
-    "resolvedMetricsProviderCount": 55,
+    "openrouterProviderCount": 113,
+    "metricsProviderCount": 56,
+    "resolvedMetricsProviderCount": 56,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 11,
     "providersWithPlans": 20,
-    "pendingCount": 35,
+    "pendingCount": 36,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/f47662e6ada7779037af88a18caf0307.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/8895c00c367135d38e849df3a286753b.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -832,7 +832,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "模型：Doubao、GLM、DeepSeek、Kimi、MiniMax等",
+            "模型：Doubao、GLM、DeepSeek、Kimi 等",
             "适配：支持自由切换模型，或开启 Auto 模式",
             "工具：Claude Code、Cursor 等主流编程工具"
           ]
@@ -854,7 +854,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.18/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.22/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1123,7 +1123,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $1.30 / $0.13）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.40 / $0.04）",
       "blocked": false
     },
     {
@@ -1196,6 +1196,15 @@
       "officialWebsiteUrl": "https://www.gmicloud.ai",
       "pricingPageUrl": "https://www.gmicloud.ai",
       "reason": "仅提供 GPU 云计算按时计费（$/GPU-hour），无套餐订阅",
+      "blocked": false
+    },
+    {
+      "slug": "google-vertex",
+      "openrouterName": "Google",
+      "providerId": null,
+      "officialWebsiteUrl": "https://cloud.google.com",
+      "pricingPageUrl": "https://cloud.google.com",
+      "reason": "云平台按量计费 + $300 免费试用额度，无套餐订阅",
       "blocked": false
     },
     {
