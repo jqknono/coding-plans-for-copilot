@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-10-21T13:34:45.143Z",
-  "generatedAtBeijing": "2026年10月21日 21:34:45",
-  "sourceGeneratedAt": "2026-10-21T13:33:50.056Z",
-  "sourceGeneratedAtBeijing": "2026年10月21日 21:33:50",
-  "sourceMetricsGeneratedAt": "2026-10-21T13:33:51.573Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月21日 21:33:51",
+  "generatedAt": "2026-10-22T13:35:47.630Z",
+  "generatedAtBeijing": "2026年10月22日 21:35:47",
+  "sourceGeneratedAt": "2026-10-22T13:34:47.389Z",
+  "sourceGeneratedAtBeijing": "2026年10月22日 21:34:47",
+  "sourceMetricsGeneratedAt": "2026-10-22T13:34:49.926Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月22日 21:34:49",
   "summary": {
-    "openrouterProviderCount": 113,
-    "metricsProviderCount": 56,
-    "resolvedMetricsProviderCount": 56,
+    "openrouterProviderCount": 114,
+    "metricsProviderCount": 55,
+    "resolvedMetricsProviderCount": 55,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 11,
     "providersWithPlans": 20,
-    "pendingCount": 36,
-    "blockedPendingCount": 2,
+    "pendingCount": 35,
+    "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/8895c00c367135d38e849df3a286753b.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/0d8a786b2ff43dd730f48458606da589.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -1240,8 +1240,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://status.makora.com",
       "pricingPageUrl": "https://status.makora.com",
-      "reason": "官网价格页探测失败：https://status.makora.com/pricing: HTTP 404",
-      "blocked": false
+      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
+      "blocked": true
     },
     {
       "slug": "mancer",
@@ -1385,15 +1385,6 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "tenstorrent",
-      "openrouterName": "Tenstorrent",
-      "providerId": null,
-      "officialWebsiteUrl": "https://console.tenstorrent.com",
-      "pricingPageUrl": "https://console.tenstorrent.com",
-      "reason": "官网价格页探测失败：https://console.tenstorrent.com/pricing: HTTP 404",
       "blocked": false
     },
     {

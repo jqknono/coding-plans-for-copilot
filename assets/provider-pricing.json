@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-10-22T07:06:39.787Z",
+  "updatedAt": "2026-10-22T13:34:47.389Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/8895c00c367135d38e849df3a286753b.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/0d8a786b2ff43dd730f48458606da589.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -43,9 +43,7 @@
             "Lingma 阿里云智能编码助手，提供独立 IDE: Kilo CLI 轻量高性能命令行编程工具"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "aliyun-ai: Request failed: https://www.aliyun.com/benefit/scene/codingplan -> 413"
+      ]
     },
     {
       "provider": "aliyun-token-plan",
@@ -178,7 +176,9 @@
             "商品类型: Token Plan 个人版"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "baidu-qianfan-ai: Unable to locate Baidu coding plan table"
     },
     {
       "provider": "cerebras-code",
@@ -1571,7 +1571,7 @@
     }
   ],
   "failures": [
-    "aliyun-ai: Request failed: https://www.aliyun.com/benefit/scene/codingplan -> 413",
+    "baidu-qianfan-ai: Unable to locate Baidu coding plan table",
     "synthetic-ai: page.waitForFunction: Timeout 12000ms exceeded."
   ]
 }
