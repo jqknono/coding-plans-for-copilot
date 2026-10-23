@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-10-22T13:35:47.630Z",
-  "generatedAtBeijing": "2026年10月22日 21:35:47",
-  "sourceGeneratedAt": "2026-10-22T13:34:47.389Z",
-  "sourceGeneratedAtBeijing": "2026年10月22日 21:34:47",
-  "sourceMetricsGeneratedAt": "2026-10-22T13:34:49.926Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月22日 21:34:49",
+  "generatedAt": "2026-10-23T13:12:20.804Z",
+  "generatedAtBeijing": "2026年10月23日 21:12:20",
+  "sourceGeneratedAt": "2026-10-23T13:11:25.200Z",
+  "sourceGeneratedAtBeijing": "2026年10月23日 21:11:25",
+  "sourceMetricsGeneratedAt": "2026-10-23T13:11:26.778Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月23日 21:11:26",
   "summary": {
     "openrouterProviderCount": 114,
-    "metricsProviderCount": 55,
-    "resolvedMetricsProviderCount": 55,
+    "metricsProviderCount": 56,
+    "resolvedMetricsProviderCount": 56,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
-    "heuristicProviderCount": 11,
-    "providersWithPlans": 20,
+    "heuristicProviderCount": 12,
+    "providersWithPlans": 21,
     "pendingCount": 35,
-    "blockedPendingCount": 3,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/0d8a786b2ff43dd730f48458606da589.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/6cc8d1333db4044c119fefb6504e139f.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -333,6 +333,75 @@
       "parseMode": "official-website-heuristic"
     },
     {
+      "slug": "cohere",
+      "openrouterName": "Cohere",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "Pro",
+          "currentPrice": 3,
+          "currentPriceText": "$3.00",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://cohere.com/pricing",
+          "serviceDetails": [
+            "Command Generative language models",
+            "Transcribe Speech recognition model",
+            "North Small Translate Machine translation model",
+            "Parse New Document parsing model",
+            "Embed New Semantic representation model",
+            "Rerank New Retrieval optimization model"
+          ]
+        },
+        {
+          "name": "Pro",
+          "currentPrice": 5,
+          "currentPriceText": "$5.00",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "Command Generative language models",
+            "Transcribe Speech recognition model",
+            "North Small Translate Machine translation model",
+            "Parse New Document parsing model",
+            "Embed New Semantic representation model",
+            "Rerank New Retrieval optimization model"
+          ]
+        },
+        {
+          "name": "Pro",
+          "currentPrice": 4,
+          "currentPriceText": "$4.00",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "Command Generative language models",
+            "Transcribe Speech recognition model",
+            "North Small Translate Machine translation model",
+            "Parse New Document parsing model",
+            "Embed New Semantic representation model",
+            "Rerank New Retrieval optimization model"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://cohere.com",
+        "https://cohere.com/pricing"
+      ],
+      "pricingPageUrl": "https://cohere.com/pricing",
+      "officialWebsiteUrl": "https://cohere.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://cohere.com/privacy",
+      "termsOfServiceUrl": "https://cohere.com/terms-of-use",
+      "statusPageUrl": "https://status.cohere.ai/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
       "slug": "coreweave",
       "openrouterName": "CoreWeave",
       "providerId": null,
@@ -484,9 +553,7 @@
           "unit": "月",
           "notes": "来源: https://fireworks.ai/pricing",
           "serviceDetails": [
-            "Join us for our inaugural conference, Forge 2026",
-            "Customize open models with your own data with minimal setup",
-            "Pay per GPU second for faster speeds, higher rate limits, and lower costs at scale"
+            "官网价格页参考，具体权益以官网说明为准"
           ]
         }
       ],
@@ -1217,15 +1284,6 @@
       "blocked": false
     },
     {
-      "slug": "io-net",
-      "openrouterName": "Io Net",
-      "providerId": null,
-      "officialWebsiteUrl": "https://io.net",
-      "pricingPageUrl": "https://io.net",
-      "reason": "官网价格页探测失败：https://io.net/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
       "slug": "ionstream",
       "openrouterName": "Ionstream",
       "providerId": null,
@@ -1240,8 +1298,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://status.makora.com",
       "pricingPageUrl": "https://status.makora.com",
-      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
-      "blocked": true
+      "reason": "官网价格页探测失败：https://status.makora.com/pricing: HTTP 404",
+      "blocked": false
     },
     {
       "slug": "mancer",
@@ -1334,6 +1392,15 @@
       "blocked": false
     },
     {
+      "slug": "pareto-alpha",
+      "openrouterName": "ParetoAlpha",
+      "providerId": null,
+      "officialWebsiteUrl": "https://paretoalphainference.com",
+      "pricingPageUrl": "https://paretoalphainference.com",
+      "reason": "官网价格页探测失败：https://paretoalphainference.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "primeintellect",
       "openrouterName": "PrimeIntellect",
       "providerId": null,
@@ -1370,21 +1437,21 @@
       "blocked": false
     },
     {
-      "slug": "sambanova",
-      "openrouterName": "SambaNova",
-      "providerId": null,
-      "officialWebsiteUrl": "https://sambanova.ai",
-      "pricingPageUrl": "https://sambanova.ai",
-      "reason": "官网价格页探测失败：https://sambanova.ai/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
       "slug": "siliconflow",
       "openrouterName": "SiliconFlow",
       "providerId": null,
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "tenstorrent",
+      "openrouterName": "Tenstorrent",
+      "providerId": null,
+      "officialWebsiteUrl": "https://console.tenstorrent.com",
+      "pricingPageUrl": "https://console.tenstorrent.com",
+      "reason": "官网价格页探测失败：https://console.tenstorrent.com/pricing: HTTP 404",
       "blocked": false
     },
     {
