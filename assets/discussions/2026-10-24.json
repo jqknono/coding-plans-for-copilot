@@ -1,0 +1,142 @@
+{
+  "date": "2026-10-24",
+  "generatedAt": "2026-10-24T10:26:55.166Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 58,
+    "postsAfterKeywordFilter": 18,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "ChatGPT": 1,
+      "Zhipu, OpenAI": 1,
+      "Cursor, Grok, X": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1251512",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1251512",
+      "title": "2026 年如何快速且靠谱的搞定你的 ChatGPT Plus/Pro 订阅，亲测四种行之有效的方法",
+      "content": "2026 年如何快速且靠谱的搞定你的 ChatGPT Plus/Pro 订阅，亲测四种行之有效的方法 2026 年简直是 AI 时代，不管你是做视频，还是写文案，或者是写代码基本离不开 AI 了。说真的，我是挺害怕 AI 未来会真的控制人类（开个玩笑，但不的不说现在的 AI 真的是强大的离谱） 我以前纯粹是手敲代码，自从去年用了 ChatGPT 之后，一发不可收拾，刚开始只是在网页版上查报错，写正则，直到 codex 的出现，简直是逆天了，直接发给 codex 提示词，它就能帮你搞定你所需要的东西。 但无奈的是免费版几乎用不了 codex,可能你说几句话就没有额度了，而且用不了它最先进的模型。想要用好的模型，你就的充 plus 甚至 pro 。但 ChatGPT 目前没有对中国用户开通付款方式，所以真的卡住了太多人了。 我是各种方法都折腾过，开通过虚拟卡，但发现充过一两次就用不成了，然后自己又去折腾美区苹果 ID ，为此还专门买了个港版苹果手机，但买来的苹果 ID ，充了一两次又没办法充了。真的是各种折腾。后来觉得太麻烦了，索性一直是找的第三方代充，无非也就是贵点手续费。但确实不用让人",
+      "author": "liuyao729",
+      "createdAt": "2026-10-24T09:23:54.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "ChatGPT",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "The post discusses four practical methods for subscribing to ChatGPT Plus/Pro in 2026, including third-party recharge platforms, official website subscription, Apple App Store, and Google Play, with detailed steps and pros/cons for each method.",
+        "topics": [
+          "ChatGPT Plus",
+          "ChatGPT Pro",
+          "订阅",
+          "第三方充值",
+          "套餐对比",
+          "支付方式",
+          "Codex"
+        ],
+        "planMentioned": "ChatGPT Plus, ChatGPT Pro",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/455",
+      "analyzedAt": "2026-10-24T10:36:20.129Z"
+    },
+    {
+      "id": "v2ex-1251497",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1251497",
+      "title": "GLM 还是 codex plus",
+      "content": "个人自用开发一些简单的需求 问下这个 2 个怎么选 glm 的连续包月 118 codex plus 20 刀",
+      "author": "rcj6056",
+      "createdAt": "2026-10-24T08:47:22.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Zhipu, OpenAI",
+        "supplierCategory": "other",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.9,
+        "summary": "用户询问个人开发简单需求时，GLM（智谱）连续包月118元与Codex Plus 20美元该如何选择，属于两款AI编码助手套餐的对比选型咨询。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "选型",
+          "GLM",
+          "Codex Plus"
+        ],
+        "planMentioned": "GLM连续包月, Codex Plus",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/456",
+      "analyzedAt": "2026-10-24T10:36:25.799Z"
+    },
+    {
+      "id": "v2ex-1251492",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1251492",
+      "title": "Grok、Cursor、X 联合会员怎么付款开通？支付宝、微信办理说明",
+      "content": "根据 Cursor 官方社区 2026 年 10 月 13 日的答复，新联合订阅暂不支持支付宝；原来通过支付宝购买的 Cursor 方案可以继续保留。 官方答复 希望用支付宝或微信办理的朋友，可以了解 ChongGrok 的联合会员月度代订阅，我们也支持开具发票，具体方案见 联合会员服务页 。能自行完成官方付款的朋友，可以从 官方套餐页 订阅。 前几天我们介绍过 Grok 、Cursor 、X 联合会员的套餐和权益 ，这篇接着聊开通时的几个实际问题：怎么付款、下单前确认什么，以及开通后怎么检查。 新联合会员官方支持哪些支付方式？还能用支付宝吗？ 这套联合会员的官方名称是 The X Subscription ，包含 Grok 、Cursor 和 X 的相应权益，具体功能和用量取决于所选档位。 官方介绍 截至 2026 年 10 月 23 日，官方网页支付说明列出的方式是银行卡、Apple Pay 、Google Pay 和 Link 。不同国家或地区支持的付款方式可能不同，具体以结账页面显示的选项为准。 官方支付说明 下单前，先确认账号情况，再选档位 如果准备通过本站办理，请先通过 C",
+      "author": "dwaiter",
+      "createdAt": "2026-10-24T08:13:04.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Cursor, Grok, X",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.85,
+        "summary": "The post explains how to subscribe to the joint membership of Grok, Cursor, and X (The X Subscription), including payment methods (bank card, Apple Pay, Google Pay, Link, and third-party Alipay/WeChat via ChongGrok), account confirmation steps, plan tiers (Plus, Premium, Super, Ultra), shared usage quotas, and the activation process.",
+        "topics": [
+          "套餐对比",
+          "联合会员",
+          "支付方式",
+          "激活",
+          "订阅",
+          "体验卡"
+        ],
+        "planMentioned": "The X Subscription (Plus, Premium, Super, Ultra)",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/457",
+      "analyzedAt": "2026-10-24T10:36:32.473Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1251478: The operation was aborted due to timeout"
+  ]
+}
