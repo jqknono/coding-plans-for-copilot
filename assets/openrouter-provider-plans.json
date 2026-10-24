@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-10-23T13:12:20.804Z",
-  "generatedAtBeijing": "2026年10月23日 21:12:20",
-  "sourceGeneratedAt": "2026-10-23T13:11:25.200Z",
-  "sourceGeneratedAtBeijing": "2026年10月23日 21:11:25",
-  "sourceMetricsGeneratedAt": "2026-10-23T13:11:26.778Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月23日 21:11:26",
+  "generatedAt": "2026-10-24T12:30:25.805Z",
+  "generatedAtBeijing": "2026年10月24日 20:30:25",
+  "sourceGeneratedAt": "2026-10-24T12:29:35.037Z",
+  "sourceGeneratedAtBeijing": "2026年10月24日 20:29:35",
+  "sourceMetricsGeneratedAt": "2026-10-24T12:29:37.250Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月24日 20:29:37",
   "summary": {
     "openrouterProviderCount": 114,
-    "metricsProviderCount": 56,
-    "resolvedMetricsProviderCount": 56,
+    "metricsProviderCount": 57,
+    "resolvedMetricsProviderCount": 57,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 12,
     "providersWithPlans": 21,
-    "pendingCount": 35,
+    "pendingCount": 36,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -921,7 +921,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.22/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.24/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1434,6 +1434,15 @@
       "officialWebsiteUrl": "https://www.sailresearch.com",
       "pricingPageUrl": "https://www.sailresearch.com",
       "reason": "官网价格页探测失败：https://www.sailresearch.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "sambanova",
+      "openrouterName": "SambaNova",
+      "providerId": null,
+      "officialWebsiteUrl": "https://sambanova.ai",
+      "pricingPageUrl": "https://sambanova.ai",
+      "reason": "官网价格页探测失败：https://sambanova.ai/pricing: HTTP 404",
       "blocked": false
     },
     {
