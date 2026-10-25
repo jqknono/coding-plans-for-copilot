@@ -1,0 +1,75 @@
+{
+  "date": "2026-10-25",
+  "generatedAt": "2026-10-25T10:53:54.890Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 53,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "LinkAGI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1251639",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1251639",
+      "title": "[LinkAGI] GPT / Codex 0.15 倍率起，进群领 3 元体验额度",
+      "content": "我是 LinkAGI 的站长，给最近想接 GPT 、Claude 、Gemini API 的朋友留个试用入口。 进 QQ 群可领 3 元体验额度 ，先拿自己的代码、文档跑一跑，再决定要不要充值。 官网： api.linktoagi.com · 注册 GPT 的 Sale 组是 0.15 倍率，只接 Codex ；需要外接客户端的，可以选 Plus / Pro 。站里也有 Claude 、Gemini 、DeepSeek 、GLM ，具体模型和费用在 模型广场 直接看，按人民币实际用量扣费，每笔调用都有用量和扣费记录。 接入教程放在 中文文档 里。最近也整理了 401 / 404 / 429 / 504 报错排查 ，配置卡住可以回帖说一下客户端、模型和报错，我来帮你看。 QQ 群：342205412 · 点击加群 进群找管理员领取体验额度。",
+      "author": "zykoo",
+      "createdAt": "2026-10-25T07:39:10.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "LinkAGI",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "LinkAGI站长发布GPT/Codex等API试用入口，进群可领3元体验额度，支持按量扣费及多种模型选择。",
+        "topics": [
+          "体验卡",
+          "定价",
+          "套餐对比",
+          "故障排查",
+          "激活"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/458",
+      "analyzedAt": "2026-10-25T10:58:30.348Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1251649: The operation was aborted due to timeout"
+  ]
+}
