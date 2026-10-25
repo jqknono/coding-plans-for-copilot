@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-10-24T12:30:25.805Z",
-  "generatedAtBeijing": "2026年10月24日 20:30:25",
+  "generatedAt": "2026-10-25T13:01:48.238Z",
+  "generatedAtBeijing": "2026年10月25日 21:01:48",
   "sourceGeneratedAt": "2026-10-24T12:29:35.037Z",
   "sourceGeneratedAtBeijing": "2026年10月24日 20:29:35",
-  "sourceMetricsGeneratedAt": "2026-10-24T12:29:37.250Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月24日 20:29:37",
+  "sourceMetricsGeneratedAt": "2026-10-25T13:00:57.995Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月25日 21:00:57",
   "summary": {
     "openrouterProviderCount": 114,
     "metricsProviderCount": 57,
@@ -79,13 +79,25 @@
       "providerId": null,
       "plans": [
         {
+          "name": "Pro",
+          "currentPrice": 4,
+          "currentPriceText": "$4",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.atlascloud.ai/pricing/models",
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        },
+        {
           "name": "Plus",
           "currentPrice": 10.4,
           "currentPriceText": "$10.4",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "来源: https://www.atlascloud.ai/pricing/models",
+          "notes": null,
           "serviceDetails": [
             "官网价格页参考，具体权益以官网说明为准"
           ]
