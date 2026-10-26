@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-10-25T13:01:48.238Z",
-  "generatedAtBeijing": "2026年10月25日 21:01:48",
-  "sourceGeneratedAt": "2026-10-24T12:29:35.037Z",
-  "sourceGeneratedAtBeijing": "2026年10月24日 20:29:35",
-  "sourceMetricsGeneratedAt": "2026-10-25T13:00:57.995Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月25日 21:00:57",
+  "generatedAt": "2026-10-26T14:56:18.021Z",
+  "generatedAtBeijing": "2026年10月26日 22:56:18",
+  "sourceGeneratedAt": "2026-10-26T14:55:21.116Z",
+  "sourceGeneratedAtBeijing": "2026年10月26日 22:55:21",
+  "sourceMetricsGeneratedAt": "2026-10-26T14:55:22.789Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月26日 22:55:22",
   "summary": {
     "openrouterProviderCount": 114,
-    "metricsProviderCount": 57,
-    "resolvedMetricsProviderCount": 57,
+    "metricsProviderCount": 56,
+    "resolvedMetricsProviderCount": 56,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 12,
     "providersWithPlans": 21,
-    "pendingCount": 36,
+    "pendingCount": 35,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -60,7 +60,7 @@
       ],
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/6cc8d1333db4044c119fefb6504e139f.js",
+        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7518ada04263bc6103314f6308249e79.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan",
         "https://www.alibabacloud.com"
@@ -774,7 +774,7 @@
       "providerId": "kimi-ai",
       "plans": [
         {
-          "name": "Adagio（海外）",
+          "name": "Free（海外）",
           "currentPrice": 0,
           "currentPriceText": "$0/月",
           "originalPrice": null,
@@ -1464,15 +1464,6 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "tenstorrent",
-      "openrouterName": "Tenstorrent",
-      "providerId": null,
-      "officialWebsiteUrl": "https://console.tenstorrent.com",
-      "pricingPageUrl": "https://console.tenstorrent.com",
-      "reason": "官网价格页探测失败：https://console.tenstorrent.com/pricing: HTTP 404",
       "blocked": false
     },
     {
