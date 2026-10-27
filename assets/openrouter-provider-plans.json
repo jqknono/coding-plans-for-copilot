@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-10-26T14:56:18.021Z",
-  "generatedAtBeijing": "2026年10月26日 22:56:18",
+  "generatedAt": "2026-10-27T14:07:14.543Z",
+  "generatedAtBeijing": "2026年10月27日 22:07:14",
   "sourceGeneratedAt": "2026-10-26T14:55:21.116Z",
   "sourceGeneratedAtBeijing": "2026年10月26日 22:55:21",
-  "sourceMetricsGeneratedAt": "2026-10-26T14:55:22.789Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月26日 22:55:22",
+  "sourceMetricsGeneratedAt": "2026-10-27T14:06:12.799Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月27日 22:06:12",
   "summary": {
     "openrouterProviderCount": 114,
-    "metricsProviderCount": 56,
-    "resolvedMetricsProviderCount": 56,
+    "metricsProviderCount": 57,
+    "resolvedMetricsProviderCount": 57,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 12,
     "providersWithPlans": 21,
-    "pendingCount": 35,
-    "blockedPendingCount": 2,
+    "pendingCount": 36,
+    "blockedPendingCount": 3,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -1319,8 +1319,8 @@
       "providerId": null,
       "officialWebsiteUrl": "https://mancer.tech",
       "pricingPageUrl": "https://mancer.tech/pricing",
-      "reason": "官网价格页探测失败：https://mancer.tech/billing: fetch failed",
-      "blocked": false
+      "reason": "官网价格页探测失败：homepage: Request timeout after 9000ms",
+      "blocked": true
     },
     {
       "slug": "mara",
@@ -1464,6 +1464,15 @@
       "officialWebsiteUrl": "https://docs.siliconflow.com",
       "pricingPageUrl": "https://docs.siliconflow.com",
       "reason": "官网价格页探测失败：https://docs.siliconflow.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "tenstorrent",
+      "openrouterName": "Tenstorrent",
+      "providerId": null,
+      "officialWebsiteUrl": "https://console.tenstorrent.com",
+      "pricingPageUrl": "https://console.tenstorrent.com",
+      "reason": "官网价格页探测失败：https://console.tenstorrent.com/pricing: HTTP 404",
       "blocked": false
     },
     {
