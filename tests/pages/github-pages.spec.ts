@@ -701,3 +701,26 @@ test('指标页套餐标记和查看套餐跳转正常', async ({ page }) => {
     page.getByRole('tab', { name: navigateArgs?.tab === 'domestic' ? '大陆套餐' : '海外套餐' }),
   ).toHaveAttribute('aria-selected', 'true');
 });
+
+test('侧边导航列出供应商并跳转到对应卡片', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/#domestic');
+  await waitForDomesticCards(page);
+
+  const nav = page.getByRole('navigation', { name: '供应商导航' });
+  await expect(nav).toBeVisible();
+  const navButtons = nav.getByRole('button');
+  await expect.poll(async () => navButtons.count()).toBeGreaterThan(1);
+
+  const target = navButtons.nth(1);
+  const label = (await target.textContent())?.trim();
+  expect(label).toBeTruthy();
+  await target.click();
+
+  const card = page.locator('#domesticGrid .provider-card').filter({
+    has: page.getByRole('heading', { level: 2, name: label || '' }),
+  });
+  await expect(card).toHaveCount(1);
+  await expect(card).toHaveClass(/highlight-card/);
+  await expect(target).toHaveAttribute('aria-current', 'true');
+});

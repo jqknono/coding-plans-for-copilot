@@ -728,6 +728,7 @@ h1 {
   box-shadow: 0 8px 22px rgba(13, 27, 42, 0.08);
   animation: rise 300ms ease both;
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  scroll-margin-top: 8.75rem;
 }
 
 .provider-card.highlight-card {
@@ -1018,5 +1019,118 @@ h1 {
   .plan-list {
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     align-items: stretch;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+.board-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: start;
+  min-width: 0;
+}
+
+.board-content {
+  min-width: 0;
+}
+
+.provider-nav {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 56px);
+  z-index: 30;
+  min-width: 0;
+  max-width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: rgba(254, 252, 246, 0.96);
+  box-shadow: 0 8px 22px rgba(13, 27, 42, 0.06);
+  padding: 0.55rem;
+}
+
+.provider-nav[hidden] {
+  display: none;
+}
+
+.provider-nav-title {
+  margin: 0 0.35rem 0.35rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+}
+
+.provider-nav-list {
+  display: flex;
+  gap: 0.35rem;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.provider-nav-link {
+  flex: 0 0 auto;
+  min-height: 44px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--bg-ink);
+  font: inherit;
+  font-size: 0.86rem;
+  font-weight: 700;
+  line-height: 1.3;
+  padding: 0.45rem 0.72rem;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.provider-nav-link:hover {
+  background: rgba(12, 124, 89, 0.08);
+}
+
+.provider-nav-link.is-active {
+  background: rgba(12, 124, 89, 0.12);
+  color: var(--primary);
+  border-color: rgba(12, 124, 89, 0.28);
+}
+
+.provider-nav-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(12, 124, 89, 0.22);
+}
+
+@media (min-width: 1080px) {
+  .page {
+    width: min(1560px, calc(100vw - 1.5rem));
+  }
+
+  .board-layout.has-provider-nav {
+    grid-template-columns: 208px minmax(0, 1fr);
+  }
+
+  .provider-nav {
+    top: 72px;
+    max-height: calc(100vh - 88px);
+    overflow: auto;
+  }
+
+  .provider-nav-list {
+    display: grid;
+    gap: 0.15rem;
+    overflow: visible;
+  }
+
+  .provider-nav-link {
+    width: 100%;
+    white-space: normal;
+  }
+
+  .provider-card {
+    scroll-margin-top: 5.25rem;
   }
 }

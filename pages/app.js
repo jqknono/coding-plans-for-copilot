@@ -875,6 +875,7 @@ function renderCurrencyFilteredTab(gridEl, providers, primarySymbol, foldedLabel
 
   if (relevant.length === 0) {
     gridEl.append(createElement('article', 'empty', '暂无可展示的套餐数据。'));
+    syncProviderNav();
     return { providerCount: 0, planCount: 0 };
   }
 
@@ -924,6 +925,7 @@ function renderCurrencyFilteredTab(gridEl, providers, primarySymbol, foldedLabel
     gridEl.append(card);
   }
 
+  syncProviderNav();
   return { providerCount: relevant.length, planCount: totalPlans };
 }
 
@@ -1660,13 +1662,120 @@ function buildMetricsRows(data, filters) {
 function navigateToProviderCard(tab, cardId) {
   selectTab(tab);
   requestAnimationFrame(() => {
-    const cardEl = document.getElementById(cardId);
-    if (cardEl) {
-      cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      cardEl.classList.add('highlight-card');
-      setTimeout(() => cardEl.classList.remove('highlight-card'), 1800);
-    }
+    focusProviderCard(cardId);
   });
+}
+
+function focusProviderCard(cardId) {
+  const cardEl = document.getElementById(cardId);
+  if (!cardEl) {
+    return;
+  }
+  cardEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  cardEl.classList.add('highlight-card');
+  setTimeout(() => cardEl.classList.remove('highlight-card'), 1800);
+  setActiveProviderNav(cardId);
+}
+
+function setActiveProviderNav(cardId) {
+  const list = document.getElementById('providerNavList');
+  if (!list) {
+    return;
+  }
+  for (const button of list.querySelectorAll('.provider-nav-link')) {
+    const isActive = button.dataset.cardId === cardId;
+    button.classList.toggle('is-active', isActive);
+    button.setAttribute('aria-current', isActive ? 'true' : 'false');
+    if (isActive) {
+      scrollProviderNavButton(button);
+    }
+  }
+}
+
+function scrollProviderNavButton(button) {
+  const scroller = button.closest('.provider-nav');
+  if (!scroller) {
+    return;
+  }
+  const scrollerRect = scroller.getBoundingClientRect();
+  const buttonRect = button.getBoundingClientRect();
+  if (buttonRect.top < scrollerRect.top) {
+    scroller.scrollTop -= scrollerRect.top - buttonRect.top + 8;
+  } else if (buttonRect.bottom > scrollerRect.bottom) {
+    scroller.scrollTop += buttonRect.bottom - scrollerRect.bottom + 8;
+  }
+
+  const list = button.parentElement;
+  if (!list || list.scrollWidth <= list.clientWidth) {
+    return;
+  }
+  const listRect = list.getBoundingClientRect();
+  if (buttonRect.left < listRect.left) {
+    list.scrollLeft -= listRect.left - buttonRect.left + 8;
+  } else if (buttonRect.right > listRect.right) {
+    list.scrollLeft += buttonRect.right - listRect.right + 8;
+  }
+}
+
+let providerNavObserver = null;
+
+function syncProviderNav() {
+  const nav = document.getElementById('providerNav');
+  const list = document.getElementById('providerNavList');
+  const title = document.getElementById('providerNavTitle');
+  const layout = document.querySelector('.board-layout');
+  if (!nav || !list || !layout) {
+    return;
+  }
+
+  const gridId = activeTab === 'domestic' ? 'domesticGrid' : activeTab === 'overseas' ? 'overseasGrid' : null;
+  const cards = gridId ? [...document.querySelectorAll(`#${gridId} .provider-card`)] : [];
+  list.replaceChildren();
+  providerNavObserver?.disconnect();
+  providerNavObserver = null;
+
+  if (cards.length === 0) {
+    nav.hidden = true;
+    layout.classList.remove('has-provider-nav');
+    return;
+  }
+
+  nav.hidden = false;
+  layout.classList.add('has-provider-nav');
+  if (title) {
+    title.textContent = `供应商 ${cards.length}`;
+  }
+
+  for (const card of cards) {
+    const label = card.querySelector('.provider-title')?.textContent || '未命名供应商';
+    const button = createElement('button', 'provider-nav-link', label);
+    button.type = 'button';
+    button.dataset.cardId = card.id;
+    button.setAttribute('aria-current', 'false');
+    button.addEventListener('click', () => focusProviderCard(card.id));
+    list.append(button);
+  }
+
+  const marker = () => (window.innerWidth >= 1080 ? 96 : 140);
+  const updateActiveFromScroll = () => {
+    let current = cards[0];
+    for (const card of cards) {
+      if (card.getBoundingClientRect().top <= marker()) {
+        current = card;
+      }
+    }
+    if (current?.id) {
+      setActiveProviderNav(current.id);
+    }
+  };
+  providerNavObserver = new IntersectionObserver(updateActiveFromScroll, {
+    rootMargin: '-12% 0px -70% 0px',
+    threshold: [0, 0.25],
+  });
+  for (const card of cards) {
+    providerNavObserver.observe(card);
+  }
+  updateActiveFromScroll();
 }
 
 function renderMetricsTableRows(rows) {
@@ -2018,6 +2127,7 @@ function switchTab(tab) {
   if (tabIntroDescEl)
     tabIntroDescEl.textContent =
       '查看 OpenRouter 模型 provider 的最近 30 分钟可用率、延迟与吞吐，并支持筛选与跳转套餐。';
+  syncProviderNav();
   if (metricsState.rawData) {
     renderMetricsFromState();
   }
@@ -2086,6 +2196,7 @@ async function loadAllPlanData() {
     domesticGridEl.append(createElement('article', 'empty', '加载失败，请稍后重试。'));
     overseasGridEl.replaceChildren();
     overseasGridEl.append(createElement('article', 'empty', '加载失败，请稍后重试。'));
+    syncProviderNav();
     setStats('提供商', 0, '套餐数', 0, '--');
   } finally {
     if (reloadButtonEl) {
