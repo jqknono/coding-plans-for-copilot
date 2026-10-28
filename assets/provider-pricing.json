@@ -1,11 +1,10 @@
 {
-  "updatedAt": "2026-10-28T07:55:28.705Z",
+  "updatedAt": "2026-10-28T09:47:12.857Z",
   "providers": [
     {
       "provider": "aliyun-ai",
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/codingplan",
-        "https://cloud-assets.alicdn.com/lowcode/entry/prod/7518ada04263bc6103314f6308249e79.js",
         "https://t.aliyun.com/abs/promotion/queryPrice",
         "https://help.aliyun.com/zh/model-studio/coding-plan"
       ],
@@ -43,9 +42,7 @@
             "Lingma 阿里云智能编码助手，提供独立 IDE: Kilo CLI 轻量高性能命令行编程工具"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "aliyun-ai: Unable to locate Aliyun entry script"
+      ]
     },
     {
       "provider": "aliyun-token-plan",
@@ -119,6 +116,70 @@
       ],
       "plans": [
         {
+          "name": "Token Plan Mini（积分制）",
+          "currentPrice": 4.9,
+          "currentPriceText": "¥4.9/月",
+          "originalPrice": 9.9,
+          "originalPriceText": "¥9.9/月",
+          "unit": "月",
+          "notes": "适用: 新手尝鲜，入门首选",
+          "serviceDetails": [
+            "额度规格: 1,400 积分 /月",
+            "限时权益: 7天限额取消",
+            "模型支持: 主流国产模型",
+            "兼容工具: 龙虾和AI编程",
+            "计费模式: 积分制"
+          ]
+        },
+        {
+          "name": "Token Plan Lite（积分制）",
+          "currentPrice": 19.9,
+          "currentPriceText": "¥19.9/月",
+          "originalPrice": 40,
+          "originalPriceText": "¥40/月",
+          "unit": "月",
+          "notes": "适用: 日常开发，高性价比之选",
+          "serviceDetails": [
+            "额度规格: 6,600 积分 /月",
+            "限时权益: 7天限额取消",
+            "模型支持: 主流国产模型",
+            "兼容工具: 龙虾和AI编程",
+            "计费模式: 积分制"
+          ]
+        },
+        {
+          "name": "Token Plan Pro（积分制）",
+          "currentPrice": 99.9,
+          "currentPriceText": "¥99.9/月",
+          "originalPrice": 200,
+          "originalPriceText": "¥200/月",
+          "unit": "月",
+          "notes": "适用: 高频开发，持续创作无压力",
+          "serviceDetails": [
+            "额度规格: 45,000 积分 /月",
+            "限时权益: 7天限额取消",
+            "模型支持: 主流国产模型",
+            "兼容工具: 龙虾和AI编程",
+            "计费模式: 积分制"
+          ]
+        },
+        {
+          "name": "Token Plan Max（积分制）",
+          "currentPrice": 299.9,
+          "currentPriceText": "¥299.9/月",
+          "originalPrice": 600,
+          "originalPriceText": "¥600/月",
+          "unit": "月",
+          "notes": "适用: 重度开发，释放 AI 生产力",
+          "serviceDetails": [
+            "额度规格: 165,000 积分 /月",
+            "限时权益: 7天限额取消",
+            "模型支持: 主流国产模型",
+            "兼容工具: 龙虾和AI编程",
+            "计费模式: 积分制"
+          ]
+        },
+        {
           "name": "Token Plan Mini",
           "currentPrice": 4.9,
           "currentPriceText": "¥4.9/月",
@@ -127,10 +188,10 @@
           "unit": "月",
           "notes": "适用: 新手尝鲜，入门首选",
           "serviceDetails": [
-            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
-            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
-            "套餐额度内取消 Coding Plan 三层限流",
-            "商品类型: Token Plan 个人版"
+            "额度规格: 1000 万 Tokens /月",
+            "模型支持: 主流国产模型",
+            "工具兼容: 龙虾和AI编程",
+            "计费模式: Token 制"
           ]
         },
         {
@@ -142,10 +203,10 @@
           "unit": "月",
           "notes": "适用: 日常开发，高性价比之选",
           "serviceDetails": [
-            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
-            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
-            "套餐额度内取消 Coding Plan 三层限流",
-            "商品类型: Token Plan 个人版"
+            "额度规格: 4200 万 Tokens /月",
+            "模型支持: 主流国产模型",
+            "工具兼容: 龙虾和AI编程",
+            "计费模式: Token 制"
           ]
         },
         {
@@ -157,10 +218,10 @@
           "unit": "月",
           "notes": "适用: 高频开发，持续创作无压力",
           "serviceDetails": [
-            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
-            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
-            "套餐额度内取消 Coding Plan 三层限流",
-            "商品类型: Token Plan 个人版"
+            "额度规格: 2.3 亿 Tokens /月",
+            "模型支持: 主流国产模型",
+            "工具兼容: 龙虾和AI编程",
+            "计费模式: Token 制"
           ]
         },
         {
@@ -170,17 +231,15 @@
           "originalPrice": 600,
           "originalPriceText": "¥600/月",
           "unit": "月",
-          "notes": "限时5折；适用: 重度开发，释放 AI 生产力",
+          "notes": "适用: 重度开发，释放 AI 生产力",
           "serviceDetails": [
-            "支持模型: GLM、DeepSeek、Kimi 等主流顶尖模型",
-            "适配工具: Cursor、Windsurf、Cline 等主流 AI Coding 工具",
-            "套餐额度内取消 Coding Plan 三层限流",
-            "商品类型: Token Plan 个人版"
+            "额度规格: 7 亿 Tokens /月",
+            "模型支持: 主流国产模型",
+            "工具兼容: 龙虾和AI编程",
+            "计费模式: Token 制"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "baidu-qianfan-ai: Unable to locate Baidu coding plan table"
+      ]
     },
     {
       "provider": "cerebras-code",
@@ -230,36 +289,19 @@
       ],
       "plans": [
         {
-          "name": "Plus",
-          "currentPrice": 10,
-          "currentPriceText": "$10/月",
+          "name": "月付套餐",
+          "currentPrice": null,
+          "currentPriceText": "已停售",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "已停止新购，存量订阅至当前账期结束后不再续费",
           "serviceDetails": [
-            "5X the value of pay-as-you-go",
-            "6% off PAYG pricing",
-            "PAYG requests beyond limit"
-          ]
-        },
-        {
-          "name": "Pro",
-          "currentPrice": 20,
-          "currentPriceText": "$20/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "Best Value",
-          "serviceDetails": [
-            "5X the value of pay-as-you-go",
-            "10% off PAYG pricing",
-            "PAYG requests beyond limit"
+            "按量计费，无订阅、无最低消费",
+            "存量月付套餐在当前账期内继续有效"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "chutes-ai: page.waitForFunction: Timeout 12000ms exceeded."
+      ]
     },
     {
       "provider": "compshare-ai",
@@ -1139,26 +1181,62 @@
       ],
       "plans": [
         {
-          "name": "Subscription Pack",
+          "name": "Go",
+          "currentPrice": 9,
+          "currentPriceText": "$9/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "Generous limits and reliable access",
+          "serviceDetails": [
+            "Credits regenerate over the week and apply at discounted model rates",
+            "Allows extra usage at API pricing",
+            "Discounted Models",
+            "Web Search API",
+            "Beta Models",
+            "Priority access",
+            "1 usage reset/month"
+          ]
+        },
+        {
+          "name": "Standard",
           "currentPrice": 30,
           "currentPriceText": "$30/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "也支持 usage-based $1/day",
+          "notes": "Larger limits for more demanding projects",
           "serviceDetails": [
-            "500 messages/5hr",
-            "3x higher rate limits than Claude's $20/month plan",
-            "1 concurrent request per model",
-            "buy more packs to increase",
-            "UI and API access",
-            "No per-token billing for included always-on models",
-            "Included models: DeepSeek、MiniMax M2.5、Kimi K2.5、Qwen3 Coder、GLM 等"
+            "Credits regenerate over the week and apply at discounted model rates",
+            "Allows extra usage at API pricing",
+            "Discounted Models",
+            "Web Search API",
+            "Beta Models",
+            "Priority access",
+            "1 usage reset/month"
+          ]
+        },
+        {
+          "name": "Big",
+          "currentPrice": 90,
+          "currentPriceText": "$90/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "Biggest limits for the biggest projects",
+          "serviceDetails": [
+            "Credits regenerate over the week and apply at discounted model rates",
+            "Allows extra usage at API pricing",
+            "Discounted Models",
+            "Web Search API",
+            "Beta Models",
+            "Higher priority access",
+            "1 usage reset/month",
+            "Fast mode",
+            "Infinite mode"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "synthetic-ai: page.waitForFunction: Timeout 12000ms exceeded."
+      ]
     },
     {
       "provider": "tencent-cloud-ai",
@@ -1574,10 +1652,5 @@
       ]
     }
   ],
-  "failures": [
-    "baidu-qianfan-ai: Unable to locate Baidu coding plan table",
-    "aliyun-ai: Unable to locate Aliyun entry script",
-    "synthetic-ai: page.waitForFunction: Timeout 12000ms exceeded.",
-    "chutes-ai: page.waitForFunction: Timeout 12000ms exceeded."
-  ]
+  "failures": []
 }
