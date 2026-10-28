@@ -68,7 +68,7 @@ const PROVIDER_BUY_URLS = {
   'scnet-coding-plan': 'https://www.scnet.cn/ui/console/index.html#/llm/coding-plan',
   'cerebras-code': 'https://www.cerebras.ai/blog/introducing-cerebras-code',
   'synthetic-ai': 'https://synthetic.new/pricing',
-  'chutes-ai': 'https://chutes.ai/',
+  'chutes-ai': 'https://chutes.ai/pricing',
   'kilo-pass': 'https://kilo.ai/features/kilo-pass',
 };
 

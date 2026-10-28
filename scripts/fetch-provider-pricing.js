@@ -2097,7 +2097,115 @@ function readBaiduCardField(cardHtml, label) {
   return normalizeText(plainMatch?.[1] || '');
 }
 
+function parseBaiduMonthlyRow(row) {
+  const unit = normalizeText(row?.unit || '');
+  if (!/月/.test(unit) || /季|年/.test(unit)) {
+    return null;
+  }
+  const amount = Number(String(row?.price ?? '').replace(/,/g, ''));
+  return Number.isFinite(amount) ? { amount, unit, deletePrice: row?.deletePrice } : null;
+}
+
+function baiduBillingModeLabel(tabName) {
+  const value = normalizeText(tabName);
+  if (/token/i.test(value)) {
+    return 'Token 制';
+  }
+  if (/积分/.test(value)) {
+    return '积分制';
+  }
+  return value || null;
+}
+
+function parseBaiduTokenPlansFromNextData(html) {
+  const match = String(html || '').match(/<script id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/i);
+  if (!match) {
+    return null;
+  }
+
+  let payload;
+  try {
+    payload = JSON.parse(match[1]);
+  } catch {
+    return null;
+  }
+
+  const modules = payload?.props?.pageProps?.modules;
+  if (!Array.isArray(modules)) {
+    return null;
+  }
+
+  const planModule = modules.find((module) => {
+    const tabs = module?.data?.render?.tabs;
+    return (
+      Array.isArray(tabs) &&
+      tabs.some((tab) => (tab?.items || []).some((item) => parseBaiduTokenPlanTierLabel(item?.title)))
+    );
+  });
+  const tabs = planModule?.data?.render?.tabs || [];
+  if (tabs.length === 0) {
+    return null;
+  }
+
+  const labeledTabs = tabs
+    .map((tab) => ({
+      tab,
+      modeLabel: baiduBillingModeLabel(tab?.tab?.name),
+    }))
+    .filter((item) => (item.tab?.items || []).some((entry) => parseBaiduTokenPlanTierLabel(entry?.title)));
+  const hasTokenTab = labeledTabs.some((item) => item.modeLabel === 'Token 制');
+  const hasCreditTab = labeledTabs.some((item) => item.modeLabel === '积分制');
+  const suffixCreditPlans = hasTokenTab && hasCreditTab;
+
+  const plans = [];
+  for (const { tab, modeLabel } of labeledTabs) {
+    for (const item of tab.items || []) {
+      const tier = parseBaiduTokenPlanTierLabel(item?.title);
+      const monthly =
+        (item?.paramsTable || []).map((row) => parseBaiduMonthlyRow(row)).find(Boolean) ||
+        parseBaiduMonthlyRow(item);
+      if (!tier || !monthly) {
+        continue;
+      }
+
+      const originalAmount = Number(String(monthly.deletePrice ?? '').replace(/,/g, ''));
+      const quota = normalizeText((item.hotTags || []).map((tag) => tag?.text).filter(Boolean).join('；'));
+      const parameterDetails = (item.parameters || [])
+        .filter((param) => param?.name && param?.value && !/订阅周期/.test(param.name))
+        .map((param) => `${normalizeText(param.name)}: ${normalizeText(param.value)}`);
+      const useCreditSuffix = suffixCreditPlans && modeLabel === '积分制';
+
+      plans.push(
+        asPlan({
+          name: useCreditSuffix ? `Token Plan ${tier}（积分制）` : `Token Plan ${tier}`,
+          currentPriceText: `¥${formatAmount(monthly.amount)}/月`,
+          currentPrice: monthly.amount,
+          originalPriceText:
+            Number.isFinite(originalAmount) && originalAmount > monthly.amount
+              ? `¥${formatAmount(originalAmount)}/月`
+              : null,
+          originalPrice: Number.isFinite(originalAmount) && originalAmount > monthly.amount ? originalAmount : null,
+          unit: '月',
+          notes: item.subTitle ? `适用: ${normalizeText(item.subTitle)}` : null,
+          serviceDetails: normalizeServiceDetails([
+            quota ? `额度规格: ${quota}` : null,
+            ...parameterDetails,
+            modeLabel ? `计费模式: ${modeLabel}` : null,
+          ]),
+        }),
+      );
+    }
+  }
+
+  return plans.length > 0 ? dedupePlans(plans) : null;
+}
+
 function parseBaiduTokenPlansFromHtml(html) {
+  const nextDataPlans = parseBaiduTokenPlansFromNextData(html);
+  if (nextDataPlans?.length) {
+    return nextDataPlans;
+  }
+
   const cardRegex =
     /<h3[^>]*>\s*((?:Mini|Lite|Pro|Max)[^<]*)<\/h3>([\s\S]*?)(?=<h3[^>]*>\s*(?:Mini|Lite|Pro|Max)|应用场景|套餐使用说明|$)/gi;
   const cards = [...html.matchAll(cardRegex)];
@@ -3063,13 +3171,13 @@ async function parseAliyunCodingPlans() {
   } catch {
     // Keep pricing fetch resilient when docs metadata is temporarily unavailable.
   }
-  const rawEntryUrl = html.match(/(?:https?:)?\/\/cloud-assets\.alicdn\.com\/lowcode\/entry\/prod\/[^"'\s]+\.js/i)?.[0];
-  const entryUrl = rawEntryUrl
-    ? absoluteUrl(rawEntryUrl.startsWith('//') ? `https:${rawEntryUrl}` : rawEntryUrl, pageUrl)
-    : null;
-  if (!entryUrl) {
-    throw new Error('Unable to locate Aliyun entry script');
-  }
+  const rawEntryUrl = html.match(
+    /(?:https?:)?\/\/(?:cloud-assets\.alicdn\.com|website\.alyasset\.com)\/lowcode\/entry\/prod\/[^"'\s]+\.js/i,
+  )?.[0];
+  const entryUrl =
+    rawEntryUrl && /coding\s*plan|sfm_codingplan/i.test(html)
+      ? absoluteUrl(rawEntryUrl.startsWith('//') ? `https:${rawEntryUrl}` : rawEntryUrl, pageUrl)
+      : null;
   const queryPriceUrl = 'https://t.aliyun.com/abs/promotion/queryPrice';
   const planDefs = [
     {
@@ -4409,43 +4517,123 @@ async function parseCerebrasCodePlans() {
   };
 }
 
-async function parseSyntheticPlans() {
-  const pageUrl = 'https://synthetic.new/pricing';
-  const { text } = await fetchRenderedPageText(pageUrl, 'Synthetic pricing parser', {
-    waitForText: /Subscription\s+Packs|Standard\s+models/,
-  });
-  if (!/Subscription\s+Packs/i.test(text) || !/\$30\/mo/i.test(text)) {
-    throw new Error('Unable to locate Synthetic subscription pack pricing text');
+function parseSyntheticPlansFromText(pageText) {
+  const text = normalizeText(pageText);
+  if (!/Subscription\s+Plan/i.test(text) && !/\$\s*9\s*\/\s*month/i.test(text)) {
+    return [];
   }
 
-  const plans = [
-    asPlan({
-      name: 'Subscription Pack',
-      currentPriceText: '$30/月',
-      currentPrice: 30,
-      unit: '月',
-      notes: '也支持 usage-based $1/day',
-      serviceDetails: [
-        '500 messages/5hr',
-        "3x higher rate limits than Claude's $20/month plan",
-        '1 concurrent request per model; buy more packs to increase',
-        'UI and API access',
-        'No per-token billing for included always-on models',
-        'Included models: DeepSeek、MiniMax M2.5、Kimi K2.5、Qwen3 Coder、GLM 等',
-      ],
-    }),
+  const tiers = [
+    { name: 'Go', notes: 'Generous limits and reliable access' },
+    { name: 'Standard', notes: 'Larger limits for more demanding projects' },
+    { name: 'Big', notes: 'Biggest limits for the biggest projects' },
   ];
+  const plans = [];
+
+  for (let index = 0; index < tiers.length; index += 1) {
+    const tier = tiers[index];
+    const nextName = tiers[index + 1]?.name;
+    const boundary = nextName ? `\\b${nextName}\\b` : 'Sign up|How many tokens';
+    const blockMatch = text.match(new RegExp(`\\b${tier.name}\\b([\\s\\S]{0,700}?)(?=${boundary}|$)`, 'i'));
+    if (!blockMatch) {
+      continue;
+    }
+
+    const priceMatch = blockMatch[1].match(/\$\s*([0-9]+(?:\.[0-9]+)?)\s*\/\s*month/i);
+    if (!priceMatch) {
+      continue;
+    }
+
+    const currentAmount = Number(priceMatch[1]);
+    const block = blockMatch[1];
+    plans.push(
+      asPlan({
+        name: tier.name,
+        currentPriceText: Number.isFinite(currentAmount) ? `$${formatAmount(currentAmount)}/月` : null,
+        currentPrice: Number.isFinite(currentAmount) ? currentAmount : null,
+        unit: '月',
+        notes: tier.notes,
+        serviceDetails: normalizeServiceDetails([
+          'Credits regenerate over the week and apply at discounted model rates',
+          /Allows extra usage at API pricing/i.test(block) ? 'Allows extra usage at API pricing' : null,
+          /Discounted Models/i.test(block) ? 'Discounted Models' : null,
+          /Web Search API/i.test(block) ? 'Web Search API' : null,
+          /Beta Models/i.test(block) ? 'Beta Models' : null,
+          /Higher priority access/i.test(block)
+            ? 'Higher priority access'
+            : /Priority access/i.test(block)
+              ? 'Priority access'
+              : null,
+          /1 Usage Reset\/month/i.test(block) ? '1 usage reset/month' : null,
+          tier.name === 'Big' ? 'Fast mode' : null,
+          tier.name === 'Big' ? 'Infinite mode' : null,
+        ]),
+      }),
+    );
+  }
+
+  return dedupePlans(plans);
+}
+
+async function readPricingPageText(pageUrl) {
+  try {
+    return htmlToVisibleText(await fetchText(pageUrl));
+  } catch {
+    return '';
+  }
+}
+
+async function parseSyntheticPlans() {
+  const pageUrl = 'https://synthetic.new/pricing';
+  let text = await readPricingPageText(pageUrl);
+  let plans = parseSyntheticPlansFromText(text);
+  if (plans.length === 0) {
+    const rendered = await fetchRenderedPageText(pageUrl, 'Synthetic pricing parser', {
+      waitForText: /Subscription\s+Plan|\$\s*9\s*\/\s*month|Standard\s+\$\s*30/,
+    });
+    text = rendered.text;
+    plans = parseSyntheticPlansFromText(text);
+  }
+  if (plans.length === 0) {
+    throw new Error('Unable to locate Synthetic subscription pack pricing text');
+  }
 
   return {
     provider: PROVIDER_IDS.SYNTHETIC,
     sourceUrls: unique([pageUrl]),
     fetchedAt: new Date().toISOString(),
-    plans: dedupePlans(plans),
+    plans,
   };
+}
+
+function chutesMonthlyPlansDiscontinued(pageText) {
+  const text = normalizeText(pageText);
+  if (/Monthly plans are no longer sold/i.test(text)) {
+    return true;
+  }
+  const hasActiveMonthlyCard =
+    /\b(?:Plus|Pro|Base)\b[\s\S]{0,180}\$\s*[0-9]+(?:\.[0-9]+)?\s*(?:per\s*month|\/\s*mo(?:nth)?)/i.test(text) ||
+    /\$\s*[0-9]+(?:\.[0-9]+)?\s*(?:per\s*month|\/\s*mo(?:nth)?)[\s\S]{0,80}\b(?:Plus|Pro|Base)\b/i.test(text);
+  return !hasActiveMonthlyCard && /No subscription/i.test(text) && /Pay per token/i.test(text);
+}
+
+function parseChutesDiscontinuedPlans() {
+  return [
+    asPlan({
+      name: '月付套餐',
+      currentPriceText: '已停售',
+      unit: '月',
+      notes: '已停止新购，存量订阅至当前账期结束后不再续费',
+      serviceDetails: ['按量计费，无订阅、无最低消费', '存量月付套餐在当前账期内继续有效'],
+    }),
+  ];
 }
 
 function parseChutesPlansFromText(pageText) {
   const text = normalizeText(pageText);
+  if (chutesMonthlyPlansDiscontinued(text)) {
+    return parseChutesDiscontinuedPlans();
+  }
   if (!/Choose a plan that fits your needs/i.test(text) && !/Pricing/i.test(text)) {
     return [];
   }
@@ -4462,7 +4650,7 @@ function parseChutesPlansFromText(pageText) {
     }
 
     const block = normalizeText(blockMatch[1]);
-    const priceMatch = block.match(/\$\s*([0-9]+(?:\.[0-9]+)?)\s*per\s*month/i);
+    const priceMatch = block.match(/\$\s*([0-9]+(?:\.[0-9]+)?)\s*(?:per\s*month|\/\s*mo(?:nth)?)/i);
     if (!priceMatch) {
       continue;
     }
@@ -4502,13 +4690,30 @@ function parseChutesPlansFromText(pageText) {
   return dedupePlans(plans);
 }
 
+function extractStructuredDataText(html) {
+  return [...String(html || '').matchAll(/<script[^>]*type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi)]
+    .map((match) => normalizeText(match[1]))
+    .filter(Boolean)
+    .join(' ');
+}
+
 async function parseChutesPlans() {
   const pageUrl = 'https://chutes.ai/';
   const pricingUrl = 'https://chutes.ai/pricing';
-  const { text } = await fetchRenderedPageText(pageUrl, 'Chutes pricing parser', {
-    waitForText: /Choose a plan that fits your needs|Plus\s+\$10|Pro\s+\$20/,
-  });
-  const plans = parseChutesPlansFromText(text);
+  let pageHtml = '';
+  try {
+    pageHtml = await fetchText(pricingUrl);
+  } catch {
+    pageHtml = '';
+  }
+  let plans = parseChutesPlansFromText(`${htmlToVisibleText(pageHtml)} ${extractStructuredDataText(pageHtml)}`);
+  if (plans.length === 0) {
+    const rendered = await fetchRenderedPageText(pricingUrl, 'Chutes pricing parser', {
+      waitForText:
+        /No subscription|Pay per token|Monthly plans are no longer sold|Plus\s+\$\s*10|Choose a plan that fits your needs/,
+    });
+    plans = parseChutesPlansFromText(rendered.text);
+  }
   if (plans.length === 0) {
     throw new Error('Unable to locate Chutes subscription plan pricing text');
   }
@@ -4844,6 +5049,7 @@ module.exports = {
   loadExistingPricingSnapshot,
   buildKimiCodePlansFromGoodsPayload,
   parseChutesPlansFromText,
+  parseSyntheticPlansFromText,
   parseAliyunServiceDetailsFromDocsHtml,
   parseAliyunTokenPlansFromDocsHtml,
   parseHuaweiTokenPlans,

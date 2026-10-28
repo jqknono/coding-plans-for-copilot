@@ -8,6 +8,7 @@ const {
   buildKimiCodePlansFromGoodsPayload,
   extractProviderIdFromFailure,
   parseChutesPlansFromText,
+  parseSyntheticPlansFromText,
   parseAliyunServiceDetailsFromDocsHtml,
   parseAliyunTokenPlansFromDocsHtml,
   parseHuaweiTokenPlans,
@@ -890,6 +891,156 @@ test('parseXfyunCodingPlansFromHtml reads monthly plans and skips offline/quarte
   assert.match(plans[0].serviceDetails.join('\n'), /用量限制: 每 5 小时：最多约 1,200 次请求/);
   assert.match(plans[0].serviceDetails.join('\n'), /支持升级与同档位叠加购买/);
   assert.ok(!plans.some((plan) => /无忧版|季/.test(plan.name + plan.currentPriceText)));
+});
+
+
+test('parseBaiduCodingPlansFromHtml reads Token Plan tabs from Next data', () => {
+  const html = `
+    <script id="__NEXT_DATA__" type="application/json">
+      ${JSON.stringify({
+        props: {
+          pageProps: {
+            modules: [
+              {
+                data: {
+                  render: {
+                    tabs: [
+                      {
+                        tab: { name: '积分制' },
+                        items: [
+                          {
+                            title: 'Mini',
+                            subTitle: '新手尝鲜，入门首选',
+                            hotTags: [{ text: '1,400 积分 /月' }],
+                            parameters: [{ name: '模型支持', value: '主流国产模型' }],
+                            price: '4.9',
+                            unit: '/月',
+                            deletePrice: '9.9',
+                            paramsTable: [
+                              { price: '4.9', unit: '/月', deletePrice: '9.9' },
+                              { price: '27.6', unit: '/季', deletePrice: '29.7' },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        tab: { name: 'Token 制' },
+                        items: [
+                          {
+                            title: 'Mini',
+                            subTitle: '新手尝鲜，入门首选',
+                            hotTags: [{ text: '1000 万 Tokens /月' }],
+                            parameters: [
+                              { name: '模型支持', value: '主流国产模型' },
+                              { name: '工具兼容', value: '龙虾和AI编程' },
+                            ],
+                            price: '4.9',
+                            unit: '/月',
+                            deletePrice: '9.9',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+        },
+      })}
+    </script>
+  `;
+
+  const plans = parseBaiduCodingPlansFromHtml(html);
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      originalPriceText: plan.originalPriceText,
+    })),
+    [
+      {
+        name: 'Token Plan Mini（积分制）',
+        currentPriceText: '¥4.9/月',
+        originalPriceText: '¥9.9/月',
+      },
+      {
+        name: 'Token Plan Mini',
+        currentPriceText: '¥4.9/月',
+        originalPriceText: '¥9.9/月',
+      },
+    ],
+  );
+  assert.match(plans[0].serviceDetails.join('\n'), /额度规格: 1,400 积分 \/月/);
+  assert.match(plans[0].serviceDetails.join('\n'), /计费模式: 积分制/);
+  assert.match(plans[1].serviceDetails.join('\n'), /额度规格: 1000 万 Tokens \/月/);
+  assert.match(plans[1].serviceDetails.join('\n'), /计费模式: Token 制/);
+  assert.doesNotMatch(plans.map((plan) => plan.currentPriceText).join('\n'), /季/);
+});
+
+test('parseSyntheticPlansFromText reads Go, Standard and Big monthly subscriptions', () => {
+  const plans = parseSyntheticPlansFromText(`
+    Subscription Plan
+    $30/month
+    Go
+    $9/month
+    Generous limits and reliable access
+    Allows extra usage at API pricing
+    Discounted Models
+    Web Search API
+    Priority access
+    1 Usage Reset/month
+    Standard
+    $30/month
+    Larger limits for more demanding projects
+    Allows extra usage at API pricing
+    Discounted Models
+    Web Search API
+    Priority access
+    1 Usage Reset/month
+    Big
+    $90/month
+    Biggest limits for the biggest projects
+    Allows extra usage at API pricing
+    Discounted Models
+    Web Search API
+    Higher priority access
+    1 Usage Reset/month
+    Fast mode
+    Infinite mode
+    Sign up
+  `);
+
+  assert.deepEqual(
+    plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      notes: plan.notes,
+    })),
+    [
+      { name: 'Go', currentPriceText: '$9/月', notes: 'Generous limits and reliable access' },
+      { name: 'Standard', currentPriceText: '$30/月', notes: 'Larger limits for more demanding projects' },
+      { name: 'Big', currentPriceText: '$90/月', notes: 'Biggest limits for the biggest projects' },
+    ],
+  );
+  assert.match(plans[2].serviceDetails.join('\n'), /Higher priority access/);
+  assert.match(plans[2].serviceDetails.join('\n'), /Infinite mode/);
+});
+
+test('parseChutesPlansFromText records that monthly plans are no longer sold', () => {
+  const plans = parseChutesPlansFromText(`
+    Pricing
+    Pay per token. No subscription, no minimum, no markup.
+    What happens to my existing monthly plan?
+    Monthly plans are no longer sold on chutes.ai. If you already have one, it stays active until the end of your current billing period and then does not renew.
+  `);
+
+  assert.equal(plans.length, 1);
+  assert.equal(plans[0].name, '月付套餐');
+  assert.equal(plans[0].currentPriceText, '已停售');
+  assert.equal(plans[0].unit, '月');
+  assert.match(plans[0].notes, /已停止新购/);
+  assert.match(plans[0].serviceDetails.join('\n'), /按量计费/);
 });
 
 test('parseBaiduCodingPlansFromHtml reads Token Plan personal cards', () => {
