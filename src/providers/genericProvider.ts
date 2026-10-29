@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import {
   BaseAIProvider,
+  RefreshModelsOptions,
   BaseLanguageModel,
   AIModelConfig,
   ChatMessage,
@@ -113,11 +114,6 @@ interface GenericChatRequest {
 /** 直接调用 provider 时也在入口补齐快照；模型入口始终传入已解析的预算。 */
 type GenericChatRequestInput = Omit<GenericChatRequest, 'budget' | 'modelSnapshot'> &
   Partial<Pick<GenericChatRequest, 'budget' | 'modelSnapshot'>>;
-
-interface RefreshModelsOptions {
-  forceDiscoveryRetry?: boolean;
-  discoverFromEndpoint?: boolean;
-}
 
 interface RetryWithV1PromptResult {
   baseUrl: string;
@@ -326,6 +322,7 @@ export class GenericAIProvider extends BaseAIProvider {
   private refreshModelsPending = false;
   private forceDiscoveryRetryRequested = false;
   private endpointDiscoveryRequested = false;
+  private readonly endpointDiscoveryVendors = new Set<string>();
   private modelsSnapshot = '';
   private modelsDevCatalogPromise: Promise<ModelsDevCatalog | undefined> | undefined;
 
@@ -402,7 +399,11 @@ export class GenericAIProvider extends BaseAIProvider {
       this.forceDiscoveryRetryRequested = true;
     }
     if (options.discoverFromEndpoint) {
-      this.endpointDiscoveryRequested = true;
+      if (options.vendorNames) {
+        options.vendorNames.forEach((name) => this.endpointDiscoveryVendors.add(name));
+      } else {
+        this.endpointDiscoveryRequested = true;
+      }
     }
 
     if (this.refreshModelsInFlight) {
@@ -411,24 +412,26 @@ export class GenericAIProvider extends BaseAIProvider {
     }
 
     const running = (async () => {
-      do {
-        const forceDiscoveryRetry = this.forceDiscoveryRetryRequested;
-        const discoverFromEndpoint = this.endpointDiscoveryRequested;
-        this.forceDiscoveryRetryRequested = false;
-        this.endpointDiscoveryRequested = false;
-        this.refreshModelsPending = false;
-        await this.refreshModelsInternal({ forceDiscoveryRetry, discoverFromEndpoint });
-      } while (this.refreshModelsPending || this.forceDiscoveryRetryRequested || this.endpointDiscoveryRequested);
+      try {
+        do {
+          const forceDiscoveryRetry = this.forceDiscoveryRetryRequested;
+          const discoverFromEndpoint = this.endpointDiscoveryRequested || this.endpointDiscoveryVendors.size > 0;
+          const vendorNames = this.endpointDiscoveryRequested ? undefined : [...this.endpointDiscoveryVendors];
+          this.forceDiscoveryRetryRequested = false;
+          this.endpointDiscoveryRequested = false;
+          this.endpointDiscoveryVendors.clear();
+          this.refreshModelsPending = false;
+          await this.refreshModelsInternal({ forceDiscoveryRetry, discoverFromEndpoint, vendorNames });
+        } while (this.refreshModelsPending || this.forceDiscoveryRetryRequested || this.endpointDiscoveryRequested
+          || this.endpointDiscoveryVendors.size > 0);
+      } finally {
+        // Clear before resolving: a new request must not attach to a finished loop.
+        this.refreshModelsInFlight = undefined;
+      }
     })();
 
     this.refreshModelsInFlight = running;
-    try {
-      await running;
-    } finally {
-      if (this.refreshModelsInFlight === running) {
-        this.refreshModelsInFlight = undefined;
-      }
-    }
+    await running;
   }
 
   private async refreshModelsInternal(options: RefreshModelsOptions = {}): Promise<void> {
@@ -485,7 +488,8 @@ export class GenericAIProvider extends BaseAIProvider {
         forceDiscoveryRetry,
       });
 
-      if (!vendor.useModelsEndpoint || !discoverFromEndpoint) {
+      if (!vendor.useModelsEndpoint || !discoverFromEndpoint
+        || (options.vendorNames && !options.vendorNames.includes(vendor.name))) {
         this.vendorDiscoveryState.delete(vendorKey);
         logger.info('Using settings models for vendor', {
           vendor: vendor.name,
@@ -564,7 +568,11 @@ export class GenericAIProvider extends BaseAIProvider {
         });
         this.refreshModelsPending = true;
         if (discoverFromEndpoint) {
-          this.endpointDiscoveryRequested = true;
+          if (options.vendorNames) {
+            this.endpointDiscoveryVendors.add(vendor.name);
+          } else {
+            this.endpointDiscoveryRequested = true;
+          }
         }
         continue;
       }

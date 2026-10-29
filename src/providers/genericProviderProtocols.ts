@@ -828,7 +828,10 @@ export function applyOpenAIResponsesStreamEvent(
     return { textDelta };
   }
 
-  if (resolvedEventType === 'response.reasoning_text.delta') {
+  if (
+    resolvedEventType === 'response.reasoning_text.delta' ||
+    resolvedEventType === 'response.reasoning_summary_text.delta'
+  ) {
     const reasoningDelta =
       typeof payload.delta === 'string'
         ? payload.delta

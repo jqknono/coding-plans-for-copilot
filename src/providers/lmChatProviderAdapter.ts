@@ -21,6 +21,7 @@ import { getMessage } from '../i18n/i18n';
 import { logger } from '../logging/outputChannelLogger';
 import { NormalizedTokenUsage, readAttachedTokenUsage } from './tokenUsage';
 import { ResolvedModelBudget, resolveRequestBudget } from './contextBudget';
+import { buildVendorDiscoverySignature } from './genericProviderDiscovery';
 
 const MAX_EMPTY_MODEL_RESPONSE_RETRIES = 2;
 const LANGUAGE_MODELS_PICKER_LOG_PREFIX = '[coding-plans][language-models-picker]';
@@ -31,8 +32,11 @@ interface CodingPlansRequestModelOptions {
 
 interface ProviderPickerConfiguration {
   vendorName?: unknown;
+  baseUrl?: unknown;
   apiKey?: unknown;
 }
+
+type NormalizedPickerConfiguration = { vendorName?: string; baseUrl?: string; apiKey?: string };
 
 interface PrepareLanguageModelChatModelOptionsWithConfiguration extends vscode.PrepareLanguageModelChatModelOptions {
   group?: unknown;
@@ -202,6 +206,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
   private readonly onDidChangeLanguageModelChatInformationEmitter = new vscode.EventEmitter<void>();
   public readonly onDidChangeLanguageModelChatInformation = this.onDidChangeLanguageModelChatInformationEmitter.event;
   private readonly disposables: vscode.Disposable[] = [];
+  private readonly pickerDiscoveries = new Map<string, { signature: string; pending: Promise<void> }>();
 
   constructor(
     private readonly provider: BaseAIProvider,
@@ -233,6 +238,9 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     _token: vscode.CancellationToken,
   ): Promise<vscode.LanguageModelChatInformation[]> {
     const pickerOptions = options as PrepareLanguageModelChatModelOptionsWithConfiguration;
+    if (_token.isCancellationRequested) {
+      return [];
+    }
     const pickerGroup = this.normalizePickerGroup(pickerOptions.group);
     const normalizedConfiguration = this.normalizePickerConfiguration(pickerOptions.configuration);
     const resolvedVendorName = this.resolvePickerVendorName(pickerGroup, normalizedConfiguration);
@@ -260,6 +268,9 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       : { vendorName: resolvedVendorName };
 
     await this.applyPickerConfiguration(resolvedConfiguration);
+    if (resolvedConfiguration.baseUrl && !_token.isCancellationRequested) {
+      await this.discoverPickerModels(resolvedVendorName);
+    }
     const result = await this.buildModelInformation(resolvedVendorName);
     this.logLanguageModelInformationRequest('resolved', options, result, {
       group: pickerGroup,
@@ -268,6 +279,32 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
       resultPreview: this.summarizeLanguageModelInfos(result),
     });
     return result;
+  }
+
+  private async discoverPickerModels(vendorName: string): Promise<void> {
+    const vendor = this.configStore?.getVendor(vendorName);
+    if (!vendor?.useModelsEndpoint || !this.configStore) {
+      return;
+    }
+    const apiKey = await this.configStore.getApiKey(vendorName);
+    if (!apiKey) {
+      return;
+    }
+    // Ignore model writeback in the signature so discovery cannot retrigger itself.
+    const signature = JSON.stringify([vendor.baseUrl, buildVendorDiscoverySignature({ ...vendor, models: [] }, apiKey)]);
+    const previous = this.pickerDiscoveries.get(vendorName);
+    if (previous?.signature === signature) {
+      await previous.pending;
+      return;
+    }
+    // Defer the refresh until the entry is installed, including for reentrant model-change events.
+    const pending = Promise.resolve().then(() => this.provider.refreshModels({
+      discoverFromEndpoint: true,
+      forceDiscoveryRetry: true,
+      vendorNames: [vendorName],
+    }));
+    this.pickerDiscoveries.set(vendorName, { signature, pending });
+    await pending;
   }
 
   private async buildModelInformation(vendorName?: string): Promise<vscode.LanguageModelChatInformation[]> {
@@ -357,7 +394,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
 
   private resolvePickerVendorName(
     group: string | undefined,
-    configuration?: { vendorName?: string; apiKey?: string },
+    configuration?: NormalizedPickerConfiguration,
   ): string | undefined {
     if (configuration?.vendorName) {
       return configuration.vendorName;
@@ -527,14 +564,17 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
 
   private normalizePickerConfiguration(
     configuration?: ProviderPickerConfiguration,
-  ): { vendorName?: string; apiKey?: string } | undefined {
+  ): NormalizedPickerConfiguration | undefined {
     if (!configuration || typeof configuration !== 'object') {
       return undefined;
     }
 
-    const normalized: { vendorName?: string; apiKey?: string } = {};
+    const normalized: NormalizedPickerConfiguration = {};
     if (typeof configuration.vendorName === 'string' && configuration.vendorName.trim().length > 0) {
       normalized.vendorName = configuration.vendorName.trim();
+    }
+    if (typeof configuration.baseUrl === 'string' && configuration.baseUrl.trim().length > 0) {
+      normalized.baseUrl = configuration.baseUrl.trim();
     }
     if (typeof configuration.apiKey === 'string' && configuration.apiKey.trim().length > 0) {
       normalized.apiKey = configuration.apiKey.trim();
@@ -543,22 +583,29 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     return Object.keys(normalized).length > 0 ? normalized : undefined;
   }
 
-  private async applyPickerConfiguration(configuration?: { vendorName?: string; apiKey?: string }): Promise<void> {
-    if (!configuration?.vendorName || !configuration.apiKey || !this.configStore) {
+  private async applyPickerConfiguration(configuration?: NormalizedPickerConfiguration): Promise<void> {
+    if (!configuration?.vendorName || !this.configStore) {
       return;
     }
 
+    if (configuration.baseUrl) {
+      await this.configStore.savePickerVendor(configuration.vendorName, configuration.baseUrl);
+    }
+    if (!configuration.apiKey) {
+      return;
+    }
     const vendor = this.configStore.getVendor(configuration.vendorName);
-    if (!vendor) {
+    if (!vendor && !configuration.baseUrl) {
       return;
     }
 
-    const currentApiKey = await this.configStore.getApiKey(vendor.name);
+    const vendorName = vendor?.name ?? configuration.vendorName;
+    const currentApiKey = await this.configStore.getApiKey(vendorName);
     if (currentApiKey === configuration.apiKey) {
       return;
     }
 
-    await this.configStore.setApiKey(vendor.name, configuration.apiKey);
+    await this.configStore.setApiKey(vendorName, configuration.apiKey);
   }
 
   private toCompactLanguageModelError(error: unknown): vscode.LanguageModelError {

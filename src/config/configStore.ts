@@ -161,6 +161,42 @@ export class ConfigStore implements vscode.Disposable {
     });
   }
 
+  /** 原生 Add Models 显式保存到用户设置，不复制或改写工作区供应商数组。 */
+  async savePickerVendor(vendorName: string, baseUrl: string): Promise<void> {
+    const name = vendorName.trim();
+    const normalizedUrl = baseUrl.trim();
+    let url: URL;
+    try {
+      url = new URL(normalizedUrl);
+    } catch {
+      throw new Error('Base URL must be a valid HTTP(S) URL.');
+    }
+    if (!name || !/^https?:\/\//i.test(normalizedUrl) || !['http:', 'https:'].includes(url.protocol)
+      || !url.hostname || url.username || url.password || url.search || url.hash || /\s/.test(normalizedUrl)) {
+      throw new Error('Provide a vendor name and an HTTP(S) Base URL without credentials, query or fragment.');
+    }
+
+    const config = vscode.workspace.getConfiguration('coding-plans');
+    const inspected = config.inspect<unknown>('vendors');
+    const raw = inspected?.globalValue ?? inspected?.defaultValue ?? [];
+    if (!Array.isArray(raw)) {
+      throw new Error('coding-plans.vendors in user settings must be an array.');
+    }
+    const vendors = [...raw];
+    const index = vendors.findIndex((entry) => isConfigObject(entry) && typeof entry.name === 'string'
+      && entry.name.trim() === name);
+    if (index >= 0) {
+      const existing = vendors[index] as Record<string, unknown>;
+      if (existing.baseUrl === normalizedUrl && inspected?.globalValue !== undefined) {
+        return;
+      }
+      vendors[index] = { ...existing, baseUrl: normalizedUrl };
+    } else {
+      vendors.push({ name, baseUrl: normalizedUrl, defaultApiStyle: 'chat-completions', useModelsEndpoint: true, models: [] });
+    }
+    await config.update('vendors', vendors, vscode.ConfigurationTarget.Global);
+  }
+
   async updateVendorBaseUrl(vendorName: string, baseUrl: string): Promise<void> {
     const normalized = baseUrl.trim();
     if (normalized.length === 0) {

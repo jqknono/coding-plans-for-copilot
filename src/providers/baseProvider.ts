@@ -435,6 +435,7 @@ export interface ChatMessage {
 }
 
 export const INTERNAL_REASONING_CONTENT_MIME_TYPE = 'application/vnd.coding-plans.reasoning-content+json';
+export const INTERNAL_THINKING_METADATA_MIME_TYPE = 'application/vnd.coding-plans.thinking-metadata+json';
 export const NATIVE_USAGE_MIME_TYPE = 'usage';
 
 interface GenericModelListEntry {
@@ -467,6 +468,13 @@ interface ResolvedModelRuntimeSettings {
   maxOutputTokens: number;
   toolCalling: boolean | number;
   imageInput: boolean;
+}
+
+export interface RefreshModelsOptions {
+  forceDiscoveryRetry?: boolean;
+  discoverFromEndpoint?: boolean;
+  /** Limit endpoint discovery to these vendors; other vendors rebuild locally. */
+  vendorNames?: readonly string[];
 }
 
 export abstract class BaseAIProvider implements vscode.Disposable {
@@ -514,7 +522,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     return this.apiKey;
   }
 
-  async refreshModels(): Promise<void> {
+  async refreshModels(_options: RefreshModelsOptions = {}): Promise<void> {
     await this.initialize();
     const apiKey = this.getApiKey();
 
@@ -791,6 +799,13 @@ export abstract class BaseAIProvider implements vscode.Disposable {
         } else if (part instanceof vscode.LanguageModelToolResultPart) {
           toolResults.push(part);
         } else if (part instanceof vscode.LanguageModelDataPart) {
+          if (part.mimeType === INTERNAL_THINKING_METADATA_MIME_TYPE) {
+            const thinkingBlock = this.readThinkingMetadataPart(part);
+            if (thinkingBlock) {
+              thinkingBlocks.push(thinkingBlock);
+            }
+            continue;
+          }
           const encodedReasoningContent = this.readReasoningContentPart(part);
           if (encodedReasoningContent) {
             reasoningContent = encodedReasoningContent;
@@ -1032,16 +1047,31 @@ export abstract class BaseAIProvider implements vscode.Disposable {
   }
 
   protected createThinkingResponsePart(block: ChatThinkingBlock): vscode.LanguageModelDataPart | unknown {
-    if (block.type === 'redacted_thinking') {
-      return this.createReasoningResponsePart('', block.id, {
-        redactedData: block.data,
-      });
+    const thinking = block.type === 'thinking' ? block.thinking ?? '' : '';
+    const metadata = block.type === 'redacted_thinking'
+      ? { redactedData: block.data }
+      : {
+        ...(block.signature ? { signature: block.signature } : {}),
+        _completeThinking: thinking,
+      };
+
+    // 将续轮元数据与可见思考分离，保留签名和隐去的思考块。
+    if (thinking.trim().length === 0) {
+      return new vscode.LanguageModelDataPart(
+        new TextEncoder().encode(JSON.stringify({ id: block.id, metadata })),
+        INTERNAL_THINKING_METADATA_MIME_TYPE,
+      );
     }
 
-    return this.createReasoningResponsePart(block.thinking ?? '', block.id, {
-      ...(block.signature ? { signature: block.signature } : {}),
-      _completeThinking: block.thinking ?? '',
-    });
+    return this.createReasoningResponsePart(thinking, block.id, metadata);
+  }
+
+  private readThinkingMetadataPart(part: vscode.LanguageModelDataPart): ChatThinkingBlock | undefined {
+    try {
+      return this.readThinkingBlockFromPart(JSON.parse(new TextDecoder().decode(part.data)));
+    } catch {
+      return undefined;
+    }
   }
 
   private readReasoningContentPart(part: vscode.LanguageModelDataPart): string | undefined {

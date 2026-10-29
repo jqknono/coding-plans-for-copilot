@@ -124,7 +124,7 @@ export function runContextConfigTests(): void {
 
 /** 使用真实 get('') 形状验证只读初始化、SecretStorage 与显式作用域写回。 */
 export async function runContextConfigStoreTests(): Promise<void> {
-  type Scope = { globalValue?: unknown[]; workspaceValue?: unknown[]; workspaceFolderValue?: unknown[] };
+  type Scope = { defaultValue?: unknown[]; globalValue?: unknown[]; workspaceValue?: unknown[]; workspaceFolderValue?: unknown[] };
   const configurationTarget = { Global: 1, Workspace: 2, WorkspaceFolder: 3 };
   let scope: Scope = {};
   const updates: Array<{ target: number; value: unknown[] }> = [];
@@ -142,7 +142,7 @@ export async function runContextConfigStoreTests(): Promise<void> {
       workspaceFolders: [{ uri: 'folder' }],
       onDidChangeConfiguration: () => ({ dispose() {} }),
       getConfiguration: () => {
-        const effective = () => scope.workspaceFolderValue ?? scope.workspaceValue ?? scope.globalValue ?? [];
+        const effective = () => scope.workspaceFolderValue ?? scope.workspaceValue ?? scope.globalValue ?? scope.defaultValue ?? [];
         return {
           get: (key: string, fallback?: unknown) => key === '' ? { vendors: effective() }
             : key === 'vendors' ? effective() : fallback,
@@ -222,6 +222,42 @@ export async function runContextConfigStoreTests(): Promise<void> {
       assert.equal(saved.find((model) => model.name === 'explicit')?.capabilities?.vision, false);
     } finally { store.dispose(); }
   }
+  const globalVendor = { ...contextConfigTestVendor, defaultApiStyle: 'messages',
+    models: [{ name: 'preserved' }], authType: 'bearer' };
+  const workspaceVendors = [{ ...contextConfigTestVendor, name: 'workspace-only' }];
+  const untouched = { name: 'invalid-but-preserved', unknown: true };
+  scope = { globalValue: [globalVendor, untouched], workspaceValue: workspaceVendors };
+  updates.length = 0;
+  const pickerStore = new ConfigStore(context);
+  try {
+    await pickerStore.ready();
+    await pickerStore.savePickerVendor(' new-vendor ', ' https://new.example.test/v1 ');
+    const added = { name: 'new-vendor', baseUrl: 'https://new.example.test/v1',
+      defaultApiStyle: 'chat-completions', useModelsEndpoint: true, models: [] };
+    assert.deepEqual(scope.globalValue, [globalVendor, untouched, added]);
+    assert.equal(scope.workspaceValue, workspaceVendors);
+    assert.deepEqual(updates.map((update) => update.target), [configurationTarget.Global]);
+    await pickerStore.savePickerVendor('new-vendor', added.baseUrl);
+    assert.equal(updates.length, 1, '重复模型查询不应改写设置');
+    await pickerStore.savePickerVendor('vendor', 'http://localhost:8080/v1');
+    assert.deepEqual(scope.globalValue, [{ ...globalVendor, baseUrl: 'http://localhost:8080/v1' }, untouched, added]);
+    const beforeInvalid = JSON.stringify(scope);
+    for (const url of ['invalid', 'file:///tmp/models', 'https://user:password@example.test',
+      'https://example.test?api_key=secret', 'https://example.test/#fragment', 'https://example.test/white space']) {
+      await assert.rejects(pickerStore.savePickerVendor('new-vendor', url));
+    }
+    await assert.rejects(pickerStore.savePickerVendor(' ', 'https://example.test'));
+    assert.equal(JSON.stringify(scope), beforeInvalid);
+
+    scope = { defaultValue: [globalVendor], workspaceFolderValue: workspaceVendors };
+    await pickerStore.savePickerVendor('vendor', globalVendor.baseUrl);
+    assert.deepEqual(scope.globalValue, [globalVendor], '内置供应商必须显式保存到用户配置');
+    assert.equal(scope.workspaceFolderValue, workspaceVendors);
+    scope = { defaultValue: [globalVendor] };
+    await pickerStore.savePickerVendor('new-vendor', added.baseUrl);
+    assert.deepEqual(scope.globalValue, [globalVendor, added], '首次写入保留内置供应商');
+    assert.equal(JSON.stringify(scope.globalValue).includes('apiKey'), false);
+  } finally { pickerStore.dispose(); }
   assert.deepEqual(warnings, []);
 }
 
@@ -277,7 +313,20 @@ export function runManifestValidationTests(): void {
       assert.deepEqual(validateRootConfiguration({ [name]: schema.default }), [], key);
     }
   }
-  const native = manifest.contributes.languageModelChatProviders[0].configuration.properties.apiKey;
+  const picker = manifest.contributes.languageModelChatProviders[0].configuration;
+  assert.deepEqual(picker.required, ['vendorName', 'baseUrl']);
+  assert.deepEqual(Object.keys(picker.properties), ['vendorName', 'baseUrl', 'apiKey']);
+  assert.equal(picker.properties.baseUrl.type, 'string');
+  assert.equal(new RegExp(picker.properties.baseUrl.pattern).test('https://example.test/v1'), true);
+  assert.equal(new RegExp(picker.properties.baseUrl.pattern).test('file:///tmp/models'), false);
+  for (const locale of ['../../package.nls.json', '../../package.nls.zh-cn.json']) {
+    const messages = require(locale);
+    for (const field of Object.values(picker.properties) as Array<{ title: string; description: string }>) {
+      assert.ok(messages[field.title.slice(1, -1)]);
+      assert.ok(messages[field.description.slice(1, -1)]);
+    }
+  }
+  const native = picker.properties.apiKey;
   assert.equal(native.type, 'string');
   assert.equal(native.secret, true);
 }

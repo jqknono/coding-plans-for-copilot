@@ -66,12 +66,16 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 
 ### 配置
 
+添加自定义端点时，打开 **Language Models → Add Models → Coding Plans**，依次填写供应商名称、**Base URL** 和可选的 API Key。供应商信息保存到用户全局设置 `coding-plans.vendors`；API Key 仅存入 VS Code Secret Storage。新增供应商默认使用 `chat-completions` 并启用 `/models` 发现；已有密钥时会自动获取该供应商的模型列表、写回设置并展示，即使关闭 `autoRefreshModels` 也会执行。每个连接配置在扩展会话中自动发现一次，重复或并发查询不会反复请求；失败重试或后续刷新可执行 **Coding Plans: Update Coding Plans Models List**，也可手动配置模型及协议。已有供应商的其他选项和模型覆盖属性保持不变。工作区级 `vendors` 数组仍会覆盖用户设置；如需使用全局列表，请移除该覆盖。
+
+对于内置或已配置的供应商：
+
 1. 按 `Ctrl+Shift+P`，输入 `Coding Plans: Manage Vendor Configuration`
 2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
 3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
 4. 打开 Copilot Chat（`Ctrl+L`），在模型选择器中选择 `Coding Plans` 提供的模型
 5. `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`，并显示 `Thinking Type`（`enabled` / `disabled` / `default`，默认 `default`；`default` 省略 `thinking` 字段，只发送 `reasoning_effort`，与原生 Custom Endpoint 一致）。需要 `thinking.enabled` 时请选择 `enabled`。OpenAI Responses 模型支持 `low` / `medium` / `high` / `xhigh` / `max`（默认 `max`）。Anthropic 模型显示 `Effort`（`low` / `medium` / `high` / `xhigh` / `max`，默认 `max`）和 `Thinking Type`（`think` / `non-think`，默认 `think`）；`think` 会发送 `thinking.enabled`，并把 Effort 映射为 `budget_tokens`，`non-think` 关闭 thinking。Copilot Chat 可能传入 `reasoningEffort` 作为 `thinkingEffort` 的别名，adapter 会按别名归一。More Actions 同时提供输入预算 Context Size。
-6. 供应商启用 `useModelsEndpoint` 后，执行 `Coding Plans: Update Coding Plans Models List` 可请求 `/models`、写回模型列表并刷新选择器。保存 settings/API Key 会即时本地重建已配置模型，预算随之生效；`coding-plans.autoRefreshModels: false` 仅关闭自动选择器同步及空查询刷新。远端发现与模型列表写回仍由手动更新命令执行。
+6. 供应商启用 `useModelsEndpoint` 后，执行 `Coding Plans: Update Coding Plans Models List` 可请求 `/models`、写回模型列表并刷新选择器。保存 settings/API Key 会即时本地重建已配置模型，预算随之生效；`coding-plans.autoRefreshModels: false` 仅关闭自动选择器同步及空查询刷新。除上述原生 Add Models 连接初始化外，远端发现与模型列表写回仍由手动更新命令执行。
    - 模型发现优先读取 [models.dev](https://models.dev/) 的 `catalog.json`，失败时回退 `api.json`，按模型 ID/名称补全新条目的能力、预算来源及价格元数据。新模型 `apiStyle` 按来源推导：OpenAI 与 Grok/xAI 使用 `responses`，Anthropic 使用 `messages`，其余使用 `chat-completions`。已有手工属性与预算保持原值；自动来源能力可随发现刷新。
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
 

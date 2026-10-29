@@ -2,7 +2,7 @@
     "name": "coding-plans-for-copilot",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "0.19.0",
+    "version": "0.19.1",
     "publisher": "techfetch-dev",
     "activationEvents": [
         "onStartupFinished"
@@ -28,11 +28,18 @@
                 "displayName": "%providers.codingPlans.displayName%",
                 "configuration": {
                     "type": "object",
+                    "required": ["vendorName", "baseUrl"],
                     "properties": {
                         "vendorName": {
                             "type": "string",
                             "title": "%providers.codingPlans.config.vendorName.title%",
                             "description": "%providers.codingPlans.config.vendorName.description%"
+                        },
+                        "baseUrl": {
+                            "type": "string",
+                            "title": "%providers.codingPlans.config.baseUrl.title%",
+                            "description": "%providers.codingPlans.config.baseUrl.description%",
+                            "pattern": "^https?://[^\\s]+$"
                         },
                         "apiKey": {
                             "type": "string",

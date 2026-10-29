@@ -6985,6 +6985,149 @@ async function runGenericProviderThinkingBeforeOutputTests(
   }
 }
 
+async function runThinkingDisplayIntegrationTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule,
+): Promise<void> {
+  const vscode = require('vscode') as typeof import('vscode');
+  const originalFetch = globalThis.fetch;
+  const summary = '先检查 tool，再汇总';
+  const responseOutput = [
+    { type: 'reasoning', id: 'rs_1', summary: [{ type: 'summary_text', text: summary }] },
+    { type: 'message', role: 'assistant', content: [{ type: 'output_text', text: '完成' }] },
+  ];
+  const metadataBlocks = [
+    { type: 'redacted_thinking', data: 'opaque_thinking' },
+    { type: 'thinking', thinking: '', signature: 'opaque_signature' },
+  ];
+  const scenarios = [
+    { apiStyle: 'responses' as const, streaming: true, deltas: true },
+    { apiStyle: 'responses' as const, streaming: true, deltas: false },
+    { apiStyle: 'messages' as const, streaming: true, deltas: false },
+    { apiStyle: 'messages' as const, streaming: false, deltas: false },
+  ];
+
+  for (const scenario of scenarios) {
+    activeState = createStaticVendorState([{
+      useModelsEndpoint: false,
+      name: 'Vendor',
+      baseUrl: 'https://example.test/v1',
+      defaultApiStyle: scenario.apiStyle,
+      models: [{
+        name: 'reasoner',
+        streaming: scenario.streaming,
+        contextWindow: 64000,
+        maxInputTokens: 51200,
+        maxOutputTokens: 12800,
+        capabilities: { tools: true, vision: false },
+      }],
+    }]);
+    const configStore = new configStoreCtor(createExtensionContext() as never);
+    const provider = new genericProviderModule.GenericAIProvider(
+      createExtensionContext() as never, configStore,
+    ) as unknown as {
+      refreshModels(): Promise<void>;
+      sendRequest(request: {
+        modelId: string;
+        messages: Array<{ role: string; content: unknown[] }>;
+        capabilities: { toolCalling: boolean; imageInput: boolean };
+        options: { tools: unknown[] };
+      }): Promise<{ stream: AsyncIterable<unknown> }>;
+      dispose(): void;
+    };
+    const payloads: Array<{ messages: Array<{ role: string; content: unknown[] }> }> = [];
+    globalThis.fetch = (async (_url: unknown, init?: RequestInit): Promise<Response> => {
+      payloads.push(JSON.parse(String(init?.body)));
+      if (payloads.length > 1 || !scenario.streaming) {
+        return new Response(JSON.stringify({
+          id: 'msg_1', role: 'assistant',
+          content: [...(payloads.length === 1 ? metadataBlocks : []), { type: 'text', text: '完成' }],
+        }), { headers: { 'content-type': 'application/json' } });
+      }
+      const events: Array<Record<string, unknown>> = scenario.apiStyle === 'responses'
+        ? [
+          ...(scenario.deltas ? [
+            { type: 'response.reasoning_summary_text.delta', item_id: 'rs_1', summary_index: 0, delta: '先检查 ' },
+            { type: 'response.reasoning_summary_text.delta', item_id: 'rs_1', summary_index: 0, delta: 'tool，再汇总' },
+            { type: 'response.reasoning_summary_text.done', item_id: 'rs_1', summary_index: 0, text: summary },
+            { type: 'response.output_item.done', item: responseOutput[0] },
+            { type: 'response.output_text.delta', delta: '完成' },
+          ] : []),
+          { type: 'response.completed', response: { id: 'resp_1', output: responseOutput } },
+        ]
+        : [
+          ...metadataBlocks.flatMap((block, index) => [
+            { type: 'content_block_start', index, content_block: block },
+            { type: 'content_block_stop', index },
+          ]),
+          { type: 'content_block_start', index: 2, content_block: { type: 'text', text: '' } },
+          { type: 'content_block_delta', index: 2, delta: { type: 'text_delta', text: '完成' } },
+          { type: 'content_block_stop', index: 2 },
+          { type: 'message_stop' },
+        ];
+      return new Response(events.map((event) => `data: ${JSON.stringify(event)}\n\n`).join(''), {
+        headers: { 'content-type': 'text/event-stream' },
+      });
+    }) as typeof globalThis.fetch;
+
+    try {
+      (configStore as unknown as { getApiKey(name: string): Promise<string> }).getApiKey = async () => 'configured';
+      await provider.refreshModels();
+      const request = {
+        modelId: 'Vendor/reasoner',
+        messages: [{ role: 'user', content: [new vscode.LanguageModelTextPart('请完成检查')] }],
+        capabilities: { toolCalling: true, imageInput: false },
+        options: { tools: [] },
+      };
+      const response = await provider.sendRequest(request);
+      const parts: unknown[] = [];
+      for await (const part of response.stream) {
+        parts.push(part);
+      }
+      const text = parts.filter((part) => part instanceof vscode.LanguageModelTextPart)
+        .map((part) => (part as import('vscode').LanguageModelTextPart).value).join('');
+      assert.equal(text, '完成');
+      const thinking = parts.filter((part) => classifyLanguageModelResponsePart(part) === 'thinking');
+      if (scenario.apiStyle === 'responses') {
+        assert.deepEqual(thinking.map((part) => (part as { value: string }).value),
+          scenario.deltas ? ['先检查 ', 'tool，再汇总'] : [summary]);
+        assertThinkingPartsBeforeText(parts, 'Responses summary');
+      } else {
+        assert.deepEqual(thinking, []);
+        const metadata = parts.filter((part) => part instanceof vscode.LanguageModelDataPart);
+        assert.equal(metadata.length, 2);
+        assert.ok(metadata.every((part) =>
+          (part as import('vscode').LanguageModelDataPart).mimeType ===
+          'application/vnd.coding-plans.thinking-metadata+json'));
+
+        // 模拟宿主将内部数据部件带回下一轮，验证元数据保持独立于正文。
+        const continuation = await provider.sendRequest({
+          ...request,
+          messages: [
+            ...request.messages,
+            { role: 'assistant', content: parts },
+            { role: 'user', content: [new vscode.LanguageModelTextPart('继续')] },
+          ],
+        });
+        const continuationParts: unknown[] = [];
+        for await (const part of continuation.stream) {
+          continuationParts.push(part);
+        }
+        assert.ok(continuationParts.some((part) => part instanceof vscode.LanguageModelTextPart));
+        assert.deepEqual(payloads[1].messages.find((message) => message.role === 'assistant')?.content, [
+          ...metadataBlocks,
+          { type: 'text', text: '完成' },
+        ]);
+      }
+      console.log(`PASS 思考显示集成：${scenario.apiStyle} streaming=${scenario.streaming} deltas=${scenario.deltas}`);
+    } finally {
+      globalThis.fetch = originalFetch;
+      provider.dispose();
+      configStore.dispose();
+    }
+  }
+}
+
 function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   const {
     readOpenAIChatMessageText,
@@ -9736,6 +9879,85 @@ async function runLMChatProviderAdapterModelFilteringTests(
   }
 }
 
+async function runPickerEndpointDiscoveryTests(
+  configStoreCtor: ConfigStoreCtor,
+  genericProviderModule: GenericProviderModule,
+  adapterModule: LMChatProviderAdapterModule,
+): Promise<void> {
+  activeState = createState([{
+    name: 'unrelated', baseUrl: 'https://unrelated.test/v1', useModelsEndpoint: true,
+    models: [{ name: 'preserved' }],
+  }], { autoRefreshModels: false });
+  const context = createExtensionContextWithSecrets();
+  context.secrets.set('coding-plans.vendor.apiKey.unrelated', 'unrelated-secret');
+  const store = new configStoreCtor(context.context as never);
+  const provider = new genericProviderModule.GenericAIProvider(context.context as never, store);
+  let adapter = new adapterModule.LMChatProviderAdapter(provider, store);
+  const originalFetch = globalThis.fetch;
+  const endpointCalls: string[] = [];
+  let fail = false;
+  globalThis.fetch = (async (input, init) => {
+    const url = String(input);
+    if (url.startsWith('https://models.dev/')) {
+      return new Response('{}', { headers: { 'content-type': 'application/json' } });
+    }
+    assert.ok(url.startsWith('https://picker.test/'), '新增供应商不得触发其他供应商的远端发现');
+    assert.ok(url.endsWith('/models'));
+    assert.ok(new Headers(init?.headers).get('authorization'));
+    endpointCalls.push(url);
+    return new Response(JSON.stringify(fail ? { error: 'denied' } : { data: [{ id: 'test-model' }] }), {
+      status: fail ? 401 : 200, headers: { 'content-type': 'application/json' },
+    });
+  }) as typeof globalThis.fetch;
+  const configuration = { vendorName: '123', baseUrl: 'https://picker.test/v1', apiKey: 'picker-secret' };
+  const query = () => adapter.provideLanguageModelChatInformation({
+    silent: true, group: 'Coding Plans 2', configuration,
+  } as never, {} as never);
+  try {
+    await store.ready();
+    await provider.initialize();
+    assert.equal(endpointCalls.length, 0);
+    const first = await query();
+    assert.equal(endpointCalls.length, 1, JSON.stringify({ vendor: store.getVendor('123'), models: provider.getAvailableModels().map((model) => model.id) }));
+    assert.deepEqual(first.map((model) => model.id), ['123/test-model']);
+    assert.equal(endpointCalls.length, 1);
+    assert.equal(store.getVendor('123')?.models[0].name, 'test-model');
+    assert.ok(provider.getAvailableModels().some((model) => model.id === 'unrelated/preserved'));
+    await Promise.all([query(), query()]);
+    assert.equal(endpointCalls.length, 1, '静默查询和模型写回事件不能重复发现');
+
+    configuration.apiKey = 'rotated-secret';
+    await Promise.all([query(), query()]);
+    assert.equal(endpointCalls.length, 2, '密钥改变后只发现一次');
+    configuration.baseUrl = 'https://picker.test/changed/v1';
+    await query();
+    assert.equal(endpointCalls.length, 3);
+    assert.equal(endpointCalls[2], 'https://picker.test/changed/v1/models');
+
+    fail = true;
+    configuration.apiKey = 'rejected-secret';
+    assert.deepEqual((await query()).map((model) => model.id), ['123/test-model']);
+    const failedCount = endpointCalls.length;
+    await query();
+    assert.equal(endpointCalls.length, failedCount, '失败不能因 UI 重查造成重试循环');
+
+    // An already persisted empty Add Models entry must recover after extension reload.
+    fail = false;
+    await store.updateVendorModels('123', []);
+    adapter.dispose();
+    adapter = new adapterModule.LMChatProviderAdapter(provider, store);
+    assert.deepEqual((await query()).map((model) => model.id), ['123/test-model']);
+    assert.equal(endpointCalls.length, failedCount + 1);
+    assert.equal(JSON.stringify(activeState.vendors).includes('secret'), false);
+    console.log('PASS 原生 Add Models 自动定向发现、写回并展示模型，配置变更与并发去重及失败回退');
+  } finally {
+    globalThis.fetch = originalFetch;
+    adapter.dispose();
+    provider.dispose();
+    store.dispose();
+  }
+}
+
 async function runLMChatProviderAdapterCliproxyapiPickerTests(
   configStoreCtor: ConfigStoreCtor,
   lmChatProviderAdapterModule: LMChatProviderAdapterModule,
@@ -9855,7 +10077,44 @@ async function runLMChatProviderAdapterCliproxyapiPickerTests(
     assert.equal(secretContext.secrets.get('coding-plans.vendor.apiKey.cliproxyapi'), 'native-secret');
     assert.equal(refreshCount, 0);
 
-    console.log('PASS LMChatProviderAdapter 会在显式 provider group 路径暴露 cliproxyapi 真实模型');
+    const originalVendors = JSON.parse(JSON.stringify(activeState.vendors));
+    await adapter.provideLanguageModelChatInformation(
+      { silent: false, group: 'Custom endpoint', configuration: {
+        vendorName: ' new-vendor ', baseUrl: ' https://new.example.test/v1 ', apiKey: ' new-secret ',
+      } } as never,
+      {} as never,
+    );
+    assert.deepEqual(activeState.vendors, [...originalVendors, {
+      name: 'new-vendor', baseUrl: 'https://new.example.test/v1',
+      defaultApiStyle: 'chat-completions', useModelsEndpoint: true, models: [],
+    }]);
+    assert.equal(await configStore.getApiKey('new-vendor'), 'new-secret');
+    assert.equal(activeState.updates.length, 1);
+    assert.equal(activeState.updates[0].target, 3); // mock ConfigurationTarget.Global
+    assert.equal(JSON.stringify(activeState.updates).includes('new-secret'), false);
+    await adapter.provideLanguageModelChatInformation(
+      { silent: true, configuration: { vendorName: 'new-vendor', baseUrl: 'https://new.example.test/v1' } } as never,
+      {} as never,
+    );
+    assert.equal(activeState.updates.length, 1);
+    assert.equal(await configStore.getApiKey('new-vendor'), 'new-secret');
+    await assert.rejects(adapter.provideLanguageModelChatInformation(
+      { silent: false, configuration: { vendorName: 'new-vendor', baseUrl: 'invalid', apiKey: 'bad-secret' } } as never,
+      {} as never,
+    ));
+    assert.equal(activeState.updates.length, 1);
+    assert.equal(await configStore.getApiKey('new-vendor'), 'new-secret');
+    for (const configuration of [undefined, { baseUrl: 'https://example.test' }, { vendorName: 'incomplete' }]) {
+      await adapter.provideLanguageModelChatInformation({ silent: true, configuration } as never, {} as never);
+    }
+    await adapter.provideLanguageModelChatInformation(
+      { silent: false, configuration: { vendorName: 'cancelled', baseUrl: 'https://example.test' } } as never,
+      { isCancellationRequested: true } as never,
+    );
+    assert.equal(activeState.updates.length, 1);
+    assert.equal(configStore.getVendor('cancelled'), undefined);
+
+    console.log('PASS LMChatProviderAdapter 原生选择器保存 Base URL 到全局配置并安全保存密钥');
   } finally {
     adapter.dispose();
     configStore.dispose();
@@ -10282,6 +10541,7 @@ async function main(): Promise<void> {
     await runGenericProviderOpenAIReasoningContinuationTests(ConfigStore, baseProviderModule, genericProviderModule);
     await runGenericProviderStreamingReasoningWhitespaceTests(ConfigStore, genericProviderModule);
     await runGenericProviderThinkingBeforeOutputTests(ConfigStore, genericProviderModule);
+    await runThinkingDisplayIntegrationTests(ConfigStore, genericProviderModule);
     runProtocolStreamTests(protocolsModule);
     runTokenUsageNormalizationTests(tokenUsageModule);
     runContextUsageStateTests(contextUsageStateModule);
@@ -10292,6 +10552,7 @@ async function main(): Promise<void> {
     await i18nModule.initI18n();
     await runLMChatProviderAdapterModelFilteringTests(ConfigStore, lmChatProviderAdapterModule);
     await runLMChatProviderAdapterCliproxyapiPickerTests(ConfigStore, lmChatProviderAdapterModule);
+    await runPickerEndpointDiscoveryTests(ConfigStore, genericProviderModule, lmChatProviderAdapterModule);
     await runLMChatProviderAdapterModelOptionsForwardingTests(lmChatProviderAdapterModule);
     await runLMChatProviderAdapterModelConfigurationForwardingTest(lmChatProviderAdapterModule);
     await runLMChatProviderAdapterReasoningEffortAliasTests(lmChatProviderAdapterModule);

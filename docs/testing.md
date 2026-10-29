@@ -24,6 +24,16 @@ flowchart LR
 
 ## 说明
 
+### 思考内容显示集成验证
+
+`src/test/runTest.ts` 中的 provider 级正向集成场景覆盖：
+
+- Responses 的 `response.reasoning_summary_text.delta` 按分片输出思考摘要，保留词间空格；`done`、`output_item.done` 和 `completed` 保持已输出摘要仅出现一次。
+- Responses 仅在完成事件携带摘要时，通过完成响应补齐思考内容。
+- Anthropic 流式和非流式的纯元数据 thinking 使用内部 `LanguageModelDataPart` 传递，正文正常输出；宿主回传这些部件时，下一轮请求恢复 redacted thinking 与 signature。
+
+这些场景模拟上游响应与宿主消息回传。真实 Copilot Chat 的内部数据部件保留行为、子代理卡片显示与运行状态仍通过手动 UI 验收确认。
+
 | 事项 | 说明 |
 | --- | --- |
 | 首次下载 | `npm run test:desktop` 首次会下载 Stable VS Code，缓存目录默认为仓库下 `.vscode-test/`。 |
