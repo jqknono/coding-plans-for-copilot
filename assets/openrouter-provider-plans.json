@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-10-28T14:56:41.743Z",
-  "generatedAtBeijing": "2026年10月28日 22:56:41",
-  "sourceGeneratedAt": "2026-10-28T09:47:12.857Z",
-  "sourceGeneratedAtBeijing": "2026年10月28日 17:47:12",
-  "sourceMetricsGeneratedAt": "2026-10-28T14:55:45.515Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月28日 22:55:45",
+  "generatedAt": "2026-10-29T15:01:14.711Z",
+  "generatedAtBeijing": "2026年10月29日 23:01:14",
+  "sourceGeneratedAt": "2026-10-29T15:00:15.132Z",
+  "sourceGeneratedAtBeijing": "2026年10月29日 23:00:15",
+  "sourceMetricsGeneratedAt": "2026-10-29T15:00:16.755Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月29日 23:00:16",
   "summary": {
-    "openrouterProviderCount": 115,
-    "metricsProviderCount": 58,
-    "resolvedMetricsProviderCount": 58,
+    "openrouterProviderCount": 116,
+    "metricsProviderCount": 59,
+    "resolvedMetricsProviderCount": 59,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 12,
     "providersWithPlans": 21,
-    "pendingCount": 37,
+    "pendingCount": 38,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -1250,7 +1250,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.40 / $0.04）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.035 / $0.10）",
       "blocked": false
     },
     {
@@ -1467,6 +1467,15 @@
       "officialWebsiteUrl": "https://paretoalphainference.com",
       "pricingPageUrl": "https://paretoalphainference.com",
       "reason": "官网价格页探测失败：https://paretoalphainference.com/pricing: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "particle-ai",
+      "openrouterName": "Particle AI",
+      "providerId": null,
+      "officialWebsiteUrl": "https://particle.ai",
+      "pricingPageUrl": "https://particle.ai",
+      "reason": "官网价格页探测失败：https://particle.ai/pricing: HTTP 404",
       "blocked": false
     },
     {
