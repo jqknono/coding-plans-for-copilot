@@ -1,0 +1,146 @@
+{
+  "date": "2026-10-29",
+  "generatedAt": "2026-10-29T12:26:10.386Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 57,
+    "postsAfterKeywordFilter": 16,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "CheapBuddy": 1,
+      "Midalo": 1,
+      "Claude": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1252941",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1252941",
+      "title": "[限时 15 天] Claude Opus 5.5 官网价 3 折｜ CheapBuddy 注册即用",
+      "content": "[活动] Claude Opus 5.5 （模型 ID：`claude-opus-5-5`）半个月专享官网价 3 折，多用多享。 站点： https://cheapbuddy.cc 文档： https://cheapbuddy.cc/api-docs/ 示例： https://github.com/GiantClam/cheapbuddy-examples 为什么现在值得注册试一把 - 同一把 Key / 同一余额，可接 WorkBuddy 、Claude Code 、OpenCode 、Codex 等 - Claude 可选 Anthropic 原生或 OpenAI 兼容协议，不用另开 Key - 活动价按官网参考价 3 折结算（活动期内）：输入约 $1.20 / MTok ，输出约 $6.00 / MTok （官网标价约 $4 / $20 ） - 余额按实际成功用量扣；注册后充值即可打通 怎么快速体验 1. 打开 https://cheapbuddy.cc 注册并充值（可先小额试） 2. 控制台选中 `claude-opus-5-5`，生成/导入客户端配置 3. 用 Claude ",
+      "author": "liulanggoukk",
+      "createdAt": "2026-10-29T10:27:46.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "CheapBuddy",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "本帖介绍 CheapBuddy 限时 15 天的 Claude Opus 5.5 模型 3 折优惠活动，支持通过同一 Key 接入 Claude Code、OpenCode、Codex 等 AI 编码客户端，并提供 API 文档和示例，适合注册充值体验低成本调用。",
+        "topics": [
+          "Claude",
+          "定价",
+          "折扣",
+          "API",
+          "Claude Code",
+          "聚合平台",
+          "注册",
+          "体验"
+        ],
+        "planMentioned": "Claude Opus 5.5",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/463",
+      "analyzedAt": "2026-10-29T12:38:10.318Z"
+    },
+    {
+      "id": "v2ex-1252940",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1252940",
+      "title": "[Midalo 中转站]一个 Key 调用 Claude、GPT、Gemini、DeepSeek、grok 等主流模型，支持国内直连与按量计费，欢迎前来试吃！",
+      "content": "给大家介绍一下 Midalo 米搭 API 中转站。 如果你同时在使用 Claude、GPT、Gemini 等模型，可能遇到过这些问题：每个平台都要单独注册和充值、接口格式不一致、切换模型需要反复修改配置。 Midalo 主要解决的就是这些问题：通过一个 API Key 调用多种模型，并兼容多种常用协议，减少重复接入工作。 站点注册地址： https://agent.midalo.ai/ （一定要用这个地址注册，不然看不到注册 ID，防止后面领不到鸡蛋） 本站主打平价，计费透明 留下注册 ID 送 2 体验金，加入 QQ 群送 3 体验金，合计 5$，足够完整测试一整天 Midalo API 官方 QQ 群：1030748124（注册后进群，私信管理员或联系客服发送账户 ID 即可随机领取 2-5$不等额度鸡蛋，24 小时内到账） 客服 QQ：3809674723 微信联系方式：wjn168178 （添加备注来意） Midalo 中转站适合哪些人？ 需要同时调用多种模型的开发者 使用 Claude Code、Cursor 等工具的编程用户 正在开发 AI 应用或智能助手的独立开发者 需",
+      "author": "wxy3464",
+      "createdAt": "2026-10-29T10:22:08.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Midalo",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "介绍 Midalo API 中转站，支持通过单一 Key 调用多种主流模型（如 Claude, GPT, DeepSeek），并特别提到支持 Cursor 和 Claude Code 等编程工具的按量计费接入。",
+        "topics": [
+          "按量计费",
+          "API中转",
+          "Cursor",
+          "Claude Code",
+          "体验金",
+          "模型调用"
+        ],
+        "planMentioned": "按量计费 (Pay-as-you-go)",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/464",
+      "analyzedAt": "2026-10-29T12:38:17.768Z"
+    },
+    {
+      "id": "v2ex-1252925",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1252925",
+      "title": "自研 Claude Pro 私有化号池（美西 / 一号一住宅 IP / 国内直连），开放少量名额",
+      "content": "开发者一枚，主要做 Claude Code / Agent 方向。 官方 5 小时窗口对高频使用太死，自己养号又被风控打到退库，自己做了一套自研的美国本土私有化 Claude Pro 号池，内部用了一段时间，现在开放少量名额。 几个事实： 全节点部署美，每个号绑定一条专属原生住宅 IP ，硬件指纹隔离，一号一环境，不是共享公网出口； 直连接入直接使用，客户端不用配代理； 单号月刷 800 刀，折算约 0.25 元/刀，高频 coding 、批量评测的成本大幅降低； 实测窗口全满血，目前零封号连带。 目前开放小范围名额体验，感兴趣的评论区留言或私信我，发测试通道。",
+      "author": "yawyt",
+      "createdAt": "2026-10-29T09:29:26.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "开发者自研了美国本土私有化 Claude Pro 号池，提供专属住宅 IP、零封号等优势，目前开放少量体验名额，月成本约 0.25 元/刀。",
+        "topics": [
+          "定价",
+          "零封号",
+          "体验名额",
+          "私有化",
+          "高频 coding"
+        ],
+        "planMentioned": "Claude Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/465",
+      "analyzedAt": "2026-10-29T12:38:26.824Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1252961: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1252948: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1252772: LLM returned invalid JSON: Unexpected token 'L', \"Looking at\"... is not valid JSON",
+    "analysis failed for v2ex-1252906: The operation was aborted due to timeout"
+  ]
+}
