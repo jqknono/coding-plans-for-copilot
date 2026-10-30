@@ -1,0 +1,143 @@
+{
+  "date": "2026-10-30",
+  "generatedAt": "2026-10-30T12:18:02.108Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 58,
+    "postsAfterKeywordFilter": 15,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Claude": 1,
+      "DeepSeek": 1,
+      "DeepSeek, OpenAI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1253076",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1253076",
+      "title": "我没有任何办法用 Claude 了吗？",
+      "content": "有一个 Google 老号，今年 1 月订阅 Max 到这个月初，一切好好的 10 月中旬，这个老号，直接被封。 然后立刻，换了一个相对老一点的 gmail 账号，重新订阅 Max 用到今天早上弹认证，然后 CN 护照认证，直接被封 然后又用了一个比较新的 gmail ，开通 Max ，支付成功瞬间被封。。。。 平时没有很关心风控措施，都是同一个梯子（应该是干净的。300 一个月）、同一个信用卡（美国的信用卡）支付的 所以是不是我这个设备+信用卡+梯子，注定用不了了吗。。。。",
+      "author": "ggp1ot2",
+      "createdAt": "2026-10-30T02:12:57.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.92,
+        "summary": "用户多次尝试用不同账号和设备订阅 Claude Max，均在付款后或认证后被封号，对风控措施感到困惑并质疑是否注定无法使用。",
+        "topics": [
+          "订阅",
+          "封号",
+          "Claude",
+          "风控",
+          "设备",
+          "支付"
+        ],
+        "planMentioned": "Claude Max",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/466",
+      "analyzedAt": "2026-10-30T12:25:30.688Z"
+    },
+    {
+      "id": "v2ex-1253217",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1253217",
+      "title": "做了一个 VS Code 插件：把 DeepSeek Harness Agent 放进侧边栏，支持权限控制和 Diff 追踪",
+      "content": "大家好，最近做了一个 VS Code 插件 SeekDock ，想在这里分享一下。 项目的初衷是希望把 DeepSeek Harness（DSH）的 Agent 能力集成到 VS Code 中，让 AI 不只是回答问题，还能直接参与日常开发工作，比如读写代码、执行命令、搜索文件、浏览网页等。 项目目前是 0.1.0 版本，MIT 开源，属于社区非官方扩展。 项目地址： VS Code Marketplace： https://marketplace.visualstudio.com/items?itemName=JerryHu.seekdock GitHub： https://github.com/jerryhu/seekdock 一、侧边栏里的 AI Agent SeekDock 将聊天面板放在 VS Code 右侧辅助侧边栏，不需要切换窗口，可以一边查看代码，一边与 Agent 对话。 支持三种打开方式： 编辑器右上角图标 快捷键：macOS Cmd+Alt+L ，Windows/Linux Ctrl+Alt+L 命令面板： SeekDock: Open SeekDock 内置 D",
+      "author": "CixJey",
+      "createdAt": "2026-10-30T07:23:22.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.95,
+        "summary": "The author developed a VS Code extension called SeekDock that integrates DeepSeek Harness Agent into the VS Code sidebar, supporting permission control, diff tracking, and various AI coding tools. The post shares the project's features, installation method, and usage instructions.",
+        "topics": [
+          "VS Code插件",
+          "DeepSeek",
+          "Agent集成",
+          "权限控制",
+          "Diff追踪",
+          "MCP",
+          "开源项目"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/467",
+      "analyzedAt": "2026-10-30T12:25:40.684Z"
+    },
+    {
+      "id": "v2ex-1253155",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1253155",
+      "title": "下个月要被调去带团队了，是否需要给组员买一些 token plan",
+      "content": "团队人不多，在想着要不要给他们买一点 token plan 提高效率呢，公司内网只部署了 ds-v4-flash-fp8,我要不要给他们买点 gpt pro 这种 token plan",
+      "author": "resten",
+      "createdAt": "2026-10-30T04:46:22.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "DeepSeek, OpenAI",
+        "supplierCategory": "other",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户考虑是否为团队购买 token 计划以提高效率，目前内部部署了 ds-v4-flash-fp8，正在考虑购买 gpt pro token 计划。",
+        "topics": [
+          "定价",
+          "套餐",
+          "提高效率",
+          "gpt pro",
+          "ds-v4-flash-fp8"
+        ],
+        "planMentioned": "gpt pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/468",
+      "analyzedAt": "2026-10-30T12:25:47.792Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "v2ex: https://www.v2ex.com/api/replies/show.json?topic_id=1253246 The operation was aborted due to timeout",
+    "analysis failed for v2ex-1253257: The operation was aborted due to timeout"
+  ]
+}
