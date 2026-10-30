@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-10-29T15:01:14.711Z",
-  "generatedAtBeijing": "2026年10月29日 23:01:14",
-  "sourceGeneratedAt": "2026-10-29T15:00:15.132Z",
-  "sourceGeneratedAtBeijing": "2026年10月29日 23:00:15",
-  "sourceMetricsGeneratedAt": "2026-10-29T15:00:16.755Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年10月29日 23:00:16",
+  "generatedAt": "2026-10-30T14:54:36.796Z",
+  "generatedAtBeijing": "2026年10月30日 22:54:36",
+  "sourceGeneratedAt": "2026-10-30T14:53:41.321Z",
+  "sourceGeneratedAtBeijing": "2026年10月30日 22:53:41",
+  "sourceMetricsGeneratedAt": "2026-10-30T14:53:43.156Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年10月30日 22:53:43",
   "summary": {
-    "openrouterProviderCount": 116,
+    "openrouterProviderCount": 117,
     "metricsProviderCount": 59,
     "resolvedMetricsProviderCount": 59,
     "unresolvedMetricsProviderCount": 0,
@@ -1250,7 +1250,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
       "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.035 / $0.10）",
+      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.01 / $0.035）",
       "blocked": false
     },
     {
@@ -1268,7 +1268,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.darkbloom.dev",
       "pricingPageUrl": "https://www.darkbloom.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.035 / $2.2 / $0.0175）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.035 / $1.5 / $0.0175）",
       "blocked": false
     },
     {
@@ -1474,8 +1474,8 @@
       "openrouterName": "Particle AI",
       "providerId": null,
       "officialWebsiteUrl": "https://particle.ai",
-      "pricingPageUrl": "https://particle.ai",
-      "reason": "官网价格页探测失败：https://particle.ai/pricing: HTTP 404",
+      "pricingPageUrl": "https://particle.ai/pricing",
+      "reason": "官网价格页探测失败：https://particle.ai/prices: HTTP 404",
       "blocked": false
     },
     {
