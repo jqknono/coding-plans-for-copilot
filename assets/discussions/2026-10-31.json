@@ -1,0 +1,104 @@
+{
+  "date": "2026-10-31",
+  "generatedAt": "2026-10-31T11:49:29.719Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 14,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Cursor, Claude Code": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1253411",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1253411",
+      "title": "我把开源项目托管给 AI 了：一句话提需求， AI 自己开发、自己测试、自己提 PR",
+      "content": "MatrixMedia 是一个开源的多平台视频矩阵发布工具，Electron 写的，一键把视频/图文同步到抖音、快手、B 站、头条、视频号、小红书、番茄等 8 个平台。GitHub 开源 7 个月，Star 1171 。 v0.14.0 之后，这个项目进入了「 AI 全面托管」状态：你一句话提个需求，AI 自己改代码、自己跑单测、自己上真实平台验证、自己修 bug ，最后给你提一个带完整测试证据的 PR 。整个过程不需要人写一行代码，也不需要人点一下鼠标。 以前用 Cursor / Claude Code 写代码，AI 生成代码已经很流畅了，但测试还是人工的——你得自己跑起来看看对不对。MatrixMedia 做的是自媒体平台自动化发布，这个痛点更明显：比如加个「挂车」功能，AI 可以写 Puppeteer 脚本，但挂车有没有成功，AI 自己不知道。 v0.14.0 解决的这个问题：让 AI 自己上真实平台验证。 AI 改完代码后，不是跑个 mock 测试就交差，而是真实登录抖音/视频号/小红书，真实上传一个视频，真实点击「存草稿」，然后检查后台草稿箱里是否真的出现了这条草稿。验证命令",
+      "author": "hanliang",
+      "createdAt": "2026-10-31T08:07:37.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "Cursor, Claude Code",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.9,
+        "summary": "The author describes using AI coding assistants (Cursor, Claude Code) to fully automate development of an open-source Electron project (MatrixMedia), where AI writes code, runs tests, validates on real platforms, and submits PRs without human intervention.",
+        "topics": [
+          "使用体验",
+          "AI 编码助手",
+          "自动化开发",
+          "测试验证",
+          "开源项目"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/469",
+      "analyzedAt": "2026-10-31T11:55:26.498Z"
+    },
+    {
+      "id": "v2ex-1253394",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1253394",
+      "title": "我的 Claude 是不是要凉了？",
+      "content": "昨晚 iOS 账户的钱不够，claude 订阅扣款失败了。今天充上之后，钱扣了，但订阅没有恢复。打开网页端显示：Complete identity verification to finish setting up your subscription. Verify 我都不敢点击 verify ，只不是可以直接注册新号了？",
+      "author": "closedevice",
+      "createdAt": "2026-10-31T06:20:44.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": null,
+        "supplierCategory": null,
+        "sentiment": "negative",
+        "sentimentConfidence": 0.9,
+        "summary": "The user reports that their Claude subscription payment failed, but after refilling the account, the money was deducted yet the subscription did not restore. The web page shows a message requiring identity verification to complete subscription setup, and the user is hesitant to click verify.",
+        "topics": [
+          "订阅",
+          "支付失败",
+          "身份验证",
+          "Claude",
+          "Coding assistant"
+        ],
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/470",
+      "analyzedAt": "2026-10-31T11:55:33.272Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
