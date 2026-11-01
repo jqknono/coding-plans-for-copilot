@@ -1,0 +1,106 @@
+{
+  "date": "2026-11-01",
+  "generatedAt": "2026-11-01T12:48:49.608Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 16,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "OpenAI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1253531",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1253531",
+      "title": "在国内环境下，如何花点儿小钱实现 token 自由？",
+      "content": "我不是码农，但偶尔也写一点儿小代码，日常工作中也偶尔用到 AI ，问一些问题，处理一些简单的工作。 以我目前的收入和使用情况，让我每个月花 100 块以上去订阅 AI 套餐，对于我来说就是不可接受的。我现在正好处于免费的额度不够用，但我又不想为此付费太多的情况。 所以想在这里请教大家： 1 、哪家的大模型性能比较好，尤其是通用性能。 2 、有非常实惠的套餐，能让我实现 Token 自由，最好每个月的费用不要超过 50 元，略超也可以接受。 3 、顺便推荐一下好用的客户端（日常工作平台），能够自定义 AI 的。",
+      "author": "xclimbing",
+      "createdAt": "2026-11-01T06:47:56.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": null,
+        "supplierCategory": "other",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户想在国内以低于50元/月的价格获得AI代码助手的Token自由，询问性价比高的套餐和客户端推荐。",
+        "topics": [
+          "定价",
+          "套餐",
+          "Token自由",
+          "客户端",
+          "推荐"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/472",
+      "analyzedAt": "2026-11-01T12:55:47.039Z"
+    },
+    {
+      "id": "v2ex-1253511",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1253511",
+      "title": "恶心了， ChatGPT 要跟 Codex 共用额度了",
+      "content": "今天收到邮件 Hello, In the coming weeks, we’ll start testing a combined experience for Chat and Work tabs in ChatGPT with a small group of users. We’ll use their feedback to improve the experience before bringing it to more people. This will enable you to move from exploring an idea to having ChatGPT carry it through, all in one place. You can bring in your files and plugins and ask ChatGPT to build a website, create a presentation, or do things for you on the web, while reviewing and guiding its work",
+      "author": "DawnMoon",
+      "createdAt": "2026-11-01T04:14:54.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.85,
+        "summary": "帖子抱怨ChatGPT与Codex共用额度，说明两者将合并使用额度，可能影响使用体验。",
+        "topics": [
+          "共用额度",
+          "ChatGPT",
+          "Codex",
+          "负面情绪",
+          "订阅"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/473",
+      "analyzedAt": "2026-11-01T12:55:54.050Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "v2ex: https://www.v2ex.com/api/replies/show.json?topic_id=1253552 The operation was aborted due to timeout"
+  ]
+}
