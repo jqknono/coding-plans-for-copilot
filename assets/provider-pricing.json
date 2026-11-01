@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-01T08:43:05.134Z",
+  "updatedAt": "2026-11-01T14:49:21.261Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1128,7 +1128,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
@@ -1145,7 +1145,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": null,
+          "notes": "当前页面显示已售罄",
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
@@ -1436,9 +1436,7 @@
             "使用 LingClaw 构建个人助理"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "x-aio: Request failed: https://code.x-aio.com/assets/index-BlH8fPH1.js -> 522; Playwright fallback failed: page.evaluate: Error: Request failed: https://code.x-aio.com/assets/index-BlH8fPH1.js -> 522 at eval (eval at evaluate (:290:30), <anonymous>:4:15) at async <anonymous>:316:30"
+      ]
     },
     {
       "provider": "xfyun-ai",
@@ -1654,7 +1652,5 @@
       ]
     }
   ],
-  "failures": [
-    "x-aio: Request failed: https://code.x-aio.com/assets/index-BlH8fPH1.js -> 522; Playwright fallback failed: page.evaluate: Error: Request failed: https://code.x-aio.com/assets/index-BlH8fPH1.js -> 522\n    at eval (eval at evaluate (:290:30), <anonymous>:4:15)\n    at async <anonymous>:316:30"
-  ]
+  "failures": []
 }
