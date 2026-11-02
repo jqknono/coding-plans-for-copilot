@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-11-01T14:50:17.032Z",
-  "generatedAtBeijing": "2026年11月1日 22:50:17",
-  "sourceGeneratedAt": "2026-11-01T14:49:21.261Z",
-  "sourceGeneratedAtBeijing": "2026年11月1日 22:49:21",
-  "sourceMetricsGeneratedAt": "2026-11-01T14:49:22.581Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月1日 22:49:22",
+  "generatedAt": "2026-11-02T17:58:11.074Z",
+  "generatedAtBeijing": "2026年11月3日 01:58:11",
+  "sourceGeneratedAt": "2026-11-02T17:57:16.699Z",
+  "sourceGeneratedAtBeijing": "2026年11月3日 01:57:16",
+  "sourceMetricsGeneratedAt": "2026-11-02T17:57:18.325Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月3日 01:57:18",
   "summary": {
     "openrouterProviderCount": 117,
-    "metricsProviderCount": 59,
-    "resolvedMetricsProviderCount": 59,
+    "metricsProviderCount": 57,
+    "resolvedMetricsProviderCount": 57,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 12,
     "providersWithPlans": 21,
-    "pendingCount": 38,
+    "pendingCount": 36,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -1020,7 +1020,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "当前页面显示已售罄",
+          "notes": null,
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
@@ -1037,7 +1037,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "当前页面显示已售罄",
+          "notes": null,
           "serviceDetails": [
             "支持所有旗舰模型",
             "支持智能路由",
@@ -1272,15 +1272,6 @@
       "blocked": false
     },
     {
-      "slug": "decart",
-      "openrouterName": "Decart",
-      "providerId": null,
-      "officialWebsiteUrl": "https://cogito.decart.ai",
-      "pricingPageUrl": "https://cogito.decart.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 5 / $ 0.66 / $ 0.144）",
-      "blocked": false
-    },
-    {
       "slug": "deepinfra",
       "openrouterName": "DeepInfra",
       "providerId": null,
@@ -1341,15 +1332,6 @@
       "officialWebsiteUrl": "https://www.inceptron.io",
       "pricingPageUrl": "https://www.inceptron.io/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3/h / $5/h / $8/h）",
-      "blocked": false
-    },
-    {
-      "slug": "io-net",
-      "openrouterName": "Io Net",
-      "providerId": null,
-      "officialWebsiteUrl": "https://io.net",
-      "pricingPageUrl": "https://io.net",
-      "reason": "官网价格页探测失败：https://io.net/pricing: HTTP 404",
       "blocked": false
     },
     {
