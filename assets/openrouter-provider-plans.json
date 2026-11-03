@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-11-02T17:58:11.074Z",
-  "generatedAtBeijing": "2026年11月3日 01:58:11",
-  "sourceGeneratedAt": "2026-11-02T17:57:16.699Z",
-  "sourceGeneratedAtBeijing": "2026年11月3日 01:57:16",
-  "sourceMetricsGeneratedAt": "2026-11-02T17:57:18.325Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月3日 01:57:18",
+  "generatedAt": "2026-11-03T15:57:19.250Z",
+  "generatedAtBeijing": "2026年11月3日 23:57:19",
+  "sourceGeneratedAt": "2026-11-03T15:56:21.826Z",
+  "sourceGeneratedAtBeijing": "2026年11月3日 23:56:21",
+  "sourceMetricsGeneratedAt": "2026-11-03T15:56:26.179Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月3日 23:56:26",
   "summary": {
     "openrouterProviderCount": 117,
-    "metricsProviderCount": 57,
-    "resolvedMetricsProviderCount": 57,
+    "metricsProviderCount": 58,
+    "resolvedMetricsProviderCount": 58,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 12,
     "providersWithPlans": 21,
-    "pendingCount": 36,
+    "pendingCount": 37,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -406,12 +406,12 @@
           "unit": "月",
           "notes": "来源: https://cohere.com/pricing",
           "serviceDetails": [
+            "Model Vault Dedicated model inference platform",
             "Command Generative language models",
             "Transcribe Speech recognition model",
             "North Small Translate Machine translation model",
             "Parse New Document parsing model",
-            "Embed New Semantic representation model",
-            "Rerank New Retrieval optimization model"
+            "Embed New Semantic representation model"
           ]
         },
         {
@@ -423,12 +423,12 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
+            "Model Vault Dedicated model inference platform",
             "Command Generative language models",
             "Transcribe Speech recognition model",
             "North Small Translate Machine translation model",
             "Parse New Document parsing model",
-            "Embed New Semantic representation model",
-            "Rerank New Retrieval optimization model"
+            "Embed New Semantic representation model"
           ]
         },
         {
@@ -440,12 +440,12 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
+            "Model Vault Dedicated model inference platform",
             "Command Generative language models",
             "Transcribe Speech recognition model",
             "North Small Translate Machine translation model",
             "Parse New Document parsing model",
-            "Embed New Semantic representation model",
-            "Rerank New Retrieval optimization model"
+            "Embed New Semantic representation model"
           ]
         }
       ],
@@ -605,9 +605,9 @@
       "providerId": null,
       "plans": [
         {
-          "name": "Base",
-          "currentPrice": 6.19,
-          "currentPriceText": "$6.19",
+          "name": "Pro",
+          "currentPrice": 8,
+          "currentPriceText": "$8/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
@@ -674,7 +674,7 @@
           "notes": "续费金额：¥49/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
-            "图像和声音模型",
+            "多模态生成（图像、声音）",
             "联网搜索与多模态理解",
             "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
             "API Key 接入 AI Agent 和编程工具"
@@ -690,8 +690,7 @@
           "notes": "续费金额：¥119/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
-            "视频模型，如 H3",
-            "图像和声音模型",
+            "多模态生成（视频、图像、声音）",
             "联网搜索与多模态理解",
             "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
             "API Key 接入 AI Agent 和编程工具"
@@ -707,8 +706,7 @@
           "notes": "续费金额：¥469/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
-            "视频模型，如 H3",
-            "图像和声音模型",
+            "多模态生成（视频、图像、声音）",
             "联网搜索与多模态理解",
             "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
             "MiniMax Code CLI",
@@ -1249,8 +1247,8 @@
       "openrouterName": "BaseTen",
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
-      "pricingPageUrl": "https://www.baseten.co/pricing/",
-      "reason": "检测到套餐页线索，但未解析到月/年订阅价格（样例: $0 per mo / $0.01 / $0.035）",
+      "pricingPageUrl": "https://www.baseten.co/pricing",
+      "reason": "官网未发现可解析的套餐价格页",
       "blocked": false
     },
     {
@@ -1269,6 +1267,15 @@
       "officialWebsiteUrl": "https://www.darkbloom.dev",
       "pricingPageUrl": "https://www.darkbloom.ai/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.035 / $1.5 / $0.0175）",
+      "blocked": false
+    },
+    {
+      "slug": "decart",
+      "openrouterName": "Decart",
+      "providerId": null,
+      "officialWebsiteUrl": "https://cogito.decart.ai",
+      "pricingPageUrl": "https://cogito.decart.ai/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 5 / $ 0.66 / $ 0.144）",
       "blocked": false
     },
     {
