@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-02T17:57:16.699Z",
+  "updatedAt": "2026-11-03T09:01:28.026Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -890,7 +890,7 @@
           "notes": "续费金额：¥49/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
-            "图像和声音模型",
+            "多模态生成（图像、声音）",
             "联网搜索与多模态理解",
             "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
             "API Key 接入 AI Agent 和编程工具"
@@ -906,8 +906,7 @@
           "notes": "续费金额：¥119/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
-            "视频模型，如 H3",
-            "图像和声音模型",
+            "多模态生成（视频、图像、声音）",
             "联网搜索与多模态理解",
             "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
             "API Key 接入 AI Agent 和编程工具"
@@ -923,8 +922,7 @@
           "notes": "续费金额：¥469/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
-            "视频模型，如 H3",
-            "图像和声音模型",
+            "多模态生成（视频、图像、声音）",
             "联网搜索与多模态理解",
             "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
             "MiniMax Code CLI",
