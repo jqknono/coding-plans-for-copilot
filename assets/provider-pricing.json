@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-03T15:56:21.826Z",
+  "updatedAt": "2026-11-04T08:38:12.126Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -39,7 +39,7 @@
             "OpenCode 开源 AI 编程代理工具: Cursor AI 原生代码编辑器",
             "Qwen Code 开源命令行 AI 编码工具: QwenPaw 开源个人 AI 助手，支持本地与云端部署",
             "Chatbox 跨平台 AI 桌面客户端: Cline VS Code 扩展，智能代码补全和调试",
-            "Lingma 阿里云智能编码助手，提供独立 IDE: Kilo CLI 轻量高性能命令行编程工具"
+            "Kilo CLI 轻量高性能命令行编程工具: WorkBuddy 桌面 AI Agent 工作台"
           ]
         }
       ]
