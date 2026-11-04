@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-11-03T15:57:19.250Z",
-  "generatedAtBeijing": "2026年11月3日 23:57:19",
-  "sourceGeneratedAt": "2026-11-03T15:56:21.826Z",
-  "sourceGeneratedAtBeijing": "2026年11月3日 23:56:21",
-  "sourceMetricsGeneratedAt": "2026-11-03T15:56:26.179Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月3日 23:56:26",
+  "generatedAt": "2026-11-04T16:01:41.393Z",
+  "generatedAtBeijing": "2026年11月5日 00:01:41",
+  "sourceGeneratedAt": "2026-11-04T08:38:12.126Z",
+  "sourceGeneratedAtBeijing": "2026年11月4日 16:38:12",
+  "sourceMetricsGeneratedAt": "2026-11-04T16:00:43.886Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月5日 00:00:43",
   "summary": {
-    "openrouterProviderCount": 117,
-    "metricsProviderCount": 58,
-    "resolvedMetricsProviderCount": 58,
+    "openrouterProviderCount": 120,
+    "metricsProviderCount": 59,
+    "resolvedMetricsProviderCount": 59,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
-    "heuristicProviderCount": 12,
-    "providersWithPlans": 21,
-    "pendingCount": 37,
+    "heuristicProviderCount": 11,
+    "providersWithPlans": 20,
+    "pendingCount": 39,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -54,7 +54,7 @@
             "OpenCode 开源 AI 编程代理工具: Cursor AI 原生代码编辑器",
             "Qwen Code 开源命令行 AI 编码工具: QwenPaw 开源个人 AI 助手，支持本地与云端部署",
             "Chatbox 跨平台 AI 桌面客户端: Cline VS Code 扩展，智能代码补全和调试",
-            "Lingma 阿里云智能编码助手，提供独立 IDE: Kilo CLI 轻量高性能命令行编程工具"
+            "Kilo CLI 轻量高性能命令行编程工具: WorkBuddy 桌面 AI Agent 工作台"
           ]
         }
       ],
@@ -390,75 +390,6 @@
       "privacyPolicyUrl": "https://developers.cloudflare.com/workers-ai/privacy",
       "termsOfServiceUrl": "https://www.cloudflare.com/service-specific-terms-developer-platform/#developer-platform-terms",
       "statusPageUrl": "https://www.cloudflarestatus.com/",
-      "parseMode": "official-website-heuristic"
-    },
-    {
-      "slug": "cohere",
-      "openrouterName": "Cohere",
-      "providerId": null,
-      "plans": [
-        {
-          "name": "Pro",
-          "currentPrice": 3,
-          "currentPriceText": "$3.00",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "来源: https://cohere.com/pricing",
-          "serviceDetails": [
-            "Model Vault Dedicated model inference platform",
-            "Command Generative language models",
-            "Transcribe Speech recognition model",
-            "North Small Translate Machine translation model",
-            "Parse New Document parsing model",
-            "Embed New Semantic representation model"
-          ]
-        },
-        {
-          "name": "Pro",
-          "currentPrice": 5,
-          "currentPriceText": "$5.00",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "Model Vault Dedicated model inference platform",
-            "Command Generative language models",
-            "Transcribe Speech recognition model",
-            "North Small Translate Machine translation model",
-            "Parse New Document parsing model",
-            "Embed New Semantic representation model"
-          ]
-        },
-        {
-          "name": "Pro",
-          "currentPrice": 4,
-          "currentPriceText": "$4.00",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "Model Vault Dedicated model inference platform",
-            "Command Generative language models",
-            "Transcribe Speech recognition model",
-            "North Small Translate Machine translation model",
-            "Parse New Document parsing model",
-            "Embed New Semantic representation model"
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://cohere.com",
-        "https://cohere.com/pricing"
-      ],
-      "pricingPageUrl": "https://cohere.com/pricing",
-      "officialWebsiteUrl": "https://cohere.com",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://cohere.com/privacy",
-      "termsOfServiceUrl": "https://cohere.com/terms-of-use",
-      "statusPageUrl": "https://status.cohere.ai/",
       "parseMode": "official-website-heuristic"
     },
     {
@@ -1252,6 +1183,15 @@
       "blocked": false
     },
     {
+      "slug": "cohere",
+      "openrouterName": "Cohere",
+      "providerId": null,
+      "officialWebsiteUrl": "https://cohere.com",
+      "pricingPageUrl": "https://cohere.com/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3.00 / $1.00 / $3.25）",
+      "blocked": false
+    },
+    {
       "slug": "crusoe",
       "openrouterName": "Crusoe",
       "providerId": null,
@@ -1339,6 +1279,15 @@
       "officialWebsiteUrl": "https://www.inceptron.io",
       "pricingPageUrl": "https://www.inceptron.io/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3/h / $5/h / $8/h）",
+      "blocked": false
+    },
+    {
+      "slug": "io-net",
+      "openrouterName": "Io Net",
+      "providerId": null,
+      "officialWebsiteUrl": "https://io.net",
+      "pricingPageUrl": "https://io.net",
+      "reason": "官网价格页探测失败：https://io.net/pricing: HTTP 404",
       "blocked": false
     },
     {
