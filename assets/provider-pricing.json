@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-04T08:38:12.126Z",
+  "updatedAt": "2026-11-05T08:58:03.145Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -109,7 +109,7 @@
         }
       ],
       "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "aliyun-token-plan: Aliyun Token Plan docs do not expose plan prices; Playwright fallback failed: page.waitForFunction: Timeout 8000ms exceeded."
+      "staleFailure": "aliyun-token-plan: fetch failed; Playwright fallback failed: page.waitForFunction: Timeout 8000ms exceeded."
     },
     {
       "provider": "baidu-qianfan-ai",
@@ -1653,6 +1653,6 @@
     }
   ],
   "failures": [
-    "aliyun-token-plan: Aliyun Token Plan docs do not expose plan prices; Playwright fallback failed: page.waitForFunction: Timeout 8000ms exceeded."
+    "aliyun-token-plan: fetch failed; Playwright fallback failed: page.waitForFunction: Timeout 8000ms exceeded."
   ]
 }
