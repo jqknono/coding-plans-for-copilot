@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-11-04T16:01:41.393Z",
-  "generatedAtBeijing": "2026年11月5日 00:01:41",
-  "sourceGeneratedAt": "2026-11-04T08:38:12.126Z",
-  "sourceGeneratedAtBeijing": "2026年11月4日 16:38:12",
-  "sourceMetricsGeneratedAt": "2026-11-04T16:00:43.886Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月5日 00:00:43",
+  "generatedAt": "2026-11-05T16:15:34.051Z",
+  "generatedAtBeijing": "2026年11月6日 00:15:34",
+  "sourceGeneratedAt": "2026-11-05T16:14:38.433Z",
+  "sourceGeneratedAtBeijing": "2026年11月6日 00:14:38",
+  "sourceMetricsGeneratedAt": "2026-11-05T16:14:39.785Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月6日 00:14:39",
   "summary": {
     "openrouterProviderCount": 120,
-    "metricsProviderCount": 59,
-    "resolvedMetricsProviderCount": 59,
+    "metricsProviderCount": 60,
+    "resolvedMetricsProviderCount": 60,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 9,
     "heuristicProviderCount": 11,
     "providersWithPlans": 20,
-    "pendingCount": 39,
+    "pendingCount": 40,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -1395,7 +1395,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://parasail.io",
       "pricingPageUrl": "https://www.parasail.io/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3.00 / $15.00 / $0.30）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $2.00 / $10.00 / $0.20）",
       "blocked": false
     },
     {
@@ -1414,6 +1414,15 @@
       "officialWebsiteUrl": "https://particle.ai",
       "pricingPageUrl": "https://particle.ai/pricing",
       "reason": "官网价格页探测失败：https://particle.ai/prices: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "primalabs",
+      "openrouterName": "PrimaLabs",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.primalabs.ai",
+      "pricingPageUrl": "https://www.primalabs.ai",
+      "reason": "官网价格页探测失败：https://www.primalabs.ai/pricing: HTTP 404",
       "blocked": false
     },
     {
