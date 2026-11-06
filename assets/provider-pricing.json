@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-05T16:14:38.433Z",
+  "updatedAt": "2026-11-06T08:56:29.064Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -121,15 +121,11 @@
           "name": "Token Plan Mini（积分制）",
           "currentPrice": 4.9,
           "currentPriceText": "¥4.9/月",
-          "originalPrice": 9.9,
-          "originalPriceText": "¥9.9/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "适用: 新手尝鲜，入门首选",
+          "notes": "适用: 新手尝鲜 入门首选",
           "serviceDetails": [
-            "额度规格: 1,400 积分 /月",
-            "限时权益: 7天限额取消",
-            "模型支持: 主流国产模型",
-            "兼容工具: 龙虾和AI编程",
             "计费模式: 积分制"
           ]
         },
@@ -137,15 +133,11 @@
           "name": "Token Plan Lite（积分制）",
           "currentPrice": 19.9,
           "currentPriceText": "¥19.9/月",
-          "originalPrice": 40,
-          "originalPriceText": "¥40/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
           "notes": "适用: 日常开发，高性价比之选",
           "serviceDetails": [
-            "额度规格: 6,600 积分 /月",
-            "限时权益: 7天限额取消",
-            "模型支持: 主流国产模型",
-            "兼容工具: 龙虾和AI编程",
             "计费模式: 积分制"
           ]
         },
@@ -153,15 +145,11 @@
           "name": "Token Plan Pro（积分制）",
           "currentPrice": 99.9,
           "currentPriceText": "¥99.9/月",
-          "originalPrice": 200,
-          "originalPriceText": "¥200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
           "notes": "适用: 高频开发，持续创作无压力",
           "serviceDetails": [
-            "额度规格: 45,000 积分 /月",
-            "限时权益: 7天限额取消",
-            "模型支持: 主流国产模型",
-            "兼容工具: 龙虾和AI编程",
             "计费模式: 积分制"
           ]
         },
@@ -169,15 +157,11 @@
           "name": "Token Plan Max（积分制）",
           "currentPrice": 299.9,
           "currentPriceText": "¥299.9/月",
-          "originalPrice": 600,
-          "originalPriceText": "¥600/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "适用: 重度开发，释放 AI 生产力",
+          "notes": "适用: 重度开发，释放AI生产力",
           "serviceDetails": [
-            "额度规格: 165,000 积分 /月",
-            "限时权益: 7天限额取消",
-            "模型支持: 主流国产模型",
-            "兼容工具: 龙虾和AI编程",
             "计费模式: 积分制"
           ]
         },
@@ -185,14 +169,11 @@
           "name": "Token Plan Mini",
           "currentPrice": 4.9,
           "currentPriceText": "¥4.9/月",
-          "originalPrice": 9.9,
-          "originalPriceText": "¥9.9/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
           "notes": "适用: 新手尝鲜，入门首选",
           "serviceDetails": [
-            "额度规格: 1000 万 Tokens /月",
-            "模型支持: 主流国产模型",
-            "工具兼容: 龙虾和AI编程",
             "计费模式: Token 制"
           ]
         },
@@ -200,14 +181,11 @@
           "name": "Token Plan Lite",
           "currentPrice": 19.9,
           "currentPriceText": "¥19.9/月",
-          "originalPrice": 40,
-          "originalPriceText": "¥40/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
           "notes": "适用: 日常开发，高性价比之选",
           "serviceDetails": [
-            "额度规格: 4200 万 Tokens /月",
-            "模型支持: 主流国产模型",
-            "工具兼容: 龙虾和AI编程",
             "计费模式: Token 制"
           ]
         },
@@ -215,14 +193,11 @@
           "name": "Token Plan Pro",
           "currentPrice": 99.9,
           "currentPriceText": "¥99.9/月",
-          "originalPrice": 200,
-          "originalPriceText": "¥200/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
           "notes": "适用: 高频开发，持续创作无压力",
           "serviceDetails": [
-            "额度规格: 2.3 亿 Tokens /月",
-            "模型支持: 主流国产模型",
-            "工具兼容: 龙虾和AI编程",
             "计费模式: Token 制"
           ]
         },
@@ -230,14 +205,11 @@
           "name": "Token Plan Max",
           "currentPrice": 299.9,
           "currentPriceText": "¥299.9/月",
-          "originalPrice": 600,
-          "originalPriceText": "¥600/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
           "notes": "适用: 重度开发，释放 AI 生产力",
           "serviceDetails": [
-            "额度规格: 7 亿 Tokens /月",
-            "模型支持: 主流国产模型",
-            "工具兼容: 龙虾和AI编程",
             "计费模式: Token 制"
           ]
         }
