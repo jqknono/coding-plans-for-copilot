@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-06",
+  "generatedAt": "2026-11-06T13:51:35.094Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 16,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "AbcTab": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1255049",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1255049",
+      "title": "新版本 AbcTab 1.3：给 ⌘-Tab 加了个「乒乓锁」，盲切不再被微信打断",
+      "content": "1.1 解决了应用多窗口切换和无法唤起隐藏窗口的问题 1.2 加上了版本更新检查 1.3 加入了乒乓模式 1.1 和 1.3 都是解决我个人长期的懂点，尤其是 1.3 解决需要专注的场景下 cmd+tab 盲切的窘境。 产品官网： https://solocraft.app/zh/abctab 这次就不直接送激活码了，上次发了 100+ 激活人数只有一半。14 天免费体验，足够长了。如果体验之后觉得好，可以分享下体验新的，送激活码。 不限内容不限篇幅，只是证明大家真激活使用了。如果用完觉得垃圾，要码也没必要。 先说场景：我现在写代码基本是让 agent 干——一边在 DeepSeek Harness Desktop （或者在终端里跑 Opencode ）盯它干活，一边在 Chrome 看文档、看预览，最高频的动作就是盲切——按住 ⌘ 点一下 Tab 松开，人就过去了，再按一下又回来。这是原生 ⌘-Tab 最舒服的场景，直到微信响了一声。 我 ⌘-Tab + W 去回了句消息，MRU 栈顶立刻变成 [微信, Harness, Chrome]。等回完切回 Harness ，习惯性再盲按一下",
+      "author": "hanfengzxh",
+      "createdAt": "2026-11-06T09:06:41.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "AbcTab",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "这篇帖子讨论了 AbcTab 1.3 版本更新，加入了乒乓锁功能以防止盲切被微信打断。作者分享了新功能的使用体验，并提到了 14 天免费体验和激活码。",
+        "topics": [
+          "乒乓模式",
+          "盲切",
+          "AbcTab",
+          "免费体验",
+          "激活码"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/474",
+      "analyzedAt": "2026-11-06T13:56:54.743Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
