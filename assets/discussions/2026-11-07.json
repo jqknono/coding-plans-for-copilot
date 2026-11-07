@@ -1,0 +1,104 @@
+{
+  "date": "2026-11-07",
+  "generatedAt": "2026-11-07T12:36:04.706Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 48,
+    "postsAfterKeywordFilter": 22,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Azure, AWS, Anthropic, OpenAI, Google": 1,
+      "OpenCode, DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1255228",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1255228",
+      "title": "大厂直供 长期收 az gpt / awsb / claude / openai key，日结",
+      "content": "收 az gpt、awsb、claude、openai、gemini key 小时计算，源头、大台子优先，量大价格好谈 联系： [qk05375 / TG: https://t.me/nokpe ]",
+      "author": "sanji1",
+      "createdAt": "2026-11-07T09:22:58.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Azure, AWS, Anthropic, OpenAI, Google",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.85,
+        "summary": "The post discusses purchasing keys for multiple AI models (Azure GPT, AWS Bedrock, Claude, OpenAI, Gemini) with focus on bulk/enterprise pricing and contact information for business deals.",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "企业级",
+          "API key",
+          "大厂直供"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/475",
+      "analyzedAt": "2026-11-07T12:43:12.306Z"
+    },
+    {
+      "id": "v2ex-1255204",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1255204",
+      "title": "多出一些 opencode.ai go 额度 免费赠送",
+      "content": "50 元 额度 只能使用 DeepSeek-4.1-flash curl https://tok.h89.cn/v1/chat/completions -H \"Content-Type: application/json\" -H \"Authorization: Bearer sk-psbtqyr5Nfs9bxnJzJURknGCUsn0lGkTVH5RYrO0XNpuceR7\" -d '{\"model\":\"deepseek-v4.1-flash\",\"messages\":[{\"role\":\"user\",\"content\":\"hi\"}]}' 如果没了 可联系我获取",
+      "author": "chenjim",
+      "createdAt": "2026-11-07T07:20:32.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "OpenCode, DeepSeek",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "用户表示获得 opencode.ai go 50 元额度免费赠送，只能使用 DeepSeek 模型，用完可以联系获取。",
+        "topics": [
+          "免费额度",
+          "额度赠送"
+        ],
+        "planMentioned": "opencode.ai go",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/476",
+      "analyzedAt": "2026-11-07T12:43:20.272Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "v2ex: https://www.v2ex.com/api/replies/show.json?topic_id=1255237 The operation was aborted due to timeout"
+  ]
+}
