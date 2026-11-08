@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T14:44:38.900Z",
+  "updatedAt": "2026-11-08T08:36:53.781Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1214,7 +1214,7 @@
       "provider": "tencent-cloud-ai",
       "sourceUrls": [
         "https://cloud.tencent.com/document/product/1823/130092",
-        "https://console.cloud.tencent.com/tokenhub/codingplan"
+        "https://buy.cloud.tencent.com/hunyuan"
       ],
       "plans": [
         {
@@ -1226,7 +1226,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "用量限制: 每 5 小时：最多约 1,200 次请求每周：最多约 9,000 次请求每订阅月：最多约 18,000 次请求"
+            "用量限制: 每 5 小时：最多约 1,200 次请求 每周：最多约 9,000 次请求 每订阅月：最多约 18,000 次请求"
           ]
         },
         {
@@ -1238,7 +1238,7 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "用量限制: 每 5 小时：最多约 6,000 次请求每周：最多约 45,000 次请求每订阅月：最多约 90,000 次请求"
+            "用量限制: 每 5 小时：最多约 6,000 次请求 每周：最多约 45,000 次请求 每订阅月：最多约 90,000 次请求"
           ]
         }
       ]
