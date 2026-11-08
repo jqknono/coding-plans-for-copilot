@@ -1,0 +1,73 @@
+{
+  "date": "2026-11-08",
+  "generatedAt": "2026-11-08T12:53:25.281Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 50,
+    "postsAfterKeywordFilter": 8,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "DeepSeek, Opencode, Ollama": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1255310",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1255310",
+      "title": "commandcode 今天怎么了，缓存命中率低的吓人。。。",
+      "content": "用的是 dsh+deepseek v4.1 flash ，套餐是 goat ，今天的缓存命中率 10%左右，没法干活啊都，一直在兜圈子，有和我一样的吗？ opencode go 和 ollma code 怎么样，有兄弟们分享下经验吗？",
+      "author": "lsk569937453",
+      "createdAt": "2026-11-08T03:28:15.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "DeepSeek, Opencode, Ollama",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "用户在使用deepseek v4.1 flash模型时遇到缓存命中率极低的问题（约10%），影响工作效率，并询问是否有其他用户遇到类似问题，同时想了解opencode go和ollma code等替代方案。",
+        "topics": [
+          "定价",
+          "缓存命中率",
+          "体验",
+          "故障排查"
+        ],
+        "planMentioned": "goat",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/477",
+      "analyzedAt": "2026-11-08T12:56:01.721Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
