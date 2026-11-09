@@ -1,0 +1,144 @@
+{
+  "date": "2026-11-09",
+  "generatedAt": "2026-11-09T15:27:19.516Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 63,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "火山引擎": 1,
+      "Kimi (Moonshot AI)": 1,
+      "DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1255654",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1255654",
+      "title": "火山的 agent plan 半价 240/年值得吗",
+      "content": "RT ，火山的 agent plan 半价 240/年值得吗，开了个 40 的 code plan 两轮对话没了，半价的 agentplan 额度怎么样，值得吗。 另外 agent plan 能生成图像语音吗，20 的额度能生成多少语音呀",
+      "author": "raslan",
+      "createdAt": "2026-11-09T10:59:23.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "火山引擎",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.6,
+        "summary": "用户询问火山引擎的 agent plan 半价 240 元/年 是否值得， 讨论了 code plan 和 agent plan 的额度、功能（图像/语音生成）以及使用体验。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "额度",
+          "图像生成",
+          "语音生成"
+        ],
+        "planMentioned": "agent plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/478",
+      "analyzedAt": "2026-11-09T15:35:48.161Z"
+    },
+    {
+      "id": "v2ex-1255598",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1255598",
+      "title": "有买 kimi 的吗？实测效果如何？",
+      "content": "套餐实际 token 用量多少？ 代码质量和 GPT 比吗？ GPT 的代码老是又臭又长，过度防御，想换个从 claude 蒸馏的模型了。",
+      "author": "UserNameisNull",
+      "createdAt": "2026-11-09T08:03:35.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "Kimi (Moonshot AI)",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户询问是否有人购买 Kimi 套餐，想了解实际 token 用量、代码质量与 GPT 对比，并考虑从 GPT 切换到 Kimi（源自 Claude 蒸馏）。",
+        "topics": [
+          "定价",
+          "Kimi",
+          "代码质量",
+          "对比",
+          "Token用量",
+          "套餐",
+          "切换"
+        ],
+        "planMentioned": "Kimi套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/479",
+      "analyzedAt": "2026-11-09T15:35:57.872Z"
+    },
+    {
+      "id": "v2ex-1255533",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1255533",
+      "title": "用 deepseek 写代码有秘诀吗",
+      "content": "最近一个月用 codex ，chatgpt plus 号跑一个任务没跑完就额度用完了，后来买了 pro 100 号，幸好上个月有重置叠加邀请新用户重置，才勉强满足使用。现在没得用了，充值使用了 deepseek ，不用不知道，用了才知道这 token 消耗，让它翻译下项目里的语言文件（翻译 9 种语言），居然消耗了 4000 多万 token 。模型能干什么，我目前也不太清楚，但我是真没有看出来有多便宜。 但是这又是国内名气最大以性价比最高的一个模型，你们都用它干什么啊，难道有什么秘诀吗",
+      "author": "takemefly",
+      "createdAt": "2026-11-09T04:31:05.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户分享使用 DeepSeek 进行代码开发的经历，提到 token 消耗量和费用问题，并询问是否有使用秘诀。",
+        "topics": [
+          "定价",
+          "token消耗",
+          "DeepSeek",
+          "使用体验",
+          "套餐",
+          "代码写作"
+        ],
+        "planMentioned": "Pro 100",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/480",
+      "analyzedAt": "2026-11-09T15:36:05.435Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1255685: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1255679: The operation was aborted due to timeout",
+    "analysis failed for v2ex-1255439: The operation was aborted due to timeout"
+  ]
+}
