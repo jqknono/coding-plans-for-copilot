@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-08T08:36:53.781Z",
+  "updatedAt": "2026-11-09T09:06:41.257Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1321,8 +1321,8 @@
       "plans": [
         {
           "name": "Coding Plan Lite 月套餐",
-          "currentPrice": 9.9,
-          "currentPriceText": "¥9.9/月",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
           "originalPrice": 40,
           "originalPriceText": "¥40/月",
           "unit": "月",
@@ -1335,8 +1335,8 @@
         },
         {
           "name": "Coding Plan Pro 月套餐",
-          "currentPrice": 49.9,
-          "currentPriceText": "¥49.9/月",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
           "originalPrice": 200,
           "originalPriceText": "¥200/月",
           "unit": "月",
