@@ -1,20 +1,20 @@
 {
-  "generatedAt": "2026-11-08T14:51:44.862Z",
-  "generatedAtBeijing": "2026年11月8日 22:51:44",
-  "sourceGeneratedAt": "2026-11-08T08:36:53.781Z",
-  "sourceGeneratedAtBeijing": "2026年11月8日 16:36:53",
-  "sourceMetricsGeneratedAt": "2026-11-08T14:50:54.898Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月8日 22:50:54",
+  "generatedAt": "2026-11-09T18:28:39.360Z",
+  "generatedAtBeijing": "2026年11月10日 02:28:39",
+  "sourceGeneratedAt": "2026-11-09T09:06:41.257Z",
+  "sourceGeneratedAtBeijing": "2026年11月9日 17:06:41",
+  "sourceMetricsGeneratedAt": "2026-11-09T18:27:48.373Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月10日 02:27:48",
   "summary": {
     "openrouterProviderCount": 121,
-    "metricsProviderCount": 59,
-    "resolvedMetricsProviderCount": 59,
+    "metricsProviderCount": 58,
+    "resolvedMetricsProviderCount": 58,
     "unresolvedMetricsProviderCount": 0,
-    "structuredProviderCount": 9,
-    "heuristicProviderCount": 11,
+    "structuredProviderCount": 8,
+    "heuristicProviderCount": 12,
     "providersWithPlans": 20,
-    "pendingCount": 39,
-    "blockedPendingCount": 2,
+    "pendingCount": 38,
+    "blockedPendingCount": 1,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -226,56 +226,6 @@
       "privacyPolicyUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/Plr0fi68q-intl-en",
       "termsOfServiceUrl": "https://intl.cloud.baidu.com/en/doc/Agreements/s/bmesahnjh-intl-en",
       "statusPageUrl": null,
-      "parseMode": "provider-pricing-structured"
-    },
-    {
-      "slug": "cerebras",
-      "openrouterName": "Cerebras",
-      "providerId": "cerebras-code",
-      "plans": [
-        {
-          "name": "Cerebras Code Pro",
-          "currentPrice": 50,
-          "currentPriceText": "$50/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "速率限制可能调整",
-          "serviceDetails": [
-            "Qwen3-Coder access with fast, high-context completions",
-            "最高 24 million tokens/day",
-            "适合 indie devs、simple agentic workflows、weekend projects",
-            "OpenAI-compatible inference endpoint",
-            "131k-token context window"
-          ]
-        },
-        {
-          "name": "Cerebras Code Max",
-          "currentPrice": 200,
-          "currentPriceText": "$200/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "速率限制可能调整",
-          "serviceDetails": [
-            "Qwen3-Coder access for heavy coding workflows",
-            "最高 120 million tokens/day",
-            "适合 full-time development、IDE integrations、code refactoring、multi-agent systems",
-            "OpenAI-compatible inference endpoint",
-            "131k-token context window"
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://www.cerebras.ai/blog/introducing-cerebras-code",
-        "https://www.cerebras.ai"
-      ],
-      "pricingPageUrl": "https://www.cerebras.ai/blog/introducing-cerebras-code",
-      "officialWebsiteUrl": "https://www.cerebras.ai",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://www.cerebras.ai/privacy-policy",
-      "termsOfServiceUrl": "https://www.cerebras.ai/terms-of-service",
-      "statusPageUrl": "https://status.cerebras.ai/",
       "parseMode": "provider-pricing-structured"
     },
     {
@@ -813,6 +763,58 @@
       "parseMode": "provider-pricing-structured"
     },
     {
+      "slug": "morph",
+      "openrouterName": "Morph",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 100,
+          "currentPriceText": "$ 100/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.morphllm.com/pricing",
+          "serviceDetails": [
+            "Morph Models Open Source Models Kimi K3",
+            "Fable-tier, 100 tok/s. #1 on Design Arena.",
+            "Opus-tier. 744B MoE, 1M context.",
+            "27B dense, low latency.",
+            "230B MoE for agentic workflows.",
+            "1M-context model, served fast."
+          ]
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 200,
+          "currentPriceText": "$ 200/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "Morph Models Open Source Models Kimi K3",
+            "Fable-tier, 100 tok/s. #1 on Design Arena.",
+            "Opus-tier. 744B MoE, 1M context.",
+            "27B dense, low latency.",
+            "230B MoE for agentic workflows.",
+            "1M-context model, served fast."
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.morphllm.com",
+        "https://www.morphllm.com/pricing"
+      ],
+      "pricingPageUrl": "https://www.morphllm.com/pricing",
+      "officialWebsiteUrl": "https://www.morphllm.com",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://morphllm.com/privacy",
+      "termsOfServiceUrl": "https://www.morphllm.com/privacy/tos",
+      "statusPageUrl": null,
+      "parseMode": "official-website-heuristic"
+    },
+    {
       "slug": "phala",
       "openrouterName": "Phala",
       "providerId": null,
@@ -853,8 +855,8 @@
       "plans": [
         {
           "name": "Coding Plan Lite 月套餐",
-          "currentPrice": 9.9,
-          "currentPriceText": "¥9.9/月",
+          "currentPrice": 40,
+          "currentPriceText": "¥40/月",
           "originalPrice": 40,
           "originalPriceText": "¥40/月",
           "unit": "月",
@@ -867,8 +869,8 @@
         },
         {
           "name": "Coding Plan Pro 月套餐",
-          "currentPrice": 49.9,
-          "currentPriceText": "¥49.9/月",
+          "currentPrice": 200,
+          "currentPriceText": "¥200/月",
           "originalPrice": 200,
           "originalPriceText": "¥200/月",
           "unit": "月",
@@ -1297,15 +1299,6 @@
       "pricingPageUrl": "https://www.modular.com/pricing",
       "reason": "官网价格页探测失败：https://www.modular.com/prices: HTTP 404",
       "blocked": false
-    },
-    {
-      "slug": "morph",
-      "openrouterName": "Morph",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.morphllm.com",
-      "pricingPageUrl": "https://www.morphllm.com",
-      "reason": "官网价格页探测失败：https://www.morphllm.com/pricing: HTTP 429",
-      "blocked": true
     },
     {
       "slug": "near-ai",
