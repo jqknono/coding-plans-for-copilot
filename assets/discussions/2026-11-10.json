@@ -1,0 +1,140 @@
+{
+  "date": "2026-11-10",
+  "generatedAt": "2026-11-10T14:28:07.039Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 53,
+    "postsAfterKeywordFilter": 17,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "火山方舟": 1,
+      "Anthropic": 1,
+      "varai.top": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1255967",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1255967",
+      "title": "有什么便宜的 Agent/Coding/Token Plan 推荐吗",
+      "content": "目前正在使用 9.9 元的火山方舟 Agent Plan ， 据说第三个月起价格会变成大概 40 元/月。 我每个月模型 API 使用量不高， 除了按量计费有什么高性价比的 Agent/Coding/Token Plan 推荐吗？",
+      "author": "sungnix",
+      "createdAt": "2026-11-10T13:41:16.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "火山方舟",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.9,
+        "summary": "The user is seeking affordable Agent/Coding/Token plans for AI coding assistance, currently using Volcano Voyager Agent Plan at 9.9 yuan but concerned about potential price increase to 40 yuan/month after three months. They want recommendations for cost-effective options with pay-as-you-go pricing.",
+        "topics": [
+          "定价",
+          "Agent",
+          "Token Plan",
+          "套餐",
+          "价格",
+          "比价"
+        ],
+        "planMentioned": "火山方舟 Agent Plan",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/482",
+      "analyzedAt": "2026-11-10T14:35:50.845Z"
+    },
+    {
+      "id": "v2ex-1255954",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1255954",
+      "title": "NUS 给教职工提供了 Claude for Education 订阅——Max 2.5x 似乎在路上了？",
+      "content": "今天收到学校邮件，NUS 的教职工现在可以付费购买教育版本 Claude 订阅了。 虽然学校此前已经提供了 Claude 系列模型的网页端聚合，但是只有网页端接入，并不能使用 API 或者 Claude Code 一类。这次提供的则是直接使用 Claude 官方渠道的账户。 使用体验应该和直接官网购买 Claude 一样了，但是使用量不太一样： 标准计划： SGD 280 / 年（个人版 Pro 是 SGD 300 / 年）； 至高 2.5 倍于个人版 Pro 用量 按照我的理解，这个就是传闻中的 Max 2.5x 计划，当然实际消费者版本定价应该就是 USD 50 / 月了。 高级计划： SGD 790 / 年（个人版 Max 10x 是 SGD 1799.88 ）； 至高 5 倍于如上标准计划的用量（相当于 Max 12.5x ） 两个计划均适用以下内容： \"所有 Claude 现有模型 (all current Claude models)\"；我把这个理解成包含 Fable 但不包含 Mythos ，等拿到账号之后我会更新信息。 暂不清楚是否有 5 小时限制。 备注：需要通过学院",
+      "author": "MaverickPLS",
+      "createdAt": "2026-11-10T11:50:39.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Anthropic",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.65,
+        "summary": "NUS 教职工现在可以通过 Claude for Education 教育订阅购买 Claude 官方渠道账户，并讨论标准计划与高级计划的价格和用量对比，同时对是否包含特定模型和 5 小时限制表示不确定。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "Claude",
+          "教育订阅",
+          "订阅"
+        ],
+        "planMentioned": "Claude for Education",
+        "language": "zh",
+        "category": "Announcements"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/483",
+      "analyzedAt": "2026-11-10T14:35:58.546Z"
+    },
+    {
+      "id": "v2ex-1255936",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1255936",
+      "title": "宝藏中转站 gpt 高缓不降智 0.09 倍率，官 key0.28 倍率 DS0.09 倍率 包稳不烧心",
+      "content": "GPT 高缓不降智低至 0.09 倍率，官 key0.28 倍率，国模 DS 0.09 倍率，满血 ccmax1.1 倍率 包稳不烧心，用了都说好 varai.top",
+      "author": "woreally21",
+      "createdAt": "2026-11-10T10:12:15.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "varai.top",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.92,
+        "summary": "分享了低价GPT高缓不降智套餐，价格低至0.09倍率，用户反馈良好，varai.top提供。",
+        "topics": [
+          "定价",
+          "套餐",
+          "GPT",
+          "varai.top",
+          "体验"
+        ],
+        "planMentioned": "GPT 高缓不降智",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/484",
+      "analyzedAt": "2026-11-10T14:36:07.183Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1255944: The operation was aborted due to timeout"
+  ]
+}
