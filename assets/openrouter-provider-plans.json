@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-09T18:28:39.360Z",
-  "generatedAtBeijing": "2026年11月10日 02:28:39",
+  "generatedAt": "2026-11-10T16:12:29.392Z",
+  "generatedAtBeijing": "2026年11月11日 00:12:29",
   "sourceGeneratedAt": "2026-11-09T09:06:41.257Z",
   "sourceGeneratedAtBeijing": "2026年11月9日 17:06:41",
-  "sourceMetricsGeneratedAt": "2026-11-09T18:27:48.373Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月10日 02:27:48",
+  "sourceMetricsGeneratedAt": "2026-11-10T16:11:30.769Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月11日 00:11:30",
   "summary": {
     "openrouterProviderCount": 121,
     "metricsProviderCount": 58,
@@ -776,8 +776,8 @@
           "unit": "月",
           "notes": "来源: https://www.morphllm.com/pricing",
           "serviceDetails": [
-            "Morph Models Open Source Models Kimi K3",
-            "Fable-tier, 100 tok/s. #1 on Design Arena.",
+            "Morph Models Open Source Models Kimi K3.1",
+            "Fable-tier, 100 tok/s.",
             "Opus-tier. 744B MoE, 1M context.",
             "27B dense, low latency.",
             "230B MoE for agentic workflows.",
@@ -793,8 +793,8 @@
           "unit": "月",
           "notes": null,
           "serviceDetails": [
-            "Morph Models Open Source Models Kimi K3",
-            "Fable-tier, 100 tok/s. #1 on Design Arena.",
+            "Morph Models Open Source Models Kimi K3.1",
+            "Fable-tier, 100 tok/s.",
             "Opus-tier. 744B MoE, 1M context.",
             "27B dense, low latency.",
             "230B MoE for agentic workflows.",
@@ -1385,9 +1385,9 @@
       "slug": "primeintellect",
       "openrouterName": "PrimeIntellect",
       "providerId": null,
-      "officialWebsiteUrl": null,
-      "pricingPageUrl": null,
-      "reason": "OpenRouter 元数据中缺少可用官网地址",
+      "officialWebsiteUrl": "https://www.primeintellect.ai",
+      "pricingPageUrl": "https://www.primeintellect.ai",
+      "reason": "官网价格页探测失败：https://www.primeintellect.ai/pricing: HTTP 404",
       "blocked": false
     },
     {
