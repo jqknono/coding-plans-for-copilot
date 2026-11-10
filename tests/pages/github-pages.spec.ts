@@ -92,6 +92,10 @@ test('大陆套餐展示阿里云 Token Plan', async ({ page }) => {
   const card = page.locator('#provider-card-aliyun-token-plan');
   await expect(card).toBeVisible();
   await expect(card.getByRole('heading', { name: '阿里云 Token Plan' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan Lite' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan Essential' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan Standard' })).toBeVisible();
+  await expect(card.getByRole('heading', { name: 'Token Plan Pro' })).toBeVisible();
   await expect(card.getByRole('heading', { name: 'Token Plan 标准座席' })).toBeVisible();
   await expect(card.getByRole('heading', { name: 'Token Plan 高级座席' })).toBeVisible();
   await expect(card.getByRole('heading', { name: 'Token Plan 尊享座席' })).toBeVisible();

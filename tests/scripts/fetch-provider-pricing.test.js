@@ -1190,11 +1190,70 @@ test('parseAliyunTokenPlansFromDocsHtml reads the current column-oriented team p
   assert.match(result.plans[3].serviceDetails.join('\n'), /625,000 Credits\/个/);
 });
 
+test('parseAliyunTokenPlansFromDocsHtml reads personal tiers and row-oriented team seats', () => {
+  const html = `
+    <table>
+      <thead><tr><th></th><th>Lite 套餐</th><th>Essential 套餐</th><th>Standard 套餐</th><th>Pro 套餐</th></tr></thead>
+      <tbody>
+        <tr><td>定价</td><td>39 元/月 新用户限时价 19.5 元/月</td><td>79 元/月 新用户限时价 39.5 元/月</td><td>139 元/月</td><td>312 元/月</td></tr>
+        <tr><td>每月限额</td><td>20,000 Credits</td><td>45,000 Credits</td><td>80,000 Credits</td><td>200,000 Credits</td></tr>
+        <tr><td>并发 Agent</td><td>1-2 个</td><td>2-3 个</td><td>3-4 个</td><td>6-8 个</td></tr>
+        <tr><td>权益</td><td>文本、视觉等模型</td><td>Lite 全部权益</td><td>赠送 Harness 权益</td><td>更高的并发上限</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead><tr><th>坐席类型</th><th>价格</th><th>额度</th><th>适用场景</th></tr></thead>
+      <tbody>
+        <tr><td>标准坐席</td><td>¥150/坐席/月</td><td>25,000 Credits/坐席/月</td><td>轻度使用 AI 辅助的团队成员</td></tr>
+        <tr><td>高级坐席</td><td>¥550/坐席/月</td><td>100,000 Credits/坐席/月</td><td>日常高频使用 AI 编程或办公的团队成员</td></tr>
+        <tr><td>尊享坐席</td><td>¥1,298/坐席/月</td><td>250,000 Credits/坐席/月</td><td>重度依赖 AI 的核心开发者或高强度使用者</td></tr>
+      </tbody>
+    </table>
+    <table>
+      <thead><tr><th>档位</th><th>价格</th><th>额度</th></tr></thead>
+      <tbody><tr><td>Token Plan 团队版 - 共享用量包</td><td>¥5,000/个</td><td>625,000 Credits/个</td></tr></tbody>
+    </table>
+  `;
+
+  const result = parseAliyunTokenPlansFromDocsHtml(html);
+
+  assert.deepEqual(
+    result.plans.map((plan) => ({
+      name: plan.name,
+      currentPriceText: plan.currentPriceText,
+      originalPriceText: plan.originalPriceText,
+      unit: plan.unit,
+    })),
+    [
+      { name: 'Token Plan Lite', currentPriceText: '¥19.5/月', originalPriceText: '¥39/月', unit: '月' },
+      { name: 'Token Plan Essential', currentPriceText: '¥39.5/月', originalPriceText: '¥79/月', unit: '月' },
+      { name: 'Token Plan Standard', currentPriceText: '¥139/月', originalPriceText: null, unit: '月' },
+      { name: 'Token Plan Pro', currentPriceText: '¥312/月', originalPriceText: null, unit: '月' },
+      { name: 'Token Plan 标准座席', currentPriceText: '¥150/座席/月', originalPriceText: null, unit: '座席/月' },
+      { name: 'Token Plan 高级座席', currentPriceText: '¥550/座席/月', originalPriceText: null, unit: '座席/月' },
+      { name: 'Token Plan 尊享座席', currentPriceText: '¥1,298/座席/月', originalPriceText: null, unit: '座席/月' },
+      { name: 'Token Plan 共享用量包', currentPriceText: '¥5,000/个/月', originalPriceText: null, unit: '个/月' },
+    ],
+  );
+  assert.equal(result.plans[0].notes, '新用户限时价 19.5 元/月');
+  assert.equal(result.plans[1].notes, '新用户限时价 39.5 元/月');
+  assert.equal(result.plans[2].notes, null);
+  assert.match(result.plans[0].serviceDetails.join('\n'), /版本: 个人版/);
+  assert.match(result.plans[0].serviceDetails.join('\n'), /20,000 Credits/);
+  assert.match(result.plans[4].notes || '', /轻度使用 AI 辅助/);
+  assert.match(result.plans[4].serviceDetails.join('\n'), /版本: 团队版/);
+  assert.match(result.plans[7].serviceDetails.join('\n'), /625,000 Credits\/个/);
+  assert.deepEqual(result.sourceUrls.slice(2), [
+    'https://help.aliyun.com/zh/model-studio/token-plan-personal-overview',
+    'https://help.aliyun.com/zh/model-studio/token-plan-team-overview',
+  ]);
+});
+
 test('parseAliyunTokenPlansFromDocsHtml handles tables without id attribute', () => {
   const html = `
     <table>
-      <thead><tr><th></th><th>Lite 套餐</th><th>Standard 套餐</th><th>Pro 套餐</th><th>用量包</th></tr></thead>
-      <tbody><tr><td>定价</td><td>39 元/月</td><td>139 元/月</td><td>499 元/月</td><td>100 元/个/月</td></tr></tbody>
+      <thead><tr><th></th><th>用量包</th><th>补充说明</th></tr></thead>
+      <tbody><tr><td>定价</td><td>100 元/个/月</td><td>按需购买</td></tr></tbody>
     </table>
     <table>
       <thead><tr><th></th><th>标准座席 Standard</th><th>高级座席 Pro</th><th>尊享座席 Max</th><th>共享用量包 Extra Bundle</th></tr></thead>

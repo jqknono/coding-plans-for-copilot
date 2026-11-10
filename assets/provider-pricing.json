@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-09T09:06:41.257Z",
+  "updatedAt": "2026-11-10T22:55:56.398Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -49,49 +49,117 @@
       "sourceUrls": [
         "https://www.aliyun.com/benefit/scene/tokenplan",
         "https://common-buy.aliyun.com/token-plan/",
-        "https://help.aliyun.com/zh/model-studio/token-plan-overview"
+        "https://help.aliyun.com/zh/model-studio/token-plan-personal-overview",
+        "https://help.aliyun.com/zh/model-studio/token-plan-team-overview"
       ],
       "plans": [
+        {
+          "name": "Token Plan Lite",
+          "currentPrice": 19.5,
+          "currentPriceText": "¥19.5/月",
+          "originalPrice": 39,
+          "originalPriceText": "¥39/月",
+          "unit": "月",
+          "notes": "新用户限时价 19.5/月",
+          "serviceDetails": [
+            "版本: 个人版",
+            "额度: 20,000 Credits",
+            "并发 Agent: 1-2 个",
+            "权益: 文本、视觉等模型 联网搜索等内置工具 适配主流工具",
+            "计费方式: 按 Token 消耗抵扣 Credits"
+          ]
+        },
+        {
+          "name": "Token Plan Essential",
+          "currentPrice": 39.5,
+          "currentPriceText": "¥39.5/月",
+          "originalPrice": 79,
+          "originalPriceText": "¥79/月",
+          "unit": "月",
+          "notes": "新用户限时价 39.5/月",
+          "serviceDetails": [
+            "版本: 个人版",
+            "额度: 45,000 Credits",
+            "并发 Agent: 2-3 个",
+            "权益: Lite 全部权益",
+            "计费方式: 按 Token 消耗抵扣 Credits"
+          ]
+        },
+        {
+          "name": "Token Plan Standard",
+          "currentPrice": 139,
+          "currentPriceText": "¥139/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "版本: 个人版",
+            "额度: 80,000 Credits",
+            "并发 Agent: 3-4 个",
+            "权益: Lite 全部权益 赠送 Harness 权益",
+            "计费方式: 按 Token 消耗抵扣 Credits"
+          ]
+        },
+        {
+          "name": "Token Plan Pro",
+          "currentPrice": 312,
+          "currentPriceText": "¥312/月",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "版本: 个人版",
+            "额度: 200,000 Credits",
+            "并发 Agent: 6-8 个",
+            "权益: Standard 全部权益 更高的并发上限 赠送 Harness 权益",
+            "计费方式: 按 Token 消耗抵扣 Credits"
+          ]
+        },
         {
           "name": "Token Plan 标准座席",
           "currentPrice": 150,
           "currentPriceText": "¥150/座席/月",
-          "originalPrice": 198,
-          "originalPriceText": "¥198/座席/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "座席/月",
-          "notes": null,
+          "notes": "轻度使用 AI 辅助的团队成员",
           "serviceDetails": [
-            "额度: 25,000 Credits/座席/月",
-            "计费方式: 按 Token 消耗抵扣 Credits",
-            "支持模型: 支持文本生成、图像生成、视频生成、语音识别、实时语音对话等多种模型（ 查看完整列表 ）"
+            "版本: 团队版",
+            "额度: 25,000 Credits/坐席/月",
+            "适用场景: 轻度使用 AI 辅助的团队成员",
+            "计费方式: 按 Token 消耗抵扣 Credits"
           ]
         },
         {
           "name": "Token Plan 高级座席",
           "currentPrice": 550,
           "currentPriceText": "¥550/座席/月",
-          "originalPrice": 698,
-          "originalPriceText": "¥698/座席/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "座席/月",
-          "notes": null,
+          "notes": "日常高频使用 AI 编程或办公的团队成员",
           "serviceDetails": [
-            "额度: 100,000 Credits/座席/月",
-            "计费方式: 按 Token 消耗抵扣 Credits",
-            "支持模型: 支持文本生成、图像生成、视频生成、语音识别、实时语音对话等多种模型（ 查看完整列表 ）"
+            "版本: 团队版",
+            "额度: 100,000 Credits/坐席/月",
+            "适用场景: 日常高频使用 AI 编程或办公的团队成员",
+            "计费方式: 按 Token 消耗抵扣 Credits"
           ]
         },
         {
           "name": "Token Plan 尊享座席",
-          "currentPrice": 1398,
-          "currentPriceText": "¥1,398/座席/月",
+          "currentPrice": 1298,
+          "currentPriceText": "¥1,298/座席/月",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "座席/月",
-          "notes": null,
+          "notes": "重度依赖 AI 的核心开发者或高强度使用者",
           "serviceDetails": [
-            "额度: 250,000 Credits/座席/月",
-            "计费方式: 按 Token 消耗抵扣 Credits",
-            "支持模型: 支持文本生成、图像生成、视频生成、语音识别、实时语音对话等多种模型（ 查看完整列表 ）"
+            "版本: 团队版",
+            "额度: 250,000 Credits/坐席/月",
+            "适用场景: 重度依赖 AI 的核心开发者或高强度使用者",
+            "计费方式: 按 Token 消耗抵扣 Credits"
           ]
         },
         {
@@ -103,13 +171,12 @@
           "unit": "个/月",
           "notes": null,
           "serviceDetails": [
+            "版本: 团队版",
             "额度: 625,000 Credits/个",
             "跨座席共享的弹性用量包"
           ]
         }
-      ],
-      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
-      "staleFailure": "aliyun-token-plan: Aliyun Token Plan docs do not expose plan prices; Playwright fallback failed: page.waitForFunction: Timeout 8000ms exceeded."
+      ]
     },
     {
       "provider": "baidu-qianfan-ai",
@@ -1624,7 +1691,5 @@
       ]
     }
   ],
-  "failures": [
-    "aliyun-token-plan: Aliyun Token Plan docs do not expose plan prices; Playwright fallback failed: page.waitForFunction: Timeout 8000ms exceeded."
-  ]
+  "failures": []
 }
