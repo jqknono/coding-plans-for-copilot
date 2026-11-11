@@ -1056,6 +1056,7 @@ export abstract class BaseAIProvider implements vscode.Disposable {
       };
 
     // 将续轮元数据与可见思考分离，保留签名和隐去的思考块。
+    // 流式增量已经显示过正文时，结束事件只保留元数据，不再形成另一个思考块。
     if (thinking.trim().length === 0) {
       return new vscode.LanguageModelDataPart(
         new TextEncoder().encode(JSON.stringify({ id: block.id, metadata })),
@@ -1147,7 +1148,9 @@ export abstract class BaseAIProvider implements vscode.Disposable {
     }
 
     const completeThinking =
-      typeof metadata?._completeThinking === 'string' ? metadata._completeThinking : undefined;
+      typeof metadata?._completeThinking === 'string' && metadata._completeThinking.length > 0
+        ? metadata._completeThinking
+        : undefined;
     const signature = typeof metadata?.signature === 'string' && metadata.signature.length > 0 ? metadata.signature : undefined;
     const valueText =
       typeof record.value === 'string'

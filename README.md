@@ -34,6 +34,41 @@ Coding Plans runs in VS Code for the Web, including `vscode.dev` and `github.dev
 - **Coding Plans Dashboard**: Visit [GitHub Pages Dashboard](https://jqknono.github.io/coding-plans-for-copilot/) to view monthly fees and benefits from multiple coding plans, as well as OpenRouter vendor performance metrics. The dashboard updates daily with automated scraping, multi-dimensional filtering, and URL state sync.
 - **Key Security**: API Keys are stored locally using VS Code Secret Storage, not uploaded to the cloud or shared.
 
+## How the Extension Works
+
+The diagram follows a model from vendor setup through a Copilot Chat request. Model discovery runs only when enabled and triggered; configured models remain the fallback. Commit generation and plan-usage reporting are summarized below.
+
+```mermaid
+flowchart TD
+  subgraph setup["Configuration and model discovery"]
+    A["Configure vendor, Base URL, and API key"] --> B["Validate settings; store key in Secret Storage"]
+    B --> C["Register provider and build model inventory"]
+    C --> D{"Discovery enabled and triggered?"}
+    D -->|Yes| E["GET /models; merge with manual overrides"]
+    D -->|No| F["Use configured models"]
+    E --> G["Show vendor models in VS Code picker"]
+    F --> G
+  end
+
+  subgraph chat["Copilot Chat request"]
+    G --> H["Select a model; VS Code supplies messages and options"]
+    H --> I["Resolve vendor and model; apply options and token budgets"]
+    I --> J{"Protocol style"}
+    J -->|OpenAI Chat| K["POST /chat/completions"]
+    J -->|OpenAI Responses| L["POST /responses"]
+    J -->|Anthropic| M["POST /messages"]
+    K --> N["Parse response; map text, thinking, and tool calls"]
+    L --> N
+    M --> N
+    N --> O["Stream response parts to Copilot Chat"]
+  end
+```
+
+| Companion workflow | What happens |
+| --- | --- |
+| Commit message | Read staged changes (or the working-tree diff), generate with a VS Code chat model, then normalize and validate the message before placing it in the SCM input box. |
+| Plan usage | Periodically query a configured `usageUrl` and show plan quota alongside context usage in the status bar. |
+
 ---
 
 ## Quick Start
@@ -74,7 +109,7 @@ For a built-in or already configured vendor:
 2. Pick the platform you've registered with from the vendor picker (e.g., Zhipu, Kimi, Volcengine, etc.)
 3. Select "Set API Key" and paste your API Key; the extension stores it and refreshes models
 4. Open Copilot Chat (`Ctrl+L`) and choose a model provided by `Coding Plans` in the model picker
-5. Set `Thinking Effort` per request from the model row `More Actions` menu. OpenAI Chat-compatible models support `none` / `low` / `medium` / `high` / `xhigh` / `max`, and also show `Thinking Type` (`enabled` / `disabled` / `default`, default: `default`; `default` omits the `thinking` field and only sends `reasoning_effort`, matching native Custom Endpoint). Choose `enabled` to also send `thinking.enabled`. OpenAI Responses models support `low` / `medium` / `high` / `xhigh` / `max` (default: `max`). Anthropic models show `Effort` (`low` / `medium` / `high` / `xhigh` / `max`, default: `max`) and `Thinking Type` (`think` / `non-think`, default: `think`); `think` sends `thinking.enabled` with `budget_tokens` mapped from Effort, and `non-think` disables thinking. Copilot Chat may pass `reasoningEffort` instead of `thinkingEffort`; the adapter maps that alias. More Actions also exposes Context Size for the input budget.
+5. Set `Thinking Effort` per request from the model row `More Actions` menu. OpenAI Chat-compatible models support `none` / `low` / `medium` / `high` / `xhigh` / `max`, and also show `Thinking Type` (`enabled` / `disabled` / `default`, default: `default`; `default` omits the `thinking` field and only sends `reasoning_effort`, matching native Custom Endpoint). Choose `enabled` to also send `thinking.enabled`. OpenAI Responses models support `low` / `medium` / `high` / `xhigh` / `max` (default: `max`) and always request `reasoning.summary: "auto"` for a visible summary. Anthropic models show `Effort` (`low` / `medium` / `high` / `xhigh` / `max`, default: `max`) and `Thinking Type` (`think` / `non-think`, default: `think`); `think` sends `thinking.enabled` with `budget_tokens` mapped from Effort, and `non-think` disables thinking. Copilot Chat may pass `reasoningEffort` instead of `thinkingEffort`; the adapter maps that alias. More Actions also exposes Context Size for the input budget.
 6. With `useModelsEndpoint` enabled, run `Coding Plans: Update Coding Plans Models List` to request `/models`, write back the model list and refresh the picker. Settings/API-key changes always rebuild configured models locally, applying budgets immediately. `coding-plans.autoRefreshModels: false` disables automatic picker synchronization and empty-query refresh; remote discovery and model-list writeback remain manual except for the native Add Models connection setup described above.
    - Discovery prefers [models.dev](https://models.dev/) `catalog.json`, falling back to `api.json`, to enrich new model entries with capability, source and price metadata by model ID/name. New model `apiStyle` follows its source: OpenAI and Grok/xAI use `responses`, Anthropic uses `messages`, and other models use `chat-completions`. Existing manual attributes and budgets remain intact; automatically sourced capabilities can refresh.
 You can also directly edit `settings.json`; the extension will open settings and navigate to `coding-plans.vendors`.

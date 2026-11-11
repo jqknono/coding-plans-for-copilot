@@ -331,6 +331,7 @@ export interface OpenAIResponsesStreamEvent {
   response?: OpenAIResponsesResponse;
   item_id?: string;
   output_index?: number;
+  summary_index?: number;
   call_id?: string;
   name?: string;
   arguments?: string;
@@ -382,6 +383,8 @@ export interface OpenAIChatStreamState {
   responseId?: string;
   usage?: OpenAIChatResponse['usage'];
   finishReason?: string;
+  /** 本次请求内所有 Chat Completions 思考增量共享的序列标识。 */
+  reasoningSequenceId?: string;
   toolCalls: Map<
     number,
     {
@@ -408,6 +411,8 @@ export interface OpenAIResponsesStreamState {
   responseId?: string;
   usage?: OpenAIResponsesResponse['usage'];
   finalResponse?: OpenAIResponsesResponse;
+  /** 已见到的 Responses reasoning item，用于在缺少 item_id 时仍保持同一段思考的稳定标识。 */
+  reasoningItemIds: string[];
   toolCalls: Map<string, OpenAIResponsesStreamToolCall>;
   toolCallAliases: Map<string, string>;
   nextToolCallOrder: number;
@@ -533,7 +538,7 @@ export function applyOpenAIChatStreamChunk(
   state: OpenAIChatStreamState,
   chunk: OpenAIChatStreamChunk,
   generateToolCallId: GenerateToolCallId,
-): { textDelta: string; reasoningDelta: string } {
+): { textDelta: string; reasoningDelta: string } & StreamThinkingIdentity {
   let textDelta = '';
   let reasoningDelta = '';
   if (typeof chunk.id === 'string' && chunk.id.trim().length > 0) {
@@ -606,7 +611,11 @@ export function applyOpenAIChatStreamChunk(
     }
   }
 
-  return { textDelta, reasoningDelta };
+  return {
+    textDelta,
+    reasoningDelta,
+    ...(reasoningDelta.length > 0 ? { thinkingId: ensureOpenAIChatReasoningSequenceId(state) } : {}),
+  };
 }
 
 export function finalizeOpenAIChatStreamState(
@@ -636,10 +645,44 @@ export function createOpenAIResponsesStreamState(): OpenAIResponsesStreamState {
   return {
     content: '',
     reasoningContent: '',
+    reasoningItemIds: [],
     toolCalls: new Map(),
     toolCallAliases: new Map(),
     nextToolCallOrder: 0,
   };
+}
+
+/** 同一次流式请求中属于同一段思考的增量共享此标识，供宿主合并呈现。 */
+export interface StreamThinkingIdentity {
+  thinkingId?: string;
+}
+
+function ensureOpenAIChatReasoningSequenceId(state: OpenAIChatStreamState): string {
+  if (!state.reasoningSequenceId) {
+    const responseId = readNonEmptyStreamIdentifier(state.responseId);
+    state.reasoningSequenceId = responseId ? `reasoning_${responseId}` : 'reasoning';
+  }
+  return state.reasoningSequenceId;
+}
+
+function resolveOpenAIResponsesReasoningSequenceId(
+  state: OpenAIResponsesStreamState,
+  payload: OpenAIResponsesStreamEvent,
+): string {
+  const itemId =
+    readNonEmptyStreamIdentifier(payload.item_id) ??
+    readNonEmptyStreamIdentifier(payload.item?.id);
+  if (itemId) {
+    if (!state.reasoningItemIds.includes(itemId)) {
+      state.reasoningItemIds.push(itemId);
+    }
+  } else if (state.reasoningItemIds.length === 0) {
+    state.reasoningItemIds.push('reasoning');
+  }
+
+  const resolvedItemId = itemId ?? state.reasoningItemIds[state.reasoningItemIds.length - 1] ?? 'reasoning';
+  const summaryIndex = typeof payload.summary_index === 'number' ? payload.summary_index : undefined;
+  return summaryIndex === undefined ? resolvedItemId : `${resolvedItemId}:${summaryIndex}`;
 }
 
 function readNonEmptyStreamIdentifier(value: unknown): string | undefined {
@@ -774,7 +817,7 @@ export function applyOpenAIResponsesStreamEvent(
   eventType: string | undefined,
   payload: OpenAIResponsesStreamEvent,
   generateToolCallId: GenerateToolCallId,
-): { textDelta: string; reasoningDelta?: string } {
+): { textDelta: string; reasoningDelta?: string } & StreamThinkingIdentity {
   const resolvedEventType = eventType || payload.type;
   let textDelta = '';
 
@@ -839,7 +882,13 @@ export function applyOpenAIResponsesStreamEvent(
     if (reasoningDelta.length > 0) {
       state.reasoningContent += reasoningDelta;
     }
-    return { textDelta, reasoningDelta };
+    return {
+      textDelta,
+      reasoningDelta,
+      ...(reasoningDelta.length > 0
+        ? { thinkingId: resolveOpenAIResponsesReasoningSequenceId(state, payload) }
+        : {}),
+    };
   }
 
   if (resolvedEventType === 'response.function_call_arguments.delta') {
@@ -902,7 +951,10 @@ export function applyOpenAIResponsesStreamEvent(
       state.content = parsed.content;
       textDelta = parsed.content;
     }
-    return { textDelta, reasoningDelta };
+    const thinkingId = reasoningDelta.length > 0
+      ? state.reasoningItemIds[0] ?? resolveOpenAIResponsesReasoningSequenceId(state, payload)
+      : undefined;
+    return { textDelta, reasoningDelta, ...(thinkingId ? { thinkingId } : {}) };
   }
 
   return { textDelta };
@@ -1087,7 +1139,11 @@ export function applyAnthropicStreamEvent(
         data: block.data,
       });
       if (completedThinking) {
-        return { textDelta, thinkingId: completedThinking.id, completedThinking };
+        // 已流式发出的正文不再随结束事件重发；这里只补签名等续轮元数据。
+        const metadataOnly = completedThinking.type === 'thinking' && (block.text?.length ?? 0) > 0
+          ? { ...completedThinking, thinking: '' }
+          : completedThinking;
+        return { textDelta, thinkingId: metadataOnly.id, completedThinking: metadataOnly };
       }
     }
     return { textDelta };

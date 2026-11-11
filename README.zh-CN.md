@@ -34,6 +34,41 @@
 - **编码套餐看板**：访问 [GitHub Pages 看板](https://jqknono.github.io/coding-plans-for-copilot/) 查看多家编码套餐月费与权益，以及 OpenRouter 供应商性能指标。看板每日自动更新，支持多维度筛选与 URL 状态同步。
 - **密钥安全**：API Key 使用 VS Code Secret Storage 本地保存，不上云不共享。
 
+## 插件工作流程
+
+下图展示模型从供应商配置到 Copilot Chat 请求的主要路径。只有启用并触发模型发现时才会请求远端模型；其他情况下使用已配置模型。提交消息生成和套餐用量流程见表格。
+
+```mermaid
+flowchart TD
+  subgraph setup["配置与模型发现"]
+    A["配置供应商、Base URL 和 API Key"] --> B["校验配置；密钥保存到 Secret Storage"]
+    B --> C["注册模型提供器并构建模型清单"]
+    C --> D{"已启用并触发模型发现？"}
+    D -->|是| E["请求 /models；合并手动配置"]
+    D -->|否| F["使用已配置模型"]
+    E --> G["在 VS Code 模型选择器中展示供应商模型"]
+    F --> G
+  end
+
+  subgraph chat["Copilot Chat 请求"]
+    G --> H["选择模型；VS Code 提供消息和选项"]
+    H --> I["解析供应商与模型；应用选项及 token 预算"]
+    I --> J{"协议风格"}
+    J -->|OpenAI Chat| K["POST /chat/completions"]
+    J -->|OpenAI Responses| L["POST /responses"]
+    J -->|Anthropic| M["POST /messages"]
+    K --> N["解析响应；映射文本、思考和工具调用"]
+    L --> N
+    M --> N
+    N --> O["将响应片段流式返回 Copilot Chat"]
+  end
+```
+
+| 辅助流程 | 执行内容 |
+| --- | --- |
+| Commit 消息 | 读取暂存变更（没有暂存内容时读取工作区 diff），调用 VS Code 聊天模型生成，再规范化并校验后写入 SCM 输入框。 |
+| 套餐用量 | 定期请求配置的 `usageUrl`，并在状态栏与上下文用量一同展示。 |
+
 ---
 
 ## 快速开始
@@ -74,7 +109,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
 3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
 4. 打开 Copilot Chat（`Ctrl+L`），在模型选择器中选择 `Coding Plans` 提供的模型
-5. `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`，并显示 `Thinking Type`（`enabled` / `disabled` / `default`，默认 `default`；`default` 省略 `thinking` 字段，只发送 `reasoning_effort`，与原生 Custom Endpoint 一致）。需要 `thinking.enabled` 时请选择 `enabled`。OpenAI Responses 模型支持 `low` / `medium` / `high` / `xhigh` / `max`（默认 `max`）。Anthropic 模型显示 `Effort`（`low` / `medium` / `high` / `xhigh` / `max`，默认 `max`）和 `Thinking Type`（`think` / `non-think`，默认 `think`）；`think` 会发送 `thinking.enabled`，并把 Effort 映射为 `budget_tokens`，`non-think` 关闭 thinking。Copilot Chat 可能传入 `reasoningEffort` 作为 `thinkingEffort` 的别名，adapter 会按别名归一。More Actions 同时提供输入预算 Context Size。
+5. `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`，并显示 `Thinking Type`（`enabled` / `disabled` / `default`，默认 `default`；`default` 省略 `thinking` 字段，只发送 `reasoning_effort`，与原生 Custom Endpoint 一致）。需要 `thinking.enabled` 时请选择 `enabled`。OpenAI Responses 模型支持 `low` / `medium` / `high` / `xhigh` / `max`（默认 `max`），并默认请求 `reasoning.summary: "auto"` 以返回可见思考摘要。Anthropic 模型显示 `Effort`（`low` / `medium` / `high` / `xhigh` / `max`，默认 `max`）和 `Thinking Type`（`think` / `non-think`，默认 `think`）；`think` 会发送 `thinking.enabled`，并把 Effort 映射为 `budget_tokens`，`non-think` 关闭 thinking。Copilot Chat 可能传入 `reasoningEffort` 作为 `thinkingEffort` 的别名，adapter 会按别名归一。More Actions 同时提供输入预算 Context Size。
 6. 供应商启用 `useModelsEndpoint` 后，执行 `Coding Plans: Update Coding Plans Models List` 可请求 `/models`、写回模型列表并刷新选择器。保存 settings/API Key 会即时本地重建已配置模型，预算随之生效；`coding-plans.autoRefreshModels: false` 仅关闭自动选择器同步及空查询刷新。除上述原生 Add Models 连接初始化外，远端发现与模型列表写回仍由手动更新命令执行。
    - 模型发现优先读取 [models.dev](https://models.dev/) 的 `catalog.json`，失败时回退 `api.json`，按模型 ID/名称补全新条目的能力、预算来源及价格元数据。新模型 `apiStyle` 按来源推导：OpenAI 与 Grok/xAI 使用 `responses`，Anthropic 使用 `messages`，其余使用 `chat-completions`。已有手工属性与预算保持原值；自动来源能力可随发现刷新。
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。

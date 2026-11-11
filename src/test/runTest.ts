@@ -7221,6 +7221,7 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   const reasoningOnlyChatDelta = applyOpenAIChatStreamChunk(
     reasoningOnlyChatState,
     {
+      id: 'chatcmpl_reasoning',
       choices: [
         {
           index: 0,
@@ -7249,6 +7250,7 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   const finalizedReasoningOnlyChat = finalizeOpenAIChatStreamState(reasoningOnlyChatState, () => 'generated_call');
   assert.equal(reasoningOnlyChatDelta.textDelta, '');
   assert.equal(reasoningOnlyChatDelta.reasoningDelta, 'fallback ');
+  assert.equal(reasoningOnlyChatDelta.thinkingId, 'reasoning_chatcmpl_reasoning');
   assert.equal(finalizedReasoningOnlyChat.content, 'fallback text');
   assert.equal(finalizedReasoningOnlyChat.reasoningContent, 'fallback text');
 
@@ -7488,6 +7490,20 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   );
   assert.equal(responsesReasoningDelta.textDelta, '');
   assert.equal(responsesReasoningDelta.reasoningDelta, 'plan first');
+  assert.equal(responsesReasoningDelta.thinkingId, 'reasoning');
+
+  const responsesSummaryIdentityState = createOpenAIResponsesStreamState();
+  const responsesSummaryDeltas = [
+    { item_id: 'rs_1', summary_index: 0, delta: '先检查 ' },
+    { item_id: 'rs_1', summary_index: 0, delta: 'tool' },
+    { item_id: 'rs_2', summary_index: 0, delta: '另一段' },
+  ].map((payload) => applyOpenAIResponsesStreamEvent(
+    responsesSummaryIdentityState,
+    'response.reasoning_summary_text.delta',
+    payload,
+    () => 'generated_call',
+  ));
+  assert.deepEqual(responsesSummaryDeltas.map((delta) => delta.thinkingId), ['rs_1:0', 'rs_1:0', 'rs_2:0']);
 
   const interleavedResponsesState = createOpenAIResponsesStreamState();
   let generatedInterleavedToolCallIds = 0;
@@ -7913,7 +7929,7 @@ function runProtocolStreamTests(protocolsModule: ProtocolsModule): void {
   assert.deepEqual(anthropicThinkingStop.completedThinking, {
     type: 'thinking',
     id: 'thinking_0',
-    thinking: 'plan first',
+    thinking: '',
     signature: 'sig_plan',
   });
   assert.equal(finalizedAnthropicThinking.reasoningContent, 'plan first');
