@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-10T22:55:56.398Z",
+  "updatedAt": "2026-11-11T08:51:23.623Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -679,10 +679,9 @@
           "unit": "月",
           "notes": "价格未在套餐概览页公开；计价币种: 人民币（CNY）",
           "serviceDetails": [
-            "适用人群：中等强度的开发者，适合大多数开发者。",
+            "适用人群：| 中等强度的开发者，适合大多数开发者。 |",
             "用量限制：每5小时：最多约 1,200 次请求。 每周：最多约 9,000 次请求。 每订阅月：最多约 18,000 次请求。",
-            "支持模型：DeepSeek-V3.2、GLM-5、GLM-4.7、MiniMax-M2.5、Kimi-K2.5、Kimi-K2-Turbo、Qwen3-Coder",
-            "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享"
+            "多工具之间套餐额度共享"
           ]
         },
         {
@@ -694,10 +693,9 @@
           "unit": "月",
           "notes": "价格未在套餐概览页公开；计价币种: 人民币（CNY）",
           "serviceDetails": [
-            "适用人群：复杂项目开发，适合高强度工作的开发者。",
+            "适用人群：| 复杂项目开发，适合高强度工作的开发者。 |",
             "用量限制：Lite套餐的5倍用量。 每5小时：最多约 6,000 次请求。 每周：最多约 45,000 次请求。 每订阅月：最多约 90,000 次请求。",
-            "支持模型：DeepSeek-V3.2、GLM-5、GLM-4.7、MiniMax-M2.5、Kimi-K2.5、Kimi-K2-Turbo、Qwen3-Coder",
-            "适配工具：完美适配多种开发场景，支持 Claude Code、OpenCode、OpenClaw、Roo Code、Cursor等主流 AI 编码工具，多工具之间套餐额度共享"
+            "多工具之间套餐额度共享"
           ]
         }
       ]
@@ -923,12 +921,12 @@
       "plans": [
         {
           "name": "Go",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "currentPrice": 24.5,
+          "currentPriceText": "¥24.5/月",
+          "originalPrice": 49,
+          "originalPriceText": "¥49/月",
           "unit": "月",
-          "notes": "续费金额：¥49/月",
+          "notes": "续费金额：¥24.5/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
             "多模态生成（图像、声音）",
@@ -939,12 +937,12 @@
         },
         {
           "name": "Explore",
-          "currentPrice": 119,
-          "currentPriceText": "¥119/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "currentPrice": 59.5,
+          "currentPriceText": "¥59.5/月",
+          "originalPrice": 119,
+          "originalPriceText": "¥119/月",
           "unit": "月",
-          "notes": "续费金额：¥119/月",
+          "notes": "续费金额：¥59.5/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
             "多模态生成（视频、图像、声音）",
@@ -955,12 +953,12 @@
         },
         {
           "name": "Build",
-          "currentPrice": 469,
-          "currentPriceText": "¥469/月",
-          "originalPrice": null,
-          "originalPriceText": null,
+          "currentPrice": 234.5,
+          "currentPriceText": "¥234.5/月",
+          "originalPrice": 469,
+          "originalPriceText": "¥469/月",
           "unit": "月",
-          "notes": "续费金额：¥469/月",
+          "notes": "续费金额：¥234.5/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
             "多模态生成（视频、图像、声音）",
@@ -1383,7 +1381,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.29/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.31/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
       ],
       "plans": [
         {
