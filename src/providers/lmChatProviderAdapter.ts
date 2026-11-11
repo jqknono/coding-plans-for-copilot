@@ -13,7 +13,9 @@ import {
   REQUEST_SOURCE_COMMIT_MESSAGE,
   REQUEST_SOURCE_MODEL_OPTION_KEY,
   RESPONSE_TRACE_ID_FIELD,
+  RESPONSES_REASONING_SUMMARY_OPTION_VALUES,
   RESPONSES_THINKING_EFFORT_VALUES,
+  REASONING_SUMMARY_MODEL_OPTION_KEY,
   THINKING_EFFORT_MODEL_OPTION_KEY,
   THINKING_TYPE_MODEL_OPTION_KEY,
 } from '../constants';
@@ -127,6 +129,14 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
           group: 'navigation',
         };
       }
+      properties[REASONING_SUMMARY_MODEL_OPTION_KEY] = {
+        type: 'string',
+        title: getMessage('reasoningSummaryTitle'),
+        description: getMessage('reasoningSummaryDescription'),
+        enum: [...RESPONSES_REASONING_SUMMARY_OPTION_VALUES],
+        default: 'auto',
+        group: 'navigation',
+      };
     } else {
       const effortOptions = resolveReasoningEffortOptions(model, [...CHAT_THINKING_EFFORT_VALUES]);
       if (effortOptions.length > 0) {
@@ -969,6 +979,7 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     return {
       thinkingEffort: record[THINKING_EFFORT_MODEL_OPTION_KEY],
       reasoningEffort: record[REASONING_EFFORT_MODEL_OPTION_KEY],
+      reasoningSummary: record[REASONING_SUMMARY_MODEL_OPTION_KEY],
       effort: record[EFFORT_MODEL_OPTION_KEY],
       thinkingType: record[THINKING_TYPE_MODEL_OPTION_KEY],
       enableThinking: record[ENABLE_THINKING_MODEL_OPTION_KEY],

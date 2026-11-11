@@ -61,6 +61,8 @@
   "contextSizeDescription": "该模型的输入 token 预算 P。可选默认、最大或数字档位（初始为 32k/64k/128k/256k/512k），由 VS Code 保存选择。预留输出 R 单独计算，有效窗口为 P + R，并受模型总能力约束。",
   "thinkingEffortDescription": "显示在模型行 More Actions 菜单中的模型配置项，支持 `none`、`low`、`medium`、`high`、`xhigh`、`max`，默认值为 `high`。保存后会由 VS Code 随请求传入。",
   "responsesThinkingEffortDescription": "Responses API 模型的 More Actions 配置项，支持 `low`、`medium`、`high`、`xhigh`、`max`，默认值为 `max`。保存后会由 VS Code 随请求传入。",
+  "reasoningSummaryTitle": "Reasoning Summary",
+  "reasoningSummaryDescription": "Responses API 模型的可见思考摘要。支持 `auto`、`concise`、`detailed`、`none`，默认值为 `auto`。选择 `none` 时不请求摘要。",
   "effortTitle": "Effort",
   "anthropicEffortDescription": "Anthropic API 模型的 More Actions effort 配置项，支持 `low`、`medium`、`high`、`xhigh`、`max`。保存后会由 VS Code 随请求传入。",
   "anthropicThinkingTitle": "Thinking Type",

@@ -61,6 +61,8 @@
   "contextSizeDescription": "Input token budget P for this model. Choose Default, Maximum, or a numeric preset (32k/64k/128k/256k/512k by default). VS Code saves the selection. Reserved output R is additional; the effective window is P + R, constrained by the model's total capacity.",
   "thinkingEffortDescription": "Shown in the model row More Actions menu. Supported values: `none`, `low`, `medium`, `high`, `xhigh`, `max`; the default is `high`. Saved values are passed by VS Code with model requests.",
   "responsesThinkingEffortDescription": "More Actions configuration for Responses API models. Supported values: `low`, `medium`, `high`, `xhigh`, `max`; the default is `max`. Saved values are passed by VS Code with model requests.",
+  "reasoningSummaryTitle": "Reasoning Summary",
+  "reasoningSummaryDescription": "Visible reasoning summary for Responses API models. Supported values: `auto`, `concise`, `detailed`, `none`; the default is `auto`. `none` omits the summary request.",
   "effortTitle": "Effort",
   "anthropicEffortDescription": "More Actions effort configuration for Anthropic API models. Supported values: `low`, `medium`, `high`, `xhigh`, `max`. Saved values are passed by VS Code with model requests.",
   "anthropicThinkingTitle": "Thinking Type",

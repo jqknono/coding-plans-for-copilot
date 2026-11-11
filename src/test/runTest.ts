@@ -5438,6 +5438,70 @@ async function runGenericProviderThinkingEffortTests(
   assert.equal('instructions' in openAIResponsesPayload, false);
   console.log('PASS responses 会按请求级 thinkingEffort 发送 reasoning.effort+summary，且未发送 instructions');
 
+  for (const reasoningSummary of ['concise', 'detailed'] as const) {
+    const summaryPayload = await capturePayload(
+      [
+        {
+          useModelsEndpoint: false,
+          name: 'Vendor',
+          baseUrl: 'https://example.test/v1',
+          defaultApiStyle: 'responses',
+          defaultVision: false,
+          models: [
+            {
+              name: 'reasoner',
+              contextWindow: 64000,
+              maxInputTokens: 51200,
+              maxOutputTokens: 12800,
+              contextBudget: { inputTokens: 51200, outputTokens: 12800 },
+              capabilities: { tools: false, vision: false },
+            },
+          ],
+        },
+      ],
+      'Vendor/reasoner',
+      {
+        modelOptions: {
+          thinkingEffort: 'high',
+          reasoningSummary,
+        },
+      },
+    );
+    assert.deepEqual(summaryPayload.reasoning, { effort: 'high', summary: reasoningSummary });
+  }
+  console.log('PASS responses 会按请求级 reasoningSummary 发送 reasoning.summary');
+
+  const omittedSummaryPayload = await capturePayload(
+    [
+      {
+        useModelsEndpoint: false,
+        name: 'Vendor',
+        baseUrl: 'https://example.test/v1',
+        defaultApiStyle: 'responses',
+        defaultVision: false,
+        models: [
+          {
+            name: 'reasoner',
+            contextWindow: 64000,
+            maxInputTokens: 51200,
+            maxOutputTokens: 12800,
+            contextBudget: { inputTokens: 51200, outputTokens: 12800 },
+            capabilities: { tools: false, vision: false },
+          },
+        ],
+      },
+    ],
+    'Vendor/reasoner',
+    {
+      modelOptions: {
+        thinkingEffort: 'high',
+        reasoningSummary: 'none',
+      },
+    },
+  );
+  assert.deepEqual(omittedSummaryPayload.reasoning, { effort: 'high' });
+  console.log('PASS responses 在 reasoningSummary=none 时省略 reasoning.summary');
+
   const copilotAliasOpenAIResponsesPayload = await capturePayload(
     [
       {
@@ -9724,6 +9788,64 @@ async function runLMChatProviderAdapterModelFilteringTests(
         }
       ).configurationSchema?.properties?.thinkingEffort?.default,
       'max',
+    );
+    assert.deepEqual(
+      (
+        otherGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                enum?: unknown[];
+                default?: unknown;
+                title?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.reasoningSummary?.enum,
+      ['none', 'auto', 'concise', 'detailed'],
+    );
+    assert.equal(
+      (
+        otherGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                default?: unknown;
+                title?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.reasoningSummary?.default,
+      'auto',
+    );
+    assert.equal(
+      (
+        otherGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<
+              string,
+              {
+                title?: unknown;
+              }
+            >;
+          };
+        }
+      ).configurationSchema?.properties?.reasoningSummary?.title,
+      'Reasoning Summary',
+    );
+    assert.equal(
+      (
+        vendorGroupModels[0] as unknown as {
+          configurationSchema?: {
+            properties?: Record<string, unknown>;
+          };
+        }
+      ).configurationSchema?.properties?.reasoningSummary,
+      undefined,
     );
     assert.equal(
       (

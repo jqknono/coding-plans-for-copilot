@@ -24,7 +24,9 @@ import {
   ENABLE_THINKING_MODEL_OPTION_KEY,
   EFFORT_MODEL_OPTION_KEY,
   REASONING_EFFORT_MODEL_OPTION_KEY,
+  REASONING_SUMMARY_MODEL_OPTION_KEY,
   RESPONSE_TRACE_ID_FIELD,
+  RESPONSES_REASONING_SUMMARY_VALUES,
   RESPONSES_THINKING_EFFORT_VALUES,
   ResponsesReasoningSummary,
   ResponsesThinkingEffort,
@@ -136,6 +138,7 @@ interface RequestModelOptions {
   [EFFORT_MODEL_OPTION_KEY]?: unknown;
   [THINKING_TYPE_MODEL_OPTION_KEY]?: unknown;
   [ENABLE_THINKING_MODEL_OPTION_KEY]?: unknown;
+  [REASONING_SUMMARY_MODEL_OPTION_KEY]?: unknown;
 }
 
 interface ResolvedThinkingOptions<Effort extends string> {
@@ -148,7 +151,7 @@ interface ResolvedThinkingOptions<Effort extends string> {
 interface ResolvedOpenAIResponsesReasoningOptions {
   reasoning: {
     effort: ResponsesThinkingEffort;
-    summary: ResponsesReasoningSummary;
+    summary?: ResponsesReasoningSummary;
   };
 }
 
@@ -866,11 +869,12 @@ export class GenericAIProvider extends BaseAIProvider {
       return undefined;
     }
 
+    const summary = this.readOpenAIResponsesReasoningSummaryFromModelOptions(request.options?.modelOptions);
     return {
       reasoning: {
         effort,
-        // OpenAI 不会默认返回可见推理摘要，需要显式 opt-in。
-        summary: DEFAULT_RESPONSES_REASONING_SUMMARY,
+        // OpenAI 不会默认返回可见推理摘要；none 表示明确关闭摘要。
+        ...(summary ? { summary } : {}),
       },
     };
   }
@@ -947,6 +951,21 @@ export class GenericAIProvider extends BaseAIProvider {
     return RESPONSES_THINKING_EFFORT_VALUES.includes(normalized as ResponsesThinkingEffort)
       ? (normalized as ResponsesThinkingEffort)
       : undefined;
+  }
+
+  private readOpenAIResponsesReasoningSummaryFromModelOptions(
+    modelOptions: unknown,
+  ): ResponsesReasoningSummary | undefined {
+    const normalized = this.readFirstNormalizedModelOptionString(modelOptions, [REASONING_SUMMARY_MODEL_OPTION_KEY]);
+    if (normalized === 'none') {
+      return undefined;
+    }
+    if (!normalized) {
+      return DEFAULT_RESPONSES_REASONING_SUMMARY;
+    }
+    return RESPONSES_REASONING_SUMMARY_VALUES.includes(normalized as ResponsesReasoningSummary)
+      ? (normalized as ResponsesReasoningSummary)
+      : DEFAULT_RESPONSES_REASONING_SUMMARY;
   }
 
   private readAnthropicEffortFromModelOptions(modelOptions: unknown): AnthropicEffort | undefined {
