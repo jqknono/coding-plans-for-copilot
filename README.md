@@ -64,6 +64,53 @@ flowchart TD
   end
 ```
 
+### Data Exchange with VS Code Chat
+
+After a model is selected, VS Code Chat passes messages, request options, available tools, and a cancellation token to the extension through the `LanguageModelChatProvider` API. The extension reads the selected vendor's API key from VS Code Secret Storage, calls the vendor endpoint directly using the model's configured protocol, and streams parsed response parts back to VS Code Chat. Tool calls are returned as VS Code language-model response parts for the Chat host to handle according to its tool policy.
+
+```mermaid
+sequenceDiagram
+  actor User as User
+  participant Chat as VS Code Chat
+  participant API as VS Code Language Model API
+  participant Extension as Coding Plans extension
+  participant Secrets as VS Code Secret Storage
+  participant Vendor as Configured vendor API
+
+  Extension->>API: Register LanguageModelChatProvider
+  API-->>Chat: Make configured models available in the picker
+  User->>Chat: Select a model and send a message
+  Chat->>API: Submit messages, options, and tools
+  API->>Extension: Call provideLanguageModelChatResponse
+  Extension->>Secrets: Read this vendor's API key
+  Secrets-->>Extension: Return API key
+  Extension->>Extension: Convert messages and options; resolve model budget
+
+  alt OpenAI Chat Completions
+    Extension->>Vendor: HTTPS POST /chat/completions
+  else OpenAI Responses
+    Extension->>Vendor: HTTPS POST /responses
+  else Anthropic Messages
+    Extension->>Vendor: HTTPS POST /messages
+  end
+
+  loop Response stream or complete response
+    Vendor-->>Extension: Return response content or stream events
+    Extension->>Extension: Parse protocol and convert response parts
+    Extension-->>API: progress.report text, thinking, or tool-call parts
+    API-->>Chat: Deliver LanguageModelResponsePart
+    Chat-->>User: Render incremental output or handle tool calls
+  end
+
+  opt Request is cancelled
+    Chat-->>API: Cancel the current request
+    API-->>Extension: Notify CancellationToken
+    Extension-->>Vendor: Abort upstream request with AbortController
+  end
+```
+
+API keys are stored in VS Code Secret Storage. The extension host sends chat requests directly to the configured vendor endpoint; they do not pass through a proxy service operated by this extension.
+
 | Companion workflow | What happens |
 | --- | --- |
 | Commit message | Read staged changes (or the working-tree diff), generate with a VS Code chat model, then normalize and validate the message before placing it in the SCM input box. |

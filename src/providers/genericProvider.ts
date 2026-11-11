@@ -20,11 +20,13 @@ import {
   CHAT_THINKING_EFFORT_VALUES,
   ChatThinkingEffort,
   DEFAULT_MODEL_TOOLS,
+  DEFAULT_RESPONSES_REASONING_SUMMARY,
   ENABLE_THINKING_MODEL_OPTION_KEY,
   EFFORT_MODEL_OPTION_KEY,
   REASONING_EFFORT_MODEL_OPTION_KEY,
   RESPONSE_TRACE_ID_FIELD,
   RESPONSES_THINKING_EFFORT_VALUES,
+  ResponsesReasoningSummary,
   ResponsesThinkingEffort,
   THINKING_EFFORT_MODEL_OPTION_KEY,
   THINKING_TYPE_MODEL_OPTION_KEY,
@@ -146,6 +148,7 @@ interface ResolvedThinkingOptions<Effort extends string> {
 interface ResolvedOpenAIResponsesReasoningOptions {
   reasoning: {
     effort: ResponsesThinkingEffort;
+    summary: ResponsesReasoningSummary;
   };
 }
 
@@ -866,6 +869,8 @@ export class GenericAIProvider extends BaseAIProvider {
     return {
       reasoning: {
         effort,
+        // OpenAI 不会默认返回可见推理摘要，需要显式 opt-in。
+        summary: DEFAULT_RESPONSES_REASONING_SUMMARY,
       },
     };
   }

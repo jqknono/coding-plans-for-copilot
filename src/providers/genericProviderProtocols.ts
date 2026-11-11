@@ -8,7 +8,12 @@ import {
   ChatToolCall,
   ChatToolDefinition,
 } from './baseProvider';
-import { AnthropicEffort, ChatThinkingEffort, ResponsesThinkingEffort } from '../constants';
+import {
+  AnthropicEffort,
+  ChatThinkingEffort,
+  ResponsesReasoningSummary,
+  ResponsesThinkingEffort,
+} from '../constants';
 
 type ThinkingToggle = {
   type: 'enabled' | 'disabled';
@@ -130,6 +135,7 @@ export interface OpenAIResponsesRequest {
   tool_choice?: 'auto' | 'required';
   reasoning?: {
     effort: ResponsesThinkingEffort;
+    summary?: ResponsesReasoningSummary;
   };
   max_output_tokens?: number;
   stream?: boolean;

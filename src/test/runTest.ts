@@ -4466,7 +4466,7 @@ async function runGenericProviderOutputLimitToggleTests(
   assert.equal('instructions' in unwrappedResponsesPayload, false);
   assert.equal('top_p' in unwrappedResponsesPayload, false);
   assert.equal(unwrappedResponsesPayload.max_output_tokens, 12800);
-  assert.deepEqual(unwrappedResponsesPayload.reasoning, { effort: 'high' });
+  assert.deepEqual(unwrappedResponsesPayload.reasoning, { effort: 'high', summary: 'auto' });
   assert.deepEqual(
     (unwrappedResponsesPayload.input as Array<{ role?: string }>).map((item) => item.role),
     ['system', 'user'],
@@ -5430,13 +5430,13 @@ async function runGenericProviderThinkingEffortTests(
       },
     },
   );
-  assert.deepEqual(openAIResponsesPayload.reasoning, { effort: 'high' });
+  assert.deepEqual(openAIResponsesPayload.reasoning, { effort: 'high', summary: 'auto' });
   assert.equal(openAIResponsesPayload.max_output_tokens, 12800);
   assert.equal('thinking' in openAIResponsesPayload, false);
   assert.equal('reasoning_effort' in openAIResponsesPayload, false);
   assert.equal('temperature' in openAIResponsesPayload, false);
   assert.equal('instructions' in openAIResponsesPayload, false);
-  console.log('PASS responses 会按请求级 thinkingEffort 发送 reasoning.effort，且未发送 instructions');
+  console.log('PASS responses 会按请求级 thinkingEffort 发送 reasoning.effort+summary，且未发送 instructions');
 
   const copilotAliasOpenAIResponsesPayload = await capturePayload(
     [
@@ -5466,7 +5466,7 @@ async function runGenericProviderThinkingEffortTests(
       },
     },
   );
-  assert.deepEqual(copilotAliasOpenAIResponsesPayload.reasoning, { effort: 'max' });
+  assert.deepEqual(copilotAliasOpenAIResponsesPayload.reasoning, { effort: 'max', summary: 'auto' });
   console.log('PASS responses 会把 Copilot 风格 reasoningEffort 当作 thinkingEffort');
 
   const copilotDisableOpenAIResponsesPayload = await capturePayload(
@@ -5563,7 +5563,7 @@ async function runGenericProviderThinkingEffortTests(
 
   const responsesReasoningFallbackPayloads = await captureOpenAIResponsesReasoningFallbackPayloads();
   assert.equal(responsesReasoningFallbackPayloads.length, 1);
-  assert.deepEqual(responsesReasoningFallbackPayloads[0].reasoning, { effort: 'high' });
+  assert.deepEqual(responsesReasoningFallbackPayloads[0].reasoning, { effort: 'high', summary: 'auto' });
   console.log('PASS responses 遇到 reasoning 参数兼容受限时未去掉 reasoning 重试');
 
   const openAIResponsesXhighPayload = await capturePayload(
@@ -5594,10 +5594,10 @@ async function runGenericProviderThinkingEffortTests(
       },
     },
   );
-  assert.deepEqual(openAIResponsesXhighPayload.reasoning, { effort: 'xhigh' });
+  assert.deepEqual(openAIResponsesXhighPayload.reasoning, { effort: 'xhigh', summary: 'auto' });
   assert.equal('thinking' in openAIResponsesXhighPayload, false);
   assert.equal('reasoning_effort' in openAIResponsesXhighPayload, false);
-  console.log('PASS responses 会按请求级 thinkingEffort=xhigh 发送 reasoning.effort=xhigh');
+  console.log('PASS responses 会按请求级 thinkingEffort=xhigh 发送 reasoning.effort=xhigh + summary');
 
   const openAIResponsesMaxPayload = await capturePayload(
     [
@@ -5627,8 +5627,8 @@ async function runGenericProviderThinkingEffortTests(
       },
     },
   );
-  assert.deepEqual(openAIResponsesMaxPayload.reasoning, { effort: 'max' });
-  console.log('PASS responses 会按请求级 thinkingEffort=max 发送 reasoning.effort=max');
+  assert.deepEqual(openAIResponsesMaxPayload.reasoning, { effort: 'max', summary: 'auto' });
+  console.log('PASS responses 会按请求级 thinkingEffort=max 发送 reasoning.effort=max + summary');
 
   const unwrappedOpenAIResponsesPayload = await capturePayload(
     [
@@ -5660,7 +5660,7 @@ async function runGenericProviderThinkingEffortTests(
       },
     },
   );
-  assert.deepEqual(unwrappedOpenAIResponsesPayload.reasoning, { effort: 'xhigh' });
+  assert.deepEqual(unwrappedOpenAIResponsesPayload.reasoning, { effort: 'xhigh', summary: 'auto' });
   assert.equal(unwrappedOpenAIResponsesPayload.max_output_tokens, 12800);
   assert.equal('top_p' in unwrappedOpenAIResponsesPayload, false);
   assert.equal('instructions' in unwrappedOpenAIResponsesPayload, false);

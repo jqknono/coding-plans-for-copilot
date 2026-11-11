@@ -64,6 +64,53 @@ flowchart TD
   end
 ```
 
+### 与 VS Code Chat 的数据交换
+
+选定模型后，VS Code Chat 通过 `LanguageModelChatProvider` API 将消息、请求选项、可用工具和取消令牌交给扩展。扩展读取 VS Code Secret Storage 中对应供应商的 API Key，按模型配置的协议直接请求供应商端点，再把解析后的响应片段流式交回 VS Code Chat。工具调用以 VS Code 语言模型响应部分返回，由 Chat 宿主按其工具策略处理。
+
+```mermaid
+sequenceDiagram
+  actor User as 用户
+  participant Chat as VS Code Chat
+  participant API as VS Code Language Model API
+  participant Extension as Coding Plans 扩展
+  participant Secrets as VS Code Secret Storage
+  participant Vendor as 已配置的供应商 API
+
+  Extension->>API: 注册 LanguageModelChatProvider
+  API-->>Chat: 在模型选择器中提供已配置模型
+  User->>Chat: 选择模型并发送消息
+  Chat->>API: 提交 messages、options、tools
+  API->>Extension: 调用 provideLanguageModelChatResponse
+  Extension->>Secrets: 读取该供应商的 API Key
+  Secrets-->>Extension: 返回 API Key
+  Extension->>Extension: 转换消息、选项并解析模型预算
+
+  alt OpenAI Chat Completions
+    Extension->>Vendor: HTTPS POST /chat/completions
+  else OpenAI Responses
+    Extension->>Vendor: HTTPS POST /responses
+  else Anthropic Messages
+    Extension->>Vendor: HTTPS POST /messages
+  end
+
+  loop 响应流或完整响应
+    Vendor-->>Extension: 返回响应内容或流式事件
+    Extension->>Extension: 按协议解析并转换响应部分
+    Extension-->>API: progress.report 文本、思考或工具调用
+    API-->>Chat: 传递 LanguageModelResponsePart
+    Chat-->>User: 展示增量回答或处理工具调用
+  end
+
+  opt 请求被取消
+    Chat-->>API: 取消当前请求
+    API-->>Extension: 通知 CancellationToken
+    Extension-->>Vendor: AbortController 中止上游请求
+  end
+```
+
+API Key 保存在 VS Code Secret Storage；聊天请求由扩展宿主直接发送到配置的供应商端点，不经本插件的中转服务。
+
 | 辅助流程 | 执行内容 |
 | --- | --- |
 | Commit 消息 | 读取暂存变更（没有暂存内容时读取工作区 diff），调用 VS Code 聊天模型生成，再规范化并校验后写入 SCM 输入框。 |
