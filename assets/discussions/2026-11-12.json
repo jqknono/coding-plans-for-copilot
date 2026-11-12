@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-12",
+  "generatedAt": "2026-11-12T14:45:43.023Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 50,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "factory.ai": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1256583",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1256583",
+      "title": "谨慎开通 factory.ai 的订阅服务",
+      "content": "kimi 3.1 pro 发布之后我觉得官方的订阅价格有点太贵了，试图找一个便宜一点的第三方订阅。最后选择了 factory.ai 这家，而且这家还能提供 claude 和 chatgpt 的模型，开源模型还可以走另外一个池子，当时感觉还不错的，就直接开通了 20 美元的订阅，用的 visa 信用卡。 结果今天第二天拿来写一个 AI 视频工作流的程序，用了没两句提示上限了，我一看不对啊，不仅仅是 5h 上限了，月份都 100%上限了。我就赶紧发邮件给技术支持问一下，只说我违反了 Factory 的用户条款，并且拒绝透露我违反了什么。 然后我就回复邮件说我一直使用的都是官方客户端并且写的也是正常的程序，希望他们人工审核，而且我愿意提供任何他们需要的证据。但是他们还是只回复说不能解除限制并且限制是永久生效，并且拒绝提供退款。 所以到最后我都没明白究竟为什么把我封了。只能在此警醒各位谨慎开通它家的订阅，以免遭受不必要的损失。",
+      "author": "d7101120120",
+      "createdAt": "2026-11-12T12:34:45.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.86,
+        "supplier": "factory.ai",
+        "supplierCategory": "international-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.95,
+        "summary": "用户分享开通 factory.ai 的 20 美元订阅后，在编写程序时很快触发 5 小时和月度用量上限；联系客服后被指违反条款并遭永久限制，且拒绝退款，因此提醒他人谨慎订阅。",
+        "topics": [
+          "订阅",
+          "第三方订阅",
+          "用量限制",
+          "封号",
+          "退款",
+          "客服",
+          "模型"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/486",
+      "analyzedAt": "2026-11-12T14:50:29.814Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
