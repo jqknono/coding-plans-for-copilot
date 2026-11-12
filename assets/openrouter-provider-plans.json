@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-11T15:56:34.023Z",
-  "generatedAtBeijing": "2026年11月11日 23:56:34",
-  "sourceGeneratedAt": "2026-11-11T15:55:36.377Z",
-  "sourceGeneratedAtBeijing": "2026年11月11日 23:55:36",
-  "sourceMetricsGeneratedAt": "2026-11-11T15:55:37.958Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月11日 23:55:37",
+  "generatedAt": "2026-11-12T16:39:28.072Z",
+  "generatedAtBeijing": "2026年11月13日 00:39:28",
+  "sourceGeneratedAt": "2026-11-12T16:38:31.973Z",
+  "sourceGeneratedAtBeijing": "2026年11月13日 00:38:31",
+  "sourceMetricsGeneratedAt": "2026-11-12T16:38:34.863Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月13日 00:38:34",
   "summary": {
-    "openrouterProviderCount": 121,
+    "openrouterProviderCount": 122,
     "metricsProviderCount": 57,
     "resolvedMetricsProviderCount": 57,
     "unresolvedMetricsProviderCount": 0,
@@ -489,22 +489,44 @@
       "plans": [
         {
           "name": "官网价格参考",
-          "currentPrice": 250,
-          "currentPriceText": "$250 per mo",
+          "currentPrice": 9,
+          "currentPriceText": "$9/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "来源: https://inference.net/pricing/",
+          "notes": "来源: https://inference.net/subscription",
           "serviceDetails": [
-            "New DeepSeek V4.1 Flash 1017 is now available on Inference.net"
+            "Hosted and provider model access",
+            "Read billing docs Plans Pick your monthly credit. Start with the allowance that fits your workload. Usage beyond the included credit continues at the listed model rate.",
+            "$10 of Gateway credit, renewed each month.",
+            "Pay as you go after the credit.",
+            "$49 / mo",
+            "$60 of Gateway credit, renewed each month."
+          ]
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 49,
+          "currentPriceText": "$49/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "Hosted and provider model access",
+            "Read billing docs Plans Pick your monthly credit. Start with the allowance that fits your workload. Usage beyond the included credit continues at the listed model rate.",
+            "$10 of Gateway credit, renewed each month.",
+            "Pay as you go after the credit.",
+            "$49 / mo",
+            "$60 of Gateway credit, renewed each month."
           ]
         }
       ],
       "sourceUrls": [
         "https://inference.net",
-        "https://inference.net/pricing/"
+        "https://inference.net/subscription"
       ],
-      "pricingPageUrl": "https://inference.net/pricing/",
+      "pricingPageUrl": "https://inference.net/subscription",
       "officialWebsiteUrl": "https://inference.net",
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://inference.net/privacy-policy",
@@ -519,12 +541,12 @@
       "plans": [
         {
           "name": "Go",
-          "currentPrice": 24.5,
-          "currentPriceText": "¥24.5/月",
-          "originalPrice": 49,
-          "originalPriceText": "¥49/月",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "续费金额：¥24.5/月",
+          "notes": "续费金额：¥49/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
             "多模态生成（图像、声音）",
@@ -535,12 +557,12 @@
         },
         {
           "name": "Explore",
-          "currentPrice": 59.5,
-          "currentPriceText": "¥59.5/月",
-          "originalPrice": 119,
-          "originalPriceText": "¥119/月",
+          "currentPrice": 119,
+          "currentPriceText": "¥119/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "续费金额：¥59.5/月",
+          "notes": "续费金额：¥119/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
             "多模态生成（视频、图像、声音）",
@@ -551,12 +573,12 @@
         },
         {
           "name": "Build",
-          "currentPrice": 234.5,
-          "currentPriceText": "¥234.5/月",
-          "originalPrice": 469,
-          "originalPriceText": "¥469/月",
+          "currentPrice": 469,
+          "currentPriceText": "¥469/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "续费金额：¥234.5/月",
+          "notes": "续费金额：¥469/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
             "多模态生成（视频、图像、声音）",
@@ -769,8 +791,8 @@
       "plans": [
         {
           "name": "官网价格参考",
-          "currentPrice": 100,
-          "currentPriceText": "$ 100/mo",
+          "currentPrice": 200,
+          "currentPriceText": "$ 200/mo",
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
@@ -779,26 +801,9 @@
             "Morph Models Open Source Models Kimi K3.1",
             "Fable-tier, 100 tok/s.",
             "Opus-tier. 744B MoE, 1M context.",
-            "27B dense, low latency.",
-            "230B MoE for agentic workflows.",
-            "1M-context model, served fast."
-          ]
-        },
-        {
-          "name": "官网价格参考 2",
-          "currentPrice": 200,
-          "currentPriceText": "$ 200/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "Morph Models Open Source Models Kimi K3.1",
-            "Fable-tier, 100 tok/s.",
-            "Opus-tier. 744B MoE, 1M context.",
-            "27B dense, low latency.",
-            "230B MoE for agentic workflows.",
-            "1M-context model, served fast."
+            "V4.1 Flash. Vision, 1M context.",
+            "Typed decisions from text, JSON or images. Probabilities, no output tokens.",
+            "Merge AI-generated code edits instantly."
           ]
         }
       ],
@@ -850,7 +855,7 @@
       ],
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.31/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.32/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json",
         "https://docs.byteplus.com"
       ],
       "pricingPageUrl": "https://www.volcengine.com/activity/codingplan",
@@ -1118,8 +1123,8 @@
       "openrouterName": "BaseTen",
       "providerId": null,
       "officialWebsiteUrl": "https://www.baseten.co",
-      "pricingPageUrl": "https://www.baseten.co/pricing",
-      "reason": "官网未发现可解析的套餐价格页",
+      "pricingPageUrl": "https://www.baseten.co/pricing/",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.10 / $0.035 / $0.01）",
       "blocked": false
     },
     {
@@ -1321,15 +1326,6 @@
       "blocked": false
     },
     {
-      "slug": "pareto-alpha",
-      "openrouterName": "ParetoAlpha",
-      "providerId": null,
-      "officialWebsiteUrl": "https://paretoalphainference.com",
-      "pricingPageUrl": "https://paretoalphainference.com",
-      "reason": "官网价格页探测失败：https://paretoalphainference.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
       "slug": "particle-ai",
       "openrouterName": "Particle AI",
       "providerId": null,
@@ -1375,6 +1371,15 @@
       "blocked": false
     },
     {
+      "slug": "river",
+      "openrouterName": "River",
+      "providerId": null,
+      "officialWebsiteUrl": "https://console.river.ai",
+      "pricingPageUrl": "https://console.river.ai/pricing",
+      "reason": "官网未发现可解析的套餐价格页",
+      "blocked": false
+    },
+    {
       "slug": "sail-research",
       "openrouterName": "Sail Research",
       "providerId": null,
@@ -1416,7 +1421,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://www.together.ai",
       "pricingPageUrl": "https://www.together.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3.00 / $0.30 / $15.00）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.15 / $0.015 / $0.60）",
       "blocked": false
     },
     {
