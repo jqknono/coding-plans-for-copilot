@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-11T15:55:36.377Z",
+  "updatedAt": "2026-11-12T09:18:12.529Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -911,7 +911,9 @@
             "1000 Prompts / 5小时"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "kwaikat-ai: fetch failed"
     },
     {
       "provider": "minimax-ai",
@@ -923,12 +925,12 @@
       "plans": [
         {
           "name": "Go",
-          "currentPrice": 24.5,
-          "currentPriceText": "¥24.5/月",
-          "originalPrice": 49,
-          "originalPriceText": "¥49/月",
+          "currentPrice": 49,
+          "currentPriceText": "¥49/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "续费金额：¥24.5/月",
+          "notes": "续费金额：¥49/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
             "多模态生成（图像、声音）",
@@ -939,12 +941,12 @@
         },
         {
           "name": "Explore",
-          "currentPrice": 59.5,
-          "currentPriceText": "¥59.5/月",
-          "originalPrice": 119,
-          "originalPriceText": "¥119/月",
+          "currentPrice": 119,
+          "currentPriceText": "¥119/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "续费金额：¥59.5/月",
+          "notes": "续费金额：¥119/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
             "多模态生成（视频、图像、声音）",
@@ -955,12 +957,12 @@
         },
         {
           "name": "Build",
-          "currentPrice": 234.5,
-          "currentPriceText": "¥234.5/月",
-          "originalPrice": 469,
-          "originalPriceText": "¥469/月",
+          "currentPrice": 469,
+          "currentPriceText": "¥469/月",
+          "originalPrice": null,
+          "originalPriceText": null,
           "unit": "月",
-          "notes": "续费金额：¥234.5/月",
+          "notes": "续费金额：¥469/月",
           "serviceDetails": [
             "文本模型，如 M3.1 Flash",
             "多模态生成（视频、图像、声音）",
@@ -1691,5 +1693,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "kwaikat-ai: fetch failed"
+  ]
 }
