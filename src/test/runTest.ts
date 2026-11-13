@@ -9493,7 +9493,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinkingEffort?.type,
+      ).configurationSchema?.properties?.reasoningEffort?.type,
       'string',
     );
     assert.deepEqual(
@@ -9508,7 +9508,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinkingEffort?.enum,
+      ).configurationSchema?.properties?.reasoningEffort?.enum,
       ['none', 'low', 'medium', 'high', 'xhigh', 'max'],
     );
     assert.equal(
@@ -9524,7 +9524,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinkingEffort?.default,
+      ).configurationSchema?.properties?.reasoningEffort?.default,
       'high',
     );
     assert.equal(
@@ -9539,7 +9539,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinkingEffort?.group,
+      ).configurationSchema?.properties?.reasoningEffort?.group,
       'navigation',
     );
     assert.deepEqual(
@@ -9552,7 +9552,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
           }
         ).configurationSchema?.properties ?? {},
       ),
-      ['contextSize', 'thinkingEffort', 'thinkingType'],
+      ['contextSize', 'reasoningEffort', 'thinkingType'],
     );
     const contextSchema = (vendorGroupModels[0] as unknown as {
       configurationSchema: { properties: Record<string, { type: string; enum: number[]; default: number; group: string }> };
@@ -9667,7 +9667,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinkingEffort?.enum,
+      ).configurationSchema?.properties?.reasoningEffort?.enum,
       ['high', 'xhigh'],
     );
     assert.equal(
@@ -9682,7 +9682,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinkingEffort?.default,
+      ).configurationSchema?.properties?.reasoningEffort?.default,
       'high',
     );
     assert.equal((limitedVendorModels[0] as unknown as { editTools?: readonly string[] }).editTools, undefined);
@@ -9733,7 +9733,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
             properties?: Record<string, unknown>;
           };
         }
-      ).configurationSchema?.properties?.thinkingEffort,
+      ).configurationSchema?.properties?.reasoningEffort,
       undefined,
     );
     availableModels = models;
@@ -9771,7 +9771,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinkingEffort?.enum,
+      ).configurationSchema?.properties?.reasoningEffort?.enum,
       ['low', 'medium', 'high', 'xhigh', 'max'],
     );
     assert.equal(
@@ -9786,8 +9786,8 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.thinkingEffort?.default,
-      'max',
+      ).configurationSchema?.properties?.reasoningEffort?.default,
+      'high',
     );
     assert.deepEqual(
       (
@@ -9954,7 +9954,7 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.effort?.enum,
+      ).configurationSchema?.properties?.reasoningEffort?.enum,
       ['low', 'medium', 'high', 'xhigh', 'max'],
     );
     assert.equal(
@@ -9969,8 +9969,8 @@ async function runLMChatProviderAdapterModelFilteringTests(
             >;
           };
         }
-      ).configurationSchema?.properties?.effort?.default,
-      'max',
+      ).configurationSchema?.properties?.reasoningEffort?.default,
+      'high',
     );
     assert.equal(
       (
@@ -10340,12 +10340,12 @@ async function runLMChatProviderAdapterModelOptionsForwardingTests(
       } as never,
     );
 
-    assert.deepEqual(capturedOptions?.modelOptions, { thinkingEffort: 'high' });
+    assert.deepEqual(capturedOptions?.modelOptions, { reasoningEffort: 'high' });
     assert.deepEqual(
       reportedParts.map((part) => part.value),
       ['ok'],
     );
-    console.log('PASS LMChatProviderAdapter 会保留 thinkingEffort 并剥离内部 source 标记');
+    console.log('PASS LMChatProviderAdapter 会归一推理强度并剥离内部 source 标记');
   } finally {
     adapter.dispose();
   }
@@ -10424,7 +10424,7 @@ async function runLMChatProviderAdapterModelConfigurationForwardingTest(
     );
 
     assert.deepEqual(capturedOptions?.modelOptions, {
-      thinkingEffort: 'high',
+      reasoningEffort: 'high',
     });
     assert.deepEqual(
       reportedParts.map((part) => part.value),
@@ -10511,10 +10511,9 @@ async function runLMChatProviderAdapterReasoningEffortAliasTests(
     }),
     {
       reasoningEffort: 'xhigh',
-      thinkingEffort: 'xhigh',
     },
   );
-  console.log('PASS LMChatProviderAdapter 会把 Copilot reasoningEffort 归一成 thinkingEffort');
+  console.log('PASS LMChatProviderAdapter 保留原生 reasoningEffort 字段');
 
   assert.deepEqual(
     await captureForwardedModelOptions({
@@ -10526,11 +10525,10 @@ async function runLMChatProviderAdapterReasoningEffortAliasTests(
       },
     }),
     {
-      thinkingEffort: 'high',
       reasoningEffort: 'xhigh',
     },
   );
-  console.log('PASS LMChatProviderAdapter 在已有 thinkingEffort 时不会用 reasoningEffort 覆盖');
+  console.log('PASS LMChatProviderAdapter 的原生 reasoningEffort 优先于别名默认值');
 
   assert.deepEqual(
     await captureForwardedModelOptions({
@@ -10555,7 +10553,7 @@ async function runLMChatProviderAdapterReasoningEffortAliasTests(
       },
     }),
     {
-      thinkingEffort: 'high',
+      reasoningEffort: 'high',
       thinkingType: 'disabled',
       [ENABLE_THINKING_OPTION_KEY]: false,
     },
@@ -10573,12 +10571,98 @@ async function runLMChatProviderAdapterReasoningEffortAliasTests(
       },
     }),
     {
-      thinkingEffort: 'high',
+      reasoningEffort: 'high',
       thinkingType: 'enabled',
       [ENABLE_THINKING_OPTION_KEY]: false,
     },
   );
   console.log('PASS LMChatProviderAdapter 不会用 _enableThinking=false 覆盖显式 thinkingType=enabled');
+}
+
+/** 原生菜单选择经过真实 adapter/provider 后，生成三种通用协议的请求。 */
+async function runNativeModelConfigurationIntegrationTests(
+  configStoreCtor: ConfigStoreModule['ConfigStore'],
+  genericProviderModule: GenericProviderModule,
+  lmChatProviderAdapterModule: LMChatProviderAdapterModule,
+  contextUsageStateModule: ContextUsageStateModule,
+): Promise<void> {
+  const vscode = require('vscode') as typeof import('vscode');
+  const originalFetch = globalThis.fetch;
+  const token = { isCancellationRequested: false, onCancellationRequested: () => new vscode.Disposable(() => {}) };
+  try {
+    for (const apiStyle of ['chat-completions', 'responses', 'messages'] as const) {
+      const vendor: import('../config/configStore').VendorConfig = {
+        name: 'native-menu', baseUrl: 'https://native.example.test/v1', authType: 'bearer',
+        defaultApiStyle: apiStyle, useModelsEndpoint: false, defaultVision: false,
+        models: [{
+          name: 'model', apiStyle, streaming: false,
+          contextWindow: 1000000, maxInputTokens: 900000, maxOutputTokens: 100000,
+          contextBudget: { inputTokens: 128000, outputTokens: 16000, presets: [64000, 128000] },
+          capabilities: { thinking: true }, supportsReasoningEffort: ['low', 'high'],
+        }],
+      };
+      const store = {
+        onDidChange: () => new vscode.Disposable(() => {}), getVendors: () => [vendor],
+        getApiKey: async () => 'native-menu-test-key', isAutoRefreshModelsEnabled: () => false,
+      };
+      const provider = new genericProviderModule.GenericAIProvider(
+        createExtensionContext() as never, store as unknown as InstanceType<typeof configStoreCtor>,
+      );
+      const usageState = new contextUsageStateModule.ContextUsageState();
+      const adapter = new lmChatProviderAdapterModule.LMChatProviderAdapter(provider, undefined, usageState);
+      try {
+        await provider.refreshModels();
+        const [info] = await adapter.provideLanguageModelChatInformation(
+          { silent: true, configuration: { vendorName: vendor.name } } as never, token,
+        );
+        assert.ok(info, '宿主获得已配置模型');
+        const schema = (info as unknown as {
+          configurationSchema: { properties: Record<string, { enum: Array<string | number>; default: string | number }> };
+        }).configurationSchema.properties;
+        assert.deepEqual(schema.reasoningEffort.enum, ['low', 'high']);
+        assert.ok(schema.contextSize.enum.includes(64000));
+        // 连续切换原生选项，验证下一次请求以及上下文用量展示使用新选择。
+        for (const [reasoningEffort, contextSize] of [['high', 64000], ['low', 128000]] as const) {
+          let body: Record<string, unknown> = {};
+          globalThis.fetch = (async (_url, init) => {
+            body = JSON.parse(String(init?.body));
+            const result = apiStyle === 'chat-completions'
+              ? { choices: [{ message: { content: '完成' } }], usage: { prompt_tokens: 100, completion_tokens: 20 } }
+              : apiStyle === 'responses'
+                ? { output: [{ type: 'message', content: [{ type: 'output_text', text: '完成' }] }], usage: { input_tokens: 100, output_tokens: 20 } }
+                : { content: [{ type: 'text', text: '完成' }], usage: { input_tokens: 100, output_tokens: 20 } };
+            return new Response(JSON.stringify(result), { headers: { 'content-type': 'application/json' } });
+          }) as typeof fetch;
+          const options = {
+            modelConfiguration: { reasoningEffort, contextSize, thinkingType: apiStyle === 'messages' ? 'think' : 'default' },
+            modelOptions: { thinkingEffort: 'medium', effort: 'medium', contextSize: 32000 },
+          };
+          const parts: string[] = [];
+          await adapter.provideLanguageModelChatResponse(info,
+            [{ role: vscode.LanguageModelChatMessageRole.User, content: [new vscode.LanguageModelTextPart('你好')], name: undefined }],
+            options as never,
+            { report: (part) => { if (part instanceof vscode.LanguageModelTextPart) { parts.push(part.value); } } }, token,
+          );
+          assert.deepEqual(parts, ['完成']);
+          if (apiStyle === 'chat-completions') {
+            assert.equal(body.reasoning_effort, reasoningEffort);
+          } else if (apiStyle === 'responses') {
+            assert.equal((body.reasoning as { effort: string }).effort, reasoningEffort);
+          } else {
+            assert.equal((body.output_config as { effort: string }).effort, reasoningEffort);
+            assert.equal((body.thinking as { budget_tokens: number }).budget_tokens, reasoningEffort === 'high' ? 8192 : 1024);
+          }
+          assert.equal(usageState.getSnapshot()?.totalContextWindow, contextSize + 16000);
+          assert.deepEqual(options.modelOptions, { thinkingEffort: 'medium', effort: 'medium', contextSize: 32000 });
+        }
+      } finally {
+        adapter.dispose(); usageState.dispose(); provider.dispose();
+      }
+    }
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+  console.log('PASS 原生模型配置输入贯通三个协议与请求预算');
 }
 
 function runIsolatedContextConfigStoreTests(): void {
@@ -10623,6 +10707,7 @@ async function main(): Promise<void> {
     const protocolsModule = require('../providers/genericProviderProtocols') as ProtocolsModule;
     const contextUsageStateModule = require('../contextUsageState') as ContextUsageStateModule;
     const lmChatProviderAdapterModule = require('../providers/lmChatProviderAdapter') as LMChatProviderAdapterModule;
+    await runNativeModelConfigurationIntegrationTests(ConfigStore, genericProviderModule, lmChatProviderAdapterModule, contextUsageStateModule);
     const planUsageStatusModule = require('../planUsageStatus') as PlanUsageStatusModule;
     const commitMessageGeneratorModule = require('../commitMessageGenerator') as CommitMessageGeneratorModule;
     const extensionModule = require('../extension') as ExtensionModule;

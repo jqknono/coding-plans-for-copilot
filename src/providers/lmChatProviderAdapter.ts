@@ -100,12 +100,12 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
     if (model.apiStyle === 'messages') {
       const effortOptions = resolveReasoningEffortOptions(model, [...ANTHROPIC_EFFORT_VALUES]);
       if (effortOptions.length > 0) {
-        properties[EFFORT_MODEL_OPTION_KEY] = {
+        properties[REASONING_EFFORT_MODEL_OPTION_KEY] = {
           type: 'string',
-          title: getMessage('effortTitle'),
+          title: getMessage('thinkingEffortTitle'),
           description: getMessage('anthropicEffortDescription'),
           enum: effortOptions,
-          default: resolveReasoningEffortDefault(effortOptions, 'max'),
+          default: resolveReasoningEffortDefault(effortOptions, 'high'),
           group: 'navigation',
         };
       }
@@ -120,12 +120,12 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
     } else if (model.apiStyle === 'responses') {
       const effortOptions = resolveReasoningEffortOptions(model, [...RESPONSES_THINKING_EFFORT_VALUES]);
       if (effortOptions.length > 0) {
-        properties[THINKING_EFFORT_MODEL_OPTION_KEY] = {
+        properties[REASONING_EFFORT_MODEL_OPTION_KEY] = {
           type: 'string',
           title: getMessage('thinkingEffortTitle'),
           description: getMessage('responsesThinkingEffortDescription'),
           enum: effortOptions,
-          default: resolveReasoningEffortDefault(effortOptions, 'max'),
+          default: resolveReasoningEffortDefault(effortOptions, 'high'),
           group: 'navigation',
         };
       }
@@ -140,7 +140,7 @@ function createModelConfigurationSchema(model: BaseLanguageModel): LanguageModel
     } else {
       const effortOptions = resolveReasoningEffortOptions(model, [...CHAT_THINKING_EFFORT_VALUES]);
       if (effortOptions.length > 0) {
-        properties[THINKING_EFFORT_MODEL_OPTION_KEY] = {
+        properties[REASONING_EFFORT_MODEL_OPTION_KEY] = {
           type: 'string',
           title: getMessage('thinkingEffortTitle'),
           description: getMessage('thinkingEffortDescription'),
@@ -955,11 +955,15 @@ export class LMChatProviderAdapter implements vscode.LanguageModelChatProvider, 
     const forwardedModelOptions = { ...modelOptions };
     delete forwardedModelOptions[REQUEST_SOURCE_MODEL_OPTION_KEY];
 
-    const thinkingEffort = this.readNormalizedOptionString(forwardedModelOptions, THINKING_EFFORT_MODEL_OPTION_KEY);
-    const reasoningEffort = this.readNormalizedOptionString(forwardedModelOptions, REASONING_EFFORT_MODEL_OPTION_KEY);
-    if (!thinkingEffort && reasoningEffort) {
-      forwardedModelOptions[THINKING_EFFORT_MODEL_OPTION_KEY] = reasoningEffort;
+    // 原生菜单与 harness 使用同一字段；协议别名在入口归一，当前选择优先于别名默认值。
+    const reasoningEffort = this.readNormalizedOptionString(forwardedModelOptions, REASONING_EFFORT_MODEL_OPTION_KEY)
+      ?? this.readNormalizedOptionString(forwardedModelOptions, THINKING_EFFORT_MODEL_OPTION_KEY)
+      ?? this.readNormalizedOptionString(forwardedModelOptions, EFFORT_MODEL_OPTION_KEY);
+    if (reasoningEffort) {
+      forwardedModelOptions[REASONING_EFFORT_MODEL_OPTION_KEY] = reasoningEffort;
     }
+    delete forwardedModelOptions[THINKING_EFFORT_MODEL_OPTION_KEY];
+    delete forwardedModelOptions[EFFORT_MODEL_OPTION_KEY];
 
     const thinkingType = this.readNormalizedOptionString(forwardedModelOptions, THINKING_TYPE_MODEL_OPTION_KEY);
     const enableThinking = this.readBooleanOption(forwardedModelOptions, ENABLE_THINKING_MODEL_OPTION_KEY);

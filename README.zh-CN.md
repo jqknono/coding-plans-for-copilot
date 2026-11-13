@@ -156,10 +156,12 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 2. 在供应商选项框中选择你已注册的平台（如智谱、Kimi、火山引擎等）
 3. 选择「Set API Key」，粘贴你的 API Key；扩展会保存密钥并刷新模型
 4. 打开 Copilot Chat（`Ctrl+L`），在模型选择器中选择 `Coding Plans` 提供的模型
-5. `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`，并显示 `Thinking Type`（`enabled` / `disabled` / `default`，默认 `default`；`default` 省略 `thinking` 字段，只发送 `reasoning_effort`，与原生 Custom Endpoint 一致）。需要 `thinking.enabled` 时请选择 `enabled`。OpenAI Responses 模型支持 `low` / `medium` / `high` / `xhigh` / `max`（默认 `max`），并提供 `Reasoning Summary`（`auto` / `concise` / `detailed` / `none`，默认 `auto`）。Anthropic 模型显示 `Effort`（`low` / `medium` / `high` / `xhigh` / `max`，默认 `max`）和 `Thinking Type`（`think` / `non-think`，默认 `think`）；`think` 会发送 `thinking.enabled`，并把 Effort 映射为 `budget_tokens`，`non-think` 关闭 thinking。Copilot Chat 可能传入 `reasoningEffort` 作为 `thinkingEffort` 的别名，adapter 会按别名归一。More Actions 同时提供输入预算 Context Size。
+5. `Thinking Effort` 请在模型行 `More Actions` 中按请求设置，其中 OpenAI Chat 兼容模型支持 `none` / `low` / `medium` / `high` / `xhigh` / `max`，并显示 `Thinking Type`（`enabled` / `disabled` / `default`，默认 `default`；`default` 省略 `thinking` 字段，只发送 `reasoning_effort`，与原生 Custom Endpoint 一致）。需要 `thinking.enabled` 时请选择 `enabled`。OpenAI Responses 模型支持 `low` / `medium` / `high` / `xhigh` / `max`（默认 `high`），并提供 `Reasoning Summary`（`auto` / `concise` / `detailed` / `none`，默认 `auto`）。Anthropic 模型显示 `Thinking Effort`（`low` / `medium` / `high` / `xhigh` / `max`，默认 `high`）和 `Thinking Type`（`think` / `non-think`，默认 `think`）；`think` 会发送 `thinking.enabled`，并把 Effort 映射为 `budget_tokens`，`non-think` 关闭 thinking。三个协议统一声明原生字段 `reasoningEffort`；adapter 将调用方的 `thinkingEffort` / `effort` 别名归一到该字段，并优先采用原生字段。More Actions 同时提供输入预算 Context Size。
 6. 供应商启用 `useModelsEndpoint` 后，执行 `Coding Plans: Update Coding Plans Models List` 可请求 `/models`、写回模型列表并刷新选择器。保存 settings/API Key 会即时本地重建已配置模型，预算随之生效；`coding-plans.autoRefreshModels: false` 仅关闭自动选择器同步及空查询刷新。除上述原生 Add Models 连接初始化外，远端发现与模型列表写回仍由手动更新命令执行。
    - 模型发现优先读取 [models.dev](https://models.dev/) 的 `catalog.json`，失败时回退 `api.json`，按模型 ID/名称补全新条目的能力、预算来源及价格元数据。新模型 `apiStyle` 按来源推导：OpenAI 与 Grok/xAI 使用 `responses`，Anthropic 使用 `messages`，其余使用 `chat-completions`。已有手工属性与预算保持原值；自动来源能力可随发现刷新。
 也可以直接编辑 `settings.json`，插件会打开设置页并定位到 `coding-plans.vendors`。
+
+**Copilot harness（VS Code 1.146.0）**：Agent Host BYOK 桥接读取 `configurationSchema.properties.reasoningEffort`，生成原生思考强度选择器。插件同时声明数字 `contextSize` 档位；这个宿主版本仅向 harness 传递固定上下文上限，因此显示 **Max context**。普通 VS Code Chat / 管理语言模型界面提供 Context Size 选择器，harness 内的 Context 选择器需要宿主桥接支持。`contextBudget` 控制插件请求预算，harness 仍接收模型注册的能力上限。若要保留 `chatLanguageModels.json` 中已保存的推理选择，请将对应模型设置键统一为 `reasoningEffort`。
 
 ### 内置供应商端点
 
@@ -306,7 +308,7 @@ code --install-extension techfetch-dev.coding-plans-for-copilot
 | `coding-plans.vendors[].models[].price.longContextInputCost` / `longContextCacheCost` / `longContextOutputCost` | `number` | 空 | 长上下文成本元数据，单位为 credits / 1M tokens；VS Code 支持时会在模型 hover 详情中显示。 |
 | `coding-plans.vendors[].models[].streaming` | `boolean` | `true` | 是否优先使用流式请求；设为 `false` 时发送非流式请求。 |
 | `coding-plans.vendors[].models[].capabilities.thinking` | `boolean` | `true` | 是否展示并发送 reasoning/thinking 相关参数；设为 `false` 时不暴露对应模型行选项。 |
-| `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | 协议默认值 | 限制模型行 `Thinking Effort` / `Effort` 可选项，并阻止未声明值进入请求 payload。 |
+| `coding-plans.vendors[].models[].supportsReasoningEffort` | `string[]` | 协议默认值 | 限制模型行 `Thinking Effort` 可选项，并阻止未声明值进入请求 payload。 |
 | `coding-plans.vendors[].models[].editTools` | `string[]` | `["apply-patch","multi-find-replace","find-replace","code-rewrite"]` | Copilot 风格编辑工具声明；透传到 VS Code/Copilot 的 `capabilities.editToolsHint`，用于选择编辑工具偏好。 |
 | `coding-plans.vendors[].models[].reasoningEffortFormat` | `string` | 由协议推导 | Copilot 风格 reasoning effort 格式元数据：`chat-completions` / `responses`。anthropic 协议不关注此项。 |
 | `coding-plans.vendors[].models[].zeroDataRetentionEnabled` | `boolean` | 空 | 声明性元数据，不代表上游真实数据保留策略。 |

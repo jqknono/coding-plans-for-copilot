@@ -924,8 +924,8 @@ export class GenericAIProvider extends BaseAIProvider {
 
   private readChatThinkingEffortFromModelOptions(modelOptions: unknown): ChatThinkingEffort | undefined {
     const normalized = this.readFirstNormalizedModelOptionString(modelOptions, [
-      THINKING_EFFORT_MODEL_OPTION_KEY,
       REASONING_EFFORT_MODEL_OPTION_KEY,
+      THINKING_EFFORT_MODEL_OPTION_KEY,
     ]);
     if (!normalized) {
       return undefined;
@@ -942,8 +942,8 @@ export class GenericAIProvider extends BaseAIProvider {
     modelOptions: unknown,
   ): ResponsesThinkingEffort | undefined {
     const normalized = this.readFirstNormalizedModelOptionString(modelOptions, [
-      THINKING_EFFORT_MODEL_OPTION_KEY,
       REASONING_EFFORT_MODEL_OPTION_KEY,
+      THINKING_EFFORT_MODEL_OPTION_KEY,
     ]);
     if (!normalized) {
       return undefined;
@@ -970,9 +970,9 @@ export class GenericAIProvider extends BaseAIProvider {
 
   private readAnthropicEffortFromModelOptions(modelOptions: unknown): AnthropicEffort | undefined {
     const normalized = this.readFirstNormalizedModelOptionString(modelOptions, [
+      REASONING_EFFORT_MODEL_OPTION_KEY,
       EFFORT_MODEL_OPTION_KEY,
       THINKING_EFFORT_MODEL_OPTION_KEY,
-      REASONING_EFFORT_MODEL_OPTION_KEY,
     ]);
     if (!normalized) {
       return undefined;

@@ -24,6 +24,17 @@ flowchart LR
 
 ## 说明
 
+### 原生模型配置集成验证
+
+`src/test/runTest.ts` 的正向集成场景从真实 provider 注册的 schema 读取 `reasoningEffort` 和 `contextSize`，模拟宿主传入 `modelConfiguration`，通过真实 adapter/provider 检查：
+
+- 三种协议均声明统一的推理强度字段，并按模型支持的档位显示。
+- 连续切换选择后，Chat 的 `reasoning_effort`、Responses 的 `reasoning.effort`、Anthropic 的 `output_config.effort` / thinking budget 使用本次值。
+- 原生推理强度优先于调用方别名默认值；原生 Context 选择同步到本轮上下文预算，用量展示包含预留输出。
+- 调用方传入的配置对象保持原值。
+
+这些测试验证插件侧注册和请求链路。VS Code 1.146.0 的 harness BYOK 桥接仅提取推理档位与固定上下文上限；`contextSize` 原生菜单的 harness 展示仍依赖宿主支持，测试结果与 UI 验收分别记录。
+
 ### 思考内容显示集成验证
 
 `src/test/runTest.ts` 中的 provider 级正向集成场景覆盖：
