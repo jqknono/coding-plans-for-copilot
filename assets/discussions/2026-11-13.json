@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-13",
+  "generatedAt": "2026-11-13T14:03:31.087Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 54,
+    "postsAfterKeywordFilter": 17,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Anthropic": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1256904",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1256904",
+      "title": "Claude Code 用的 Apple Store 订阅服务用不用绑卡问题",
+      "content": "第一个月用的是礼品卡，现在要续第二个月是不是直接用礼品卡充值余额就可以了，但是收到邮箱说绑卡，不知道不绑定能不能续，不能续我就不充了。 There is a problem with your payment method which may prevent the renewal of this subscription. To avoid losing access to your service, update your payment information. 请教有弄过的友。谢谢",
+      "author": "lovedeepl",
+      "createdAt": "2026-11-13T09:47:50.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Anthropic",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.6,
+        "summary": "用户询问通过 Apple Store 订阅的 Claude Code 续订时，是否可以用礼品卡充值；因收到付款方式问题，不确定能否直接续费。",
+        "topics": [
+          "订阅",
+          "续费",
+          "绑卡",
+          "礼品卡",
+          "支付方式"
+        ],
+        "planMentioned": "Claude Code",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/487",
+      "analyzedAt": "2026-11-13T14:10:32.068Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "v2ex: https://www.v2ex.com/api/replies/show.json?topic_id=1256914 The operation was aborted due to timeout"
+  ]
+}
