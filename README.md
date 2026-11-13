@@ -544,18 +544,6 @@ The dashboard uses the following core data files (located in the `assets/` direc
   "generatedAt(Beijing)": "2026-05-06 16:00:00"
 }
 ```
-  "captureWindow": "30 minutes",
-  "models": [
-    {
-      "id": "deepseek/deepseek-chat",
-      "organization": "deepseek",
-      "providers": [
-        { "provider_name": "Cerebras", "uptime": 99.9, "latency_p50": 120, ... }
-      ]
-    }
-  ]
-}
-```
 
 ---
 
