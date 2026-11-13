@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-11-12T16:39:28.072Z",
-  "generatedAtBeijing": "2026年11月13日 00:39:28",
+  "generatedAt": "2026-11-13T15:59:16.994Z",
+  "generatedAtBeijing": "2026年11月13日 23:59:16",
   "sourceGeneratedAt": "2026-11-12T16:38:31.973Z",
   "sourceGeneratedAtBeijing": "2026年11月13日 00:38:31",
-  "sourceMetricsGeneratedAt": "2026-11-12T16:38:34.863Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月13日 00:38:34",
+  "sourceMetricsGeneratedAt": "2026-11-13T15:58:22.362Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月13日 23:58:22",
   "summary": {
     "openrouterProviderCount": 122,
-    "metricsProviderCount": 57,
-    "resolvedMetricsProviderCount": 57,
+    "metricsProviderCount": 58,
+    "resolvedMetricsProviderCount": 58,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
     "heuristicProviderCount": 11,
     "providersWithPlans": 19,
-    "pendingCount": 38,
+    "pendingCount": 39,
     "blockedPendingCount": 1,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -85,18 +85,6 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://www.atlascloud.ai/pricing/models",
-          "serviceDetails": [
-            "官网价格页参考，具体权益以官网说明为准"
-          ]
-        },
-        {
-          "name": "Plus",
-          "currentPrice": 10.4,
-          "currentPriceText": "$10.4",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
           "serviceDetails": [
             "官网价格页参考，具体权益以官网说明为准"
           ]
@@ -494,7 +482,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "来源: https://inference.net/subscription",
+          "notes": "来源: https://inference.net/subscription/",
           "serviceDetails": [
             "Hosted and provider model access",
             "Read billing docs Plans Pick your monthly credit. Start with the allowance that fits your workload. Usage beyond the included credit continues at the listed model rate.",
@@ -524,9 +512,9 @@
       ],
       "sourceUrls": [
         "https://inference.net",
-        "https://inference.net/subscription"
+        "https://inference.net/subscription/"
       ],
-      "pricingPageUrl": "https://inference.net/subscription",
+      "pricingPageUrl": "https://inference.net/subscription/",
       "officialWebsiteUrl": "https://inference.net",
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://inference.net/privacy-policy",
@@ -1323,6 +1311,15 @@
       "officialWebsiteUrl": "https://parasail.io",
       "pricingPageUrl": "https://www.parasail.io/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $2.00 / $10.00 / $0.20）",
+      "blocked": false
+    },
+    {
+      "slug": "pareto-alpha",
+      "openrouterName": "ParetoAlpha",
+      "providerId": null,
+      "officialWebsiteUrl": "https://paretoalphainference.com",
+      "pricingPageUrl": "https://paretoalphainference.com",
+      "reason": "官网价格页探测失败：https://paretoalphainference.com/pricing: HTTP 404",
       "blocked": false
     },
     {
