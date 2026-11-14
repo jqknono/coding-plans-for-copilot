@@ -1,0 +1,141 @@
+{
+  "date": "2026-11-14",
+  "generatedAt": "2026-11-14T13:05:24.165Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 15,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Claude Code": 1,
+      "Google, OpenAI": 1,
+      "国模": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1257058",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1257058",
+      "title": "CC 源头号商，主打一个字稳！澳洲时区自带东八区，懂得来～",
+      "content": "出一批 CC （ Claude Code ）源头号，自营号源，不是层层转手的二手垃圾号。 号源：澳洲区，相对稳定和冷门 售后：东八区时间在线，国内白天基本能找到人 稳定：主打一个稳，掉号有明确处理规则（见下） 价格：1700 ，6.25x ，量大可谈 支持先小量试用，长期合作优先。 邮箱：bmljZW5vbmVjYkBnbWFpbC5jb20=",
+      "author": "nicenonecb",
+      "createdAt": "2026-11-14T08:38:24.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.7,
+        "supplier": "Claude Code",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.6,
+        "summary": "该帖子在V2EX上出售Claude Code（CC）的源头账号，强调澳洲区号源稳定、东八区售后在线，价格1700并支持小量试用。",
+        "topics": [
+          "Claude Code",
+          "账号出售",
+          "定价",
+          "试用",
+          "售后"
+        ],
+        "planMentioned": "Claude Code",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/488",
+      "analyzedAt": "2026-11-14T13:13:12.668Z"
+    },
+    {
+      "id": "v2ex-1257050",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1257050",
+      "title": "从 GPT Pro 切到 Google AI Ultra 两周实测： 30 亿 Tokens 账本与 Antigravity 对比",
+      "content": "📊 实测导读 ：本文基于两台主力 Mac 本地 Tokei 统计的真实请求账本，完整拆解 Google AI Ultra （$200/月）全套回血权益 、 Antigravity （反重力） vs OpenAI Codex 单周真实额度反算与 12 款模型速度实测 ，以及两周高强度落地的开源输入法 TypeFree v3.5.0 与 AI 连载短剧实战消耗账单。 先说清楚我为什么要从 GPT 订阅转到谷歌订阅。 我前前后后用了大半年 OpenAI 的 $200/月（ Pro + Codex ）订阅。从刚开始的惊艳，到最近这几个月，GPT 给我的体感可以用四个词概括： 疯狂“流口水” + 速度慢 + 不说人话不沾锅 + 写材料打满了补丁 ，实在让人受不了： 疯狂“流口水” &amp; 速度慢 ：不管问多简单的问题，先给你铺垫一屏正确废话，真正有用的信息藏在中间；再加上吐字速度掉到 30 tok/s 出头，看着屏幕一字一顿往外蹦废话，耐心直接耗光。 不说人话 ：满嘴八股黑话和套娃句式——动辄“不是 A ，而是 B”“本质上是……核心在于……”“在当前约束条件下形成闭环”。明明一句话能说清",
+      "author": "submartingale",
+      "createdAt": "2026-11-14T07:46:29.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.86,
+        "supplier": "Google, OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.78,
+        "summary": "作者从 OpenAI GPT Pro/Codex 转向 Google AI Ultra，基于两周真实 token 账本对比 Antigravity 与 Codex 的额度、速度和权益，整体更认可 Google 方案。",
+        "topics": [
+          "订阅",
+          "套餐对比",
+          "额度",
+          "Antigravity",
+          "Codex",
+          "Google AI Ultra",
+          "使用体验"
+        ],
+        "planMentioned": "Google AI Ultra, Antigravity, OpenAI Codex",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/489",
+      "analyzedAt": "2026-11-14T13:13:20.351Z"
+    },
+    {
+      "id": "v2ex-1257001",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1257001",
+      "title": "国模真的还可以的",
+      "content": "最近 codex 特别慢， 尝试体验以下 CodeBuddy Trae 这些。 发现国模(主要用 glm flash deepseek flash)真的效果还是可以的， 不光更便宜，整体其实效果还行。整体下来比 codex 价格合适。 另外还有一个感受就是即使不用手写代码，但是最好还有一个编辑器，在类似 CodeBuddy trae 这种编辑器里面使用 ai 的时候感觉 ai 对项目整体的感知能力会更好，比如我用 openspec 产出好的 task ，CodeBuddy trae 可以比较顺畅的沿着计划执行下去， 但是 codex 无论是客户端 cli 还是嵌入到 zed 中都总是卡壳断在某个任务上停止。 再有就是编辑器中可以连远程机器，直接可以交给 ai 去操作，以及编辑器里打开浏览器去操作验收功能，尽管 codex 也有这种能力，但是要占用系统的 chrome ，相比之下感觉放到编辑器中开个浏览器似乎更友好一点。感觉比起一些各种自己配置的编辑器不如这种拿来就用的效率高，而且相对还更成熟。 当然顶级模型应该还是国外的领先，我用 codex 也只是 gpt6 sol 和 gpt6.1",
+      "author": "JohnXu20151211",
+      "createdAt": "2026-11-14T02:05:00.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "国模",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "用户表示最近 codex 较慢，尝试后觉得国模（主要用 glm flash 和 deepseek flash）效果不错、更便宜，整体比 codex 价格合适；还讨论了不同编辑器中 AI 对项目感知和执行计划的能力。",
+        "topics": [
+          "定价",
+          "套餐对比",
+          "体验",
+          "模型",
+          "编辑器"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/490",
+      "analyzedAt": "2026-11-14T13:13:27.835Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "v2ex: https://www.v2ex.com/api/replies/show.json?topic_id=1257054 The operation was aborted due to timeout"
+  ]
+}
