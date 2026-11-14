@@ -1,12 +1,12 @@
 {
-  "generatedAt": "2026-11-13T15:59:16.994Z",
-  "generatedAtBeijing": "2026年11月13日 23:59:16",
+  "generatedAt": "2026-11-14T14:52:05.772Z",
+  "generatedAtBeijing": "2026年11月14日 22:52:05",
   "sourceGeneratedAt": "2026-11-12T16:38:31.973Z",
   "sourceGeneratedAtBeijing": "2026年11月13日 00:38:31",
-  "sourceMetricsGeneratedAt": "2026-11-13T15:58:22.362Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月13日 23:58:22",
+  "sourceMetricsGeneratedAt": "2026-11-14T14:51:11.795Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月14日 22:51:11",
   "summary": {
-    "openrouterProviderCount": 122,
+    "openrouterProviderCount": 123,
     "metricsProviderCount": 58,
     "resolvedMetricsProviderCount": 58,
     "unresolvedMetricsProviderCount": 0,
@@ -1215,6 +1215,15 @@
       "blocked": false
     },
     {
+      "slug": "inferact-vllm",
+      "openrouterName": "Inferact vLLM",
+      "providerId": null,
+      "officialWebsiteUrl": "https://inferact.ai",
+      "pricingPageUrl": "https://inferact.ai/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.300 / $0.060 / $1.200）",
+      "blocked": false
+    },
+    {
       "slug": "io-net",
       "openrouterName": "Io Net",
       "providerId": null,
@@ -1311,15 +1320,6 @@
       "officialWebsiteUrl": "https://parasail.io",
       "pricingPageUrl": "https://www.parasail.io/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $2.00 / $10.00 / $0.20）",
-      "blocked": false
-    },
-    {
-      "slug": "pareto-alpha",
-      "openrouterName": "ParetoAlpha",
-      "providerId": null,
-      "officialWebsiteUrl": "https://paretoalphainference.com",
-      "pricingPageUrl": "https://paretoalphainference.com",
-      "reason": "官网价格页探测失败：https://paretoalphainference.com/pricing: HTTP 404",
       "blocked": false
     },
     {
