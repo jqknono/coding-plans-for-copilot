@@ -1,0 +1,108 @@
+{
+  "date": "2026-11-15",
+  "generatedAt": "2026-11-15T13:35:01.144Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 46,
+    "postsAfterKeywordFilter": 16,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Gemini, Codex, Claude": 1,
+      "Anthropic": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1257234",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1257234",
+      "title": "Gemini 模型如何？",
+      "content": "最近 codex 表现实在有点拉，智力有点下滑，额度还不经用 想体验下 Gemini， 有用过的朋友吗？ 体验对比 claude 如何？如果开 20 刀的额度对比 codex 的 20 刀哪个更经用一点？",
+      "author": "JohnXu20151211",
+      "createdAt": "2026-11-15T12:00:27.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.86,
+        "supplier": "Gemini, Codex, Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.62,
+        "summary": "发帖人抱怨 Codex 近期智力下滑、额度不经用，想了解 Gemini 的使用体验，并与 Claude 做对比，询问同样 20 美元档位下 Gemini 和 Codex 哪个额度更耐用。",
+        "topics": [
+          "定价",
+          "额度对比",
+          "模型对比",
+          "使用体验",
+          "订阅"
+        ],
+        "planMentioned": "20 美元档订阅（Codex / Gemini / Claude）",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/491",
+      "analyzedAt": "2026-11-15T13:42:26.410Z"
+    },
+    {
+      "id": "v2ex-1257158",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1257158",
+      "title": "打算购买 Claude Team 成品号，这种号的风险跟稳定性怎么样？",
+      "content": "有在用的老师提供一些经验分享吗？ 只自己工作室内部使用。",
+      "author": "chirsxp",
+      "createdAt": "2026-11-15T02:15:58.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "Anthropic",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户询问购买 Claude Team 成品号（现成账号）的风险与稳定性，寻求工作室内部使用的经验分享。",
+        "topics": [
+          "Claude Team",
+          "成品号",
+          "账号共享",
+          "风险",
+          "稳定性",
+          "订阅",
+          "内部使用"
+        ],
+        "planMentioned": "Claude Team",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/492",
+      "analyzedAt": "2026-11-15T13:42:34.277Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
