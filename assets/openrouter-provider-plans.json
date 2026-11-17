@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-11-16T18:02:35.912Z",
-  "generatedAtBeijing": "2026年11月17日 02:02:35",
+  "generatedAt": "2026-11-17T17:28:44.193Z",
+  "generatedAtBeijing": "2026年11月18日 01:28:44",
   "sourceGeneratedAt": "2026-11-12T16:38:31.973Z",
   "sourceGeneratedAtBeijing": "2026年11月13日 00:38:31",
-  "sourceMetricsGeneratedAt": "2026-11-16T18:01:40.049Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月17日 02:01:40",
+  "sourceMetricsGeneratedAt": "2026-11-17T17:27:40.710Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月18日 01:27:40",
   "summary": {
     "openrouterProviderCount": 123,
-    "metricsProviderCount": 59,
-    "resolvedMetricsProviderCount": 59,
+    "metricsProviderCount": 60,
+    "resolvedMetricsProviderCount": 60,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 8,
-    "heuristicProviderCount": 11,
-    "providersWithPlans": 19,
+    "heuristicProviderCount": 12,
+    "providersWithPlans": 20,
     "pendingCount": 40,
     "blockedPendingCount": 1,
     "probeConcurrency": 4,
@@ -1020,6 +1020,36 @@
       "parseMode": "provider-pricing-structured"
     },
     {
+      "slug": "together",
+      "openrouterName": "Together",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "Free",
+          "currentPrice": 3,
+          "currentPriceText": "$3.00",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.together.ai/pricing",
+          "serviceDetails": [
+            "官网价格页参考，具体权益以官网说明为准"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.together.ai",
+        "https://www.together.ai/pricing"
+      ],
+      "pricingPageUrl": "https://www.together.ai/pricing",
+      "officialWebsiteUrl": "https://www.together.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.together.ai/privacy",
+      "termsOfServiceUrl": "https://www.together.ai/terms-of-service",
+      "statusPageUrl": "https://status.together.ai/",
+      "parseMode": "official-website-heuristic"
+    },
+    {
       "slug": "venice",
       "openrouterName": "Venice",
       "providerId": null,
@@ -1093,8 +1123,8 @@
       "openrouterName": "AkashML",
       "providerId": null,
       "officialWebsiteUrl": "https://akashml.com",
-      "pricingPageUrl": "https://akashml.com",
-      "reason": "官网价格页探测失败：https://akashml.com/pricing: HTTP 404",
+      "pricingPageUrl": "https://akashml.com/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 1.75 / $ 10.00 / $ 0.18）",
       "blocked": false
     },
     {
@@ -1104,6 +1134,15 @@
       "officialWebsiteUrl": "https://aws.amazon.com",
       "pricingPageUrl": "https://aws.amazon.com/pricing/",
       "reason": "官网价格页探测失败：https://aws.amazon.com/prices: HTTP 404",
+      "blocked": false
+    },
+    {
+      "slug": "ambient",
+      "openrouterName": "Ambient",
+      "providerId": null,
+      "officialWebsiteUrl": null,
+      "pricingPageUrl": null,
+      "reason": "OpenRouter 元数据中缺少可用官网地址",
       "blocked": false
     },
     {
@@ -1121,7 +1160,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://cohere.com",
       "pricingPageUrl": "https://cohere.com/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3.00 / $1.00 / $3.25）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $250 / $1.00 / $2.00）",
       "blocked": false
     },
     {
@@ -1269,6 +1308,15 @@
       "blocked": false
     },
     {
+      "slug": "modelrun",
+      "openrouterName": "ModelRun",
+      "providerId": null,
+      "officialWebsiteUrl": "https://www.modular.com",
+      "pricingPageUrl": "https://www.modular.com/pricing",
+      "reason": "官网价格页探测失败：https://www.modular.com/prices: HTTP 404",
+      "blocked": false
+    },
+    {
       "slug": "near-ai",
       "openrouterName": "Near AI",
       "providerId": null,
@@ -1320,15 +1368,6 @@
       "officialWebsiteUrl": "https://parasail.io",
       "pricingPageUrl": "https://www.parasail.io/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $2.00 / $10.00 / $0.20）",
-      "blocked": false
-    },
-    {
-      "slug": "pareto-alpha",
-      "openrouterName": "ParetoAlpha",
-      "providerId": null,
-      "officialWebsiteUrl": "https://paretoalphainference.com",
-      "pricingPageUrl": "https://paretoalphainference.com",
-      "reason": "官网价格页探测失败：https://paretoalphainference.com/pricing: HTTP 404",
       "blocked": false
     },
     {
@@ -1419,15 +1458,6 @@
       "officialWebsiteUrl": "https://console.tenstorrent.com",
       "pricingPageUrl": "https://console.tenstorrent.com",
       "reason": "官网价格页探测失败：https://console.tenstorrent.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "together",
-      "openrouterName": "Together",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.together.ai",
-      "pricingPageUrl": "https://www.together.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.15 / $0.015 / $0.60）",
       "blocked": false
     },
     {
