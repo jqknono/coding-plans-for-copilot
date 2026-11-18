@@ -1,10 +1,10 @@
 {
-  "generatedAt": "2026-11-17T17:28:44.193Z",
-  "generatedAtBeijing": "2026年11月18日 01:28:44",
+  "generatedAt": "2026-11-18T17:00:50.178Z",
+  "generatedAtBeijing": "2026年11月19日 01:00:50",
   "sourceGeneratedAt": "2026-11-12T16:38:31.973Z",
   "sourceGeneratedAtBeijing": "2026年11月13日 00:38:31",
-  "sourceMetricsGeneratedAt": "2026-11-17T17:27:40.710Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月18日 01:27:40",
+  "sourceMetricsGeneratedAt": "2026-11-18T16:59:41.029Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月19日 00:59:41",
   "summary": {
     "openrouterProviderCount": 123,
     "metricsProviderCount": 60,
@@ -14,7 +14,7 @@
     "heuristicProviderCount": 12,
     "providersWithPlans": 20,
     "pendingCount": 40,
-    "blockedPendingCount": 1,
+    "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
   },
@@ -357,30 +357,6 @@
           "originalPriceText": null,
           "unit": "月",
           "notes": "来源: https://www.digitalocean.com/pricing",
-          "serviceDetails": [
-            "官网价格页参考，具体权益以官网说明为准"
-          ]
-        },
-        {
-          "name": "官网价格参考 2",
-          "currentPrice": 12,
-          "currentPriceText": "$12/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "官网价格页参考，具体权益以官网说明为准"
-          ]
-        },
-        {
-          "name": "官网价格参考 3",
-          "currentPrice": 11,
-          "currentPriceText": "$11/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
           "serviceDetails": [
             "官网价格页参考，具体权益以官网说明为准"
           ]
@@ -1146,6 +1122,15 @@
       "blocked": false
     },
     {
+      "slug": "antdigital",
+      "openrouterName": "Ant Digital",
+      "providerId": null,
+      "officialWebsiteUrl": "https://maas-global.oss-ap-southeast-1.aliyuncs.com",
+      "pricingPageUrl": "https://maas-global.oss-ap-southeast-1.aliyuncs.com",
+      "reason": "官网价格页探测失败：homepage: HTTP 403",
+      "blocked": true
+    },
+    {
       "slug": "baseten",
       "openrouterName": "BaseTen",
       "providerId": null,
@@ -1160,7 +1145,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://cohere.com",
       "pricingPageUrl": "https://cohere.com/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $250 / $1.00 / $2.00）",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3.00 / $1.00 / $3.25）",
       "blocked": false
     },
     {
@@ -1332,15 +1317,6 @@
       "officialWebsiteUrl": "https://docs.nebius.com",
       "pricingPageUrl": "https://docs.nebius.com",
       "reason": "官网价格页探测失败：https://docs.nebius.com/pricing: HTTP 404",
-      "blocked": false
-    },
-    {
-      "slug": "nextbit",
-      "openrouterName": "NextBit",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.nextbit256.com",
-      "pricingPageUrl": "https://www.nextbit256.com",
-      "reason": "官网价格页探测失败：https://www.nextbit256.com/pricing: HTTP 404",
       "blocked": false
     },
     {
