@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-18",
+  "generatedAt": "2026-11-18T15:15:36.033Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 51,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Google": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1258078",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1258078",
+      "title": "Google AI Ultra 的额度怎么样",
+      "content": "看大家都说哈基米翻身了，鉴于当前 gpt 现在太慢了，目前 gpt pro200，一周刚刚够用，想换 Google AI Ultra 试下，另外 claude 模型额度大概有多少，可以在一些场景下作补充",
+      "author": "layxy",
+      "createdAt": "2026-11-18T10:08:54.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.88,
+        "supplier": "Google",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.45,
+        "summary": "用户因为当前 GPT 太慢，想换 Google AI Ultra 试用，询问它的额度以及 Claude 模型的额度。",
+        "topics": [
+          "谷歌 AI Ultra",
+          "额度",
+          "GPT Pro200",
+          "Claude 模型",
+          "对比"
+        ],
+        "planMentioned": "Google AI Ultra",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/493",
+      "analyzedAt": "2026-11-18T15:21:35.973Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "v2ex: https://www.v2ex.com/api/replies/show.json?topic_id=1258094 The operation was aborted due to timeout"
+  ]
+}
