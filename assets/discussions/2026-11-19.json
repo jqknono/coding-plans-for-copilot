@@ -1,0 +1,76 @@
+{
+  "date": "2026-11-19",
+  "generatedAt": "2026-11-19T15:22:04.403Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 59,
+    "postsAfterKeywordFilter": 13,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Kimi, 智谱GLM, DeepSeek": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1258331",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1258331",
+      "title": "国产模型哪个好用?kimi k3 pro 还是 GLM 5.3 ?",
+      "content": "最近 claude code 额度收紧了，最近半年被统计用了 15000 的 claude code 额度，现在需要转向国产模型了。哪个好用? kimi k3 用起来有点贵，199 会员感觉一周就用完了。 GLM 5.3 之前似乎抢不到。 DeepSeek 可以，但是仅限非常简单明确的需求，一旦涉及到稍微复杂的需要模型自己决策的任务就要出错，而且都是比较隐蔽的错误，DeepSeek 用起来始终不放心",
+      "author": "webhub123",
+      "createdAt": "2026-11-19T09:18:14.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "Kimi, 智谱GLM, DeepSeek",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.6,
+        "summary": "作者因 Claude Code 额度收紧，想转向国产模型，比较 Kimi K3 Pro、GLM 5.3 和 DeepSeek：Kimi 199 会员一周就用完觉得贵，GLM 5.3 抢不到，DeepSeek 只在简单任务上可用、复杂任务容易出隐蔽错误。",
+        "topics": [
+          "国产模型",
+          "模型对比",
+          "额度",
+          "定价",
+          "会员",
+          "使用体验",
+          "Claude Code"
+        ],
+        "planMentioned": "Kimi 199 会员",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/495",
+      "analyzedAt": "2026-11-19T15:26:20.971Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
