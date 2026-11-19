@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-12T16:38:31.973Z",
+  "updatedAt": "2026-11-19T09:53:49.285Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1558,7 +1558,9 @@
             "支持升级与同档位叠加购买"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "xfyun-ai: fetch failed"
     },
     {
       "provider": "xiaomi-mimo",
@@ -1691,5 +1693,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "xfyun-ai: fetch failed"
+  ]
 }
