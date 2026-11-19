@@ -191,6 +191,42 @@ npm run test:pages
 - Unified `CodingPlans` status shows the latest completed request's real usage: input / `P`, generation / `R`; occupied context is `prompt + max(R,completion)` over `P+R`, retaining over-limit percentages. Missing upstream usage stays missing rather than being filled with local estimates.
 - A configured `usageUrl` adds plan quota, including supported Zhipu hourly and MCP/request-count quotas.
 
+## VS Code `configurationSchema` Groups and Agent Host Bridge
+
+Verified by static inspection of the installed VS Code `1.147.0` bundles (`workbench.desktop.main.js`, `vs/platform/agentHost/node/agentHostMain.js`). The rules below describe host behavior; the plugin side lives in [createModelConfigurationSchema](src/providers/lmChatProviderAdapter.ts).
+
+**Groups in the model card / picker**
+
+| `group` | Preferred keys (first match wins) | UI |
+| --- | --- | --- |
+| `navigation` | `tier`, `autoTier`, `thinkingLevel`, `reasoningEffort` | Effort segment control |
+| `tokens` | `contextSize`, `contextTier` | Context choice segment control |
+
+- The host looks up a group by preferred key first and falls back to any property in that group. A property renders as a selector only when it has `enum.length >= 2`; the current value is the persisted `modelConfiguration[key]`, otherwise `schema.default`. Labels come from `enumItemLabels`, then numeric `JC()` formatting (for example `1M`).
+- With no selectable `tokens` property, the card shows a read-only **Max context** row computed as `min(maxContextWindowTokens, maxInputTokens + maxOutputTokens)` (`maxContextWindowTokens` alone when input/output are absent).
+- The hover lists "Configurable" buttons for each group with a selectable `enum`, using the property `title`.
+
+**Agent Host (Copilot CLI / Claude agent sessions)**
+
+- The BYOK bridge forwards only `vendor`, `id`, `name`, `maxContextWindowTokens` (computed as above), `maxPromptTokens`, `maxOutputTokens`, `supportsVision`, `supportedReasoningEfforts` (the `enum` of `configurationSchema.properties.reasoningEffort`) and `defaultReasoningEffort`.
+- The Agent Host rebuilds the model schema with only `thinkingLevel` ("Effort Level"). `contextSize` and other plugin schema properties are dropped, so BYOK models in Agent Host sessions show **Max context** as a fixed value with no selector. Change it through model capabilities (`contextWindow`, `maxInputTokens`, `maxOutputTokens`).
+- Host-generated `contextSize` / `contextTier` (two entries: default vs long context) exists only for Copilot-hosted models that publish `tokenPrices.longContext.contextMax`.
+- Regular Chat sessions use the plugin schema directly, so `contextSize` stays selectable there and arrives as `modelOptions.contextSize`.
+
+**Re-verifying after a VS Code update**
+
+```bash
+APP=$(dirname "$(readlink -f "$(which code)")")/../resources/app/out
+# Group key preference and the rendered value lookup
+grep -o 'function Lw(.\{700\}' "$APP/vs/workbench/workbench.desktop.main.js"
+# Max context computation
+grep -o 'function nY(.\{200\}' "$APP/vs/workbench/workbench.desktop.main.js"
+# Fields forwarded by the BYOK bridge and the rebuilt Agent Host schema
+grep -o '_refreshByokModels(.\{900\}' "$APP/vs/platform/agentHost/node/agentHostMain.js"
+```
+
+Minified identifiers (`Lw`, `nY`) change between releases; when they miss, search for the stable strings `"contextTier"`, `maxContextWindowTokens:` or `supportedReasoningEfforts`. Update this section and the version above when behavior changes.
+
 ## Configuration Contract
 
 - Root settings retain `logLevel`, `locale`, `autoRefreshModels`, `terminalIntent.enabled`, `terminalIntent.maxEntries`, and `vendors`.
@@ -232,7 +268,7 @@ npm run test:pages
   - All protocol menus expose `configurationSchema.properties.reasoningEffort` with the `Thinking Effort` title. Requests use `modelOptions.reasoningEffort`; the adapter normalizes `thinkingEffort` / `effort` aliases to this field and removes duplicate alias keys. Canonical values take precedence over aliases; explicit `modelOptions.reasoningEffort` overrides `modelConfiguration.reasoningEffort`. Copilot's private `_enableThinking: false` disables thinking when `thinkingType` is missing or still the schema default (`default` / `think`); an explicit `enabled` / `disabled` / `non-think` choice is kept. `_enableThinking: true` does not change `thinkingType` and does not force thinking on. Adapter info logs include the forwarded thinking fields. `_enableThinking` is adapter/provider input only and is not sent upstream. Model-level `capabilities.thinking: false` hides and forbids sending thinking/reasoning parameters, and `supportsReasoningEffort` restricts model-row options and blocks undeclared values from the payload.
   - `editTools` defaults to `["apply-patch","multi-find-replace","find-replace","code-rewrite"]`, passed through as Copilot-style model metadata to `capabilities.editToolsHint` for VS Code/Copilot to choose edit-tool preferences; this extension itself does not filter request tools by this field.
   - `reasoningEffortFormat` and `zeroDataRetentionEnabled` are kept as Copilot-style metadata; the latter does not represent the upstream's real data retention policy.
-  - VS Code 1.146.0 Agent Host reads only `configurationSchema.properties.reasoningEffort` when building BYOK effort options; top-level `supportsReasoningEffort` metadata does not replace this schema. The BYOK bridge forwards fixed context limits, while `contextSize` enum/default are currently used only by regular Chat. The plugin preserves that native schema and request-budget handling for hosts that forward it. Source: [AgentHostByokLmHandler.listModels](https://github.com/microsoft/vscode/blob/69047191fc427f2f92828279aae1d90d8eeda7ab/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostByokLmHandler.ts) and [CopilotAgent._refreshByokModels](https://github.com/microsoft/vscode/blob/69047191fc427f2f92828279aae1d90d8eeda7ab/src/vs/platform/agentHost/node/copilot/copilotAgent.ts).
+  - VS Code 1.146.0 Agent Host reads only `configurationSchema.properties.reasoningEffort` when building BYOK effort options; top-level `supportsReasoningEffort` metadata does not replace this schema. The BYOK bridge forwards fixed context limits, while `contextSize` enum/default are currently used only by regular Chat. The plugin preserves that native schema and request-budget handling for hosts that forward it; see [VS Code `configurationSchema` Groups and Agent Host Bridge](#vs-code-configurationschema-groups-and-agent-host-bridge) (still true in `1.147.0`). Source: [AgentHostByokLmHandler.listModels](https://github.com/microsoft/vscode/blob/69047191fc427f2f92828279aae1d90d8eeda7ab/src/vs/workbench/contrib/chat/browser/agentSessions/agentHost/agentHostByokLmHandler.ts) and [CopilotAgent._refreshByokModels](https://github.com/microsoft/vscode/blob/69047191fc427f2f92828279aae1d90d8eeda7ab/src/vs/platform/agentHost/node/copilot/copilotAgent.ts).
   - Protocol mapping:
     - `chat-completions`: uses `request.modelOptions.reasoningEffort` (caller alias `thinkingEffort`), options `none` / `low` / `medium` / `high` / `xhigh` / `max`; the model row `More Actions` default is `high`; `none` sends `thinking: { type: "disabled" }`. The rest send top-level `reasoning_effort` only by default (native Custom Endpoint Chat Completions shape). Uses `request.modelOptions.thinkingType` as the thinking switch; the More Actions default is `default` (omit `thinking`, A11/A12). Explicit `enabled` also sends `thinking: { type: "enabled" }` (A13) for vendors that require that field. Response parts emit thinking before output text (native Custom Endpoint order).
     - `responses`: uses `request.modelOptions.reasoningEffort` (caller alias `thinkingEffort`), options `low` / `medium` / `high` / `xhigh` / `max`; the model row `More Actions` default is `high`. Also exposes `reasoningSummary` (`none` / `auto` / `concise` / `detailed`, default `auto`) and sends `reasoning: { effort, summary }` when summary is not `none`. Copilot `_enableThinking: false` or an explicit disabled `thinkingType` omits `reasoning`. Response parts emit thinking before output text.
