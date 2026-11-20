@@ -1,0 +1,110 @@
+{
+  "date": "2026-11-20",
+  "generatedAt": "2026-11-20T14:59:32.320Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 60,
+    "postsAfterKeywordFilter": 16,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "DeepSeek, WorkBuddy": 1,
+      "OnDemand Agent": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1258657",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1258657",
+      "title": "各位的 opencode 近期速度是多少",
+      "content": "一直只用 deepseek-4.1-1017，不是用 free 的。刚开通时候能到 160+，现在稳定只在 80+ tok/s，都是 100 以内，我都有点动摇是否取消换 workbuddy 了（实测今天 workbuddy 都能到 300+）",
+      "author": "xyooyx",
+      "createdAt": "2026-11-20T14:01:58.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.72,
+        "supplier": "DeepSeek, WorkBuddy",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "negative",
+        "sentimentConfidence": 0.8,
+        "summary": "用户在 OpenCode 中使用付费的 deepseek-4.1-1017 模型，发现输出速度从开通时的 160+ tok/s 降到稳定在 80+ tok/s，因此动摇是否取消订阅转投实测可达 300+ tok/s 的 WorkBuddy。",
+        "topics": [
+          "使用体验",
+          "速度",
+          "tok/s",
+          "OpenCode",
+          "DeepSeek",
+          "取消订阅",
+          "换套餐",
+          "WorkBuddy"
+        ],
+        "planMentioned": null,
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/497",
+      "analyzedAt": "2026-11-20T15:07:15.809Z"
+    },
+    {
+      "id": "v2ex-1258640",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1258640",
+      "title": "一键使用 Claude Code Opus 5.5，不用折腾账号和 API",
+      "content": "做了个小站 OnDemand Agent，一键用上 Claude Code Opus 5.5。 不用注册 Claude 账号，不用搞 API 中转，不用翻墙。在 GitHub 上一句话说清要改什么，先给你方案，你确认了才动手，写完直接提 PR。 按量付费，1 credit = 0.01 美元，没有月费，没有席位费。 👉 ondemandagent.dev 找几个用户帮我测试给反馈，免费送 500 Credits，感兴趣的留言，我发你。",
+      "author": "1wlinesperday",
+      "createdAt": "2026-11-20T11:43:56.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "OnDemand Agent",
+        "supplierCategory": "aggregator",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.8,
+        "summary": "作者推出 OnDemand Agent 服务，提供一键接入 Claude Code Opus 5.5 的按量付费方案（1 credit = $0.01，无月费/席位费），并招募测试用户赠送 500 Credits 免费额度。",
+        "topics": [
+          "定价",
+          "免费额度",
+          "Claude Code",
+          "体验卡",
+          "按量付费",
+          "聚合服务"
+        ],
+        "planMentioned": "OnDemand Agent 按量付费方案",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/498",
+      "analyzedAt": "2026-11-20T15:07:24.017Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
