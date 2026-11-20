@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-19T17:08:34.441Z",
+  "updatedAt": "2026-11-20T09:41:13.284Z",
   "providers": [
     {
       "provider": "aliyun-ai",
@@ -1211,7 +1211,9 @@
             "优先技术支持"
           ]
         }
-      ]
+      ],
+      "staleReason": "最近一次抓取解析失败，当前展示的是上次成功抓取结果，可能信息已过时。",
+      "staleFailure": "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
     },
     {
       "provider": "synthetic-ai",
@@ -1383,7 +1385,7 @@
       "provider": "volcengine-ai",
       "sourceUrls": [
         "https://www.volcengine.com/activity/codingplan",
-        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.32/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
+        "https://res.gcloudcache.com/webserver/andserveTar/volc/prod/vlc/andserve.vlc.activity_codingplan__6a4b6c2a2aabef01763560b7/6aa24d9b6845bc01a1d8e2cf/0.0.52/6aa24d9b6845bc01a1d8e2cf-vlc-uidl.json"
       ],
       "plans": [
         {
@@ -1411,7 +1413,7 @@
           "serviceDetails": [
             "能力：享受 Lite 套餐的所有能力和权益",
             "适配：满足高阶用户的大规模编程需求",
-            "升级：用量为 Claude Max 数倍，Lite套餐 5 倍"
+            "升级：用量为 Claude Max 数倍，Lite 套餐 5 倍"
           ]
         }
       ]
@@ -1691,5 +1693,7 @@
       ]
     }
   ],
-  "failures": []
+  "failures": [
+    "stepfun-step-plan: page.waitForFunction: Timeout 25000ms exceeded."
+  ]
 }
