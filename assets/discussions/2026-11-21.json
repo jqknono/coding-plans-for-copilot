@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-21",
+  "generatedAt": "2026-11-21T14:20:52.169Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 61,
+    "postsAfterKeywordFilter": 18,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {}
+  },
+  "posts": [
+    {
+      "id": "v2ex-1258715",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1258715",
+      "title": "美区 appleID ,用礼品卡买不了 claude 了。。",
+      "content": "根据近期用户实测与反馈，自 2026 年 11 月中旬起，美区 App Store 针对 Claude 订阅收紧了支付风控，部分纯礼品卡余额、无备用付款方式（Payment Method）的账号会直接被拦截或要求绑定美区信用卡/美区 PayPal 才能完成自动续费类订阅。 需要绑定美区信用卡、paypal , 这两个怎么弄？哪个容易一点？",
+      "author": "kpub54",
+      "createdAt": "2026-11-21T03:36:19.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": null,
+        "supplierCategory": "other",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.8,
+        "summary": "用户反映美区 App Store 自 2026 年 11 月起对 Claude 订阅实施支付风控，要求绑定美区信用卡或 PayPal，礼品卡无法完成续费。",
+        "topics": [
+          "支付风控",
+          "礼品卡",
+          "Claude",
+          "订阅",
+          "绑定付款"
+        ],
+        "planMentioned": "Claude",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/499",
+      "analyzedAt": "2026-11-21T14:26:31.130Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "v2ex: https://www.v2ex.com/api/replies/show.json?topic_id=1258786 The operation was aborted due to timeout",
+    "v2ex: https://www.v2ex.com/api/replies/show.json?topic_id=1258745 The operation was aborted due to timeout"
+  ]
+}
