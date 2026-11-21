@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-11-20T16:47:39.000Z",
-  "generatedAtBeijing": "2026年11月21日 00:47:39",
+  "generatedAt": "2026-11-21T15:58:19.273Z",
+  "generatedAtBeijing": "2026年11月21日 23:58:19",
   "sourceGeneratedAt": "2026-11-20T09:41:13.284Z",
   "sourceGeneratedAtBeijing": "2026年11月20日 17:41:13",
-  "sourceMetricsGeneratedAt": "2026-11-20T16:46:44.769Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月21日 00:46:44",
+  "sourceMetricsGeneratedAt": "2026-11-21T15:57:26.278Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月21日 23:57:26",
   "summary": {
     "openrouterProviderCount": 123,
-    "metricsProviderCount": 61,
-    "resolvedMetricsProviderCount": 61,
+    "metricsProviderCount": 58,
+    "resolvedMetricsProviderCount": 58,
     "unresolvedMetricsProviderCount": 0,
-    "structuredProviderCount": 8,
-    "heuristicProviderCount": 11,
-    "providersWithPlans": 19,
-    "pendingCount": 42,
+    "structuredProviderCount": 7,
+    "heuristicProviderCount": 10,
+    "providersWithPlans": 17,
+    "pendingCount": 41,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -71,36 +71,6 @@
       "termsOfServiceUrl": "https://www.alibabacloud.com/help/en/legal/latest/alibaba-cloud-international-website-product-terms-of-service-v-3-8-0",
       "statusPageUrl": "https://status.alibabacloud.com/",
       "parseMode": "provider-pricing-structured"
-    },
-    {
-      "slug": "atlas-cloud",
-      "openrouterName": "AtlasCloud",
-      "providerId": null,
-      "plans": [
-        {
-          "name": "Pro",
-          "currentPrice": 4,
-          "currentPriceText": "$4",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "来源: https://www.atlascloud.ai/pricing/models",
-          "serviceDetails": [
-            "官网价格页参考，具体权益以官网说明为准"
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://www.atlascloud.ai",
-        "https://www.atlascloud.ai/pricing/models"
-      ],
-      "pricingPageUrl": "https://www.atlascloud.ai/pricing/models",
-      "officialWebsiteUrl": "https://www.atlascloud.ai",
-      "websiteSource": "privacy_policy_url",
-      "privacyPolicyUrl": "https://www.atlascloud.ai/privacy",
-      "termsOfServiceUrl": null,
-      "statusPageUrl": null,
-      "parseMode": "official-website-heuristic"
     },
     {
       "slug": "baidu",
@@ -314,7 +284,7 @@
           "originalPrice": null,
           "originalPriceText": null,
           "unit": "月",
-          "notes": "来源: https://coreweave.com/forge-pricing",
+          "notes": "来源: https://www.coreweave.com/forge-pricing",
           "serviceDetails": [
             "官网价格页参考，具体权益以官网说明为准"
           ]
@@ -334,9 +304,9 @@
       ],
       "sourceUrls": [
         "https://docs.coreweave.com",
-        "https://coreweave.com/forge-pricing"
+        "https://www.coreweave.com/forge-pricing"
       ],
-      "pricingPageUrl": "https://coreweave.com/forge-pricing",
+      "pricingPageUrl": "https://www.coreweave.com/forge-pricing",
       "officialWebsiteUrl": "https://docs.coreweave.com",
       "websiteSource": "terms_of_service_url",
       "privacyPolicyUrl": "https://docs.coreweave.com/policies/terms-of-service/privacy-policy",
@@ -455,77 +425,6 @@
       "termsOfServiceUrl": "https://inference.net/terms-of-service",
       "statusPageUrl": "https://status.inference.net",
       "parseMode": "official-website-heuristic"
-    },
-    {
-      "slug": "minimax",
-      "openrouterName": "Minimax",
-      "providerId": "minimax-ai",
-      "plans": [
-        {
-          "name": "Go",
-          "currentPrice": 49,
-          "currentPriceText": "¥49/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "续费金额：¥49/月",
-          "serviceDetails": [
-            "文本模型，如 M3.1 Flash",
-            "多模态生成（图像、声音）",
-            "联网搜索与多模态理解",
-            "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
-            "API Key 接入 AI Agent 和编程工具"
-          ]
-        },
-        {
-          "name": "Explore",
-          "currentPrice": 119,
-          "currentPriceText": "¥119/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "续费金额：¥119/月",
-          "serviceDetails": [
-            "文本模型，如 M3.1 Flash",
-            "多模态生成（视频、图像、声音）",
-            "联网搜索与多模态理解",
-            "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
-            "API Key 接入 AI Agent 和编程工具"
-          ]
-        },
-        {
-          "name": "Build",
-          "currentPrice": 469,
-          "currentPriceText": "¥469/月",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "续费金额：¥469/月",
-          "serviceDetails": [
-            "文本模型，如 M3.1 Flash",
-            "多模态生成（视频、图像、声音）",
-            "联网搜索与多模态理解",
-            "MiniMax Code 网页端、桌面端、TUI、iOS 和 Android",
-            "MiniMax Code CLI",
-            "API Key 接入 AI Agent 和编程工具",
-            "高峰时段优先通行",
-            "抢先体验新功能"
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://platform.minimaxi.com/subscribe/token-plan",
-        "https://platform.minimaxi.com/docs/token-plan/intro",
-        "https://www.minimaxi.com/public/api/openplatform/charge/combo/products?cycle_type=1&biz_line=2&resource_package_type=7",
-        "https://www.minimax.io"
-      ],
-      "pricingPageUrl": "https://platform.minimaxi.com/subscribe/token-plan",
-      "officialWebsiteUrl": "https://www.minimax.io",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://www.minimax.io/platform/protocol/privacy-policy",
-      "termsOfServiceUrl": "https://www.minimax.io/platform/protocol/terms-of-service",
-      "statusPageUrl": null,
-      "parseMode": "provider-pricing-structured"
     },
     {
       "slug": "mistral",
@@ -1176,15 +1075,6 @@
       "officialWebsiteUrl": "https://friendli.ai",
       "pricingPageUrl": "https://friendli.ai/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 4.0 / $ 5.0 / $ 7.0）",
-      "blocked": false
-    },
-    {
-      "slug": "gmicloud",
-      "openrouterName": "GMICloud",
-      "providerId": null,
-      "officialWebsiteUrl": "https://www.gmicloud.ai",
-      "pricingPageUrl": "https://www.gmicloud.ai",
-      "reason": "仅提供 GPU 云计算按时计费（$/GPU-hour），无套餐订阅",
       "blocked": false
     },
     {
