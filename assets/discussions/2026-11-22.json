@@ -1,0 +1,77 @@
+{
+  "date": "2026-11-22",
+  "generatedAt": "2026-11-22T14:12:34.851Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 12,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Claude, GPT, Gemini": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1258871",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1258871",
+      "title": "要取消 claude 订阅吗",
+      "content": "请教大神，目前有 gpt plus 20 刀，claude pro 20 刀，刚刚搞了个 100 刀的 google gemini， 发现 fable 5.2 在 claude 里不能用了 - 要另外买，业余编程非重度使用，gpt 全家尤其高中小朋友在用做学习，是否应该取消 claude？",
+      "author": "spectereye",
+      "createdAt": "2026-11-22T04:24:16.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "Claude, GPT, Gemini",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.75,
+        "summary": "用户在 V2EX 询问是否应取消 Claude Pro 订阅，因已订阅 GPT Plus 和 Google Gemini，且发现 Fable 5.2 在 Claude 中无法使用，自身为业余编程非重度用户。",
+        "topics": [
+          "Claude",
+          "GPT Plus",
+          "Gemini",
+          "订阅",
+          "取消",
+          "编程",
+          "定价",
+          "Fable 5.2"
+        ],
+        "planMentioned": "Claude Pro",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/500",
+      "analyzedAt": "2026-11-22T14:18:52.740Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
