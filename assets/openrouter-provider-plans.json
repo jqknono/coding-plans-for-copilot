@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-11-22T16:01:35.838Z",
-  "generatedAtBeijing": "2026年11月23日 00:01:35",
+  "generatedAt": "2026-11-23T19:57:09.631Z",
+  "generatedAtBeijing": "2026年11月24日 03:57:09",
   "sourceGeneratedAt": "2026-11-20T09:41:13.284Z",
   "sourceGeneratedAtBeijing": "2026年11月20日 17:41:13",
-  "sourceMetricsGeneratedAt": "2026-11-22T16:00:43.336Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月23日 00:00:43",
+  "sourceMetricsGeneratedAt": "2026-11-23T19:56:14.968Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月24日 03:56:14",
   "summary": {
-    "openrouterProviderCount": 123,
-    "metricsProviderCount": 58,
-    "resolvedMetricsProviderCount": 58,
+    "openrouterProviderCount": 124,
+    "metricsProviderCount": 57,
+    "resolvedMetricsProviderCount": 57,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 7,
     "heuristicProviderCount": 10,
     "providersWithPlans": 17,
-    "pendingCount": 41,
+    "pendingCount": 40,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -1048,15 +1048,6 @@
       "officialWebsiteUrl": "https://chat.deepseek.com",
       "pricingPageUrl": "https://chat.deepseek.com/pricing",
       "reason": "官网未发现可解析的套餐价格页",
-      "blocked": false
-    },
-    {
-      "slug": "dekallm",
-      "openrouterName": "DekaLLM",
-      "providerId": null,
-      "officialWebsiteUrl": "https://docs.cloudeka.ai",
-      "pricingPageUrl": "https://docs.cloudeka.ai",
-      "reason": "官网价格页探测失败：https://docs.cloudeka.ai/pricing: HTTP 404",
       "blocked": false
     },
     {
