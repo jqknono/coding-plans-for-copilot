@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-11-23T19:57:09.631Z",
-  "generatedAtBeijing": "2026年11月24日 03:57:09",
+  "generatedAt": "2026-11-24T19:25:44.227Z",
+  "generatedAtBeijing": "2026年11月25日 03:25:44",
   "sourceGeneratedAt": "2026-11-20T09:41:13.284Z",
   "sourceGeneratedAtBeijing": "2026年11月20日 17:41:13",
-  "sourceMetricsGeneratedAt": "2026-11-23T19:56:14.968Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月24日 03:56:14",
+  "sourceMetricsGeneratedAt": "2026-11-24T19:24:43.810Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月25日 03:24:43",
   "summary": {
     "openrouterProviderCount": 124,
-    "metricsProviderCount": 57,
-    "resolvedMetricsProviderCount": 57,
+    "metricsProviderCount": 58,
+    "resolvedMetricsProviderCount": 58,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 7,
     "heuristicProviderCount": 10,
     "providersWithPlans": 17,
-    "pendingCount": 40,
+    "pendingCount": 41,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -1195,6 +1195,15 @@
       "blocked": false
     },
     {
+      "slug": "pareto-inference",
+      "openrouterName": "Pareto Inference",
+      "providerId": null,
+      "officialWebsiteUrl": "https://paretoinference.com",
+      "pricingPageUrl": "https://paretoinference.com/pricing",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.15 / $0.06 / $0.50）",
+      "blocked": false
+    },
+    {
       "slug": "particle-ai",
       "openrouterName": "Particle AI",
       "providerId": null,
@@ -1243,7 +1252,7 @@
       "slug": "relace",
       "openrouterName": "Relace",
       "providerId": null,
-      "officialWebsiteUrl": "https://www.relace.ai",
+      "officialWebsiteUrl": "https://relace.ai",
       "pricingPageUrl": "https://relace.ai/pricing",
       "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $0.50 / $0.05 / $2.00）",
       "blocked": false
