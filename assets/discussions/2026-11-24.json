@@ -1,0 +1,108 @@
+{
+  "date": "2026-11-24",
+  "generatedAt": "2026-11-24T17:05:05.789Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 10,
+    "relevantPosts": 2,
+    "discussionsCreated": 2,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Claude": 1,
+      "智谱": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1259582",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1259582",
+      "title": "用虚拟卡+Apple Pay 成功支付 Claude Pro",
+      "content": "卡是 safepal fiat24，之前某宝买号正常蹬了一个月（虚拟机，deepseek 帮忙写了个全局网关，会丢弃所有没走代理的流量）。快到期想续费发现涨价太厉害于是决定自己充值，让 gpt 做了个规则类似的无线热点给苹果手机连（和虚拟机同一个美国节点，丢弃所有直连流量）。苹果手机连上后拔卡、调语言时区，买了个 11 年注册的苹果老号，applepay 绑卡+绑美区 paypal，safari 网页版充值成功。全程和虚拟机用的同一个 ip。 之前一个月沟通全程用中文，甚至好几次 claude 已经认出了这是虚拟机（流汗），不过还没跳 kyc。我特意去 privacy 设置里把两个选项关掉了，不知道是不是有用 看看能撑多久，如果有情况我再来汇报",
+      "author": "AelecTi",
+      "createdAt": "2026-11-24T16:43:58.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.95,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.92,
+        "summary": "用虚拟卡和Apple Pay为Claude Pro续费，通过美国节点虚拟机和Apple老号完成支付，因价格上涨自行充值。",
+        "topics": [
+          "定价",
+          "续费",
+          "支付",
+          "虚拟卡",
+          "Apple Pay",
+          "Claude Pro",
+          "套餐"
+        ],
+        "planMentioned": "Claude Pro",
+        "language": "zh",
+        "category": "经验分享"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/501",
+      "analyzedAt": "2026-11-24T17:11:27.139Z"
+    },
+    {
+      "id": "v2ex-1259575",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1259575",
+      "title": "GLM-5.4 发布后 GLM-5.3-Flash 限时 2 倍用量 大伙怎么看",
+      "content": "“11 月 24 日至 12 月 24 日，GLM-5.3-Flash 的套餐额度消耗减半。 用 GLM-5.4 做规划和审查，用 GLM-5.3-Flash 写代码、补测试。” 大伙有按官方推荐这样配过吗？体验怎么样？之前 GLM5.3 降智让我对 5.3 有点抵触",
+      "author": "jh9",
+      "createdAt": "2026-11-24T15:53:10.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.85,
+        "supplier": "智谱",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.75,
+        "summary": "帖子宣布 GLM-5.3-Flash 在 11 月 24 日至 12 月 24 日期间套餐额度减半，并询问大家在使用 GLM-5.4 规划审查、GLM-5.3-Flash 写代码和补测试时的体验情况，提到之前 GLM5.3 降智让对 5.3 有抵触。",
+        "topics": [
+          "定价",
+          "套餐",
+          "额度",
+          "体验"
+        ],
+        "planMentioned": "GLM-5.3-Flash",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/502",
+      "analyzedAt": "2026-11-24T17:11:33.372Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "analysis failed for v2ex-1259545: The operation was aborted due to timeout"
+  ]
+}
