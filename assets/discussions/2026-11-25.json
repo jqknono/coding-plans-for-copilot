@@ -1,0 +1,146 @@
+{
+  "date": "2026-11-25",
+  "generatedAt": "2026-11-25T16:54:10.470Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 55,
+    "postsAfterKeywordFilter": 12,
+    "relevantPosts": 3,
+    "discussionsCreated": 3,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "Google, OpenCode, DeepSeek": 1,
+      "AIHubMix": 1,
+      "Claude": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1259833",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1259833",
+      "title": "如何保质量下减少 token 消耗",
+      "content": "最近在使用 AI Coding 从零开始开发一个中型项目，涉及前后端、数据库、第三方系统集成。 目前手上有 Google AI Pro 和 OpenCode Go 订阅，但 Antigravity 的 Pro 额度消耗太快，单独使用很难支撑持续开发。 初步想法是： Antigravity 负责需求分析、架构设计、复杂功能开发、疑难问题处理和代码审查。 OpenCode Go 主要使用 DeepSeek 等模型，负责常规功能开发、代码重构、测试和 Bug 修复。 想请教一下是以 Antigravity 为主调用 OpenCode，还是以 OpenCode 为主，遇到复杂任务再交给 Antigravity？ 如何实现两个工具之间的任务分发、上下文共享和开发进度同步，尽量减少人工介入？ 对于从零开始开发的中型项目，使用桌面客户端还是 CLI + WSL 的方式更合适？ 保证最终交付的软件质量和可维护性，同时降低 Token 消耗及订阅成本。 希望有类似实践的 V 友分享一下经验。",
+      "author": "jeffsun",
+      "createdAt": "2026-11-25T14:35:04.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.75,
+        "supplier": "Google, OpenCode, DeepSeek",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.75,
+        "summary": "用户分享使用 Antigravity、OpenCode Go 等 AI 编码工具从零开发中型项目的实践，抱怨 Antigravity Pro 额度消耗过快，并咨询如何在两个工具间分配任务、共享上下文，以降低 token 消耗和订阅成本。",
+        "topics": [
+          "AI Coding",
+          "token消耗",
+          "订阅成本",
+          "工具协作",
+          "任务分发",
+          "上下文共享",
+          "Antigravity",
+          "OpenCode",
+          "DeepSeek",
+          "经验请教"
+        ],
+        "planMentioned": "Google AI Pro, OpenCode Go, Antigravity Pro",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/503",
+      "analyzedAt": "2026-11-25T17:02:40.705Z"
+    },
+    {
+      "id": "v2ex-1259825",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1259825",
+      "title": "做了个给 Claude Code / Codex 用的云电脑，独享静态 IP，首月 $19.9，附赠 claude 模型额度",
+      "content": "大家好，我们是 AIHubMix，最近上线了 AIHubMix 云电脑，来 V 站介绍一下，听听大家的意见。 想解决的问题很简单：用 Claude Code 干活，除了模型订阅，还要自己准备运行环境。租服务器、装工具、管理会话，重度用户也会考虑出门后任务怎么办。 我们把云电脑和 Agent 工作台做在了一起。你可以接入自己的 Claude Code、Codex 订阅，也可以使用平台提供的模型额度目前支持 claude gpt ds glm。 目前套餐是： 首月 $19.9，之后 $49.9/月，可随时取消 4 vCPU、8GB 内存、120GB 存储 独享静态公网 IP 附赠模型额度 具体用法： 把项目放到云端，关电脑后继续跑。 比如晚上让 Agent 修改代码、跑测试，任务在云电脑上执行，本机合盖不影响云端任务继续运行。 手机继续接管任务。 电脑上开始的任务，出门后可以用手机查看进度、补充要求或确认操作，项目和文件保留在云端。 也能调用已有的本机环境。 如果代码、工具、Skills、MCP 已经配在自己的电脑上，可以授权 Agent 使用，不用全部搬走。这种情况下，本机需要保持开机、",
+      "author": "littlecola",
+      "createdAt": "2026-11-25T13:44:59.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.98,
+        "supplier": "AIHubMix",
+        "supplierCategory": "chinese-provider",
+        "sentiment": "positive",
+        "sentimentConfidence": 0.96,
+        "summary": "AIHubMix 云电脑为使用 Claude Code / Codex 的用户提供独享静态 IP、首月 $19.9 费用、4 vCPU、8GB 内存、120GB 存储以及模型额度，可随时取消。",
+        "topics": [
+          "定价",
+          "套餐",
+          "Claude Code",
+          "Codex",
+          "静态IP",
+          "模型额度"
+        ],
+        "planMentioned": "AIHubMix 套餐",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/504",
+      "analyzedAt": "2026-11-25T17:02:51.015Z"
+    },
+    {
+      "id": "v2ex-1259803",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1259803",
+      "title": "自己开 Claude 老封号 配环境麻烦？我们提供了一套本地部署 + 订阅代开方案",
+      "content": "自己开 Claude 官方订阅，很多人会碰到这些问题： 网络或环境不稳定，容易被封 封了号不知道怎么处理，也没有退款保障 遇到 KYC 不知道该怎么操作 我们提供 Claude 官方订阅代开 + 本地部署服务（支持 Pro / Max / Ultra），帮你把这些常见问题解决掉。 主要能解决： 支持 Windows/Linux/MacOS 我们远程帮您配置环境，开箱即用不用自己折腾各种配置 包封号方案下，非违规封禁可以按剩余天数退款 遇到 KYC 可以先找我们，避免自己操作出错 整体使用更稳定，减少因为网络或环境导致的问题 价格和具体方案根据套餐、是否包封号有所不同，可以直接找客服咨询。 联系方式： QQ：168354235 微信：HeS088",
+      "author": "suzkhunter",
+      "createdAt": "2026-11-25T11:55:57.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.72,
+        "supplier": "Claude",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.6,
+        "summary": "这是一则第三方代开 Claude 官方订阅（Pro/Max/Ultra）并提供本地环境远程部署服务的广告，主打解决封号、KYC、网络环境不稳定等痛点，价格按套餐和是否包封号而定。虽为灰产代开服务，但核心讨论对象仍是 Claude 订阅套餐本身的使用与售后问题。",
+        "topics": [
+          "Claude",
+          "订阅代开",
+          "套餐",
+          "封号",
+          "本地部署",
+          "KYC",
+          "退款"
+        ],
+        "planMentioned": "Claude Pro / Max / Ultra",
+        "language": "zh",
+        "category": "社区资讯"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/505",
+      "analyzedAt": "2026-11-25T17:03:00.937Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
