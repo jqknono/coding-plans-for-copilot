@@ -1,19 +1,19 @@
 {
-  "generatedAt": "2026-11-24T19:25:44.227Z",
-  "generatedAtBeijing": "2026年11月25日 03:25:44",
+  "generatedAt": "2026-11-25T18:31:29.103Z",
+  "generatedAtBeijing": "2026年11月26日 02:31:29",
   "sourceGeneratedAt": "2026-11-20T09:41:13.284Z",
   "sourceGeneratedAtBeijing": "2026年11月20日 17:41:13",
-  "sourceMetricsGeneratedAt": "2026-11-24T19:24:43.810Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月25日 03:24:43",
+  "sourceMetricsGeneratedAt": "2026-11-25T18:30:31.098Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月26日 02:30:31",
   "summary": {
     "openrouterProviderCount": 124,
-    "metricsProviderCount": 58,
-    "resolvedMetricsProviderCount": 58,
+    "metricsProviderCount": 60,
+    "resolvedMetricsProviderCount": 60,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 7,
-    "heuristicProviderCount": 10,
-    "providersWithPlans": 17,
-    "pendingCount": 41,
+    "heuristicProviderCount": 11,
+    "providersWithPlans": 18,
+    "pendingCount": 42,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
     "probeMaxCandidates": 6
@@ -424,6 +424,75 @@
       "privacyPolicyUrl": "https://inference.net/privacy-policy",
       "termsOfServiceUrl": "https://inference.net/terms-of-service",
       "statusPageUrl": "https://status.inference.net",
+      "parseMode": "official-website-heuristic"
+    },
+    {
+      "slug": "krea",
+      "openrouterName": "Krea",
+      "providerId": null,
+      "plans": [
+        {
+          "name": "官网价格参考",
+          "currentPrice": 5,
+          "currentPriceText": "$5/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": "来源: https://www.krea.ai/pricing",
+          "serviceDetails": [
+            "Image Krea 3, Nano Banana & more",
+            "Image to Video Animate any photo with AI",
+            "3D Objects Models from text or images",
+            "Image Editor Edit any image with words",
+            "Upscaler Images and video up to 22K",
+            "Nodes Chain models into workflows"
+          ]
+        },
+        {
+          "name": "官网价格参考 2",
+          "currentPrice": 21,
+          "currentPriceText": "$21/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "Image Krea 3, Nano Banana & more",
+            "Image to Video Animate any photo with AI",
+            "3D Objects Models from text or images",
+            "Image Editor Edit any image with words",
+            "Upscaler Images and video up to 22K",
+            "Nodes Chain models into workflows"
+          ]
+        },
+        {
+          "name": "官网价格参考 3",
+          "currentPrice": 42,
+          "currentPriceText": "$42/mo",
+          "originalPrice": null,
+          "originalPriceText": null,
+          "unit": "月",
+          "notes": null,
+          "serviceDetails": [
+            "Image Krea 3, Nano Banana & more",
+            "Image to Video Animate any photo with AI",
+            "3D Objects Models from text or images",
+            "Image Editor Edit any image with words",
+            "Upscaler Images and video up to 22K",
+            "Nodes Chain models into workflows"
+          ]
+        }
+      ],
+      "sourceUrls": [
+        "https://www.krea.ai",
+        "https://www.krea.ai/pricing"
+      ],
+      "pricingPageUrl": "https://www.krea.ai/pricing",
+      "officialWebsiteUrl": "https://www.krea.ai",
+      "websiteSource": "terms_of_service_url",
+      "privacyPolicyUrl": "https://www.krea.ai/privacy-policy",
+      "termsOfServiceUrl": "https://www.krea.ai/terms",
+      "statusPageUrl": null,
       "parseMode": "official-website-heuristic"
     },
     {
@@ -1051,6 +1120,15 @@
       "blocked": false
     },
     {
+      "slug": "doubleword",
+      "openrouterName": "Doubleword",
+      "providerId": null,
+      "officialWebsiteUrl": "https://doubleword.ai",
+      "pricingPageUrl": "https://doubleword.ai/pricing/",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $60 / $24 / $18）",
+      "blocked": false
+    },
+    {
       "slug": "featherless",
       "openrouterName": "Featherless",
       "providerId": null,
@@ -1218,7 +1296,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://pearlresearch.ai",
       "pricingPageUrl": "https://pearlresearch.ai/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 0.1 / $ 0.02 / $ 2）",
+      "reason": "官网价格页探测失败：https://pearlresearch.ai/prices: HTTP 404",
       "blocked": false
     },
     {
