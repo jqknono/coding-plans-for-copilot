@@ -1,18 +1,18 @@
 {
-  "generatedAt": "2026-11-25T18:31:29.103Z",
-  "generatedAtBeijing": "2026年11月26日 02:31:29",
+  "generatedAt": "2026-11-26T18:12:53.141Z",
+  "generatedAtBeijing": "2026年11月27日 02:12:53",
   "sourceGeneratedAt": "2026-11-20T09:41:13.284Z",
   "sourceGeneratedAtBeijing": "2026年11月20日 17:41:13",
-  "sourceMetricsGeneratedAt": "2026-11-25T18:30:31.098Z",
-  "sourceMetricsGeneratedAtBeijing": "2026年11月26日 02:30:31",
+  "sourceMetricsGeneratedAt": "2026-11-26T18:11:58.793Z",
+  "sourceMetricsGeneratedAtBeijing": "2026年11月27日 02:11:58",
   "summary": {
     "openrouterProviderCount": 124,
-    "metricsProviderCount": 60,
-    "resolvedMetricsProviderCount": 60,
+    "metricsProviderCount": 59,
+    "resolvedMetricsProviderCount": 59,
     "unresolvedMetricsProviderCount": 0,
     "structuredProviderCount": 7,
-    "heuristicProviderCount": 11,
-    "providersWithPlans": 18,
+    "heuristicProviderCount": 10,
+    "providersWithPlans": 17,
     "pendingCount": 42,
     "blockedPendingCount": 2,
     "probeConcurrency": 4,
@@ -424,75 +424,6 @@
       "privacyPolicyUrl": "https://inference.net/privacy-policy",
       "termsOfServiceUrl": "https://inference.net/terms-of-service",
       "statusPageUrl": "https://status.inference.net",
-      "parseMode": "official-website-heuristic"
-    },
-    {
-      "slug": "krea",
-      "openrouterName": "Krea",
-      "providerId": null,
-      "plans": [
-        {
-          "name": "官网价格参考",
-          "currentPrice": 5,
-          "currentPriceText": "$5/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": "来源: https://www.krea.ai/pricing",
-          "serviceDetails": [
-            "Image Krea 3, Nano Banana & more",
-            "Image to Video Animate any photo with AI",
-            "3D Objects Models from text or images",
-            "Image Editor Edit any image with words",
-            "Upscaler Images and video up to 22K",
-            "Nodes Chain models into workflows"
-          ]
-        },
-        {
-          "name": "官网价格参考 2",
-          "currentPrice": 21,
-          "currentPriceText": "$21/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "Image Krea 3, Nano Banana & more",
-            "Image to Video Animate any photo with AI",
-            "3D Objects Models from text or images",
-            "Image Editor Edit any image with words",
-            "Upscaler Images and video up to 22K",
-            "Nodes Chain models into workflows"
-          ]
-        },
-        {
-          "name": "官网价格参考 3",
-          "currentPrice": 42,
-          "currentPriceText": "$42/mo",
-          "originalPrice": null,
-          "originalPriceText": null,
-          "unit": "月",
-          "notes": null,
-          "serviceDetails": [
-            "Image Krea 3, Nano Banana & more",
-            "Image to Video Animate any photo with AI",
-            "3D Objects Models from text or images",
-            "Image Editor Edit any image with words",
-            "Upscaler Images and video up to 22K",
-            "Nodes Chain models into workflows"
-          ]
-        }
-      ],
-      "sourceUrls": [
-        "https://www.krea.ai",
-        "https://www.krea.ai/pricing"
-      ],
-      "pricingPageUrl": "https://www.krea.ai/pricing",
-      "officialWebsiteUrl": "https://www.krea.ai",
-      "websiteSource": "terms_of_service_url",
-      "privacyPolicyUrl": "https://www.krea.ai/privacy-policy",
-      "termsOfServiceUrl": "https://www.krea.ai/terms",
-      "statusPageUrl": null,
       "parseMode": "official-website-heuristic"
     },
     {
@@ -1160,8 +1091,8 @@
       "openrouterName": "Inceptron",
       "providerId": null,
       "officialWebsiteUrl": "https://www.inceptron.io",
-      "pricingPageUrl": "https://www.inceptron.io/pricing",
-      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $3/h / $5/h / $8/h）",
+      "pricingPageUrl": "https://www.inceptron.io",
+      "reason": "官网价格页探测失败：https://www.inceptron.io/pricing: HTTP 404",
       "blocked": false
     },
     {
@@ -1296,7 +1227,7 @@
       "providerId": null,
       "officialWebsiteUrl": "https://pearlresearch.ai",
       "pricingPageUrl": "https://pearlresearch.ai/pricing",
-      "reason": "官网价格页探测失败：https://pearlresearch.ai/prices: HTTP 404",
+      "reason": "仅检测到按量计费价格，未识别到套餐订阅价格（样例: $ 1.1 / $ 0.043 / $ 3.3）",
       "blocked": false
     },
     {
