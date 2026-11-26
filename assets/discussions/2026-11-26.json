@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-26",
+  "generatedAt": "2026-11-26T16:31:08.572Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 52,
+    "postsAfterKeywordFilter": 15,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "OpenAI": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1260140",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1260140",
+      "title": "GPT 200 刀降 100 刀， 100 扣款的时候先额度清零",
+      "content": "我是大概一周之前就已经退档了，今天 20 点自动续费，正式从 200 dollar 降到了 100 dollar 的套餐。 20 点之前我看了一眼，大概还剩 50%的额度，我寻思降到 100 刀之后，顶多这个额度算的时候就是按 100 刀的 50% 算呗。 结果你猜怎么着？我刚刚要用了，看了一眼，直接给我降到零了。。。。原来是这么算的啊？",
+      "author": "nekoooooo",
+      "createdAt": "2026-11-26T13:51:21.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.9,
+        "supplier": "OpenAI",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.7,
+        "summary": "用户描述在价格从200美元降至100美元后，自动扣款时预付额度被清零，导致无法使用。",
+        "topics": [
+          "定价",
+          "套餐",
+          "额度清零",
+          "自动续费",
+          "退档"
+        ],
+        "planMentioned": "GPT 200 刀套餐",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/506",
+      "analyzedAt": "2026-11-26T16:38:23.132Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
