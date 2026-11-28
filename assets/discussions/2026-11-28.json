@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-28",
+  "generatedAt": "2026-11-28T15:10:54.041Z",
+  "config": {
+    "sources": [
+      "v2ex",
+      "linuxdo"
+    ],
+    "keywords": [
+      "套餐",
+      "coding",
+      "plan",
+      "claude",
+      "gpt",
+      "openai",
+      "kimi",
+      "zhipu",
+      "moonshot",
+      "qwen",
+      "glm",
+      "deepseek"
+    ],
+    "llmModel": "openrouter/free",
+    "relevanceThreshold": 0.7
+  },
+  "summary": {
+    "totalPostsFetched": 47,
+    "postsAfterKeywordFilter": 12,
+    "relevantPosts": 1,
+    "discussionsCreated": 1,
+    "discussionsSkipped": 0,
+    "supplierMentions": {
+      "OpenAI, Gemini": 1
+    }
+  },
+  "posts": [
+    {
+      "id": "v2ex-1260591",
+      "source": "v2ex",
+      "sourceUrl": "https://www.v2ex.com/t/1260591",
+      "title": "Codex 还有 3 次重置，明天订阅到期不再续订，三次重置用不完怎么办？",
+      "content": "这个月玩魔兽，没有折腾代码，100 刀的订阅明天到期，不再准备续订 GPT，换了 Gemini 。还有 3 次重置怎么办？ 完全重置 将于 12 月 2 日 GMT+8 06:53 到期 完全重置 将于 12 月 13 日 GMT+8 06:50 到期 完全重置 将于 12 月 26 日 GMT+8 14:21 到期",
+      "author": "lemolee",
+      "createdAt": "2026-11-28T09:39:26.000Z",
+      "analysis": {
+        "isRelevant": true,
+        "isCodingPlan": true,
+        "relevance": 0.86,
+        "supplier": "OpenAI, Gemini",
+        "supplierCategory": "international-provider",
+        "sentiment": "neutral",
+        "sentimentConfidence": 0.62,
+        "summary": "用户表示 100 美元的 Codex/GPT 订阅明天到期且不再续订，询问剩余的 3 次完全重置该如何处理。",
+        "topics": [
+          "订阅到期",
+          "不再续订",
+          "重置次数",
+          "Codex",
+          "GPT",
+          "Gemini"
+        ],
+        "planMentioned": "Codex 订阅",
+        "language": "zh",
+        "category": "使用体验"
+      },
+      "discussionUrl": "https://github.com/jqknono/coding-plans-for-copilot/discussions/507",
+      "analyzedAt": "2026-11-28T15:14:22.117Z"
+    }
+  ],
+  "failures": [
+    "linuxdo: https://linux.do/latest.rss → 429",
+    "linuxdo: https://linux.do/latest.json → 429",
+    "linuxdo: https://linux.do/latest.json → 429"
+  ]
+}
